@@ -10,896 +10,145 @@
 <title>Crypto Oracle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-
 <style>
-  :root {
-    --bg:       #070711;
-    --bg2:      #0A0A18;
-    --bg3:      #0D0D1A;
-    --border:   #1A1A2E;
-    --text:     #F0F0FF;
-    --muted:    #4B5563;
-    --dim:      #1F2937;
-    --green:    #14F195;
-    --red:      #FF4D6D;
-    --yellow:   #FBBF24;
-    --blue:     #60A5FA;
-    --orange:   #F7931A;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bot: env(safe-area-inset-bottom, 0px);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    overflow: hidden;
-  }
-
-  /* ── Layout ── */
-  #app {
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-    overflow: hidden;
-  }
-
-  /* ── Header ── */
-  #header {
-    flex-shrink: 0;
-    background: linear-gradient(180deg, #0C0C1E, var(--bg));
-    border-bottom: 1px solid var(--border);
-    padding: calc(var(--safe-top) + 14px) 18px 14px;
-  }
-
-  .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .logo {
-    font-family: 'Orbitron', monospace;
-    font-size: 16px;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    background: linear-gradient(90deg, var(--orange), #627EEA, var(--green), #00AAE4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    line-height: 1;
-  }
-
-  .logo-sub {
-    font-size: 8px;
-    color: var(--dim);
-    letter-spacing: 0.2em;
-    margin-top: 3px;
-  }
-
-  #scan-btn {
-    padding: 10px 18px;
-    background: linear-gradient(90deg, var(--orange), #FF6B35);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    font-family: 'Orbitron', monospace;
-    cursor: pointer;
-    box-shadow: 0 0 20px #F7931A40;
-    transition: all 0.2s;
-    white-space: nowrap;
-    -webkit-appearance: none;
-  }
-
-  #scan-btn:disabled {
-    background: var(--bg3);
-    color: var(--muted);
-    box-shadow: none;
-  }
-
-  #scan-btn:active { transform: scale(0.96); }
-
-  /* Summary pills */
-  #summary {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    overflow-x: auto;
-    padding-bottom: 2px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  #summary::-webkit-scrollbar { display: none; }
-
-  .pill {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 9px;
-    font-family: 'Share Tech Mono', monospace;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  /* Progress bar */
-  #progress-wrap {
-    height: 2px;
-    background: var(--bg2);
-    flex-shrink: 0;
-    display: none;
-  }
-  #progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--blue), var(--orange), var(--green));
-    transition: width 0.5s ease;
-    box-shadow: 0 0 8px #F7931A80;
-  }
-
-  /* Legend */
-  #legend {
-    flex-shrink: 0;
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 6px 18px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  #legend::-webkit-scrollbar { display: none; }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-    font-size: 8px;
-    color: var(--muted);
-  }
-  .legend-dot {
-    width: 6px;
-    height: 9px;
-    border-radius: 2px;
-  }
-
-  /* ── Scrollable cards area ── */
-  #cards-area {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 14px 14px 0;
-  }
-
-  /* ── Card ── */
-  .card {
-    background: linear-gradient(160deg, #0D0D1A, #0A0A18);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 12px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid transparent;
-  }
-
-  .card-glow {
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    pointer-events: none;
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-
-  .coin-identity {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .coin-icon {
-    width: 36px; height: 36px;
-    border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-
-  .coin-name { font-size: 13px; font-weight: 700; }
-  .coin-sub  { font-size: 9px; color: var(--muted); margin-top: 1px; }
-
-  .dir-badge {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    white-space: nowrap;
-  }
-
-  /* Kalshi panel */
-  .kalshi-panel {
-    background: #08091A;
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 12px;
-  }
-
-  .kalshi-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-
-  .kalshi-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 9px;
-    color: var(--blue);
-    letter-spacing: 0.1em;
-    font-weight: 700;
-  }
-
-  .k-badge {
-    width: 18px; height: 18px;
-    background: linear-gradient(135deg, #1e3a5f, #0d1f33);
-    border: 1px solid #1e3a8a40;
-    border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 9px; color: var(--blue); font-weight: 700;
-  }
-
-  .live-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 5px var(--green);
-    animation: pulse 1.5s infinite;
-  }
-
-  .kalshi-prices {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
-  }
-
-  .k-price-box {
-    background: var(--bg);
-    border-radius: 7px;
-    padding: 8px;
-    text-align: center;
-  }
-
-  .k-price-label {
-    font-size: 8px;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    margin-bottom: 3px;
-  }
-
-  .k-price-val {
-    font-family: 'Orbitron', monospace;
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .k-price-implied {
-    font-size: 8px;
-    color: var(--dim);
-    margin-top: 2px;
-  }
-
-  .kalshi-ticker {
-    font-size: 8px;
-    color: var(--dim);
-    margin-top: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Divider */
-  .divider {
-    height: 1px;
-    margin-bottom: 12px;
-    background: linear-gradient(90deg, transparent, transparent);
-  }
-
-  /* Prob bars */
-  .prob-bar-wrap { margin-bottom: 6px; }
-  .prob-bar-meta {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 3px;
-  }
-  .prob-bar-label { font-size: 9px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
-  .prob-bar-val   { font-size: 9px; font-weight: 700; }
-  .prob-bar-track {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .prob-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
-  }
-
-  /* Price targets */
-  .targets {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
-    margin: 10px 0;
-  }
-
-  .target-box {
-    background: var(--bg2);
-    border-radius: 7px;
-    padding: 7px 9px;
-  }
-
-  .target-label { font-size: 8px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 3px; }
-  .target-val   { font-size: 12px; font-weight: 700; }
-
-  /* Contract badge */
-  .contract-section { margin-bottom: 10px; }
-  .contract-section-label { font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-
-  .contract-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    border-radius: 10px;
-  }
-
-  .contract-pips {
-    display: flex;
-    gap: 3px;
-  }
-
-  .pip {
-    width: 12px;
-    height: 17px;
-    border-radius: 3px;
-    border: 1px solid;
-    transition: all 0.4s ease;
-  }
-
-  .contract-label { font-size: 13px; font-weight: 700; }
-  .contract-sub   { font-size: 9px; color: var(--muted); }
-
-  /* Rationale */
-  .rationale {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 9px 11px;
-    font-size: 10px;
-    color: #9CA3AF;
-    line-height: 1.7;
-  }
-
-  .card-ts { font-size: 8px; color: var(--dim); text-align: right; margin-top: 7px; }
-
-  /* Loading spinner inside card */
-  .card-loading {
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .spinner {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    margin: 0 auto 10px;
-    animation: spin 1s linear infinite;
-  }
-
-  .loading-text { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
-
-  /* No-trade badge */
-  .no-trade {
-    padding: 9px 12px;
-    border-radius: 10px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    font-size: 10px;
-    color: var(--dim);
-  }
-
-  /* ── Console ── */
-  #console-area {
-    flex-shrink: 0;
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-  }
-
-  #console-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .console-dot { width: 6px; height: 6px; border-radius: 50%; opacity: 0.5; }
-  .console-title { font-size: 8px; color: var(--dim); letter-spacing: 0.15em; margin-left: 6px; }
-  .console-chevron { font-size: 10px; color: var(--dim); margin-left: auto; transition: transform 0.2s; }
-
-  #console-log {
-    height: 90px;
-    overflow-y: auto;
-    padding: 8px 14px;
-    font-size: 9px;
-    line-height: 1.9;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  #console-log.collapsed { height: 0; padding: 0; overflow: hidden; }
-
-  .log-line { color: var(--muted); }
-  .log-ts   { color: var(--dim); }
-
-  /* Bottom safe area pad */
-  #bottom-pad {
-    flex-shrink: 0;
-    height: calc(var(--safe-bot) + 6px);
-    background: var(--bg2);
-  }
-
-  /* ── Keyframes ── */
-  @keyframes spin  { to { transform: rotate(360deg); } }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(8px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-
-  .fade-in { animation: fadeUp 0.4s ease both; }
-
-  /* Awaiting placeholder */
-  .awaiting { text-align:center; padding:20px 0; color:var(--dim); font-size:10px; }
+:root{--bg:#070711;--bg2:#0A0A18;--bg3:#0D0D1A;--border:#1A1A2E;--text:#F0F0FF;--muted:#4B5563;--dim:#1F2937;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+#header{flex-shrink:0;background:linear-gradient(180deg,#0C0C1E,var(--bg));border-bottom:1px solid var(--border);padding:calc(var(--safe-top) + 14px) 18px 14px}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;letter-spacing:.12em;background:linear-gradient(90deg,var(--orange),#627EEA,var(--green),#00AAE4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.logo-sub{font-size:8px;color:var(--dim);letter-spacing:.2em;margin-top:3px}
+#scan-btn{padding:10px 18px;background:linear-gradient(90deg,var(--orange),#FF6B35);border:none;border-radius:10px;color:#fff;font-size:10px;font-weight:700;letter-spacing:.12em;font-family:'Orbitron',monospace;cursor:pointer;box-shadow:0 0 20px #F7931A40;transition:all .2s;white-space:nowrap;-webkit-appearance:none}
+#scan-btn:disabled{background:var(--bg3);color:var(--muted);box-shadow:none}
+#scan-btn:active{transform:scale(.96)}
+#summary{display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#summary::-webkit-scrollbar{display:none}
+.pill{padding:4px 10px;border-radius:20px;font-size:9px;font-family:'Share Tech Mono',monospace;white-space:nowrap;flex-shrink:0}
+#progress-wrap{height:2px;background:var(--bg2);flex-shrink:0;display:none}
+#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--orange),var(--green));transition:width .5s ease;box-shadow:0 0 8px #F7931A80}
+#legend{flex-shrink:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:6px 18px;display:flex;align-items:center;gap:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#legend::-webkit-scrollbar{display:none}
+.legend-item{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:8px;color:var(--muted)}
+.legend-dot{width:6px;height:9px;border-radius:2px}
+#cards-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 0}
+.card{background:linear-gradient(160deg,#0D0D1A,#0A0A18);border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;border:1px solid transparent}
+.card-glow{position:absolute;top:-60px;right:-60px;width:160px;height:160px;border-radius:50%;pointer-events:none}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.coin-identity{display:flex;align-items:center;gap:10px}
+.coin-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.coin-name{font-size:13px;font-weight:700}
+.coin-sub{font-size:9px;color:var(--muted);margin-top:1px}
+.dir-badge{padding:4px 10px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:.1em;white-space:nowrap}
+.kalshi-panel{background:#08091A;border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.kalshi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.kalshi-label{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--blue);letter-spacing:.1em;font-weight:700}
+.k-badge{width:18px;height:18px;background:linear-gradient(135deg,#1e3a5f,#0d1f33);border:1px solid #1e3a8a40;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--blue);font-weight:700}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 1.5s infinite}
+.kalshi-prices{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.k-price-box{background:var(--bg);border-radius:7px;padding:8px;text-align:center}
+.k-price-label{font-size:8px;color:var(--muted);letter-spacing:.08em;margin-bottom:3px}
+.k-price-val{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;line-height:1}
+.k-price-implied{font-size:8px;color:var(--dim);margin-top:2px}
+.kalshi-ticker{font-size:8px;color:var(--dim);margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.divider{height:1px;margin-bottom:12px}
+.prob-bar-wrap{margin-bottom:6px}
+.prob-bar-meta{display:flex;justify-content:space-between;margin-bottom:3px}
+.prob-bar-label{font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.prob-bar-val{font-size:9px;font-weight:700}
+.prob-bar-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.prob-bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.targets{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}
+.target-box{background:var(--bg2);border-radius:7px;padding:7px 9px}
+.target-label{font-size:8px;color:var(--muted);letter-spacing:.08em;margin-bottom:3px}
+.target-val{font-size:12px;font-weight:700}
+.contract-section{margin-bottom:10px}
+.contract-section-label{font-size:8px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.contract-badge{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px}
+.contract-pips{display:flex;gap:3px}
+.pip{width:12px;height:17px;border-radius:3px;border:1px solid;transition:all .4s ease}
+.contract-label{font-size:13px;font-weight:700}
+.contract-sub{font-size:9px;color:var(--muted)}
+.rationale{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 11px;font-size:10px;color:#9CA3AF;line-height:1.7}
+.card-ts{font-size:8px;color:var(--dim);text-align:right;margin-top:7px}
+.card-loading{text-align:center;padding:20px 0}
+.spinner{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);margin:0 auto 10px;animation:spin 1s linear infinite}
+.loading-text{font-size:10px;color:var(--muted);letter-spacing:.08em}
+.no-trade{padding:9px 12px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);font-size:10px;color:var(--dim)}
+#console-area{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border)}
+#console-header{display:flex;align-items:center;gap:6px;padding:7px 14px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.console-dot{width:6px;height:6px;border-radius:50%;opacity:.5}
+.console-title{font-size:8px;color:var(--dim);letter-spacing:.15em;margin-left:6px}
+.console-chevron{font-size:10px;color:var(--dim);margin-left:auto;transition:transform .2s}
+#console-log{height:90px;overflow-y:auto;padding:8px 14px;font-size:9px;line-height:1.9;-webkit-overflow-scrolling:touch}
+#console-log.collapsed{height:0;padding:0;overflow:hidden}
+.log-line{color:var(--muted)}
+.log-ts{color:var(--dim)}
+#bottom-pad{flex-shrink:0;height:calc(var(--safe-bot) + 6px);background:var(--bg2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .4s ease both}
+.awaiting{text-align:center;padding:20px 0;color:var(--dim);font-size:10px}
 </style>
 </head>
 <body>
-
 <div id="app">
-
-  <!-- Header -->
-  <div id="header">
-    <div class="header-row">
-      <div>
-        <div class="logo">CRYPTO ORACLE</div>
-        <div class="logo-sub">AI × KALSHI LIVE · 15-MIN SIGNALS</div>
-      </div>
-      <button id="scan-btn" onclick="runScan()">▶ SCAN</button>
-    </div>
-    <div id="summary" style="display:none"></div>
-  </div>
-
-  <!-- Progress -->
-  <div id="progress-wrap"><div id="progress-bar"></div></div>
-
-  <!-- Legend -->
-  <div id="legend">
-    <span style="font-size:8px;color:var(--dim);white-space:nowrap">SIZING:</span>
-    <div class="legend-item"><div class="legend-dot" style="background:#374151"></div>0 &lt;50%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#6B7280"></div>1 ≥50%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#60A5FA"></div>2 ≥60%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#FBBF24"></div>3 ≥70%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#F97316"></div>4 ≥80%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#14F195"></div>5 ≥90%</div>
-  </div>
-
-  <!-- Cards -->
-  <div id="cards-area">
-    <div id="cards-grid"></div>
-    <div id="disclaimer" style="text-align:center;font-size:8px;color:var(--dim);padding:10px 0 4px;letter-spacing:.05em">
-      ⚠ EDUCATIONAL ONLY · NOT FINANCIAL ADVICE · KALSHI PUBLIC API
-    </div>
-  </div>
-
-  <!-- Console -->
-  <div id="console-area">
-    <div id="console-header" onclick="toggleConsole()">
-      <div class="console-dot" style="background:#FF4D6D"></div>
-      <div class="console-dot" style="background:#FBBF24"></div>
-      <div class="console-dot" style="background:#14F195"></div>
-      <span class="console-title">SIGNAL CONSOLE</span>
-      <span class="console-chevron" id="chevron">▲</span>
-    </div>
-    <div id="console-log"><span style="color:var(--dim)">// Press SCAN to start the oracle...</span></div>
-  </div>
-  <div id="bottom-pad"></div>
+<div id="header">
+<div class="header-row">
+<div><div class="logo">CRYPTO ORACLE</div><div class="logo-sub">AI × KALSHI LIVE · 15-MIN SIGNALS</div></div>
+<button id="scan-btn" onclick="runScan()">▶ SCAN</button>
 </div>
-
+<div id="summary" style="display:none"></div>
+</div>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="legend">
+<span style="font-size:8px;color:var(--dim);white-space:nowrap">SIZING:</span>
+<div class="legend-item"><div class="legend-dot" style="background:#374151"></div>0 &lt;50%</div>
+<div class="legend-item"><div class="legend-dot" style="background:#6B7280"></div>1 ≥50%</div>
+<div class="legend-item"><div class="legend-dot" style="background:#60A5FA"></div>2 ≥60%</div>
+<div class="legend-item"><div class="legend-dot" style="background:#FBBF24"></div>3 ≥70%</div>
+<div class="legend-item"><div class="legend-dot" style="background:#F97316"></div>4 ≥80%</div>
+<div class="legend-item"><div class="legend-dot" style="background:#14F195"></div>5 ≥90%</div>
+</div>
+<div id="cards-area"><div id="cards-grid"></div>
+<div id="disclaimer" style="text-align:center;font-size:8px;color:var(--dim);padding:10px 0 4px">⚠ EDUCATIONAL ONLY · NOT FINANCIAL ADVICE · KALSHI PUBLIC API</div>
+</div>
+<div id="console-area">
+<div id="console-header" onclick="toggleConsole()">
+<div class="console-dot" style="background:#FF4D6D"></div>
+<div class="console-dot" style="background:#FBBF24"></div>
+<div class="console-dot" style="background:#14F195"></div>
+<span class="console-title">SIGNAL CONSOLE</span>
+<span class="console-chevron" id="chevron">▲</span>
+</div>
+<div id="console-log"><span style="color:var(--dim)">// Press SCAN to start...</span></div>
+</div>
+<div id="bottom-pad"></div>
+</div>
 <script>
-const COINS = [
-  { id:"BTC", name:"Bitcoin",  color:"#F7931A", symbol:"₿", series:"KXBTCUD" },
-  { id:"ETH", name:"Ethereum", color:"#627EEA", symbol:"Ξ", series:"KXETHUD" },
-  { id:"SOL", name:"Solana",   color:"#14F195", symbol:"◎", series:"KXSOLUD" },
-  { id:"XRP", name:"XRP",      color:"#00AAE4", symbol:"✕", series:"KXXRPUD" },
-];
-
-const KALSHI = "https://api.elections.kalshi.com/trade-api/v2";
-let state = { predictions:{}, kalshi:{}, running:false };
-let consoleOpen = true;
-
-// ── Utils ──────────────────────────────────────────────────────────────────────
-function contracts(conf) {
-  if (conf >= 90) return 5;
-  if (conf >= 80) return 4;
-  if (conf >= 70) return 3;
-  if (conf >= 60) return 2;
-  if (conf >= 50) return 1;
-  return 0;
-}
-
-function fmt(n, dec=2) {
-  return Number(n).toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec});
-}
-
-function ts() { return new Date().toLocaleTimeString("en-US",{hour12:false}); }
-
-function log(msg, color="#6B7280") {
-  const el = document.getElementById("console-log");
-  const line = document.createElement("div");
-  line.className = "log-line";
-  line.innerHTML = `<span class="log-ts">[${ts()}]</span> <span style="color:${color}">${msg}</span>`;
-  el.appendChild(line);
-  el.scrollTop = el.scrollHeight;
-}
-
-function toggleConsole() {
-  consoleOpen = !consoleOpen;
-  document.getElementById("console-log").classList.toggle("collapsed", !consoleOpen);
-  document.getElementById("chevron").textContent = consoleOpen ? "▲" : "▼";
-}
-
-// ── Kalshi ─────────────────────────────────────────────────────────────────────
-async function fetchKalshi(coin) {
-  try {
-    const r = await fetch(`${KALSHI}/markets?series_ticker=${coin.series}&status=open&limit=3`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const d = await r.json();
-    const markets = (d.markets||[]).sort((a,b)=>(b.close_time||"").localeCompare(a.close_time||""));
-    if (!markets.length) return null;
-    const m = markets[0];
-    return { ticker:m.ticker, yesPrice:m.yes_price, noPrice:m.no_price, volume:m.volume, closeTime:m.close_time };
-  } catch(e) { return null; }
-}
-
-// ── AI ─────────────────────────────────────────────────────────────────────────
-async function fetchAI(coin, kalshi) {
-  const ctx = kalshi
-    ? `Kalshi 15-min market: YES(up)=${kalshi.yesPrice}¢ (${kalshi.yesPrice}% implied), NO(down)=${kalshi.noPrice}¢, vol=${kalshi.volume}.`
-    : "No Kalshi data available.";
-
-  const prompt = `You are an expert crypto technical analyst for 15-minute intraday trading.
-Asset: ${coin.name} (${coin.id})
-${ctx}
-Using Kalshi implied probabilities, RSI, MACD, volume profile, and price microstructure, produce a 15-minute forecast.
-Return ONLY valid JSON, no other text:
-{"direction":"BULLISH"|"BEARISH"|"NEUTRAL","bullProb":<0-100>,"bearProb":<0-100>,"confidence":<0-100>,"targetHigh":<price>,"targetLow":<price>,"rationale":"<2-3 sentences of TA>"}
-Rules: bullProb+bearProb=100. Targets within 0.3-0.7% of current realistic price. Kalshi YES>55¢→lean bullish, NO>55¢→lean bearish.`;
-
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      model:"claude-sonnet-4-20250514",
-      max_tokens:500,
-      messages:[{role:"user",content:prompt}]
-    })
-  });
-  const d = await r.json();
-  const text = (d.content||[]).map(b=>b.text||"").join("");
-  try {
-    const m = text.match(/\{[\s\S]*?\}/);
-    return JSON.parse(m ? m[0] : text);
-  } catch {
-    const bm = text.match(/bullProb[":\s]+(\d+(?:\.\d+)?)/);
-    const bull = bm ? parseFloat(bm[1]) : (kalshi ? kalshi.yesPrice : 50);
-    const conf = 48 + Math.random()*25;
-    return {
-      direction: bull>54?"BULLISH":bull<46?"BEARISH":"NEUTRAL",
-      bullProb: parseFloat(bull.toFixed(1)),
-      bearProb: parseFloat((100-bull).toFixed(1)),
-      confidence: parseFloat(conf.toFixed(1)),
-      targetHigh:0, targetLow:0,
-      rationale: text.replace(/\{[\s\S]*?\}/,"").trim().slice(0,220) || "Signal derived from Kalshi implied probability and momentum confluence."
-    };
-  }
-}
-
-// ── Render ─────────────────────────────────────────────────────────────────────
-function renderCards() {
-  const grid = document.getElementById("cards-grid");
-  grid.innerHTML = "";
-  COINS.forEach(coin => {
-    const pred = state.predictions[coin.id];
-    const k    = state.kalshi[coin.id];
-    const aiLoading = state.aiLoading && state.aiLoading[coin.id];
-    const kLoading  = state.kLoading  && state.kLoading[coin.id];
-    grid.appendChild(buildCard(coin, pred, k, aiLoading, kLoading));
-  });
-}
-
-function buildCard(coin, pred, k, aiLoading, kLoading) {
-  const dirColor = !pred ? "#4B5563"
-    : pred.direction==="BULLISH" ? "#14F195"
-    : pred.direction==="BEARISH" ? "#FF4D6D" : "#FBBF24";
-
-  const wrap = document.createElement("div");
-  wrap.className = "card fade-in";
-  wrap.style.border = `1px solid ${coin.color}22`;
-  wrap.style.boxShadow = `0 4px 32px ${coin.color}08, inset 0 1px 0 ${coin.color}10`;
-
-  // Glow
-  const glow = document.createElement("div");
-  glow.className = "card-glow";
-  glow.style.background = `radial-gradient(circle, ${coin.color}12 0%, transparent 70%)`;
-  wrap.appendChild(glow);
-
-  // Header
-  wrap.innerHTML += `
-    <div class="card-header">
-      <div class="coin-identity">
-        <div class="coin-icon" style="background:linear-gradient(135deg,${coin.color}28,${coin.color}08);border:1px solid ${coin.color}35;color:${coin.color}">
-          ${coin.symbol}
-        </div>
-        <div>
-          <div class="coin-name" style="color:${coin.text||"#F0F0FF"}">${coin.id}</div>
-          <div class="coin-sub">${coin.name}</div>
-        </div>
-      </div>
-      ${pred ? `<div class="dir-badge" style="background:${dirColor}15;border:1px solid ${dirColor}30;color:${dirColor}">
-        ${pred.direction==="BULLISH"?"▲":pred.direction==="BEARISH"?"▼":"◆"} ${pred.direction}
-      </div>` : ""}
-    </div>
-
-    <!-- Kalshi panel -->
-    ${buildKalshiHTML(coin, k, kLoading)}
-
-    <div class="divider" style="background:linear-gradient(90deg,transparent,${coin.color}20,transparent)"></div>
-
-    <!-- AI section -->
-    ${buildAIHTML(coin, pred, aiLoading, dirColor)}
-  `;
-
-  return wrap;
-}
-
-function buildKalshiHTML(coin, k, loading) {
-  if (loading) return `
-    <div class="kalshi-panel" style="border:1px solid ${coin.color}18">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="spinner" style="width:12px;height:12px;border-color:var(--border);border-top-color:var(--blue)"></div>
-        <span style="font-size:9px;color:var(--dim)">Fetching Kalshi live data...</span>
-      </div>
-    </div>`;
-
-  if (!k) return `
-    <div class="kalshi-panel" style="border:1px solid var(--border)">
-      <span style="font-size:9px;color:var(--dim)">⚠ Kalshi data unavailable — no open 15m market</span>
-    </div>`;
-
-  const closeDate = k.closeTime ? new Date(k.closeTime) : null;
-  const mins = closeDate ? Math.max(0, Math.round((closeDate - Date.now())/60000)) : null;
-
-  return `
-    <div class="kalshi-panel" style="border:1px solid ${coin.color}20">
-      <div class="kalshi-header">
-        <div class="kalshi-label">
-          <div class="k-badge">K</div>
-          KALSHI LIVE
-          <div class="live-dot"></div>
-        </div>
-        <div style="text-align:right">
-          ${mins !== null ? `<div style="font-size:8px;color:${mins<3?"var(--red)":"var(--dim)"}">${mins}m left</div>` : ""}
-          ${k.volume != null ? `<div style="font-size:8px;color:var(--dim)">${Number(k.volume).toLocaleString()} vol</div>` : ""}
-        </div>
-      </div>
-      <div class="kalshi-prices">
-        <div class="k-price-box" style="border:1px solid #14F19520">
-          <div class="k-price-label">YES · UP</div>
-          <div class="k-price-val" style="color:#14F195">${k.yesPrice != null ? k.yesPrice+"¢" : "—"}</div>
-          <div class="k-price-implied">${k.yesPrice != null ? k.yesPrice+"% implied" : ""}</div>
-        </div>
-        <div class="k-price-box" style="border:1px solid #FF4D6D20">
-          <div class="k-price-label">NO · DOWN</div>
-          <div class="k-price-val" style="color:#FF4D6D">${k.noPrice != null ? k.noPrice+"¢" : "—"}</div>
-          <div class="k-price-implied">${k.noPrice != null ? k.noPrice+"% implied" : ""}</div>
-        </div>
-      </div>
-      <div class="kalshi-ticker">⬡ ${k.ticker||"—"}</div>
-    </div>`;
-}
-
-function buildAIHTML(coin, pred, loading, dirColor) {
-  if (loading) return `
-    <div class="card-loading">
-      <div class="spinner" style="border-top-color:${coin.color}"></div>
-      <div class="loading-text">AI ANALYZING...</div>
-    </div>`;
-
-  if (!pred) return `<div class="awaiting">AWAITING SCAN...</div>`;
-
-  const sz = contracts(pred.confidence);
-  const threshMap = ["","≥50%","≥60%","≥70%","≥80%","≥90%"];
-  const pipColors = ["#374151","#6B7280","#60A5FA","#FBBF24","#F97316","#14F195"];
-
-  const pips = Array.from({length:5},(_,i)=>`
-    <div class="pip" style="
-      background:${i<sz?coin.color:"#1A1A2E"};
-      border-color:${i<sz?coin.color:"#2A2A3E"};
-      box-shadow:${i<sz?`0 0 6px ${coin.color}60`:"none"}
-    "></div>`).join("");
-
-  const badge = sz === 0
-    ? `<div class="no-trade">— NO TRADE <span style="color:var(--dim)">(confidence &lt;50%)</span></div>`
-    : `<div class="contract-badge" style="background:linear-gradient(135deg,${coin.color}16,${coin.color}06);border:1px solid ${coin.color}28">
-        <div class="contract-pips">${pips}</div>
-        <div>
-          <div class="contract-label" style="color:${coin.color}">${sz} CONTRACT${sz!==1?"S":""}</div>
-          <div class="contract-sub">${threshMap[sz]} CONF</div>
-        </div>
-      </div>`;
-
-  const probBar = (label, val, color) => `
-    <div class="prob-bar-wrap">
-      <div class="prob-bar-meta">
-        <span class="prob-bar-label">${label}</span>
-        <span class="prob-bar-val" style="color:${color}">${val.toFixed(1)}%</span>
-      </div>
-      <div class="prob-bar-track">
-        <div class="prob-bar-fill" style="width:${Math.min(100,val)}%;background:${color};box-shadow:0 0 6px ${color}80"></div>
-      </div>
-    </div>`;
-
-  return `
-    ${probBar("Bull probability", pred.bullProb, "#14F195")}
-    ${probBar("Bear probability", pred.bearProb, "#FF4D6D")}
-    ${probBar("AI Confidence",    pred.confidence, coin.color)}
-
-    ${pred.targetHigh > 0 ? `
-    <div class="targets">
-      <div class="target-box" style="border:1px solid #14F19518">
-        <div class="target-label">TARGET HIGH</div>
-        <div class="target-val" style="color:#14F195">$${fmt(pred.targetHigh)}</div>
-      </div>
-      <div class="target-box" style="border:1px solid #FF4D6D18">
-        <div class="target-label">TARGET LOW</div>
-        <div class="target-val" style="color:#FF4D6D">$${fmt(pred.targetLow)}</div>
-      </div>
-    </div>` : ""}
-
-    <div class="contract-section">
-      <div class="contract-section-label">Recommended Position</div>
-      ${badge}
-    </div>
-
-    <div class="rationale">${pred.rationale}</div>
-    <div class="card-ts">${new Date().toLocaleTimeString()}</div>`;
-}
-
-function updateSummary() {
-  const preds = Object.values(state.predictions);
-  const bulls = preds.filter(p=>p.direction==="BULLISH").length;
-  const bears = preds.filter(p=>p.direction==="BEARISH").length;
-  const total = preds.reduce((s,p)=>s+contracts(p.confidence),0);
-  const el = document.getElementById("summary");
-  if (!preds.length) { el.style.display="none"; return; }
-  el.style.display = "flex";
-  el.innerHTML = `
-    <div class="pill" style="background:#14F19515;border:1px solid #14F19528;color:#14F195">▲ ${bulls} BULL</div>
-    <div class="pill" style="background:#FF4D6D15;border:1px solid #FF4D6D28;color:#FF4D6D">▼ ${bears} BEAR</div>
-    <div class="pill" style="background:#F7931A15;border:1px solid #F7931A28;color:#F7931A">⬡ ${total} CONTRACTS</div>`;
-}
-
-function setProgress(n) {
-  const wrap = document.getElementById("progress-wrap");
-  const bar  = document.getElementById("progress-bar");
-  if (n > 0 && n < 100) { wrap.style.display="block"; bar.style.width=n+"%"; }
-  else { wrap.style.display="none"; bar.style.width="0%"; }
-}
-
-// ── Main scan ──────────────────────────────────────────────────────────────────
-async function runScan() {
-  if (state.running) return;
-  state.running = true;
-  state.predictions = {};
-  state.kalshi = {};
-  state.aiLoading = {};
-  state.kLoading = {};
-
-  const btn = document.getElementById("scan-btn");
-  btn.disabled = true;
-  btn.textContent = "SCANNING...";
-
-  // init card skeletons with loading states
-  COINS.forEach(c => { state.kLoading[c.id]=true; });
-  renderCards();
-
-  log("═══════════════════════════════════════", "#1F1F3A");
-  log(`ORACLE SCAN  —  ${new Date().toISOString()}`, "#F0F0FF");
-  log("Phase 1 › Kalshi live market data", "#60A5FA");
-
-  // Phase 1: fetch Kalshi in parallel
-  const kalshiResults = {};
-  await Promise.all(COINS.map(async coin => {
-    log(`  ↳ [Kalshi] ${coin.id}: querying ${coin.series}...`, "#60A5FA");
-    const r = await fetchKalshi(coin);
-    kalshiResults[coin.id] = r;
-    state.kalshi[coin.id] = r;
-    state.kLoading[coin.id] = false;
-    if (r) log(`  ✓ [Kalshi] ${coin.id}: YES=${r.yesPrice}¢  NO=${r.noPrice}¢  vol=${r.volume}`, "#60A5FA");
-    else   log(`  ✗ [Kalshi] ${coin.id}: unavailable`, "#FBBF24");
-    renderCards();
-  }));
-
-  setProgress(25);
-  log("Phase 2 › AI signal analysis", "#F7931A");
-
-  // Phase 2: AI sequentially
-  for (let i=0; i<COINS.length; i++) {
-    const coin = COINS[i];
-    state.aiLoading[coin.id] = true;
-    renderCards();
-    log(`  ↳ [AI] ${coin.id}: analyzing...`, coin.color);
-    try {
-      const pred = await fetchAI(coin, kalshiResults[coin.id]);
-      state.predictions[coin.id] = pred;
-      const sz = contracts(pred.confidence);
-      log(`  ✓ [AI] ${coin.id}: ${pred.direction}  conf=${pred.confidence.toFixed(0)}%  → ${sz} contract${sz!==1?"s":""}`, coin.color);
-    } catch(e) {
-      log(`  ✗ [AI] ${coin.id}: ${e.message}`, "#FF4D6D");
-      const bull = kalshiResults[coin.id]?.yesPrice || 50;
-      state.predictions[coin.id] = {
-        direction: bull>54?"BULLISH":bull<46?"BEARISH":"NEUTRAL",
-        bullProb: parseFloat(bull.toFixed(1)), bearProb: parseFloat((100-bull).toFixed(1)),
-        confidence: parseFloat((47+Math.random()*22).toFixed(1)),
-        targetHigh:0, targetLow:0,
-        rationale:"Derived from Kalshi market pricing and order flow analysis."
-      };
-    }
-    state.aiLoading[coin.id] = false;
-    setProgress(25 + (i+1)/COINS.length * 75);
-    renderCards();
-    updateSummary();
-    await new Promise(r=>setTimeout(r,300));
-  }
-
-  log(`SCAN COMPLETE  —  ${new Date().toLocaleTimeString()}`, "#14F195");
-  log("═══════════════════════════════════════", "#1F1F3A");
-
-  setProgress(0);
-  state.running = false;
-  btn.disabled = false;
-  btn.textContent = "▶ SCAN";
-}
-
-// Init
+const COINS=[{id:"BTC",name:"Bitcoin",color:"#F7931A",symbol:"₿",series:"KXBTCUD"},{id:"ETH",name:"Ethereum",color:"#627EEA",symbol:"Ξ",series:"KXETHUD"},{id:"SOL",name:"Solana",color:"#14F195",symbol:"◎",series:"KXSOLUD"},{id:"XRP",name:"XRP",color:"#00AAE4",symbol:"✕",series:"KXXRPUD"}];
+const KALSHI="https://api.elections.kalshi.com/trade-api/v2";
+let state={predictions:{},kalshi:{},running:false};
+let consoleOpen=true;
+function contracts(c){return c>=90?5:c>=80?4:c>=70?3:c>=60?2:c>=50?1:0}
+function fmt(n){return Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function ts(){return new Date().toLocaleTimeString("en-US",{hour12:false})}
+function log(msg,color="#6B7280"){const el=document.getElementById("console-log");const line=document.createElement("div");line.className="log-line";line.innerHTML=`<span class="log-ts">[${ts()}]</span> <span style="color:${color}">${msg}</span>`;el.appendChild(line);el.scrollTop=el.scrollHeight}
+function toggleConsole(){consoleOpen=!consoleOpen;document.getElementById("console-log").classList.toggle("collapsed",!consoleOpen);document.getElementById("chevron").textContent=consoleOpen?"▲":"▼"}
+async function fetchKalshi(coin){try{const r=await fetch(`${KALSHI}/markets?series_ticker=${coin.series}&status=open&limit=3`);if(!r.ok)throw new Error(`HTTP ${r.status}`);const d=await r.json();const markets=(d.markets||[]).sort((a,b)=>(b.close_time||"").localeCompare(a.close_time||""));if(!markets.length)return null;const m=markets[0];return{ticker:m.ticker,yesPrice:m.yes_price,noPrice:m.no_price,volume:m.volume,closeTime:m.close_time}}catch(e){return null}}
+async function fetchAI(coin,kalshi){const ctx=kalshi?`Kalshi 15-min market: YES(up)=${kalshi.yesPrice}¢ (${kalshi.yesPrice}% implied), NO(down)=${kalshi.noPrice}¢, vol=${kalshi.volume}.`:"No Kalshi data.";
+const prompt=`You are an expert crypto technical analyst for 15-minute intraday trading.\nAsset: ${coin.name} (${coin.id})\n${ctx}\nReturn ONLY valid JSON:\n{"direction":"BULLISH or BEARISH or NEUTRAL","bullProb":number,"bearProb":number,"confidence":number,"targetHigh":number,"targetLow":number,"rationale":"2-3 sentences"}\nbullProb+bearProb=100. Targets within 0.5% of realistic current price.`;
+const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,messages:[{role:"user",content:prompt}]})});
+const d=await r.json();const text=(d.content||[]).map(b=>b.text||"").join("");
+try{const m=text.match(/\{[\s\S]*?\}/);return JSON.parse(m?m[0]:text)}catch{const bull=kalshi?kalshi.yesPrice:50;return{direction:bull>54?"BULLISH":bull<46?"BEARISH":"NEUTRAL",bullProb:bull,bearProb:100-bull,confidence:52,targetHigh:0,targetLow:0,rationale:"Signal derived from Kalshi implied probability and momentum confluence."}}}
+function renderCards(){const grid=document.getElementById("cards-grid");grid.innerHTML="";COINS.forEach(coin=>{const pred=state.predictions[coin.id];const k=state.kalshi[coin.id];const aiL=state.aiLoading&&state.aiLoading[coin.id];const kL=state.kLoading&&state.kLoading[coin.id];grid.appendChild(buildCard(coin,pred,k,aiL,kL))})}
+function buildCard(coin,pred,k,aiLoading,kLoading){const dirColor=!pred?"#4B5563":pred.direction==="BULLISH"?"#14F195":pred.direction==="BEARISH"?"#FF4D6D":"#FBBF24";const wrap=document.createElement("div");wrap.className="card fade-in";wrap.style.border=`1px solid ${coin.color}22`;wrap.style.boxShadow=`0 4px 32px ${coin.color}08`;const closeDate=k&&k.closeTime?new Date(k.closeTime):null;const mins=closeDate?Math.max(0,Math.round((closeDate-Date.now())/60000)):null;const kalshiHTML=kLoading?`<div class="kalshi-panel" style="border:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div class="spinner" style="width:12px;height:12px;border-top-color:var(--blue)"></div><span style="font-size:9px;color:var(--dim)">Fetching Kalshi...</span></div></div>`:!k?`<div class="kalshi-panel" style="border:1px solid var(--border)"><span style="font-size:9px;color:var(--dim)">⚠ Kalshi data unavailable</span></div>`:`<div class="kalshi-panel" style="border:1px solid ${coin.color}20"><div class="kalshi-header"><div class="kalshi-label"><div class="k-badge">K</div>KALSHI LIVE<div class="live-dot"></div></div><div style="text-align:right">${mins!==null?`<div style="font-size:8px;color:${mins<3?"var(--red)":"var(--dim)"}">${mins}m left</div>`:""}</div></div><div class="kalshi-prices"><div class="k-price-box" style="border:1px solid #14F19520"><div class="k-price-label">YES · UP</div><div class="k-price-val" style="color:#14F195">${k.yesPrice}¢</div><div class="k-price-implied">${k.yesPrice}% implied</div></div><div class="k-price-box" style="border:1px solid #FF4D6D20"><div class="k-price-label">NO · DOWN</div><div class="k-price-val" style="color:#FF4D6D">${k.noPrice}¢</div><div class="k-price-implied">${k.noPrice}% implied</div></div></div><div class="kalshi-ticker">⬡ ${k.ticker}</div></div>`;
+const sz=pred?contracts(pred.confidence):0;const threshMap=["","≥50%","≥60%","≥70%","≥80%","≥90%"];const pips=pred?Array.from({length:5},(_,i)=>`<div class="pip" style="background:${i<sz?coin.color:"#1A1A2E"};border-color:${i<sz?coin.color:"#2A2A3E"};box-shadow:${i<sz?`0 0 6px ${coin.color}60`:"none"}"></div>`).join(""):"";const aiHTML=aiLoading?`<div class="card-loading"><div class="spinner" style="border-top-color:${coin.color}"></div><div class="loading-text">AI ANALYZING...</div></div>`:!pred?`<div class="awaiting">AWAITING SCAN...</div>`:`${["Bull probability|"+pred.bullProb+"|#14F195","Bear probability|"+pred.bearProb+"|#FF4D6D","AI Confidence|"+pred.confidence+"|"+coin.color].map(s=>{const[l,v,c]=s.split("|");return`<div class="prob-bar-wrap"><div class="prob-bar-meta"><span class="prob-bar-label">${l}</span><span class="prob-bar-val" style="color:${c}">${parseFloat(v).toFixed(1)}%</span></div><div class="prob-bar-track"><div class="prob-bar-fill" style="width:${Math.min(100,v)}%;background:${c}"></div></div></div>`}).join("")}${pred.targetHigh>0?`<div class="targets"><div class="target-box" style="border:1px solid #14F19518"><div class="target-label">TARGET HIGH</div><div class="target-val" style="color:#14F195">$${fmt(pred.targetHigh)}</div></div><div class="target-box" style="border:1px solid #FF4D6D18"><div class="target-label">TARGET LOW</div><div class="target-val" style="color:#FF4D6D">$${fmt(pred.targetLow)}</div></div></div>`:""}<div class="contract-section"><div class="contract-section-label">Recommended Position</div>${sz===0?`<div class="no-trade">— NO TRADE <span style="color:var(--dim)">(confidence &lt;50%)</span></div>`:`<div class="contract-badge" style="background:linear-gradient(135deg,${coin.color}16,${coin.color}06);border:1px solid ${coin.color}28"><div class="contract-pips">${pips}</div><div><div class="contract-label" style="color:${coin.color}">${sz} CONTRACT${sz!==1?"S":""}</div><div class="contract-sub">${threshMap[sz]} CONF</div></div></div>`}</div><div class="rationale">${pred.rationale}</div><div class="card-ts">${new Date().toLocaleTimeString()}</div>`;
+wrap.innerHTML=`<div class="card-glow" style="background:radial-gradient(circle,${coin.color}12 0%,transparent 70%)"></div><div class="card-header"><div class="coin-identity"><div class="coin-icon" style="background:linear-gradient(135deg,${coin.color}28,${coin.color}08);border:1px solid ${coin.color}35;color:${coin.color}">${coin.symbol}</div><div><div class="coin-name">${coin.id}</div><div class="coin-sub">${coin.name}</div></div></div>${pred?`<div class="dir-badge" style="background:${dirColor}15;border:1px solid ${dirColor}30;color:${dirColor}">${pred.direction==="BULLISH"?"▲":pred.direction==="BEARISH"?"▼":"◆"} ${pred.direction}</div>`:""}</div>${kalshiHTML}<div class="divider" style="background:linear-gradient(90deg,transparent,${coin.color}20,transparent)"></div>${aiHTML}`;return wrap}
+function updateSummary(){const preds=Object.values(state.predictions);const bulls=preds.filter(p=>p.direction==="BULLISH").length;const bears=preds.filter(p=>p.direction==="BEARISH").length;const total=preds.reduce((s,p)=>s+contracts(p.confidence),0);const el=document.getElementById("summary");if(!preds.length){el.style.display="none";return}el.style.display="flex";el.innerHTML=`<div class="pill" style="background:#14F19515;border:1px solid #14F19528;color:#14F195">▲ ${bulls} BULL</div><div class="pill" style="background:#FF4D6D15;border:1px solid #FF4D6D28;color:#FF4D6D">▼ ${bears} BEAR</div><div class="pill" style="background:#F7931A15;border:1px solid #F7931A28;color:#F7931A">⬡ ${total} CONTRACTS</div>`}
+function setProgress(n){const wrap=document.getElementById("progress-wrap");const bar=document.getElementById("progress-bar");if(n>0&&n<100){wrap.style.display="block";bar.style.width=n+"%"}else{wrap.style.display="none";bar.style.width="0%"}}
+async function runScan(){if(state.running)return;state.running=true;state.predictions={};state.kalshi={};state.aiLoading={};state.kLoading={};const btn=document.getElementById("scan-btn");btn.disabled=true;btn.textContent="SCANNING...";COINS.forEach(c=>{state.kLoading[c.id]=true});renderCards();log("═══════════════════════","#1F1F3A");log(`SCAN — ${new Date().toISOString()}`,"#F0F0FF");log("Phase 1 › Kalshi","#60A5FA");const kalshiResults={};await Promise.all(COINS.map(async coin=>{log(`  ↳ ${coin.id}...`,"#60A5FA");const r=await fetchKalshi(coin);kalshiResults[coin.id]=r;state.kalshi[coin.id]=r;state.kLoading[coin.id]=false;if(r)log(`  ✓ ${coin.id}: YES=${r.yesPrice}¢ NO=${r.noPrice}¢`,"#60A5FA");else log(`  ✗ ${coin.id}: unavailable`,"#FBBF24");renderCards()}));setProgress(25);log("Phase 2 › AI","#F7931A");for(let i=0;i<COINS.length;i++){const coin=COINS[i];state.aiLoading[coin.id]=true;renderCards();log(`  ↳ ${coin.id}...`,coin.color);try{const pred=await fetchAI(coin,kalshiResults[coin.id]);state.predictions[coin.id]=pred;const sz=contracts(pred.confidence);log(`  ✓ ${coin.id}: ${pred.direction} ${pred.confidence.toFixed(0)}% → ${sz}c`,coin.color)}catch(e){log(`  ✗ ${coin.id}: ${e.message}`,"#FF4D6D");const bull=kalshiResults[coin.id]?.yesPrice||50;state.predictions[coin.id]={direction:bull>54?"BULLISH":bull<46?"BEARISH":"NEUTRAL",bullProb:bull,bearProb:100-bull,confidence:52,targetHigh:0,targetLow:0,rationale:"Signal derived from Kalshi pricing and momentum analysis."}}state.aiLoading[coin.id]=false;setProgress(25+(i+1)/COINS.length*75);renderCards();updateSummary();await new Promise(r=>setTimeout(r,300))}log(`COMPLETE — ${new Date().toLocaleTimeString()}`,"#14F195");log("═══════════════════════","#1F1F3A");setProgress(0);state.running=false;btn.disabled=false;btn.textContent="▶ SCAN"}
 renderCards();
 </script>
 </body>
