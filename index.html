@@ -410,23 +410,29 @@ function updateCountdown(){
 // ─── KALSHI ───────────────────────────────────────────────────────────────────
 async function fetchKalshi(coin){
   try{
-    const r=await fetch(`${KALSHI}/markets?series_ticker=${coin.series}&status=open&limit=3`,{
+    log(`  → Fetching ${coin.id} (${coin.series})...`,"#60A5FA");
+    const url=`${KALSHI}/markets?series_ticker=${coin.series}&status=open&limit=3`;
+    const r=await fetch(url,{
       headers:{"Authorization":`Bearer ${state.apiKey}`}
     });
+    log(`  → ${coin.id} response: ${r.status}`,"#60A5FA");
     if(!r.ok){
-      log(`  ✗ ${coin.id}: Kalshi API ${r.status}`,"#FF4D6D");
+      const err=await r.text();
+      log(`  ✗ ${coin.id}: API ${r.status} - ${err.substring(0,100)}`,"#FF4D6D");
       return null;
     }
     const d=await r.json();
+    log(`  → ${coin.id} markets found: ${d.markets?.length||0}`,"#60A5FA");
     const markets=(d.markets||[]).sort((a,b)=>(b.close_time||"").localeCompare(a.close_time||""));
     if(!markets.length){
-      log(`  ✗ ${coin.id}: No open markets`,"#FBBF24");
+      log(`  ✗ ${coin.id}: No open markets in series`,"#FBBF24");
       return null;
     }
     const m=markets[0];
+    log(`  ✓ ${coin.id}: ${m.ticker} YES=${m.yes_price}¢ NO=${m.no_price}¢`,"#14F195");
     return{ticker:m.ticker,yesPrice:m.yes_price,noPrice:m.no_price,volume:m.volume,closeTime:m.close_time};
   }catch(e){
-    log(`  ✗ ${coin.id}: ${e.message}`,"#FF4D6D");
+    log(`  ✗ ${coin.id} ERROR: ${e.message}`,"#FF4D6D");
     return null;
   }
 }
