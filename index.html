@@ -410,14 +410,25 @@ function updateCountdown(){
 // ─── KALSHI ───────────────────────────────────────────────────────────────────
 async function fetchKalshi(coin){
   try{
-    const r=await fetch(`${KALSHI}/markets?series_ticker=${coin.series}&status=open&limit=3`);
-    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    const r=await fetch(`${KALSHI}/markets?series_ticker=${coin.series}&status=open&limit=3`,{
+      headers:{"Authorization":`Bearer ${state.apiKey}`}
+    });
+    if(!r.ok){
+      log(`  ✗ ${coin.id}: Kalshi API ${r.status}`,"#FF4D6D");
+      return null;
+    }
     const d=await r.json();
     const markets=(d.markets||[]).sort((a,b)=>(b.close_time||"").localeCompare(a.close_time||""));
-    if(!markets.length)return null;
+    if(!markets.length){
+      log(`  ✗ ${coin.id}: No open markets`,"#FBBF24");
+      return null;
+    }
     const m=markets[0];
     return{ticker:m.ticker,yesPrice:m.yes_price,noPrice:m.no_price,volume:m.volume,closeTime:m.close_time};
-  }catch(e){return null}
+  }catch(e){
+    log(`  ✗ ${coin.id}: ${e.message}`,"#FF4D6D");
+    return null;
+  }
 }
 
 // ─── AI SIGNAL ────────────────────────────────────────────────────────────────
