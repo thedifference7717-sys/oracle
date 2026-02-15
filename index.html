@@ -832,7 +832,8 @@ function renderBrain(){
 }
 
 function renderAll(){renderSignals();renderTrades();if(state.tab==="brain")renderBrain();updateStats();}
-renderSignals();
+renderSignals();document.getElementById("nft-avatar").src = "nft.png";
+
 
 // Load NFT avatar (upload nft.png to your GitHub repo)
 if(document.getElementById("nft-avatar")){
