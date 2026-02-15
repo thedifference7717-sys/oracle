@@ -541,10 +541,39 @@ async function runCycle(){
   setProgress(65);
 
   // Rank all tradeable signals
-  const candidates=COINS
+  let candidates=COINS
     .filter(c=>{const s=signals[c.id];const k=kalshiMap[c.id];return s&&k&&s.direction!=="NEUTRAL"&&getBetSize(s.confidence,s.streak)>0;})
     .map(c=>{const s=signals[c.id];return{coin:c,sig:s,kalshi:kalshiMap[c.id],rank:(s.confidence/100)*0.5+(s.score/100)*0.5};})
     .sort((a,b)=>b.rank-a.rank);
+
+  // CONTRARIAN MODE: If all signals are NEUTRAL, force trade on best-performing coin
+  if(candidates.length===0&&dailyWins<WIN_TARGET){
+    log(`⚡ CONTRARIAN MODE: All neutral — forcing trade on best coin`,"#F7931A");
+    const bestCoin=COINS
+      .filter(c=>kalshiMap[c.id]) // Has market
+      .map(c=>({coin:c,score:getCoinScore(c.id),sig:signals[c.id],kalshi:kalshiMap[c.id]}))
+      .sort((a,b)=>b.score-a.score)[0];
+    
+    if(bestCoin){
+      const k=bestCoin.kalshi;
+      // Use Kalshi implied probability to pick direction
+      const direction=k.yesPrice>k.noPrice?"BULLISH":"BEARISH";
+      const forcedSig={
+        ...bestCoin.sig,
+        direction:direction,
+        confidence:Math.max(45,bestCoin.sig.confidence), // Boost to threshold
+        rationale:`Contrarian trade: Best historical performer (score ${bestCoin.score.toFixed(0)}) with Kalshi ${direction.toLowerCase()} bias.`
+      };
+      const b=loadBrain();
+      candidates=[{
+        coin:bestCoin.coin,
+        sig:forcedSig,
+        kalshi:k,
+        rank:bestCoin.score/100
+      }];
+      log(`  → Forcing ${bestCoin.coin.id} ${direction} (score=${bestCoin.score.toFixed(0)}, Kalshi=${direction==="BULLISH"?k.yesPrice:k.noPrice}¢)`,"#F7931A");
+    }
+  }
 
   log(`3 › Trading ${candidates.length} signal(s)`,"#FBBF24");
 
