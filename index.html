@@ -549,29 +549,42 @@ async function runCycle(){
   // CONTRARIAN MODE: If all signals are NEUTRAL, force trade on best-performing coin
   if(candidates.length===0&&dailyWins<WIN_TARGET){
     log(`⚡ CONTRARIAN MODE: All neutral — forcing trade on best coin`,"#F7931A");
-    const bestCoin=COINS
-      .filter(c=>kalshiMap[c.id]) // Has market
+    const coinsWithMarkets=COINS
+      .filter(c=>kalshiMap[c.id]&&signals[c.id])
       .map(c=>({coin:c,score:getCoinScore(c.id),sig:signals[c.id],kalshi:kalshiMap[c.id]}))
-      .sort((a,b)=>b.score-a.score)[0];
+      .sort((a,b)=>b.score-a.score);
     
-    if(bestCoin){
+    if(coinsWithMarkets.length>0){
+      const bestCoin=coinsWithMarkets[0];
       const k=bestCoin.kalshi;
-      // Use Kalshi implied probability to pick direction
-      const direction=k.yesPrice>k.noPrice?"BULLISH":"BEARISH";
-      const forcedSig={
-        ...bestCoin.sig,
-        direction:direction,
-        confidence:Math.max(45,bestCoin.sig.confidence), // Boost to threshold
-        rationale:`Contrarian trade: Best historical performer (score ${bestCoin.score.toFixed(0)}) with Kalshi ${direction.toLowerCase()} bias.`
-      };
       const b=loadBrain();
+      const streak=b[bestCoin.coin.id]?.streak||0;
+      
+      // Use Kalshi implied probability to pick direction
+      const direction=k.yesPrice>=k.noPrice?"BULLISH":"BEARISH";
+      const forcedConf=Math.max(45,bestCoin.sig.confidence);
+      
+      // Create forced signal
+      const forcedSig={
+        direction:direction,
+        bullProb:direction==="BULLISH"?k.yesPrice:100-k.yesPrice,
+        bearProb:direction==="BEARISH"?k.noPrice:100-k.noPrice,
+        confidence:forcedConf,
+        targetHigh:0,
+        targetLow:0,
+        score:bestCoin.score,
+        streak:streak,
+        rationale:`Contrarian: Best performer (${bestCoin.score.toFixed(0)}/100) + Kalshi ${direction.toLowerCase()} bias (${direction==="BULLISH"?k.yesPrice:k.noPrice}¢)`
+      };
+      
       candidates=[{
         coin:bestCoin.coin,
         sig:forcedSig,
         kalshi:k,
         rank:bestCoin.score/100
       }];
-      log(`  → Forcing ${bestCoin.coin.id} ${direction} (score=${bestCoin.score.toFixed(0)}, Kalshi=${direction==="BULLISH"?k.yesPrice:k.noPrice}¢)`,"#F7931A");
+      
+      log(`  → Forcing ${bestCoin.coin.id} ${direction} conf=${forcedConf}% (Kalshi=${direction==="BULLISH"?k.yesPrice:k.noPrice}¢, score=${bestCoin.score.toFixed(0)})`,"#F7931A");
     }
   }
 
