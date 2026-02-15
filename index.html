@@ -10,107 +10,56 @@
 <title>theDiff3r3nc3</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#050510;--bg2:#08081A;--bg3:#0D0D20;
-  --border:#1A1A35;--text:#F0F0FF;--muted:#4B5563;--dim:#1F2937;
-  --green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA;
-  --safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px);
-}
+:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#4B5563;--dim:#1F2937;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA;--safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;overflow:hidden}
 #app{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
-
-/* Header */
 #header{flex-shrink:0;background:linear-gradient(180deg,#0A0A1E,var(--bg));border-bottom:1px solid var(--border);padding:calc(var(--safe-top) + 12px) 16px 12px}
 .header-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .logo-wrap{display:flex;align-items:center;gap:10px}
 .agent-avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#A78BFA,#627EEA);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 0 15px #A78BFA40}
-.logo{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;letter-spacing:.1em;background:linear-gradient(90deg,#A78BFA,#60A5FA,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo-sub{font-size:8px;color:var(--dim);letter-spacing:.15em;margin-top:2px}
-
-/* Toggle */
+.logo{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:.08em;background:linear-gradient(90deg,#A78BFA,#60A5FA,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:7px;color:var(--dim);letter-spacing:.12em;margin-top:2px}
 .toggle-wrap{display:flex;align-items:center;gap:8px}
 .toggle-label{font-size:9px;color:var(--muted);letter-spacing:.1em}
 #agent-toggle{position:relative;width:44px;height:24px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .3s;flex-shrink:0}
 #agent-toggle.on{background:linear-gradient(90deg,#A78BFA,var(--green));border-color:transparent;box-shadow:0 0 12px #A78BFA60}
 #agent-toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 #agent-toggle.on::after{transform:translateX(20px)}
-
-/* Stats bar */
-.stats-bar{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+.stats-bar{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
 .stats-bar::-webkit-scrollbar{display:none}
-.stat-pill{display:flex;flex-direction:column;align-items:center;padding:6px 12px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);flex-shrink:0;min-width:60px}
-.stat-val{font-size:13px;font-weight:700;font-family:'Orbitron',monospace}
-.stat-lbl{font-size:7px;color:var(--muted);letter-spacing:.08em;margin-top:2px}
-
-/* Progress */
+.stat-pill{display:flex;flex-direction:column;align-items:center;padding:5px 9px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);flex-shrink:0;min-width:52px}
+.stat-val{font-size:11px;font-weight:700;font-family:'Orbitron',monospace}
+.stat-lbl{font-size:6px;color:var(--muted);letter-spacing:.08em;margin-top:2px}
 #progress-wrap{height:2px;background:var(--bg2);flex-shrink:0;display:none}
-#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#A78BFA,var(--green));transition:width .5s ease;box-shadow:0 0 8px #A78BFA80}
-
-/* API key screen */
-#api-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px}
+#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#A78BFA,var(--green));transition:width .5s ease}
+#api-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 .api-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:340px}
-.api-title{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--purple);margin-bottom:8px;letter-spacing:.1em}
+.api-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px;letter-spacing:.1em}
 .api-desc{font-size:10px;color:var(--muted);line-height:1.7;margin-bottom:16px}
 #api-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;-webkit-appearance:none}
-#api-input:focus{border-color:var(--purple);box-shadow:0 0 0 2px #A78BFA20}
+#api-input:focus{border-color:var(--purple)}
 #api-submit{width:100%;margin-top:10px;padding:12px;background:linear-gradient(90deg,#A78BFA,#627EEA);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;font-family:'Orbitron',monospace;cursor:pointer;-webkit-appearance:none}
-#api-submit:active{transform:scale(.98)}
 .api-warning{font-size:9px;color:var(--yellow);margin-top:10px;line-height:1.6;text-align:center}
-
-/* Main content */
 #main-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 0;display:none}
-
-/* Tabs */
-.tabs{display:flex;gap:6px;margin-bottom:12px}
-.tab{flex:1;padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:9px;letter-spacing:.1em;color:var(--muted);text-align:center;cursor:pointer;transition:all .2s}
+.tabs{display:flex;gap:5px;margin-bottom:12px}
+.tab{flex:1;padding:7px 4px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:8px;letter-spacing:.08em;color:var(--muted);text-align:center;cursor:pointer;transition:all .2s}
 .tab.active{background:linear-gradient(135deg,#A78BFA20,#627EEA20);border-color:#A78BFA40;color:var(--purple)}
-
-/* Signal cards */
-.signal-card{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid transparent;position:relative;overflow:hidden}
-.signal-card-glow{position:absolute;top:-50px;right:-50px;width:140px;height:140px;border-radius:50%;pointer-events:none}
+.limit-bar-wrap{margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.signal-card{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border-radius:14px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden}
 .sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .sc-coin{display:flex;align-items:center;gap:8px}
 .sc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.sc-name{font-size:12px;font-weight:700}
-.sc-sub{font-size:8px;color:var(--muted);margin-top:1px}
-.sc-dir{padding:3px 8px;border-radius:20px;font-size:8px;font-weight:700;letter-spacing:.1em}
-
-/* Kalshi prices */
 .k-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
 .k-box{background:var(--bg);border-radius:7px;padding:7px;text-align:center}
 .k-lbl{font-size:7px;color:var(--muted);letter-spacing:.08em;margin-bottom:2px}
 .k-val{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;line-height:1}
-.k-imp{font-size:7px;color:var(--dim);margin-top:1px}
-
-/* Prob bars */
 .pb-wrap{margin-bottom:5px}
 .pb-meta{display:flex;justify-content:space-between;margin-bottom:2px}
-.pb-lbl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.pb-val{font-size:8px;font-weight:700}
 .pb-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
 .pb-fill{height:100%;border-radius:2px;transition:width 1s ease}
-
-/* Trade recommendation */
 .trade-rec{margin-top:8px;padding:10px 12px;border-radius:10px;display:flex;align-items:center;justify-content:space-between}
-.trade-size{font-size:14px;font-weight:700;font-family:'Orbitron',monospace}
-.trade-meta{font-size:8px;color:var(--muted);margin-top:2px}
-.trade-status{font-size:9px;padding:4px 8px;border-radius:6px;font-weight:700;letter-spacing:.08em}
-
-/* Trade log */
 .trade-log-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-.tli-left{}
-.tli-coin{font-size:11px;font-weight:700}
-.tli-detail{font-size:8px;color:var(--muted);margin-top:2px}
-.tli-right{text-align:right}
-.tli-amount{font-size:12px;font-weight:700;font-family:'Orbitron',monospace}
-.tli-time{font-size:8px;color:var(--dim);margin-top:2px}
-.tli-status{font-size:8px;padding:2px 7px;border-radius:4px;margin-top:3px;display:inline-block}
-
-/* Empty state */
-.empty{text-align:center;padding:40px 20px;color:var(--dim);font-size:10px;line-height:2}
-
-/* Console */
 #console-area{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border)}
 #console-header{display:flex;align-items:center;gap:6px;padding:7px 14px;border-bottom:1px solid var(--border);cursor:pointer}
 .cdot{width:6px;height:6px;border-radius:50%;opacity:.5}
@@ -118,102 +67,71 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share 
 .cchev{font-size:10px;color:var(--dim);margin-left:auto;transition:transform .2s}
 #console-log{height:80px;overflow-y:auto;padding:8px 14px;font-size:9px;line-height:1.9;-webkit-overflow-scrolling:touch}
 #console-log.collapsed{height:0;padding:0;overflow:hidden}
-.log-ts{color:var(--dim)}
 #bottom-pad{flex-shrink:0;height:calc(var(--safe-bot) + 6px);background:var(--bg2)}
-
-/* Daily limit bar */
-.limit-bar-wrap{margin-bottom:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
-.limit-bar-header{display:flex;justify-content:space-between;margin-bottom:6px}
-.limit-bar-label{font-size:9px;color:var(--muted);letter-spacing:.08em}
-.limit-bar-val{font-size:9px;font-weight:700}
-.limit-bar-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
-.limit-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
-
-/* Spinner */
-.spinner{border-radius:50%;border:2px solid var(--border);animation:spin 1s linear infinite}
+.empty{text-align:center;padding:40px 20px;color:var(--dim);font-size:10px;line-height:2}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeUp .35s ease both}
 .live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 1.5s infinite;display:inline-block}
+.hot-streak{animation:pulse 1.5s infinite;box-shadow:0 0 15px var(--green)60}
 </style>
 </head>
 <body>
 <div id="app">
-
-<!-- Header -->
 <div id="header">
   <div class="header-top">
     <div class="logo-wrap">
       <div class="agent-avatar">🤖</div>
-      <div>
-        <div class="logo">theDiff3r3nc3</div>
-        <div class="logo-sub">KALSHI AUTO-TRADER · 15-MIN</div>
-      </div>
+      <div><div class="logo">theDiff3r3nc3</div><div class="logo-sub">AGGRESSIVE MODE · 33 WINS/DAY TARGET</div></div>
     </div>
     <div class="toggle-wrap">
       <span class="toggle-label" id="toggle-label">OFF</span>
       <div id="agent-toggle" onclick="toggleAgent()"></div>
     </div>
   </div>
-  <div class="stats-bar" id="stats-bar">
-    <div class="stat-pill"><div class="stat-val" id="stat-pnl" style="color:var(--green)">$0.00</div><div class="stat-lbl">TODAY P&L</div></div>
-    <div class="stat-pill"><div class="stat-val" id="stat-trades" style="color:var(--blue)">0</div><div class="stat-lbl">TRADES</div></div>
+  <div class="stats-bar">
+    <div class="stat-pill"><div class="stat-val" id="stat-pnl" style="color:var(--green)">$0.00</div><div class="stat-lbl">P&L</div></div>
+    <div class="stat-pill"><div class="stat-val" id="stat-mult" style="color:var(--purple)">1.0x</div><div class="stat-lbl">MULTIPLIER</div></div>
     <div class="stat-pill"><div class="stat-val" id="stat-wins" style="color:var(--green)">0</div><div class="stat-lbl">WINS</div></div>
-    <div class="stat-pill"><div class="stat-val" id="stat-losses" style="color:var(--red)">0</div><div class="stat-lbl">LOSSES</div></div>
-    <div class="stat-pill"><div class="stat-val" id="stat-next" style="color:var(--yellow)">--:--</div><div class="stat-lbl">NEXT SCAN</div></div>
+    <div class="stat-pill"><div class="stat-val" id="stat-target" style="color:var(--yellow)">0/33</div><div class="stat-lbl">TARGET</div></div>
+    <div class="stat-pill"><div class="stat-val" id="stat-wr" style="color:var(--yellow)">--%</div><div class="stat-lbl">WIN RATE</div></div>
+    <div class="stat-pill"><div class="stat-val" id="stat-next" style="color:var(--purple)">--:--</div><div class="stat-lbl">NEXT</div></div>
   </div>
 </div>
-
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 
-<!-- API key screen -->
 <div id="api-screen">
   <div class="api-card">
     <div class="api-title">🔑 CONNECT KALSHI</div>
-    <div class="api-desc">Enter your Kalshi API key to enable live trading. Your key is stored only on this device and never shared.</div>
-    <input id="api-input" type="password" placeholder="Paste your Kalshi API key..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-    <button id="api-submit" onclick="submitKey()">CONNECT & START →</button>
-    <div class="api-warning">⚠ This will place REAL trades with REAL money on Kalshi. $50 daily loss limit is enforced automatically.</div>
+    <div class="api-desc">Enter your Kalshi API key. Aggressive mode: 45% confidence threshold, 10-min scans, momentum multipliers, correlation trades.</div>
+    <input id="api-input" type="password" placeholder="Paste Kalshi API key..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <button id="api-submit" onclick="submitKey()">ACTIVATE AGGRESSIVE MODE →</button>
+    <div class="api-warning">⚠ REAL MONEY · $50 daily loss limit · Target: 33 winning trades/day</div>
   </div>
 </div>
 
-<!-- Main content -->
 <div id="main-content">
-  <div style="padding:0 0 4px">
-
-    <!-- Daily limit -->
-    <div class="limit-bar-wrap">
-      <div class="limit-bar-header">
-        <span class="limit-bar-label">DAILY LOSS LIMIT</span>
-        <span class="limit-bar-val" id="limit-val" style="color:var(--green)">$0.00 / $50.00</span>
-      </div>
-      <div class="limit-bar-track">
-        <div class="limit-bar-fill" id="limit-fill" style="width:0%;background:var(--green)"></div>
-      </div>
+  <div class="limit-bar-wrap">
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:9px;color:var(--muted);letter-spacing:.08em">DAILY LOSS LIMIT</span>
+      <span style="font-size:9px;font-weight:700" id="limit-val">$0.00 / $50.00</span>
     </div>
-
-    <!-- Tabs -->
-    <div class="tabs">
-      <div class="tab active" id="tab-signals" onclick="switchTab('signals')">SIGNALS</div>
-      <div class="tab" id="tab-trades" onclick="switchTab('trades')">TRADES</div>
-      <div class="tab" id="tab-brain" onclick="switchTab('brain')">🧠 BRAIN</div>
+    <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+      <div id="limit-fill" style="height:100%;width:0%;background:var(--green);border-radius:3px;transition:width .5s ease"></div>
     </div>
-
-    <!-- Signals view -->
-    <div id="view-signals"></div>
-
-    <!-- Trades view -->
-    <div id="view-trades" style="display:none"></div>
-
-    <!-- Brain view -->
-    <div id="view-brain" style="display:none"></div>
-
-    <div style="text-align:center;font-size:8px;color:var(--dim);padding:8px 0 4px">⚠ NOT FINANCIAL ADVICE · TRADE AT YOUR OWN RISK</div>
   </div>
+  <div class="tabs">
+    <div class="tab active" id="tab-signals" onclick="switchTab('signals')">SIGNALS</div>
+    <div class="tab" id="tab-trades" onclick="switchTab('trades')">TRADES</div>
+    <div class="tab" id="tab-brain" onclick="switchTab('brain')">🧠</div>
+  </div>
+  <div id="view-signals"></div>
+  <div id="view-trades" style="display:none"></div>
+  <div id="view-brain" style="display:none"></div>
+  <div style="text-align:center;font-size:8px;color:var(--dim);padding:8px 0 4px">⚠ NOT FINANCIAL ADVICE · AGGRESSIVE TRADING MODE</div>
 </div>
 
-<!-- Console -->
 <div id="console-area">
   <div id="console-header" onclick="toggleConsole()">
     <div class="cdot" style="background:#FF4D6D"></div>
@@ -222,182 +140,248 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share 
     <span class="ctitle">AGENT CONSOLE</span>
     <span class="cchev" id="chevron">▲</span>
   </div>
-  <div id="console-log"><span style="color:var(--dim)">// Connect Kalshi API to start agent...</span></div>
+  <div id="console-log"><span style="color:var(--dim)">// Aggressive mode ready. Connect Kalshi API...</span></div>
 </div>
 <div id="bottom-pad"></div>
 </div>
 
 <script>
-// ── Self-Learning Brain ──────────────────────────────────────────────────────
-// Stores per-coin win/loss stats and adjusts confidence + bet sizing over time
-const BRAIN_KEY="thediff3r3nc3_brain";
-
-function loadBrain(){
-  try{
-    const raw=localStorage.getItem(BRAIN_KEY);
-    if(raw)return JSON.parse(raw);
-  }catch(e){}
-  // Default brain
-  return{
-    BTC:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
-    ETH:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
-    SOL:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
-    XRP:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
-    totalCycles:0,
-    lastUpdated:null,
-  };
-}
-
-function saveBrain(brain){
-  try{localStorage.setItem(BRAIN_KEY,JSON.stringify(brain));}catch(e){}
-}
-
-function getBrainSummary(coinId){
-  const brain=loadBrain();
-  const c=brain[coinId];
-  if(!c||c.totalTrades===0)return"No trade history yet.";
-  const wr=c.totalTrades>0?((c.wins/c.totalTrades)*100).toFixed(0):0;
-  const streak=c.streak>0?`${c.streak} win streak`:c.streak<0?`${Math.abs(c.streak)} loss streak`:"no streak";
-  return`${coinId} history: ${c.wins}W/${c.losses}L (${wr}% win rate), ${streak}. Conf adjustment: ${c.confAdjust>0?"+":""}${c.confAdjust}%.`;
-}
-
-function recordResult(coinId, won){
-  const brain=loadBrain();
-  const c=brain[coinId];
-  c.totalTrades++;
-  if(won){
-    c.wins++;
-    c.streak=c.streak>0?c.streak+1:1;
-    c.lastResult="WIN";
-    // Reward: increase confidence adjustment (up to +15)
-    c.confAdjust=Math.min(15,c.confAdjust+2);
-  } else {
-    c.losses++;
-    c.streak=c.streak<0?c.streak-1:-1;
-    c.lastResult="LOSS";
-    // Penalize: decrease confidence adjustment (down to -20)
-    c.confAdjust=Math.max(-20,c.confAdjust-3);
-  }
-  brain.lastUpdated=new Date().toISOString();
-  saveBrain(brain);
-  log(`🧠 Brain updated: ${coinId} ${won?"WIN ✓":"LOSS ✗"} | WR: ${((c.wins/c.totalTrades)*100).toFixed(0)}% | ConfAdj: ${c.confAdjust>0?"+":""}${c.confAdjust}%`,"#A78BFA");
-}
-
-function getAdjustedConfidence(coinId, baseConf){
-  const brain=loadBrain();
-  const c=brain[coinId];
-  if(!c)return baseConf;
-  // Apply brain's confidence adjustment
-  return Math.min(99,Math.max(10,baseConf+c.confAdjust));
-}
-
-// Check open trades for resolution after 15 min
-async function resolveOpenTrades(){
-  const brain=loadBrain();
-  const openTrades=state.trades.filter(t=>t.status==="OPEN"&&t.orderId);
-  if(!openTrades.length)return;
-  log(`🧠 Checking ${openTrades.length} open trade(s) for resolution...`,"#A78BFA");
-  for(const trade of openTrades){
-    try{
-      const r=await fetch(`${KALSHI}/portfolio/orders/${trade.orderId}`,{
-        headers:{"Authorization":`Bearer ${state.apiKey}`}
-      });
-      if(!r.ok)continue;
-      const d=await r.json();
-      const order=d.order;
-      if(order&&order.status==="settled"){
-        const won=order.pnl>0;
-        trade.status=won?"WON":"LOST";
-        trade.payout=won?(order.pnl+trade.cost):0;
-        recordResult(trade.coin,won);
-        log(`  ✓ ${trade.coin}: Trade settled — ${won?"WON +$"+(order.pnl).toFixed(2):"LOST -$"+trade.cost.toFixed(2)}`
-          ,won?"#14F195":"#FF4D6D");
-        if(!won)state.dailyLoss+=0; // already counted at open
-      }
-    }catch(e){}
-  }
-  updateStats();
-  renderTrades();
-}
-
 const COINS=[
   {id:"BTC",name:"Bitcoin",color:"#F7931A",symbol:"₿",series:"KXBTCUD"},
   {id:"ETH",name:"Ethereum",color:"#627EEA",symbol:"Ξ",series:"KXETHUD"},
   {id:"SOL",name:"Solana",color:"#14F195",symbol:"◎",series:"KXSOLUD"},
   {id:"XRP",name:"XRP",color:"#00AAE4",symbol:"✕",series:"KXXRPUD"},
 ];
-
 const KALSHI="https://api.elections.kalshi.com/trade-api/v2";
 const DAILY_LIMIT=50;
+const BRAIN_KEY="thediff3r3nc3_aggressive";
+const WIN_TARGET=33;
+const CONF_THRESHOLD=45; // Lowered from 50 for more trades
 
-// Bet sizing
-function getBetSize(conf){
-  if(conf>=90)return 5;
-  if(conf>=80)return 4;
-  if(conf>=70)return 3;
-  if(conf>=60)return 2;
-  if(conf>=50)return 1;
-  return 0;
+// ── COMPOUNDING BET SIZING ──────────────────────────────────────────────────
+// Calculate session P&L to adjust bet sizes dynamically
+function getSessionPnL(){
+  return state.trades.reduce((s,t)=>{
+    if(t.status==="WON")return s+(t.payout||0)-t.cost;
+    if(t.status==="LOST")return s-t.cost;
+    return s;
+  },0);
 }
 
-let state={
-  apiKey:"",
-  agentOn:false,
-  signals:{},
-  kalshi:{},
-  trades:[],
-  dailyLoss:0,
-  scanTimer:null,
-  nextScan:null,
-  scanning:false,
-  consoleOpen:true,
-  tab:"signals",
-};
+// Compound multiplier: if up 20%, bet 20% more. If down 20%, bet 20% less.
+function getCompoundMultiplier(){
+  const pnl=getSessionPnL();
+  if(pnl===0)return 1.0;
+  // Assume starting bankroll of $100 for calculation
+  const bankroll=100;
+  const pct=pnl/bankroll;
+  // +20% P&L = 1.2x multiplier, -20% P&L = 0.8x multiplier
+  const multiplier=1+pct;
+  // Clamp between 0.5x (max reduction) and 2.0x (max increase)
+  return Math.min(2.0,Math.max(0.5,multiplier));
+}
 
-// ── Utils ──
+// Aggressive bet sizing with momentum multipliers + compounding
+function getBetSize(conf,streak){
+  let base=conf>=90?5:conf>=80?4:conf>=70?3:conf>=60?2:conf>=CONF_THRESHOLD?1:0;
+  // Hot streak multiplier: 3+ wins = double the bet
+  if(streak>=3&&base>0)base=Math.min(5,base*2);
+  
+  // Apply compound multiplier based on session P&L
+  const multiplier=getCompoundMultiplier();
+  let adjusted=Math.round(base*multiplier);
+  
+  // Hard limits: min $1, max $10
+  if(adjusted<1&&base>0)adjusted=1; // Never go below $1 if we're trading
+  adjusted=Math.min(10,adjusted); // Cap at $10
+  
+  return adjusted;
+}
+
+// ─── BRAIN ────────────────────────────────────────────────────────────────────
+function loadBrain(){
+  try{const r=localStorage.getItem(BRAIN_KEY);if(r)return JSON.parse(r);}catch(e){}
+  const def=()=>({wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,
+    hourlyWins:{},hourlyLosses:{},pricePatterns:[],momentum:[],
+    dailyWins:0,dailyDate:"",bestHours:[]});
+  return{BTC:def(),ETH:def(),SOL:def(),XRP:def(),totalCycles:0,lastUpdated:null,btcMomentum:"NEUTRAL"};
+}
+function saveBrain(b){try{localStorage.setItem(BRAIN_KEY,JSON.stringify(b));}catch(e){}}
+
+function checkDailyReset(){
+  const b=loadBrain();const today=new Date().toDateString();let ch=false;
+  COINS.forEach(c=>{if(b[c.id].dailyDate!==today){b[c.id].dailyWins=0;b[c.id].dailyDate=today;ch=true;}});
+  if(ch)saveBrain(b);
+}
+
+function getDailyWins(){
+  const b=loadBrain();
+  return COINS.reduce((s,c)=>s+(b[c.id]?.dailyWins||0),0);
+}
+
+function recordResult(coinId,won,yesPrice,direction){
+  const b=loadBrain();const c=b[coinId];const h=new Date().getHours();
+  c.totalTrades++;
+  if(!c.hourlyWins)c.hourlyWins={};
+  if(!c.hourlyLosses)c.hourlyLosses={};
+  const today=new Date().toDateString();
+  if(c.dailyDate!==today){c.dailyWins=0;c.dailyDate=today;}
+  
+  if(won){
+    c.wins++;c.dailyWins++;
+    c.streak=c.streak>0?c.streak+1:1;
+    c.lastResult="WIN";
+    c.hourlyWins[h]=(c.hourlyWins[h]||0)+1;
+    c.confAdjust=Math.min(20,c.confAdjust+3); // More aggressive reward
+  } else {
+    c.losses++;
+    c.streak=c.streak<0?c.streak-1:-1;
+    c.lastResult="LOSS";
+    c.hourlyLosses[h]=(c.hourlyLosses[h]||0)+1;
+    c.confAdjust=Math.max(-15,c.confAdjust-2); // Less harsh penalty
+  }
+  
+  if(!c.pricePatterns)c.pricePatterns=[];
+  if(yesPrice){c.pricePatterns.push({yesPrice,won,hour:h,direction});if(c.pricePatterns.length>100)c.pricePatterns=c.pricePatterns.slice(-100);}
+  if(!c.momentum)c.momentum=[];
+  if(direction){c.momentum.push(direction);if(c.momentum.length>7)c.momentum=c.momentum.slice(-7);}
+  if(coinId==="BTC")b.btcMomentum=direction||"NEUTRAL";
+  
+  // Track best hours
+  if(!c.bestHours)c.bestHours=[];
+  const hwins=c.hourlyWins[h]||0;const hlosses=c.hourlyLosses[h]||0;
+  if(hwins+hlosses>=5&&(hwins/(hwins+hlosses))>=0.6){
+    if(!c.bestHours.includes(h))c.bestHours.push(h);
+  }
+  
+  b.lastUpdated=new Date().toISOString();
+  saveBrain(b);
+  log(`🧠 ${coinId} ${won?"WIN ✓":"LOSS ✗"} | Daily:${c.dailyWins} | Streak:${c.streak} | Conf:${c.confAdjust>0?"+":""}${c.confAdjust}%`,"#A78BFA");
+}
+
+function updateMomentum(coinId,direction){
+  const b=loadBrain();const c=b[coinId];
+  if(!c.momentum)c.momentum=[];
+  c.momentum.push(direction);if(c.momentum.length>7)c.momentum=c.momentum.slice(-7);
+  if(coinId==="BTC")b.btcMomentum=direction;
+  saveBrain(b);
+}
+
+function getHourlyWR(coinId){
+  const b=loadBrain();const c=b[coinId];const h=new Date().getHours();
+  const w=c.hourlyWins?.[h]||0;const l=c.hourlyLosses?.[h]||0;
+  const total=w+l;if(total<2)return null;
+  return{h,w,l,rate:(w/total)*100};
+}
+
+function getPricePattern(coinId,yesPrice){
+  const b=loadBrain();const c=b[coinId];
+  if(!c.pricePatterns||c.pricePatterns.length<5)return null;
+  const sim=c.pricePatterns.filter(p=>Math.abs(p.yesPrice-yesPrice)<=7); // Wider range
+  if(sim.length<3)return null;
+  const wins=sim.filter(p=>p.won).length;
+  return{n:sim.length,wr:((wins/sim.length)*100).toFixed(0),good:wins/sim.length>=0.52}; // Lower threshold
+}
+
+function getMomentum(coinId){
+  const b=loadBrain();const c=b[coinId];
+  if(!c.momentum||c.momentum.length<2)return"UNKNOWN";
+  const r=c.momentum.slice(-4); // Look at last 4
+  const bulls=r.filter(m=>m==="BULLISH").length;const bears=r.filter(m=>m==="BEARISH").length;
+  if(bulls>=3)return"STRONG_UP";
+  if(bears>=3)return"STRONG_DOWN";
+  if(bulls>=2)return"TRENDING_UP";
+  if(bears>=2)return"TRENDING_DOWN";
+  return"MIXED";
+}
+
+function getCoinScore(coinId){
+  const b=loadBrain();const c=b[coinId];
+  if(!c||c.totalTrades<3)return 50;
+  const wr=(c.wins/c.totalTrades)*100;
+  const streakBonus=c.streak>0?c.streak*4:c.streak*2; // Bigger streak bonus
+  const hr=getHourlyWR(coinId);
+  const hourBonus=hr?(hr.rate-50)*0.4:0;
+  return Math.min(100,Math.max(0,wr+streakBonus+hourBonus));
+}
+
+function getAdjustedConf(coinId,baseConf,yesPrice){
+  const b=loadBrain();const c=b[coinId];if(!c)return baseConf;
+  let adj=c.confAdjust;
+  const hr=getHourlyWR(coinId);if(hr){if(hr.rate>=60)adj+=6;else if(hr.rate<=40)adj-=4;}
+  const pp=yesPrice?getPricePattern(coinId,yesPrice):null;
+  if(pp){if(parseFloat(pp.wr)>=60)adj+=5;else if(parseFloat(pp.wr)<=40)adj-=3;}
+  // Momentum boost
+  const mom=getMomentum(coinId);
+  if(mom==="STRONG_UP"||mom==="STRONG_DOWN")adj+=4;
+  else if(mom==="TRENDING_UP"||mom==="TRENDING_DOWN")adj+=2;
+  return Math.min(99,Math.max(10,baseConf+adj));
+}
+
+function shouldUseCorrelation(coinId){
+  const b=loadBrain();
+  if(coinId==="BTC")return false;
+  // If BTC is strongly trending, correlate altcoins
+  const btcMom=getMomentum("BTC");
+  return btcMom==="STRONG_UP"||btcMom==="STRONG_DOWN";
+}
+
+function getBrainCtx(coinId,yesPrice){
+  const b=loadBrain();const c=b[coinId];const parts=[];
+  if(c.totalTrades>0){
+    const wr=((c.wins/c.totalTrades)*100).toFixed(0);
+    parts.push(`${coinId}: ${c.wins}W/${c.losses}L (${wr}%WR), streak:${c.streak}, conf_adj:${c.confAdjust>0?"+":""}${c.confAdjust}%`);
+  }
+  const hr=getHourlyWR(coinId);if(hr)parts.push(`Hour ${hr.h}: ${hr.rate.toFixed(0)}%WR (${hr.w}W/${hr.l}L)`);
+  const pp=yesPrice?getPricePattern(coinId,yesPrice):null;if(pp)parts.push(`Price ~${yesPrice}¢: ${pp.wr}%WR (${pp.n} samples)${pp.good?" FAVORABLE":""}`);
+  const mom=getMomentum(coinId);if(mom!=="UNKNOWN")parts.push(`Momentum: ${mom}`);
+  if(c.bestHours&&c.bestHours.length>0)parts.push(`Best hours: ${c.bestHours.join(",")}`);
+  if(shouldUseCorrelation(coinId))parts.push(`BTC correlation: ${b.btcMomentum}`);
+  return parts.join(". ");
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let state={apiKey:"",agentOn:false,signals:{},kalshi:{},trades:[],dailyLoss:0,
+  scanTimer:null,nextScan:null,scanning:false,consoleOpen:true,tab:"signals",
+  scanInterval:10}; // Aggressive 10-min scans
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
 function ts(){return new Date().toLocaleTimeString("en-US",{hour12:false})}
 function log(msg,color="#6B7280"){
   const el=document.getElementById("console-log");
   const d=document.createElement("div");
-  d.innerHTML=`<span class="log-ts">[${ts()}]</span> <span style="color:${color}">${msg}</span>`;
+  d.innerHTML=`<span style="color:var(--dim)">[${ts()}]</span> <span style="color:${color}">${msg}</span>`;
   el.appendChild(d);el.scrollTop=el.scrollHeight;
 }
-function toggleConsole(){
-  state.consoleOpen=!state.consoleOpen;
-  document.getElementById("console-log").classList.toggle("collapsed",!state.consoleOpen);
-  document.getElementById("chevron").textContent=state.consoleOpen?"▲":"▼";
-}
+function toggleConsole(){state.consoleOpen=!state.consoleOpen;document.getElementById("console-log").classList.toggle("collapsed",!state.consoleOpen);document.getElementById("chevron").textContent=state.consoleOpen?"▲":"▼";}
 function fmt(n,d=2){return Number(n).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function setProgress(n){const w=document.getElementById("progress-wrap");const b=document.getElementById("progress-bar");if(n>0&&n<100){w.style.display="block";b.style.width=n+"%"}else{w.style.display="none";b.style.width="0%"}}
 
-// ── API Key ──
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
 function submitKey(){
   const key=document.getElementById("api-input").value.trim();
   if(!key||key.length<10){alert("Please enter a valid API key");return}
   state.apiKey=key;
   document.getElementById("api-screen").style.display="none";
   document.getElementById("main-content").style.display="block";
-  log("✓ Kalshi API key connected","#14F195");
-  log("Agent ready. Toggle ON to start auto-trading.","#A78BFA");
+  log("✓ Kalshi API connected","#14F195");
+  log("🔥 AGGRESSIVE MODE ACTIVATED","#F7931A");
+  log(`Target: ${WIN_TARGET} wins/day · Conf threshold: ${CONF_THRESHOLD}% · Scan: ${state.scanInterval}min`,"#A78BFA");
   renderAll();
 }
 
-// ── Toggle ──
+// ─── AGENT TOGGLE ─────────────────────────────────────────────────────────────
 function toggleAgent(){
-  if(!state.apiKey){return}
+  if(!state.apiKey)return;
   state.agentOn=!state.agentOn;
   const btn=document.getElementById("agent-toggle");
   const lbl=document.getElementById("toggle-label");
   if(state.agentOn){
-    btn.classList.add("on");
-    lbl.textContent="ON";
-    lbl.style.color="#14F195";
-    log("▶ Agent ACTIVATED — scanning every 15 minutes","#14F195");
-    runCycle();
-    scheduleNext();
+    btn.classList.add("on");lbl.textContent="ON";lbl.style.color="#14F195";
+    log("▶ theDiff3r3nc3 ACTIVATED — hunting for 33 wins","#14F195");
+    runCycle();scheduleNext();
   } else {
-    btn.classList.remove("on");
-    lbl.textContent="OFF";
-    lbl.style.color="";
+    btn.classList.remove("on");lbl.textContent="OFF";lbl.style.color="";
     if(state.scanTimer)clearTimeout(state.scanTimer);
     log("■ Agent DEACTIVATED","#FF4D6D");
     document.getElementById("stat-next").textContent="--:--";
@@ -406,24 +390,24 @@ function toggleAgent(){
 
 function scheduleNext(){
   if(!state.agentOn)return;
-  const next=new Date(Date.now()+15*60*1000);
-  state.nextScan=next;
+  // Dynamic interval: if under target, scan faster
+  const dailyWins=getDailyWins();
+  const interval=dailyWins<WIN_TARGET?state.scanInterval:15; // Speed up if behind target
+  state.nextScan=new Date(Date.now()+interval*60*1000);
   if(state.scanTimer)clearTimeout(state.scanTimer);
-  state.scanTimer=setTimeout(()=>{if(state.agentOn)runCycle();scheduleNext();},15*60*1000);
-  // countdown
+  state.scanTimer=setTimeout(()=>{if(state.agentOn){runCycle();scheduleNext();}},interval*60*1000);
   updateCountdown();
 }
 
 function updateCountdown(){
-  if(!state.nextScan||!state.agentOn){return}
+  if(!state.nextScan||!state.agentOn)return;
   const diff=Math.max(0,Math.round((state.nextScan-Date.now())/1000));
-  const m=Math.floor(diff/60);
-  const s=diff%60;
+  const m=Math.floor(diff/60),s=diff%60;
   document.getElementById("stat-next").textContent=`${m}:${String(s).padStart(2,"0")}`;
   if(state.agentOn)setTimeout(updateCountdown,1000);
 }
 
-// ── Kalshi fetch ──
+// ─── KALSHI ───────────────────────────────────────────────────────────────────
 async function fetchKalshi(coin){
   try{
     const r=await fetch(`${KALSHI}/markets?series_ticker=${coin.series}&status=open&limit=3`);
@@ -432,378 +416,341 @@ async function fetchKalshi(coin){
     const markets=(d.markets||[]).sort((a,b)=>(b.close_time||"").localeCompare(a.close_time||""));
     if(!markets.length)return null;
     const m=markets[0];
-    return{ticker:m.ticker,yesPrice:m.yes_price,noPrice:m.no_price,volume:m.volume,closeTime:m.close_time,eventTicker:m.event_ticker};
+    return{ticker:m.ticker,yesPrice:m.yes_price,noPrice:m.no_price,volume:m.volume,closeTime:m.close_time};
   }catch(e){return null}
 }
 
-// ── AI signal ──
+// ─── AI SIGNAL ────────────────────────────────────────────────────────────────
 async function fetchAI(coin,kalshi){
-  const ctx=kalshi?`Kalshi 15-min: YES=${kalshi.yesPrice}¢ (${kalshi.yesPrice}% implied up), NO=${kalshi.noPrice}¢, vol=${kalshi.volume}.`:"No Kalshi data.";
-  const brainCtx=getBrainSummary(coin.id);
-  const prompt=`Expert crypto analyst, 15-min Kalshi prediction market trading.
+  const ctx=kalshi?`Kalshi: YES=${kalshi.yesPrice}¢ (${kalshi.yesPrice}% implied up), NO=${kalshi.noPrice}¢, vol=${kalshi.volume}.`:"No Kalshi data.";
+  const brainCtx=getBrainCtx(coin.id,kalshi?.yesPrice);
+  const correlate=shouldUseCorrelation(coin.id);
+  const prompt=`You are theDiff3r3nc3, an aggressive self-learning crypto trading agent for Kalshi 15-min markets. Target: 33 wins/day.
 Asset: ${coin.name} (${coin.id})
-${ctx}
-Agent learning history: ${brainCtx}
-Use the win/loss history to calibrate your confidence. If win rate is low for this asset, be more conservative. If win rate is high, you can be more aggressive.
+Market: ${ctx}
+Memory: ${brainCtx}
+Hour: ${new Date().getHours()}:00
+${correlate?"BTC CORRELATION MODE: Weight BTC direction heavily for this altcoin signal.":""}
+
+AGGRESSIVE MODE:
+- Weight Kalshi implied probability (real market sentiment)
+- Use time/price patterns from memory aggressively
+- Momentum = strong signal boost
+- Be DECISIVE — NEUTRAL only if truly no edge
+- Lower bar for entry: 45%+ confidence acceptable if conditions align
+
 Return ONLY valid JSON:
-{"direction":"BULLISH or BEARISH or NEUTRAL","bullProb":number,"bearProb":number,"confidence":number,"targetHigh":number,"targetLow":number,"rationale":"2-3 sentences"}
-bullProb+bearProb=100. If YES>55 lean bullish, NO>55 lean bearish. confidence 0-100.`;
-
-  const r=await fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:prompt}]})
-  });
-  const d=await r.json();
-  const text=(d.content||[]).map(b=>b.text||"").join("");
-  try{const m=text.match(/\{[\s\S]*?\}/);return JSON.parse(m?m[0]:text)}
-  catch{
-    const bull=kalshi?kalshi.yesPrice:50;
-    return{direction:bull>54?"BULLISH":bull<46?"BEARISH":"NEUTRAL",bullProb:bull,bearProb:100-bull,confidence:51,targetHigh:0,targetLow:0,rationale:"Signal from Kalshi implied probability and momentum."};
-  }
-}
-
-// ── Place trade on Kalshi ──
-async function placeTrade(coin,signal,kalshi,betSize){
-  if(!kalshi||!kalshi.ticker){
-    log(`  ✗ ${coin.id}: No active market to trade`,"#FBBF24");
-    return null;
-  }
-
-  // Determine YES or NO based on direction
-  const side=signal.direction==="BULLISH"?"yes":"no";
-  const price=side==="yes"?kalshi.yesPrice:kalshi.noPrice;
-
-  log(`  ↳ Placing ${side.toUpperCase()} ${betSize} contract(s) on ${coin.id} @ ${price}¢`,"#A78BFA");
+{"direction":"BULLISH or BEARISH or NEUTRAL","bullProb":number,"bearProb":number,"confidence":number,"targetHigh":number,"targetLow":number,"rationale":"1-2 sentences"}
+bullProb+bearProb=100. confidence 0-100.`;
 
   try{
-    const body={
-      ticker: kalshi.ticker,
-      client_order_id: `agent_${Date.now()}_${coin.id}`,
-      type: "limit",
-      action: "buy",
-      side: side,
-      count: betSize,
-      yes_price: side==="yes"?price:undefined,
-      no_price: side==="no"?price:undefined,
-    };
-    // Remove undefined
-    Object.keys(body).forEach(k=>body[k]===undefined&&delete body[k]);
+    const r=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,messages:[{role:"user",content:prompt}]})
+    });
+    const d=await r.json();
+    const text=(d.content||[]).map(b=>b.text||"").join("");
+    const m=text.match(/\{[\s\S]*?\}/);
+    return JSON.parse(m?m[0]:text);
+  }catch(e){
+    const bull=kalshi?kalshi.yesPrice:50;
+    return{direction:bull>52?"BULLISH":bull<48?"BEARISH":"NEUTRAL",bullProb:bull,bearProb:100-bull,confidence:48,targetHigh:0,targetLow:0,rationale:"Kalshi implied signal."};
+  }
+}
 
+// ─── PLACE TRADE ──────────────────────────────────────────────────────────────
+async function placeTrade(coin,sig,kalshi,betSize){
+  if(!kalshi?.ticker)return null;
+  const side=sig.direction==="BULLISH"?"yes":"no";
+  const price=side==="yes"?kalshi.yesPrice:kalshi.noPrice;
+  log(`  ↳ ${coin.id}: ${betSize}x ${side.toUpperCase()} @ ${price}¢`,"#A78BFA");
+  try{
+    const body={ticker:kalshi.ticker,client_order_id:`d3_${Date.now()}_${coin.id}`,type:"limit",action:"buy",side,count:betSize};
+    if(side==="yes")body.yes_price=price;else body.no_price=price;
     const r=await fetch(`${KALSHI}/portfolio/orders`,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":`Bearer ${state.apiKey}`,
-      },
+      method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${state.apiKey}`},
       body:JSON.stringify(body)
     });
-
     const d=await r.json();
-    if(!r.ok){
-      log(`  ✗ ${coin.id}: Order failed — ${d.error_message||r.status}`,"#FF4D6D");
-      return null;
-    }
-
+    if(!r.ok){log(`  ✗ ${coin.id}: ${d.error_message||r.status}`,"#FF4D6D");return null;}
     const cost=(price/100)*betSize;
-    log(`  ✓ ${coin.id}: Order placed! ${betSize}x ${side.toUpperCase()} @ ${price}¢ = $${cost.toFixed(2)}`,"#14F195");
+    log(`  ✓ ${coin.id}: Order placed $${cost.toFixed(2)}`,"#14F195");
     return{orderId:d.order?.order_id,side,price,count:betSize,cost,ticker:kalshi.ticker};
-  }catch(e){
-    log(`  ✗ ${coin.id}: ${e.message}`,"#FF4D6D");
-    return null;
-  }
+  }catch(e){log(`  ✗ ${coin.id}: ${e.message}`,"#FF4D6D");return null;}
 }
 
-// ── Main scan cycle ──
+// ─── RESOLVE TRADES ───────────────────────────────────────────────────────────
+async function resolveOpenTrades(){
+  const open=state.trades.filter(t=>t.status==="OPEN"&&t.orderId);
+  if(!open.length)return;
+  log(`🧠 Resolving ${open.length} open trade(s)...`,"#A78BFA");
+  for(const trade of open){
+    try{
+      const r=await fetch(`${KALSHI}/portfolio/orders/${trade.orderId}`,{headers:{"Authorization":`Bearer ${state.apiKey}`}});
+      if(!r.ok)continue;
+      const d=await r.json();const o=d.order;
+      if(o&&(o.status==="settled"||o.status==="filled")){
+        const won=o.pnl>0;
+        trade.status=won?"WON":"LOST";trade.payout=won?(o.pnl+trade.cost):0;
+        recordResult(trade.coin,won,trade.price,trade.direction);
+        log(`  ${won?"✓":"✗"} ${trade.coin}: ${won?"WON +$"+o.pnl.toFixed(2):"LOST -$"+trade.cost.toFixed(2)}`,won?"#14F195":"#FF4D6D");
+      }
+    }catch(e){}
+  }
+  updateStats();renderTrades();
+}
+
+// ─── MAIN CYCLE ───────────────────────────────────────────────────────────────
 async function runCycle(){
   if(state.scanning)return;
-  if(state.dailyLoss>=DAILY_LIMIT){
-    log("⛔ Daily loss limit reached. No more trades today.","#FF4D6D");
-    return;
-  }
-  state.scanning=true;
-  setProgress(5);
+  if(state.dailyLoss>=DAILY_LIMIT){log("⛔ Daily limit reached.","#FF4D6D");return;}
+  state.scanning=true;setProgress(5);checkDailyReset();
 
+  const dailyWins=getDailyWins();
   log("══════════════════════════════","#1F1F3A");
-  log(`CYCLE START — ${new Date().toISOString()}`,"#F0F0FF");
-
-  // Resolve any open trades from last cycle
+  log(`CYCLE — ${new Date().toLocaleTimeString()} | Wins today: ${dailyWins}/${WIN_TARGET}`,"#F0F0FF");
   await resolveOpenTrades();
 
-  log("Phase 1 › Fetching Kalshi markets","#60A5FA");
-
-  // Fetch Kalshi
-  const kalshiResults={};
-  await Promise.all(COINS.map(async coin=>{
-    const k=await fetchKalshi(coin);
-    kalshiResults[coin.id]=k;
-    state.kalshi[coin.id]=k;
-    if(k)log(`  ✓ ${coin.id}: YES=${k.yesPrice}¢ NO=${k.noPrice}¢`,"#60A5FA");
-    else log(`  ✗ ${coin.id}: No open market`,"#FBBF24");
+  log("1 › Kalshi markets","#60A5FA");
+  const kalshiMap={};
+  await Promise.all(COINS.map(async c=>{
+    const k=await fetchKalshi(c);kalshiMap[c.id]=k;state.kalshi[c.id]=k;
+    if(k)log(`  ${c.id}: YES=${k.yesPrice}¢ NO=${k.noPrice}¢`,"#60A5FA");
   }));
+  setProgress(25);
 
-  setProgress(30);
-  log("Phase 2 › AI analysis","#A78BFA");
-
-  // AI signals
+  log("2 › AI analysis","#A78BFA");
+  const signals={};
   for(let i=0;i<COINS.length;i++){
     const coin=COINS[i];
-    const kalshi=kalshiResults[coin.id];
     try{
-      log(`  ↳ Analyzing ${coin.id}...`,coin.color);
-      const sig=await fetchAI(coin,kalshi);
-      // Apply brain learning adjustment to confidence
-      sig.confidence=getAdjustedConfidence(coin.id,sig.confidence);
+      const sig=await fetchAI(coin,kalshiMap[coin.id]);
+      sig.confidence=getAdjustedConf(coin.id,sig.confidence,kalshiMap[coin.id]?.yesPrice);
+      sig.score=getCoinScore(coin.id);
+      const b=loadBrain();
+      sig.streak=b[coin.id]?.streak||0;
+      signals[coin.id]=sig;
       state.signals[coin.id]=sig;
-      const betSize=getBetSize(sig.confidence);
-      log(`  ✓ ${coin.id}: ${sig.direction} conf=${sig.confidence.toFixed(0)}% → $${betSize} bet`,coin.color);
-
-      // Place trade if agent is on, market exists, bet size > 0, under daily limit
-      if(state.agentOn&&betSize>0&&kalshi&&sig.direction!=="NEUTRAL"){
-        const remaining=DAILY_LIMIT-state.dailyLoss;
-        const cost=(betSize*((sig.direction==="BULLISH"?kalshi.yesPrice:kalshi.noPrice)/100));
-        if(cost<=remaining){
-          log(`  💰 Trading ${coin.id}...`,"#FBBF24");
-          const order=await placeTrade(coin,sig,kalshi,betSize);
-          if(order){
-            const trade={
-              id:Date.now()+"_"+coin.id,
-              coin:coin.id,
-              coinColor:coin.color,
-              direction:sig.direction,
-              side:order.side,
-              count:order.count,
-              price:order.price,
-              cost:order.cost,
-              confidence:sig.confidence,
-              time:new Date().toLocaleTimeString(),
-              status:"OPEN",
-              orderId:order.orderId,
-              ticker:order.ticker,
-            };
-            state.trades.unshift(trade);
-            // Deduct from daily loss tracking (cost at risk)
-            state.dailyLoss+=order.cost;
-            updateStats();
-          }
-        } else {
-          log(`  ⚠ ${coin.id}: Would exceed daily limit, skipping`,"#FBBF24");
-        }
-      }
-    }catch(e){
-      log(`  ✗ ${coin.id}: ${e.message}`,"#FF4D6D");
-    }
-    setProgress(30+(i+1)/COINS.length*65);
+      updateMomentum(coin.id,sig.direction);
+      log(`  ${coin.id}: ${sig.direction} conf=${sig.confidence.toFixed(0)}% score=${sig.score.toFixed(0)} streak=${sig.streak}`,coin.color);
+    }catch(e){log(`  ${coin.id}: error`,"#FF4D6D");}
+    setProgress(25+(i+1)/COINS.length*40);
     renderSignals();
-    await new Promise(r=>setTimeout(r,400));
+    await new Promise(r=>setTimeout(r,250));
+  }
+  setProgress(65);
+
+  // Rank all tradeable signals
+  const candidates=COINS
+    .filter(c=>{const s=signals[c.id];const k=kalshiMap[c.id];return s&&k&&s.direction!=="NEUTRAL"&&getBetSize(s.confidence,s.streak)>0;})
+    .map(c=>{const s=signals[c.id];return{coin:c,sig:s,kalshi:kalshiMap[c.id],rank:(s.confidence/100)*0.5+(s.score/100)*0.5};})
+    .sort((a,b)=>b.rank-a.rank);
+
+  log(`3 › Trading ${candidates.length} signal(s)`,"#FBBF24");
+
+  for(const {coin,sig,kalshi} of candidates){
+    if(!state.agentOn)break;
+    const b=loadBrain();
+    const streak=b[coin.id]?.streak||0;
+    const betSize=getBetSize(sig.confidence,streak);
+    const multiplier=getCompoundMultiplier();
+    const price=sig.direction==="BULLISH"?kalshi.yesPrice:kalshi.noPrice;
+    const cost=(betSize*(price/100));
+    const remaining=DAILY_LIMIT-state.dailyLoss;
+    if(cost>remaining){log(`  ⚠ ${coin.id}: exceeds limit`,"#FBBF24");continue;}
+
+    log(`  💰 ${coin.id}: $${betSize} bet (${multiplier.toFixed(1)}x mult, ${streak} streak)`,coin.color);
+    const order=await placeTrade(coin,sig,kalshi,betSize);
+    if(order){
+      state.trades.unshift({
+        id:Date.now()+"_"+coin.id,coin:coin.id,coinColor:coin.color,
+        direction:sig.direction,side:order.side,count:order.count,
+        price:order.price,cost:order.cost,confidence:sig.confidence,
+        time:new Date().toLocaleTimeString(),status:"OPEN",
+        orderId:order.orderId,ticker:order.ticker,
+      });
+      state.dailyLoss+=order.cost;
+      updateStats();renderTrades();
+    }
   }
 
-  log(`CYCLE COMPLETE — ${new Date().toLocaleTimeString()}`,"#14F195");
+  const b=loadBrain();b.totalCycles=(b.totalCycles||0)+1;saveBrain(b);
+  const newDailyWins=getDailyWins();
+  log(`COMPLETE — ${newDailyWins}/${WIN_TARGET} wins today`,"#14F195");
   log("══════════════════════════════","#1F1F3A");
-  setProgress(0);
-  state.scanning=false;
-  updateStats();
-  renderAll();
+  setProgress(0);state.scanning=false;renderAll();
 }
 
-// ── Stats ──
+// ─── STATS ────────────────────────────────────────────────────────────────────
 function updateStats(){
   const wins=state.trades.filter(t=>t.status==="WON").length;
-  const losses=state.trades.filter(t=>t.status==="LOST").length;
-  const pnl=state.trades.reduce((s,t)=>{
-    if(t.status==="WON")return s+(t.payout||0)-t.cost;
-    if(t.status==="LOST")return s-t.cost;
-    return s;
-  },0);
-
+  const settled=state.trades.filter(t=>t.status==="WON"||t.status==="LOST").length;
+  const pnl=getSessionPnL();
+  const wr=settled>0?((wins/settled)*100).toFixed(0):0;
+  const dailyWins=getDailyWins();
+  const multiplier=getCompoundMultiplier();
+  
   document.getElementById("stat-pnl").textContent=`${pnl>=0?"":"-"}$${fmt(Math.abs(pnl))}`;
   document.getElementById("stat-pnl").style.color=pnl>=0?"var(--green)":"var(--red)";
-  document.getElementById("stat-trades").textContent=state.trades.length;
-  document.getElementById("stat-wins").textContent=wins;
-  document.getElementById("stat-losses").textContent=losses;
-
-  // Daily limit bar
+  
+  document.getElementById("stat-mult").textContent=`${multiplier.toFixed(1)}x`;
+  document.getElementById("stat-mult").style.color=multiplier>1.2?"var(--green)":multiplier<0.8?"var(--red)":"var(--purple)";
+  
+  document.getElementById("stat-wins").textContent=dailyWins;
+  document.getElementById("stat-wins").style.color=dailyWins>=WIN_TARGET?"var(--green)":"var(--yellow)";
+  document.getElementById("stat-target").textContent=`${dailyWins}/${WIN_TARGET}`;
+  document.getElementById("stat-target").style.color=dailyWins>=WIN_TARGET?"var(--green)":dailyWins>=WIN_TARGET*0.7?"var(--yellow)":"var(--red)";
+  document.getElementById("stat-wr").textContent=settled>0?wr+"%":"--%";
+  document.getElementById("stat-wr").style.color=parseFloat(wr)>=55?"var(--green)":parseFloat(wr)<=45&&settled>0?"var(--red)":"var(--yellow)";
+  
   const pct=Math.min(100,(state.dailyLoss/DAILY_LIMIT)*100);
   document.getElementById("limit-val").textContent=`$${fmt(state.dailyLoss)} / $${DAILY_LIMIT}.00`;
+  document.getElementById("limit-val").style.color=pct>80?"var(--red)":pct>50?"var(--yellow)":"var(--green)";
   document.getElementById("limit-fill").style.width=pct+"%";
   document.getElementById("limit-fill").style.background=pct>80?"var(--red)":pct>50?"var(--yellow)":"var(--green)";
-  document.getElementById("limit-val").style.color=pct>80?"var(--red)":pct>50?"var(--yellow)":"var(--green)";
 }
 
-function setProgress(n){
-  const w=document.getElementById("progress-wrap");
-  const b=document.getElementById("progress-bar");
-  if(n>0&&n<100){w.style.display="block";b.style.width=n+"%"}
-  else{w.style.display="none";b.style.width="0%"}
-}
-
-// ── Tabs ──
+// ─── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(t){
   state.tab=t;
-  document.getElementById("tab-signals").classList.toggle("active",t==="signals");
-  document.getElementById("tab-trades").classList.toggle("active",t==="trades");
-  document.getElementById("tab-brain").classList.toggle("active",t==="brain");
-  document.getElementById("view-signals").style.display=t==="signals"?"block":"none";
-  document.getElementById("view-trades").style.display=t==="trades"?"block":"none";
-  document.getElementById("view-brain").style.display=t==="brain"?"block":"none";
+  ["signals","trades","brain"].forEach(n=>{
+    document.getElementById("tab-"+n).classList.toggle("active",t===n);
+    document.getElementById("view-"+n).style.display=t===n?"block":"none";
+  });
   if(t==="brain")renderBrain();
 }
 
-function renderBrain(){
-  const el=document.getElementById("view-brain");
-  const brain=loadBrain();
-  const coinColors={BTC:"#F7931A",ETH:"#627EEA",SOL:"#14F195",XRP:"#00AAE4"};
-  el.innerHTML=`
-    <div style="margin-bottom:10px;background:var(--bg2);border:1px solid #A78BFA30;border-radius:12px;padding:14px">
-      <div style="font-family:'Orbitron',monospace;font-size:11px;color:#A78BFA;letter-spacing:.1em;margin-bottom:12px">🧠 AGENT LEARNING BRAIN</div>
-      <div style="font-size:9px;color:var(--muted);line-height:1.8;margin-bottom:12px">
-        theDiff3r3nc3 learns from every trade. Win streaks boost confidence. Loss streaks make the agent more conservative. The brain persists across sessions.
-      </div>
-      <div style="font-size:8px;color:var(--dim)">Total cycles: ${brain.totalCycles||0} · Last updated: ${brain.lastUpdated?new Date(brain.lastUpdated).toLocaleTimeString():"Never"}</div>
-    </div>
-    ${COINS.map(coin=>{
-      const c=brain[coin.id]||{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0};
-      const wr=c.totalTrades>0?((c.wins/c.totalTrades)*100).toFixed(0):0;
-      const wrPct=c.totalTrades>0?(c.wins/c.totalTrades)*100:50;
-      const streakColor=c.streak>2?"var(--green)":c.streak<-2?"var(--red)":"var(--yellow)";
-      const adjColor=c.confAdjust>0?"var(--green)":c.confAdjust<0?"var(--red)":"var(--muted)";
-      return`<div class="signal-card fade-in" style="border:1px solid ${coinColors[coin.id]}20;margin-bottom:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,${coinColors[coin.id]}25,${coinColors[coin.id]}08);border:1px solid ${coinColors[coin.id]}30;display:flex;align-items:center;justify-content:center;color:${coinColors[coin.id]};font-size:12px">${coin.symbol}</div>
-            <div style="font-size:12px;font-weight:700;color:${coinColors[coin.id]}">${coin.id}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:16px;font-weight:700;font-family:'Orbitron',monospace;color:${wrPct>=55?"var(--green)":wrPct<=45?"var(--red)":"var(--yellow)}">${wr}%</div>
-            <div style="font-size:8px;color:var(--muted)">WIN RATE</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
-          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid #14F19520">
-            <div style="font-size:14px;font-weight:700;color:var(--green)">${c.wins}</div>
-            <div style="font-size:7px;color:var(--muted)">WINS</div>
-          </div>
-          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid #FF4D6D20">
-            <div style="font-size:14px;font-weight:700;color:var(--red)">${c.losses}</div>
-            <div style="font-size:7px;color:var(--muted)">LOSSES</div>
-          </div>
-          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid ${streakColor}20">
-            <div style="font-size:14px;font-weight:700;color:${streakColor}">${c.streak>0?"+":""}${c.streak}</div>
-            <div style="font-size:7px;color:var(--muted)">STREAK</div>
-          </div>
-        </div>
-        <div style="background:var(--bg);border-radius:7px;padding:8px 10px;border:1px solid #A78BFA20;display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:9px;color:var(--muted)">CONF ADJUSTMENT</div>
-          <div style="font-size:13px;font-weight:700;color:${adjColor}">${c.confAdjust>0?"+":""}${c.confAdjust}%</div>
-        </div>
-        <div style="margin-top:8px">
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-            <span style="font-size:8px;color:var(--muted)">WIN RATE</span>
-            <span style="font-size:8px;color:${wrPct>=55?"var(--green)":wrPct<=45?"var(--red)":"var(--yellow)"}">${wr}%</span>
-          </div>
-          <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden">
-            <div style="height:100%;width:${wrPct}%;background:${wrPct>=55?"var(--green)":wrPct<=45?"var(--red)":"var(--yellow)"};border-radius:2px;transition:width 1s ease"></div>
-          </div>
-        </div>
-      </div>`;
-    }).join("")}
-    <div style="text-align:center;margin-bottom:8px">
-      <button onclick="resetBrain()" style="padding:8px 16px;background:var(--bg3);border:1px solid #FF4D6D30;border-radius:8px;color:#FF4D6D;font-size:9px;letter-spacing:.1em;font-family:'Share Tech Mono',monospace;cursor:pointer">🗑 RESET BRAIN</button>
-    </div>`;
-}
-
-function resetBrain(){
-  if(confirm("Reset all learning data? This cannot be undone.")){
-    localStorage.removeItem(BRAIN_KEY);
-    log("🧠 Brain reset — starting fresh","#FBBF24");
-    renderBrain();
-  }
-}
-
-// ── Render signals ──
+// ─── RENDER SIGNALS ───────────────────────────────────────────────────────────
 function renderSignals(){
   const el=document.getElementById("view-signals");
-  if(!Object.keys(state.signals).length&&!state.scanning){
-    el.innerHTML=`<div class="empty">🤖 Agent is ready<br>Toggle ON to start auto-trading<br><span style="color:var(--dim)">Scans every 15 minutes</span></div>`;
+  if(!Object.keys(state.signals).length){
+    el.innerHTML=`<div class="empty">🔥 AGGRESSIVE MODE<br>45% confidence threshold · 10min scans<br>Momentum multipliers · Correlation trades<br><br>Toggle ON to hunt for 33 wins</div>`;
     return;
   }
-
+  const dailyWins=getDailyWins();
+  const compoundMult=getCompoundMultiplier();
   el.innerHTML=COINS.map(coin=>{
-    const sig=state.signals[coin.id];
-    const k=state.kalshi[coin.id];
-    const betSize=sig?getBetSize(sig.confidence):0;
+    const sig=state.signals[coin.id];const k=state.kalshi[coin.id];
+    const b=loadBrain();const streak=b[coin.id]?.streak||0;
+    const betSize=sig?getBetSize(sig.confidence,streak):0;
     const dirColor=!sig?"#4B5563":sig.direction==="BULLISH"?"#14F195":sig.direction==="BEARISH"?"#FF4D6D":"#FBBF24";
-    const closeDate=k&&k.closeTime?new Date(k.closeTime):null;
-    const mins=closeDate?Math.max(0,Math.round((closeDate-Date.now())/60000)):null;
-
-    return `<div class="signal-card fade-in" style="border:1px solid ${coin.color}20;box-shadow:0 4px 24px ${coin.color}06">
-      <div class="signal-card-glow" style="background:radial-gradient(circle,${coin.color}10 0%,transparent 70%)"></div>
+    const hotStreak=streak>=3;
+    const compounding=compoundMult!==1.0;
+    return`<div class="signal-card fade-in ${hotStreak?"hot-streak":""}" style="border:1px solid ${coin.color}${hotStreak?"":"20"};box-shadow:0 4px 24px ${coin.color}${hotStreak?"40":"06"}">
       <div class="sc-header">
         <div class="sc-coin">
           <div class="sc-icon" style="background:linear-gradient(135deg,${coin.color}25,${coin.color}08);border:1px solid ${coin.color}30;color:${coin.color}">${coin.symbol}</div>
-          <div><div class="sc-name">${coin.id}</div><div class="sc-sub">${coin.name}</div></div>
-        </div>
-        ${sig?`<div class="sc-dir" style="background:${dirColor}15;border:1px solid ${dirColor}30;color:${dirColor}">${sig.direction==="BULLISH"?"▲":sig.direction==="BEARISH"?"▼":"◆"} ${sig.direction}</div>`:""}
-      </div>
-
-      ${k?`<div class="k-row">
-        <div class="k-box" style="border:1px solid #14F19520"><div class="k-lbl">YES · UP</div><div class="k-val" style="color:#14F195">${k.yesPrice}¢</div><div class="k-imp">${k.yesPrice}% implied</div></div>
-        <div class="k-box" style="border:1px solid #FF4D6D20"><div class="k-lbl">NO · DOWN</div><div class="k-val" style="color:#FF4D6D">${k.noPrice}¢</div><div class="k-imp">${k.noPrice}% implied</div></div>
-      </div>`:`<div style="padding:8px;background:var(--bg3);border-radius:7px;font-size:9px;color:var(--dim);margin-bottom:8px">⚠ No open Kalshi market</div>`}
-
-      ${sig?`
-        ${[["Bull prob",sig.bullProb,"#14F195"],["Bear prob",sig.bearProb,"#FF4D6D"],["Confidence",sig.confidence,coin.color]].map(([l,v,c])=>`
-          <div class="pb-wrap"><div class="pb-meta"><span class="pb-lbl">${l}</span><span class="pb-val" style="color:${c}">${parseFloat(v).toFixed(1)}%</span></div>
-          <div class="pb-track"><div class="pb-fill" style="width:${Math.min(100,v)}%;background:${c};box-shadow:0 0 6px ${c}60"></div></div></div>
-        `).join("")}
-
-        <div class="trade-rec" style="background:linear-gradient(135deg,${coin.color}14,${coin.color}06);border:1px solid ${coin.color}25;margin-top:8px">
           <div>
-            <div class="trade-size" style="color:${betSize>0?coin.color:"var(--dim)"}">$${betSize} BET</div>
-            <div class="trade-meta">${betSize>0?`${betSize} contract${betSize>1?"s":""} · ≥${betSize>=5?90:betSize>=4?80:betSize>=3?70:betSize>=2?60:50}% conf`:"No trade (conf <50%)"}</div>
-          </div>
-          <div class="trade-status" style="background:${state.agentOn?"#14F19520":"#374151"};color:${state.agentOn?"var(--green)":"var(--dim)"}">
-            ${state.agentOn?"🟢 AUTO":"⏸ OFF"}
+            <div style="font-size:12px;font-weight:700">${coin.id}${hotStreak?' 🔥':''}</div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">${hotStreak?`${streak}-WIN STREAK`:coin.name}</div>
           </div>
         </div>
-        <div style="font-size:9px;color:var(--muted);margin-top:8px;line-height:1.6">${sig.rationale}</div>
-      `:`<div style="text-align:center;padding:16px;color:var(--dim);font-size:10px">${state.scanning?"Analyzing...":"Awaiting scan..."}</div>`}
+        ${sig?`<div style="padding:3px 8px;border-radius:20px;font-size:8px;font-weight:700;background:${dirColor}15;border:1px solid ${dirColor}30;color:${dirColor}">${sig.direction==="BULLISH"?"▲":sig.direction==="BEARISH"?"▼":"◆"} ${sig.direction}</div>`:""}
+      </div>
+      ${k?`<div class="k-row">
+        <div class="k-box" style="border:1px solid #14F19520"><div class="k-lbl">YES</div><div class="k-val" style="color:#14F195">${k.yesPrice}¢</div></div>
+        <div class="k-box" style="border:1px solid #FF4D6D20"><div class="k-lbl">NO</div><div class="k-val" style="color:#FF4D6D">${k.noPrice}¢</div></div>
+      </div>`:`<div style="padding:7px;background:var(--bg3);border-radius:7px;font-size:9px;color:var(--dim);margin-bottom:8px">⚠ No market</div>`}
+      ${sig?`
+        ${[["Conf",sig.confidence,coin.color]].map(([l,v,c])=>`
+          <div class="pb-wrap"><div class="pb-meta"><span style="font-size:8px;color:var(--muted)">${l}</span><span style="font-size:8px;font-weight:700;color:${c}">${parseFloat(v).toFixed(0)}%</span></div>
+          <div class="pb-track"><div class="pb-fill" style="width:${Math.min(100,v)}%;background:${c}"></div></div></div>`).join("")}
+        <div class="trade-rec" style="background:linear-gradient(135deg,${coin.color}14,${coin.color}06);border:1px solid ${coin.color}25">
+          <div>
+            <div style="font-size:${hotStreak?16:14}px;font-weight:700;font-family:'Orbitron',monospace;color:${betSize>0?coin.color:"var(--dim)"}">$${betSize}${hotStreak?' 🔥':''}${compounding&&betSize>0?` (${compoundMult.toFixed(1)}x)`:''}</div>
+            <div style="font-size:8px;color:var(--muted);margin-top:2px">${betSize>0?`${betSize}x${hotStreak?" STREAK":""}${compounding?" COMPOUND":""}`:"No trade"}</div>
+          </div>
+          <div style="font-size:9px;padding:4px 8px;border-radius:6px;font-weight:700;background:${state.agentOn?"#14F19520":"#374151"};color:${state.agentOn?"var(--green)":"var(--dim)"}">${state.agentOn?"🟢 AUTO":"OFF"}</div>
+        </div>
+        <div style="font-size:9px;color:var(--muted);margin-top:8px;line-height:1.5">${sig.rationale}</div>
+      `:`<div style="text-align:center;padding:12px;color:var(--dim);font-size:10px">Scanning...</div>`}
     </div>`;
   }).join("");
 }
 
-// ── Render trades ──
+// ─── RENDER TRADES ────────────────────────────────────────────────────────────
 function renderTrades(){
   const el=document.getElementById("view-trades");
-  if(!state.trades.length){
-    el.innerHTML=`<div class="empty">📋 No trades yet<br>Turn agent ON to start trading</div>`;
-    return;
-  }
-  el.innerHTML=state.trades.map(t=>{
-    const statusColor=t.status==="WON"?"var(--green)":t.status==="LOST"?"var(--red)":t.status==="OPEN"?"var(--yellow)":"var(--muted)";
+  if(!state.trades.length){el.innerHTML=`<div class="empty">📋 No trades yet</div>`;return;}
+  el.innerHTML=state.trades.slice(0,50).map(t=>{
+    const sc=t.status==="WON"?"var(--green)":t.status==="LOST"?"var(--red)":"var(--yellow)";
+    const pnlVal=t.status==="WON"?"+$"+fmt((t.payout||0)-t.cost):t.status==="LOST"?"-$"+fmt(t.cost):"$"+fmt(t.cost);
     return`<div class="trade-log-item fade-in">
-      <div class="tli-left">
-        <div class="tli-coin" style="color:${t.coinColor}">${t.coin} <span style="color:${t.direction==="BULLISH"?"var(--green)":"var(--red)"}">${t.direction==="BULLISH"?"▲":"▼"}</span></div>
-        <div class="tli-detail">${t.count} contract${t.count>1?"s":""} · ${t.side.toUpperCase()} @ ${t.price}¢ · conf ${t.confidence.toFixed(0)}%</div>
-        <span class="tli-status" style="background:${statusColor}20;color:${statusColor}">${t.status}</span>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:${t.coinColor}">${t.coin} <span style="color:${t.direction==="BULLISH"?"var(--green)":"var(--red)"}">${t.direction==="BULLISH"?"▲":"▼"}</span></div>
+        <div style="font-size:8px;color:var(--muted);margin-top:2px">${t.count}x ${t.side?.toUpperCase()} @ ${t.price}¢</div>
+        <span style="font-size:8px;padding:2px 7px;border-radius:4px;margin-top:3px;display:inline-block;background:${sc}20;color:${sc}">${t.status}</span>
       </div>
-      <div class="tli-right">
-        <div class="tli-amount" style="color:${t.status==="WON"?"var(--green)":t.status==="LOST"?"var(--red)":"var(--yellow)"}">
-          ${t.status==="WON"?"+$"+fmt((t.payout||0)-t.cost):t.status==="LOST"?"-$"+fmt(t.cost):"$"+fmt(t.cost)}
-        </div>
-        <div class="tli-time">${t.time}</div>
+      <div style="text-align:right">
+        <div style="font-size:12px;font-weight:700;font-family:'Orbitron',monospace;color:${sc}">${pnlVal}</div>
+        <div style="font-size:8px;color:var(--dim);margin-top:2px">${t.time}</div>
       </div>
     </div>`;
   }).join("");
 }
 
-function renderAll(){
-  renderSignals();
-  renderTrades();
-  if(state.tab==="brain")renderBrain();
-  updateStats();
+// ─── RENDER BRAIN ─────────────────────────────────────────────────────────────
+function renderBrain(){
+  const el=document.getElementById("view-brain");
+  const b=loadBrain();
+  const dailyWins=getDailyWins();
+  el.innerHTML=`
+    <div style="background:var(--bg2);border:1px solid #A78BFA30;border-radius:12px;padding:14px;margin-bottom:10px">
+      <div style="font-family:'Orbitron',monospace;font-size:11px;color:#A78BFA;margin-bottom:10px">🧠 AGGRESSIVE BRAIN</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.7;margin-bottom:10px">45% confidence threshold · Momentum multipliers (3+ streak = 2x bet) · Time-based boosts · BTC correlation trades · 10-min scans when under target</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+        <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid ${dailyWins>=WIN_TARGET?"var(--green)":"var(--yellow)"}30">
+          <div style="font-size:16px;font-weight:700;font-family:'Orbitron',monospace;color:${dailyWins>=WIN_TARGET?"var(--green)":"var(--yellow)"}">${dailyWins}</div>
+          <div style="font-size:7px;color:var(--muted)">WINS TODAY</div>
+        </div>
+        <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid var(--purple)30">
+          <div style="font-size:16px;font-weight:700;font-family:'Orbitron',monospace;color:var(--purple)">${WIN_TARGET}</div>
+          <div style="font-size:7px;color:var(--muted)">TARGET</div>
+        </div>
+        <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid var(--blue)30">
+          <div style="font-size:16px;font-weight:700;font-family:'Orbitron',monospace;color:var(--blue)">${b.totalCycles||0}</div>
+          <div style="font-size:7px;color:var(--muted)">CYCLES</div>
+        </div>
+      </div>
+    </div>
+    ${COINS.map(c=>{
+      const coin=b[c.id];
+      const wr=coin.totalTrades>0?((coin.wins/coin.totalTrades)*100).toFixed(0):0;
+      const score=getCoinScore(c.id);
+      const hotStreak=coin.streak>=3;
+      return`<div class="signal-card fade-in ${hotStreak?"hot-streak":""}" style="border:1px solid ${c.color}${hotStreak?"":"20"}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,${c.color}25,${c.color}08);border:1px solid ${c.color}30;display:flex;align-items:center;justify-content:center;color:${c.color};font-size:12px">${c.symbol}</div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:${c.color}">${c.id}${hotStreak?' 🔥':''}</div>
+              <div style="font-size:8px;color:var(--muted)">${hotStreak?coin.streak+"-WIN STREAK":c.name}</div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:16px;font-weight:700;font-family:'Orbitron',monospace;color:${score>=60?"var(--green)":score<=40?"var(--red)":"var(--yellow)"}">${score.toFixed(0)}</div>
+            <div style="font-size:7px;color:var(--muted)">SCORE</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid var(--green)20">
+            <div style="font-size:14px;font-weight:700;color:var(--green)">${coin.wins}</div>
+            <div style="font-size:7px;color:var(--muted)">WINS</div>
+          </div>
+          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid var(--red)20">
+            <div style="font-size:14px;font-weight:700;color:var(--red)">${coin.losses}</div>
+            <div style="font-size:7px;color:var(--muted)">LOSSES</div>
+          </div>
+          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid ${wr>=55?"var(--green)":wr<=45?"var(--red)":"var(--yellow)"}20">
+            <div style="font-size:14px;font-weight:700;color:${wr>=55?"var(--green)":wr<=45&&coin.totalTrades>0?"var(--red)":"var(--yellow)"}">${coin.totalTrades>0?wr:"-"}%</div>
+            <div style="font-size:7px;color:var(--muted)">WIN RATE</div>
+          </div>
+        </div>
+      </div>`;
+    }).join("")}`;
 }
 
-// Init
+function renderAll(){renderSignals();renderTrades();if(state.tab==="brain")renderBrain();updateStats();}
 renderSignals();
 </script>
 </body>
