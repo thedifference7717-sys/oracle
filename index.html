@@ -82,7 +82,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share 
 <div id="header">
   <div class="header-top">
     <div class="logo-wrap">
-      <div class="agent-avatar">🤖</div>
+      <div class="agent-avatar" style="background:none;border:2px solid #A78BFA40;padding:0;overflow:hidden">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" 
+             alt="NFT" 
+             style="width:100%;height:100%;object-fit:cover;border-radius:8px"
+             id="nft-avatar">
+      </div>
       <div><div class="logo">theDiff3r3nc3</div><div class="logo-sub">AGGRESSIVE MODE · 33 WINS/DAY TARGET</div></div>
     </div>
     <div class="toggle-wrap">
@@ -91,6 +96,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share 
     </div>
   </div>
   <div class="stats-bar">
+    <div class="stat-pill"><div class="stat-val" id="stat-balance" style="color:var(--blue)">$0.00</div><div class="stat-lbl">BALANCE</div></div>
     <div class="stat-pill"><div class="stat-val" id="stat-pnl" style="color:var(--green)">$0.00</div><div class="stat-lbl">P&L</div></div>
     <div class="stat-pill"><div class="stat-val" id="stat-mult" style="color:var(--purple)">1.0x</div><div class="stat-lbl">MULTIPLIER</div></div>
     <div class="stat-pill"><div class="stat-val" id="stat-wins" style="color:var(--green)">0</div><div class="stat-lbl">WINS</div></div>
@@ -367,7 +373,21 @@ function submitKey(){
   log("✓ Kalshi API connected","#14F195");
   log("🔥 AGGRESSIVE MODE ACTIVATED","#F7931A");
   log(`Target: ${WIN_TARGET} wins/day · Conf threshold: ${CONF_THRESHOLD}% · Scan: ${state.scanInterval}min`,"#A78BFA");
+  fetchBalance();
   renderAll();
+}
+
+// ─── BALANCE ──────────────────────────────────────────────────────────────────
+async function fetchBalance(){
+  try{
+    const r=await fetch(`${KALSHI}/portfolio/balance`,{
+      headers:{"Authorization":`Bearer ${state.apiKey}`}
+    });
+    if(!r.ok)return;
+    const d=await r.json();
+    const balance=(d.balance||0)/100;
+    document.getElementById("stat-balance").textContent=`$${balance.toFixed(2)}`;
+  }catch(e){}
 }
 
 // ─── AGENT TOGGLE ─────────────────────────────────────────────────────────────
@@ -379,6 +399,8 @@ function toggleAgent(){
   if(state.agentOn){
     btn.classList.add("on");lbl.textContent="ON";lbl.style.color="#14F195";
     log("▶ theDiff3r3nc3 ACTIVATED — hunting for 33 wins","#14F195");
+    fetchBalance();
+    setInterval(fetchBalance,30000);
     runCycle();scheduleNext();
   } else {
     btn.classList.remove("on");lbl.textContent="OFF";lbl.style.color="";
@@ -811,6 +833,11 @@ function renderBrain(){
 
 function renderAll(){renderSignals();renderTrades();if(state.tab==="brain")renderBrain();updateStats();}
 renderSignals();
+
+// Load NFT avatar (upload nft.png to your GitHub repo)
+if(document.getElementById("nft-avatar")){
+  document.getElementById("nft-avatar").src="nft.png";
+}
 </script>
 </body>
 </html>
