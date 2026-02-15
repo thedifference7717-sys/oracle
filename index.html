@@ -196,7 +196,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share 
     <!-- Tabs -->
     <div class="tabs">
       <div class="tab active" id="tab-signals" onclick="switchTab('signals')">SIGNALS</div>
-      <div class="tab" id="tab-trades" onclick="switchTab('trades')">TRADE LOG</div>
+      <div class="tab" id="tab-trades" onclick="switchTab('trades')">TRADES</div>
+      <div class="tab" id="tab-brain" onclick="switchTab('brain')">🧠 BRAIN</div>
     </div>
 
     <!-- Signals view -->
@@ -204,6 +205,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share 
 
     <!-- Trades view -->
     <div id="view-trades" style="display:none"></div>
+
+    <!-- Brain view -->
+    <div id="view-brain" style="display:none"></div>
 
     <div style="text-align:center;font-size:8px;color:var(--dim);padding:8px 0 4px">⚠ NOT FINANCIAL ADVICE · TRADE AT YOUR OWN RISK</div>
   </div>
@@ -224,6 +228,98 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Share 
 </div>
 
 <script>
+// ── Self-Learning Brain ──────────────────────────────────────────────────────
+// Stores per-coin win/loss stats and adjusts confidence + bet sizing over time
+const BRAIN_KEY="thediff3r3nc3_brain";
+
+function loadBrain(){
+  try{
+    const raw=localStorage.getItem(BRAIN_KEY);
+    if(raw)return JSON.parse(raw);
+  }catch(e){}
+  // Default brain
+  return{
+    BTC:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
+    ETH:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
+    SOL:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
+    XRP:{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0,lastResult:null},
+    totalCycles:0,
+    lastUpdated:null,
+  };
+}
+
+function saveBrain(brain){
+  try{localStorage.setItem(BRAIN_KEY,JSON.stringify(brain));}catch(e){}
+}
+
+function getBrainSummary(coinId){
+  const brain=loadBrain();
+  const c=brain[coinId];
+  if(!c||c.totalTrades===0)return"No trade history yet.";
+  const wr=c.totalTrades>0?((c.wins/c.totalTrades)*100).toFixed(0):0;
+  const streak=c.streak>0?`${c.streak} win streak`:c.streak<0?`${Math.abs(c.streak)} loss streak`:"no streak";
+  return`${coinId} history: ${c.wins}W/${c.losses}L (${wr}% win rate), ${streak}. Conf adjustment: ${c.confAdjust>0?"+":""}${c.confAdjust}%.`;
+}
+
+function recordResult(coinId, won){
+  const brain=loadBrain();
+  const c=brain[coinId];
+  c.totalTrades++;
+  if(won){
+    c.wins++;
+    c.streak=c.streak>0?c.streak+1:1;
+    c.lastResult="WIN";
+    // Reward: increase confidence adjustment (up to +15)
+    c.confAdjust=Math.min(15,c.confAdjust+2);
+  } else {
+    c.losses++;
+    c.streak=c.streak<0?c.streak-1:-1;
+    c.lastResult="LOSS";
+    // Penalize: decrease confidence adjustment (down to -20)
+    c.confAdjust=Math.max(-20,c.confAdjust-3);
+  }
+  brain.lastUpdated=new Date().toISOString();
+  saveBrain(brain);
+  log(`🧠 Brain updated: ${coinId} ${won?"WIN ✓":"LOSS ✗"} | WR: ${((c.wins/c.totalTrades)*100).toFixed(0)}% | ConfAdj: ${c.confAdjust>0?"+":""}${c.confAdjust}%`,"#A78BFA");
+}
+
+function getAdjustedConfidence(coinId, baseConf){
+  const brain=loadBrain();
+  const c=brain[coinId];
+  if(!c)return baseConf;
+  // Apply brain's confidence adjustment
+  return Math.min(99,Math.max(10,baseConf+c.confAdjust));
+}
+
+// Check open trades for resolution after 15 min
+async function resolveOpenTrades(){
+  const brain=loadBrain();
+  const openTrades=state.trades.filter(t=>t.status==="OPEN"&&t.orderId);
+  if(!openTrades.length)return;
+  log(`🧠 Checking ${openTrades.length} open trade(s) for resolution...`,"#A78BFA");
+  for(const trade of openTrades){
+    try{
+      const r=await fetch(`${KALSHI}/portfolio/orders/${trade.orderId}`,{
+        headers:{"Authorization":`Bearer ${state.apiKey}`}
+      });
+      if(!r.ok)continue;
+      const d=await r.json();
+      const order=d.order;
+      if(order&&order.status==="settled"){
+        const won=order.pnl>0;
+        trade.status=won?"WON":"LOST";
+        trade.payout=won?(order.pnl+trade.cost):0;
+        recordResult(trade.coin,won);
+        log(`  ✓ ${trade.coin}: Trade settled — ${won?"WON +$"+(order.pnl).toFixed(2):"LOST -$"+trade.cost.toFixed(2)}`
+          ,won?"#14F195":"#FF4D6D");
+        if(!won)state.dailyLoss+=0; // already counted at open
+      }
+    }catch(e){}
+  }
+  updateStats();
+  renderTrades();
+}
+
 const COINS=[
   {id:"BTC",name:"Bitcoin",color:"#F7931A",symbol:"₿",series:"KXBTCUD"},
   {id:"ETH",name:"Ethereum",color:"#627EEA",symbol:"Ξ",series:"KXETHUD"},
@@ -343,9 +439,12 @@ async function fetchKalshi(coin){
 // ── AI signal ──
 async function fetchAI(coin,kalshi){
   const ctx=kalshi?`Kalshi 15-min: YES=${kalshi.yesPrice}¢ (${kalshi.yesPrice}% implied up), NO=${kalshi.noPrice}¢, vol=${kalshi.volume}.`:"No Kalshi data.";
+  const brainCtx=getBrainSummary(coin.id);
   const prompt=`Expert crypto analyst, 15-min Kalshi prediction market trading.
 Asset: ${coin.name} (${coin.id})
 ${ctx}
+Agent learning history: ${brainCtx}
+Use the win/loss history to calibrate your confidence. If win rate is low for this asset, be more conservative. If win rate is high, you can be more aggressive.
 Return ONLY valid JSON:
 {"direction":"BULLISH or BEARISH or NEUTRAL","bullProb":number,"bearProb":number,"confidence":number,"targetHigh":number,"targetLow":number,"rationale":"2-3 sentences"}
 bullProb+bearProb=100. If YES>55 lean bullish, NO>55 lean bearish. confidence 0-100.`;
@@ -426,6 +525,10 @@ async function runCycle(){
 
   log("══════════════════════════════","#1F1F3A");
   log(`CYCLE START — ${new Date().toISOString()}`,"#F0F0FF");
+
+  // Resolve any open trades from last cycle
+  await resolveOpenTrades();
+
   log("Phase 1 › Fetching Kalshi markets","#60A5FA");
 
   // Fetch Kalshi
@@ -448,6 +551,8 @@ async function runCycle(){
     try{
       log(`  ↳ Analyzing ${coin.id}...`,coin.color);
       const sig=await fetchAI(coin,kalshi);
+      // Apply brain learning adjustment to confidence
+      sig.confidence=getAdjustedConfidence(coin.id,sig.confidence);
       state.signals[coin.id]=sig;
       const betSize=getBetSize(sig.confidence);
       log(`  ✓ ${coin.id}: ${sig.direction} conf=${sig.confidence.toFixed(0)}% → $${betSize} bet`,coin.color);
@@ -536,8 +641,82 @@ function switchTab(t){
   state.tab=t;
   document.getElementById("tab-signals").classList.toggle("active",t==="signals");
   document.getElementById("tab-trades").classList.toggle("active",t==="trades");
+  document.getElementById("tab-brain").classList.toggle("active",t==="brain");
   document.getElementById("view-signals").style.display=t==="signals"?"block":"none";
   document.getElementById("view-trades").style.display=t==="trades"?"block":"none";
+  document.getElementById("view-brain").style.display=t==="brain"?"block":"none";
+  if(t==="brain")renderBrain();
+}
+
+function renderBrain(){
+  const el=document.getElementById("view-brain");
+  const brain=loadBrain();
+  const coinColors={BTC:"#F7931A",ETH:"#627EEA",SOL:"#14F195",XRP:"#00AAE4"};
+  el.innerHTML=`
+    <div style="margin-bottom:10px;background:var(--bg2);border:1px solid #A78BFA30;border-radius:12px;padding:14px">
+      <div style="font-family:'Orbitron',monospace;font-size:11px;color:#A78BFA;letter-spacing:.1em;margin-bottom:12px">🧠 AGENT LEARNING BRAIN</div>
+      <div style="font-size:9px;color:var(--muted);line-height:1.8;margin-bottom:12px">
+        theDiff3r3nc3 learns from every trade. Win streaks boost confidence. Loss streaks make the agent more conservative. The brain persists across sessions.
+      </div>
+      <div style="font-size:8px;color:var(--dim)">Total cycles: ${brain.totalCycles||0} · Last updated: ${brain.lastUpdated?new Date(brain.lastUpdated).toLocaleTimeString():"Never"}</div>
+    </div>
+    ${COINS.map(coin=>{
+      const c=brain[coin.id]||{wins:0,losses:0,totalTrades:0,confAdjust:0,streak:0};
+      const wr=c.totalTrades>0?((c.wins/c.totalTrades)*100).toFixed(0):0;
+      const wrPct=c.totalTrades>0?(c.wins/c.totalTrades)*100:50;
+      const streakColor=c.streak>2?"var(--green)":c.streak<-2?"var(--red)":"var(--yellow)";
+      const adjColor=c.confAdjust>0?"var(--green)":c.confAdjust<0?"var(--red)":"var(--muted)";
+      return`<div class="signal-card fade-in" style="border:1px solid ${coinColors[coin.id]}20;margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,${coinColors[coin.id]}25,${coinColors[coin.id]}08);border:1px solid ${coinColors[coin.id]}30;display:flex;align-items:center;justify-content:center;color:${coinColors[coin.id]};font-size:12px">${coin.symbol}</div>
+            <div style="font-size:12px;font-weight:700;color:${coinColors[coin.id]}">${coin.id}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:16px;font-weight:700;font-family:'Orbitron',monospace;color:${wrPct>=55?"var(--green)":wrPct<=45?"var(--red)":"var(--yellow)}">${wr}%</div>
+            <div style="font-size:8px;color:var(--muted)">WIN RATE</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid #14F19520">
+            <div style="font-size:14px;font-weight:700;color:var(--green)">${c.wins}</div>
+            <div style="font-size:7px;color:var(--muted)">WINS</div>
+          </div>
+          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid #FF4D6D20">
+            <div style="font-size:14px;font-weight:700;color:var(--red)">${c.losses}</div>
+            <div style="font-size:7px;color:var(--muted)">LOSSES</div>
+          </div>
+          <div style="background:var(--bg);border-radius:7px;padding:7px;text-align:center;border:1px solid ${streakColor}20">
+            <div style="font-size:14px;font-weight:700;color:${streakColor}">${c.streak>0?"+":""}${c.streak}</div>
+            <div style="font-size:7px;color:var(--muted)">STREAK</div>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:7px;padding:8px 10px;border:1px solid #A78BFA20;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:9px;color:var(--muted)">CONF ADJUSTMENT</div>
+          <div style="font-size:13px;font-weight:700;color:${adjColor}">${c.confAdjust>0?"+":""}${c.confAdjust}%</div>
+        </div>
+        <div style="margin-top:8px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+            <span style="font-size:8px;color:var(--muted)">WIN RATE</span>
+            <span style="font-size:8px;color:${wrPct>=55?"var(--green)":wrPct<=45?"var(--red)":"var(--yellow)"}">${wr}%</span>
+          </div>
+          <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:${wrPct}%;background:${wrPct>=55?"var(--green)":wrPct<=45?"var(--red)":"var(--yellow)"};border-radius:2px;transition:width 1s ease"></div>
+          </div>
+        </div>
+      </div>`;
+    }).join("")}
+    <div style="text-align:center;margin-bottom:8px">
+      <button onclick="resetBrain()" style="padding:8px 16px;background:var(--bg3);border:1px solid #FF4D6D30;border-radius:8px;color:#FF4D6D;font-size:9px;letter-spacing:.1em;font-family:'Share Tech Mono',monospace;cursor:pointer">🗑 RESET BRAIN</button>
+    </div>`;
+}
+
+function resetBrain(){
+  if(confirm("Reset all learning data? This cannot be undone.")){
+    localStorage.removeItem(BRAIN_KEY);
+    log("🧠 Brain reset — starting fresh","#FBBF24");
+    renderBrain();
+  }
 }
 
 // ── Render signals ──
@@ -620,6 +799,7 @@ function renderTrades(){
 function renderAll(){
   renderSignals();
   renderTrades();
+  if(state.tab==="brain")renderBrain();
   updateStats();
 }
 
