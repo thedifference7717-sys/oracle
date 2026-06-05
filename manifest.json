@@ -2,7 +2,7 @@
   "name": "ShohAI Ohtani — HR Oracle",
   "short_name": "ShohAI Ohtani",
   "description": "Real-time MLB home run dashboard: top-100 hitters ranked by HR drought + favorable matchup. Auto-refreshes hourly.",
-  "start_url": "./homerun.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
