@@ -122,7 +122,9 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
       </select>
     </div>
     <div class="fav-toggle" id="fav-toggle" onclick="toggleFav()"><span class="tg-lbl">FAVORABLE ONLY</span><div class="tg"></div></div>
-    <button class="refresh-btn" id="refresh-btn" onclick="load()">⟳ SCAN</button>
+    <div class="fav-toggle on" id="auto-toggle" onclick="toggleAuto()"><span class="tg-lbl">AUTO 1H</span><div class="tg"></div></div>
+    <div class="ctrl-group"><span class="ctrl-lbl">NEXT REFRESH</span><div id="next-update" style="font-family:'Orbitron',monospace;font-size:13px;color:var(--green);padding:7px 2px">--:--</div></div>
+    <button class="refresh-btn" id="refresh-btn" onclick="load(true)">⟳ SCAN</button>
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
@@ -271,9 +273,34 @@ function status(msg,color="var(--blue)"){const el=document.getElementById("statu
 function season(){return document.getElementById("season-input").value;}
 function fmtDate(d){if(!d)return "—";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}}
 
+// ── AUTO-REFRESH (hourly) ──
+const HOUR=3600000;
+let autoState={on:true,nextAt:null,tick:null};
+function toggleAuto(){
+  autoState.on=!autoState.on;
+  document.getElementById("auto-toggle").classList.toggle("on",autoState.on);
+  if(autoState.on){autoState.nextAt=Date.now()+HOUR;tickCountdown();}
+  else{clearTimeout(autoState.tick);document.getElementById("next-update").textContent="OFF";document.getElementById("next-update").style.color="var(--dim)";}
+}
+function tickCountdown(){
+  if(!autoState.on)return;
+  clearTimeout(autoState.tick);
+  if(Date.now()>=autoState.nextAt){
+    autoState.nextAt=Date.now()+HOUR;       // reset for the next hour
+    if(!state.loading)load(false);          // fire the hourly scan
+  }
+  const d=Math.max(0,autoState.nextAt-Date.now());
+  const m=Math.floor(d/60000),s=Math.floor(d%60000/1000);
+  const el=document.getElementById("next-update");
+  el.textContent=`${m}:${String(s).padStart(2,"0")}`;el.style.color="var(--green)";
+  autoState.tick=setTimeout(tickCountdown,1000);
+}
+
 // ── LOAD ──
-async function load(){
+async function load(manual){
   if(state.loading)return;state.loading=true;
+  // any successful/attempted load resets the hourly clock
+  if(autoState.on){autoState.nextAt=Date.now()+HOUR;}
   const btn=document.getElementById("refresh-btn");btn.disabled=true;
   const s=+document.getElementById("season-input").value,date=document.getElementById("date-input").value;
   document.getElementById("st-date-sub").textContent=date;
@@ -447,7 +474,11 @@ function render(){
   document.getElementById("st-date-sub").textContent=now.toISOString().slice(0,10);
   document.getElementById("nft-avatar").src="https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/OCM%20Katoshi%20Classic%20%236606.png";
   render();
-  status("Ready. Hit ⟳ SCAN to pull today’s slate and rank the top-100 hitters by HR drought.","var(--muted)");
+  status("Loading live MLB data for the current season…","var(--muted)");
+  // Auto-load on open, then refresh every hour
+  load(false);
+  autoState.nextAt=Date.now()+HOUR;
+  tickCountdown();
 })();
 </script>
 </body>
