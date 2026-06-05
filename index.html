@@ -13,8 +13,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ShohAI Ohtani">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/OCM%20Katoshi%20Classic%20%236606.png">
-<link rel="icon" href="https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/OCM%20Katoshi%20Classic%20%236606.png">
+<link rel="apple-touch-icon" href="baseball.svg">
+<link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#4B5563;--dim:#1F2937;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
@@ -25,8 +25,8 @@ body{padding-bottom:40px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 #topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .logo-wrap{display:flex;align-items:center;gap:11px}
-.agent-avatar{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 15px #A78BFA40;border:2px solid #A78BFA40;overflow:hidden;background:linear-gradient(135deg,#A78BFA,#627EEA);font-size:20px}
-.agent-avatar img{width:100%;height:100%;object-fit:cover;border-radius:9px}
+.agent-avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #A78BFA40;border:2px solid #A78BFA40;overflow:hidden;background:#070714}
+.agent-avatar svg{width:100%;height:100%}
 .logo{font-family:'Orbitron',monospace;font-size:19px;font-weight:900;letter-spacing:.06em;background:linear-gradient(90deg,#A78BFA,#60A5FA,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-sub{font-size:10px;color:var(--dim);letter-spacing:.14em;margin-top:3px}
 .controls{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-left:auto}
@@ -109,8 +109,27 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 
 <div id="topbar">
   <div class="logo-wrap">
-    <div class="agent-avatar">⚾<img id="nft-avatar" alt="" style="display:none" onload="this.style.display='block'" src="https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/OCM%20Katoshi%20Classic%20%236606.png"></div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 8 · LIVE + AUTO-DROP</div></div>
+    <div class="agent-avatar">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball">
+        <defs><radialGradient id="ballh" cx="38%" cy="32%" r="75%">
+          <stop offset="0%" stop-color="#ffffff"/><stop offset="68%" stop-color="#f1f1ea"/><stop offset="100%" stop-color="#d4d4ca"/>
+        </radialGradient></defs>
+        <circle cx="50" cy="50" r="45" fill="url(#ballh)" stroke="#c4c4ba" stroke-width="1.5"/>
+        <path d="M27,12 C33,30 33,70 27,88" fill="none" stroke="#e23744" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M73,12 C67,30 67,70 73,88" fill="none" stroke="#e23744" stroke-width="2.2" stroke-linecap="round"/>
+        <g stroke="#e23744" stroke-width="1.5" stroke-linecap="round">
+          <line x1="23.6" y1="24" x2="30.4" y2="20"/><line x1="27.1" y1="33" x2="33.9" y2="29"/>
+          <line x1="29.1" y1="42" x2="35.9" y2="38"/><line x1="29.6" y1="52" x2="36.4" y2="48"/>
+          <line x1="29.1" y1="61" x2="35.9" y2="57"/><line x1="27.1" y1="70" x2="33.9" y2="66"/>
+          <line x1="23.6" y1="79" x2="30.4" y2="75"/>
+          <line x1="69.6" y1="20" x2="76.4" y2="24"/><line x1="66.1" y1="29" x2="72.9" y2="33"/>
+          <line x1="64.1" y1="38" x2="70.9" y2="42"/><line x1="63.6" y1="48" x2="70.4" y2="52"/>
+          <line x1="64.1" y1="57" x2="70.9" y2="61"/><line x1="66.1" y1="66" x2="72.9" y2="70"/>
+          <line x1="69.6" y1="75" x2="76.4" y2="79"/>
+        </g>
+      </svg>
+    </div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 9 · ⚾ NEW LOGO</div></div>
   </div>
   <div class="controls">
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>

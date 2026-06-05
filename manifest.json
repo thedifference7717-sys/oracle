@@ -10,9 +10,9 @@
   "theme_color": "#050510",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/OCM%20Katoshi%20Classic%20%236606.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "baseball.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
