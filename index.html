@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 12 · LOCKED TOP 50</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 13 · DAILY RESET</div></div>
   </div>
   <div class="controls">
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
@@ -301,7 +301,7 @@ const SAMPLE=[
 ];
 
 // ── STATE ──
-let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false};
+let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:new Date().toISOString().slice(0,10)};
 const COLS=[
   {k:"rank",label:"#",num:true,sortable:false},
   {k:"name",label:"PLAYER",num:false},
@@ -350,7 +350,7 @@ function render(){
     document.getElementById("st-top").textContent=top?top.name:"--";
     document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
   }
-  document.getElementById("row-count").textContent=players.length+" shown";
+  document.getElementById("row-count").textContent=players.length+" shown · SLATE "+fmtDate(state.slateDate);
 
   document.getElementById("thead-row").innerHTML=COLS.map(c=>{
     const arr=state.sortKey===c.k?` <span class="arr">${state.sortDir<0?"▼":"▲"}</span>`:"";
@@ -442,6 +442,7 @@ async function loadLive(manual){
   try{
     const season=new Date().getFullYear();
     const date=new Date().toISOString().slice(0,10);
+    state.slateDate=date; // current day's slate (rebuilds at midnight)
     const sched=await getJSON(`${API}/schedule?sportId=1&date=${date}&hydrate=probablePitcher,team,venue`);
     const games=sched?.dates?.[0]?.games||[];
     if(!games.length){status(`No MLB games today (${date}). Showing model slate.`,"var(--yellow)");return;}
@@ -490,6 +491,12 @@ render();
 status("Model slate loaded. Connecting to live MLB data…","var(--muted)");
 loadLive(false);
 setInterval(()=>loadLive(false),600000); // refresh every 10 min while open
+// End-of-day rollover: when the local date changes, rebuild the whole board
+// for the new day's slate (homer-hitters cleared, fresh streaks pulled in).
+setInterval(()=>{
+  const today=new Date().toISOString().slice(0,10);
+  if(today!==state.slateDate){state.slateDate=today;loadLive(false);}
+},60000);
 </script>
 </body>
 </html>
