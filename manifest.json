@@ -1,0 +1,19 @@
+{
+  "name": "ShohAI Ohtani — HR Oracle",
+  "short_name": "ShohAI Ohtani",
+  "description": "Real-time MLB home run dashboard: top-100 hitters ranked by HR drought + favorable matchup. Auto-refreshes hourly.",
+  "start_url": "./homerun.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050510",
+  "theme_color": "#050510",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/OCM%20Katoshi%20Classic%20%236606.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
