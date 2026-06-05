@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 11 · AUTO-REMOVE ON HR</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 12 · LOCKED TOP 50</div></div>
   </div>
   <div class="controls">
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
@@ -177,7 +177,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div style="min-width:0">
     <div class="panel">
       <div class="panel-head">
-        <span class="panel-title">⚾ HR WATCHLIST</span>
+        <span class="panel-title">⚾ HR WATCHLIST · TOP 50</span>
         <span class="panel-note" id="row-count">tap a column to sort</span>
       </div>
       <div class="table-wrap"><table><thead><tr id="thead-row"></tr></thead><tbody id="tbody"></tbody></table></div>
@@ -278,7 +278,26 @@ const SAMPLE=[
   {name:"Jake Burger",team:"Rangers",pos:"3B",bat:"R",hr:13,drought:14,lastHR:"2026-05-22",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"George Kirby",spHand:"R",hr9:1.2,era:3.60},
   {name:"Tyler O'Neill",team:"Orioles",pos:"LF",bat:"R",hr:12,drought:18,lastHR:"2026-05-18",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"José Berríos",spHand:"R",hr9:1.4,era:4.10},
   {name:"Isaac Paredes",team:"Astros",pos:"3B",bat:"R",hr:12,drought:15,lastHR:"2026-05-21",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Yusei Kikuchi",spHand:"L",hr9:1.5,era:4.20},
-  {name:"Josh Naylor",team:"Diamondbacks",pos:"1B",bat:"L",hr:12,drought:9,lastHR:"2026-05-27",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Miles Mikolas",spHand:"R",hr9:1.6,era:4.50}
+  {name:"Josh Naylor",team:"Diamondbacks",pos:"1B",bat:"L",hr:12,drought:9,lastHR:"2026-05-27",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Miles Mikolas",spHand:"R",hr9:1.6,era:4.50},
+  {name:"Salvador Perez",team:"Royals",pos:"C",bat:"R",hr:12,drought:17,lastHR:"2026-05-19",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Gavin Williams",spHand:"R",hr9:1.3,era:3.95},
+  {name:"Eugenio Suárez",team:"Diamondbacks",pos:"3B",bat:"R",hr:12,drought:13,lastHR:"2026-05-23",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Erick Fedde",spHand:"R",hr9:1.4,era:4.05},
+  {name:"Kyle Tucker",team:"Cubs",pos:"RF",bat:"L",hr:11,drought:10,lastHR:"2026-05-26",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Paul Skenes",spHand:"R",hr9:0.9,era:2.85},
+  {name:"Corbin Carroll",team:"Diamondbacks",pos:"CF",bat:"L",hr:11,drought:15,lastHR:"2026-05-21",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Andre Pallante",spHand:"R",hr9:1.2,era:3.80},
+  {name:"Manny Machado",team:"Padres",pos:"3B",bat:"R",hr:11,drought:18,lastHR:"2026-05-18",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Logan Webb",spHand:"R",hr9:1.0,era:3.10},
+  {name:"Francisco Lindor",team:"Mets",pos:"SS",bat:"S",hr:11,drought:12,lastHR:"2026-05-24",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Quinn Priester",spHand:"R",hr9:1.3,era:4.00},
+  {name:"George Springer",team:"Blue Jays",pos:"DH",bat:"R",hr:11,drought:16,lastHR:"2026-05-20",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Tomoyuki Sugano",spHand:"R",hr9:1.5,era:4.30},
+  {name:"Jazz Chisholm Jr.",team:"Yankees",pos:"2B",bat:"L",hr:11,drought:14,lastHR:"2026-05-22",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Garrett Crochet",spHand:"L",hr9:1.1,era:3.20},
+  {name:"Oneil Cruz",team:"Pirates",pos:"CF",bat:"L",hr:11,drought:19,lastHR:"2026-05-17",opp:"Cubs",isHome:false,venue:"Wrigley Field",sp:"Shota Imanaga",spHand:"L",hr9:1.4,era:3.70},
+  {name:"Yandy Díaz",team:"Rays",pos:"1B",bat:"R",hr:10,drought:13,lastHR:"2026-05-23",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Tarik Skubal",spHand:"L",hr9:1.0,era:2.95},
+  {name:"Bo Bichette",team:"Blue Jays",pos:"SS",bat:"R",hr:10,drought:20,lastHR:"2026-05-16",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Dean Kremer",spHand:"R",hr9:1.5,era:4.40},
+  {name:"Wyatt Langford",team:"Rangers",pos:"LF",bat:"R",hr:10,drought:16,lastHR:"2026-05-20",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Luis Castillo",spHand:"R",hr9:1.3,era:3.85},
+  {name:"Nolan Arenado",team:"Cardinals",pos:"3B",bat:"R",hr:10,drought:21,lastHR:"2026-05-15",opp:"Diamondbacks",isHome:false,venue:"Chase Field",sp:"Brandon Pfaadt",spHand:"R",hr9:1.6,era:4.55},
+  {name:"Triston Casas",team:"Red Sox",pos:"1B",bat:"L",hr:10,drought:18,lastHR:"2026-05-18",opp:"Yankees",isHome:false,venue:"Yankee Stadium",sp:"Carlos Rodón",spHand:"L",hr9:1.4,era:4.10},
+  {name:"Jordan Westburg",team:"Orioles",pos:"2B",bat:"R",hr:10,drought:14,lastHR:"2026-05-22",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Bowden Francis",spHand:"R",hr9:1.7,era:4.70},
+  {name:"Lawrence Butler",team:"Athletics",pos:"RF",bat:"L",hr:10,drought:17,lastHR:"2026-05-19",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Bailey Ober",spHand:"R",hr9:1.5,era:4.25},
+  {name:"Josh Lowe",team:"Rays",pos:"RF",bat:"L",hr:9,drought:15,lastHR:"2026-05-21",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Casey Mize",spHand:"R",hr9:1.3,era:3.95},
+  {name:"Michael Toglia",team:"Rockies",pos:"1B",bat:"S",hr:9,drought:12,lastHR:"2026-05-24",opp:"Dodgers",isHome:false,venue:"Dodger Stadium",sp:"Tyler Glasnow",spHand:"R",hr9:1.1,era:3.30},
+  {name:"Colton Cowser",team:"Orioles",pos:"CF",bat:"L",hr:9,drought:19,lastHR:"2026-05-17",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Max Scherzer",spHand:"R",hr9:1.4,era:4.00}
 ];
 
 // ── STATE ──
@@ -309,22 +328,25 @@ function sorted(arr){const {sortKey,sortDir}=state;return arr.slice().sort((a,b)
 
 function render(){
   // Anyone whose latest game has a HR (drought 0) is OFF the board — the
-  // next-most-due hitters move up to fill their spots.
+  // next-most-due hitters move up to fill their spots. The board is locked to
+  // the 50 most-due hitters and always backfills to 50.
+  const BOARD_SIZE=50;
   const active=state.players.filter(p=>p.drought>0);
-  let players=active;
+  const board=active.slice().sort((a,b)=>(b.drought-a.drought)||(b.mScore-a.mScore)).slice(0,BOARD_SIZE);
+  let players=board;
   if(state.favOnly)players=players.filter(p=>p.favorable);
   players=sorted(players);
 
-  if(active.length){
-    const dr=active.map(p=>p.drought);
-    document.getElementById("st-players").textContent=active.length;
-    document.getElementById("st-fav").textContent=active.filter(p=>p.favorable).length;
+  if(board.length){
+    const dr=board.map(p=>p.drought);
+    document.getElementById("st-players").textContent=board.length;
+    document.getElementById("st-fav").textContent=board.filter(p=>p.favorable).length;
     const max=Math.max(...dr);
     document.getElementById("st-max").textContent=max;
-    const leader=active.find(p=>p.drought===max);
+    const leader=board.find(p=>p.drought===max);
     document.getElementById("st-max-sub").textContent=leader?leader.name:"games w/o HR";
     document.getElementById("st-avg").textContent=Math.round(dr.reduce((s,v)=>s+v,0)/dr.length);
-    const top=active.slice().sort((a,b)=>b.due-a.due)[0];
+    const top=board.slice().sort((a,b)=>b.due-a.due)[0];
     document.getElementById("st-top").textContent=top?top.name:"--";
     document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
   }
@@ -358,7 +380,7 @@ function render(){
     </tr>`;
   }).join("");
 
-  const topDue=active.slice().sort((a,b)=>b.due-a.due).slice(0,6);
+  const topDue=board.slice().sort((a,b)=>b.due-a.due).slice(0,6);
   document.getElementById("top-due").innerHTML=topDue.map((p,i)=>{
     const c=p.due>=70?"var(--green)":p.due>=50?"var(--yellow)":"var(--muted)";
     return `<div class="due-card"><div class="due-rank">${i+1}</div>
@@ -366,14 +388,14 @@ function render(){
       <div class="due-num"><div class="due-big" style="color:${c}">${p.due}</div><div class="due-cap">DUE</div></div></div>`;
   }).join("");
 
-  const dl=active.slice().sort((a,b)=>b.drought-a.drought).slice(0,10);
+  const dl=board.slice().sort((a,b)=>b.drought-a.drought).slice(0,10);
   const maxD=Math.max(1,...dl.map(p=>p.drought));
   document.getElementById("chart").innerHTML=dl.map(p=>`
     <div class="chart-row"><div class="chart-name">${p.name}</div>
       <div class="chart-bar-bg"><div class="chart-bar" style="width:${Math.round(p.drought/maxD*100)}%"></div></div>
       <div class="chart-val">${p.drought}</div></div>`).join("");
 
-  const best=active.slice().filter(p=>p.favorable).sort((a,b)=>b.mScore-a.mScore).slice(0,6);
+  const best=board.slice().filter(p=>p.favorable).sort((a,b)=>b.mScore-a.mScore).slice(0,6);
   document.getElementById("best-matchups").innerHTML=best.length?best.map((p,i)=>`
     <div class="due-card"><div class="due-rank">${i+1}</div>
       <div class="due-info"><div class="due-name">${p.name}</div><div class="due-meta">${p.matchupText} · HR/9 ${p.pitcher&&p.pitcher.hr9!=null?p.pitcher.hr9.toFixed(2):"—"} · Park ${p.park}</div></div>
