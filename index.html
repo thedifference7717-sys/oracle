@@ -75,7 +75,6 @@ tbody td{padding:11px 12px;white-space:nowrap}
 tbody tr{border-bottom:1px solid var(--border)}
 tbody tr:hover{background:#10102433}
 tbody tr.fav{background:linear-gradient(90deg,#14F1950E,transparent)}
-tbody tr.homered{opacity:.4}
 td.num{text-align:right;font-family:'Orbitron',monospace}
 .pname{font-weight:700;color:var(--text);font-size:14px}
 .pteam{font-size:10px;color:var(--muted)}
@@ -149,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 10 · ⚾ 3D LOGO</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 11 · AUTO-REMOVE ON HR</div></div>
   </div>
   <div class="controls">
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
@@ -309,20 +308,23 @@ function sortVal(p,k){if(k==="lastHR")return p.lastHR?new Date(p.lastHR).getTime
 function sorted(arr){const {sortKey,sortDir}=state;return arr.slice().sort((a,b)=>{let av=sortVal(a,sortKey),bv=sortVal(b,sortKey);if(typeof av==="string"||typeof bv==="string"){av=(""+av).toLowerCase();bv=(""+bv).toLowerCase();return av<bv?-sortDir:av>bv?sortDir:0;}return (av-bv)*sortDir;});}
 
 function render(){
-  let players=state.players;
+  // Anyone whose latest game has a HR (drought 0) is OFF the board — the
+  // next-most-due hitters move up to fill their spots.
+  const active=state.players.filter(p=>p.drought>0);
+  let players=active;
   if(state.favOnly)players=players.filter(p=>p.favorable);
   players=sorted(players);
 
-  if(state.players.length){
-    const dr=state.players.map(p=>p.drought);
-    document.getElementById("st-players").textContent=state.players.length;
-    document.getElementById("st-fav").textContent=state.players.filter(p=>p.favorable).length;
+  if(active.length){
+    const dr=active.map(p=>p.drought);
+    document.getElementById("st-players").textContent=active.length;
+    document.getElementById("st-fav").textContent=active.filter(p=>p.favorable).length;
     const max=Math.max(...dr);
     document.getElementById("st-max").textContent=max;
-    const leader=state.players.find(p=>p.drought===max);
+    const leader=active.find(p=>p.drought===max);
     document.getElementById("st-max-sub").textContent=leader?leader.name:"games w/o HR";
     document.getElementById("st-avg").textContent=Math.round(dr.reduce((s,v)=>s+v,0)/dr.length);
-    const top=state.players.slice().sort((a,b)=>b.due-a.due)[0];
+    const top=active.slice().sort((a,b)=>b.due-a.due)[0];
     document.getElementById("st-top").textContent=top?top.name:"--";
     document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
   }
@@ -340,10 +342,9 @@ function render(){
     const hr9Color=p.hr9!=null?(p.hr9>=1.4?"var(--green)":p.hr9<=1.0?"var(--red)":"var(--yellow)"):"var(--dim)";
     const parkColor=p.park>=104?"var(--green)":p.park<=96?"var(--red)":"var(--yellow)";
     const mColor=p.mScore>=55?"var(--green)":"var(--yellow)";
-    const justHomered=p.drought===0;
-    return `<tr class="${p.favorable?"fav":""} ${justHomered?"homered":""} fade-in">
+    return `<tr class="${p.favorable?"fav":""} fade-in">
       <td class="num" style="color:var(--dim)">${i+1}</td>
-      <td><div class="pname">${p.name}${justHomered?' <span class="chip" style="background:#FF4D6D20;color:var(--red)">JUST HOMERED</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
+      <td><div class="pname">${p.name}</div><div class="pteam">${p.teamName||""}</div></td>
       <td style="color:var(--muted)">${p.pos||"--"}</td>
       <td style="color:var(--muted)">${p.bat||"?"}</td>
       <td class="num">${p.hr}</td>
@@ -357,7 +358,7 @@ function render(){
     </tr>`;
   }).join("");
 
-  const topDue=state.players.slice().sort((a,b)=>b.due-a.due).slice(0,6);
+  const topDue=active.slice().sort((a,b)=>b.due-a.due).slice(0,6);
   document.getElementById("top-due").innerHTML=topDue.map((p,i)=>{
     const c=p.due>=70?"var(--green)":p.due>=50?"var(--yellow)":"var(--muted)";
     return `<div class="due-card"><div class="due-rank">${i+1}</div>
@@ -365,14 +366,14 @@ function render(){
       <div class="due-num"><div class="due-big" style="color:${c}">${p.due}</div><div class="due-cap">DUE</div></div></div>`;
   }).join("");
 
-  const dl=state.players.slice().sort((a,b)=>b.drought-a.drought).slice(0,10);
+  const dl=active.slice().sort((a,b)=>b.drought-a.drought).slice(0,10);
   const maxD=Math.max(1,...dl.map(p=>p.drought));
   document.getElementById("chart").innerHTML=dl.map(p=>`
     <div class="chart-row"><div class="chart-name">${p.name}</div>
       <div class="chart-bar-bg"><div class="chart-bar" style="width:${Math.round(p.drought/maxD*100)}%"></div></div>
       <div class="chart-val">${p.drought}</div></div>`).join("");
 
-  const best=state.players.slice().filter(p=>p.favorable).sort((a,b)=>b.mScore-a.mScore).slice(0,6);
+  const best=active.slice().filter(p=>p.favorable).sort((a,b)=>b.mScore-a.mScore).slice(0,6);
   document.getElementById("best-matchups").innerHTML=best.length?best.map((p,i)=>`
     <div class="due-card"><div class="due-rank">${i+1}</div>
       <div class="due-info"><div class="due-name">${p.name}</div><div class="due-meta">${p.matchupText} · HR/9 ${p.pitcher&&p.pitcher.hr9!=null?p.pitcher.hr9.toFixed(2):"—"} · Park ${p.park}</div></div>
@@ -453,7 +454,8 @@ async function loadLive(manual){
     if(live.length){
       state.players=live;state.live=true;render();
       const homered=live.filter(p=>p.drought===0).length;
-      status(`✓ LIVE · ${live.length} hitters · ${games.length} games · ${homered} just homered (dropped) · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+      const shown=live.filter(p=>p.drought>0).length;
+      status(`✓ LIVE · ${shown} due hitters · ${games.length} games · ${homered} removed after homering · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
     }
   }catch(e){
     status(`⚠ Live feed blocked on this device — showing model slate (NOT live). [${e.message}]`,"var(--yellow)");
