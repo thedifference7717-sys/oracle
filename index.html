@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 13 · DAILY RESET</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 14 · 7+ STREAK · 6AM ET</div></div>
   </div>
   <div class="controls">
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
@@ -194,6 +194,16 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <script>
 const API="https://statsapi.mlb.com/api/v1";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+// Only hitters on a homerless streak of at least this many games make the board.
+const MIN_DROUGHT=7;
+// The "baseball day" rolls over at 6:00 AM Eastern, not local midnight.
+function slateDate(){
+  const et=new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
+  et.setHours(et.getHours()-6);
+  const y=et.getFullYear(),m=String(et.getMonth()+1).padStart(2,"0"),d=String(et.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
 
 // ── BALLPARK HR FACTORS (100 = neutral; >100 favors HR) ──
 const PARK={
@@ -301,7 +311,7 @@ const SAMPLE=[
 ];
 
 // ── STATE ──
-let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:new Date().toISOString().slice(0,10)};
+let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:slateDate()};
 const COLS=[
   {k:"rank",label:"#",num:true,sortable:false},
   {k:"name",label:"PLAYER",num:false},
@@ -331,7 +341,7 @@ function render(){
   // next-most-due hitters move up to fill their spots. The board is locked to
   // the 50 most-due hitters and always backfills to 50.
   const BOARD_SIZE=50;
-  const active=state.players.filter(p=>p.drought>0);
+  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT);
   const board=active.slice().sort((a,b)=>(b.drought-a.drought)||(b.mScore-a.mScore)).slice(0,BOARD_SIZE);
   let players=board;
   if(state.favOnly)players=players.filter(p=>p.favorable);
@@ -402,6 +412,7 @@ function render(){
       <div class="due-num"><div class="due-big" style="color:var(--green)">${p.mScore}</div><div class="due-cap">MATCH</div></div></div>`).join(""):`<div style="padding:20px;text-align:center;color:var(--dim);font-size:10px">No favorable matchups.</div>`;
 
   document.getElementById("legend").innerHTML=`
+    <b>Board</b> — top 50 hitters on a <b>7+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
     <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP HR/9 (60%) + ballpark HR factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup. &nbsp; ⚠ Informational only · not betting advice.`;
@@ -440,9 +451,9 @@ async function loadLive(manual){
   const btn=document.getElementById("refresh-btn");btn.disabled=true;
   status('<span class="spin">⟳</span> Checking for live MLB games…');
   try{
-    const season=new Date().getFullYear();
-    const date=new Date().toISOString().slice(0,10);
-    state.slateDate=date; // current day's slate (rebuilds at midnight)
+    const date=slateDate();          // current baseball day (6 AM ET rollover)
+    const season=+date.slice(0,4);
+    state.slateDate=date;
     const sched=await getJSON(`${API}/schedule?sportId=1&date=${date}&hydrate=probablePitcher,team,venue`);
     const games=sched?.dates?.[0]?.games||[];
     if(!games.length){status(`No MLB games today (${date}). Showing model slate.`,"var(--yellow)");return;}
@@ -477,8 +488,8 @@ async function loadLive(manual){
     if(live.length){
       state.players=live;state.live=true;render();
       const homered=live.filter(p=>p.drought===0).length;
-      const shown=live.filter(p=>p.drought>0).length;
-      status(`✓ LIVE · ${shown} due hitters · ${games.length} games · ${homered} removed after homering · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+      const shown=live.filter(p=>p.drought>=MIN_DROUGHT).length;
+      status(`✓ LIVE · ${shown} hitters on 7+ streak · ${games.length} games · ${homered} removed after homering · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
     }
   }catch(e){
     status(`⚠ Live feed blocked on this device — showing model slate (NOT live). [${e.message}]`,"var(--yellow)");
@@ -491,10 +502,10 @@ render();
 status("Model slate loaded. Connecting to live MLB data…","var(--muted)");
 loadLive(false);
 setInterval(()=>loadLive(false),600000); // refresh every 10 min while open
-// End-of-day rollover: when the local date changes, rebuild the whole board
-// for the new day's slate (homer-hitters cleared, fresh streaks pulled in).
+// End-of-day rollover at 6 AM ET: when the baseball day changes, rebuild the
+// whole board for the new slate (homer-hitters cleared, fresh streaks pulled in).
 setInterval(()=>{
-  const today=new Date().toISOString().slice(0,10);
+  const today=slateDate();
   if(today!==state.slateDate){state.slateDate=today;loadLive(false);}
 },60000);
 </script>
