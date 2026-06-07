@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 14 · 7+ STREAK · 6AM ET</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 15 · BET LAYER</div></div>
   </div>
   <div class="controls">
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
@@ -171,6 +171,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="kpi"><div class="kpi-val" id="st-max" style="color:var(--orange)">--</div><div class="kpi-lbl">MAX DROUGHT</div><div class="kpi-sub" id="st-max-sub">games w/o HR</div></div>
   <div class="kpi"><div class="kpi-val" id="st-avg" style="color:var(--yellow)">--</div><div class="kpi-lbl">AVG DROUGHT</div><div class="kpi-sub">games</div></div>
   <div class="kpi"><div class="kpi-val" id="st-top" style="color:var(--purple);font-size:15px">--</div><div class="kpi-lbl">TOP DUE</div><div class="kpi-sub" id="st-top-sub">highest score</div></div>
+  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 9g · +$0.25/game</div></div>
 </section>
 
 <div class="grid">
@@ -233,6 +234,9 @@ function matchupScore(hr9,park,plt){
   return clamp(Math.round(s),0,100);
 }
 function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
+// Escalating wager: $1.00 once a hitter reaches a 9-game homerless drought,
+// then +$0.25 for every additional game without a home run.
+function betSize(drought){return drought>=9 ? 1+0.25*(drought-9) : 0;}
 
 // Turn a raw {name,team,pos,bat,hr,drought,lastHR,opp,isHome,venue,sp,spHand,hr9,era}
 // record into the enriched object the UI renders.
@@ -247,7 +251,8 @@ function build(r){
     matchupText:(r.isHome?"vs ":"@ ")+r.opp,
     hr9:r.hr9!=null?r.hr9:null,
     pitcher:r.sp?{name:r.sp,hand:r.spHand,hr9:r.hr9,era:r.era}:null,
-    platoon:plt,mScore,due:dueScore(r.drought,mScore),favorable:mScore>=55
+    platoon:plt,mScore,due:dueScore(r.drought,mScore),favorable:mScore>=55,
+    bet:betSize(r.drought)
   };
 }
 
@@ -324,7 +329,8 @@ const COLS=[
   {k:"hr9",label:"SP HR/9",num:true},
   {k:"park",label:"PARK",num:true},
   {k:"mScore",label:"MATCH",num:true},
-  {k:"due",label:"DUE",num:true}
+  {k:"due",label:"DUE",num:true},
+  {k:"bet",label:"BET $",num:true}
 ];
 
 function status(msg,color="var(--blue)"){const el=document.getElementById("status-line");el.style.color=color;el.innerHTML=msg;}
@@ -341,7 +347,8 @@ function render(){
   // next-most-due hitters move up to fill their spots. The board is locked to
   // the 50 most-due hitters and always backfills to 50.
   const BOARD_SIZE=50;
-  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT);
+  // Only hitters on a 7+ game streak who actually have a game on the slate.
+  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT && p.venue && p.opp && p.opp.name);
   const board=active.slice().sort((a,b)=>(b.drought-a.drought)||(b.mScore-a.mScore)).slice(0,BOARD_SIZE);
   let players=board;
   if(state.favOnly)players=players.filter(p=>p.favorable);
@@ -356,6 +363,10 @@ function render(){
     const leader=board.find(p=>p.drought===max);
     document.getElementById("st-max-sub").textContent=leader?leader.name:"games w/o HR";
     document.getElementById("st-avg").textContent=Math.round(dr.reduce((s,v)=>s+v,0)/dr.length);
+    const totalBet=board.reduce((s,p)=>s+(p.bet||0),0);
+    document.getElementById("st-bet").textContent="$"+totalBet.toFixed(2);
+    const betCount=board.filter(p=>p.bet>0).length;
+    document.getElementById("st-bet-sub").textContent=betCount+" active bets · +$0.25/game";
     const top=board.slice().sort((a,b)=>b.due-a.due)[0];
     document.getElementById("st-top").textContent=top?top.name:"--";
     document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
@@ -387,6 +398,7 @@ function render(){
       <td class="num" style="color:${parkColor}">${p.park}</td>
       <td class="num bar-cell"><span style="color:${mColor};font-size:15px">${p.mScore}</span>${p.favorable?' <span class="chip" style="background:#14F19520;color:var(--green)">FAV</span>':''}</td>
       <td class="num"><span style="color:${dueColor};font-size:17px;font-weight:700">${p.due}</span></td>
+      <td class="num">${p.bet>0?`<span style="color:var(--green);font-size:15px;font-weight:700">$${p.bet.toFixed(2)}</span>`:'<span style="color:var(--dim)">—</span>'}</td>
     </tr>`;
   }).join("");
 
@@ -415,7 +427,8 @@ function render(){
     <b>Board</b> — top 50 hitters on a <b>7+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
     <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP HR/9 (60%) + ballpark HR factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
-    <b>DUE</b> — 55% drought + 45% matchup. &nbsp; ⚠ Informational only · not betting advice.`;
+    <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
+    <b>BET $</b> — $1.00 at a 9-game drought, +$0.25 each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
 }
 
 // ── LIVE UPGRADE (best-effort; falls back silently to the built-in slate) ──
