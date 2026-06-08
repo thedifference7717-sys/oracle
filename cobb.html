@@ -19,10 +19,10 @@
 :root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#9CA3AF;--dim:#6B7280;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
-body{padding-bottom:40px}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 20px 14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .logo-wrap{display:flex;align-items:center;gap:11px}
 .agent-avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #A78BFA40;border:2px solid #A78BFA40;overflow:hidden;background:#070714}
 .agent-avatar svg{width:100%;height:100%}
@@ -57,7 +57,7 @@ body{padding-bottom:40px}
   thead th:nth-child(9),tbody td:nth-child(9),
   thead th:nth-child(10),tbody td:nth-child(10){display:none}
   .kpis{grid-template-columns:1fr 1fr}
-  #topbar{padding:12px 14px}
+  #topbar{padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 12px}
   .grid{padding:12px 14px}
 }
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
@@ -121,7 +121,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 2 · BIGGER TYPE</div></div>
+    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 3 · NOTCH FIX</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
