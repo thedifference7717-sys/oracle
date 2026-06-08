@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 15 · BET LAYER</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 16 · BET +10%/GAME</div></div>
   </div>
   <div class="controls">
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
@@ -171,7 +171,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="kpi"><div class="kpi-val" id="st-max" style="color:var(--orange)">--</div><div class="kpi-lbl">MAX DROUGHT</div><div class="kpi-sub" id="st-max-sub">games w/o HR</div></div>
   <div class="kpi"><div class="kpi-val" id="st-avg" style="color:var(--yellow)">--</div><div class="kpi-lbl">AVG DROUGHT</div><div class="kpi-sub">games</div></div>
   <div class="kpi"><div class="kpi-val" id="st-top" style="color:var(--purple);font-size:15px">--</div><div class="kpi-lbl">TOP DUE</div><div class="kpi-sub" id="st-top-sub">highest score</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 9g · +$0.25/game</div></div>
+  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 9g · +10%/game</div></div>
 </section>
 
 <div class="grid">
@@ -235,8 +235,8 @@ function matchupScore(hr9,park,plt){
 }
 function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
 // Escalating wager: $1.00 once a hitter reaches a 9-game homerless drought,
-// then +$0.25 for every additional game without a home run.
-function betSize(drought){return drought>=9 ? 1+0.25*(drought-9) : 0;}
+// then +10% (compounding) for every additional game without a home run.
+function betSize(drought){return drought>=9 ? Math.pow(1.1,drought-9) : 0;}
 
 // Turn a raw {name,team,pos,bat,hr,drought,lastHR,opp,isHome,venue,sp,spHand,hr9,era}
 // record into the enriched object the UI renders.
@@ -366,7 +366,7 @@ function render(){
     const totalBet=board.reduce((s,p)=>s+(p.bet||0),0);
     document.getElementById("st-bet").textContent="$"+totalBet.toFixed(2);
     const betCount=board.filter(p=>p.bet>0).length;
-    document.getElementById("st-bet-sub").textContent=betCount+" active bets · +$0.25/game";
+    document.getElementById("st-bet-sub").textContent=betCount+" active bets · +10%/game";
     const top=board.slice().sort((a,b)=>b.due-a.due)[0];
     document.getElementById("st-top").textContent=top?top.name:"--";
     document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
@@ -428,7 +428,7 @@ function render(){
     <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP HR/9 (60%) + ballpark HR factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
-    <b>BET $</b> — $1.00 at a 9-game drought, +$0.25 each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
+    <b>BET $</b> — $1.00 at a 9-game drought, +10% (compounding) each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
 }
 
 // ── LIVE UPGRADE (best-effort; falls back silently to the built-in slate) ──
