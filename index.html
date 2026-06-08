@@ -17,7 +17,7 @@
 <link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#9CA3AF;--dim:#6B7280;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
+:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
 body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
@@ -28,7 +28,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .agent-avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #A78BFA40;border:2px solid #A78BFA40;overflow:hidden;background:#070714}
 .agent-avatar svg{width:100%;height:100%}
 .logo{font-family:'Orbitron',monospace;font-size:23px;font-weight:900;letter-spacing:.05em;color:#EDEAFF;text-shadow:0 0 14px #A78BFA66}
-.logo-sub{font-size:11px;color:var(--dim);letter-spacing:.14em;margin-top:3px}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.14em;margin-top:3px}
 .controls{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-left:auto}
 .ctrl-group{display:flex;flex-direction:column;gap:3px}
 .ctrl-lbl{font-size:10px;color:var(--muted);letter-spacing:.1em}
@@ -45,8 +45,8 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:16px 20px 4px}
 .kpi{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border:1px solid var(--border);border-radius:12px;padding:15px 17px}
 .kpi-val{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;line-height:1}
-.kpi-lbl{font-size:11px;color:var(--muted);letter-spacing:.1em;margin-top:7px}
-.kpi-sub{font-size:12px;color:var(--dim);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-lbl{font-size:12px;color:#D2D7E1;letter-spacing:.1em;margin-top:7px;font-weight:700}
+.kpi-sub{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;padding:14px 20px}
 @media(max-width:1080px){.grid{grid-template-columns:1fr}}
 /* On phones: drop POS, B, SP HR/9, PARK so the key columns fit cleanly */
@@ -64,7 +64,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
 .panel-head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--border)}
 .panel-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--purple)}
-.panel-note{font-size:11px;color:var(--dim);letter-spacing:.05em}
+.panel-note{font-size:11px;color:var(--muted);letter-spacing:.05em}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
 thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:11px;letter-spacing:.07em;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
@@ -97,7 +97,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 .chart-bar-bg{flex:1;height:11px;background:var(--bg3);border-radius:5px;overflow:hidden}
 .chart-bar{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--orange),var(--red))}
 .chart-val{font-size:11px;font-family:'Orbitron',monospace;width:26px;text-align:right;color:var(--orange)}
-.legend{font-size:12px;color:var(--dim);line-height:1.9;padding:14px 20px 0}
+.legend{font-size:12px;color:var(--muted);line-height:1.9;padding:14px 20px 0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{display:inline-block;animation:spin .9s linear infinite}
 .fade-in{animation:fadeUp .35s ease both}
@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 20 · NOTCH FIX</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 21 · HIGH CONTRAST</div></div>
   </div>
   <div class="controls">
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
@@ -198,7 +198,7 @@ const API="https://statsapi.mlb.com/api/v1";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 // Only hitters on a homerless streak of at least this many games make the board.
-const MIN_DROUGHT=7;
+const MIN_DROUGHT=5;
 // The "baseball day" rolls over at 6:00 AM Eastern, not local midnight.
 function slateDate(){
   const et=new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
@@ -425,7 +425,7 @@ function render(){
       <div class="due-num"><div class="due-big" style="color:var(--green)">${p.mScore}</div><div class="due-cap">MATCH</div></div></div>`).join(""):`<div style="padding:20px;text-align:center;color:var(--dim);font-size:10px">No favorable matchups.</div>`;
 
   document.getElementById("legend").innerHTML=`
-    <b>Board</b> — top 50 hitters on a <b>7+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
+    <b>Board</b> — top 50 hitters on a <b>5+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
     <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP HR/9 (60%) + ballpark HR factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
@@ -503,7 +503,7 @@ async function loadLive(manual){
       state.players=live;state.live=true;render();
       const homered=live.filter(p=>p.drought===0).length;
       const shown=live.filter(p=>p.drought>=MIN_DROUGHT).length;
-      status(`✓ LIVE · ${shown} hitters on 7+ streak · ${games.length} games · ${homered} removed after homering · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+      status(`✓ LIVE · ${shown} hitters on 5+ streak · ${games.length} games · ${homered} removed after homering · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
     }
   }catch(e){
     status(`⚠ Live feed blocked on this device — showing model slate (NOT live). [${e.message}]`,"var(--yellow)");
