@@ -7,12 +7,11 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>ShohAI Ohtani · HR Dashboard</title>
-<link rel="manifest" href="manifest.json">
+<title>ShohAI Ohtani · Doubles Dashboard</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ShohAI Ohtani">
+<meta name="apple-mobile-web-app-title" content="ShohAI 2B">
 <link rel="apple-touch-icon" href="baseball.svg">
 <link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
@@ -148,10 +147,10 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 17 · +2B BOARD</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">2B ORACLE · DOUBLES BUILD 1</div></div>
   </div>
   <div class="controls">
-    <a href="doubles.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">2B →</a>
+    <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ HR</a>
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
       <select class="ctrl-select" id="sort-select" onchange="onSortSelect()">
         <option value="drought">Longest Drought</option>
@@ -179,7 +178,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div style="min-width:0">
     <div class="panel">
       <div class="panel-head">
-        <span class="panel-title">⚾ HR WATCHLIST · TOP 50</span>
+        <span class="panel-title">⚾ 2B WATCHLIST · TOP 50</span>
         <span class="panel-note" id="row-count">tap a column to sort</span>
       </div>
       <div class="table-wrap"><table><thead><tr id="thead-row"></tr></thead><tbody id="tbody"></tbody></table></div>
@@ -209,13 +208,13 @@ function slateDate(){
 
 // ── BALLPARK HR FACTORS (100 = neutral; >100 favors HR) ──
 const PARK={
-  "Coors Field":112,"Great American Ball Park":113,"Yankee Stadium":110,"Citizens Bank Park":108,
-  "Globe Life Field":104,"Oriole Park at Camden Yards":101,"Fenway Park":99,"Dodger Stadium":103,
-  "Wrigley Field":101,"Truist Park":102,"Chase Field":103,"Daikin Park":101,"Minute Maid Park":101,
-  "Rogers Centre":103,"American Family Field":105,"Nationals Park":101,"Citi Field":96,"Petco Park":96,
-  "Oracle Park":90,"T-Mobile Park":93,"loanDepot park":95,"Comerica Park":94,"Kauffman Stadium":95,
-  "Angel Stadium":102,"Busch Stadium":96,"PNC Park":94,"Target Field":99,"Progressive Field":98,
-  "Rate Field":103,"Sutter Health Park":100,"George M. Steinbrenner Field":102
+  "Fenway Park":118,"Coors Field":112,"Oracle Park":108,"Kauffman Stadium":106,"Chase Field":105,
+  "Wrigley Field":104,"Comerica Park":104,"loanDepot park":104,"PNC Park":103,"T-Mobile Park":103,
+  "Globe Life Field":102,"Target Field":102,"Sutter Health Park":102,"Great American Ball Park":101,
+  "Rogers Centre":101,"Truist Park":101,"Oriole Park at Camden Yards":101,"Petco Park":100,"Citi Field":100,
+  "Busch Stadium":100,"Nationals Park":100,"Progressive Field":100,"George M. Steinbrenner Field":100,
+  "Dodger Stadium":99,"Minute Maid Park":99,"Daikin Park":99,"American Family Field":99,"Citizens Bank Park":99,
+  "Rate Field":99,"Angel Stadium":99,"Yankee Stadium":98
 };
 function parkFactor(name){
   if(!name)return 100;
@@ -228,7 +227,7 @@ function parkFactor(name){
 function platoon(bat,pitch){if(!bat||!pitch)return null;if(bat==="S")return "adv";return bat!==pitch?"adv":"dis";}
 function droughtScore(d){return clamp(Math.round(d*5),0,100);}
 function matchupScore(hr9,park,plt){
-  const pComp=hr9==null?50:clamp((hr9-0.8)/(2.4-0.8)*100,0,100);
+  const pComp=hr9==null?50:clamp((hr9-6.5)/(10.5-6.5)*100,0,100);
   const parkComp=clamp((park-88)/(114-88)*100,0,100);
   let s=pComp*0.6+parkComp*0.4;
   if(plt==="adv")s+=6;else if(plt==="dis")s-=6;
@@ -238,6 +237,8 @@ function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
 // Escalating wager: $1.00 once a hitter reaches a 9-game homerless drought,
 // then +10% (compounding) for every additional game without a home run.
 function betSize(drought){return drought>=9 ? Math.pow(1.1,drought-9) : 0;}
+function ipToNum(ip){if(ip==null)return 0;const p=(""+ip).split(".");return (+p[0]||0)+((p[1]?+p[1]:0)/3);}
+function pH9(s){const ip=ipToNum(s.inningsPitched);return ip>0?+(((+s.hits||0)/ip*9).toFixed(2)):null;}
 
 // Turn a raw {name,team,pos,bat,hr,drought,lastHR,opp,isHome,venue,sp,spHand,hr9,era}
 // record into the enriched object the UI renders.
@@ -259,61 +260,61 @@ function build(r){
 
 // ── BUILT-IN SLATE (renders instantly, no network needed) ──
 const SAMPLE=[
-  {name:"Aaron Judge",team:"Yankees",pos:"RF",bat:"R",hr:34,drought:9,lastHR:"2026-05-27",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Sean Newcomb",spHand:"L",hr9:1.7,era:4.65},
-  {name:"Shohei Ohtani",team:"Dodgers",pos:"DH",bat:"L",hr:31,drought:7,lastHR:"2026-05-29",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Austin Gomber",spHand:"L",hr9:1.9,era:5.10},
-  {name:"Kyle Schwarber",team:"Phillies",pos:"DH",bat:"L",hr:29,drought:12,lastHR:"2026-05-24",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Nick Martinez",spHand:"R",hr9:1.6,era:4.20},
-  {name:"Pete Alonso",team:"Mets",pos:"1B",bat:"R",hr:27,drought:14,lastHR:"2026-05-22",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Jose Quintana",spHand:"L",hr9:1.4,era:3.95},
-  {name:"Cal Raleigh",team:"Mariners",pos:"C",bat:"S",hr:26,drought:18,lastHR:"2026-05-18",opp:"Rangers",isHome:false,venue:"Globe Life Field",sp:"Patrick Corbin",spHand:"L",hr9:1.8,era:4.80},
-  {name:"Marcell Ozuna",team:"Braves",pos:"DH",bat:"R",hr:25,drought:16,lastHR:"2026-05-20",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Mitchell Parker",spHand:"L",hr9:1.5,era:4.10},
-  {name:"Juan Soto",team:"Mets",pos:"RF",bat:"L",hr:24,drought:6,lastHR:"2026-05-30",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Freddy Peralta",spHand:"R",hr9:1.2,era:3.40},
-  {name:"Yordan Alvarez",team:"Astros",pos:"DH",bat:"L",hr:24,drought:20,lastHR:"2026-05-16",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Tyler Anderson",spHand:"L",hr9:1.3,era:4.00},
-  {name:"Vladimir Guerrero Jr.",team:"Blue Jays",pos:"1B",bat:"R",hr:22,drought:11,lastHR:"2026-05-25",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Charlie Morton",spHand:"R",hr9:1.5,era:4.45},
-  {name:"Mookie Betts",team:"Dodgers",pos:"SS",bat:"R",hr:21,drought:13,lastHR:"2026-05-23",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Kyle Freeland",spHand:"L",hr9:1.7,era:4.90},
-  {name:"Bryce Harper",team:"Phillies",pos:"1B",bat:"L",hr:21,drought:8,lastHR:"2026-05-28",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Hunter Greene",spHand:"R",hr9:1.3,era:3.65},
-  {name:"Rafael Devers",team:"Giants",pos:"DH",bat:"L",hr:20,drought:15,lastHR:"2026-05-21",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Dylan Cease",spHand:"R",hr9:1.4,era:3.85},
-  {name:"José Ramírez",team:"Guardians",pos:"3B",bat:"S",hr:20,drought:10,lastHR:"2026-05-26",opp:"Royals",isHome:false,venue:"Kauffman Stadium",sp:"Seth Lugo",spHand:"R",hr9:1.0,era:3.30},
-  {name:"Gunnar Henderson",team:"Orioles",pos:"SS",bat:"L",hr:19,drought:17,lastHR:"2026-05-19",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Kevin Gausman",spHand:"R",hr9:1.5,era:4.15},
-  {name:"Corey Seager",team:"Rangers",pos:"SS",bat:"L",hr:19,drought:22,lastHR:"2026-05-13",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Logan Gilbert",spHand:"R",hr9:1.1,era:3.50},
-  {name:"Fernando Tatis Jr.",team:"Padres",pos:"RF",bat:"R",hr:18,drought:9,lastHR:"2026-05-27",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Robbie Ray",spHand:"L",hr9:1.4,era:3.95},
-  {name:"Adolis García",team:"Rangers",pos:"RF",bat:"R",hr:18,drought:19,lastHR:"2026-05-17",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Bryan Woo",spHand:"R",hr9:1.2,era:3.60},
-  {name:"Bobby Witt Jr.",team:"Royals",pos:"SS",bat:"R",hr:17,drought:12,lastHR:"2026-05-24",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Tanner Bibee",spHand:"R",hr9:1.3,era:3.80},
-  {name:"Elly De La Cruz",team:"Reds",pos:"SS",bat:"S",hr:17,drought:7,lastHR:"2026-05-29",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Cristopher Sánchez",spHand:"L",hr9:1.1,era:3.45},
-  {name:"Teoscar Hernández",team:"Dodgers",pos:"RF",bat:"R",hr:17,drought:16,lastHR:"2026-05-20",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Germán Márquez",spHand:"R",hr9:1.6,era:4.55},
-  {name:"Austin Riley",team:"Braves",pos:"3B",bat:"R",hr:16,drought:14,lastHR:"2026-05-22",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"MacKenzie Gore",spHand:"L",hr9:1.2,era:3.70},
-  {name:"Matt Olson",team:"Braves",pos:"1B",bat:"L",hr:16,drought:21,lastHR:"2026-05-15",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Jake Irvin",spHand:"R",hr9:1.5,era:4.25},
-  {name:"Christian Walker",team:"Astros",pos:"1B",bat:"R",hr:16,drought:18,lastHR:"2026-05-18",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"José Soriano",spHand:"R",hr9:1.0,era:3.55},
-  {name:"William Contreras",team:"Brewers",pos:"C",bat:"R",hr:15,drought:10,lastHR:"2026-05-26",opp:"Mets",isHome:true,venue:"American Family Field",sp:"Kodai Senga",spHand:"R",hr9:1.1,era:3.25},
-  {name:"Anthony Santander",team:"Blue Jays",pos:"DH",bat:"S",hr:15,drought:15,lastHR:"2026-05-21",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Zach Eflin",spHand:"R",hr9:1.4,era:4.05},
-  {name:"Riley Greene",team:"Tigers",pos:"LF",bat:"L",hr:15,drought:13,lastHR:"2026-05-23",opp:"White Sox",isHome:false,venue:"Rate Field",sp:"Davis Martin",spHand:"R",hr9:1.6,era:4.70},
-  {name:"Ketel Marte",team:"Diamondbacks",pos:"2B",bat:"S",hr:14,drought:8,lastHR:"2026-05-28",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Sonny Gray",spHand:"R",hr9:1.3,era:3.90},
-  {name:"Willy Adames",team:"Giants",pos:"SS",bat:"R",hr:14,drought:17,lastHR:"2026-05-19",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Michael King",spHand:"R",hr9:1.0,era:3.20},
-  {name:"Jackson Chourio",team:"Brewers",pos:"RF",bat:"R",hr:14,drought:11,lastHR:"2026-05-25",opp:"Mets",isHome:true,venue:"American Family Field",sp:"David Peterson",spHand:"L",hr9:1.2,era:3.75},
-  {name:"Seiya Suzuki",team:"Cubs",pos:"DH",bat:"R",hr:14,drought:19,lastHR:"2026-05-17",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Mitch Keller",spHand:"R",hr9:1.4,era:4.30},
-  {name:"Spencer Steer",team:"Reds",pos:"1B",bat:"R",hr:13,drought:16,lastHR:"2026-05-20",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Aaron Nola",spHand:"R",hr9:1.5,era:4.40},
-  {name:"Brent Rooker",team:"Athletics",pos:"DH",bat:"R",hr:13,drought:20,lastHR:"2026-05-16",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Pablo López",spHand:"R",hr9:1.3,era:3.85},
-  {name:"Jake Burger",team:"Rangers",pos:"3B",bat:"R",hr:13,drought:14,lastHR:"2026-05-22",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"George Kirby",spHand:"R",hr9:1.2,era:3.60},
-  {name:"Tyler O'Neill",team:"Orioles",pos:"LF",bat:"R",hr:12,drought:18,lastHR:"2026-05-18",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"José Berríos",spHand:"R",hr9:1.4,era:4.10},
-  {name:"Isaac Paredes",team:"Astros",pos:"3B",bat:"R",hr:12,drought:15,lastHR:"2026-05-21",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Yusei Kikuchi",spHand:"L",hr9:1.5,era:4.20},
-  {name:"Josh Naylor",team:"Diamondbacks",pos:"1B",bat:"L",hr:12,drought:9,lastHR:"2026-05-27",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Miles Mikolas",spHand:"R",hr9:1.6,era:4.50},
-  {name:"Salvador Perez",team:"Royals",pos:"C",bat:"R",hr:12,drought:17,lastHR:"2026-05-19",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Gavin Williams",spHand:"R",hr9:1.3,era:3.95},
-  {name:"Eugenio Suárez",team:"Diamondbacks",pos:"3B",bat:"R",hr:12,drought:13,lastHR:"2026-05-23",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Erick Fedde",spHand:"R",hr9:1.4,era:4.05},
-  {name:"Kyle Tucker",team:"Cubs",pos:"RF",bat:"L",hr:11,drought:10,lastHR:"2026-05-26",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Paul Skenes",spHand:"R",hr9:0.9,era:2.85},
-  {name:"Corbin Carroll",team:"Diamondbacks",pos:"CF",bat:"L",hr:11,drought:15,lastHR:"2026-05-21",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Andre Pallante",spHand:"R",hr9:1.2,era:3.80},
-  {name:"Manny Machado",team:"Padres",pos:"3B",bat:"R",hr:11,drought:18,lastHR:"2026-05-18",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Logan Webb",spHand:"R",hr9:1.0,era:3.10},
-  {name:"Francisco Lindor",team:"Mets",pos:"SS",bat:"S",hr:11,drought:12,lastHR:"2026-05-24",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Quinn Priester",spHand:"R",hr9:1.3,era:4.00},
-  {name:"George Springer",team:"Blue Jays",pos:"DH",bat:"R",hr:11,drought:16,lastHR:"2026-05-20",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Tomoyuki Sugano",spHand:"R",hr9:1.5,era:4.30},
-  {name:"Jazz Chisholm Jr.",team:"Yankees",pos:"2B",bat:"L",hr:11,drought:14,lastHR:"2026-05-22",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Garrett Crochet",spHand:"L",hr9:1.1,era:3.20},
-  {name:"Oneil Cruz",team:"Pirates",pos:"CF",bat:"L",hr:11,drought:19,lastHR:"2026-05-17",opp:"Cubs",isHome:false,venue:"Wrigley Field",sp:"Shota Imanaga",spHand:"L",hr9:1.4,era:3.70},
-  {name:"Yandy Díaz",team:"Rays",pos:"1B",bat:"R",hr:10,drought:13,lastHR:"2026-05-23",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Tarik Skubal",spHand:"L",hr9:1.0,era:2.95},
-  {name:"Bo Bichette",team:"Blue Jays",pos:"SS",bat:"R",hr:10,drought:20,lastHR:"2026-05-16",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Dean Kremer",spHand:"R",hr9:1.5,era:4.40},
-  {name:"Wyatt Langford",team:"Rangers",pos:"LF",bat:"R",hr:10,drought:16,lastHR:"2026-05-20",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Luis Castillo",spHand:"R",hr9:1.3,era:3.85},
-  {name:"Nolan Arenado",team:"Cardinals",pos:"3B",bat:"R",hr:10,drought:21,lastHR:"2026-05-15",opp:"Diamondbacks",isHome:false,venue:"Chase Field",sp:"Brandon Pfaadt",spHand:"R",hr9:1.6,era:4.55},
-  {name:"Triston Casas",team:"Red Sox",pos:"1B",bat:"L",hr:10,drought:18,lastHR:"2026-05-18",opp:"Yankees",isHome:false,venue:"Yankee Stadium",sp:"Carlos Rodón",spHand:"L",hr9:1.4,era:4.10},
-  {name:"Jordan Westburg",team:"Orioles",pos:"2B",bat:"R",hr:10,drought:14,lastHR:"2026-05-22",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Bowden Francis",spHand:"R",hr9:1.7,era:4.70},
-  {name:"Lawrence Butler",team:"Athletics",pos:"RF",bat:"L",hr:10,drought:17,lastHR:"2026-05-19",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Bailey Ober",spHand:"R",hr9:1.5,era:4.25},
-  {name:"Josh Lowe",team:"Rays",pos:"RF",bat:"L",hr:9,drought:15,lastHR:"2026-05-21",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Casey Mize",spHand:"R",hr9:1.3,era:3.95},
-  {name:"Michael Toglia",team:"Rockies",pos:"1B",bat:"S",hr:9,drought:12,lastHR:"2026-05-24",opp:"Dodgers",isHome:false,venue:"Dodger Stadium",sp:"Tyler Glasnow",spHand:"R",hr9:1.1,era:3.30},
-  {name:"Colton Cowser",team:"Orioles",pos:"CF",bat:"L",hr:9,drought:19,lastHR:"2026-05-17",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Max Scherzer",spHand:"R",hr9:1.4,era:4.00}
+  {name:"Aaron Judge",team:"Yankees",pos:"RF",bat:"R",hr:34,drought:9,lastHR:"2026-05-27",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Sean Newcomb",spHand:"L",hr9:9.6,era:4.65},
+  {name:"Shohei Ohtani",team:"Dodgers",pos:"DH",bat:"L",hr:31,drought:7,lastHR:"2026-05-29",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Austin Gomber",spHand:"L",hr9:10.5,era:5.10},
+  {name:"Kyle Schwarber",team:"Phillies",pos:"DH",bat:"L",hr:29,drought:12,lastHR:"2026-05-24",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Nick Martinez",spHand:"R",hr9:9.2,era:4.20},
+  {name:"Pete Alonso",team:"Mets",pos:"1B",bat:"R",hr:27,drought:14,lastHR:"2026-05-22",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Jose Quintana",spHand:"L",hr9:8.3,era:3.95},
+  {name:"Cal Raleigh",team:"Mariners",pos:"C",bat:"S",hr:26,drought:18,lastHR:"2026-05-18",opp:"Rangers",isHome:false,venue:"Globe Life Field",sp:"Patrick Corbin",spHand:"L",hr9:10.1,era:4.80},
+  {name:"Marcell Ozuna",team:"Braves",pos:"DH",bat:"R",hr:25,drought:16,lastHR:"2026-05-20",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Mitchell Parker",spHand:"L",hr9:8.8,era:4.10},
+  {name:"Juan Soto",team:"Mets",pos:"RF",bat:"L",hr:24,drought:6,lastHR:"2026-05-30",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Freddy Peralta",spHand:"R",hr9:7.4,era:3.40},
+  {name:"Yordan Alvarez",team:"Astros",pos:"DH",bat:"L",hr:24,drought:20,lastHR:"2026-05-16",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Tyler Anderson",spHand:"L",hr9:7.9,era:4.00},
+  {name:"Vladimir Guerrero Jr.",team:"Blue Jays",pos:"1B",bat:"R",hr:22,drought:11,lastHR:"2026-05-25",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Charlie Morton",spHand:"R",hr9:8.8,era:4.45},
+  {name:"Mookie Betts",team:"Dodgers",pos:"SS",bat:"R",hr:21,drought:13,lastHR:"2026-05-23",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Kyle Freeland",spHand:"L",hr9:9.6,era:4.90},
+  {name:"Bryce Harper",team:"Phillies",pos:"1B",bat:"L",hr:21,drought:8,lastHR:"2026-05-28",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Hunter Greene",spHand:"R",hr9:7.9,era:3.65},
+  {name:"Rafael Devers",team:"Giants",pos:"DH",bat:"L",hr:20,drought:15,lastHR:"2026-05-21",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Dylan Cease",spHand:"R",hr9:8.3,era:3.85},
+  {name:"José Ramírez",team:"Guardians",pos:"3B",bat:"S",hr:20,drought:10,lastHR:"2026-05-26",opp:"Royals",isHome:false,venue:"Kauffman Stadium",sp:"Seth Lugo",spHand:"R",hr9:6.5,era:3.30},
+  {name:"Gunnar Henderson",team:"Orioles",pos:"SS",bat:"L",hr:19,drought:17,lastHR:"2026-05-19",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Kevin Gausman",spHand:"R",hr9:8.8,era:4.15},
+  {name:"Corey Seager",team:"Rangers",pos:"SS",bat:"L",hr:19,drought:22,lastHR:"2026-05-13",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Logan Gilbert",spHand:"R",hr9:7.0,era:3.50},
+  {name:"Fernando Tatis Jr.",team:"Padres",pos:"RF",bat:"R",hr:18,drought:9,lastHR:"2026-05-27",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Robbie Ray",spHand:"L",hr9:8.3,era:3.95},
+  {name:"Adolis García",team:"Rangers",pos:"RF",bat:"R",hr:18,drought:19,lastHR:"2026-05-17",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Bryan Woo",spHand:"R",hr9:7.4,era:3.60},
+  {name:"Bobby Witt Jr.",team:"Royals",pos:"SS",bat:"R",hr:17,drought:12,lastHR:"2026-05-24",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Tanner Bibee",spHand:"R",hr9:7.9,era:3.80},
+  {name:"Elly De La Cruz",team:"Reds",pos:"SS",bat:"S",hr:17,drought:7,lastHR:"2026-05-29",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Cristopher Sánchez",spHand:"L",hr9:7.0,era:3.45},
+  {name:"Teoscar Hernández",team:"Dodgers",pos:"RF",bat:"R",hr:17,drought:16,lastHR:"2026-05-20",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Germán Márquez",spHand:"R",hr9:9.2,era:4.55},
+  {name:"Austin Riley",team:"Braves",pos:"3B",bat:"R",hr:16,drought:14,lastHR:"2026-05-22",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"MacKenzie Gore",spHand:"L",hr9:7.4,era:3.70},
+  {name:"Matt Olson",team:"Braves",pos:"1B",bat:"L",hr:16,drought:21,lastHR:"2026-05-15",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Jake Irvin",spHand:"R",hr9:8.8,era:4.25},
+  {name:"Christian Walker",team:"Astros",pos:"1B",bat:"R",hr:16,drought:18,lastHR:"2026-05-18",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"José Soriano",spHand:"R",hr9:6.5,era:3.55},
+  {name:"William Contreras",team:"Brewers",pos:"C",bat:"R",hr:15,drought:10,lastHR:"2026-05-26",opp:"Mets",isHome:true,venue:"American Family Field",sp:"Kodai Senga",spHand:"R",hr9:7.0,era:3.25},
+  {name:"Anthony Santander",team:"Blue Jays",pos:"DH",bat:"S",hr:15,drought:15,lastHR:"2026-05-21",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Zach Eflin",spHand:"R",hr9:8.3,era:4.05},
+  {name:"Riley Greene",team:"Tigers",pos:"LF",bat:"L",hr:15,drought:13,lastHR:"2026-05-23",opp:"White Sox",isHome:false,venue:"Rate Field",sp:"Davis Martin",spHand:"R",hr9:9.2,era:4.70},
+  {name:"Ketel Marte",team:"Diamondbacks",pos:"2B",bat:"S",hr:14,drought:8,lastHR:"2026-05-28",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Sonny Gray",spHand:"R",hr9:7.9,era:3.90},
+  {name:"Willy Adames",team:"Giants",pos:"SS",bat:"R",hr:14,drought:17,lastHR:"2026-05-19",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Michael King",spHand:"R",hr9:6.5,era:3.20},
+  {name:"Jackson Chourio",team:"Brewers",pos:"RF",bat:"R",hr:14,drought:11,lastHR:"2026-05-25",opp:"Mets",isHome:true,venue:"American Family Field",sp:"David Peterson",spHand:"L",hr9:7.4,era:3.75},
+  {name:"Seiya Suzuki",team:"Cubs",pos:"DH",bat:"R",hr:14,drought:19,lastHR:"2026-05-17",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Mitch Keller",spHand:"R",hr9:8.3,era:4.30},
+  {name:"Spencer Steer",team:"Reds",pos:"1B",bat:"R",hr:13,drought:16,lastHR:"2026-05-20",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Aaron Nola",spHand:"R",hr9:8.8,era:4.40},
+  {name:"Brent Rooker",team:"Athletics",pos:"DH",bat:"R",hr:13,drought:20,lastHR:"2026-05-16",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Pablo López",spHand:"R",hr9:7.9,era:3.85},
+  {name:"Jake Burger",team:"Rangers",pos:"3B",bat:"R",hr:13,drought:14,lastHR:"2026-05-22",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"George Kirby",spHand:"R",hr9:7.4,era:3.60},
+  {name:"Tyler O'Neill",team:"Orioles",pos:"LF",bat:"R",hr:12,drought:18,lastHR:"2026-05-18",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"José Berríos",spHand:"R",hr9:8.3,era:4.10},
+  {name:"Isaac Paredes",team:"Astros",pos:"3B",bat:"R",hr:12,drought:15,lastHR:"2026-05-21",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Yusei Kikuchi",spHand:"L",hr9:8.8,era:4.20},
+  {name:"Josh Naylor",team:"Diamondbacks",pos:"1B",bat:"L",hr:12,drought:9,lastHR:"2026-05-27",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Miles Mikolas",spHand:"R",hr9:9.2,era:4.50},
+  {name:"Salvador Perez",team:"Royals",pos:"C",bat:"R",hr:12,drought:17,lastHR:"2026-05-19",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Gavin Williams",spHand:"R",hr9:7.9,era:3.95},
+  {name:"Eugenio Suárez",team:"Diamondbacks",pos:"3B",bat:"R",hr:12,drought:13,lastHR:"2026-05-23",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Erick Fedde",spHand:"R",hr9:8.3,era:4.05},
+  {name:"Kyle Tucker",team:"Cubs",pos:"RF",bat:"L",hr:11,drought:10,lastHR:"2026-05-26",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Paul Skenes",spHand:"R",hr9:6.0,era:2.85},
+  {name:"Corbin Carroll",team:"Diamondbacks",pos:"CF",bat:"L",hr:11,drought:15,lastHR:"2026-05-21",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Andre Pallante",spHand:"R",hr9:7.4,era:3.80},
+  {name:"Manny Machado",team:"Padres",pos:"3B",bat:"R",hr:11,drought:18,lastHR:"2026-05-18",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Logan Webb",spHand:"R",hr9:6.5,era:3.10},
+  {name:"Francisco Lindor",team:"Mets",pos:"SS",bat:"S",hr:11,drought:12,lastHR:"2026-05-24",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Quinn Priester",spHand:"R",hr9:7.9,era:4.00},
+  {name:"George Springer",team:"Blue Jays",pos:"DH",bat:"R",hr:11,drought:16,lastHR:"2026-05-20",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Tomoyuki Sugano",spHand:"R",hr9:8.8,era:4.30},
+  {name:"Jazz Chisholm Jr.",team:"Yankees",pos:"2B",bat:"L",hr:11,drought:14,lastHR:"2026-05-22",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Garrett Crochet",spHand:"L",hr9:7.0,era:3.20},
+  {name:"Oneil Cruz",team:"Pirates",pos:"CF",bat:"L",hr:11,drought:19,lastHR:"2026-05-17",opp:"Cubs",isHome:false,venue:"Wrigley Field",sp:"Shota Imanaga",spHand:"L",hr9:8.3,era:3.70},
+  {name:"Yandy Díaz",team:"Rays",pos:"1B",bat:"R",hr:10,drought:13,lastHR:"2026-05-23",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Tarik Skubal",spHand:"L",hr9:6.5,era:2.95},
+  {name:"Bo Bichette",team:"Blue Jays",pos:"SS",bat:"R",hr:10,drought:20,lastHR:"2026-05-16",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Dean Kremer",spHand:"R",hr9:8.8,era:4.40},
+  {name:"Wyatt Langford",team:"Rangers",pos:"LF",bat:"R",hr:10,drought:16,lastHR:"2026-05-20",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Luis Castillo",spHand:"R",hr9:7.9,era:3.85},
+  {name:"Nolan Arenado",team:"Cardinals",pos:"3B",bat:"R",hr:10,drought:21,lastHR:"2026-05-15",opp:"Diamondbacks",isHome:false,venue:"Chase Field",sp:"Brandon Pfaadt",spHand:"R",hr9:9.2,era:4.55},
+  {name:"Triston Casas",team:"Red Sox",pos:"1B",bat:"L",hr:10,drought:18,lastHR:"2026-05-18",opp:"Yankees",isHome:false,venue:"Yankee Stadium",sp:"Carlos Rodón",spHand:"L",hr9:8.3,era:4.10},
+  {name:"Jordan Westburg",team:"Orioles",pos:"2B",bat:"R",hr:10,drought:14,lastHR:"2026-05-22",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Bowden Francis",spHand:"R",hr9:9.6,era:4.70},
+  {name:"Lawrence Butler",team:"Athletics",pos:"RF",bat:"L",hr:10,drought:17,lastHR:"2026-05-19",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Bailey Ober",spHand:"R",hr9:8.8,era:4.25},
+  {name:"Josh Lowe",team:"Rays",pos:"RF",bat:"L",hr:9,drought:15,lastHR:"2026-05-21",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Casey Mize",spHand:"R",hr9:7.9,era:3.95},
+  {name:"Michael Toglia",team:"Rockies",pos:"1B",bat:"S",hr:9,drought:12,lastHR:"2026-05-24",opp:"Dodgers",isHome:false,venue:"Dodger Stadium",sp:"Tyler Glasnow",spHand:"R",hr9:7.0,era:3.30},
+  {name:"Colton Cowser",team:"Orioles",pos:"CF",bat:"L",hr:9,drought:19,lastHR:"2026-05-17",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Max Scherzer",spHand:"R",hr9:8.3,era:4.00}
 ];
 
 // ── STATE ──
@@ -323,11 +324,11 @@ const COLS=[
   {k:"name",label:"PLAYER",num:false},
   {k:"pos",label:"POS",num:false},
   {k:"bat",label:"B",num:false},
-  {k:"hr",label:"HR",num:true},
+  {k:"hr",label:"2B",num:true},
   {k:"drought",label:"DROUGHT",num:true},
-  {k:"lastHR",label:"LAST HR",num:false},
+  {k:"lastHR",label:"LAST 2B",num:false},
   {k:"matchupText",label:"OPP / SP",num:false,sortable:false},
-  {k:"hr9",label:"SP HR/9",num:true},
+  {k:"hr9",label:"SP H/9",num:true},
   {k:"park",label:"PARK",num:true},
   {k:"mScore",label:"MATCH",num:true},
   {k:"due",label:"DUE",num:true},
@@ -425,9 +426,9 @@ function render(){
       <div class="due-num"><div class="due-big" style="color:var(--green)">${p.mScore}</div><div class="due-cap">MATCH</div></div></div>`).join(""):`<div style="padding:20px;text-align:center;color:var(--dim);font-size:10px">No favorable matchups.</div>`;
 
   document.getElementById("legend").innerHTML=`
-    <b>Board</b> — top 50 hitters on a <b>7+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
-    <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
-    <b>MATCHUP</b> — opposing SP HR/9 (60%) + ballpark HR factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
+    <b>Board</b> — top 50 hitters on a <b>7+ game</b> streak without a double; resets each day at <b>6:00 AM ET</b>. Double → removed until a new streak builds. &nbsp;·&nbsp;
+    <b>DROUGHT</b> — games played without a double &nbsp;·&nbsp;
+    <b>MATCHUP</b> — opposing SP H/9 (60%) + ballpark 2B factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
     <b>BET $</b> — $1.00 at a 9-game drought, +10% (compounding) each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
 }
@@ -477,8 +478,8 @@ async function loadLive(manual){
       byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher};});
 
     status('<span class="spin">⟳</span> Loading live hitters…');
-    const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=homeRuns&gameType=R&playerPool=All`);
-    let hitters=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,hr:+s.stat.homeRuns||0}));
+    const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=doubles&gameType=R&playerPool=All`);
+    let hitters=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,hr:+s.stat.doubles||0}));
     hitters.sort((a,b)=>b.hr-a.hr);
     // Top-100 power hitters who are actually playing today (capped so the
     // per-player game-log pulls stay fast and proxy-friendly).
@@ -490,8 +491,8 @@ async function loadLive(manual){
     const people={};
     for(let i=0;i<ids.length;i+=40){const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>people[p.id]={bat:p.batSide?.code,pitch:p.pitchHand?.code});}
     const pst={};
-    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:s.homeRunsPer9!=null?+s.homeRunsPer9:null,era:s.era}:null;});
-    const logs=await pool(actionable,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);const sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);let dr=0,last=null;for(let i=sp.length-1;i>=0;i--){if((+sp[i].stat.homeRuns||0)>0){last=sp[i].date;break;}dr++;}return {drought:dr,lastHR:last};});
+    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:pH9(s),era:s.era}:null;});
+    const logs=await pool(actionable,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);const sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);let dr=0,last=null;for(let i=sp.length-1;i>=0;i--){if((+sp[i].stat.doubles||0)>0){last=sp[i].date;break;}dr++;}return {drought:dr,lastHR:last};});
 
     const live=actionable.map((h,i)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];return build({
       name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,
@@ -503,7 +504,7 @@ async function loadLive(manual){
       state.players=live;state.live=true;render();
       const homered=live.filter(p=>p.drought===0).length;
       const shown=live.filter(p=>p.drought>=MIN_DROUGHT).length;
-      status(`✓ LIVE · ${shown} hitters on 7+ streak · ${games.length} games · ${homered} removed after homering · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+      status(`✓ LIVE · ${shown} hitters on 7+ streak · ${games.length} games · ${homered} removed after a double · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
     }
   }catch(e){
     status(`⚠ Live feed blocked on this device — showing model slate (NOT live). [${e.message}]`,"var(--yellow)");
