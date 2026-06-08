@@ -17,7 +17,7 @@
 <link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#4B5563;--dim:#1F2937;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
+:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#9CA3AF;--dim:#6B7280;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
 body{padding-bottom:40px}
@@ -27,11 +27,11 @@ body{padding-bottom:40px}
 .logo-wrap{display:flex;align-items:center;gap:11px}
 .agent-avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #A78BFA40;border:2px solid #A78BFA40;overflow:hidden;background:#070714}
 .agent-avatar svg{width:100%;height:100%}
-.logo{font-family:'Orbitron',monospace;font-size:19px;font-weight:900;letter-spacing:.06em;background:linear-gradient(90deg,#A78BFA,#60A5FA,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo-sub{font-size:10px;color:var(--dim);letter-spacing:.14em;margin-top:3px}
+.logo{font-family:'Orbitron',monospace;font-size:23px;font-weight:900;letter-spacing:.05em;color:#EDEAFF;text-shadow:0 0 14px #A78BFA66}
+.logo-sub{font-size:11px;color:var(--dim);letter-spacing:.14em;margin-top:3px}
 .controls{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-left:auto}
 .ctrl-group{display:flex;flex-direction:column;gap:3px}
-.ctrl-lbl{font-size:9px;color:var(--muted);letter-spacing:.1em}
+.ctrl-lbl{font-size:10px;color:var(--muted);letter-spacing:.1em}
 .ctrl-select{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none}
 .fav-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;padding-bottom:8px}
 .fav-toggle .tg{position:relative;width:42px;height:22px;background:var(--bg3);border:1px solid var(--border);border-radius:11px;transition:all .25s;flex-shrink:0}
@@ -41,12 +41,12 @@ body{padding-bottom:40px}
 .fav-toggle .tg-lbl{font-size:10px;color:var(--muted);letter-spacing:.08em}
 .refresh-btn{padding:11px 18px;background:linear-gradient(90deg,#A78BFA,#627EEA);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.08em;font-family:'Orbitron',monospace;cursor:pointer}
 .refresh-btn:disabled{opacity:.5;cursor:wait}
-#status-line{font-size:12px;color:var(--blue);letter-spacing:.04em;padding:10px 20px;min-height:16px;border-bottom:1px solid var(--border);background:var(--bg2)}
+#status-line{font-size:13px;color:var(--blue);letter-spacing:.04em;padding:10px 20px;min-height:16px;border-bottom:1px solid var(--border);background:var(--bg2)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:16px 20px 4px}
 .kpi{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border:1px solid var(--border);border-radius:12px;padding:15px 17px}
 .kpi-val{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;line-height:1}
-.kpi-lbl{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-top:7px}
-.kpi-sub{font-size:11px;color:var(--dim);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-lbl{font-size:11px;color:var(--muted);letter-spacing:.1em;margin-top:7px}
+.kpi-sub{font-size:12px;color:var(--dim);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;padding:14px 20px}
 @media(max-width:1080px){.grid{grid-template-columns:1fr}}
 /* On phones: drop POS, B, SP HR/9, PARK so the key columns fit cleanly */
@@ -64,10 +64,10 @@ body{padding-bottom:40px}
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
 .panel-head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--border)}
 .panel-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--purple)}
-.panel-note{font-size:10px;color:var(--dim);letter-spacing:.05em}
+.panel-note{font-size:11px;color:var(--dim);letter-spacing:.05em}
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
-thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:10px;letter-spacing:.07em;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:11px;letter-spacing:.07em;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
 thead th:hover{color:var(--text)}
 thead th.num{text-align:right}
 thead th .arr{color:var(--purple)}
@@ -77,7 +77,7 @@ tbody tr:hover{background:#10102433}
 tbody tr.fav{background:linear-gradient(90deg,#14F1950E,transparent)}
 td.num{text-align:right;font-family:'Orbitron',monospace}
 .pname{font-weight:700;color:var(--text);font-size:14px}
-.pteam{font-size:10px;color:var(--muted)}
+.pteam{font-size:11px;color:var(--muted)}
 .chip{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.04em}
 .bar-cell{position:relative;min-width:96px}
 .bar-cell .bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:3px}
@@ -87,17 +87,17 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 .due-rank{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--dim);width:22px;flex-shrink:0}
 .due-info{min-width:0;flex:1}
 .due-name{font-size:14px;font-weight:700}
-.due-meta{font-size:10px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.due-meta{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .due-num{text-align:right;flex-shrink:0}
 .due-big{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;line-height:1}
 .due-cap{font-size:8px;color:var(--muted);letter-spacing:.08em}
 .chart{padding:12px 14px}
 .chart-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
-.chart-name{font-size:11px;width:108px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.chart-name{font-size:12px;width:108px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
 .chart-bar-bg{flex:1;height:11px;background:var(--bg3);border-radius:5px;overflow:hidden}
 .chart-bar{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--orange),var(--red))}
 .chart-val{font-size:11px;font-family:'Orbitron',monospace;width:26px;text-align:right;color:var(--orange)}
-.legend{font-size:11px;color:var(--dim);line-height:1.9;padding:14px 20px 0}
+.legend{font-size:12px;color:var(--dim);line-height:1.9;padding:14px 20px 0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{display:inline-block;animation:spin .9s linear infinite}
 .fade-in{animation:fadeUp .35s ease both}
@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 18 · +COBB BOARD</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 19 · BIGGER TYPE</div></div>
   </div>
   <div class="controls">
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
