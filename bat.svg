@@ -1,0 +1,19 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball bat">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eac794"/>
+      <stop offset="42%" stop-color="#c8924f"/>
+      <stop offset="100%" stop-color="#7a4a22"/>
+    </linearGradient>
+    <filter id="bds" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="26" fill="#070714"/>
+  <g transform="translate(60,60) rotate(-38) translate(-60,-60)" filter="url(#bds)">
+    <path d="M60,20 C67,20 71,25 71,32 C71,52 65,80 64,96 C64,101 67,104 67,108 C67,112 64,114 60,114 C56,114 53,112 53,108 C53,104 56,101 56,96 C55,80 49,52 49,32 C49,25 53,20 60,20 Z"
+          fill="url(#wood)" stroke="#5a3617" stroke-width="1.4"/>
+    <path d="M55,27 C50,47 52,74 57,97" fill="none" stroke="#f3dcb0" stroke-width="2.2" stroke-linecap="round" opacity="0.65"/>
+    <ellipse cx="60" cy="110" rx="7.5" ry="4.2" fill="#6b3f1c" opacity="0.5"/>
+  </g>
+</svg>

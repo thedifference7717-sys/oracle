@@ -7,13 +7,13 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>ShohAI Ohtani · Doubles Dashboard</title>
+<title>TAIy Cobb · Doubles Dashboard</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ShohAI 2B">
-<link rel="apple-touch-icon" href="baseball.svg">
-<link rel="icon" type="image/svg+xml" href="baseball.svg">
+<meta name="apple-mobile-web-app-title" content="TAIy Cobb">
+<link rel="apple-touch-icon" href="bat.svg">
+<link rel="icon" type="image/svg+xml" href="bat.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#4B5563;--dim:#1F2937;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
@@ -108,49 +108,23 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="topbar">
   <div class="logo-wrap">
     <div class="agent-avatar">
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball bat">
         <defs>
-          <radialGradient id="hSphere" cx="38%" cy="32%" r="72%">
-            <stop offset="0%" stop-color="#ffffff"/><stop offset="42%" stop-color="#f5f5ef"/>
-            <stop offset="78%" stop-color="#deded4"/><stop offset="100%" stop-color="#b3b3a6"/>
-          </radialGradient>
-          <radialGradient id="hAo" cx="50%" cy="50%" r="50%">
-            <stop offset="62%" stop-color="#000000" stop-opacity="0"/><stop offset="100%" stop-color="#1a1208" stop-opacity="0.42"/>
-          </radialGradient>
-          <radialGradient id="hSpec" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="hSeam" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#e8404d"/><stop offset="50%" stop-color="#d22f3b"/><stop offset="100%" stop-color="#a81f2a"/>
+          <linearGradient id="hWood" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#eac794"/><stop offset="42%" stop-color="#c8924f"/><stop offset="100%" stop-color="#7a4a22"/>
           </linearGradient>
-          <filter id="hSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
-          <filter id="hDs" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.4" flood-color="#000000" flood-opacity="0.5"/></filter>
+          <filter id="hBds" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.2" stdDeviation="2.2" flood-color="#000000" flood-opacity="0.5"/></filter>
         </defs>
-        <g transform="translate(60,60) scale(0.9) translate(-60,-60)" filter="url(#hDs)">
-          <circle cx="60" cy="60" r="50" fill="url(#hSphere)"/>
-          <g stroke="url(#hSeam)" stroke-linecap="round" fill="none">
-            <path d="M36,20 C44,40 44,80 36,100" stroke-width="2.6"/>
-            <path d="M84,20 C76,40 76,80 84,100" stroke-width="2.6"/>
-          </g>
-          <g stroke="#c8313c" stroke-width="1.8" stroke-linecap="round">
-            <line x1="32.4" y1="30.2" x2="39.6" y2="25.8"/><line x1="36.4" y1="42.2" x2="43.6" y2="37.8"/>
-            <line x1="39.4" y1="54.2" x2="46.6" y2="49.8"/><line x1="40.4" y1="62.2" x2="47.6" y2="57.8"/>
-            <line x1="39.4" y1="70.2" x2="46.6" y2="65.8"/><line x1="36.4" y1="82.2" x2="43.6" y2="77.8"/>
-            <line x1="32.4" y1="94.2" x2="39.6" y2="89.8"/>
-            <line x1="80.4" y1="25.8" x2="87.6" y2="30.2"/><line x1="76.4" y1="37.8" x2="83.6" y2="42.2"/>
-            <line x1="73.4" y1="49.8" x2="80.6" y2="54.2"/><line x1="72.4" y1="57.8" x2="79.6" y2="62.2"/>
-            <line x1="73.4" y1="65.8" x2="80.6" y2="70.2"/><line x1="76.4" y1="77.8" x2="83.6" y2="82.2"/>
-            <line x1="80.4" y1="89.8" x2="87.6" y2="94.2"/>
-          </g>
-          <circle cx="60" cy="60" r="50" fill="url(#hAo)"/>
-          <ellipse cx="44" cy="40" rx="17" ry="12" fill="url(#hSpec)" filter="url(#hSoft)"/>
+        <g transform="translate(60,60) rotate(-38) translate(-60,-60)" filter="url(#hBds)">
+          <path d="M60,20 C67,20 71,25 71,32 C71,52 65,80 64,96 C64,101 67,104 67,108 C67,112 64,114 60,114 C56,114 53,112 53,108 C53,104 56,101 56,96 C55,80 49,52 49,32 C49,25 53,20 60,20 Z" fill="url(#hWood)" stroke="#5a3617" stroke-width="1.4"/>
+          <path d="M55,27 C50,47 52,74 57,97" fill="none" stroke="#f3dcb0" stroke-width="2.2" stroke-linecap="round" opacity="0.65"/>
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">2B ORACLE · DOUBLES BUILD 1</div></div>
+    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 1 · 🏏 BAT</div></div>
   </div>
   <div class="controls">
-    <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ HR</a>
+    <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
       <select class="ctrl-select" id="sort-select" onchange="onSortSelect()">
         <option value="drought">Longest Drought</option>
