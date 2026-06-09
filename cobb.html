@@ -121,7 +121,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 8 · TOP 100 POOL</div></div>
+    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 9 · 9+ STREAK</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
@@ -171,7 +171,7 @@ const API="https://statsapi.mlb.com/api/v1";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 // Only hitters on a homerless streak of at least this many games make the board.
-const MIN_DROUGHT=7;
+const MIN_DROUGHT=9;
 // The "baseball day" rolls over at 6:00 AM Eastern, not local midnight.
 function slateDate(){
   const et=new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
@@ -400,7 +400,7 @@ function render(){
       <div class="due-num"><div class="due-big" style="color:var(--green)">${p.mScore}</div><div class="due-cap">MATCH</div></div></div>`).join(""):`<div style="padding:20px;text-align:center;color:var(--dim);font-size:10px">No favorable matchups.</div>`;
 
   document.getElementById("legend").innerHTML=`
-    <b>Board</b> — top 50 hitters on a <b>7+ game</b> streak without a double; resets each day at <b>6:00 AM ET</b>. Double → removed until a new streak builds. &nbsp;·&nbsp;
+    <b>Board</b> — top 50 hitters on a <b>9+ game</b> streak without a double; resets each day at <b>6:00 AM ET</b>. Double → removed until a new streak builds. &nbsp;·&nbsp;
     <b>DROUGHT</b> — games played without a double &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP H/9 (60%) + ballpark 2B factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
@@ -478,7 +478,7 @@ async function loadLive(manual){
       state.players=live;state.live=true;render();
       const homered=live.filter(p=>p.drought===0).length;
       const shown=live.filter(p=>p.drought>=MIN_DROUGHT).length;
-      status(`✓ LIVE · ${shown} hitters on 7+ streak · ${games.length} games · ${homered} removed after a double · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+      status(`✓ LIVE · ${shown} hitters on 9+ streak · ${games.length} games · ${homered} removed after a double · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
     }
   }catch(e){
     status(`⚠ Live feed blocked on this device — showing model slate (NOT live). [${e.message}]`,"var(--yellow)");
