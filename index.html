@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 27 · +BACKTEST</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 28 · FINAL-ONLY</div></div>
   </div>
   <div class="controls">
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
@@ -473,9 +473,9 @@ async function loadLive(manual){
     const games=sched?.dates?.[0]?.games||[];
     if(!games.length){status(`No MLB games today (${date}). Showing model slate.`,"var(--yellow)");return;}
     const byTeam={};
-    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away;
-      byTeam[h.team.id]={opp:a.team,isHome:true,venue:v,sp:a.probablePitcher};
-      byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher};});
+    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away;const fin=g.status?.abstractGameState==="Final"||g.status?.codedGameState==="F";const gd=g.officialDate;
+      byTeam[h.team.id]={opp:a.team,isHome:true,venue:v,sp:a.probablePitcher,final:fin,gdate:gd};
+      byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher,final:fin,gdate:gd};});
 
     status('<span class="spin">⟳</span> Loading live hitters…');
     const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=homeRuns&gameType=R&playerPool=All`);
@@ -492,7 +492,7 @@ async function loadLive(manual){
     for(let i=0;i<ids.length;i+=40){const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>people[p.id]={bat:p.batSide?.code,pitch:p.pitchHand?.code});}
     const pst={};
     await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:s.homeRunsPer9!=null?+s.homeRunsPer9:null,era:s.era}:null;});
-    const logs=await pool(actionable,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);const sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);let dr=0,last=null;for(let i=sp.length-1;i>=0;i--){if((+sp[i].stat.homeRuns||0)>0){last=sp[i].date;break;}dr++;}return {drought:dr,lastHR:last};});
+    const logs=await pool(actionable,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);if(!h.g.final&&h.g.gdate)sp=sp.filter(x=>x.date!==h.g.gdate);let dr=0,last=null;for(let i=sp.length-1;i>=0;i--){if((+sp[i].stat.homeRuns||0)>0){last=sp[i].date;break;}dr++;}return {drought:dr,lastHR:last};});
 
     const live=actionable.map((h,i)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];return build({
       name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,
