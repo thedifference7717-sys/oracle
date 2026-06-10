@@ -148,7 +148,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 29 · STICKY BETS</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 30 · TOP 69 POOL</div></div>
   </div>
   <div class="controls">
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
@@ -481,7 +481,7 @@ async function loadLive(manual){
       byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher,final:fin,gdate:gd};});
 
     status('<span class="spin">⟳</span> Loading live hitters…');
-    const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=homeRuns&gameType=R&playerPool=All`);
+    const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=69&sortStat=homeRuns&gameType=R&playerPool=All`);
     let hitters=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,hr:+s.stat.homeRuns||0}));
     // Keep players with an active bet on the board even if they slip out of the top 100.
     const carried=loadBets();const seen=new Set(hitters.map(h=>h.id));
