@@ -1,0 +1,29 @@
+name: Provision shared store
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create keyless shared JSON store (jsonblob) if not already set
+        run: |
+          if grep -q 'jsonBlob/' store-id.js 2>/dev/null; then
+            echo "Already provisioned:"; cat store-id.js; exit 0
+          fi
+          loc=$(curl -s -D - -o /dev/null -X POST https://jsonblob.com/api/jsonBlob \
+            -H "Content-Type: application/json" -H "Accept: application/json" \
+            -d '{"hr":{},"db":{}}' | tr -d '\r' | awk 'tolower($1)=="location:"{print $2}')
+          echo "Location: $loc"
+          if [ -z "$loc" ]; then echo "Failed to create blob"; exit 1; fi
+          echo "window.SHARED_STORE=\"$loc\";" > store-id.js
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add store-id.js
+          git commit -m "Provision shared active-bet store"
+          git push
