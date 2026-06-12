@@ -149,7 +149,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 34 · LIVE HELD</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 35 · TOP69 START·10G</div></div>
   </div>
   <div class="controls">
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
@@ -174,7 +174,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="kpi"><div class="kpi-val" id="st-max" style="color:var(--orange)">--</div><div class="kpi-lbl">MAX DROUGHT</div><div class="kpi-sub" id="st-max-sub">games w/o HR</div></div>
   <div class="kpi"><div class="kpi-val" id="st-avg" style="color:var(--yellow)">--</div><div class="kpi-lbl">AVG DROUGHT</div><div class="kpi-sub">games</div></div>
   <div class="kpi"><div class="kpi-val" id="st-top" style="color:var(--purple);font-size:15px">--</div><div class="kpi-lbl">TOP DUE</div><div class="kpi-sub" id="st-top-sub">highest score</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 9g · +10%/game</div></div>
+  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 10g · +10%/game</div></div>
 </section>
 
 <div class="grid">
@@ -200,7 +200,7 @@ const API="https://statsapi.mlb.com/api/v1";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 // Only hitters on a homerless streak of at least this many games make the board.
-const MIN_DROUGHT=9;
+const MIN_DROUGHT=10;
 // The "baseball day" rolls over at 6:00 AM Eastern, not local midnight.
 function slateDate(){
   const et=new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
@@ -239,7 +239,7 @@ function matchupScore(hr9,park,plt){
 function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
 // Escalating wager: $1.00 once a hitter reaches a 9-game homerless drought,
 // then +10% (compounding) for every additional game without a home run.
-function betSize(drought){return drought>=9 ? Math.pow(1.1,drought-9) : 0;}
+function betSize(drought){return drought>=10 ? Math.pow(1.1,drought-10) : 0;}
 
 // Turn a raw {name,team,pos,bat,hr,drought,lastHR,opp,isHome,venue,sp,spHand,hr9,era}
 // record into the enriched object the UI renders.
@@ -427,11 +427,11 @@ function render(){
       <div class="due-num"><div class="due-big" style="color:var(--green)">${p.mScore}</div><div class="due-cap">MATCH</div></div></div>`).join(""):`<div style="padding:20px;text-align:center;color:var(--dim);font-size:10px">No favorable matchups.</div>`;
 
   document.getElementById("legend").innerHTML=`
-    <b>Board</b> — top 50 hitters on a <b>9+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
+    <b>Board</b> — top 50 hitters on a <b>10+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
     <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP HR/9 (60%) + ballpark HR factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
-    <b>BET $</b> — $1.00 at a 9-game drought, +10% (compounding) each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
+    <b>BET $</b> — $1.00 at a 10-game drought, +10% (compounding) each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
 }
 
 // ── LIVE UPGRADE (best-effort; falls back silently to the built-in slate) ──
@@ -482,29 +482,31 @@ async function loadLive(manual){
     const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=homeRuns&gameType=R&playerPool=All`);
     let hitters=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,hr:+s.stat.homeRuns||0}));
     hitters.sort((a,b)=>b.hr-a.hr);
-    hitters.forEach((h,i)=>{h.rank=i;}); // rank 0-68 = top 69 (new bets); 69-99 = HELD if on a 9+ drought
-    let actionable=hitters.filter(h=>byTeam[h.teamId]).map(h=>({...h,g:byTeam[h.teamId]}));
-    if(!actionable.length){status(`No tracked hitters in today’s games. Showing model slate.`,"var(--yellow)");return;}
-
+    hitters.forEach((h,i)=>{h.rank=i;}); // top 69 (rank<69) is the ONLY place a NEW bet can start
+    const START=10; // a bet starts once the drought reaches 10
+    status('<span class="spin">⟳</span> Loading game logs…');
+    const gl=await pool(hitters,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);const tg=byTeam[h.teamId];if(tg&&!tg.final&&tg.gdate)sp=sp.filter(x=>x.date!==tg.gdate);return sp;},6,(done,total)=>{setProg(30+Math.round(done/total*55));});
+    hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
+    const asOf=(h,T)=>{let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.homeRuns||0);}return s;};
+    hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
+    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]).map(h=>({...h,g:byTeam[h.teamId]}));
+    if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
     const pids=[...new Set(actionable.map(h=>h.g.sp?.id).filter(Boolean))];
     const ids=[...new Set([...actionable.map(h=>h.id),...pids])];
     const people={};
     for(let i=0;i<ids.length;i+=40){const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>people[p.id]={bat:p.batSide?.code,pitch:p.pitchHand?.code});}
     const pst={};
     await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:s.homeRunsPer9!=null?+s.homeRunsPer9:null,era:s.era}:null;});
-    const logs=await pool(actionable,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);if(!h.g.final&&h.g.gdate)sp=sp.filter(x=>x.date!==h.g.gdate);let dr=0,last=null;for(let i=sp.length-1;i>=0;i--){if((+sp[i].stat.homeRuns||0)>0){last=sp[i].date;break;}dr++;}return {drought:dr,lastHR:last};});
-
-    const live=actionable.map((h,i)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];const o=build({
+    const live=actionable.map((h)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];const o=build({
       name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,
-      drought:logs[i]?.drought||0,lastHR:logs[i]?.lastHR,
+      drought:h.drought,lastHR:h.lastHR,
       opp:g.opp?.name,isHome:g.isHome,venue:g.venue,
       sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era
-    });o.carried=h.rank>=69;return o;});
+    });o.carried=h.held;return o;});
     if(live.length){
       state.players=live;state.live=true;render();
-      const homered=live.filter(p=>p.drought===0).length;
-      const shown=live.filter(p=>p.drought>=MIN_DROUGHT).length;
-      status(`✓ LIVE · ${shown} hitters on 9+ streak · ${games.length} games · ${homered} removed after homering · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+      const held=live.filter(p=>p.carried).length;
+      status(`✓ LIVE · ${live.length} active bets · ${games.length} games · ${held} held · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
     }
   }catch(e){
     status(`⚠ Live feed blocked on this device — showing model slate (NOT live). [${e.message}]`,"var(--yellow)");
