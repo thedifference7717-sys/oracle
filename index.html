@@ -149,7 +149,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 35 · TOP69 START·10G</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 36 · +CASHED</div></div>
   </div>
   <div class="controls">
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
@@ -191,6 +191,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     <div class="panel"><div class="panel-head"><span class="panel-title">🔥 TOP DUE</span><span class="panel-note">highest due score</span></div><div id="top-due"></div></div>
     <div class="panel"><div class="panel-head"><span class="panel-title">📉 DROUGHT LEADERS</span><span class="panel-note">games w/o HR</span></div><div class="chart" id="chart"></div></div>
     <div class="panel"><div class="panel-head"><span class="panel-title">🎯 BEST MATCHUPS</span><span class="panel-note">pitcher + park</span></div><div id="best-matchups"></div></div>
+    <div class="panel"><div class="panel-head"><span class="panel-title">💰 RECENTLY CASHED</span><span class="panel-note">last 5 days</span></div><div id="cashed"></div></div>
   </aside>
 </div>
 <div class="legend" id="legend"></div>
@@ -320,6 +321,7 @@ const SAMPLE=[
 
 // ── STATE ──
 let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:slateDate()};
+let cashedBets=[];
 const COLS=[
   {k:"rank",label:"#",num:true,sortable:false},
   {k:"name",label:"PLAYER",num:false},
@@ -426,6 +428,10 @@ function render(){
       <div class="due-info"><div class="due-name">${p.name}</div><div class="due-meta">${p.matchupText} · HR/9 ${p.pitcher&&p.pitcher.hr9!=null?p.pitcher.hr9.toFixed(2):"—"} · Park ${p.park}</div></div>
       <div class="due-num"><div class="due-big" style="color:var(--green)">${p.mScore}</div><div class="due-cap">MATCH</div></div></div>`).join(""):`<div style="padding:20px;text-align:center;color:var(--dim);font-size:10px">No favorable matchups.</div>`;
 
+  const _cb=cashedBets||[];
+  document.getElementById("cashed").innerHTML=_cb.length?_cb.slice(0,8).map(c=>`
+    <div class="due-card"><div class="due-info"><div class="due-name">${c.name}</div><div class="due-meta">cashed ${fmtDate(c.date)} · ${c.drought}g drought</div></div>
+    <div class="due-num"><div class="due-big" style="color:var(--green)">$${c.stake.toFixed(2)}</div><div class="due-cap">CASHED</div></div></div>`).join(""):`<div style="padding:18px;text-align:center;color:var(--dim);font-size:11px">No bets cashed in the last 5 days.</div>`;
   document.getElementById("legend").innerHTML=`
     <b>Board</b> — top 50 hitters on a <b>10+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
     <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
@@ -489,6 +495,10 @@ async function loadLive(manual){
     hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
     const asOf=(h,T)=>{let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.homeRuns||0);}return s;};
     hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
+    const _cut=new Date(date+"T00:00:00");_cut.setDate(_cut.getDate()-5);const _cutS=_cut.toISOString().slice(0,10);
+    const cashed=[];
+    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
+    cashed.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);cashedBets=cashed;
     let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]).map(h=>({...h,g:byTeam[h.teamId]}));
     if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
     const pids=[...new Set(actionable.map(h=>h.g.sp?.id).filter(Boolean))];
