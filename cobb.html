@@ -122,7 +122,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 20 · LIVE 2B · 2MIN</div></div>
+    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 21 · HELD FIX</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
@@ -469,8 +469,8 @@ async function loadLive(manual){
     status('<span class="spin">⟳</span> Loading game logs…');
     const gl=await pool(hitters,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);const tg=byTeam[h.teamId];if(tg&&!tg.final&&tg.gdate)sp=sp.filter(x=>!(x.date===tg.gdate&&(+x.stat.doubles||0)===0));return sp;},6,(done,total)=>{setProg(30+Math.round(done/total*55));});
     hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.doubles||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
-    const asOf=(h,T)=>{let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.doubles||0);}return s;};
-    hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
+    const asOf=(h,T)=>{if(!h.games||!h.games.length)return h.hr||0;let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.doubles||0);}return s;};
+    hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart&&h.drought>START){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
     const _cut=new Date(date+"T00:00:00");_cut.setDate(_cut.getDate()-5);const _cutS=_cut.toISOString().slice(0,10);
     const cashed=[];
     hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.doubles||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.doubles||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
