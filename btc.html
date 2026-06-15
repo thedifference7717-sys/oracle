@@ -187,6 +187,23 @@ function findPivots(c, s){
   }
   return {highs, lows};
 }
+function inferDir(c4h){
+  // Continuation of the latest 4h impulse: if the window's absolute high prints
+  // more recently than its low it's an up-leg (long), otherwise a down-leg (short).
+  let iHi = 0, iLo = 0;
+  for(let i = 1; i < c4h.length; i++){
+    if(c4h[i].h > c4h[iHi].h) iHi = i;
+    if(c4h[i].l < c4h[iLo].l) iLo = i;
+  }
+  return iHi >= iLo ? 'long' : 'short';
+}
+function stop886Of(dir, swingHigh, swingLow, range){
+  // The 0.886 retracement measured from the impulse END back toward its start —
+  // the deep-invalidation level. It always sits on the LOSS side of the entry:
+  //   LONG  (up-leg, pull back down): swingHigh − 0.886·range  (below entry)
+  //   SHORT (down-leg, pull back up): swingLow  + 0.886·range  (above entry)
+  return dir === 'long' ? swingHigh - 0.886*range : swingLow + 0.886*range;
+}
 function analyzeLeg(c4h){
   const closed = c4h.slice(0,-1);
   const {highs, lows} = findPivots(closed, PIVOT_4H);
@@ -194,16 +211,13 @@ function analyzeLeg(c4h){
   const lh = highs[highs.length-1], ll = lows[lows.length-1];
   const swingHigh = closed[lh].h, swingLow = closed[ll].l;
   if(swingHigh <= swingLow) return null;
-  const dir = lh > ll ? 'long' : 'short';
+  const dir = lh > ll ? 'long' : 'short';   // continuation of the latest 4h impulse
   const range = swingHigh - swingLow;
-  // Fib levels measured on the PULLBACK (from high down to low).
-  // 50%  = midpoint of the pullback = entry zone.
-  // 0.886 = 88.6% recovery of the pullback FROM the low = trailing stop target level.
-  // Initial SL = the opposite extreme (swingLow for long, swingHigh for short).
-  const fib = f => dir === 'long' ? swingLow + f*range : swingHigh - f*range;
+  // 50% = midpoint of the swing = pullback entry zone.
+  // stop886 = 0.886 retracement = the stop (2% risk is measured to it).
   return {dir, swingHigh, swingLow, range,
-          lvl50: fib(0.5), lvl886: fib(0.886),
-          initialSL: dir === 'long' ? swingLow : swingHigh};
+          lvl50: swingLow + 0.5*range,
+          stop886: stop886Of(dir, swingHigh, swingLow, range)};
 }
 function step2Status(c15, dir){
   // Work only on fully closed candles — the last element is still forming.
@@ -232,21 +246,22 @@ const btc  = x => (x == null || !isFinite(x)) ? '—' : x.toFixed(4)+' ₿';
 const sign = x => x >= 0 ? '+' : '';
 const cls  = x => x >= 0 ? 'up' : 'down';
 
-let STATE = {leg:null, price:null, s2:null, ts:null};
+let STATE = {leg:null, dir:null, price:null, s2:null, s2long:null, s2short:null, c4h:null, ts:null};
 
 function render(){
-  let {leg, price, s2} = STATE;
+  let {leg, dir, price, s2, s2long, s2short, c4h} = STATE;
   const c = loadCfg();
   const dirPill = $('dir-pill'), legInfo = $('leg-info');
 
   // If auto-detection found nothing but user supplied a manual swing, synthesize a leg.
-  const useManualFallback = !leg && isFinite(c.manualHigh) && isFinite(c.manualLow) && c.manualHigh > c.manualLow;
-  if(useManualFallback){
+  const haveManual = isFinite(c.manualHigh) && isFinite(c.manualLow) && c.manualHigh > c.manualLow;
+  if(!leg && haveManual){
+    const d = dir || (c4h ? inferDir(c4h) : 'long');
     const range = c.manualHigh - c.manualLow;
-    leg = {dir:'long', swingHigh:c.manualHigh, swingLow:c.manualLow, range,
-           lvl50:  c.manualLow + 0.5   * range,
-           lvl886: c.manualLow + 0.886 * range,
-           initialSL: c.manualLow};
+    leg = {dir:d, swingHigh:c.manualHigh, swingLow:c.manualLow, range,
+           lvl50: c.manualLow + 0.5*range,
+           stop886: stop886Of(d, c.manualHigh, c.manualLow, range)};
+    if(!dir){ dir = d; s2 = d === 'long' ? s2long : s2short; }
   }
   if(!leg){
     dirPill.className = 'pill none'; dirPill.textContent = 'NO CLEAN LEG';
@@ -257,21 +272,25 @@ function render(){
     $('kpis').innerHTML = ''; $('note').textContent = ''; return;
   }
 
-  // Allow manual swing override — takes priority over auto-detected pivot values.
-  const useManual = isFinite(c.manualHigh) && isFinite(c.manualLow) && c.manualHigh > c.manualLow;
+  // Effective direction: a confirmed 15m MSS wins; otherwise the 4h continuation.
+  dir = dir || leg.dir;
+  const isLong = dir === 'long';
+
+  // Manual swing override — recompute levels for the effective direction. Without
+  // an override we still re-derive stop886 in case the confirmed MSS flipped dir.
+  const useManual = haveManual;
   if(useManual){
     const range = c.manualHigh - c.manualLow;
-    const fib = f => leg.dir === 'long' ? c.manualLow + f*range : c.manualHigh - f*range;
     leg = Object.assign({}, leg, {
       swingHigh: c.manualHigh, swingLow: c.manualLow, range,
-      lvl50:     fib(0.5),
-      lvl886:    fib(0.886),
-      initialSL: leg.dir === 'long' ? c.manualLow : c.manualHigh,
+      lvl50:   c.manualLow + 0.5*range,
+      stop886: stop886Of(dir, c.manualHigh, c.manualLow, range),
     });
+  } else {
+    leg = Object.assign({}, leg, {stop886: stop886Of(dir, leg.swingHigh, leg.swingLow, leg.range)});
   }
 
-  const isLong  = leg.dir === 'long';
-  dirPill.className = 'pill '+leg.dir;
+  dirPill.className = 'pill '+dir;
   dirPill.textContent = isLong ? '🟢 LONG SETUP' : '🔴 SHORT SETUP';
   legInfo.innerHTML = `4h ${isLong?'up-leg':'down-leg'} · swing high <b>${usd(leg.swingHigh)}</b> · swing low <b>${usd(leg.swingLow)}</b>`+
     (useManual ? ' <span style="color:var(--yellow);font-size:11px">· MANUAL OVERRIDE</span>' : '');
@@ -292,23 +311,21 @@ function render(){
 
   // --- Sizing: only calculated once Step 2 confirms ---
   // Entry   = close of 3rd confirming 15m candle (Step 2)
-  // SL      = swing extreme (swingLow for long, swingHigh for short)
-  // R/coin  = entry - SL
+  // Stop    = 0.886 level on the loss side; the 2% risk realises only if it hits
+  // R/coin  = |entry − 0.886|
   // Size    = (riskPct% × capital) / R
-  const initialSL   = leg.initialSL;
-  const trailTarget = leg.lvl886;
-  const riskUsd     = c.capital * (c.riskPct / 100);  // always show: e.g. $938
+  const stop886 = leg.stop886;
+  const riskUsd = c.capital * (c.riskPct / 100);  // always show: e.g. $938
 
   let R = null, sizeBtc = null, notional = null, marginNeeded = null, marginPct = null, trail = null, stopPnl = null;
   if(s2ok && entryPx != null){
-    R            = Math.abs(entryPx - initialSL);
+    R            = Math.abs(entryPx - stop886);
     sizeBtc      = R > 0 ? riskUsd / R : 0;
     notional     = sizeBtc * entryPx;
     marginNeeded = notional / c.lev;
     marginPct    = (marginNeeded / c.capital) * 100;
-    trail        = isLong
-      ? (price >= trailTarget ? trailTarget : Math.max(initialSL, price - R))
-      : (price <= trailTarget ? trailTarget : Math.min(initialSL, price + R));
+    // Trailing stop starts at the 0.886 level and trails by R as price runs in profit.
+    trail        = isLong ? Math.max(stop886, price - R) : Math.min(stop886, price + R);
     stopPnl      = (isLong ? (trail - entryPx) : (entryPx - trail)) * sizeBtc;
   }
 
@@ -319,8 +336,8 @@ function render(){
       <div class="kpi-lbl">Current Price</div>
       <div class="kpi-val">${usd(price)}</div>
       <div class="kpi-sub">${pxDelta != null
-        ? `vs entry: <b class="${cls(pxDelta)}">${sign(pxDelta)}${usd(pxDelta,1)}</b> (${((pxDelta/entryPx)*100).toFixed(2)}%)`
-        : `vs 50% zone: <b class="${cls(price-leg.lvl50)}">${sign(price-leg.lvl50)}${usd(price-leg.lvl50,0)}</b>`}
+        ? `vs entry: <b class="${cls(isLong?pxDelta:-pxDelta)}">${sign(pxDelta)}${usd(pxDelta,1)}</b> (${((pxDelta/entryPx)*100).toFixed(2)}%)`
+        : `vs 50% zone: <b>${sign(price-leg.lvl50)}${usd(price-leg.lvl50,0)}</b>`}
       </div>
     </div>
 
@@ -351,20 +368,19 @@ function render(){
       <div class="kpi-val ${s2ok ? '' : 'pending'}">${s2ok ? btc(sizeBtc) : 'PENDING'}</div>
       <div class="kpi-sub">
         ${s2ok
-          ? `2% risk = <b>${usd(riskUsd,0)}</b> · R/coin <b>${usd(R,0)}</b><br>notional <b>${usd(notional,0)}</b> · margin <b>${usd(marginNeeded,0)}</b> (${marginPct.toFixed(1)}%) at ${c.lev}×`
-          : `<span class="dim">calculated after Step 2 entry confirmed<br>will be: ${usd(riskUsd,0)} risk ÷ (entry − ${usd(initialSL,0)} SL)</span>`}
+          ? `${c.riskPct}% risk = <b>${usd(riskUsd,0)}</b> · R/coin <b>${usd(R,0)}</b><br>notional <b>${usd(notional,0)}</b> · margin <b>${usd(marginNeeded,0)}</b> (${marginPct.toFixed(1)}%) at ${c.lev}×`
+          : `<span class="dim">set after Step 2 entry confirmed<br>= ${usd(riskUsd,0)} risk ÷ (entry − ${usd(stop886,0)} 0.886 stop)</span>`}
       </div>
     </div>
 
     <div class="kpi accent-sl">
-      <div class="kpi-lbl">Stop / Trail  <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">0.886 LOCK</span></div>
-      <div class="kpi-val">${s2ok ? usd(trail) : usd(initialSL)}</div>
+      <div class="kpi-lbl">Stop / Trail  <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">0.886 STOP</span></div>
+      <div class="kpi-val">${s2ok ? usd(trail) : usd(stop886)}</div>
       <div class="kpi-sub">
-        initial SL: <b>${usd(initialSL)}</b> (swing ${isLong?'low':'high'})<br>
-        0.886 lock: <b>${usd(trailTarget)}</b><br>
-        ${stopPnl != null
-          ? `P/L if stopped now: <b class="${cls(stopPnl)}">${sign(stopPnl)}${usd(stopPnl,0)}</b>`
-          : `<span class="dim">trail starts at entry, locks at 0.886</span>`}
+        0.886 stop: <b>${usd(stop886)}</b> (${isLong?'below':'above'} entry)<br>
+        ${s2ok
+          ? `trails ${isLong?'up':'down'} by R as price runs<br>P/L if stopped now: <b class="${cls(stopPnl)}">${sign(stopPnl)}${usd(stopPnl,0)}</b>`
+          : `<span class="dim">2% risk realises only if 0.886 hits;<br>trailing stop starts from that level</span>`}
       </div>
     </div>
 
@@ -373,16 +389,16 @@ function render(){
       <div class="kpi-val up">${usd(riskUsd,0)}</div>
       <div class="kpi-sub">
         <b>${c.riskPct}%</b> of <b>${usd(c.capital,0)}</b><br>
-        ${s2ok ? `<b>${usd(R,0)}</b>/coin · entry → swing ${isLong?'low':'high'}` : `<span class="dim">R/coin known after Step 2</span>`}
+        ${s2ok ? `<b>${usd(R,0)}</b>/coin · entry → 0.886 stop` : `<span class="dim">R/coin known after Step 2 (entry → 0.886)</span>`}
       </div>
     </div>
   `;
 
   $('note').innerHTML = s2ok
-    ? `<b>Trade active.</b> Entry ${usd(entryPx)} · SL ${usd(initialSL)} · R/coin ${usd(R,0)} · size ${btc(sizeBtc)} · trail now at ${usd(trail)}, locks to ${usd(trailTarget)} when price arrives.`
+    ? `<b>Trade active (${isLong?'LONG':'SHORT'}).</b> Entry ${usd(entryPx)} · 0.886 stop ${usd(stop886)} · R/coin ${usd(R,0)} · size ${btc(sizeBtc)} · trailing now at ${usd(trail)}, ${isLong?'rising':'falling'} with price.`
     : `<b>Watching.</b> 50% zone ${usd(leg.lvl50)} (${usd(leg.lvl50-half,0)}–${usd(leg.lvl50+half,0)}) arms the setup. `+
       `Entry is the close of the 3rd consecutive ${isLong?'bullish':'bearish'} 15m candle after an MSS. `+
-      `At entry, risk = 2% of account (${usd(riskUsd,0)}) with SL at swing ${isLong?'low':'high'} (${usd(initialSL)}).`;
+      `Risk = 2% of account (${usd(riskUsd,0)}); the stop sits at the 0.886 level (${usd(stop886)}) and trails from there.`;
 }
 
 async function refresh(){
@@ -392,8 +408,15 @@ async function refresh(){
     const [c4h, c15] = await Promise.all([get4h(), get15m()]);
     const leg   = analyzeLeg(c4h);
     const price = c15[c15.length-1].c;
-    const s2    = leg ? step2Status(c15, leg.dir) : null;
-    STATE = {leg, price, s2, ts: new Date()};
+    // Step 2 may confirm in either direction; whichever fires sets the trade
+    // direction. Before confirmation we track progress in the 4h continuation dir.
+    const s2long  = step2Status(c15, 'long');
+    const s2short = step2Status(c15, 'short');
+    let dir = null, s2 = null;
+    if(s2long.ok){ dir = 'long';  s2 = s2long; }
+    else if(s2short.ok){ dir = 'short'; s2 = s2short; }
+    else if(leg){ dir = leg.dir; s2 = leg.dir === 'long' ? s2long : s2short; }
+    STATE = {leg, dir, price, s2, s2long, s2short, c4h, ts: new Date()};
     render();
     sl.textContent = 'Live · BTC '+usd(price)+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh every 30s';
   } catch(e){
