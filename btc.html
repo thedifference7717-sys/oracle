@@ -73,7 +73,7 @@ body{padding-bottom:40px}
   </div>
   <div class="controls">
     <div class="ctrl-group"><label class="ctrl-lbl">ACCOUNT $</label><input id="in-capital" class="ctrl-input" type="number" step="100" placeholder="46900"></div>
-    <div class="ctrl-group"><label class="ctrl-lbl">ALLOCATION %</label><input id="in-alloc" class="ctrl-input" type="number" step="1" placeholder="10"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">RISK % OF ACCT</label><input id="in-risk" class="ctrl-input" type="number" step="0.5" placeholder="2"></div>
     <div class="ctrl-group"><label class="ctrl-lbl">LEVERAGE ×</label><input id="in-lev" class="ctrl-input" type="number" step="1" placeholder="5"></div>
     <div class="ctrl-group"><label class="ctrl-lbl">4H HIGH $ (override)</label><input id="in-high" class="ctrl-input" type="number" step="1" placeholder="auto"></div>
     <div class="ctrl-group"><label class="ctrl-lbl">4H LOW $ (override)</label><input id="in-low" class="ctrl-input" type="number" step="1" placeholder="auto"></div>
@@ -93,9 +93,9 @@ body{padding-bottom:40px}
 <div class="note" id="note"></div>
 <div class="separator"></div>
 <div class="disclaimer">
-  Strategy: 4h 50% Fib pullback (Step 1 arms the setup) → 15m market-structure shift + 3 consecutive candles in the trade direction (Step 2 = entry at that candle's close).
-  Stop anchored to the 0.886 retracement; trails price by the initial risk distance once in-trade.
-  This is a planning aid — it places no orders. Confirm on your chart and follow prop-firm rules.
+  Strategy: 4h 50% Fib pullback arms the setup (Step 1) → 15m MSS + 3 consecutive candles = entry at that candle's close (Step 2).
+  Initial SL at the swing extreme. Trailing stop rises with price; locks at the 0.886 level when reached.
+  Planning aid only — places no orders. Confirm on your chart and follow prop-firm rules.
 </div>
 
 <script>
@@ -103,12 +103,12 @@ const FIB_ZONE_BAND = 0.03;
 const PIVOT_4H = 3, PIVOT_15M = 2, CONSEC = 3;
 const REFRESH_MS = 30000;
 
-const DEFAULTS = {capital: 46900, alloc: 10, lev: 5};
+const DEFAULTS = {capital: 46900, riskPct: 2, lev: 5};
 const $ = id => document.getElementById(id);
 
 function loadCfg(){
   const c = {};
-  for(const k of ['capital','alloc','lev']){
+  for(const k of ['capital','riskPct','lev']){
     const v = parseFloat(localStorage.getItem('btcfib_'+k));
     c[k] = isFinite(v) && v > 0 ? v : DEFAULTS[k];
   }
@@ -119,7 +119,7 @@ function loadCfg(){
 function initInputs(){
   const c = loadCfg();
   $('in-capital').value = c.capital;
-  $('in-alloc').value   = c.alloc;
+  $('in-risk').value    = c.riskPct;
   $('in-lev').value     = c.lev;
   if(isFinite(c.manualHigh)) $('in-high').value = c.manualHigh;
   if(isFinite(c.manualLow))  $('in-low').value  = c.manualLow;
@@ -130,7 +130,7 @@ function initInputs(){
     render();
   });
   bind('in-capital','capital');
-  bind('in-alloc',  'alloc');
+  bind('in-risk',   'riskPct');
   bind('in-lev',    'lev');
   bind('in-high',   'high');
   bind('in-low',    'low');
@@ -194,9 +194,14 @@ function analyzeLeg(c4h){
   if(swingHigh <= swingLow) return null;
   const dir = lh > ll ? 'long' : 'short';
   const range = swingHigh - swingLow;
-  const fib = f => dir === 'long' ? swingHigh - f*range : swingLow + f*range;
+  // Fib measured FROM the swing extreme (low for long, high for short).
+  // 50%  = midpoint = entry zone.
+  // 0.886 = 88.6% recovery toward original high = trailing stop lock level.
+  // Initial SL = the opposite extreme (swing low for long, swing high for short).
+  const fib = f => dir === 'long' ? swingLow + f*range : swingHigh - f*range;
   return {dir, swingHigh, swingLow, range,
-          lvl50: fib(0.5), lvl886: fib(0.886)};
+          lvl50: fib(0.5), lvl886: fib(0.886),
+          initialSL: dir === 'long' ? swingLow : swingHigh};
 }
 function step2Status(c15, dir){
   const closed = c15.slice(0,-1);
@@ -234,7 +239,9 @@ function render(){
   if(useManualFallback){
     const range = c.manualHigh - c.manualLow;
     leg = {dir:'long', swingHigh:c.manualHigh, swingLow:c.manualLow, range,
-           lvl50: c.manualHigh - 0.5*range, lvl886: c.manualHigh - 0.886*range};
+           lvl50:     c.manualLow + 0.5   * range,
+           lvl886:    c.manualLow + 0.886 * range,
+           initialSL: c.manualLow};
   }
   if(!leg){
     dirPill.className = 'pill none'; dirPill.textContent = 'NO CLEAN LEG';
@@ -247,14 +254,14 @@ function render(){
 
   const useManual = isFinite(c.manualHigh) && isFinite(c.manualLow) && c.manualHigh > c.manualLow;
   if(useManual){
+    const range = c.manualHigh - c.manualLow;
+    const fib = f => leg.dir === 'long' ? c.manualLow + f*range : c.manualHigh - f*range;
     leg = Object.assign({}, leg, {
-      swingHigh: c.manualHigh,
-      swingLow:  c.manualLow,
-      range:     c.manualHigh - c.manualLow,
+      swingHigh: c.manualHigh, swingLow: c.manualLow, range,
+      lvl50:     fib(0.5),
+      lvl886:    fib(0.886),
+      initialSL: leg.dir === 'long' ? c.manualLow : c.manualHigh,
     });
-    const fib = f => leg.dir === 'long' ? leg.swingHigh - f*leg.range : leg.swingLow + f*leg.range;
-    leg.lvl50  = fib(0.5);
-    leg.lvl886 = fib(0.886);
   }
 
   const isLong  = leg.dir === 'long';
@@ -276,17 +283,21 @@ function render(){
   $('s2badge').textContent = s2ok ? 'ENTRY CONFIRMED' : (inZone ? 'WATCHING' : 'WAITING');
 
   const entryForCalc = entryPx ?? leg.lvl50;
-  const sl0      = leg.lvl886;
-  const R        = Math.abs(entryForCalc - sl0);
-  const margin   = c.capital * (c.alloc / 100);
-  const notional = margin * c.lev;
-  const sizeBtc  = notional / entryForCalc;
-  const riskUsd  = sizeBtc * R;
-  const riskPct  = (riskUsd / c.capital) * 100;
+  const initialSL    = leg.initialSL;
+  const R            = Math.abs(entryForCalc - initialSL);
+  const riskUsd      = c.capital * (c.riskPct / 100);
+  const sizeBtc      = R > 0 ? riskUsd / R : 0;
+  const notional     = sizeBtc * entryForCalc;
+  const marginNeeded = notional / c.lev;
+  const marginPct    = (marginNeeded / c.capital) * 100;
+  const actualRiskPct = (riskUsd / c.capital) * 100;
 
+  const trailTarget = leg.lvl886;
   const trail = price != null
-    ? (isLong ? Math.max(sl0, price - R) : Math.min(sl0, price + R))
-    : sl0;
+    ? (isLong
+        ? (price >= trailTarget ? trailTarget : Math.max(initialSL, price - R))
+        : (price <= trailTarget ? trailTarget : Math.min(initialSL, price + R)))
+    : initialSL;
   const stopPnl = entryPx != null
     ? (isLong ? (trail - entryPx) : (entryPx - trail)) * sizeBtc
     : null;
@@ -294,8 +305,7 @@ function render(){
   const entryLabel = s2ok
     ? `<span class="up">confirmed · 3rd candle close</span>`
     : `<span class="dim">pending Step 2 · projected ≈ 50% zone</span>`;
-
-  const pxDelta  = price != null && entryPx != null ? price - entryPx : null;
+  const pxDelta = price != null && entryPx != null ? price - entryPx : null;
 
   $('kpis').innerHTML = `
     <div class="kpi accent-price">
@@ -327,43 +337,41 @@ function render(){
 
     <div class="kpi accent-size">
       <div class="kpi-lbl">Trade Size</div>
-      <div class="kpi-val">${usd(margin,0)}</div>
+      <div class="kpi-val">${btc(sizeBtc)}</div>
       <div class="kpi-sub">
-        ${c.alloc}% of <b>${usd(c.capital,0)}</b> account · ${c.lev}× leverage<br>
-        notional <b>${usd(notional,0)}</b> · <b>${btc(sizeBtc)}</b>
-        ${s2ok ? '' : '<br><span class="dim">(sized at 50% for planning)</span>'}
+        max risk <b>${usd(riskUsd,0)}</b> (${c.riskPct}% of ${usd(c.capital,0)})<br>
+        notional <b>${usd(notional,0)}</b> · margin <b>${usd(marginNeeded,0)}</b> (${marginPct.toFixed(1)}%)<br>
+        at ${c.lev}× leverage${s2ok ? '' : ' <span class="dim">· sizing at 50% zone</span>'}
       </div>
     </div>
 
     <div class="kpi accent-sl">
-      <div class="kpi-lbl">Trailing Stop  <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">0.886 ANCHOR</span></div>
+      <div class="kpi-lbl">Stop / Trail  <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">0.886 LOCK</span></div>
       <div class="kpi-val">${usd(trail)}</div>
       <div class="kpi-sub">
-        hard floor: <b>${usd(sl0)}</b>  (0.886 Fib)<br>
+        initial SL: <b>${usd(initialSL)}</b> (swing ${isLong?'low':'high'})<br>
+        0.886 lock: <b>${usd(trailTarget)}</b><br>
         ${stopPnl != null
-          ? `locked P/L at stop: <b class="${cls(stopPnl)}">${sign(stopPnl)}${usd(stopPnl,0)}</b>`
-          : `trails price by <b>${usd(R,0)}</b>/coin initial risk`}
+          ? `P/L if stopped here: <b class="${cls(stopPnl)}">${sign(stopPnl)}${usd(stopPnl,0)}</b>`
+          : `risk/coin: <b>${usd(R,0)}</b>`}
       </div>
     </div>
 
     <div class="kpi">
-      <div class="kpi-lbl">Initial Risk</div>
-      <div class="kpi-val ${riskPct > 3 ? 'down' : riskPct > 1.5 ? 'warn' : 'up'}">${usd(riskUsd,0)}</div>
+      <div class="kpi-lbl">Max Risk</div>
+      <div class="kpi-val up">${usd(riskUsd,0)}</div>
       <div class="kpi-sub">
-        <b>${riskPct.toFixed(2)}%</b> of account<br>
-        <b>${usd(R,0)}</b>/coin  (entry → 0.886)
+        <b>${actualRiskPct.toFixed(2)}%</b> of account if SL hit<br>
+        <b>${usd(R,0)}</b>/coin  ·  entry → swing ${isLong?'low':'high'}
       </div>
     </div>
   `;
 
   $('note').innerHTML =
-    `<b>How levels are set:</b> `+
-    `4h swing leg identified by confirmed pivot highs/lows. `+
-    `<b>50% Fib (${usd(leg.lvl50)})</b> is the pullback zone that arms the setup (Step 1). `+
-    `The <span class="hl">actual entry</span> is the close of the 3rd consecutive ${isLong?'bullish':'bearish'} 15m candle `+
-    `after a 15m market-structure shift ${isLong?`above ${usd(s2?.mssLvl)}`:`below ${usd(s2?.mssLvl)}`} fires (Step 2). `+
-    `<b>Stop (${usd(sl0)})</b> anchors to the 0.886 retracement and <b>trails price by ${usd(R,0)}</b> once you're in trade — `+
-    `it only tightens, never loosens.`;
+    `<b>Levels:</b> 50% zone (${usd(leg.lvl50)}) = entry trigger. `+
+    `0.886 (${usd(trailTarget)}) = trailing stop lock — stop moves here when price arrives. `+
+    `Initial SL = swing ${isLong?'low':'high'} (${usd(initialSL)}). `+
+    `Size = ${usd(riskUsd,0)} risk ÷ ${usd(R,0)}/coin = <b>${btc(sizeBtc)}</b>.`;
 }
 
 async function refresh(){
@@ -376,7 +384,7 @@ async function refresh(){
     const s2    = leg ? step2Status(c15, leg.dir) : null;
     STATE = {leg, price, s2, ts: new Date()};
     render();
-    sl.textContent = 'Live · BTC '+usd(price)+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh every 30s';
+    sl.textContent = 'Live · BTC '+usd(price)+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh 30s';
   } catch(e){
     sl.className = 'err';
     sl.textContent = 'Data error: '+e.message+' — retrying on next cycle.';
