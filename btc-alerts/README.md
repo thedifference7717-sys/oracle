@@ -13,6 +13,13 @@ two-step trend-continuation setup:
 
 Works **both directions**: a 4h up-leg gives long setups, a down-leg gives shorts.
 
+The Step 2 alert is enriched with **Smart Money Concepts** context (open-source
+SMC logic, *not* LuxAlgo's proprietary indicator): the 15m break is labelled
+**CHoCH** (change of character / reversal) or **BOS** (break of structure /
+continuation), plus the most recent **order block**, nearest unfilled
+**fair-value gap**, and any recent **liquidity sweep**. The live dashboard
+(`btc.html`) renders the same SMC structure panel.
+
 > ⚠️ This is an alerting aid, not financial advice or an auto-trader. It never
 > places orders. Always confirm on your own chart and follow your prop-firm rules.
 

@@ -50,7 +50,29 @@ def step1_message(s1):
     )
 
 
-def step2_message(s1, s2):
+def _smc_lines(smc, direction):
+    """Render the SMC context (CHoCH/BOS, order block, FVG, liquidity) for the alert."""
+    if not smc:
+        return ""
+    lines = []
+    ev = smc.get("last_event")
+    if ev:
+        arrow = "↑" if ev["dir"] == "bull" else "↓"
+        lines.append(f"Structure: <b>{ev['type']}</b> {arrow} @ {_money(ev['level'])}")
+    ob = smc.get("order_block")
+    if ob:
+        kind = "demand" if ob["dir"] == "bull" else "supply"
+        lines.append(f"Order block ({kind}): {_money(ob['lo'])}–{_money(ob['hi'])}")
+    fvg = smc.get("fvg")
+    if fvg:
+        lines.append(f"FVG ({fvg['dir']}, unfilled): {_money(fvg['lo'])}–{_money(fvg['hi'])}")
+    if smc.get("sweep"):
+        sw = smc["sweep"]
+        lines.append(f"Liquidity sweep {sw['dir']} @ {_money(sw['level'])}")
+    return ("\n" + "\n".join(lines)) if lines else ""
+
+
+def step2_message(s1, s2, smc=None):
     if s1["direction"] == "long":
         shift = f"15m close {_money(s2['last_close'])} broke <b>above</b> swing high {_money(s2['mss_level'])}"
         candles = f"{config.CONSECUTIVE_CANDLES} consecutive green 15m candles"
@@ -61,14 +83,17 @@ def step2_message(s1, s2):
     stop = s1["stop_886"]
     risk_per_coin = abs(entry - stop)
     side = "below" if s1["direction"] == "long" else "above"
+    # Label the shift with the SMC structure type (CHoCH/BOS) when available.
+    shift_type = smc["last_event"]["type"] if smc and smc.get("last_event") else "MSS"
     return (
         f"🚨 <b>BTC — Step 2 CONFIRMED</b>  {_arrow(s1['direction'])}\n"
         f"Full setup complete at the 4h 50% Fib ({_money(s1['fib50'])}).\n\n"
-        f"✅ Market structure shift: {shift}\n"
+        f"✅ {shift_type}: {shift}\n"
         f"✅ {candles}\n"
         f"Entry (3rd candle close): {_money(entry)}\n"
         f"Stop — 0.886 level: {_money(stop)} ({side} entry)\n"
-        f"Risk/coin: {_money(risk_per_coin)} → size 2% of account ÷ that.\n\n"
+        f"Risk/coin: {_money(risk_per_coin)} → size 2% of account ÷ that."
+        f"{_smc_lines(smc, s1['direction'])}\n\n"
         f"Manage risk per your prop-firm rules. ({_now_iso()})"
     )
 
@@ -113,10 +138,12 @@ def run():
         c15_closed, _ = data.get_candles("15m", config.KRAKEN_PAIR, config.BINANCE_SYMBOL)
         s2 = indicators.compute_step2(
             c15_closed, s1["direction"], config.PIVOT_STRENGTH_15M, config.CONSECUTIVE_CANDLES)
+        smc = indicators.compute_smc(c15_closed, config.PIVOT_STRENGTH_15M)
         print(f"Step2 mss={s2['mss']} (level={_money(s2['mss_level'])}) "
-              f"consecutive={s2['consecutive']} confirmed={s2['confirmed']}")
+              f"consecutive={s2['consecutive']} confirmed={s2['confirmed']} "
+              f"smc={smc['last_event'] if smc else None}")
         if s2["confirmed"]:
-            if notify.send(config.TELEGRAM_BOT_TOKEN, config.TELEGRAM_CHAT_ID, step2_message(s1, s2)):
+            if notify.send(config.TELEGRAM_BOT_TOKEN, config.TELEGRAM_CHAT_ID, step2_message(s1, s2, smc)):
                 print("Sent Step 2 alert.")
             st["step2_sent"] = True
             st["armed"] = False  # require a fresh tag of the zone to re-arm
