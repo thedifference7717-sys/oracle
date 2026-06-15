@@ -20,11 +20,11 @@ jobs:
           fi
           send(){ curl -s "https://api.telegram.org/bot$TOKEN/sendMessage" \
             --data-urlencode "chat_id=$CHAT" --data-urlencode "text=$1" \
-            -o /dev/null -w "%{http_code}\n"; }
+            | jq -r 'if .ok then "OK — delivered" else "FAIL \(.error_code): \(.description)" end'; }
           send $'📊 Chart Hackers — Setup\n🟢 BERA · LONG\nEntry: 0.258\nTP: 0.343\nSL: 0.226\nR:R ≈ 2.7:1'
           send $'📊 Chart Hackers — Setup\n🔴 TAO (Bittensor) · SHORT\nEntry: 301–303\nTP: 230–240\nSL: 312\nR:R ≈ 6.7:1'
           send $'📊 Chart Hackers — Setup\n🟢 TRUMP · LONG\nEntry: ~2.01 (market)\nTP: 2.13 → 2.25\nSL: 1.958\nR:R ≈ 2.3:1'
           send $'📊 Chart Hackers — Setup\n🟢 BMX (BeamX) · LONG\nEntry: 0.01436–0.01481\nTP: 0.01780\nSL: 0.01377\nR:R ≈ 3.9:1'
           send $'📊 Chart Hackers — Setup\n🟢 BCH (Bitcoin Cash) · LONG\nEntry: 208–212\nTP: 300\nSL: 198.2\nR:R ≈ 7.6:1'
           send $'📊 Chart Hackers — Setup\n🟢 ADA · LONG\nEntry: 0.1739–0.1753\nTP: 0.20 → 0.2272\nSL: 0.1604\nR:R ≈ 1.8:1'
-          echo "Done — each 200 above is a delivered message."
+          echo "--- done (see OK/FAIL per message above) ---"
