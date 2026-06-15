@@ -1,0 +1,24 @@
+name: BTC SMC strategy backtest
+
+# Manual run only. Fetches historical 15m BTC and replays the 4h 50% + 15m SMC
+# strategy, printing edge metrics to the job log. Runs where the network works
+# (the sandbox can't reach exchanges; CI can).
+on:
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: 'CryptoCompare 15m pages to fetch (more = longer history)'
+        default: '8'
+        required: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run backtest
+        working-directory: btc-alerts
+        run: python backtest.py ${{ inputs.pages }}
