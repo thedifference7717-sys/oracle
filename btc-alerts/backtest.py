@@ -17,7 +17,9 @@ Usage:
 import csv as _csv
 import json
 import sys
+import time as _time
 import urllib.request
+from datetime import datetime, timezone
 
 import config
 import indicators
@@ -30,23 +32,57 @@ def _get(url):
         return json.loads(r.read().decode())
 
 
-def fetch_15m(pages=4):
-    """Pull recent 15m BTC/USD bars from CryptoCompare (keyless), paging back."""
-    merged, to_ts = {}, None
+def _iso(ts):
+    return datetime.fromtimestamp(ts, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def fetch_coinbase(pages):
+    """Coinbase Exchange 15m candles, paged backward (300/call, keyless, CI-reachable).
+    Row format: [time, low, high, open, close, volume]."""
+    out, end = {}, None
     for _ in range(pages):
-        url = ("https://min-api.cryptocompare.com/data/v2/histominute"
-               "?fsym=BTC&tsym=USD&aggregate=15&limit=2000")
-        if to_ts:
-            url += f"&toTs={to_ts}"
-        data = (_get(url).get("Data") or {}).get("Data") or []
-        if not data:
+        url = "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=900"
+        if end is not None:
+            url += f"&start={_iso(end - 300 * 900)}&end={_iso(end)}"
+        rows = _get(url)
+        if not isinstance(rows, list) or not rows:
             break
-        for d in data:
-            if d["close"] > 0:
-                merged[d["time"]] = {"t": d["time"], "o": d["open"], "h": d["high"],
-                                     "l": d["low"], "c": d["close"]}
-        to_ts = data[0]["time"] - 1
-    return [merged[t] for t in sorted(merged)]
+        for x in rows:
+            t = int(x[0])
+            out[t] = {"t": t, "o": float(x[3]), "h": float(x[2]), "l": float(x[1]), "c": float(x[4])}
+        end = min(int(x[0]) for x in rows) - 1
+        _time.sleep(0.34)                      # respect the public rate limit
+    return [out[t] for t in sorted(out)]
+
+
+def fetch_kraken():
+    j = _get("https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=15")
+    res = j.get("result", {})
+    key = next((k for k in res if k != "last"), None)
+    if not key:
+        return []
+    return [{"t": int(x[0]), "o": float(x[1]), "h": float(x[2]), "l": float(x[3]), "c": float(x[4])}
+            for x in res[key]]
+
+
+def fetch_binance():
+    rows = _get("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=15m&limit=1000")
+    return [{"t": int(x[0]) // 1000, "o": float(x[1]), "h": float(x[2]), "l": float(x[3]), "c": float(x[4])}
+            for x in rows]
+
+
+def fetch_15m(pages=12):
+    """Best-available 15m history: Coinbase (paged) → Kraken → Binance."""
+    for name, fn in (("Coinbase", lambda: fetch_coinbase(pages)),
+                     ("Kraken", fetch_kraken), ("Binance", fetch_binance)):
+        try:
+            bars = fn()
+            if len(bars) > 50:
+                print(f"Data source: {name} ({len(bars)} bars)")
+                return bars
+        except Exception as e:                 # noqa: BLE001 — try the next source
+            print(f"{name} failed: {e}")
+    return []
 
 
 def load_csv(path):
@@ -183,8 +219,8 @@ def report(trades, capital=46900.0, risk_pct=2.0):
 if __name__ == "__main__":
     a = sys.argv[1:]
     if a and a[0].endswith(".csv"):
-        c15 = load_csv(a[0]); src = a[0]
+        c15 = load_csv(a[0])
+        print(f"Loaded {len(c15)} 15m bars from {a[0]}")
     else:
-        c15 = fetch_15m(pages=int(a[0]) if a and a[0].isdigit() else 4); src = "CryptoCompare 15m"
-    print(f"Loaded {len(c15)} 15m bars from {src}")
+        c15 = fetch_15m(pages=int(a[0]) if a and a[0].isdigit() else 12)
     report(run_backtest(c15))
