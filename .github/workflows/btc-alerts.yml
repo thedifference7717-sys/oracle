@@ -1,0 +1,58 @@
+name: BTC 4h Fib + 15m MSS alerts
+
+# Scheduled workflows only run on the repository's DEFAULT branch (main),
+# so this activates once merged to main. Use "Run workflow" (workflow_dispatch)
+# to test it from any branch in the meantime.
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: btc-alerts
+  cancel-in-progress: false
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure state store
+        env:
+          STATE_BLOB_URL: ${{ secrets.STATE_BLOB_URL }}
+        run: |
+          if [ -n "$STATE_BLOB_URL" ]; then echo "Using STATE_BLOB_URL secret."; exit 0; fi
+          if [ -s btc-alerts/.state-url ]; then echo "Using committed state url."; exit 0; fi
+          loc=$(curl -s -D - -o /dev/null -X POST https://jsonblob.com/api/jsonBlob \
+            -H "Content-Type: application/json" -H "Accept: application/json" \
+            -d '{}' | tr -d '\r' | awk 'tolower($1)=="location:"{print $2}')
+          case "$loc" in /*) loc="https://jsonblob.com$loc";; esac
+          if [ -z "$loc" ]; then echo "Failed to create state blob"; exit 1; fi
+          echo "$loc" > btc-alerts/.state-url
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add btc-alerts/.state-url
+          git commit -m "Provision BTC alert state store [skip ci]"
+          git push
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r btc-alerts/requirements.txt
+
+      - name: Run alert check
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          STATE_BLOB_URL: ${{ secrets.STATE_BLOB_URL }}
+        run: |
+          if [ -z "$STATE_BLOB_URL" ] && [ -s btc-alerts/.state-url ]; then
+            export STATE_BLOB_URL="$(cat btc-alerts/.state-url)"
+          fi
+          python btc-alerts/main.py
