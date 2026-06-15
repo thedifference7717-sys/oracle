@@ -1,0 +1,9 @@
+# Cloudflare Worker config for the LuxAlgo SMC → Telegram relay.
+# Deploy with: wrangler deploy
+# Then set secrets (never hardcode them here):
+#   wrangler secret put TELEGRAM_BOT_TOKEN
+#   wrangler secret put TELEGRAM_CHAT_ID
+#   wrangler secret put WEBHOOK_SECRET
+name = "luxalgo-tv-telegram"
+main = "worker.js"
+compatibility_date = "2024-11-01"
