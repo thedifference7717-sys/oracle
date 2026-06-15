@@ -106,3 +106,83 @@ def compute_step2(closed, direction, strength, n_consecutive):
         "last_close": last["c"],
         "candles": recent,
     }
+
+
+def compute_smc(closed, strength):
+    """Smart Money Concepts on a candle series (open-source SMC logic, not LuxAlgo's).
+
+    Returns the internal trend, the latest structure event (CHoCH vs BOS), the
+    most recent order block, the nearest unfilled fair-value gap, equal
+    highs/lows, and any recent liquidity sweep. Returns None if too few candles.
+    """
+    n = len(closed)
+    if n < strength * 2 + 3:
+        return None
+    highs, lows = find_pivots(closed, strength)
+
+    # Structure: a pivot is usable `strength` bars after it prints (confirmed).
+    conf_high = {i + strength: (i, closed[i]["h"]) for i in highs}
+    conf_low = {i + strength: (i, closed[i]["l"]) for i in lows}
+
+    trend, ref_high, ref_low = 0, None, None
+    events = []
+    for i in range(n):
+        if ref_high is not None and closed[i]["c"] > ref_high[1]:
+            events.append({"i": i, "type": "CHoCH" if trend == -1 else "BOS",
+                           "dir": "bull", "level": ref_high[1]})
+            trend, ref_high = 1, None
+        if ref_low is not None and closed[i]["c"] < ref_low[1]:
+            events.append({"i": i, "type": "CHoCH" if trend == 1 else "BOS",
+                           "dir": "bear", "level": ref_low[1]})
+            trend, ref_low = -1, None
+        if i in conf_high:
+            ref_high = conf_high[i]
+        if i in conf_low:
+            ref_low = conf_low[i]
+    last_event = events[-1] if events else None
+
+    # Order block: last opposing candle before the move that broke structure.
+    order_block = None
+    if last_event:
+        want_down = last_event["dir"] == "bull"   # bullish break -> last down candle = demand OB
+        for j in range(last_event["i"], max(-1, last_event["i"] - 20), -1):
+            is_down = closed[j]["c"] < closed[j]["o"]
+            if is_down == want_down:
+                order_block = {"dir": last_event["dir"], "lo": closed[j]["l"], "hi": closed[j]["h"]}
+                break
+
+    # Fair value gaps: 3-candle imbalance; keep the most recent still-unfilled.
+    fvg = None
+    for j in range(1, n - 1):
+        if closed[j - 1]["h"] < closed[j + 1]["l"]:
+            z = {"dir": "bull", "lo": closed[j - 1]["h"], "hi": closed[j + 1]["l"]}
+            if not any(closed[k]["l"] <= z["lo"] for k in range(j + 2, n)):
+                fvg = z
+        elif closed[j - 1]["l"] > closed[j + 1]["h"]:
+            z = {"dir": "bear", "lo": closed[j + 1]["h"], "hi": closed[j - 1]["l"]}
+            if not any(closed[k]["h"] >= z["hi"] for k in range(j + 2, n)):
+                fvg = z
+
+    # Liquidity: equal highs/lows + a recent sweep (stop-run that closed back).
+    tol = closed[-1]["c"] * 0.0008
+    eqh = eql = None
+    for a in range(len(highs) - 1):
+        for b in range(a + 1, len(highs)):
+            if abs(closed[highs[a]]["h"] - closed[highs[b]]["h"]) <= tol:
+                eqh = (closed[highs[a]]["h"] + closed[highs[b]]["h"]) / 2
+    for a in range(len(lows) - 1):
+        for b in range(a + 1, len(lows)):
+            if abs(closed[lows[a]]["l"] - closed[lows[b]]["l"]) <= tol:
+                eql = (closed[lows[a]]["l"] + closed[lows[b]]["l"]) / 2
+
+    sweep = None
+    for i in range(max(0, n - 10), n):
+        for hi in highs:
+            if hi < i and closed[i]["h"] > closed[hi]["h"] and closed[i]["c"] < closed[hi]["h"]:
+                sweep = {"dir": "bear", "level": closed[hi]["h"]}
+        for lo in lows:
+            if lo < i and closed[i]["l"] < closed[lo]["l"] and closed[i]["c"] > closed[lo]["l"]:
+                sweep = {"dir": "bull", "level": closed[lo]["l"]}
+
+    return {"trend": trend, "last_event": last_event, "order_block": order_block,
+            "fvg": fvg, "eqh": eqh, "eql": eql, "sweep": sweep}
