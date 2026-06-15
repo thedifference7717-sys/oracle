@@ -58,6 +58,17 @@ body{padding-bottom:40px}
 .kpi-sub{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.6}
 .kpi-sub b{color:var(--text)}
 .up{color:var(--green)}.down{color:var(--red)}.dim{color:var(--dim)}.warn{color:var(--yellow)}
+.fibwrap{padding:6px 20px 0;display:none}
+.fibwrap.show{display:block}
+.fib-title{font-size:11px;color:#D2D7E1;letter-spacing:.14em;font-weight:700;text-transform:uppercase;margin:10px 0 8px}
+.fib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.fib-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;gap:10px}
+.fib-row .f{color:var(--dim);letter-spacing:.04em}
+.fib-row .p{font-family:'Orbitron',monospace;font-weight:700;color:var(--text)}
+.fib-row.entry{border-color:#60A5FA66;background:#60A5FA12}.fib-row.entry .f{color:var(--blue)}
+.fib-row.stop{border-color:#FF4D6D66;background:#FF4D6D12}.fib-row.stop .f{color:var(--red)}
+.fib-row.mss{border-color:#FBBF2466;background:#FBBF2412}.fib-row.mss .f{color:var(--yellow)}
+.fib-row.extreme{opacity:.65}
 .note{font-size:12px;color:var(--dim);line-height:1.7;padding:2px 22px 0;max-width:980px}
 .note b{color:var(--muted)}
 .note .hl{color:var(--text)}
@@ -90,6 +101,7 @@ body{padding-bottom:40px}
   <div id="step2" class="step"><span class="dot"></span><span>Step 2 · 15m MSS + 3 candles → entry</span><span id="s2badge" class="badge waiting">WAITING</span></div>
 </div>
 <div class="kpis" id="kpis"></div>
+<div class="fibwrap" id="fibwrap"></div>
 <div class="note" id="note"></div>
 <div class="separator"></div>
 <div class="disclaimer">
@@ -269,7 +281,8 @@ function render(){
     $('step1').className = 'step'; $('step2').className = 'step';
     $('s1badge').className = 'badge waiting'; $('s1badge').textContent = 'WAITING';
     $('s2badge').className = 'badge waiting'; $('s2badge').textContent = 'WAITING';
-    $('kpis').innerHTML = ''; $('note').textContent = ''; return;
+    $('kpis').innerHTML = ''; $('note').textContent = '';
+    $('fibwrap').className = 'fibwrap'; $('fibwrap').innerHTML = ''; return;
   }
 
   // Effective direction: a confirmed 15m MSS wins; otherwise the 4h continuation.
@@ -393,6 +406,29 @@ function render(){
       </div>
     </div>
   `;
+
+  // 4h Fibonacci ladder (anchored at the swing low, so 0.886 ≈ near the high) +
+  // the live "next 15m MSS trigger" — the level a 15m candle must close beyond.
+  const stopFrac = isLong ? 0.114 : 0.886;   // where the 0.886 stop lands on the low-anchored ladder
+  const mssLvl   = s2 && s2.mssLvl != null ? s2.mssLvl : null;
+  const fibRows = [1.0, 0.886, 0.786, 0.618, 0.5, 0.382, 0.236, 0.114, 0.0].map(f => {
+    const p = leg.swingLow + f * leg.range;
+    let k = '', tag = '';
+    if(f === 1.0){ k = 'extreme'; tag = ' · swing high'; }
+    else if(f === 0.0){ k = 'extreme'; tag = ' · swing low'; }
+    if(f === 0.5){ k = 'entry'; tag = ' · 50% entry zone'; }
+    if(Math.abs(f - stopFrac) < 1e-9){ k = 'stop'; tag = ' · 0.886 STOP'; }
+    return `<div class="fib-row ${k}"><span class="f">${(f*100).toFixed(1)}%${tag}</span><span class="p">${usd(p,0)}</span></div>`;
+  }).join('');
+  $('fibwrap').className = 'fibwrap show';
+  $('fibwrap').innerHTML =
+    `<div class="fib-title">4H Fibonacci levels · swing ${usd(leg.swingLow,0)} → ${usd(leg.swingHigh,0)} (range ${usd(leg.range,0)})</div>`+
+    `<div class="fib-grid">${fibRows}</div>`+
+    `<div class="fib-title">Next 15m MSS trigger — a 15m candle must CLOSE ${isLong?'above':'below'} this</div>`+
+    `<div class="fib-grid"><div class="fib-row mss">`+
+      `<span class="f">last 15m swing ${isLong?'high':'low'}${mssLvl!=null && s2 && s2.mss ? ' · BROKEN ✓' : ''}</span>`+
+      `<span class="p">${mssLvl != null ? usd(mssLvl,1) : '—'}</span>`+
+    `</div></div>`;
 
   $('note').innerHTML = s2ok
     ? `<b>Trade active (${isLong?'LONG':'SHORT'}).</b> Entry ${usd(entryPx)} · 0.886 stop ${usd(stop886)} · R/coin ${usd(R,0)} · size ${btc(sizeBtc)} · trailing now at ${usd(trail)}, ${isLong?'rising':'falling'} with price.`
