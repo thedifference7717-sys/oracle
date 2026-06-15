@@ -22,7 +22,7 @@ body{padding-bottom:40px}
 .controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-left:auto}
 .ctrl-group{display:flex;flex-direction:column;gap:3px}
 .ctrl-lbl{font-size:10px;color:var(--muted);letter-spacing:.1em}
-.ctrl-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none;width:120px}
+.ctrl-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none;width:110px}
 .ctrl-input:focus{border-color:var(--purple)}
 .refresh-btn{padding:11px 18px;background:linear-gradient(90deg,#F7931A,#A78BFA);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.08em;font-family:'Orbitron',monospace;cursor:pointer}
 .refresh-btn:disabled{opacity:.5;cursor:wait}
@@ -35,35 +35,46 @@ body{padding-bottom:40px}
 .pill.none{color:var(--dim);background:#8C95A418;border:1px solid #8C95A455}
 .leg-info{font-size:13px;color:var(--muted);letter-spacing:.04em}
 .leg-info b{color:var(--text)}
-.steps{display:flex;gap:10px;flex-wrap:wrap;padding:8px 20px 0}
-.step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:8px 13px;letter-spacing:.05em}
-.step .dot{width:10px;height:10px;border-radius:50%;background:var(--dim);flex-shrink:0}
+.steps{display:flex;gap:10px;flex-wrap:wrap;padding:10px 20px 0}
+.step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 14px;letter-spacing:.05em}
+.step .dot{width:10px;height:10px;border-radius:50%;background:var(--dim);flex-shrink:0;transition:all .3s}
 .step.on{color:var(--text);border-color:#14F19566}
 .step.on .dot{background:var(--green);box-shadow:0 0 8px var(--green)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:16px 20px}
+.step .badge{font-size:10px;margin-left:4px;padding:2px 7px;border-radius:5px;font-weight:700;letter-spacing:.06em}
+.badge.confirmed{background:#14F19522;color:var(--green);border:1px solid #14F19555}
+.badge.armed{background:#FBBF2422;color:var(--yellow);border:1px solid #FBBF2455}
+.badge.waiting{background:#60A5FA11;color:var(--dim);border:1px solid var(--border)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;padding:16px 20px}
 .kpi{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
-.kpi.accent-price{border-color:#F7931A55}.kpi.accent-entry{border-color:#A78BFA55}.kpi.accent-sl{border-color:#FF4D6D55}.kpi.accent-fib{border-color:#60A5FA55}
-.kpi-lbl{font-size:11px;color:#D2D7E1;letter-spacing:.12em;font-weight:700;text-transform:uppercase}
-.kpi-val{font-family:'Orbitron',monospace;font-size:30px;font-weight:900;line-height:1.05;margin-top:9px;word-break:break-word}
-.kpi-sub{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.5}
+.kpi.accent-price{border-color:#F7931A55}
+.kpi.accent-entry{border-color:#A78BFA55}
+.kpi.accent-sl{border-color:#FF4D6D55}
+.kpi.accent-fib{border-color:#60A5FA55}
+.kpi.accent-size{border-color:#FBBF2455}
+.kpi-lbl{font-size:10px;color:#D2D7E1;letter-spacing:.14em;font-weight:700;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.kpi-lbl .lbl-badge{font-size:10px;padding:1px 7px;border-radius:5px;font-weight:700;letter-spacing:.06em}
+.kpi-val{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;line-height:1.08;margin-top:9px;word-break:break-word}
+.kpi-val.pending{font-size:18px;color:var(--dim);letter-spacing:.08em}
+.kpi-sub{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.6}
 .kpi-sub b{color:var(--text)}
-.up{color:var(--green)}.down{color:var(--red)}.dim{color:var(--dim)}
-.note{font-size:12px;color:var(--dim);line-height:1.6;padding:6px 22px 0;max-width:960px}
+.up{color:var(--green)}.down{color:var(--red)}.dim{color:var(--dim)}.warn{color:var(--yellow)}
+.note{font-size:12px;color:var(--dim);line-height:1.7;padding:2px 22px 0;max-width:980px}
 .note b{color:var(--muted)}
-.disclaimer{font-size:11px;color:var(--dim);padding:18px 22px 0;line-height:1.6;border-top:1px solid var(--border);margin-top:18px;max-width:960px}
+.note .hl{color:var(--text)}
+.separator{height:1px;background:var(--border);margin:14px 20px 0}
+.disclaimer{font-size:11px;color:var(--dim);padding:14px 22px 0;line-height:1.6;max-width:980px}
 </style>
 </head>
 <body>
 <div id="topbar">
   <div class="logo-wrap">
     <div class="btc-badge">₿</div>
-    <div><div class="logo">BTC FIB DESK</div><div class="logo-sub">4H 50% PULLBACK · 15M MSS</div></div>
+    <div><div class="logo">BTC FIB DESK</div><div class="logo-sub">4H 50% · 15M MSS · 3 CANDLES</div></div>
   </div>
   <div class="controls">
-    <div class="ctrl-group"><label class="ctrl-lbl">CAPITAL $</label><input id="in-capital" class="ctrl-input" type="number" step="1000"></div>
-    <div class="ctrl-group"><label class="ctrl-lbl">ALLOCATION %</label><input id="in-alloc" class="ctrl-input" type="number" step="1"></div>
-    <div class="ctrl-group"><label class="ctrl-lbl">LEVERAGE ×</label><input id="in-lev" class="ctrl-input" type="number" step="1"></div>
-    <div class="ctrl-group"><label class="ctrl-lbl">ENTRY $ (blank = 50%)</label><input id="in-entry" class="ctrl-input" type="number" step="1" placeholder="auto"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">ACCOUNT $</label><input id="in-capital" class="ctrl-input" type="number" step="100" placeholder="46900"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">ALLOCATION %</label><input id="in-alloc" class="ctrl-input" type="number" step="1" placeholder="10"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">LEVERAGE ×</label><input id="in-lev" class="ctrl-input" type="number" step="1" placeholder="5"></div>
     <button id="refresh" class="refresh-btn">REFRESH</button>
   </div>
 </div>
@@ -73,73 +84,73 @@ body{padding-bottom:40px}
   <span id="leg-info" class="leg-info"></span>
 </div>
 <div class="steps">
-  <div id="step1" class="step"><span class="dot"></span><span>Step 1 · price in 50% Fib zone</span></div>
-  <div id="step2" class="step"><span class="dot"></span><span>Step 2 · 15m MSS + 3 candles</span></div>
+  <div id="step1" class="step"><span class="dot"></span><span>Step 1 · 4h price in 50% Fib zone</span><span id="s1badge" class="badge waiting">WAITING</span></div>
+  <div id="step2" class="step"><span class="dot"></span><span>Step 2 · 15m MSS + 3 candles → entry</span><span id="s2badge" class="badge waiting">WAITING</span></div>
 </div>
 <div class="kpis" id="kpis"></div>
 <div class="note" id="note"></div>
+<div class="separator"></div>
 <div class="disclaimer">
-  Levels are computed live from public exchange data (Coinbase, Binance fallback) using pivot-based 4h swing detection.
-  The trailing stop trails price by your initial risk (entry → 0.886 level) and never loosens past the 0.886 level.
-  This is a planning aid — it places no orders. Verify on your own chart and follow your prop-firm rules.
+  Strategy: 4h 50% Fib pullback (Step 1 arms the setup) → 15m market-structure shift + 3 consecutive candles in the trade direction (Step 2 = entry at that candle's close).
+  Stop anchored to the 0.886 retracement; trails price by the initial risk distance once in-trade.
+  This is a planning aid — it places no orders. Confirm on your chart and follow prop-firm rules.
 </div>
 
 <script>
-const FIB_ZONE_BAND = 0.03;      // 50% zone half-width as a fraction of the leg
+const FIB_ZONE_BAND = 0.03;
 const PIVOT_4H = 3, PIVOT_15M = 2, CONSEC = 3;
 const REFRESH_MS = 30000;
 
-const DEFAULTS = {capital:469000, alloc:10, lev:5};
+const DEFAULTS = {capital: 46900, alloc: 10, lev: 5};
 const $ = id => document.getElementById(id);
 
 function loadCfg(){
   const c = {};
   for(const k of ['capital','alloc','lev']){
-    const v = parseFloat(localStorage.getItem('btc_'+k));
-    c[k] = isFinite(v) && v>0 ? v : DEFAULTS[k];
+    const v = parseFloat(localStorage.getItem('btcfib_'+k));
+    c[k] = isFinite(v) && v > 0 ? v : DEFAULTS[k];
   }
-  c.entry = parseFloat(localStorage.getItem('btc_entry')); // NaN = auto (50%)
   return c;
 }
 function initInputs(){
   const c = loadCfg();
   $('in-capital').value = c.capital;
-  $('in-alloc').value = c.alloc;
-  $('in-lev').value = c.lev;
-  if(isFinite(c.entry)) $('in-entry').value = c.entry;
-  const bind = (id,key)=> $(id).addEventListener('input', ()=>{
+  $('in-alloc').value   = c.alloc;
+  $('in-lev').value     = c.lev;
+  const bind = (id, key) => $(id).addEventListener('input', () => {
     const v = $(id).value.trim();
-    if(v==='') localStorage.removeItem('btc_'+key); else localStorage.setItem('btc_'+key, v);
+    if(v === '') localStorage.removeItem('btcfib_'+key);
+    else localStorage.setItem('btcfib_'+key, v);
     render();
   });
-  bind('in-capital','capital'); bind('in-alloc','alloc'); bind('in-lev','lev'); bind('in-entry','entry');
+  bind('in-capital','capital');
+  bind('in-alloc',  'alloc');
+  bind('in-lev',    'lev');
 }
 
-// ---------- data ----------
+// ── data ──────────────────────────────────────────────────────────────────────
 async function fetchJSON(url){
   const r = await fetch(url, {cache:'no-store'});
   if(!r.ok) throw new Error(url.split('/')[2]+' '+r.status);
   return r.json();
 }
-function aggregate(c1h, sec){
-  // group ascending 1h candles into `sec`-second buckets
-  const buckets = new Map();
-  for(const c of c1h){
+function aggregate(candles1h, sec){
+  const m = new Map();
+  for(const c of candles1h){
     const k = Math.floor(c.t/sec)*sec;
-    const b = buckets.get(k);
-    if(!b) buckets.set(k, {t:k, o:c.o, h:c.h, l:c.l, c:c.c});
-    else { b.h=Math.max(b.h,c.h); b.l=Math.min(b.l,c.l); b.c=c.c; }
+    const b = m.get(k);
+    if(!b) m.set(k, {t:k, o:c.o, h:c.h, l:c.l, c:c.c});
+    else { b.h = Math.max(b.h,c.h); b.l = Math.min(b.l,c.l); b.c = c.c; }
   }
-  return [...buckets.values()].sort((a,b)=>a.t-b.t);
+  return [...m.values()].sort((a,b)=>a.t-b.t);
 }
-async function coinbase(granularity){
-  // [time, low, high, open, close, volume], newest first
-  const rows = await fetchJSON('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity='+granularity);
-  return rows.map(x=>({t:x[0], o:+x[3], h:+x[2], l:+x[1], c:+x[4]})).sort((a,b)=>a.t-b.t);
+async function coinbase(gran){
+  const rows = await fetchJSON('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity='+gran);
+  return rows.map(x=>({t:x[0],o:+x[3],h:+x[2],l:+x[1],c:+x[4]})).sort((a,b)=>a.t-b.t);
 }
 async function binance(interval){
   const rows = await fetchJSON('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=400');
-  return rows.map(x=>({t:Math.floor(x[0]/1000), o:+x[1], h:+x[2], l:+x[3], c:+x[4]}));
+  return rows.map(x=>({t:Math.floor(x[0]/1000),o:+x[1],h:+x[2],l:+x[3],c:+x[4]}));
 }
 async function get4h(){
   try { return aggregate(await coinbase(3600), 14400); }
@@ -150,15 +161,21 @@ async function get15m(){
   catch(e){ return await binance('15m'); }
 }
 
-// ---------- strategy ----------
+// ── strategy ──────────────────────────────────────────────────────────────────
 function findPivots(c, s){
-  const highs=[], lows=[];
-  for(let i=s;i<c.length-s;i++){
-    let isH=true,isL=true;
-    for(let j=i-s;j<i;j++){ if(!(c[i].h>c[j].h)) isH=false; if(!(c[i].l<c[j].l)) isL=false; }
-    for(let j=i+1;j<=i+s;j++){ if(!(c[i].h>=c[j].h)) isH=false; if(!(c[i].l<=c[j].l)) isL=false; }
+  const highs = [], lows = [];
+  for(let i = s; i < c.length - s; i++){
+    let isH = true, isL = true;
+    for(let j = i-s; j < i; j++){
+      if(!(c[i].h > c[j].h)) isH = false;
+      if(!(c[i].l < c[j].l)) isL = false;
+    }
+    for(let j = i+1; j <= i+s; j++){
+      if(!(c[i].h >= c[j].h)) isH = false;
+      if(!(c[i].l <= c[j].l)) isL = false;
+    }
     if(isH) highs.push(i);
-    if(isL) lows.push(i);
+    if(isL)  lows.push(i);
   }
   return {highs, lows};
 }
@@ -169,30 +186,39 @@ function analyzeLeg(c4h){
   const lh = highs[highs.length-1], ll = lows[lows.length-1];
   const swingHigh = closed[lh].h, swingLow = closed[ll].l;
   if(swingHigh <= swingLow) return null;
-  const dir = lh>ll ? 'long' : 'short';
+  const dir = lh > ll ? 'long' : 'short';
   const range = swingHigh - swingLow;
-  const fib = f => dir==='long' ? swingHigh - f*range : swingLow + f*range;
-  return {dir, swingHigh, swingLow, range, lvl50:fib(0.5), lvl886:fib(0.886)};
+  const fib = f => dir === 'long' ? swingHigh - f*range : swingLow + f*range;
+  return {dir, swingHigh, swingLow, range,
+          lvl50: fib(0.5), lvl236: fib(0.236), lvl382: fib(0.382),
+          lvl618: fib(0.618), lvl786: fib(0.786), lvl886: fib(0.886)};
 }
 function step2Status(c15, dir){
+  // Work only on fully closed candles — the last element is still forming.
   const closed = c15.slice(0,-1);
   const {highs, lows} = findPivots(closed, PIVOT_15M);
   const recent = closed.slice(-CONSEC);
-  const last = closed[closed.length-1];
-  if(dir==='long'){
-    const consec = recent.every(c=>c.c>c.o);
-    const lvl = highs.length ? closed[highs[highs.length-1]].h : null;
-    return {mss: lvl!=null && last.c>lvl, lvl, consec, ok:(lvl!=null&&last.c>lvl)&&consec};
+  const last   = closed[closed.length-1];
+  if(dir === 'long'){
+    const consec = recent.length === CONSEC && recent.every(c => c.c > c.o);
+    const mssLvl = highs.length ? closed[highs[highs.length-1]].h : null;
+    const mss    = mssLvl != null && last.c > mssLvl;
+    return {mss, mssLvl, consec, ok: mss && consec,
+            entryPrice: (mss && consec) ? last.c : null};
   } else {
-    const consec = recent.every(c=>c.c<c.o);
-    const lvl = lows.length ? closed[lows[lows.length-1]].l : null;
-    return {mss: lvl!=null && last.c<lvl, lvl, consec, ok:(lvl!=null&&last.c<lvl)&&consec};
+    const consec = recent.length === CONSEC && recent.every(c => c.c < c.o);
+    const mssLvl = lows.length ? closed[lows[lows.length-1]].l : null;
+    const mss    = mssLvl != null && last.c < mssLvl;
+    return {mss, mssLvl, consec, ok: mss && consec,
+            entryPrice: (mss && consec) ? last.c : null};
   }
 }
 
-// ---------- formatting ----------
-const usd = (x,d=1)=> x==null||!isFinite(x) ? '—' : '$'+x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
-const btc = x => x==null||!isFinite(x) ? '—' : x.toFixed(4)+' ₿';
+// ── formatting ────────────────────────────────────────────────────────────────
+const usd  = (x,d=1) => (x == null || !isFinite(x)) ? '—' : '$'+x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const btc  = x => (x == null || !isFinite(x)) ? '—' : x.toFixed(4)+' ₿';
+const sign = x => x >= 0 ? '+' : '';
+const cls  = x => x >= 0 ? 'up' : 'down';
 
 let STATE = {leg:null, price:null, s2:null, ts:null};
 
@@ -200,81 +226,142 @@ function render(){
   const {leg, price, s2} = STATE;
   const c = loadCfg();
   const dirPill = $('dir-pill'), legInfo = $('leg-info');
+
   if(!leg){
-    dirPill.className='pill none'; dirPill.textContent='NO CLEAN LEG';
-    legInfo.textContent='Waiting for a confirmed 4h swing high and low.';
-    $('kpis').innerHTML=''; $('note').textContent=''; return;
+    dirPill.className = 'pill none'; dirPill.textContent = 'NO CLEAN LEG';
+    legInfo.textContent = 'Waiting for a confirmed 4h swing high and low…';
+    $('step1').className = 'step'; $('step2').className = 'step';
+    $('s1badge').className = 'badge waiting'; $('s1badge').textContent = 'WAITING';
+    $('s2badge').className = 'badge waiting'; $('s2badge').textContent = 'WAITING';
+    $('kpis').innerHTML = ''; $('note').textContent = ''; return;
   }
-  const isLong = leg.dir==='long';
+
+  const isLong  = leg.dir === 'long';
   dirPill.className = 'pill '+leg.dir;
   dirPill.textContent = isLong ? '🟢 LONG SETUP' : '🔴 SHORT SETUP';
   legInfo.innerHTML = `4h ${isLong?'up-leg':'down-leg'} · swing high <b>${usd(leg.swingHigh)}</b> · swing low <b>${usd(leg.swingLow)}</b>`;
 
-  // entry: manual override, else the 50% level
-  const entry = isFinite(c.entry) ? c.entry : leg.lvl50;
-  const sl0 = leg.lvl886;                          // initial stop = 0.886 level
-  const R = Math.abs(entry - sl0);                 // initial risk per unit
-  const trail = isLong ? Math.max(sl0, price - R) : Math.min(sl0, price + R);
+  // Step 1: is current price touching the 50% zone?
+  const half   = FIB_ZONE_BAND * leg.range;
+  const inZone = price != null && Math.abs(price - leg.lvl50) <= half;
+  $('step1').className = 'step' + (inZone ? ' on' : '');
+  $('s1badge').className = 'badge ' + (inZone ? 'armed' : 'waiting');
+  $('s1badge').textContent = inZone ? 'ARMED' : 'WAITING';
 
-  const alloc = c.capital * (c.alloc/100);         // margin allocated, e.g. $46,900
-  const notional = alloc * c.lev;                  // 5x exposure
-  const sizeBtc = notional / entry;
-  const riskUsd = sizeBtc * R;                     // $ lost if stopped at initial 0.886
-  const riskPct = riskUsd / c.capital * 100;
-  const stopPnl = (isLong ? (trail - entry) : (entry - trail)) * sizeBtc; // locked at current trail
+  // Step 2: 15m MSS + 3 consecutive candles → actual entry price
+  const s2ok    = s2 && s2.ok;
+  const entryPx = s2ok ? s2.entryPrice : null;   // confirmed entry = close of 3rd candle
+  $('step2').className = 'step' + (s2ok ? ' on' : '');
+  $('s2badge').className = 'badge ' + (s2ok ? 'confirmed' : (inZone ? 'armed' : 'waiting'));
+  $('s2badge').textContent = s2ok ? 'ENTRY CONFIRMED' : (inZone ? 'WATCHING' : 'WAITING');
 
-  // zone / step status
-  const half = FIB_ZONE_BAND * leg.range;
-  const inZone = Math.abs(price - leg.lvl50) <= half;
-  $('step1').className = 'step'+(inZone?' on':'');
-  $('step2').className = 'step'+(s2 && s2.ok ?' on':'');
+  // Position sizing — always use confirmed entry if available, else 50% for planning.
+  const entryForCalc = entryPx ?? leg.lvl50;
+  const sl0      = leg.lvl886;                         // hard stop = 0.886 Fib
+  const R        = Math.abs(entryForCalc - sl0);       // initial risk per coin
+  const margin   = c.capital * (c.alloc / 100);        // e.g. $4,690 (10% of $46,900)
+  const notional = margin * c.lev;                     // e.g. $23,450 at 5×
+  const sizeBtc  = notional / entryForCalc;
+  const riskUsd  = sizeBtc * R;
+  const riskPct  = (riskUsd / c.capital) * 100;
 
-  const pxClass = price>=entry ? 'up':'down';
-  const trailClass = stopPnl>=0 ? 'up':'down';
+  // Trailing stop: starts at 0.886 level, tightens once price has moved ≥ R in your favor.
+  const trail = price != null
+    ? (isLong ? Math.max(sl0, price - R) : Math.min(sl0, price + R))
+    : sl0;
+  const stopPnl = entryPx != null
+    ? (isLong ? (trail - entryPx) : (entryPx - trail)) * sizeBtc
+    : null;
+
+  const entryLabel = s2ok
+    ? `<span class="up">confirmed · 3rd candle close</span>`
+    : `<span class="dim">pending Step 2 · projected ≈ 50% zone</span>`;
+
+  const pxDelta  = price != null && entryPx != null ? price - entryPx : null;
 
   $('kpis').innerHTML = `
-    <div class="kpi accent-price"><div class="kpi-lbl">Current Price</div>
+    <div class="kpi accent-price">
+      <div class="kpi-lbl">Current Price</div>
       <div class="kpi-val">${usd(price)}</div>
-      <div class="kpi-sub">vs entry: <b class="${pxClass}">${price>=entry?'+':''}${usd(price-entry,1)}</b> (${((price-entry)/entry*100).toFixed(2)}%)</div></div>
+      <div class="kpi-sub">${pxDelta != null
+        ? `vs entry: <b class="${cls(pxDelta)}">${sign(pxDelta)}${usd(pxDelta,1)}</b> (${((pxDelta/entryPx)*100).toFixed(2)}%)`
+        : `vs 50% zone: <b class="${cls(price-leg.lvl50)}">${sign(price-leg.lvl50)}${usd(price-leg.lvl50,0)}</b>`}
+      </div>
+    </div>
 
-    <div class="kpi accent-fib"><div class="kpi-lbl">50% Pullback</div>
+    <div class="kpi accent-fib">
+      <div class="kpi-lbl">Step 1 · 50% Fib Zone</div>
       <div class="kpi-val">${usd(leg.lvl50)}</div>
-      <div class="kpi-sub">zone <b>${usd(leg.lvl50-half,0)}–${usd(leg.lvl50+half,0)}</b><br>${inZone?'<b class="up">price in zone ✓</b>':'<span class="dim">price not in zone</span>'}</div></div>
+      <div class="kpi-sub">
+        zone <b>${usd(leg.lvl50-half,0)} – ${usd(leg.lvl50+half,0)}</b><br>
+        ${inZone ? '<b class="up">price in zone ✓  setup ARMED</b>' : '<span class="dim">awaiting pullback into zone</span>'}
+      </div>
+    </div>
 
-    <div class="kpi accent-entry"><div class="kpi-lbl">Entry</div>
-      <div class="kpi-val">${usd(entry)}</div>
-      <div class="kpi-sub">${isFinite(c.entry)?'manual override':'auto = 50% Fib'}</div></div>
+    <div class="kpi accent-entry">
+      <div class="kpi-lbl">Step 2 · Entry</div>
+      <div class="kpi-val ${s2ok ? '' : 'pending'}">${s2ok ? usd(entryPx) : 'PENDING'}</div>
+      <div class="kpi-sub">
+        ${entryLabel}<br>
+        ${s2 && s2.mssLvl ? `15m MSS level: <b>${usd(s2.mssLvl)}</b> · MSS: <b class="${s2.mss?'up':'dim'}">${s2.mss?'✓':'✗'}</b> · 3 candles: <b class="${s2.consec?'up':'dim'}">${s2.consec?'✓':'✗'}</b>` : '<span class="dim">waiting for 15m structure to form</span>'}
+      </div>
+    </div>
 
-    <div class="kpi"><div class="kpi-lbl">Trade Size</div>
-      <div class="kpi-val">${usd(alloc,0)}</div>
-      <div class="kpi-sub">${c.alloc}% of ${usd(c.capital,0)} · ${c.lev}× lev<br>notional <b>${usd(notional,0)}</b> · <b>${btc(sizeBtc)}</b></div></div>
+    <div class="kpi accent-size">
+      <div class="kpi-lbl">Trade Size</div>
+      <div class="kpi-val">${usd(margin,0)}</div>
+      <div class="kpi-sub">
+        ${c.alloc}% of <b>${usd(c.capital,0)}</b> account · ${c.lev}× leverage<br>
+        notional <b>${usd(notional,0)}</b> · <b>${btc(sizeBtc)}</b>
+        ${s2ok ? '' : '<br><span class="dim">(sized at 50% for planning)</span>'}
+      </div>
+    </div>
 
-    <div class="kpi accent-sl"><div class="kpi-lbl">Trailing Stop</div>
+    <div class="kpi accent-sl">
+      <div class="kpi-lbl">Trailing Stop  <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">0.886 ANCHOR</span></div>
       <div class="kpi-val">${usd(trail)}</div>
-      <div class="kpi-sub">initial (0.886) <b>${usd(sl0)}</b><br>locked P/L at stop: <b class="${trailClass}">${stopPnl>=0?'+':''}${usd(stopPnl,0)}</b></div></div>
+      <div class="kpi-sub">
+        hard floor: <b>${usd(sl0)}</b>  (0.886 Fib)<br>
+        ${stopPnl != null
+          ? `locked P/L at stop: <b class="${cls(stopPnl)}">${sign(stopPnl)}${usd(stopPnl,0)}</b>`
+          : `trails price by <b>${usd(R,0)}</b>/coin initial risk`}
+      </div>
+    </div>
 
-    <div class="kpi"><div class="kpi-lbl">Initial Risk</div>
-      <div class="kpi-val ${riskPct>2?'down':''}">${usd(riskUsd,0)}</div>
-      <div class="kpi-sub"><b>${riskPct.toFixed(2)}%</b> of capital · ${usd(R,0)}/coin to 0.886</div></div>
+    <div class="kpi">
+      <div class="kpi-lbl">Initial Risk</div>
+      <div class="kpi-val ${riskPct > 3 ? 'down' : riskPct > 1.5 ? 'warn' : 'up'}">${usd(riskUsd,0)}</div>
+      <div class="kpi-sub">
+        <b>${riskPct.toFixed(2)}%</b> of account<br>
+        <b>${usd(R,0)}</b>/coin  (entry → 0.886)
+      </div>
+    </div>
   `;
-  $('note').innerHTML = `<b>0.886 level:</b> ${usd(leg.lvl886)} — the deep retracement the stop is anchored to. `+
-    `As price moves in your favor the trailing stop follows by the initial risk distance (${usd(R,0)}), `+
-    `tightening toward break-even and beyond while never sitting looser than the 0.886 level.`;
+
+  $('note').innerHTML =
+    `<b>How levels are set:</b> `+
+    `4h swing leg identified by confirmed pivot highs/lows. `+
+    `<b>50% Fib (${usd(leg.lvl50)})</b> is the pullback zone that arms the setup (Step 1). `+
+    `The <span class="hl">actual entry</span> is the close of the 3rd consecutive ${isLong?'bullish':'bearish'} 15m candle `+
+    `after a 15m market-structure shift ${isLong?`above ${usd(s2?.mssLvl)}`:`below ${usd(s2?.mssLvl)}`} fires (Step 2). `+
+    `<b>Stop (${usd(sl0)})</b> anchors to the 0.886 retracement and <b>trails price by ${usd(R,0)}</b> once you're in trade — `+
+    `it only tightens, never loosens.`;
 }
 
 async function refresh(){
   const btn = $('refresh'); btn.disabled = true;
-  const sl = $('status-line'); sl.className='';
+  const sl  = $('status-line'); sl.className = '';
   try {
     const [c4h, c15] = await Promise.all([get4h(), get15m()]);
-    const leg = analyzeLeg(c4h);
-    const price = c15[c15.length-1].c; // latest (forming) 15m close = live-ish price
-    const s2 = leg ? step2Status(c15, leg.dir) : null;
-    STATE = {leg, price, s2, ts:new Date()};
+    const leg   = analyzeLeg(c4h);
+    const price = c15[c15.length-1].c;
+    const s2    = leg ? step2Status(c15, leg.dir) : null;
+    STATE = {leg, price, s2, ts: new Date()};
     render();
-    sl.textContent = 'Live · BTC '+usd(price)+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh 30s';
+    sl.textContent = 'Live · BTC '+usd(price)+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh every 30s';
   } catch(e){
-    sl.className='err'; sl.textContent = 'Data error: '+e.message+' — retrying on next refresh.';
+    sl.className = 'err';
+    sl.textContent = 'Data error: '+e.message+' — retrying on next cycle.';
   } finally { btn.disabled = false; }
 }
 
