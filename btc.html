@@ -168,17 +168,47 @@ async function coinbase(gran){
   const rows = await fetchJSON('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity='+gran);
   return rows.map(x=>({t:x[0],o:+x[3],h:+x[2],l:+x[1],c:+x[4]})).sort((a,b)=>a.t-b.t);
 }
+async function kraken(intervalMin){
+  const j = await fetchJSON('https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval='+intervalMin);
+  if(j.error && j.error.length) throw new Error('kraken '+j.error[0]);
+  const key = Object.keys(j.result).find(k => k !== 'last');
+  return j.result[key].map(x=>({t:+x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4]})).sort((a,b)=>a.t-b.t);
+}
 async function binance(interval){
   const rows = await fetchJSON('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=400');
   return rows.map(x=>({t:Math.floor(x[0]/1000),o:+x[1],h:+x[2],l:+x[3],c:+x[4]}));
 }
+async function cryptocompare(path, agg){
+  const j = await fetchJSON('https://min-api.cryptocompare.com/data/v2/'+path+'?fsym=BTC&tsym=USD&limit=300&aggregate='+agg);
+  if(!j.Data || !j.Data.Data) throw new Error('cryptocompare shape');
+  return j.Data.Data.map(x=>({t:x.time,o:+x.open,h:+x.high,l:+x.low,c:+x.close})).filter(c=>c.c>0);
+}
+// Try sources in order; first one returning a usable series wins. Records the
+// winning source name in SRC so the status line can show where data came from.
+const SRC = {};
+async function firstOk(key, attempts){
+  let err;
+  for(const [name, fn] of attempts){
+    try { const d = await fn(); if(d && d.length > 20){ SRC[key] = name; return d; } }
+    catch(e){ err = e; }
+  }
+  throw new Error(key+' data unavailable ('+(err ? err.message : 'no data')+')');
+}
 async function get4h(){
-  try { return aggregate(await coinbase(3600), 14400); }
-  catch(e){ return await binance('4h'); }
+  return firstOk('4h', [
+    ['Coinbase',      async()=>aggregate(await coinbase(3600), 14400)],
+    ['Kraken',        ()=>kraken(240)],
+    ['Binance',       ()=>binance('4h')],
+    ['CryptoCompare', ()=>cryptocompare('histohour', 4)],
+  ]);
 }
 async function get15m(){
-  try { return await coinbase(900); }
-  catch(e){ return await binance('15m'); }
+  return firstOk('15m', [
+    ['Coinbase',      ()=>coinbase(900)],
+    ['Kraken',        ()=>kraken(15)],
+    ['Binance',       ()=>binance('15m')],
+    ['CryptoCompare', ()=>cryptocompare('histominute', 15)],
+  ]);
 }
 
 // ── strategy ──────────────────────────────────────────────────────────────────
@@ -454,7 +484,8 @@ async function refresh(){
     else if(leg){ dir = leg.dir; s2 = leg.dir === 'long' ? s2long : s2short; }
     STATE = {leg, dir, price, s2, s2long, s2short, c4h, ts: new Date()};
     render();
-    sl.textContent = 'Live · BTC '+usd(price)+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh every 30s';
+    const srcTxt = SRC['15m'] ? ' · 15m via '+SRC['15m']+(SRC['4h']&&SRC['4h']!==SRC['15m']?', 4h via '+SRC['4h']:'') : '';
+    sl.textContent = 'Live · BTC '+usd(price)+srcTxt+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh every 30s';
   } catch(e){
     sl.className = 'err';
     sl.textContent = 'Data error: '+e.message+' — retrying on next cycle.';
