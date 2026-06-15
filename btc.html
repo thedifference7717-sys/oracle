@@ -290,38 +290,29 @@ function render(){
   $('s2badge').className = 'badge ' + (s2ok ? 'confirmed' : (inZone ? 'armed' : 'waiting'));
   $('s2badge').textContent = s2ok ? 'ENTRY CONFIRMED' : (inZone ? 'WATCHING' : 'WAITING');
 
-  // Position sizing — 2% risk-based.
-  // Entry = confirmed Step 2 close, else 50% Fib as a planning proxy.
-  // Initial SL = swing extreme (swingLow for long, swingHigh for short).
-  // Risk per coin = |entry - initialSL|.
-  // Size = (2% × capital) / risk_per_coin.
-  const entryForCalc = entryPx ?? leg.lvl50;
-  const initialSL    = leg.initialSL;
-  const R            = Math.abs(entryForCalc - initialSL);  // $ risk per coin
-  const riskUsd      = c.capital * (c.riskPct / 100);       // e.g. $938 at 2%
-  const sizeBtc      = R > 0 ? riskUsd / R : 0;
-  const notional     = sizeBtc * entryForCalc;
-  const marginNeeded = notional / c.lev;
-  const marginPct    = (marginNeeded / c.capital) * 100;
-  const actualRiskPct = (riskUsd / c.capital) * 100;
+  // --- Sizing: only calculated once Step 2 confirms ---
+  // Entry   = close of 3rd confirming 15m candle (Step 2)
+  // SL      = swing extreme (swingLow for long, swingHigh for short)
+  // R/coin  = entry - SL
+  // Size    = (riskPct% × capital) / R
+  const initialSL   = leg.initialSL;
+  const trailTarget = leg.lvl886;
+  const riskUsd     = c.capital * (c.riskPct / 100);  // always show: e.g. $938
 
-  // 0.886 level = trailing stop TARGET (where stop locks in once price arrives).
-  const trailTarget  = leg.lvl886;
-  // Trail: stop rises with price, never looser than initial SL, locks at 0.886 once crossed.
-  const trail = price != null
-    ? (isLong
-        ? (price >= trailTarget ? trailTarget : Math.max(initialSL, price - R))
-        : (price <= trailTarget ? trailTarget : Math.min(initialSL, price + R)))
-    : initialSL;
-  const stopPnl = entryPx != null
-    ? (isLong ? (trail - entryPx) : (entryPx - trail)) * sizeBtc
-    : null;
+  let R = null, sizeBtc = null, notional = null, marginNeeded = null, marginPct = null, trail = null, stopPnl = null;
+  if(s2ok && entryPx != null){
+    R            = Math.abs(entryPx - initialSL);
+    sizeBtc      = R > 0 ? riskUsd / R : 0;
+    notional     = sizeBtc * entryPx;
+    marginNeeded = notional / c.lev;
+    marginPct    = (marginNeeded / c.capital) * 100;
+    trail        = isLong
+      ? (price >= trailTarget ? trailTarget : Math.max(initialSL, price - R))
+      : (price <= trailTarget ? trailTarget : Math.min(initialSL, price + R));
+    stopPnl      = (isLong ? (trail - entryPx) : (entryPx - trail)) * sizeBtc;
+  }
 
-  const entryLabel = s2ok
-    ? `<span class="up">confirmed · 3rd candle close</span>`
-    : `<span class="dim">pending Step 2 · projected ≈ 50% zone</span>`;
-
-  const pxDelta  = price != null && entryPx != null ? price - entryPx : null;
+  const pxDelta = price != null && entryPx != null ? price - entryPx : null;
 
   $('kpis').innerHTML = `
     <div class="kpi accent-price">
@@ -346,30 +337,34 @@ function render(){
       <div class="kpi-lbl">Step 2 · Entry</div>
       <div class="kpi-val ${s2ok ? '' : 'pending'}">${s2ok ? usd(entryPx) : 'PENDING'}</div>
       <div class="kpi-sub">
-        ${entryLabel}<br>
-        ${s2 && s2.mssLvl ? `15m MSS level: <b>${usd(s2.mssLvl)}</b> · MSS: <b class="${s2.mss?'up':'dim'}">${s2.mss?'✓':'✗'}</b> · 3 candles: <b class="${s2.consec?'up':'dim'}">${s2.consec?'✓':'✗'}</b>` : '<span class="dim">waiting for 15m structure to form</span>'}
+        ${s2ok
+          ? `<span class="up">15m MSS + 3 candles confirmed</span>`
+          : `<span class="dim">awaiting 15m MSS + 3 consecutive ${isLong?'bullish':'bearish'} candles</span>`}<br>
+        ${s2 && s2.mssLvl
+          ? `MSS level: <b>${usd(s2.mssLvl)}</b> · MSS: <b class="${s2.mss?'up':'dim'}">${s2.mss?'✓':'✗'}</b> · 3 candles: <b class="${s2.consec?'up':'dim'}">${s2.consec?'✓':'✗'}</b>`
+          : `<span class="dim">no 15m structure yet</span>`}
       </div>
     </div>
 
     <div class="kpi accent-size">
       <div class="kpi-lbl">Trade Size</div>
-      <div class="kpi-val">${btc(sizeBtc)}</div>
+      <div class="kpi-val ${s2ok ? '' : 'pending'}">${s2ok ? btc(sizeBtc) : 'PENDING'}</div>
       <div class="kpi-sub">
-        max risk <b>${usd(riskUsd,0)}</b> (${c.riskPct}% of ${usd(c.capital,0)})<br>
-        notional <b>${usd(notional,0)}</b> · margin <b>${usd(marginNeeded,0)}</b> (${marginPct.toFixed(1)}%)<br>
-        at ${c.lev}× leverage${s2ok ? '' : ' <span class="dim">· planning at 50%</span>'}
+        ${s2ok
+          ? `2% risk = <b>${usd(riskUsd,0)}</b> · R/coin <b>${usd(R,0)}</b><br>notional <b>${usd(notional,0)}</b> · margin <b>${usd(marginNeeded,0)}</b> (${marginPct.toFixed(1)}%) at ${c.lev}×`
+          : `<span class="dim">calculated after Step 2 entry confirmed<br>will be: ${usd(riskUsd,0)} risk ÷ (entry − ${usd(initialSL,0)} SL)</span>`}
       </div>
     </div>
 
     <div class="kpi accent-sl">
-      <div class="kpi-lbl">Initial SL / Trailing Stop  <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">0.886 LOCK</span></div>
-      <div class="kpi-val">${usd(trail)}</div>
+      <div class="kpi-lbl">Stop / Trail  <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">0.886 LOCK</span></div>
+      <div class="kpi-val">${s2ok ? usd(trail) : usd(initialSL)}</div>
       <div class="kpi-sub">
         initial SL: <b>${usd(initialSL)}</b> (swing ${isLong?'low':'high'})<br>
-        0.886 lock level: <b>${usd(trailTarget)}</b><br>
+        0.886 lock: <b>${usd(trailTarget)}</b><br>
         ${stopPnl != null
-          ? `P/L if stopped here: <b class="${cls(stopPnl)}">${sign(stopPnl)}${usd(stopPnl,0)}</b>`
-          : `risk/coin: <b>${usd(R,0)}</b> (entry → swing ${isLong?'low':'high'})`}
+          ? `P/L if stopped now: <b class="${cls(stopPnl)}">${sign(stopPnl)}${usd(stopPnl,0)}</b>`
+          : `<span class="dim">trail starts at entry, locks at 0.886</span>`}
       </div>
     </div>
 
@@ -377,18 +372,17 @@ function render(){
       <div class="kpi-lbl">Max Risk</div>
       <div class="kpi-val up">${usd(riskUsd,0)}</div>
       <div class="kpi-sub">
-        <b>${actualRiskPct.toFixed(2)}%</b> of account if SL hit<br>
-        <b>${usd(R,0)}</b>/coin  (entry → swing ${isLong?'low':'high'})
+        <b>${c.riskPct}%</b> of <b>${usd(c.capital,0)}</b><br>
+        ${s2ok ? `<b>${usd(R,0)}</b>/coin · entry → swing ${isLong?'low':'high'}` : `<span class="dim">R/coin known after Step 2</span>`}
       </div>
     </div>
   `;
 
-  $('note').innerHTML =
-    `<b>Fib levels:</b> drawn on the pullback from swing ${isLong?'high to low':'low to high'}. `+
-    `<b>50% (${usd(leg.lvl50)})</b> = entry zone (Step 1). `+
-    `<b>0.886 (${usd(trailTarget)})</b> = trailing stop lock level — when price reaches here the stop is set to this level. `+
-    `Initial SL = swing ${isLong?'low':'high'} (<b>${usd(initialSL)}</b>). `+
-    `Size = ${usd(riskUsd,0)} max risk ÷ ${usd(R,0)}/coin = <b>${btc(sizeBtc)}</b>.`;
+  $('note').innerHTML = s2ok
+    ? `<b>Trade active.</b> Entry ${usd(entryPx)} · SL ${usd(initialSL)} · R/coin ${usd(R,0)} · size ${btc(sizeBtc)} · trail now at ${usd(trail)}, locks to ${usd(trailTarget)} when price arrives.`
+    : `<b>Watching.</b> 50% zone ${usd(leg.lvl50)} (${usd(leg.lvl50-half,0)}–${usd(leg.lvl50+half,0)}) arms the setup. `+
+      `Entry is the close of the 3rd consecutive ${isLong?'bullish':'bearish'} 15m candle after an MSS. `+
+      `At entry, risk = 2% of account (${usd(riskUsd,0)}) with SL at swing ${isLong?'low':'high'} (${usd(initialSL)}).`;
 }
 
 async function refresh(){
