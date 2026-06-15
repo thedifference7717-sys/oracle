@@ -68,6 +68,8 @@ body{padding-bottom:40px}
 .fib-row.entry{border-color:#60A5FA66;background:#60A5FA12}.fib-row.entry .f{color:var(--blue)}
 .fib-row.stop{border-color:#FF4D6D66;background:#FF4D6D12}.fib-row.stop .f{color:var(--red)}
 .fib-row.mss{border-color:#FBBF2466;background:#FBBF2412}.fib-row.mss .f{color:var(--yellow)}
+.fib-row.bull{border-color:#14F19555;background:#14F19510}.fib-row.bull .f{color:var(--green)}
+.fib-row.bear{border-color:#FF4D6D55;background:#FF4D6D10}.fib-row.bear .f{color:var(--red)}
 .fib-row.extreme{opacity:.65}
 .note{font-size:12px;color:var(--dim);line-height:1.7;padding:2px 22px 0;max-width:980px}
 .note b{color:var(--muted)}
@@ -102,6 +104,7 @@ body{padding-bottom:40px}
 </div>
 <div class="kpis" id="kpis"></div>
 <div class="fibwrap" id="fibwrap"></div>
+<div class="fibwrap" id="smcwrap"></div>
 <div class="note" id="note"></div>
 <div class="separator"></div>
 <div class="disclaimer">
@@ -282,16 +285,93 @@ function step2Status(c15, dir){
   }
 }
 
-// ── formatting ────────────────────────────────────────────────────────────────
+// ── Smart Money Concepts (open-source SMC logic — not LuxAlgo's proprietary code) ─
+// Returns the live 15m market structure (CHoCH/BOS), the latest order block,
+// the nearest unfilled fair-value gap, equal highs/lows, and any recent sweep.
+function smc(closed, strength){
+  const n = closed.length;
+  if(n < strength*2 + 3) return null;
+  const {highs, lows} = findPivots(closed, strength);
+
+  // ---- Structure: CHoCH / BOS via a closing break of the active swing ref ----
+  // A pivot is only usable `strength` bars after it prints (i.e. once confirmed).
+  const confHigh = new Map(), confLow = new Map();
+  highs.forEach(i => confHigh.set(i + strength, {i, price: closed[i].h}));
+  lows.forEach(i  => confLow.set(i + strength,  {i, price: closed[i].l}));
+
+  let trend = 0, refHigh = null, refLow = null;
+  const events = [];
+  for(let i = 0; i < n; i++){
+    if(refHigh && closed[i].c > refHigh.price){
+      events.push({i, type: trend === -1 ? 'CHoCH' : 'BOS', dir: 'bull', level: refHigh.price});
+      trend = 1; refHigh = null;
+    }
+    if(refLow && closed[i].c < refLow.price){
+      events.push({i, type: trend === 1 ? 'CHoCH' : 'BOS', dir: 'bear', level: refLow.price});
+      trend = -1; refLow = null;
+    }
+    if(confHigh.has(i)) refHigh = confHigh.get(i);
+    if(confLow.has(i))  refLow  = confLow.get(i);
+  }
+  const lastEvent = events.length ? events[events.length-1] : null;
+
+  // ---- Order block: last opposing candle before the move that broke structure ----
+  let orderBlock = null;
+  if(lastEvent){
+    const wantBear = lastEvent.dir === 'bull';   // bullish break ⇒ last down candle = demand OB
+    for(let j = lastEvent.i; j >= Math.max(0, lastEvent.i - 20); j--){
+      const down = closed[j].c < closed[j].o;
+      if(down === wantBear){ orderBlock = {dir: lastEvent.dir, lo: closed[j].l, hi: closed[j].h}; break; }
+    }
+  }
+
+  // ---- Fair value gaps: 3-candle imbalance; keep the most recent still-unfilled ----
+  let fvg = null;
+  for(let j = 1; j < n-1; j++){
+    if(closed[j-1].h < closed[j+1].l){            // bullish gap
+      const z = {dir:'bull', lo: closed[j-1].h, hi: closed[j+1].l};
+      let filled = false;
+      for(let k = j+2; k < n; k++){ if(closed[k].l <= z.lo){ filled = true; break; } }
+      if(!filled) fvg = z;
+    } else if(closed[j-1].l > closed[j+1].h){     // bearish gap
+      const z = {dir:'bear', lo: closed[j+1].h, hi: closed[j-1].l};
+      let filled = false;
+      for(let k = j+2; k < n; k++){ if(closed[k].h >= z.hi){ filled = true; break; } }
+      if(!filled) fvg = z;
+    }
+  }
+
+  // ---- Liquidity: equal highs/lows (resting liquidity) + a recent sweep/stop-run ----
+  const tol = closed[n-1].c * 0.0008;             // ≈0.08% = "equal"
+  let eqh = null, eql = null;
+  for(let a = 0; a < highs.length-1; a++)
+    for(let b = a+1; b < highs.length; b++)
+      if(Math.abs(closed[highs[a]].h - closed[highs[b]].h) <= tol)
+        eqh = {price: (closed[highs[a]].h + closed[highs[b]].h)/2};
+  for(let a = 0; a < lows.length-1; a++)
+    for(let b = a+1; b < lows.length; b++)
+      if(Math.abs(closed[lows[a]].l - closed[lows[b]].l) <= tol)
+        eql = {price: (closed[lows[a]].l + closed[lows[b]].l)/2};
+
+  let sweep = null;
+  for(let i = Math.max(0, n-10); i < n; i++){
+    for(const hi of highs) if(hi < i && closed[i].h > closed[hi].h && closed[i].c < closed[hi].h)
+      sweep = {dir:'bear', level: closed[hi].h};   // buy-side liquidity swept → bearish
+    for(const lo of lows)  if(lo < i && closed[i].l < closed[lo].l && closed[i].c > closed[lo].l)
+      sweep = {dir:'bull', level: closed[lo].l};    // sell-side liquidity swept → bullish
+  }
+
+  return {trend, lastEvent, orderBlock, fvg, eqh, eql, sweep};
+}
 const usd  = (x,d=1) => (x == null || !isFinite(x)) ? '—' : '$'+x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const btc  = x => (x == null || !isFinite(x)) ? '—' : x.toFixed(4)+' ₿';
 const sign = x => x >= 0 ? '+' : '';
 const cls  = x => x >= 0 ? 'up' : 'down';
 
-let STATE = {leg:null, dir:null, price:null, s2:null, s2long:null, s2short:null, c4h:null, ts:null};
+let STATE = {leg:null, dir:null, price:null, s2:null, s2long:null, s2short:null, smc:null, c4h:null, ts:null};
 
 function render(){
-  let {leg, dir, price, s2, s2long, s2short, c4h} = STATE;
+  let {leg, dir, price, s2, s2long, s2short, smc: smcData, c4h} = STATE;
   const c = loadCfg();
   const dirPill = $('dir-pill'), legInfo = $('leg-info');
 
@@ -312,7 +392,8 @@ function render(){
     $('s1badge').className = 'badge waiting'; $('s1badge').textContent = 'WAITING';
     $('s2badge').className = 'badge waiting'; $('s2badge').textContent = 'WAITING';
     $('kpis').innerHTML = ''; $('note').textContent = '';
-    $('fibwrap').className = 'fibwrap'; $('fibwrap').innerHTML = ''; return;
+    $('fibwrap').className = 'fibwrap'; $('fibwrap').innerHTML = '';
+    $('smcwrap').className = 'fibwrap'; $('smcwrap').innerHTML = ''; return;
   }
 
   // Effective direction: a confirmed 15m MSS wins; otherwise the 4h continuation.
@@ -401,7 +482,7 @@ function render(){
           ? `<span class="up">15m MSS + 3 candles confirmed</span>`
           : `<span class="dim">awaiting 15m MSS + 3 consecutive ${isLong?'bullish':'bearish'} candles</span>`}<br>
         ${s2 && s2.mssLvl
-          ? `MSS level: <b>${usd(s2.mssLvl)}</b> · MSS: <b class="${s2.mss?'up':'dim'}">${s2.mss?'✓':'✗'}</b> · 3 candles: <b class="${s2.consec?'up':'dim'}">${s2.consec?'✓':'✗'}</b>`
+          ? `MSS level: <b>${usd(s2.mssLvl)}</b> · ${smcData && smcData.lastEvent ? smcData.lastEvent.type : 'MSS'}: <b class="${s2.mss?'up':'dim'}">${s2.mss?'✓':'✗'}</b> · 3 candles: <b class="${s2.consec?'up':'dim'}">${s2.consec?'✓':'✗'}</b>`
           : `<span class="dim">no 15m structure yet</span>`}
       </div>
     </div>
@@ -460,6 +541,39 @@ function render(){
       `<span class="p">${mssLvl != null ? usd(mssLvl,1) : '—'}</span>`+
     `</div></div>`;
 
+  // ── Smart Money Concepts panel (15m) ──
+  if(smcData){
+    const want = isLong ? 'bull' : 'bear';          // structure side that confirms this setup
+    const le = smcData.lastEvent;
+    const trendTxt = smcData.trend === 1 ? '<b class="up">Bullish ↑</b>'
+                   : smcData.trend === -1 ? '<b class="down">Bearish ↓</b>' : '<span class="dim">forming</span>';
+    const row = (k, label, val) => `<div class="fib-row ${k}"><span class="f">${label}</span><span class="p">${val}</span></div>`;
+    const dirCls = d => d === 'bull' ? 'bull' : 'bear';
+    const rows = [];
+    rows.push(row('', '15m internal trend', trendTxt));
+    rows.push(le
+      ? row(dirCls(le.dir), `last shift · <b>${le.type}</b> ${le.dir==='bull'?'↑':'↓'}${le.dir===want?' · favors setup':''}`, usd(le.level,1))
+      : row('', 'last shift', '<span class="dim">none yet</span>'));
+    rows.push(smcData.orderBlock
+      ? row(dirCls(smcData.orderBlock.dir), `${smcData.orderBlock.dir==='bull'?'demand':'supply'} order block`, `${usd(smcData.orderBlock.lo,0)}–${usd(smcData.orderBlock.hi,0)}`)
+      : row('', 'order block', '<span class="dim">none</span>'));
+    rows.push(smcData.fvg
+      ? row(dirCls(smcData.fvg.dir), `${smcData.fvg.dir} fair-value gap (unfilled)`, `${usd(smcData.fvg.lo,0)}–${usd(smcData.fvg.hi,0)}`)
+      : row('', 'fair-value gap', '<span class="dim">none unfilled</span>'));
+    rows.push(smcData.eqh
+      ? row('bear', 'equal highs (buy-side liq)', usd(smcData.eqh.price,0)) : '');
+    rows.push(smcData.eql
+      ? row('bull', 'equal lows (sell-side liq)', usd(smcData.eql.price,0)) : '');
+    rows.push(smcData.sweep
+      ? row(dirCls(smcData.sweep.dir), `liquidity sweep ${smcData.sweep.dir==='bull'?'↑ (bullish)':'↓ (bearish)'}`, usd(smcData.sweep.level,0)) : '');
+    $('smcwrap').className = 'fibwrap show';
+    $('smcwrap').innerHTML =
+      `<div class="fib-title">Smart Money Concepts · 15m structure</div>`+
+      `<div class="fib-grid">${rows.filter(Boolean).join('')}</div>`;
+  } else {
+    $('smcwrap').className = 'fibwrap'; $('smcwrap').innerHTML = '';
+  }
+
   $('note').innerHTML = s2ok
     ? `<b>Trade active (${isLong?'LONG':'SHORT'}).</b> Entry ${usd(entryPx)} · 0.886 stop ${usd(stop886)} · R/coin ${usd(R,0)} · size ${btc(sizeBtc)} · trailing now at ${usd(trail)}, ${isLong?'rising':'falling'} with price.`
     : `<b>Watching.</b> 50% zone ${usd(leg.lvl50)} (${usd(leg.lvl50-half,0)}–${usd(leg.lvl50+half,0)}) arms the setup. `+
@@ -482,7 +596,8 @@ async function refresh(){
     if(s2long.ok){ dir = 'long';  s2 = s2long; }
     else if(s2short.ok){ dir = 'short'; s2 = s2short; }
     else if(leg){ dir = leg.dir; s2 = leg.dir === 'long' ? s2long : s2short; }
-    STATE = {leg, dir, price, s2, s2long, s2short, c4h, ts: new Date()};
+    const smcData = smc(c15.slice(0,-1), PIVOT_15M);
+    STATE = {leg, dir, price, s2, s2long, s2short, smc: smcData, c4h, ts: new Date()};
     render();
     const srcTxt = SRC['15m'] ? ' · 15m via '+SRC['15m']+(SRC['4h']&&SRC['4h']!==SRC['15m']?', 4h via '+SRC['4h']:'') : '';
     sl.textContent = 'Live · BTC '+usd(price)+srcTxt+' · updated '+STATE.ts.toLocaleTimeString()+' · auto-refresh every 30s';
