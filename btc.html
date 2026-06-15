@@ -75,6 +75,8 @@ body{padding-bottom:40px}
     <div class="ctrl-group"><label class="ctrl-lbl">ACCOUNT $</label><input id="in-capital" class="ctrl-input" type="number" step="100" placeholder="46900"></div>
     <div class="ctrl-group"><label class="ctrl-lbl">ALLOCATION %</label><input id="in-alloc" class="ctrl-input" type="number" step="1" placeholder="10"></div>
     <div class="ctrl-group"><label class="ctrl-lbl">LEVERAGE ×</label><input id="in-lev" class="ctrl-input" type="number" step="1" placeholder="5"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">4H HIGH $ (override)</label><input id="in-high" class="ctrl-input" type="number" step="1" placeholder="auto"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">4H LOW $ (override)</label><input id="in-low" class="ctrl-input" type="number" step="1" placeholder="auto"></div>
     <button id="refresh" class="refresh-btn">REFRESH</button>
   </div>
 </div>
@@ -110,6 +112,8 @@ function loadCfg(){
     const v = parseFloat(localStorage.getItem('btcfib_'+k));
     c[k] = isFinite(v) && v > 0 ? v : DEFAULTS[k];
   }
+  c.manualHigh = parseFloat(localStorage.getItem('btcfib_high'));
+  c.manualLow  = parseFloat(localStorage.getItem('btcfib_low'));
   return c;
 }
 function initInputs(){
@@ -117,6 +121,8 @@ function initInputs(){
   $('in-capital').value = c.capital;
   $('in-alloc').value   = c.alloc;
   $('in-lev').value     = c.lev;
+  if(isFinite(c.manualHigh)) $('in-high').value = c.manualHigh;
+  if(isFinite(c.manualLow))  $('in-low').value  = c.manualLow;
   const bind = (id, key) => $(id).addEventListener('input', () => {
     const v = $(id).value.trim();
     if(v === '') localStorage.removeItem('btcfib_'+key);
@@ -126,9 +132,10 @@ function initInputs(){
   bind('in-capital','capital');
   bind('in-alloc',  'alloc');
   bind('in-lev',    'lev');
+  bind('in-high',   'high');
+  bind('in-low',    'low');
 }
 
-// ── data ──────────────────────────────────────────────────────────────────────
 async function fetchJSON(url){
   const r = await fetch(url, {cache:'no-store'});
   if(!r.ok) throw new Error(url.split('/')[2]+' '+r.status);
@@ -161,7 +168,6 @@ async function get15m(){
   catch(e){ return await binance('15m'); }
 }
 
-// ── strategy ──────────────────────────────────────────────────────────────────
 function findPivots(c, s){
   const highs = [], lows = [];
   for(let i = s; i < c.length - s; i++){
@@ -190,11 +196,9 @@ function analyzeLeg(c4h){
   const range = swingHigh - swingLow;
   const fib = f => dir === 'long' ? swingHigh - f*range : swingLow + f*range;
   return {dir, swingHigh, swingLow, range,
-          lvl50: fib(0.5), lvl236: fib(0.236), lvl382: fib(0.382),
-          lvl618: fib(0.618), lvl786: fib(0.786), lvl886: fib(0.886)};
+          lvl50: fib(0.5), lvl886: fib(0.886)};
 }
 function step2Status(c15, dir){
-  // Work only on fully closed candles — the last element is still forming.
   const closed = c15.slice(0,-1);
   const {highs, lows} = findPivots(closed, PIVOT_15M);
   const recent = closed.slice(-CONSEC);
@@ -214,7 +218,6 @@ function step2Status(c15, dir){
   }
 }
 
-// ── formatting ────────────────────────────────────────────────────────────────
 const usd  = (x,d=1) => (x == null || !isFinite(x)) ? '—' : '$'+x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const btc  = x => (x == null || !isFinite(x)) ? '—' : x.toFixed(4)+' ₿';
 const sign = x => x >= 0 ? '+' : '';
@@ -223,49 +226,64 @@ const cls  = x => x >= 0 ? 'up' : 'down';
 let STATE = {leg:null, price:null, s2:null, ts:null};
 
 function render(){
-  const {leg, price, s2} = STATE;
+  let {leg, price, s2} = STATE;
   const c = loadCfg();
   const dirPill = $('dir-pill'), legInfo = $('leg-info');
 
+  const useManualFallback = !leg && isFinite(c.manualHigh) && isFinite(c.manualLow) && c.manualHigh > c.manualLow;
+  if(useManualFallback){
+    const range = c.manualHigh - c.manualLow;
+    leg = {dir:'long', swingHigh:c.manualHigh, swingLow:c.manualLow, range,
+           lvl50: c.manualHigh - 0.5*range, lvl886: c.manualHigh - 0.886*range};
+  }
   if(!leg){
     dirPill.className = 'pill none'; dirPill.textContent = 'NO CLEAN LEG';
-    legInfo.textContent = 'Waiting for a confirmed 4h swing high and low…';
+    legInfo.textContent = 'Waiting for a confirmed 4h swing high and low… or enter the swing manually above.';
     $('step1').className = 'step'; $('step2').className = 'step';
     $('s1badge').className = 'badge waiting'; $('s1badge').textContent = 'WAITING';
     $('s2badge').className = 'badge waiting'; $('s2badge').textContent = 'WAITING';
     $('kpis').innerHTML = ''; $('note').textContent = ''; return;
   }
 
+  const useManual = isFinite(c.manualHigh) && isFinite(c.manualLow) && c.manualHigh > c.manualLow;
+  if(useManual){
+    leg = Object.assign({}, leg, {
+      swingHigh: c.manualHigh,
+      swingLow:  c.manualLow,
+      range:     c.manualHigh - c.manualLow,
+    });
+    const fib = f => leg.dir === 'long' ? leg.swingHigh - f*leg.range : leg.swingLow + f*leg.range;
+    leg.lvl50  = fib(0.5);
+    leg.lvl886 = fib(0.886);
+  }
+
   const isLong  = leg.dir === 'long';
   dirPill.className = 'pill '+leg.dir;
   dirPill.textContent = isLong ? '🟢 LONG SETUP' : '🔴 SHORT SETUP';
-  legInfo.innerHTML = `4h ${isLong?'up-leg':'down-leg'} · swing high <b>${usd(leg.swingHigh)}</b> · swing low <b>${usd(leg.swingLow)}</b>`;
+  legInfo.innerHTML = `4h ${isLong?'up-leg':'down-leg'} · swing high <b>${usd(leg.swingHigh)}</b> · swing low <b>${usd(leg.swingLow)}</b>`+
+    (useManual ? ' <span style="color:var(--yellow);font-size:11px">· MANUAL OVERRIDE</span>' : '');
 
-  // Step 1: is current price touching the 50% zone?
   const half   = FIB_ZONE_BAND * leg.range;
   const inZone = price != null && Math.abs(price - leg.lvl50) <= half;
   $('step1').className = 'step' + (inZone ? ' on' : '');
   $('s1badge').className = 'badge ' + (inZone ? 'armed' : 'waiting');
   $('s1badge').textContent = inZone ? 'ARMED' : 'WAITING';
 
-  // Step 2: 15m MSS + 3 consecutive candles → actual entry price
   const s2ok    = s2 && s2.ok;
-  const entryPx = s2ok ? s2.entryPrice : null;   // confirmed entry = close of 3rd candle
+  const entryPx = s2ok ? s2.entryPrice : null;
   $('step2').className = 'step' + (s2ok ? ' on' : '');
   $('s2badge').className = 'badge ' + (s2ok ? 'confirmed' : (inZone ? 'armed' : 'waiting'));
   $('s2badge').textContent = s2ok ? 'ENTRY CONFIRMED' : (inZone ? 'WATCHING' : 'WAITING');
 
-  // Position sizing — always use confirmed entry if available, else 50% for planning.
   const entryForCalc = entryPx ?? leg.lvl50;
-  const sl0      = leg.lvl886;                         // hard stop = 0.886 Fib
-  const R        = Math.abs(entryForCalc - sl0);       // initial risk per coin
-  const margin   = c.capital * (c.alloc / 100);        // e.g. $4,690 (10% of $46,900)
-  const notional = margin * c.lev;                     // e.g. $23,450 at 5×
+  const sl0      = leg.lvl886;
+  const R        = Math.abs(entryForCalc - sl0);
+  const margin   = c.capital * (c.alloc / 100);
+  const notional = margin * c.lev;
   const sizeBtc  = notional / entryForCalc;
   const riskUsd  = sizeBtc * R;
   const riskPct  = (riskUsd / c.capital) * 100;
 
-  // Trailing stop: starts at 0.886 level, tightens once price has moved ≥ R in your favor.
   const trail = price != null
     ? (isLong ? Math.max(sl0, price - R) : Math.min(sl0, price + R))
     : sl0;
