@@ -43,9 +43,16 @@ def compute_step1(closed, forming, strength, band):
     # Newest pivot a low   -> down-leg (high->low), downtrend, pullback UP -> short.
     direction = "long" if last_high_i > last_low_i else "short"
 
+    leg_range = swing_high - swing_low
     fib50 = (swing_high + swing_low) / 2.0
-    half = band * (swing_high - swing_low)
+    half = band * leg_range
     zone_low, zone_high = fib50 - half, fib50 + half
+
+    # 0.886 retracement = the stop. It sits on the LOSS side of the entry:
+    #   long  -> swing_high - 0.886*range  (below the 50% entry)
+    #   short -> swing_low  + 0.886*range  (above the 50% entry)
+    stop_886 = swing_high - 0.886 * leg_range if direction == "long" \
+        else swing_low + 0.886 * leg_range
 
     price = forming["c"]
     # Did the live candle trade into the zone (touched), or is price sitting in it?
@@ -61,6 +68,7 @@ def compute_step1(closed, forming, strength, band):
         "swing_high": swing_high,
         "swing_low": swing_low,
         "fib50": fib50,
+        "stop_886": stop_886,
         "zone_low": zone_low,
         "zone_high": zone_high,
         "price": price,

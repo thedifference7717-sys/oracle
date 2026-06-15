@@ -57,12 +57,18 @@ def step2_message(s1, s2):
     else:
         shift = f"15m close {_money(s2['last_close'])} broke <b>below</b> swing low {_money(s2['mss_level'])}"
         candles = f"{config.CONSECUTIVE_CANDLES} consecutive red 15m candles"
+    entry = s2["last_close"]
+    stop = s1["stop_886"]
+    risk_per_coin = abs(entry - stop)
+    side = "below" if s1["direction"] == "long" else "above"
     return (
         f"🚨 <b>BTC — Step 2 CONFIRMED</b>  {_arrow(s1['direction'])}\n"
         f"Full setup complete at the 4h 50% Fib ({_money(s1['fib50'])}).\n\n"
         f"✅ Market structure shift: {shift}\n"
         f"✅ {candles}\n"
-        f"Price: {_money(s2['last_close'])}\n\n"
+        f"Entry (3rd candle close): {_money(entry)}\n"
+        f"Stop — 0.886 level: {_money(stop)} ({side} entry)\n"
+        f"Risk/coin: {_money(risk_per_coin)} → size 2% of account ÷ that.\n\n"
         f"Manage risk per your prop-firm rules. ({_now_iso()})"
     )
 
