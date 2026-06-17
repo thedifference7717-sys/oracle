@@ -116,7 +116,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         <path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
-    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 6 · 1.5× BET</div></div>
+    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 7 · .250 FLOOR</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
@@ -325,7 +325,7 @@ function render(){
   // the 50 most-due hitters and always backfills to 50.
   const BOARD_SIZE=50;
   // Only hitters on a 7+ game streak who actually have a game on the slate.
-  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT && p.venue && p.opp && p.opp.name);
+  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT && p.venue && p.opp && p.opp.name && (!p.avg||parseFloat(p.avg)>=0.25));
   const board=active.slice().sort((a,b)=>(b.drought-a.drought)||(b.mScore-a.mScore)).slice(0,BOARD_SIZE);
   let players=board;
   if(state.favOnly)players=players.filter(p=>p.favorable);
@@ -408,7 +408,7 @@ function render(){
     <div class="due-num"><div class="due-big" style="color:var(--green)">$${c.stake.toFixed(2)}</div><div class="due-cap">CASHED</div></div></div>`).join(""):`<div style="padding:18px;text-align:center;color:var(--dim);font-size:11px">No bets cashed in the last 5 days.</div>`;
   document.getElementById("legend").innerHTML=`
     <b>Board</b> — top 50 hitters on a <b>3+ game</b> hitless streak; resets each day at <b>6:00 AM ET</b>. Hit → removed until a new streak builds. &nbsp;·&nbsp;
-    <b>POOL</b> — top 69 by a blend of hits + average. <b>⚠ TOUGH SP</b> = facing a stingy starter (BAA ≤ .225); <b>🟢 EDGE</b> = hittable starter (BAA ≥ .260); <b>▲ PLATOON</b> = handedness advantage. <b>DROUGHT</b> — games played without a hit &nbsp;·&nbsp;
+    <b>POOL</b> — top 69 by a blend of hits + average, min .250 AVG. <b>⚠ TOUGH SP</b> = facing a stingy starter (BAA ≤ .225); <b>🟢 EDGE</b> = hittable starter (BAA ≥ .260); <b>▲ PLATOON</b> = handedness advantage. <b>DROUGHT</b> — games played without a hit &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP H/9 (60%) + ballpark hit factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
     <b>BET $</b> — $1.00 at a 3-game hitless streak, ×1.5 each additional game without a hit. &nbsp; ⚠ Informational only · not betting advice.`;
@@ -473,7 +473,7 @@ async function loadLive(manual){
     hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart&&h.drought>START){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
     const _cut=new Date(date+"T00:00:00");_cut.setDate(_cut.getDate()-5);const _cutS=_cut.toISOString().slice(0,10);
     const cashed=[];
-    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.hits||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.hits||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
+    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;if(h.avg&&parseFloat(h.avg)<0.25)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.hits||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.hits||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
     cashed.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);cashedBets=cashed;
     let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]).map(h=>({...h,g:byTeam[h.teamId]}));
     if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
