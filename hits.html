@@ -116,7 +116,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         <path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
-    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 2 · HITS+AVG</div></div>
+    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 3 · 70AVG · HITTABLE SP</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
@@ -130,6 +130,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
       </select>
     </div>
     <div class="fav-toggle" id="fav-toggle" onclick="toggleFav()"><span class="tg-lbl">FAVORABLE ONLY</span><div class="tg"></div></div>
+    <div class="fav-toggle" id="hsp-toggle" onclick="toggleHsp()"><span class="tg-lbl">HITTABLE SP</span><div class="tg"></div></div>
     <button class="refresh-btn" id="refresh-btn" onclick="loadLive(true)">⟳ REFRESH</button>
   </div>
 </div>
@@ -218,12 +219,12 @@ function build(r){
   const plt=platoon(r.bat,r.spHand);
   const mScore=matchupScore(r.hr9,park,plt);
   return {
-    name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,avg:r.avg,
+    name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,avg:r.avg,baa:r.baa,
     drought:r.drought,lastHR:r.lastHR||null,
     opp:{name:r.opp},isHome:r.isHome,venue:r.venue,park,
     matchupText:(r.isHome?"vs ":"@ ")+r.opp,
     hr9:r.hr9!=null?r.hr9:null,
-    pitcher:r.sp?{name:r.sp,hand:r.spHand,hr9:r.hr9,era:r.era}:null,
+    pitcher:r.sp?{name:r.sp,hand:r.spHand,hr9:r.hr9,era:r.era,baa:r.baa}:null,
     platoon:plt,mScore,due:dueScore(r.drought,mScore),favorable:mScore>=55,
     bet:betSize(r.drought)
   };
@@ -289,7 +290,7 @@ const SAMPLE=[
 ];
 
 // ── STATE ──
-let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:slateDate()};
+let state={players:[],favOnly:false,hittableOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:slateDate()};
 let cashedBets=[];
 const COLS=[
   {k:"rank",label:"#",num:true,sortable:false},
@@ -314,6 +315,7 @@ function fmtDate(d){if(!d)return "—";try{return new Date(d+"T00:00:00").toLoca
 function onSortSelect(){state.sortKey=document.getElementById("sort-select").value;state.sortDir=-1;render();}
 function setSort(k){if(state.sortKey===k)state.sortDir*=-1;else{state.sortKey=k;state.sortDir=(k==="name"||k==="pos"||k==="bat")?1:-1;}render();}
 function toggleFav(){state.favOnly=!state.favOnly;document.getElementById("fav-toggle").classList.toggle("on",state.favOnly);render();}
+function toggleHsp(){state.hittableOnly=!state.hittableOnly;document.getElementById("hsp-toggle").classList.toggle("on",state.hittableOnly);render();}
 function sortVal(p,k){if(k==="lastHR")return p.lastHR?new Date(p.lastHR).getTime():0;if(k==="hr9")return p.hr9==null?-1:p.hr9;const v=p[k];return v==null?-Infinity:v;}
 function sorted(arr){const {sortKey,sortDir}=state;return arr.slice().sort((a,b)=>{let av=sortVal(a,sortKey),bv=sortVal(b,sortKey);if(typeof av==="string"||typeof bv==="string"){av=(""+av).toLowerCase();bv=(""+bv).toLowerCase();return av<bv?-sortDir:av>bv?sortDir:0;}return (av-bv)*sortDir;});}
 
@@ -327,6 +329,7 @@ function render(){
   const board=active.slice().sort((a,b)=>(b.drought-a.drought)||(b.mScore-a.mScore)).slice(0,BOARD_SIZE);
   let players=board;
   if(state.favOnly)players=players.filter(p=>p.favorable);
+  if(state.hittableOnly)players=players.filter(p=>p.baa!=null&&p.baa>=0.25);
   players=sorted(players);
 
   if(board.length){
@@ -369,7 +372,7 @@ function render(){
       <td class="num" style="color:var(--muted)">${p.avg||"—"}</td>
       <td class="num bar-cell"><span style="color:var(--orange);font-size:16px;font-weight:700">${p.drought}</span><div class="bg"><div class="fl" style="width:${droughtScore(p.drought)}%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div></td>
       <td style="color:var(--muted);font-size:12px">${fmtDate(p.lastHR)}</td>
-      <td style="font-size:12px">${p.matchupText}<div style="color:var(--dim);font-size:10px">${p.pitcher?p.pitcher.name+(p.pitcher.hand?" ("+p.pitcher.hand+")":""):"SP TBD"}</div></td>
+      <td style="font-size:12px">${p.matchupText}<div style="color:var(--dim);font-size:10px">${p.pitcher?p.pitcher.name+(p.pitcher.hand?" ("+p.pitcher.hand+")":""):"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3):""}</div></td>
       <td class="num" style="color:${hr9Color}">${hr9}</td>
       <td class="num" style="color:${parkColor}">${p.park}</td>
       <td class="num bar-cell"><span style="color:${mColor};font-size:15px">${p.mScore}</span>${p.favorable?' <span class="chip" style="background:#14F19520;color:var(--green)">FAV</span>':''}</td>
@@ -459,7 +462,7 @@ async function loadLive(manual){
     status('<span class="spin">⟳</span> Loading live hitters…');
     const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=hits&gameType=R&playerPool=All`);
     let hitters=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,hr:+s.stat.hits||0,avg:s.stat.avg}));
-    {const hv=hitters.map(h=>h.hr),av=hitters.map(h=>parseFloat(h.avg)||0);const mnH=Math.min(...hv),mxH=Math.max(...hv),mnA=Math.min(...av),mxA=Math.max(...av);hitters.forEach(h=>{const nh=mxH>mnH?(h.hr-mnH)/(mxH-mnH):0;const na=mxA>mnA?((parseFloat(h.avg)||0)-mnA)/(mxA-mnA):0;h.blend=nh+na;});}
+    {const hv=hitters.map(h=>h.hr),av=hitters.map(h=>parseFloat(h.avg)||0);const mnH=Math.min(...hv),mxH=Math.max(...hv),mnA=Math.min(...av),mxA=Math.max(...av);hitters.forEach(h=>{const nh=mxH>mnH?(h.hr-mnH)/(mxH-mnH):0;const na=mxA>mnA?((parseFloat(h.avg)||0)-mnA)/(mxA-mnA):0;h.blend=0.3*nh+0.7*na;});}
     hitters.sort((a,b)=>b.blend-a.blend);
     hitters.forEach((h,i)=>{h.rank=i;}); // top 69 (rank<69) is the ONLY place a NEW bet can start
     const START=4; // a bet starts once the drought reaches 10
@@ -479,12 +482,12 @@ async function loadLive(manual){
     const people={};
     for(let i=0;i<ids.length;i+=40){const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>people[p.id]={bat:p.batSide?.code,pitch:p.pitchHand?.code});}
     const pst={};
-    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:pH9(s),era:s.era}:null;});
+    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:pH9(s),era:s.era,baa:(s.avg!=null?parseFloat(s.avg):null)}:null;});
     const live=actionable.map((h)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];const o=build({
       name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,avg:h.avg,
       drought:h.drought,lastHR:h.lastHR,
       opp:g.opp?.name,isHome:g.isHome,venue:g.venue,
-      sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era
+      sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era,baa:s?.baa
     });o.carried=h.held;return o;});
     if(live.length){
       state.players=live;state.live=true;render();
