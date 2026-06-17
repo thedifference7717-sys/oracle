@@ -116,7 +116,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         <path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
-    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 7 · .250 FLOOR</div></div>
+    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 8 · INJ FILTER</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
@@ -475,7 +475,12 @@ async function loadLive(manual){
     const cashed=[];
     hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;if(h.avg&&parseFloat(h.avg)<0.25)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.hits||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.hits||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
     cashed.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);cashedBets=cashed;
-    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]).map(h=>({...h,g:byTeam[h.teamId]}));
+    // Injury filter: keep only players on their team's active roster (IL excluded). If a roster
+    // fetch fails, that team is not filtered (fail-open) so we never drop available hitters.
+    const _tids=[...new Set(Object.keys(byTeam))];
+    const _active=new Set(),_rostered=new Set();
+    await pool(_tids,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);if(d&&d.roster){_rostered.add(String(tid));d.roster.forEach(p=>_active.add(p.person.id));}}catch(e){}},6);
+    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]&&(!_rostered.has(String(h.teamId))||_active.has(h.id))).map(h=>({...h,g:byTeam[h.teamId]}));
     if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
     const pids=[...new Set(actionable.map(h=>h.g.sp?.id).filter(Boolean))];
     const ids=[...new Set([...actionable.map(h=>h.id),...pids])];
