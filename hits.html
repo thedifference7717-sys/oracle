@@ -7,13 +7,13 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>TAIy Cobb · Doubles Dashboard</title>
+<title>Hit Streak · Hits Dashboard</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TAIy Cobb">
-<link rel="apple-touch-icon" href="bat.svg">
-<link rel="icon" type="image/svg+xml" href="bat.svg">
+<meta name="apple-mobile-web-app-title" content="Hit Streak">
+<link rel="apple-touch-icon" href="baseball.svg">
+<link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <script src="store-id.js"></script>
 <style>
@@ -55,8 +55,8 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
   thead th,tbody td{padding:11px 9px}
   thead th:nth-child(3),tbody td:nth-child(3),
   thead th:nth-child(4),tbody td:nth-child(4),
-  thead th:nth-child(9),tbody td:nth-child(9),
-  thead th:nth-child(10),tbody td:nth-child(10){display:none}
+  thead th:nth-child(10),tbody td:nth-child(10),
+  thead th:nth-child(11),tbody td:nth-child(11){display:none}
   .kpis{grid-template-columns:1fr 1fr}
   #topbar{padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 12px}
   .grid{padding:12px 14px}
@@ -109,24 +109,18 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="topbar">
   <div class="logo-wrap">
     <div class="agent-avatar">
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball bat">
-        <defs>
-          <linearGradient id="hWood" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#eac794"/><stop offset="42%" stop-color="#c8924f"/><stop offset="100%" stop-color="#7a4a22"/>
-          </linearGradient>
-          <filter id="hBds" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.2" stdDeviation="2.2" flood-color="#000000" flood-opacity="0.5"/></filter>
-        </defs>
-        <g transform="translate(60,60) rotate(-38) translate(-60,-60)" filter="url(#hBds)">
-          <path d="M60,20 C67,20 71,25 71,32 C71,52 65,80 64,96 C64,101 67,104 67,108 C67,112 64,114 60,114 C56,114 53,112 53,108 C53,104 56,101 56,96 C55,80 49,52 49,32 C49,25 53,20 60,20 Z" fill="url(#hWood)" stroke="#5a3617" stroke-width="1.4"/>
-          <path d="M55,27 C50,47 52,74 57,97" fill="none" stroke="#f3dcb0" stroke-width="2.2" stroke-linecap="round" opacity="0.65"/>
-        </g>
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball">
+        <defs><radialGradient id="hbS" cx="38%" cy="32%" r="72%"><stop offset="0%" stop-color="#ffffff"/><stop offset="42%" stop-color="#f5f5ef"/><stop offset="78%" stop-color="#deded4"/><stop offset="100%" stop-color="#b3b3a6"/></radialGradient></defs>
+        <circle cx="60" cy="60" r="50" fill="url(#hbS)" stroke="#c4c4ba" stroke-width="1.5"/>
+        <path d="M40,16 C50,40 50,80 40,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
+        <path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
-    <div><div class="logo">TAIy COBB</div><div class="logo-sub">2B ORACLE · BUILD 22 · +HIT BOARD</div></div>
+    <div><div class="logo">HIT ORACLE</div><div class="logo-sub">HIT ORACLE · BUILD 1 · HITLESS 4+</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
-    <a href="hits.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🎯 HIT</a>
+    <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
       <select class="ctrl-select" id="sort-select" onchange="onSortSelect()">
         <option value="drought">Longest Drought</option>
@@ -147,14 +141,14 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="kpi"><div class="kpi-val" id="st-max" style="color:var(--orange)">--</div><div class="kpi-lbl">MAX DROUGHT</div><div class="kpi-sub" id="st-max-sub">games w/o HR</div></div>
   <div class="kpi"><div class="kpi-val" id="st-avg" style="color:var(--yellow)">--</div><div class="kpi-lbl">AVG DROUGHT</div><div class="kpi-sub">games</div></div>
   <div class="kpi"><div class="kpi-val" id="st-top" style="color:var(--purple);font-size:15px">--</div><div class="kpi-lbl">TOP DUE</div><div class="kpi-sub" id="st-top-sub">highest score</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 10g · +10%/game</div></div>
+  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 4g · 2×/game</div></div>
 </section>
 
 <div class="grid">
   <div style="min-width:0">
     <div class="panel">
       <div class="panel-head">
-        <span class="panel-title">⚾ 2B WATCHLIST · TOP 50</span>
+        <span class="panel-title">🎯 HIT WATCHLIST · TOP 50</span>
         <span class="panel-note" id="row-count">tap a column to sort</span>
       </div>
       <div class="table-wrap"><table><thead><tr id="thead-row"></tr></thead><tbody id="tbody"></tbody></table></div>
@@ -174,7 +168,7 @@ const API="https://statsapi.mlb.com/api/v1";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 // Only hitters on a homerless streak of at least this many games make the board.
-const MIN_DROUGHT=10;
+const MIN_DROUGHT=4;
 // The "baseball day" rolls over at 6:00 AM Eastern, not local midnight.
 function slateDate(){
   const et=new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
@@ -213,7 +207,7 @@ function matchupScore(hr9,park,plt){
 function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
 // Escalating wager: $1.00 once a hitter reaches a 9-game homerless drought,
 // then +10% (compounding) for every additional game without a home run.
-function betSize(drought){return drought>=10 ? Math.pow(1.1,drought-10) : 0;}
+function betSize(drought){return drought>=4 ? Math.pow(2,drought-4) : 0;}
 function ipToNum(ip){if(ip==null)return 0;const p=(""+ip).split(".");return (+p[0]||0)+((p[1]?+p[1]:0)/3);}
 function pH9(s){const ip=ipToNum(s.inningsPitched);return ip>0?+(((+s.hits||0)/ip*9).toFixed(2)):null;}
 
@@ -224,7 +218,7 @@ function build(r){
   const plt=platoon(r.bat,r.spHand);
   const mScore=matchupScore(r.hr9,park,plt);
   return {
-    name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,
+    name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,avg:r.avg,
     drought:r.drought,lastHR:r.lastHR||null,
     opp:{name:r.opp},isHome:r.isHome,venue:r.venue,park,
     matchupText:(r.isHome?"vs ":"@ ")+r.opp,
@@ -302,9 +296,10 @@ const COLS=[
   {k:"name",label:"PLAYER",num:false},
   {k:"pos",label:"POS",num:false},
   {k:"bat",label:"B",num:false},
-  {k:"hr",label:"2B",num:true},
+  {k:"hr",label:"H",num:true},
+  {k:"avg",label:"AVG",num:true},
   {k:"drought",label:"DROUGHT",num:true},
-  {k:"lastHR",label:"LAST 2B",num:false},
+  {k:"lastHR",label:"LAST H",num:false},
   {k:"matchupText",label:"OPP / SP",num:false,sortable:false},
   {k:"hr9",label:"SP H/9",num:true},
   {k:"park",label:"PARK",num:true},
@@ -346,7 +341,7 @@ function render(){
     const totalBet=board.reduce((s,p)=>s+(p.bet||0),0);
     document.getElementById("st-bet").textContent="$"+totalBet.toFixed(2);
     const betCount=board.filter(p=>p.bet>0).length;
-    document.getElementById("st-bet-sub").textContent=betCount+" active bets · +10%/game";
+    document.getElementById("st-bet-sub").textContent=betCount+" active bets · 2×/game";
     const top=board.slice().sort((a,b)=>b.due-a.due)[0];
     document.getElementById("st-top").textContent=top?top.name:"--";
     document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
@@ -371,6 +366,7 @@ function render(){
       <td style="color:var(--muted)">${p.pos||"--"}</td>
       <td style="color:var(--muted)">${p.bat||"?"}</td>
       <td class="num">${p.hr}</td>
+      <td class="num" style="color:var(--muted)">${p.avg||"—"}</td>
       <td class="num bar-cell"><span style="color:var(--orange);font-size:16px;font-weight:700">${p.drought}</span><div class="bg"><div class="fl" style="width:${droughtScore(p.drought)}%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div></td>
       <td style="color:var(--muted);font-size:12px">${fmtDate(p.lastHR)}</td>
       <td style="font-size:12px">${p.matchupText}<div style="color:var(--dim);font-size:10px">${p.pitcher?p.pitcher.name+(p.pitcher.hand?" ("+p.pitcher.hand+")":""):"SP TBD"}</div></td>
@@ -408,11 +404,11 @@ function render(){
     <div class="due-card"><div class="due-info"><div class="due-name">${c.name}</div><div class="due-meta">cashed ${fmtDate(c.date)} · ${c.drought}g drought</div></div>
     <div class="due-num"><div class="due-big" style="color:var(--green)">$${c.stake.toFixed(2)}</div><div class="due-cap">CASHED</div></div></div>`).join(""):`<div style="padding:18px;text-align:center;color:var(--dim);font-size:11px">No bets cashed in the last 5 days.</div>`;
   document.getElementById("legend").innerHTML=`
-    <b>Board</b> — top 50 hitters on a <b>10+ game</b> streak without a double; resets each day at <b>6:00 AM ET</b>. Double → removed until a new streak builds. &nbsp;·&nbsp;
-    <b>DROUGHT</b> — games played without a double &nbsp;·&nbsp;
-    <b>MATCHUP</b> — opposing SP H/9 (60%) + ballpark 2B factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
+    <b>Board</b> — top 50 hitters on a <b>4+ game</b> hitless streak; resets each day at <b>6:00 AM ET</b>. Hit → removed until a new streak builds. &nbsp;·&nbsp;
+    <b>DROUGHT</b> — games played without a hit &nbsp;·&nbsp;
+    <b>MATCHUP</b> — opposing SP H/9 (60%) + ballpark hit factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
-    <b>BET $</b> — $1.00 at a 10-game drought, +10% (compounding) each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
+    <b>BET $</b> — $1.00 at a 4-game hitless streak, doubling each additional game without a hit. &nbsp; ⚠ Informational only · not betting advice.`;
 }
 
 // ── LIVE UPGRADE (best-effort; falls back silently to the built-in slate) ──
@@ -461,19 +457,19 @@ async function loadLive(manual){
       byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher,final:fin,gdate:gd};});
 
     status('<span class="spin">⟳</span> Loading live hitters…');
-    const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=doubles&gameType=R&playerPool=All`);
-    let hitters=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,hr:+s.stat.doubles||0}));
+    const hd=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=hits&gameType=R&playerPool=All`);
+    let hitters=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,hr:+s.stat.hits||0,avg:s.stat.avg}));
     hitters.sort((a,b)=>b.hr-a.hr);
     hitters.forEach((h,i)=>{h.rank=i;}); // top 69 (rank<69) is the ONLY place a NEW bet can start
-    const START=10; // a bet starts once the drought reaches 10
+    const START=4; // a bet starts once the drought reaches 10
     status('<span class="spin">⟳</span> Loading game logs…');
-    const gl=await pool(hitters,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);const tg=byTeam[h.teamId];if(tg&&!tg.final&&tg.gdate)sp=sp.filter(x=>!(x.date===tg.gdate&&(+x.stat.doubles||0)===0));return sp;},6,(done,total)=>{setProg(30+Math.round(done/total*55));});
-    hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.doubles||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
-    const asOf=(h,T)=>{if(!h.games||!h.games.length)return h.hr||0;let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.doubles||0);}return s;};
+    const gl=await pool(hitters,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);const tg=byTeam[h.teamId];if(tg&&!tg.final&&tg.gdate)sp=sp.filter(x=>!(x.date===tg.gdate&&(+x.stat.hits||0)===0));return sp;},6,(done,total)=>{setProg(30+Math.round(done/total*55));});
+    hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.hits||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
+    const asOf=(h,T)=>{if(!h.games||!h.games.length)return h.hr||0;let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.hits||0);}return s;};
     hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart&&h.drought>START){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
     const _cut=new Date(date+"T00:00:00");_cut.setDate(_cut.getDate()-5);const _cutS=_cut.toISOString().slice(0,10);
     const cashed=[];
-    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.doubles||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.doubles||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
+    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.hits||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.hits||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
     cashed.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);cashedBets=cashed;
     let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]).map(h=>({...h,g:byTeam[h.teamId]}));
     if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
@@ -484,7 +480,7 @@ async function loadLive(manual){
     const pst={};
     await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:pH9(s),era:s.era}:null;});
     const live=actionable.map((h)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];const o=build({
-      name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,
+      name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,avg:h.avg,
       drought:h.drought,lastHR:h.lastHR,
       opp:g.opp?.name,isHome:g.isHome,venue:g.venue,
       sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era
