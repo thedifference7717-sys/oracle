@@ -116,7 +116,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         <path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
-    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 3 · 70AVG · HITTABLE SP</div></div>
+    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 4 · MATCHUP FLAGS</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
@@ -365,7 +365,7 @@ function render(){
     const mColor=p.mScore>=55?"var(--green)":"var(--yellow)";
     return `<tr class="${p.favorable?"fav":""} fade-in">
       <td class="num" style="color:var(--dim)">${i+1}</td>
-      <td><div class="pname">${p.name}${p.carried?' <span class="chip" style="background:#A78BFA20;color:var(--purple)">HELD</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
+      <td><div class="pname">${p.name}${p.carried?' <span class="chip" style="background:#A78BFA20;color:var(--purple)">HELD</span>':''}${p.baa!=null&&p.baa<=0.225?' <span class="chip" style="background:#FF4D6D22;color:var(--red)">⚠ TOUGH SP</span>':(p.baa!=null&&p.baa>=0.26?' <span class="chip" style="background:#14F19522;color:var(--green)">🟢 EDGE</span>':'')}${p.platoon==="adv"?' <span class="chip" style="background:#60A5FA22;color:var(--blue)">▲ PLATOON</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
       <td style="color:var(--muted)">${p.pos||"--"}</td>
       <td style="color:var(--muted)">${p.bat||"?"}</td>
       <td class="num">${p.hr}</td>
@@ -408,7 +408,7 @@ function render(){
     <div class="due-num"><div class="due-big" style="color:var(--green)">$${c.stake.toFixed(2)}</div><div class="due-cap">CASHED</div></div></div>`).join(""):`<div style="padding:18px;text-align:center;color:var(--dim);font-size:11px">No bets cashed in the last 5 days.</div>`;
   document.getElementById("legend").innerHTML=`
     <b>Board</b> — top 50 hitters on a <b>4+ game</b> hitless streak; resets each day at <b>6:00 AM ET</b>. Hit → removed until a new streak builds. &nbsp;·&nbsp;
-    <b>POOL</b> — top 69 by a blend of hits + average. <b>DROUGHT</b> — games played without a hit &nbsp;·&nbsp;
+    <b>POOL</b> — top 69 by a blend of hits + average. <b>⚠ TOUGH SP</b> = facing a stingy starter (BAA ≤ .225); <b>🟢 EDGE</b> = hittable starter (BAA ≥ .260); <b>▲ PLATOON</b> = handedness advantage. <b>DROUGHT</b> — games played without a hit &nbsp;·&nbsp;
     <b>MATCHUP</b> — opposing SP H/9 (60%) + ballpark hit factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
     <b>BET $</b> — $1.00 at a 4-game hitless streak, doubling each additional game without a hit. &nbsp; ⚠ Informational only · not betting advice.`;
