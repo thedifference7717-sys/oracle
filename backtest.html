@@ -86,8 +86,8 @@ function setProg(p){const w=document.getElementById("progress-wrap"),b=document.
 function status(m,c="var(--blue)"){const e=document.getElementById("status");e.style.color=c;e.innerHTML=m;}
 
 async function leaders(stat,season){
-  const d=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=${stat}&gameType=R&playerPool=All`);
-  return (d?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,avg:s.stat.avg}));
+  const d=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=2000&gameType=R&playerPool=All`);
+  return (d?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,avg:s.stat.avg,val:+(s.stat[stat]||0)}));
 }
 async function gamelog(id,season){
   const d=await getJSON(`${API}/people/${id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);
@@ -113,6 +113,7 @@ function simPlayer(splits,key,START,factor,odds){
 async function backtest(cfg,season,base){
   status(`<span class="spin">⟳</span> ${cfg.tag}: fetching hitters…`);
   let players=await leaders(cfg.stat,season);
+  players.sort((a,b)=>b.val-a.val);players=players.slice(0,100); // true top 100 by the stat
   if(cfg.floor)players=players.filter(p=>parseFloat(p.avg)>=cfg.floor);
   if(!players.length)throw new Error("no data for "+season);
   const logs=await pool(players,p=>gamelog(p.id,season),5,(done,total)=>{
