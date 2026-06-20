@@ -131,6 +131,7 @@ function render(el,title,icon,res,cfg){
   const t=res.tot,roi=t.staked>0?t.pnl/t.staked*100:0,wr=t.bets>0?t.wins/t.bets*100:0;
   const col=t.pnl>=0?"var(--green)":"var(--red)";
   const top=res.per.slice(0,5),bot=res.per.slice(-5).reverse();
+  const flatPnl=t.wins*(cfg.odds-1)-(t.bets-t.wins),flatRoi=t.bets?flatPnl/t.bets*100:0;
   el.innerHTML=`
     <div class="phead"><div style="font-size:22px">${icon}</div><div><div class="ptitle">${title}</div>
       <div class="psub">${res.n} hitters · start ${cfg.start}g · ×${cfg.factor}/g · payout ${cfg.odds.toFixed(2)}×</div></div></div>
@@ -143,6 +144,7 @@ function render(el,title,icon,res,cfg){
       <div class="kbox"><div class="kv">${t.wins.toLocaleString()}</div><div class="kl">WINS</div></div>
       <div class="kbox"><div class="kv">${fmt(t.bets?t.staked/t.bets:0)}</div><div class="kl">AVG STAKE</div></div>
     </div>
+    <div style="padding:2px 16px 12px;font-size:12px;color:var(--muted)">FLAT $1/bet → <b style="color:${flatPnl>=0?'var(--green)':'var(--red)'}">${fmt(flatPnl)}</b> · ${flatRoi.toFixed(1)}% ROI <span style="color:var(--dim)">(vs ×escalating above)</span></div>
     <div class="lead">
       <h4>▲ TOP PROFIT</h4>${top.map(p=>`<div class="lrow"><span>${p.name}</span><span style="color:var(--green)">${fmt(p.pnl)}</span></div>`).join("")||'<div class="lrow"><span>—</span></div>'}
       <h4>▼ BIGGEST LOSS</h4>${bot.map(p=>`<div class="lrow"><span>${p.name}</span><span style="color:var(--red)">${fmt(p.pnl)}</span></div>`).join("")||'<div class="lrow"><span>—</span></div>'}
@@ -171,7 +173,7 @@ async function run(){
 }
 
 document.getElementById("legend").innerHTML=`
-  <b>Method:</b> for each top-100 hitter by the board's stat, replay the season game-by-game. A bet starts once the drought hits the board's threshold (HR/2B: 10 games, ×1.10/game; Hits: 3 games, ×1.50/game). A hit pays <b>(payout−1)×</b> the stake and resets; a miss loses the stake. Hits applies the .250 AVG floor. <b>1 unit = $1.</b><br>
+  <b>Method:</b> for each top-100 hitter by the board's stat, replay the season game-by-game. A bet starts once the drought hits the board's threshold (HR/2B: 10 games, ×1.10/game; Hits: 3 games, ×1.50/game). A hit pays <b>(payout−1)×</b> the stake and resets; a miss loses the stake. Hits applies the .250 AVG floor. <b>1 unit = $1.</b> Each panel also shows a <b>FLAT $1/bet</b> line (same triggers, no escalation) for comparison.<br>
   <b>Odds are decimal</b> (4.5 ≈ +350, 3.6 ≈ +260, 1.40 ≈ −250). Defaults are editable — set them to your book. ⚠ Flat odds for every player/game, no vig/limits/lineup checks · estimate only · not betting advice.`;
 </script>
 </body>
