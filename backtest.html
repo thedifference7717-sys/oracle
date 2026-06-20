@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#050510">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>HR/2B Backtest Lab</title>
+<title>Backtest Lab</title>
 <link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -16,63 +16,59 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 #topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.05em;color:#EDEAFF;text-shadow:0 0 14px #A78BFA66}
 .logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
-.controls{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-left:auto}
+.controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
 .ctrl-group{display:flex;flex-direction:column;gap:3px}
-.ctrl-lbl{font-size:10px;color:var(--muted);letter-spacing:.08em}
-.ctrl-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none;width:90px}
-.navlink{align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
+.ctrl-lbl{font-size:9px;color:var(--muted);letter-spacing:.08em}
+.ctrl-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 8px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none;width:74px}
+.navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
 .run-btn{padding:11px 20px;background:linear-gradient(90deg,#A78BFA,#627EEA);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer}
 .run-btn:disabled{opacity:.5;cursor:wait}
 #progress-wrap{height:3px;background:var(--bg2);display:none}
 #progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#A78BFA,var(--green));transition:width .2s}
 #status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
-.wrap{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:820px){.wrap{grid-template-columns:1fr}}
+.wrap{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:980px){.wrap{grid-template-columns:1fr}}
 .panel{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.panel.hr{border-color:#F7931A40}
-.panel.db{border-color:#60A5FA40}
+.panel.hr{border-color:#F7931A40}.panel.db{border-color:#60A5FA40}.panel.ht{border-color:#14F19540}
 .phead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}
-.picon{width:34px;height:34px;border-radius:9px;overflow:hidden;flex-shrink:0;background:#070714;border:1px solid var(--border)}
-.picon svg{width:100%;height:100%}
 .ptitle{font-family:'Orbitron',monospace;font-size:15px;font-weight:900}
 .psub{font-size:10px;color:var(--muted);margin-top:2px}
 .pnl-hero{text-align:center;padding:18px 10px 6px}
-.pnl-val{font-family:'Orbitron',monospace;font-size:42px;font-weight:900;line-height:1}
+.pnl-val{font-family:'Orbitron',monospace;font-size:38px;font-weight:900;line-height:1}
 .pnl-cap{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-top:6px}
 .kgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 16px}
-.kbox{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 8px;text-align:center}
-.kv{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;line-height:1}
-.kl{font-size:9px;color:var(--muted);margin-top:4px;letter-spacing:.05em}
+.kbox{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 6px;text-align:center}
+.kv{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;line-height:1}
+.kl{font-size:9px;color:var(--muted);margin-top:4px;letter-spacing:.04em}
 .lead{padding:6px 16px 16px}
 .lead h4{font-size:11px;color:var(--purple);font-family:'Orbitron',monospace;letter-spacing:.06em;margin:10px 0 6px}
 .lrow{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
-.lrow span:first-child{color:var(--text)}
-.legend{font-size:12px;color:var(--muted);line-height:1.8;padding:4px 18px 0}
+.legend{font-size:12px;color:var(--muted);line-height:1.8;padding:6px 18px 0}
 .spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.empty{padding:40px 16px;text-align:center;color:var(--dim);font-size:12px;line-height:1.8}
+.empty{padding:36px 16px;text-align:center;color:var(--dim);font-size:12px;line-height:1.7}
 </style>
 </head>
 <body>
 <div id="topbar">
-  <div>
-    <div class="logo">BACKTEST LAB</div>
-    <div class="logo-sub">ShohAI / TAIy COBB STRATEGY · 2025</div>
-  </div>
+  <div><div class="logo">BACKTEST LAB</div><div class="logo-sub">CURRENT STRATEGY · ALL 3 BOARDS</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
-    <div class="ctrl-group"><span class="ctrl-lbl">SEASON</span><input class="ctrl-input" id="season" type="number" value="2025" style="width:74px"></div>
-    <div class="ctrl-group"><span class="ctrl-lbl">HR PAYOUT ×</span><input class="ctrl-input" id="hrOdds" type="number" step="0.1" value="4.5"></div>
-    <div class="ctrl-group"><span class="ctrl-lbl">2B PAYOUT ×</span><input class="ctrl-input" id="dbOdds" type="number" step="0.1" value="3.6"></div>
-    <button class="run-btn" id="run" onclick="run()">▶ RUN BACKTEST</button>
+    <a class="navlink" href="hits.html">🎯 AIchiro</a>
+    <div class="ctrl-group"><span class="ctrl-lbl">SEASON</span><input class="ctrl-input" id="season" type="number" value="2025" style="width:72px"></div>
+    <div class="ctrl-group"><span class="ctrl-lbl">HR ×</span><input class="ctrl-input" id="hrOdds" type="number" step="0.05" value="4.5"></div>
+    <div class="ctrl-group"><span class="ctrl-lbl">2B ×</span><input class="ctrl-input" id="dbOdds" type="number" step="0.05" value="3.6"></div>
+    <div class="ctrl-group"><span class="ctrl-lbl">HIT ×</span><input class="ctrl-input" id="htOdds" type="number" step="0.05" value="1.4"></div>
+    <button class="run-btn" id="run" onclick="run()">▶ RUN</button>
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
-<div id="status">Ready. Set the season/odds and hit RUN — it replays the strategy over the whole season (takes ~1–2 min while it pulls game logs).</div>
+<div id="status">Set season/odds and hit RUN. Replays each board's exact rules over the full season (pulls game logs — ~1–3 min).</div>
 
 <div class="wrap">
-  <div class="panel hr" id="panel-hr"><div class="empty">⚾ Home-run backtest will appear here.</div></div>
-  <div class="panel db" id="panel-db"><div class="empty">🏏 Doubles backtest will appear here.</div></div>
+  <div class="panel hr" id="panel-hr"><div class="empty">⚾ Home-run board backtest.</div></div>
+  <div class="panel db" id="panel-db"><div class="empty">🏏 Doubles board backtest.</div></div>
+  <div class="panel ht" id="panel-ht"><div class="empty">🎯 AIchiro (hits) board backtest.</div></div>
 </div>
 <div class="legend" id="legend"></div>
 
@@ -85,28 +81,27 @@ async function getJSON(url){
   let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}throw e||new Error("unreachable");
 }
 async function pool(items,fn,size,onTick){const out=new Array(items.length);let i=0,done=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}done++;onTick&&onTick(done,items.length);}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
-
 const fmt=(n)=>(n<0?"-$":"$")+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
 function status(m,c="var(--blue)"){const e=document.getElementById("status");e.style.color=c;e.innerHTML=m;}
 
 async function leaders(stat,season){
   const d=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=100&sortStat=${stat}&gameType=R&playerPool=All`);
-  return (d?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,team:s.team?.name}));
+  return (d?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,avg:s.stat.avg}));
 }
 async function gamelog(id,season){
   const d=await getJSON(`${API}/people/${id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);
   return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);
 }
 
-// Replay the strategy for one player's chronological game log.
-// Bet begins once the drought reaches 9; stake = 1.10^(drought-9); win pays (odds-1)x, miss loses stake; reset on hit.
-function simPlayer(splits,key,odds){
+// Replay one player's season for a board: a bet starts when the drought reaches START,
+// stake = factor^(drought-START); a hit pays (odds-1)x and resets, a miss loses the stake.
+function simPlayer(splits,key,START,factor,odds){
   let drought=0,pnl=0,staked=0,bets=0,wins=0;
   for(const g of splits){
     const hit=(+g.stat[key]||0)>0;
-    if(drought>=9){
-      const stake=Math.pow(1.1,drought-9);
+    if(drought>=START){
+      const stake=Math.pow(factor,drought-START);
       bets++;staked+=stake;
       if(hit){wins++;pnl+=stake*(odds-1);}else{pnl-=stake;}
     }
@@ -115,72 +110,69 @@ function simPlayer(splits,key,odds){
   return {pnl,staked,bets,wins};
 }
 
-async function backtest(stat,key,odds,season,base){
-  status(`<span class="spin">⟳</span> ${stat==="homeRuns"?"HR":"2B"}: fetching top-100 hitters…`);
-  const players=await leaders(stat,season);
-  if(!players.length)throw new Error("no leaders for "+season);
+async function backtest(cfg,season,base){
+  status(`<span class="spin">⟳</span> ${cfg.tag}: fetching hitters…`);
+  let players=await leaders(cfg.stat,season);
+  if(cfg.floor)players=players.filter(p=>parseFloat(p.avg)>=cfg.floor);
+  if(!players.length)throw new Error("no data for "+season);
   const logs=await pool(players,p=>gamelog(p.id,season),5,(done,total)=>{
-    setProg(base+Math.round(done/total*45));
-    status(`<span class="spin">⟳</span> ${stat==="homeRuns"?"HR":"2B"}: game logs ${done}/${total}…`);
+    setProg(base+Math.round(done/total*30));status(`<span class="spin">⟳</span> ${cfg.tag}: game logs ${done}/${total}…`);
   });
-  let tot={pnl:0,staked:0,bets:0,wins:0},perPlayer=[];
-  players.forEach((p,i)=>{
-    const sp=logs[i];if(!sp||!sp.length)return;
-    const r=simPlayer(sp,key,odds);
+  let tot={pnl:0,staked:0,bets:0,wins:0},per=[];
+  players.forEach((p,i)=>{const sp=logs[i];if(!sp||!sp.length)return;
+    const r=simPlayer(sp,cfg.key,cfg.start,cfg.factor,cfg.odds);
     tot.pnl+=r.pnl;tot.staked+=r.staked;tot.bets+=r.bets;tot.wins+=r.wins;
-    if(r.bets>0)perPlayer.push({name:p.name,...r});
-  });
-  perPlayer.sort((a,b)=>b.pnl-a.pnl);
-  return {tot,perPlayer,nPlayers:players.length};
+    if(r.bets>0)per.push({name:p.name,...r});});
+  per.sort((a,b)=>b.pnl-a.pnl);
+  return {tot,per,n:players.length};
 }
 
-function renderPanel(el,title,icon,res,odds){
-  const t=res.tot;
-  const roi=t.staked>0?(t.pnl/t.staked*100):0;
-  const wr=t.bets>0?(t.wins/t.bets*100):0;
+function render(el,title,icon,res,cfg){
+  const t=res.tot,roi=t.staked>0?t.pnl/t.staked*100:0,wr=t.bets>0?t.wins/t.bets*100:0;
   const col=t.pnl>=0?"var(--green)":"var(--red)";
-  const top=res.perPlayer.slice(0,6);
-  const bot=res.perPlayer.slice(-6).reverse();
+  const top=res.per.slice(0,5),bot=res.per.slice(-5).reverse();
   el.innerHTML=`
-    <div class="phead"><div class="picon">${icon}</div><div><div class="ptitle">${title}</div><div class="psub">${res.nPlayers} hitters · payout ${odds.toFixed(2)}× on a hit</div></div></div>
-    <div class="pnl-hero"><div class="pnl-val" style="color:${col}">${fmt(t.pnl)}</div><div class="pnl-cap">NET P&L (1 unit = $1 base stake)</div></div>
+    <div class="phead"><div style="font-size:22px">${icon}</div><div><div class="ptitle">${title}</div>
+      <div class="psub">${res.n} hitters · start ${cfg.start}g · ×${cfg.factor}/g · payout ${cfg.odds.toFixed(2)}×</div></div></div>
+    <div class="pnl-hero"><div class="pnl-val" style="color:${col}">${fmt(t.pnl)}</div><div class="pnl-cap">NET P&L (1 unit = $1)</div></div>
     <div class="kgrid">
       <div class="kbox"><div class="kv" style="color:${roi>=0?'var(--green)':'var(--red)'}">${roi.toFixed(1)}%</div><div class="kl">ROI</div></div>
-      <div class="kbox"><div class="kv">${wr.toFixed(1)}%</div><div class="kl">HIT RATE</div></div>
+      <div class="kbox"><div class="kv">${wr.toFixed(1)}%</div><div class="kl">WIN RATE</div></div>
       <div class="kbox"><div class="kv">${t.bets.toLocaleString()}</div><div class="kl">BETS</div></div>
-      <div class="kbox"><div class="kv">${fmt(t.staked)}</div><div class="kl">TOTAL STAKED</div></div>
+      <div class="kbox"><div class="kv">${fmt(t.staked)}</div><div class="kl">STAKED</div></div>
       <div class="kbox"><div class="kv">${t.wins.toLocaleString()}</div><div class="kl">WINS</div></div>
-      <div class="kbox"><div class="kv">${fmt(t.staked? t.staked/t.bets:0)}</div><div class="kl">AVG STAKE</div></div>
+      <div class="kbox"><div class="kv">${fmt(t.bets?t.staked/t.bets:0)}</div><div class="kl">AVG STAKE</div></div>
     </div>
     <div class="lead">
       <h4>▲ TOP PROFIT</h4>${top.map(p=>`<div class="lrow"><span>${p.name}</span><span style="color:var(--green)">${fmt(p.pnl)}</span></div>`).join("")||'<div class="lrow"><span>—</span></div>'}
-      <h4>▼ BIGGEST LOSSES</h4>${bot.map(p=>`<div class="lrow"><span>${p.name}</span><span style="color:var(--red)">${fmt(p.pnl)}</span></div>`).join("")||'<div class="lrow"><span>—</span></div>'}
+      <h4>▼ BIGGEST LOSS</h4>${bot.map(p=>`<div class="lrow"><span>${p.name}</span><span style="color:var(--red)">${fmt(p.pnl)}</span></div>`).join("")||'<div class="lrow"><span>—</span></div>'}
     </div>`;
 }
 
 async function run(){
   const btn=document.getElementById("run");btn.disabled=true;
   const season=+document.getElementById("season").value;
-  const hrOdds=+document.getElementById("hrOdds").value, dbOdds=+document.getElementById("dbOdds").value;
+  const boards=[
+    {tag:"HR",key:"homeRuns",stat:"homeRuns",start:10,factor:1.1,odds:+document.getElementById("hrOdds").value,floor:0,el:"panel-hr",title:"HOME RUNS",icon:"⚾"},
+    {tag:"2B",key:"doubles",stat:"doubles",start:10,factor:1.1,odds:+document.getElementById("dbOdds").value,floor:0,el:"panel-db",title:"DOUBLES",icon:"🏏"},
+    {tag:"HITS",key:"hits",stat:"hits",start:3,factor:1.5,odds:+document.getElementById("htOdds").value,floor:0.25,el:"panel-ht",title:"HITS · AIchiro",icon:"🎯"}
+  ];
   try{
-    setProg(4);
-    const hr=await backtest("homeRuns","homeRuns",hrOdds,season,0);
-    renderPanel(document.getElementById("panel-hr"),"HOME RUNS",ballSVG(),hr,hrOdds);
-    const db=await backtest("doubles","doubles",dbOdds,season,50);
-    renderPanel(document.getElementById("panel-db"),"DOUBLES",batSVG(),db,dbOdds);
+    setProg(3);let net=0,b=0;
+    for(const cfg of boards){
+      const res=await backtest(cfg,season,b);b+=33;
+      render(document.getElementById(cfg.el),cfg.title,cfg.icon,res,cfg);
+      net+=res.tot.pnl;
+    }
     setProg(100);setTimeout(()=>setProg(0),400);
-    const net=hr.tot.pnl+db.tot.pnl;
-    status(`✓ ${season} backtest complete · combined net ${fmt(net)} · HR ${fmt(hr.tot.pnl)} · 2B ${fmt(db.tot.pnl)}`,"var(--green)");
-  }catch(e){
-    setProg(0);status(`✗ ${e.message}. The MLB feed may be blocked — try again, or open on a normal network.`,"var(--red)");
-  }finally{btn.disabled=false;}
+    status(`✓ ${season} complete · combined net ${fmt(net)}`,"var(--green)");
+  }catch(e){setProg(0);status(`✗ ${e.message}. Feed may be blocked — try again or use a normal network.`,"var(--red)");}
+  finally{btn.disabled=false;}
 }
 
 document.getElementById("legend").innerHTML=`
-  <b>Method:</b> for each top-100 hitter, replay the season game-by-game. Once a player's drought reaches <b>9 games</b>, place a bet that game with stake <b>1.10^(drought−9)</b> ($1, then +10%/game). A hit pays <b>(payout−1)×</b> the stake and resets the drought; a miss loses the stake. Every qualifying game across all 100 hitters is counted (not capped at 50). <b>1 unit = $1</b> base stake. ⚠ Estimate only — uses flat prop odds, ignores juice/limits/availability · not betting advice.`;
-
-function ballSVG(){return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="#f1f1ea"/><path d="M40,16 C50,40 50,80 40,104" fill="none" stroke="#e23744" stroke-width="3"/><path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3"/></svg>`;}
-function batSVG(){return `<svg viewBox="0 0 120 120"><g transform="translate(60,60) rotate(-38) translate(-60,-60)"><path d="M60,20 C67,20 71,25 71,32 C71,52 65,80 64,96 C64,101 67,104 67,108 C67,112 64,114 60,114 C56,114 53,112 53,108 C53,104 56,101 56,96 C55,80 49,52 49,32 C49,25 53,20 60,20 Z" fill="#c8924f" stroke="#5a3617" stroke-width="1.4"/></g></svg>`;}
+  <b>Method:</b> for each top-100 hitter by the board's stat, replay the season game-by-game. A bet starts once the drought hits the board's threshold (HR/2B: 10 games, ×1.10/game; Hits: 3 games, ×1.50/game). A hit pays <b>(payout−1)×</b> the stake and resets; a miss loses the stake. Hits applies the .250 AVG floor. <b>1 unit = $1.</b><br>
+  <b>Odds are decimal</b> (4.5 ≈ +350, 3.6 ≈ +260, 1.40 ≈ −250). Defaults are editable — set them to your book. ⚠ Flat odds for every player/game, no vig/limits/lineup checks · estimate only · not betting advice.`;
 </script>
 </body>
 </html>
