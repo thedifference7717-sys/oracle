@@ -116,7 +116,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         <path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
-    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 10 · LEADERS API</div></div>
+    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 11 · CARRY ANY RANK</div></div>
   </div>
   <div class="controls">
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
@@ -460,7 +460,7 @@ async function loadLive(manual){
       byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher,final:fin,gdate:gd};});
 
     status('<span class="spin">⟳</span> Loading live hitters…');
-    const hd=await getJSON(`${API}/stats/leaders?leaderCategories=hits&statGroup=hitting&season=${season}&sportId=1&limit=100&leaderGameTypes=R`);
+    const hd=await getJSON(`${API}/stats/leaders?leaderCategories=hits&statGroup=hitting&season=${season}&sportId=1&limit=200&leaderGameTypes=R`);
     let hitters=((hd?.leagueLeaders?.[0]?.leaders)||[]).map(L=>({id:L.person.id,name:L.person.fullName,teamId:L.team?.id,team:L.team?.name,pos:L.person?.primaryPosition?.abbreviation||"",hr:+L.value||0}));
     try{const ad=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=2000&gameType=R&playerPool=All`);const am={};(ad?.stats?.[0]?.splits||[]).forEach(s=>{am[s.player.id]=s.stat.avg;});hitters.forEach(h=>{h.avg=am[h.id];});}catch(e){} // AVG for blend/floor
     {const hv=hitters.map(h=>h.hr),av=hitters.map(h=>parseFloat(h.avg)||0);const mnH=Math.min(...hv),mxH=Math.max(...hv),mnA=Math.min(...av),mxA=Math.max(...av);hitters.forEach(h=>{const nh=mxH>mnH?(h.hr-mnH)/(mxH-mnH):0;const na=mxA>mnA?((parseFloat(h.avg)||0)-mnA)/(mxA-mnA):0;h.blend=0.3*nh+0.7*na;});}
