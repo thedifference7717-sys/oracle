@@ -85,9 +85,9 @@ const fmt=(n)=>(n<0?"-$":"$")+Math.abs(n).toLocaleString("en-US",{minimumFractio
 function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
 function status(m,c="var(--blue)"){const e=document.getElementById("status");e.style.color=c;e.innerHTML=m;}
 
-async function leaders(stat,season){
-  const d=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=2000&gameType=R&playerPool=All`);
-  return (d?.stats?.[0]?.splits||[]).map(s=>({id:s.player.id,name:s.player.fullName,avg:s.stat.avg,val:+(s.stat[stat]||0)}));
+async function leaders(cat,season,n){
+  const d=await getJSON(`${API}/stats/leaders?leaderCategories=${cat}&statGroup=hitting&season=${season}&sportId=1&limit=${n}&leaderGameTypes=R`);
+  return ((d?.leagueLeaders?.[0]?.leaders)||[]).map(L=>({id:L.person.id,name:L.person.fullName}));
 }
 async function gamelog(id,season){
   const d=await getJSON(`${API}/people/${id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);
@@ -111,16 +111,15 @@ function simPlayer(splits,key,START,factor,odds){
 }
 
 async function backtest(cfg,season,base){
-  status(`<span class="spin">⟳</span> ${cfg.tag}: fetching hitters…`);
-  let players=await leaders(cfg.stat,season);
-  players.sort((a,b)=>b.val-a.val);players=players.slice(0,100); // true top 100 by the stat
-  if(cfg.floor)players=players.filter(p=>parseFloat(p.avg)>=cfg.floor);
+  status(`<span class="spin">⟳</span> ${cfg.tag}: fetching top-69 leaders…`);
+  let players=await leaders(cfg.cat,season,69);
   if(!players.length)throw new Error("no data for "+season);
   const logs=await pool(players,p=>gamelog(p.id,season),5,(done,total)=>{
     setProg(base+Math.round(done/total*30));status(`<span class="spin">⟳</span> ${cfg.tag}: game logs ${done}/${total}…`);
   });
   let tot={pnl:0,staked:0,bets:0,wins:0},per=[];
   players.forEach((p,i)=>{const sp=logs[i];if(!sp||!sp.length)return;
+    if(cfg.floor){let h=0,ab=0;for(const g of sp){h+=(+g.stat.hits||0);ab+=(+g.stat.atBats||0);}if(ab>0&&h/ab<cfg.floor)return;}
     const r=simPlayer(sp,cfg.key,cfg.start,cfg.factor,cfg.odds);
     tot.pnl+=r.pnl;tot.staked+=r.staked;tot.bets+=r.bets;tot.wins+=r.wins;
     if(r.bets>0)per.push({name:p.name,...r});});
@@ -156,9 +155,9 @@ async function run(){
   const btn=document.getElementById("run");btn.disabled=true;
   const season=+document.getElementById("season").value;
   const boards=[
-    {tag:"HR",key:"homeRuns",stat:"homeRuns",start:10,factor:1.1,odds:+document.getElementById("hrOdds").value,floor:0,el:"panel-hr",title:"HOME RUNS",icon:"⚾"},
-    {tag:"2B",key:"doubles",stat:"doubles",start:10,factor:1.1,odds:+document.getElementById("dbOdds").value,floor:0,el:"panel-db",title:"DOUBLES",icon:"🏏"},
-    {tag:"HITS",key:"hits",stat:"hits",start:3,factor:1.5,odds:+document.getElementById("htOdds").value,floor:0.25,el:"panel-ht",title:"HITS · AIchiro",icon:"🎯"}
+    {tag:"HR",key:"homeRuns",cat:"homeRuns",start:10,factor:1.1,odds:+document.getElementById("hrOdds").value,floor:0,el:"panel-hr",title:"HOME RUNS",icon:"⚾"},
+    {tag:"2B",key:"doubles",cat:"doubles",start:10,factor:1.1,odds:+document.getElementById("dbOdds").value,floor:0,el:"panel-db",title:"DOUBLES",icon:"🏏"},
+    {tag:"HITS",key:"hits",cat:"hits",start:3,factor:1.5,odds:+document.getElementById("htOdds").value,floor:0.25,el:"panel-ht",title:"HITS · AIchiro",icon:"🎯"}
   ];
   try{
     setProg(3);let net=0,b=0;
@@ -174,7 +173,7 @@ async function run(){
 }
 
 document.getElementById("legend").innerHTML=`
-  <b>Method:</b> for each top-100 hitter by the board's stat, replay the season game-by-game. A bet starts once the drought hits the board's threshold (HR/2B: 10 games, ×1.10/game; Hits: 3 games, ×1.50/game). A hit pays <b>(payout−1)×</b> the stake and resets; a miss loses the stake. Hits applies the .250 AVG floor. <b>1 unit = $1.</b> Each panel also shows a <b>FLAT $1/bet</b> line (same triggers, no escalation) for comparison.<br>
+  <b>Method:</b> for each of the true top-69 leaders in the category, replay the season game-by-game. A bet starts once the drought hits the board's threshold (HR/2B: 10 games, ×1.10/game; Hits: 3 games, ×1.50/game). A hit pays <b>(payout−1)×</b> the stake and resets; a miss loses the stake. Hits applies the .250 AVG floor. <b>1 unit = $1.</b> Each panel also shows a <b>FLAT $1/bet</b> line (same triggers, no escalation) for comparison.<br>
   <b>Odds are decimal</b> (4.5 ≈ +350, 3.6 ≈ +260, 1.40 ≈ −250). Defaults are editable — set them to your book. ⚠ Flat odds for every player/game, no vig/limits/lineup checks · estimate only · not betting advice.`;
 </script>
 </body>
