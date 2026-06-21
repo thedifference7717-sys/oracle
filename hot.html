@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#050510">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Hot Hitters · Last 14 Days</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hot Hitters">
+<link rel="icon" type="image/svg+xml" href="baseball.svg">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
+#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#1A0A0A,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.05em;color:#FFE9D6;text-shadow:0 0 14px #F7931A88}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
+.controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
+.navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
+.run-btn{padding:11px 18px;background:linear-gradient(90deg,#F7931A,#FF4D6D);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer}
+.run-btn:disabled{opacity:.5;cursor:wait}
+#progress-wrap{height:3px;background:var(--bg2);display:none}#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#F7931A,var(--green));transition:width .2s}
+#status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.section-h{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--orange);padding:16px 18px 8px}
+.parlay{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:0 18px}
+@media(max-width:820px){.parlay{grid-template-columns:1fr}}
+.pcard{background:linear-gradient(160deg,#1A120A,var(--bg2));border:1px solid #F7931A55;border-radius:16px;padding:15px;box-shadow:0 4px 24px #F7931A14}
+.pc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pc-rank{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--orange);width:30px}
+.pc-name{font-size:17px;font-weight:700;line-height:1.1}
+.pc-team{font-size:10px;color:var(--muted);margin-top:2px}
+.pc-stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.pc-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center}
+.pc-v{font-family:'Orbitron',monospace;font-size:16px;font-weight:700}
+.pc-l{font-size:8px;color:var(--muted);margin-top:3px;letter-spacing:.05em}
+.pc-mu{font-size:12px;color:var(--text)}.pc-mu .d{color:var(--muted);font-size:11px}
+.wrap{padding:14px 18px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--purple);letter-spacing:.05em}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}
+thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:11px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);white-space:nowrap}
+thead th.num{text-align:right}
+tbody td{padding:11px 12px;white-space:nowrap;border-bottom:1px solid var(--border)}
+td.num{text-align:right;font-family:'Orbitron',monospace}
+.pname{font-weight:700;font-size:14px}.pteam{font-size:10px;color:var(--muted)}
+.legend{font-size:12px;color:var(--muted);line-height:1.8;padding:10px 18px 0}
+.spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:40px 18px;text-align:center;color:var(--dim);font-size:12px}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div><div class="logo">🔥 HOT HITTERS</div><div class="logo-sub">LAST 14 DAYS · BUILD 1</div></div>
+  <div class="controls">
+    <a class="navlink" href="./">⚾ HR</a>
+    <a class="navlink" href="cobb.html">🏏 2B</a>
+    <a class="navlink" href="hits.html">🎯 AIchiro</a>
+    <button class="run-btn" id="run" onclick="load()">⟳ REFRESH</button>
+  </div>
+</div>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="status"></div>
+
+<div class="section-h">🔥 TOP 3 PARLAY WATCHLIST — hottest bats in action today</div>
+<div class="parlay" id="parlay"></div>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="panel-head">⚾ HOT HITTERS PLAYING TODAY</div>
+    <div class="table-wrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+  </div>
+</div>
+<div class="legend" id="legend"></div>
+
+<script>
+const API="https://statsapi.mlb.com/api/v1";
+const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
+let good=null;
+async function getJSON(url){const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}throw e||new Error("unreachable");}
+async function pool(items,fn,size,onTick){const out=new Array(items.length);let i=0,done=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}done++;onTick&&onTick(done,items.length);}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const PARK={"Coors Field":110,"Fenway Park":108,"Great American Ball Park":104,"Globe Life Field":103,"Chase Field":103,"Wrigley Field":102,"Yankee Stadium":102,"Citizens Bank Park":102,"Oriole Park at Camden Yards":101,"Rogers Centre":101,"American Family Field":101,"Truist Park":101,"Kauffman Stadium":101,"Daikin Park":100,"Minute Maid Park":100,"Nationals Park":100,"Dodger Stadium":100,"Angel Stadium":100,"Busch Stadium":99,"Target Field":99,"Progressive Field":99,"Rate Field":99,"PNC Park":99,"Comerica Park":99,"Citi Field":98,"Petco Park":97,"loanDepot park":96,"T-Mobile Park":96,"Oracle Park":95,"Sutter Health Park":100,"George M. Steinbrenner Field":101};
+function park(n){if(!n)return 100;if(PARK[n]!=null)return PARK[n];const k=Object.keys(PARK).find(k=>n.includes(k)||k.includes(n));return k?PARK[k]:100;}
+function status(m,c="var(--blue)"){const e=document.getElementById("status");e.style.color=c;e.innerHTML=m;}
+function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
+function etNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));}
+function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
+
+async function load(){
+  const btn=document.getElementById("run");btn.disabled=true;
+  try{
+    const end=etNow(),start=etNow();start.setDate(start.getDate()-13);
+    const endStr=ymd(end),startStr=ymd(start),season=end.getFullYear();
+    status('<span class="spin">⟳</span> Today’s schedule…');setProg(6);
+    const sched=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher,team,venue`);
+    const games=sched?.dates?.[0]?.games||[];
+    if(!games.length){status(`No MLB games today (${endStr}).`,"var(--yellow)");renderEmpty();return;}
+    const byTeam={};
+    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away;
+      byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName};
+      byTeam[a.team.id]={opp:h.team?.abbreviation||h.team?.name,isHome:false,venue:v,sp:h.probablePitcher?.fullName};});
+
+    status('<span class="spin">⟳</span> Active rosters…');setProg(14);
+    const tids=[...new Set(Object.keys(byTeam))];const active=new Set(),rostered=new Set();
+    await pool(tids,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);if(d&&d.roster){rostered.add(String(tid));d.roster.forEach(p=>active.add(p.person.id));}}catch(e){}},6);
+
+    status('<span class="spin">⟳</span> Last-14-day hitting…');setProg(26);
+    const hd=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${startStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
+    let all=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player?.id,name:s.player?.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,
+      avg:parseFloat(s.stat?.avg)||0,hr:+s.stat?.homeRuns||0,rbi:+s.stat?.rbi||0,hits:+s.stat?.hits||0,ab:+s.stat?.atBats||0,g:+s.stat?.gamesPlayed||0}));
+    // Only meaningful samples, playing today, not injured
+    let pool0=all.filter(p=>p.ab>=20 && byTeam[p.teamId] && (!rostered.has(String(p.teamId))||active.has(p.id)));
+    if(!pool0.length){status(`No qualifying hot hitters in today’s games.`,"var(--yellow)");renderEmpty();return;}
+
+    // quick composite to shortlist (normalize avg/hr/rbi), then fetch logs for the top ~40
+    const nrm=(arr,key)=>{const v=arr.map(x=>x[key]),mn=Math.min(...v),mx=Math.max(...v);return x=>mx>mn?(x[key]-mn)/(mx-mn):0;};
+    let na=nrm(pool0,"avg"),nh=nrm(pool0,"hr"),nr=nrm(pool0,"rbi");
+    pool0.forEach(p=>{p.pre=na(p)+nh(p)+nr(p);});
+    pool0.sort((a,b)=>b.pre-a.pre);
+    let cand=pool0.slice(0,40);
+
+    status('<span class="spin">⟳</span> Counting 2+ H/R/RBI games…');
+    const logs=await pool(cand,async p=>{const d=await getJSON(`${API}/people/${p.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date>=startStr&&x.date<=endStr);},6,(done,total)=>setProg(30+Math.round(done/total*60)));
+    cand.forEach((p,i)=>{let hot=0;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;});p.hotG=hot;});
+
+    // final hot score = normalized avg + hr + rbi + hot-games
+    na=nrm(cand,"avg");nh=nrm(cand,"hr");nr=nrm(cand,"rbi");const ng=nrm(cand,"hotG");
+    cand.forEach(p=>{p.score=Math.round((na(p)+nh(p)+nr(p)+ng(p))/4*100);p.g2=byTeam[p.teamId];});
+    cand.sort((a,b)=>b.score-a.score);
+
+    setProg(100);setTimeout(()=>setProg(0),300);
+    render(cand,startStr,endStr);
+    status(`✓ ${cand.length} hot hitters in action · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
+  }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
+  finally{btn.disabled=false;}
+}
+
+function renderEmpty(){document.getElementById("parlay").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="9"><div class="empty">No games / hot hitters right now.</div></td></tr>`;}
+
+function render(list,s,e){
+  const top3=list.slice(0,3);
+  document.getElementById("parlay").innerHTML=top3.map((p,i)=>`
+    <div class="pcard">
+      <div class="pc-top"><div class="pc-rank">${i+1}</div><div><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div></div>
+      <div class="pc-stats">
+        <div class="pc-box"><div class="pc-v">${p.avg.toFixed(3).replace(/^0/,"")}</div><div class="pc-l">AVG</div></div>
+        <div class="pc-box"><div class="pc-v" style="color:var(--orange)">${p.hr}</div><div class="pc-l">HR</div></div>
+        <div class="pc-box"><div class="pc-v" style="color:var(--green)">${p.rbi}</div><div class="pc-l">RBI</div></div>
+        <div class="pc-box"><div class="pc-v" style="color:var(--purple)">${p.hotG}</div><div class="pc-l">2+ G</div></div>
+      </div>
+      <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"} · ${p.g2.venue||""} (Park ${park(p.g2.venue)})</span></div>
+    </div>`).join("")||'<div class="empty">No hot hitters in action.</div>';
+
+  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","2+ H/R/RBI","HOT","OPP / SP","PARK"].map((h,i)=>`<th class="${i>=2&&i<=6||i===8?'num':''}">${h}</th>`).join("");
+  document.getElementById("tbody").innerHTML=list.map((p,i)=>`
+    <tr>
+      <td class="num" style="color:var(--dim)">${i+1}</td>
+      <td><div class="pname">${p.name}</div><div class="pteam">${p.team||""} · ${p.pos||""}</div></td>
+      <td class="num">${p.avg.toFixed(3).replace(/^0/,"")}</td>
+      <td class="num" style="color:var(--orange)">${p.hr}</td>
+      <td class="num" style="color:var(--green)">${p.rbi}</td>
+      <td class="num" style="color:var(--purple)">${p.hotG}</td>
+      <td class="num"><b style="color:${p.score>=70?'var(--green)':p.score>=45?'var(--yellow)':'var(--muted)'}">${p.score}</b></td>
+      <td style="font-size:12px">${p.g2.isHome?"vs":"@"} ${p.g2.opp||"TBD"}<div style="color:var(--dim);font-size:10px">${p.g2.sp||"SP TBD"}</div></td>
+      <td class="num" style="color:${park(p.g2.venue)>=103?'var(--green)':park(p.g2.venue)<=97?'var(--red)':'var(--yellow)'}">${park(p.g2.venue)}</td>
+    </tr>`).join("");
+
+  document.getElementById("legend").innerHTML=`<b>HOT score</b> = blend of last-14-day AVG, HR, RBI, and <b>2+ H/R/RBI games</b> (games with at least 2 combined hits/runs/RBI), normalized. Min 20 AB in the window · only hitters in today's games · injured (IL) excluded. ⚠ Watchlist only — informational, not betting advice.`;
+}
+load();
+setInterval(load,600000); // refresh every 10 min
+</script>
+</body>
+</html>
