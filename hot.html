@@ -57,7 +57,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 5 · LIVE ✅ (~30s)</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 6 · 9AM ET REBUILD</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -200,7 +200,8 @@ async function pollResults(){
   }catch(e){}
 }
 load();
-setInterval(load,900000);      // full 14-day rebuild every 15 min
+function _ms9(){const e=etNow();const t=new Date(e);t.setHours(9,0,0,0);if(e>=t)t.setDate(t.getDate()+1);return t-e;}
+function _daily(){setTimeout(()=>{load();_daily();},_ms9());}_daily(); // rebuild 14-day rankings daily at 9:00 AM ET
 setInterval(pollResults,30000); // live 1.5 H/R/RBI results every ~30s
 </script>
 </body>
