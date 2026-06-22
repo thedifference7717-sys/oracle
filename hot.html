@@ -57,7 +57,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 6 · 9AM ET REBUILD</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 7 · STARTERS-DRIVEN</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -199,10 +199,12 @@ async function pollResults(){
     status(`✓ live results · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){}
 }
-load();
-function _ms9(){const e=etNow();const t=new Date(e);t.setHours(9,0,0,0);if(e>=t)t.setDate(t.getDate()+1);return t-e;}
-function _daily(){setTimeout(()=>{load();_daily();},_ms9());}_daily(); // rebuild 14-day rankings daily at 9:00 AM ET
-setInterval(pollResults,30000); // live 1.5 H/R/RBI results every ~30s
+let _lastDate="",_lastProb=-1;
+// Rebuild the board when probable starters get posted (matchup score depends on them).
+async function watchStarters(){try{const endStr=ymd(etNow());const d=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher`);const gs=d?.dates?.[0]?.games||[];let prob=0;gs.forEach(g=>{if(g.teams?.home?.probablePitcher)prob++;if(g.teams?.away?.probablePitcher)prob++;});if(endStr!==_lastDate){_lastDate=endStr;_lastProb=prob;load();}else if(prob>_lastProb){_lastProb=prob;load();}}catch(e){}}
+watchStarters();                    // initial build + rebuild as starters post
+setInterval(watchStarters,900000);  // check for newly-posted starters every 15 min
+setInterval(pollResults,30000);     // live 1.5 H/R/RBI results every ~30s
 </script>
 </body>
 </html>
