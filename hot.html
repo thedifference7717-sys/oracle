@@ -38,6 +38,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .pc-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center}
 .pc-v{font-family:'Orbitron',monospace;font-size:16px;font-weight:700}
 .pc-l{font-size:8px;color:var(--muted);margin-top:3px;letter-spacing:.05em}
+.chip{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;flex-shrink:0}.chip.ok{background:#14F19522;color:var(--green)}.chip.pend{background:#8C95A422;color:var(--muted)}.chip.miss{background:#FBBF2422;color:var(--yellow)}
 .pc-mu{font-size:12px;color:var(--text)}.pc-mu .d{color:var(--muted);font-size:11px}
 .wrap{padding:14px 18px}
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
@@ -56,7 +57,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 3 · .300 + MATCHUP</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 4 · TOP 10 + ✅</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -67,7 +68,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="status"></div>
 
-<div class="section-h">🔥 TOP 5 PARLAY WATCHLIST — hottest .300+ bats vs the best matchups</div>
+<div class="section-h">🔥 TOP 10 PARLAY WATCHLIST — hottest .300+ bats vs the best matchups · ✅ = cleared 1.5 H/R/RBI today</div>
 <div class="parlay" id="parlay"></div>
 
 <div class="wrap">
@@ -127,7 +128,7 @@ async function load(){
 
     status('<span class="spin">⟳</span> Counting 2+ H/R/RBI games…');
     const logs=await pool(cand,async p=>{const d=await getJSON(`${API}/people/${p.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date>=startStr&&x.date<=endStr);},6,(done,total)=>setProg(30+Math.round(done/total*60)));
-    cand.forEach((p,i)=>{let hot=0;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;});p.hotG=hot;});
+    cand.forEach((p,i)=>{let hot=0,today=null;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;if(gm.date===endStr)today=c;});p.hotG=hot;p.todayHRR=today;p.cleared=today!=null&&today>=2;});
 
     // opposing starter hittability (batting-avg-against) for the matchup focus
     cand.forEach(p=>{p.g2=byTeam[p.teamId];p.park=park(p.g2.venue);});
@@ -152,13 +153,13 @@ async function load(){
   finally{btn.disabled=false;}
 }
 
-function renderEmpty(){document.getElementById("parlay").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="10"><div class="empty">No games / hot hitters right now.</div></td></tr>`;}
+function renderEmpty(){document.getElementById("parlay").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="11"><div class="empty">No games / hot hitters right now.</div></td></tr>`;}
 
 function render(list,s,e){
-  const top=list.slice(0,5);
+  const top=list.slice(0,10);
   document.getElementById("parlay").innerHTML=top.map((p,i)=>`
     <div class="pcard">
-      <div class="pc-top"><div class="pc-rank">${i+1}</div><div><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div></div>
+      <div class="pc-top"><div class="pc-rank">${i+1}</div><div style="flex:1;min-width:0"><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div>${p.todayHRR==null?'<span class="chip pend">⏳</span>':(p.cleared?'<span class="chip ok">✅</span>':'<span class="chip miss">'+p.todayHRR+'/2</span>')}</div>
       <div class="pc-stats">
         <div class="pc-box"><div class="pc-v">${p.avg.toFixed(3).replace(/^0/,"")}</div><div class="pc-l">AVG</div></div>
         <div class="pc-box"><div class="pc-v" style="color:var(--orange)">${p.hr}</div><div class="pc-l">HR</div></div>
@@ -168,7 +169,7 @@ function render(list,s,e){
       <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3).replace(/^0/,""):""} · Park ${p.park}</span><div style="margin-top:6px;font-size:11px"><span style="color:var(--orange)">HOT ${p.hotN}</span> · <span style="color:${p.muN>=60?'var(--green)':p.muN>=40?'var(--yellow)':'var(--red)'}">MATCH ${p.muN}</span> · <b style="color:var(--green)">SCORE ${p.score}</b></div></div>
     </div>`).join("")||'<div class="empty">No hot hitters in action.</div>';
 
-  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","2+","OPP / SP","SP BAA","PARK","SCORE"].map((h,i)=>`<th class="${[2,3,4,5,7,8,9].includes(i)?'num':''}">${h}</th>`).join("");
+  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","2+","OPP / SP","SP BAA","PARK","SCORE","1.5 HRR"].map((h,i)=>`<th class="${[2,3,4,5,7,8,9].includes(i)?'num':''}">${h}</th>`).join("");
   document.getElementById("tbody").innerHTML=list.map((p,i)=>`
     <tr>
       <td class="num" style="color:var(--dim)">${i+1}</td>
@@ -181,9 +182,10 @@ function render(list,s,e){
       <td class="num" style="color:${p.baa!=null?(p.baa>=0.260?'var(--green)':p.baa<=0.225?'var(--red)':'var(--yellow)'):'var(--dim)'}">${p.baa!=null?p.baa.toFixed(3).replace(/^0/,""):"—"}</td>
       <td class="num" style="color:${p.park>=103?'var(--green)':p.park<=97?'var(--red)':'var(--yellow)'}">${p.park}</td>
       <td class="num"><b style="color:${p.score>=65?'var(--green)':p.score>=45?'var(--yellow)':'var(--muted)'}">${p.score}</b></td>
+      <td>${p.todayHRR==null?'<span class="chip pend">⏳</span>':(p.cleared?'<span class="chip ok">✅</span>':'<span class="chip miss">'+p.todayHRR+'/2</span>')}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 20 AB over 14 days · in today's lineup · injured (IL) excluded. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 20 AB over 14 days · in today's lineup · injured (IL) excluded. <b>✅</b> = already has 2+ (Over 1.5) combined H/R/RBI today · <b>⏳</b> = game not started / no result yet · <b>n/2</b> = current count. ⚠ Watchlist only — not betting advice.`;
 }
 load();
 setInterval(load,600000); // refresh every 10 min
