@@ -57,7 +57,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 4 · TOP 10 + ✅</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 5 · LIVE ✅ (~30s)</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -82,7 +82,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <script>
 const API="https://statsapi.mlb.com/api/v1";
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
-let good=null;
+let good=null;let current=[];
 async function getJSON(url){const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}throw e||new Error("unreachable");}
 async function pool(items,fn,size,onTick){const out=new Array(items.length);let i=0,done=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}done++;onTick&&onTick(done,items.length);}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -147,7 +147,7 @@ async function load(){
     cand.sort((a,b)=>b.score-a.score);
 
     setProg(100);setTimeout(()=>setProg(0),300);
-    render(cand,startStr,endStr);
+    current=cand;render(cand,startStr,endStr);
     status(`✓ ${cand.length} hot hitters in action · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
   finally{btn.disabled=false;}
@@ -187,8 +187,21 @@ function render(list,s,e){
 
   document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 20 AB over 14 days · in today's lineup · injured (IL) excluded. <b>✅</b> = already has 2+ (Over 1.5) combined H/R/RBI today · <b>⏳</b> = game not started / no result yet · <b>n/2</b> = current count. ⚠ Watchlist only — not betting advice.`;
 }
+// Lightweight ~30s poll: one call returns every player's TODAY H/R/RBI; update checkmarks live.
+async function pollResults(){
+  if(!current.length)return;
+  try{
+    const endStr=ymd(etNow());
+    const d=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${endStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
+    const m={};(d?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null)m[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
+    current.forEach(p=>{if(m[p.id]!=null){p.todayHRR=m[p.id];p.cleared=m[p.id]>=2;}});
+    render(current);
+    status(`✓ live results · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+  }catch(e){}
+}
 load();
-setInterval(load,600000); // refresh every 10 min
+setInterval(load,900000);      // full 14-day rebuild every 15 min
+setInterval(pollResults,30000); // live 1.5 H/R/RBI results every ~30s
 </script>
 </body>
 </html>
