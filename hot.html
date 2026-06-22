@@ -27,7 +27,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 #progress-wrap{height:3px;background:var(--bg2);display:none}#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#F7931A,var(--green));transition:width .2s}
 #status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
 .section-h{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--orange);padding:16px 18px 8px}
-.parlay{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:0 18px}
+.parlay{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;padding:0 18px}
 @media(max-width:820px){.parlay{grid-template-columns:1fr}}
 .pcard{background:linear-gradient(160deg,#1A120A,var(--bg2));border:1px solid #F7931A55;border-radius:16px;padding:15px;box-shadow:0 4px 24px #F7931A14}
 .pc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -56,7 +56,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 2</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 3 · .300 + MATCHUP</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -67,7 +67,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="status"></div>
 
-<div class="section-h">🔥 TOP 3 PARLAY WATCHLIST — hottest bats in action today</div>
+<div class="section-h">🔥 TOP 5 PARLAY WATCHLIST — hottest .300+ bats vs the best matchups</div>
 <div class="parlay" id="parlay"></div>
 
 <div class="wrap">
@@ -103,8 +103,8 @@ async function load(){
     if(!games.length){status(`No MLB games today (${endStr}).`,"var(--yellow)");renderEmpty();return;}
     const byTeam={};
     games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away;
-      byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName};
-      byTeam[a.team.id]={opp:h.team?.abbreviation||h.team?.name,isHome:false,venue:v,sp:h.probablePitcher?.fullName};});
+      byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName,spId:a.probablePitcher?.id};
+      byTeam[a.team.id]={opp:h.team?.abbreviation||h.team?.name,isHome:false,venue:v,sp:h.probablePitcher?.fullName,spId:h.probablePitcher?.id};});
 
     status('<span class="spin">⟳</span> Active rosters…');setProg(14);
     const tids=[...new Set(Object.keys(byTeam))];const active=new Set(),rostered=new Set();
@@ -115,7 +115,7 @@ async function load(){
     let all=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player?.id,name:s.player?.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,
       avg:parseFloat(s.stat?.avg)||0,hr:+s.stat?.homeRuns||0,rbi:+s.stat?.rbi||0,hits:+s.stat?.hits||0,ab:+s.stat?.atBats||0,g:+s.stat?.gamesPlayed||0}));
     // Only meaningful samples, playing today, not injured
-    let pool0=all.filter(p=>p.ab>=20 && byTeam[p.teamId] && (!rostered.has(String(p.teamId))||active.has(p.id)));
+    let pool0=all.filter(p=>p.ab>=20 && p.avg>=0.300 && byTeam[p.teamId] && (!rostered.has(String(p.teamId))||active.has(p.id)));
     if(!pool0.length){status(`No qualifying hot hitters in today’s games.`,"var(--yellow)");renderEmpty();return;}
 
     // quick composite to shortlist (normalize avg/hr/rbi), then fetch logs for the top ~40
@@ -129,9 +129,20 @@ async function load(){
     const logs=await pool(cand,async p=>{const d=await getJSON(`${API}/people/${p.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date>=startStr&&x.date<=endStr);},6,(done,total)=>setProg(30+Math.round(done/total*60)));
     cand.forEach((p,i)=>{let hot=0;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;});p.hotG=hot;});
 
-    // final hot score = normalized avg + hr + rbi + hot-games
+    // opposing starter hittability (batting-avg-against) for the matchup focus
+    cand.forEach(p=>{p.g2=byTeam[p.teamId];p.park=park(p.g2.venue);});
+    status('<span class="spin">⟳</span> Pitching matchups…');
+    const spIds=[...new Set(cand.map(p=>p.g2.spId).filter(Boolean))];const baaMap={};
+    await pool(spIds,async pid=>{try{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const st=d?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]=parseFloat(st.avg);}catch(e){}},6);
+    cand.forEach(p=>{p.baa=(p.g2.spId!=null&&baaMap[p.g2.spId]!=null)?baaMap[p.g2.spId]:null;});
+    // SCORE = 50% hot bat (2+games 40 / AVG 25 / HR 20 / RBI 15) + 50% matchup (SP BAA 70 / park 30)
     na=nrm(cand,"avg");nh=nrm(cand,"hr");nr=nrm(cand,"rbi");const ng=nrm(cand,"hotG");
-    cand.forEach(p=>{p.score=Math.round((na(p)+nh(p)+nr(p)+ng(p))/4*100);p.g2=byTeam[p.teamId];});
+    const bArr=cand.map(p=>p.baa).filter(v=>v!=null);const bMin=bArr.length?Math.min(...bArr):0.22,bMax=bArr.length?Math.max(...bArr):0.28;
+    const pArr=cand.map(p=>p.park);const pkMin=Math.min(...pArr),pkMax=Math.max(...pArr);
+    cand.forEach(p=>{const hot=0.40*ng(p)+0.25*na(p)+0.20*nh(p)+0.15*nr(p);
+      const nb=(p.baa!=null&&bMax>bMin)?(p.baa-bMin)/(bMax-bMin):0.5;
+      const npk=pkMax>pkMin?(p.park-pkMin)/(pkMax-pkMin):0.5;const mu=0.7*nb+0.3*npk;
+      p.hotN=Math.round(hot*100);p.muN=Math.round(mu*100);p.score=Math.round((0.5*hot+0.5*mu)*100);});
     cand.sort((a,b)=>b.score-a.score);
 
     setProg(100);setTimeout(()=>setProg(0),300);
@@ -141,11 +152,11 @@ async function load(){
   finally{btn.disabled=false;}
 }
 
-function renderEmpty(){document.getElementById("parlay").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="9"><div class="empty">No games / hot hitters right now.</div></td></tr>`;}
+function renderEmpty(){document.getElementById("parlay").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="10"><div class="empty">No games / hot hitters right now.</div></td></tr>`;}
 
 function render(list,s,e){
-  const top3=list.slice(0,3);
-  document.getElementById("parlay").innerHTML=top3.map((p,i)=>`
+  const top=list.slice(0,5);
+  document.getElementById("parlay").innerHTML=top.map((p,i)=>`
     <div class="pcard">
       <div class="pc-top"><div class="pc-rank">${i+1}</div><div><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div></div>
       <div class="pc-stats">
@@ -154,10 +165,10 @@ function render(list,s,e){
         <div class="pc-box"><div class="pc-v" style="color:var(--green)">${p.rbi}</div><div class="pc-l">RBI</div></div>
         <div class="pc-box"><div class="pc-v" style="color:var(--purple)">${p.hotG}</div><div class="pc-l">2+ G</div></div>
       </div>
-      <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"} · ${p.g2.venue||""} (Park ${park(p.g2.venue)})</span></div>
+      <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3).replace(/^0/,""):""} · Park ${p.park}</span><div style="margin-top:6px;font-size:11px"><span style="color:var(--orange)">HOT ${p.hotN}</span> · <span style="color:${p.muN>=60?'var(--green)':p.muN>=40?'var(--yellow)':'var(--red)'}">MATCH ${p.muN}</span> · <b style="color:var(--green)">SCORE ${p.score}</b></div></div>
     </div>`).join("")||'<div class="empty">No hot hitters in action.</div>';
 
-  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","2+ H/R/RBI","HOT","OPP / SP","PARK"].map((h,i)=>`<th class="${i>=2&&i<=6||i===8?'num':''}">${h}</th>`).join("");
+  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","2+","OPP / SP","SP BAA","PARK","SCORE"].map((h,i)=>`<th class="${[2,3,4,5,7,8,9].includes(i)?'num':''}">${h}</th>`).join("");
   document.getElementById("tbody").innerHTML=list.map((p,i)=>`
     <tr>
       <td class="num" style="color:var(--dim)">${i+1}</td>
@@ -166,12 +177,13 @@ function render(list,s,e){
       <td class="num" style="color:var(--orange)">${p.hr}</td>
       <td class="num" style="color:var(--green)">${p.rbi}</td>
       <td class="num" style="color:var(--purple)">${p.hotG}</td>
-      <td class="num"><b style="color:${p.score>=70?'var(--green)':p.score>=45?'var(--yellow)':'var(--muted)'}">${p.score}</b></td>
       <td style="font-size:12px">${p.g2.isHome?"vs":"@"} ${p.g2.opp||"TBD"}<div style="color:var(--dim);font-size:10px">${p.g2.sp||"SP TBD"}</div></td>
-      <td class="num" style="color:${park(p.g2.venue)>=103?'var(--green)':park(p.g2.venue)<=97?'var(--red)':'var(--yellow)'}">${park(p.g2.venue)}</td>
+      <td class="num" style="color:${p.baa!=null?(p.baa>=0.260?'var(--green)':p.baa<=0.225?'var(--red)':'var(--yellow)'):'var(--dim)'}">${p.baa!=null?p.baa.toFixed(3).replace(/^0/,""):"—"}</td>
+      <td class="num" style="color:${p.park>=103?'var(--green)':p.park<=97?'var(--red)':'var(--yellow)'}">${p.park}</td>
+      <td class="num"><b style="color:${p.score>=65?'var(--green)':p.score>=45?'var(--yellow)':'var(--muted)'}">${p.score}</b></td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>HOT score</b> = blend of last-14-day AVG, HR, RBI, and <b>2+ H/R/RBI games</b> (games with at least 2 combined hits/runs/RBI), normalized. Min 20 AB in the window · only hitters in today's games · injured (IL) excluded. ⚠ Watchlist only — informational, not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 20 AB over 14 days · in today's lineup · injured (IL) excluded. ⚠ Watchlist only — not betting advice.`;
 }
 load();
 setInterval(load,600000); // refresh every 10 min
