@@ -57,7 +57,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 7 · STARTERS-DRIVEN</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 8 · 1 PER GAME</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -103,9 +103,9 @@ async function load(){
     const games=sched?.dates?.[0]?.games||[];
     if(!games.length){status(`No MLB games today (${endStr}).`,"var(--yellow)");renderEmpty();return;}
     const byTeam={};
-    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away;
-      byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName,spId:a.probablePitcher?.id};
-      byTeam[a.team.id]={opp:h.team?.abbreviation||h.team?.name,isHome:false,venue:v,sp:h.probablePitcher?.fullName,spId:h.probablePitcher?.id};});
+    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away,gk=g.gamePk;
+      byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName,spId:a.probablePitcher?.id,gameKey:gk};
+      byTeam[a.team.id]={opp:h.team?.abbreviation||h.team?.name,isHome:false,venue:v,sp:h.probablePitcher?.fullName,spId:h.probablePitcher?.id,gameKey:gk};});
 
     status('<span class="spin">⟳</span> Active rosters…');setProg(14);
     const tids=[...new Set(Object.keys(byTeam))];const active=new Set(),rostered=new Set();
@@ -145,10 +145,14 @@ async function load(){
       const npk=pkMax>pkMin?(p.park-pkMin)/(pkMax-pkMin):0.5;const mu=0.7*nb+0.3*npk;
       p.hotN=Math.round(hot*100);p.muN=Math.round(mu*100);p.score=Math.round((0.5*hot+0.5*mu)*100);});
     cand.sort((a,b)=>b.score-a.score);
+    // ONE PICK PER GAME — round-robin parlays disallow same-game legs, so keep
+    // only the highest-scoring hitter from each game (cand is already score-desc).
+    const seenG=new Set(),uniq=[];
+    cand.forEach(p=>{const gk=(p.g2&&p.g2.gameKey!=null)?p.g2.gameKey:("t"+p.teamId);if(seenG.has(gk))return;seenG.add(gk);uniq.push(p);});
 
     setProg(100);setTimeout(()=>setProg(0),300);
-    current=cand;render(cand,startStr,endStr);
-    status(`✓ ${cand.length} hot hitters in action · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
+    current=uniq;render(uniq,startStr,endStr);
+    status(`✓ ${uniq.length} hot hitters · 1 per game · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
   finally{btn.disabled=false;}
 }
