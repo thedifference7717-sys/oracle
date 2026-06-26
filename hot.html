@@ -57,7 +57,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 8 · 1 PER GAME</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 9 · TOP10 1/GAME</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -68,7 +68,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="status"></div>
 
-<div class="section-h">🔥 TOP 10 PARLAY WATCHLIST — hottest .300+ bats vs the best matchups · ✅ = cleared 1.5 H/R/RBI today</div>
+<div class="section-h">🔥 TOP 10 PARLAY WATCHLIST — 1 player per game (round-robin safe) · hottest .300+ bats vs best matchups · ✅ = cleared 1.5 H/R/RBI today</div>
 <div class="parlay" id="parlay"></div>
 
 <div class="wrap">
@@ -145,14 +145,10 @@ async function load(){
       const npk=pkMax>pkMin?(p.park-pkMin)/(pkMax-pkMin):0.5;const mu=0.7*nb+0.3*npk;
       p.hotN=Math.round(hot*100);p.muN=Math.round(mu*100);p.score=Math.round((0.5*hot+0.5*mu)*100);});
     cand.sort((a,b)=>b.score-a.score);
-    // ONE PICK PER GAME — round-robin parlays disallow same-game legs, so keep
-    // only the highest-scoring hitter from each game (cand is already score-desc).
-    const seenG=new Set(),uniq=[];
-    cand.forEach(p=>{const gk=(p.g2&&p.g2.gameKey!=null)?p.g2.gameKey:("t"+p.teamId);if(seenG.has(gk))return;seenG.add(gk);uniq.push(p);});
 
     setProg(100);setTimeout(()=>setProg(0),300);
-    current=uniq;render(uniq,startStr,endStr);
-    status(`✓ ${uniq.length} hot hitters · 1 per game · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
+    current=cand;render(cand,startStr,endStr);
+    status(`✓ ${cand.length} hot hitters in action · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
   finally{btn.disabled=false;}
 }
@@ -160,7 +156,10 @@ async function load(){
 function renderEmpty(){document.getElementById("parlay").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="11"><div class="empty">No games / hot hitters right now.</div></td></tr>`;}
 
 function render(list,s,e){
-  const top=list.slice(0,10);
+  // Top-10 parlay cards: ONE pick per game (round-robin parlays disallow
+  // same-game legs). list is score-desc, so keep the first hitter per game.
+  const seenG=new Set();
+  const top=list.filter(p=>{const gk=(p.g2&&p.g2.gameKey!=null)?p.g2.gameKey:("t"+p.teamId);if(seenG.has(gk))return false;seenG.add(gk);return true;}).slice(0,10);
   document.getElementById("parlay").innerHTML=top.map((p,i)=>`
     <div class="pcard">
       <div class="pc-top"><div class="pc-rank">${i+1}</div><div style="flex:1;min-width:0"><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div>${p.todayHRR==null?'<span class="chip pend">⏳</span>':(p.cleared?'<span class="chip ok">✅</span>':'<span class="chip miss">'+p.todayHRR+'/2</span>')}</div>
