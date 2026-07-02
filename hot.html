@@ -57,7 +57,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 9 · TOP10 1/GAME</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 10 · LOCK AT 1ST PITCH</div></div>
   <div class="controls">
     <a class="navlink" href="./">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -188,7 +188,7 @@ function render(list,s,e){
       <td>${p.todayHRR==null?'<span class="chip pend">⏳</span>':(p.cleared?'<span class="chip ok">✅</span>':'<span class="chip miss">'+p.todayHRR+'/2</span>')}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 20 AB over 14 days · in today's lineup · injured (IL) excluded. <b>✅</b> = already has 2+ (Over 1.5) combined H/R/RBI today · <b>⏳</b> = game not started / no result yet · <b>n/2</b> = current count. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 20 AB over 14 days · in today's lineup · injured (IL) excluded. <b>✅</b> = already has 2+ (Over 1.5) combined H/R/RBI today · <b>⏳</b> = game not started / no result yet · <b>n/2</b> = current count. Rankings lock in at the day's first pitch — only ✅ results update after that. ⚠ Watchlist only — not betting advice.`;
 }
 // Lightweight ~30s poll: one call returns every player's TODAY H/R/RBI; update checkmarks live.
 async function pollResults(){
@@ -202,9 +202,22 @@ async function pollResults(){
     status(`✓ live results · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){}
 }
-let _lastDate="",_lastProb=-1;
-// Rebuild the board when probable starters get posted (matchup score depends on them).
-async function watchStarters(){try{const endStr=ymd(etNow());const d=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher`);const gs=d?.dates?.[0]?.games||[];let prob=0;gs.forEach(g=>{if(g.teams?.home?.probablePitcher)prob++;if(g.teams?.away?.probablePitcher)prob++;});if(endStr!==_lastDate){_lastDate=endStr;_lastProb=prob;load();}else if(prob>_lastProb){_lastProb=prob;load();}}catch(e){}}
+let _lastDate="",_lastProb=-1,_locked=false;
+// Rebuild the board when probable starters get posted (matchup score depends on them),
+// but FREEZE it once the day's first game starts — no more re-ranking mid-slate.
+async function watchStarters(){try{
+  const endStr=ymd(etNow());
+  const d=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher`);
+  const gs=d?.dates?.[0]?.games||[];
+  const starts=gs.map(g=>Date.parse(g.gameDate)).filter(t=>!isNaN(t));
+  const started=starts.length?Date.now()>=Math.min(...starts):false;
+  if(endStr!==_lastDate){_lastDate=endStr;_lastProb=-1;_locked=false;} // new day → unlock & rebuild
+  if(_locked)return;                                                    // board frozen since first pitch
+  if(started&&current.length){                                         // first game began → lock the snapshot
+    _locked=true;status(`🔒 Board locked at first pitch — live ✅ results only · ${new Date().toLocaleTimeString()}`,"var(--yellow)");return;}
+  let prob=0;gs.forEach(g=>{if(g.teams?.home?.probablePitcher)prob++;if(g.teams?.away?.probablePitcher)prob++;});
+  if(prob>_lastProb){_lastProb=prob;await load();if(started)_locked=true;} // opened mid-slate → build once, then lock
+}catch(e){}}
 watchStarters();                    // initial build + rebuild as starters post
 setInterval(watchStarters,900000);  // check for newly-posted starters every 15 min
 setInterval(pollResults,30000);     // live 1.5 H/R/RBI results every ~30s
