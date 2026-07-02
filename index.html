@@ -149,7 +149,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
         </g>
       </svg>
     </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 46 · PARLAIY</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 47 · SHARP MATCHUP</div></div>
   </div>
   <div class="controls">
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
@@ -231,11 +231,12 @@ function parkFactor(name){
 // ── SCORING ──
 function platoon(bat,pitch){if(!bat||!pitch)return null;if(bat==="S")return "adv";return bat!==pitch?"adv":"dis";}
 function droughtScore(d){return clamp(Math.round(d*5),0,100);}
-function matchupScore(hr9,park,plt){
+function matchupScore(hr9,park,plt,baa){
   const pComp=hr9==null?50:clamp((hr9-0.8)/(2.4-0.8)*100,0,100);
+  const bComp=baa==null?50:clamp((baa-0.200)/(0.290-0.200)*100,0,100); // SP contact quality
   const parkComp=clamp((park-88)/(114-88)*100,0,100);
-  let s=pComp*0.6+parkComp*0.4;
-  if(plt==="adv")s+=6;else if(plt==="dis")s-=6;
+  let s=pComp*0.5+bComp*0.2+parkComp*0.3;
+  if(plt==="adv")s+=8;else if(plt==="dis")s-=8;
   return clamp(Math.round(s),0,100);
 }
 function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
@@ -248,16 +249,19 @@ function betSize(drought){return drought>=10 ? Math.pow(1.1,drought-10) : 0;}
 function build(r){
   const park=parkFactor(r.venue);
   const plt=platoon(r.bat,r.spHand);
-  const mScore=matchupScore(r.hr9,park,plt);
+  const mScore=matchupScore(r.hr9,park,plt,r.baa);
+  // Matchup gate: at a 10-11 game drought a NEW bet needs a favorable matchup
+  // (mScore ≥ 55) to enter; from 12 games the bet is on regardless (carried).
+  const waiting=r.drought>=10&&r.drought<12&&mScore<55;
   return {
     name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,
     drought:r.drought,lastHR:r.lastHR||null,
     opp:{name:r.opp},isHome:r.isHome,venue:r.venue,park,
     matchupText:(r.isHome?"vs ":"@ ")+r.opp,
-    hr9:r.hr9!=null?r.hr9:null,
+    hr9:r.hr9!=null?r.hr9:null,baa:r.baa!=null?r.baa:null,
     pitcher:r.sp?{name:r.sp,hand:r.spHand,hr9:r.hr9,era:r.era}:null,
     platoon:plt,mScore,due:dueScore(r.drought,mScore),favorable:mScore>=55,
-    bet:betSize(r.drought)
+    waiting,bet:waiting?0:betSize(r.drought)
   };
 }
 
@@ -393,7 +397,7 @@ function render(){
     const mColor=p.mScore>=55?"var(--green)":"var(--yellow)";
     return `<tr class="${p.favorable?"fav":""} fade-in">
       <td class="num" style="color:var(--dim)">${i+1}</td>
-      <td><div class="pname">${p.name}${p.carried?' <span class="chip" style="background:#A78BFA20;color:var(--purple)">HELD</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
+      <td><div class="pname">${p.name}${p.carried?' <span class="chip" style="background:#A78BFA20;color:var(--purple)">HELD</span>':''}${p.waiting?' <span class="chip" style="background:#FBBF2420;color:var(--yellow)">⏸ WAIT</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
       <td style="color:var(--muted)">${p.pos||"--"}</td>
       <td style="color:var(--muted)">${p.bat||"?"}</td>
       <td class="num">${p.hr}</td>
@@ -436,9 +440,10 @@ function render(){
   document.getElementById("legend").innerHTML=`
     <b>Board</b> — top 50 hitters on a <b>10+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
     <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
-    <b>MATCHUP</b> — opposing SP HR/9 (60%) + ballpark HR factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
+    <b>MATCHUP</b> — opposing SP HR/9 (50%) + SP BAA (20%) + ballpark HR factor (30%) ± 8 platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
-    <b>BET $</b> — $1.00 at a 10-game drought, +10% (compounding) each additional homerless game. &nbsp; ⚠ Informational only · not betting advice.`;
+    <b>BET $</b> — new bets are <b>matchup-gated</b>: $1.00 at a 10-game drought only when matchup ≥ 55 (⏸ WAIT until then); at 12+ games the bet is on regardless. +10% (compounding) each homerless game &nbsp;·&nbsp;
+    <b>Pool</b> — regulars only (played ≥3 of team's last 5). &nbsp; ⚠ Informational only · not betting advice.`;
 }
 
 // ── LIVE UPGRADE (best-effort; falls back silently to the built-in slate) ──
@@ -505,19 +510,34 @@ async function loadLive(manual){
     const _tids=[...new Set(Object.keys(byTeam))];
     const _active=new Set(),_rostered=new Set();
     await pool(_tids,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);if(d&&d.roster){_rostered.add(String(tid));d.roster.forEach(p=>_active.add(p.person.id));}}catch(e){}},6);
-    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]&&(!_rostered.has(String(h.teamId))||_active.has(h.id))).map(h=>({...h,g:byTeam[h.teamId]}));
+    // Regulars-only: must have appeared in ≥3 of the team's last 5 completed games —
+    // bench/platoon bats can't end a drought from the pine. Fail-open when the recent
+    // schedule can't be loaded or a team has fewer than 5 finals (early season, breaks).
+    const teamLast5={};
+    try{
+      const _s=new Date(date+"T00:00:00");_s.setDate(_s.getDate()-9);
+      const _e=new Date(date+"T00:00:00");_e.setDate(_e.getDate()-1);
+      const rs=await getJSON(`${API}/schedule?sportId=1&startDate=${_s.toISOString().slice(0,10)}&endDate=${_e.toISOString().slice(0,10)}&gameType=R`);
+      (rs?.dates||[]).forEach(dd=>(dd.games||[]).forEach(g=>{
+        if(g.status?.abstractGameState!=="Final")return;
+        [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(tid=>{if(tid!=null)(teamLast5[tid]=teamLast5[tid]||[]).push(g.officialDate);});
+      }));
+      Object.keys(teamLast5).forEach(t=>{teamLast5[t]=[...new Set(teamLast5[t])].sort().slice(-5);});
+    }catch(e){}
+    const isRegular=h=>{const t5=teamLast5[h.teamId];if(!t5||t5.length<5)return true;const pd=new Set((h.games||[]).map(g=>g.date));let n=0;t5.forEach(d=>{if(pd.has(d))n++;});return n>=3;};
+    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]&&isRegular(h)&&(!_rostered.has(String(h.teamId))||_active.has(h.id))).map(h=>({...h,g:byTeam[h.teamId]}));
     if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
     const pids=[...new Set(actionable.map(h=>h.g.sp?.id).filter(Boolean))];
     const ids=[...new Set([...actionable.map(h=>h.id),...pids])];
     const people={};
     for(let i=0;i<ids.length;i+=40){const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>people[p.id]={bat:p.batSide?.code,pitch:p.pitchHand?.code});}
     const pst={};
-    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:s.homeRunsPer9!=null?+s.homeRunsPer9:null,era:s.era}:null;});
+    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:s.homeRunsPer9!=null?+s.homeRunsPer9:null,era:s.era,baa:s.avg!=null?parseFloat(s.avg):null}:null;});
     const live=actionable.map((h)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];const o=build({
       name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,
       drought:h.drought,lastHR:h.lastHR,
       opp:g.opp?.name,isHome:g.isHome,venue:g.venue,
-      sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era
+      sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era,baa:s?.baa
     });o.carried=h.held;return o;});
     if(live.length){
       state.players=live;state.live=true;render();
