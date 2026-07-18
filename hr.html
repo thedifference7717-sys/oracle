@@ -7,11 +7,12 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>AIchiro · Hits Dashboard</title>
+<title>ShohAI Ohtani · HR Dashboard</title>
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AIchiro">
+<meta name="apple-mobile-web-app-title" content="ShohAI Ohtani">
 <link rel="apple-touch-icon" href="baseball.svg">
 <link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
@@ -55,8 +56,8 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
   thead th,tbody td{padding:11px 9px}
   thead th:nth-child(3),tbody td:nth-child(3),
   thead th:nth-child(4),tbody td:nth-child(4),
-  thead th:nth-child(10),tbody td:nth-child(10),
-  thead th:nth-child(11),tbody td:nth-child(11){display:none}
+  thead th:nth-child(9),tbody td:nth-child(9),
+  thead th:nth-child(10),tbody td:nth-child(10){display:none}
   .kpis{grid-template-columns:1fr 1fr}
   #topbar{padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 12px}
   .grid{padding:12px 14px}
@@ -110,17 +111,49 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="logo-wrap">
     <div class="agent-avatar">
       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball">
-        <defs><radialGradient id="hbS" cx="38%" cy="32%" r="72%"><stop offset="0%" stop-color="#ffffff"/><stop offset="42%" stop-color="#f5f5ef"/><stop offset="78%" stop-color="#deded4"/><stop offset="100%" stop-color="#b3b3a6"/></radialGradient></defs>
-        <circle cx="60" cy="60" r="50" fill="url(#hbS)" stroke="#c4c4ba" stroke-width="1.5"/>
-        <path d="M40,16 C50,40 50,80 40,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
-        <path d="M80,16 C70,40 70,80 80,104" fill="none" stroke="#e23744" stroke-width="3" stroke-linecap="round"/>
+        <defs>
+          <radialGradient id="hSphere" cx="38%" cy="32%" r="72%">
+            <stop offset="0%" stop-color="#ffffff"/><stop offset="42%" stop-color="#f5f5ef"/>
+            <stop offset="78%" stop-color="#deded4"/><stop offset="100%" stop-color="#b3b3a6"/>
+          </radialGradient>
+          <radialGradient id="hAo" cx="50%" cy="50%" r="50%">
+            <stop offset="62%" stop-color="#000000" stop-opacity="0"/><stop offset="100%" stop-color="#1a1208" stop-opacity="0.42"/>
+          </radialGradient>
+          <radialGradient id="hSpec" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="hSeam" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#e8404d"/><stop offset="50%" stop-color="#d22f3b"/><stop offset="100%" stop-color="#a81f2a"/>
+          </linearGradient>
+          <filter id="hSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
+          <filter id="hDs" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.4" flood-color="#000000" flood-opacity="0.5"/></filter>
+        </defs>
+        <g transform="translate(60,60) scale(0.9) translate(-60,-60)" filter="url(#hDs)">
+          <circle cx="60" cy="60" r="50" fill="url(#hSphere)"/>
+          <g stroke="url(#hSeam)" stroke-linecap="round" fill="none">
+            <path d="M36,20 C44,40 44,80 36,100" stroke-width="2.6"/>
+            <path d="M84,20 C76,40 76,80 84,100" stroke-width="2.6"/>
+          </g>
+          <g stroke="#c8313c" stroke-width="1.8" stroke-linecap="round">
+            <line x1="32.4" y1="30.2" x2="39.6" y2="25.8"/><line x1="36.4" y1="42.2" x2="43.6" y2="37.8"/>
+            <line x1="39.4" y1="54.2" x2="46.6" y2="49.8"/><line x1="40.4" y1="62.2" x2="47.6" y2="57.8"/>
+            <line x1="39.4" y1="70.2" x2="46.6" y2="65.8"/><line x1="36.4" y1="82.2" x2="43.6" y2="77.8"/>
+            <line x1="32.4" y1="94.2" x2="39.6" y2="89.8"/>
+            <line x1="80.4" y1="25.8" x2="87.6" y2="30.2"/><line x1="76.4" y1="37.8" x2="83.6" y2="42.2"/>
+            <line x1="73.4" y1="49.8" x2="80.6" y2="54.2"/><line x1="72.4" y1="57.8" x2="79.6" y2="62.2"/>
+            <line x1="73.4" y1="65.8" x2="80.6" y2="70.2"/><line x1="76.4" y1="77.8" x2="83.6" y2="82.2"/>
+            <line x1="80.4" y1="89.8" x2="87.6" y2="94.2"/>
+          </g>
+          <circle cx="60" cy="60" r="50" fill="url(#hAo)"/>
+          <ellipse cx="44" cy="40" rx="17" ry="12" fill="url(#hSpec)" filter="url(#hSoft)"/>
+        </g>
       </svg>
     </div>
-    <div><div class="logo">AIchiro</div><div class="logo-sub">HITLESS STREAK · BUILD 13 · PARLAIY</div></div>
+    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 47 · SHARP MATCHUP</div></div>
   </div>
   <div class="controls">
-    <a href="hr.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">⚾ OHTANI</a>
     <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
+    <a href="hits.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🎯 AIchiro</a>
     <a href="./" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🔥 ParlAIy</a>
     <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
       <select class="ctrl-select" id="sort-select" onchange="onSortSelect()">
@@ -131,7 +164,6 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
       </select>
     </div>
     <div class="fav-toggle" id="fav-toggle" onclick="toggleFav()"><span class="tg-lbl">FAVORABLE ONLY</span><div class="tg"></div></div>
-    <div class="fav-toggle" id="hsp-toggle" onclick="toggleHsp()"><span class="tg-lbl">HITTABLE SP</span><div class="tg"></div></div>
     <button class="refresh-btn" id="refresh-btn" onclick="loadLive(true)">⟳ REFRESH</button>
   </div>
 </div>
@@ -143,14 +175,14 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="kpi"><div class="kpi-val" id="st-max" style="color:var(--orange)">--</div><div class="kpi-lbl">MAX DROUGHT</div><div class="kpi-sub" id="st-max-sub">games w/o HR</div></div>
   <div class="kpi"><div class="kpi-val" id="st-avg" style="color:var(--yellow)">--</div><div class="kpi-lbl">AVG DROUGHT</div><div class="kpi-sub">games</div></div>
   <div class="kpi"><div class="kpi-val" id="st-top" style="color:var(--purple);font-size:15px">--</div><div class="kpi-lbl">TOP DUE</div><div class="kpi-sub" id="st-top-sub">highest score</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 3g · 1.5×/game</div></div>
+  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 10g · +10%/game</div></div>
 </section>
 
 <div class="grid">
   <div style="min-width:0">
     <div class="panel">
       <div class="panel-head">
-        <span class="panel-title">🎯 AIchiro · TOP 50</span>
+        <span class="panel-title">⚾ HR WATCHLIST · TOP 50</span>
         <span class="panel-note" id="row-count">tap a column to sort</span>
       </div>
       <div class="table-wrap"><table><thead><tr id="thead-row"></tr></thead><tbody id="tbody"></tbody></table></div>
@@ -170,7 +202,7 @@ const API="https://statsapi.mlb.com/api/v1";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 // Only hitters on a homerless streak of at least this many games make the board.
-const MIN_DROUGHT=3;
+const MIN_DROUGHT=10;
 // The "baseball day" rolls over at 6:00 AM Eastern, not local midnight.
 function slateDate(){
   const et=new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
@@ -181,13 +213,13 @@ function slateDate(){
 
 // ── BALLPARK HR FACTORS (100 = neutral; >100 favors HR) ──
 const PARK={
-  "Fenway Park":118,"Coors Field":112,"Oracle Park":108,"Kauffman Stadium":106,"Chase Field":105,
-  "Wrigley Field":104,"Comerica Park":104,"loanDepot park":104,"PNC Park":103,"T-Mobile Park":103,
-  "Globe Life Field":102,"Target Field":102,"Sutter Health Park":102,"Great American Ball Park":101,
-  "Rogers Centre":101,"Truist Park":101,"Oriole Park at Camden Yards":101,"Petco Park":100,"Citi Field":100,
-  "Busch Stadium":100,"Nationals Park":100,"Progressive Field":100,"George M. Steinbrenner Field":100,
-  "Dodger Stadium":99,"Minute Maid Park":99,"Daikin Park":99,"American Family Field":99,"Citizens Bank Park":99,
-  "Rate Field":99,"Angel Stadium":99,"Yankee Stadium":98
+  "Coors Field":112,"Great American Ball Park":113,"Yankee Stadium":110,"Citizens Bank Park":108,
+  "Globe Life Field":104,"Oriole Park at Camden Yards":101,"Fenway Park":99,"Dodger Stadium":103,
+  "Wrigley Field":101,"Truist Park":102,"Chase Field":103,"Daikin Park":101,"Minute Maid Park":101,
+  "Rogers Centre":103,"American Family Field":105,"Nationals Park":101,"Citi Field":96,"Petco Park":96,
+  "Oracle Park":90,"T-Mobile Park":93,"loanDepot park":95,"Comerica Park":94,"Kauffman Stadium":95,
+  "Angel Stadium":102,"Busch Stadium":96,"PNC Park":94,"Target Field":99,"Progressive Field":98,
+  "Rate Field":103,"Sutter Health Park":100,"George M. Steinbrenner Field":102
 };
 function parkFactor(name){
   if(!name)return 100;
@@ -199,111 +231,112 @@ function parkFactor(name){
 // ── SCORING ──
 function platoon(bat,pitch){if(!bat||!pitch)return null;if(bat==="S")return "adv";return bat!==pitch?"adv":"dis";}
 function droughtScore(d){return clamp(Math.round(d*5),0,100);}
-function matchupScore(hr9,park,plt){
-  const pComp=hr9==null?50:clamp((hr9-6.5)/(10.5-6.5)*100,0,100);
+function matchupScore(hr9,park,plt,baa){
+  const pComp=hr9==null?50:clamp((hr9-0.8)/(2.4-0.8)*100,0,100);
+  const bComp=baa==null?50:clamp((baa-0.200)/(0.290-0.200)*100,0,100); // SP contact quality
   const parkComp=clamp((park-88)/(114-88)*100,0,100);
-  let s=pComp*0.6+parkComp*0.4;
-  if(plt==="adv")s+=6;else if(plt==="dis")s-=6;
+  let s=pComp*0.5+bComp*0.2+parkComp*0.3;
+  if(plt==="adv")s+=8;else if(plt==="dis")s-=8;
   return clamp(Math.round(s),0,100);
 }
 function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
 // Escalating wager: $1.00 once a hitter reaches a 9-game homerless drought,
 // then +10% (compounding) for every additional game without a home run.
-function betSize(drought){return drought>=3 ? Math.pow(1.5,drought-3) : 0;}
-function ipToNum(ip){if(ip==null)return 0;const p=(""+ip).split(".");return (+p[0]||0)+((p[1]?+p[1]:0)/3);}
-function pH9(s){const ip=ipToNum(s.inningsPitched);return ip>0?+(((+s.hits||0)/ip*9).toFixed(2)):null;}
+function betSize(drought){return drought>=10 ? Math.pow(1.1,drought-10) : 0;}
 
 // Turn a raw {name,team,pos,bat,hr,drought,lastHR,opp,isHome,venue,sp,spHand,hr9,era}
 // record into the enriched object the UI renders.
 function build(r){
   const park=parkFactor(r.venue);
   const plt=platoon(r.bat,r.spHand);
-  const mScore=matchupScore(r.hr9,park,plt);
+  const mScore=matchupScore(r.hr9,park,plt,r.baa);
+  // Matchup gate: at a 10-11 game drought a NEW bet needs a favorable matchup
+  // (mScore ≥ 55) to enter; from 12 games the bet is on regardless (carried).
+  const waiting=r.drought>=10&&r.drought<12&&mScore<55;
   return {
-    name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,avg:r.avg,baa:r.baa,
+    name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,
     drought:r.drought,lastHR:r.lastHR||null,
     opp:{name:r.opp},isHome:r.isHome,venue:r.venue,park,
     matchupText:(r.isHome?"vs ":"@ ")+r.opp,
-    hr9:r.hr9!=null?r.hr9:null,
-    pitcher:r.sp?{name:r.sp,hand:r.spHand,hr9:r.hr9,era:r.era,baa:r.baa}:null,
+    hr9:r.hr9!=null?r.hr9:null,baa:r.baa!=null?r.baa:null,
+    pitcher:r.sp?{name:r.sp,hand:r.spHand,hr9:r.hr9,era:r.era}:null,
     platoon:plt,mScore,due:dueScore(r.drought,mScore),favorable:mScore>=55,
-    bet:betSize(r.drought)
+    waiting,bet:waiting?0:betSize(r.drought)
   };
 }
 
 // ── BUILT-IN SLATE (renders instantly, no network needed) ──
 const SAMPLE=[
-  {name:"Aaron Judge",team:"Yankees",pos:"RF",bat:"R",hr:34,drought:9,lastHR:"2026-05-27",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Sean Newcomb",spHand:"L",hr9:9.6,era:4.65},
-  {name:"Shohei Ohtani",team:"Dodgers",pos:"DH",bat:"L",hr:31,drought:7,lastHR:"2026-05-29",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Austin Gomber",spHand:"L",hr9:10.5,era:5.10},
-  {name:"Kyle Schwarber",team:"Phillies",pos:"DH",bat:"L",hr:29,drought:12,lastHR:"2026-05-24",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Nick Martinez",spHand:"R",hr9:9.2,era:4.20},
-  {name:"Pete Alonso",team:"Mets",pos:"1B",bat:"R",hr:27,drought:14,lastHR:"2026-05-22",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Jose Quintana",spHand:"L",hr9:8.3,era:3.95},
-  {name:"Cal Raleigh",team:"Mariners",pos:"C",bat:"S",hr:26,drought:18,lastHR:"2026-05-18",opp:"Rangers",isHome:false,venue:"Globe Life Field",sp:"Patrick Corbin",spHand:"L",hr9:10.1,era:4.80},
-  {name:"Marcell Ozuna",team:"Braves",pos:"DH",bat:"R",hr:25,drought:16,lastHR:"2026-05-20",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Mitchell Parker",spHand:"L",hr9:8.8,era:4.10},
-  {name:"Juan Soto",team:"Mets",pos:"RF",bat:"L",hr:24,drought:6,lastHR:"2026-05-30",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Freddy Peralta",spHand:"R",hr9:7.4,era:3.40},
-  {name:"Yordan Alvarez",team:"Astros",pos:"DH",bat:"L",hr:24,drought:20,lastHR:"2026-05-16",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Tyler Anderson",spHand:"L",hr9:7.9,era:4.00},
-  {name:"Vladimir Guerrero Jr.",team:"Blue Jays",pos:"1B",bat:"R",hr:22,drought:11,lastHR:"2026-05-25",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Charlie Morton",spHand:"R",hr9:8.8,era:4.45},
-  {name:"Mookie Betts",team:"Dodgers",pos:"SS",bat:"R",hr:21,drought:13,lastHR:"2026-05-23",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Kyle Freeland",spHand:"L",hr9:9.6,era:4.90},
-  {name:"Bryce Harper",team:"Phillies",pos:"1B",bat:"L",hr:21,drought:8,lastHR:"2026-05-28",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Hunter Greene",spHand:"R",hr9:7.9,era:3.65},
-  {name:"Rafael Devers",team:"Giants",pos:"DH",bat:"L",hr:20,drought:15,lastHR:"2026-05-21",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Dylan Cease",spHand:"R",hr9:8.3,era:3.85},
-  {name:"José Ramírez",team:"Guardians",pos:"3B",bat:"S",hr:20,drought:10,lastHR:"2026-05-26",opp:"Royals",isHome:false,venue:"Kauffman Stadium",sp:"Seth Lugo",spHand:"R",hr9:6.5,era:3.30},
-  {name:"Gunnar Henderson",team:"Orioles",pos:"SS",bat:"L",hr:19,drought:17,lastHR:"2026-05-19",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Kevin Gausman",spHand:"R",hr9:8.8,era:4.15},
-  {name:"Corey Seager",team:"Rangers",pos:"SS",bat:"L",hr:19,drought:22,lastHR:"2026-05-13",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Logan Gilbert",spHand:"R",hr9:7.0,era:3.50},
-  {name:"Fernando Tatis Jr.",team:"Padres",pos:"RF",bat:"R",hr:18,drought:9,lastHR:"2026-05-27",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Robbie Ray",spHand:"L",hr9:8.3,era:3.95},
-  {name:"Adolis García",team:"Rangers",pos:"RF",bat:"R",hr:18,drought:19,lastHR:"2026-05-17",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Bryan Woo",spHand:"R",hr9:7.4,era:3.60},
-  {name:"Bobby Witt Jr.",team:"Royals",pos:"SS",bat:"R",hr:17,drought:12,lastHR:"2026-05-24",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Tanner Bibee",spHand:"R",hr9:7.9,era:3.80},
-  {name:"Elly De La Cruz",team:"Reds",pos:"SS",bat:"S",hr:17,drought:7,lastHR:"2026-05-29",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Cristopher Sánchez",spHand:"L",hr9:7.0,era:3.45},
-  {name:"Teoscar Hernández",team:"Dodgers",pos:"RF",bat:"R",hr:17,drought:16,lastHR:"2026-05-20",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Germán Márquez",spHand:"R",hr9:9.2,era:4.55},
-  {name:"Austin Riley",team:"Braves",pos:"3B",bat:"R",hr:16,drought:14,lastHR:"2026-05-22",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"MacKenzie Gore",spHand:"L",hr9:7.4,era:3.70},
-  {name:"Matt Olson",team:"Braves",pos:"1B",bat:"L",hr:16,drought:21,lastHR:"2026-05-15",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Jake Irvin",spHand:"R",hr9:8.8,era:4.25},
-  {name:"Christian Walker",team:"Astros",pos:"1B",bat:"R",hr:16,drought:18,lastHR:"2026-05-18",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"José Soriano",spHand:"R",hr9:6.5,era:3.55},
-  {name:"William Contreras",team:"Brewers",pos:"C",bat:"R",hr:15,drought:10,lastHR:"2026-05-26",opp:"Mets",isHome:true,venue:"American Family Field",sp:"Kodai Senga",spHand:"R",hr9:7.0,era:3.25},
-  {name:"Anthony Santander",team:"Blue Jays",pos:"DH",bat:"S",hr:15,drought:15,lastHR:"2026-05-21",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Zach Eflin",spHand:"R",hr9:8.3,era:4.05},
-  {name:"Riley Greene",team:"Tigers",pos:"LF",bat:"L",hr:15,drought:13,lastHR:"2026-05-23",opp:"White Sox",isHome:false,venue:"Rate Field",sp:"Davis Martin",spHand:"R",hr9:9.2,era:4.70},
-  {name:"Ketel Marte",team:"Diamondbacks",pos:"2B",bat:"S",hr:14,drought:8,lastHR:"2026-05-28",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Sonny Gray",spHand:"R",hr9:7.9,era:3.90},
-  {name:"Willy Adames",team:"Giants",pos:"SS",bat:"R",hr:14,drought:17,lastHR:"2026-05-19",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Michael King",spHand:"R",hr9:6.5,era:3.20},
-  {name:"Jackson Chourio",team:"Brewers",pos:"RF",bat:"R",hr:14,drought:11,lastHR:"2026-05-25",opp:"Mets",isHome:true,venue:"American Family Field",sp:"David Peterson",spHand:"L",hr9:7.4,era:3.75},
-  {name:"Seiya Suzuki",team:"Cubs",pos:"DH",bat:"R",hr:14,drought:19,lastHR:"2026-05-17",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Mitch Keller",spHand:"R",hr9:8.3,era:4.30},
-  {name:"Spencer Steer",team:"Reds",pos:"1B",bat:"R",hr:13,drought:16,lastHR:"2026-05-20",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Aaron Nola",spHand:"R",hr9:8.8,era:4.40},
-  {name:"Brent Rooker",team:"Athletics",pos:"DH",bat:"R",hr:13,drought:20,lastHR:"2026-05-16",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Pablo López",spHand:"R",hr9:7.9,era:3.85},
-  {name:"Jake Burger",team:"Rangers",pos:"3B",bat:"R",hr:13,drought:14,lastHR:"2026-05-22",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"George Kirby",spHand:"R",hr9:7.4,era:3.60},
-  {name:"Tyler O'Neill",team:"Orioles",pos:"LF",bat:"R",hr:12,drought:18,lastHR:"2026-05-18",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"José Berríos",spHand:"R",hr9:8.3,era:4.10},
-  {name:"Isaac Paredes",team:"Astros",pos:"3B",bat:"R",hr:12,drought:15,lastHR:"2026-05-21",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Yusei Kikuchi",spHand:"L",hr9:8.8,era:4.20},
-  {name:"Josh Naylor",team:"Diamondbacks",pos:"1B",bat:"L",hr:12,drought:9,lastHR:"2026-05-27",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Miles Mikolas",spHand:"R",hr9:9.2,era:4.50},
-  {name:"Salvador Perez",team:"Royals",pos:"C",bat:"R",hr:12,drought:17,lastHR:"2026-05-19",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Gavin Williams",spHand:"R",hr9:7.9,era:3.95},
-  {name:"Eugenio Suárez",team:"Diamondbacks",pos:"3B",bat:"R",hr:12,drought:13,lastHR:"2026-05-23",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Erick Fedde",spHand:"R",hr9:8.3,era:4.05},
-  {name:"Kyle Tucker",team:"Cubs",pos:"RF",bat:"L",hr:11,drought:10,lastHR:"2026-05-26",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Paul Skenes",spHand:"R",hr9:6.0,era:2.85},
-  {name:"Corbin Carroll",team:"Diamondbacks",pos:"CF",bat:"L",hr:11,drought:15,lastHR:"2026-05-21",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Andre Pallante",spHand:"R",hr9:7.4,era:3.80},
-  {name:"Manny Machado",team:"Padres",pos:"3B",bat:"R",hr:11,drought:18,lastHR:"2026-05-18",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Logan Webb",spHand:"R",hr9:6.5,era:3.10},
-  {name:"Francisco Lindor",team:"Mets",pos:"SS",bat:"S",hr:11,drought:12,lastHR:"2026-05-24",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Quinn Priester",spHand:"R",hr9:7.9,era:4.00},
-  {name:"George Springer",team:"Blue Jays",pos:"DH",bat:"R",hr:11,drought:16,lastHR:"2026-05-20",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Tomoyuki Sugano",spHand:"R",hr9:8.8,era:4.30},
-  {name:"Jazz Chisholm Jr.",team:"Yankees",pos:"2B",bat:"L",hr:11,drought:14,lastHR:"2026-05-22",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Garrett Crochet",spHand:"L",hr9:7.0,era:3.20},
-  {name:"Oneil Cruz",team:"Pirates",pos:"CF",bat:"L",hr:11,drought:19,lastHR:"2026-05-17",opp:"Cubs",isHome:false,venue:"Wrigley Field",sp:"Shota Imanaga",spHand:"L",hr9:8.3,era:3.70},
-  {name:"Yandy Díaz",team:"Rays",pos:"1B",bat:"R",hr:10,drought:13,lastHR:"2026-05-23",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Tarik Skubal",spHand:"L",hr9:6.5,era:2.95},
-  {name:"Bo Bichette",team:"Blue Jays",pos:"SS",bat:"R",hr:10,drought:20,lastHR:"2026-05-16",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Dean Kremer",spHand:"R",hr9:8.8,era:4.40},
-  {name:"Wyatt Langford",team:"Rangers",pos:"LF",bat:"R",hr:10,drought:16,lastHR:"2026-05-20",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Luis Castillo",spHand:"R",hr9:7.9,era:3.85},
-  {name:"Nolan Arenado",team:"Cardinals",pos:"3B",bat:"R",hr:10,drought:21,lastHR:"2026-05-15",opp:"Diamondbacks",isHome:false,venue:"Chase Field",sp:"Brandon Pfaadt",spHand:"R",hr9:9.2,era:4.55},
-  {name:"Triston Casas",team:"Red Sox",pos:"1B",bat:"L",hr:10,drought:18,lastHR:"2026-05-18",opp:"Yankees",isHome:false,venue:"Yankee Stadium",sp:"Carlos Rodón",spHand:"L",hr9:8.3,era:4.10},
-  {name:"Jordan Westburg",team:"Orioles",pos:"2B",bat:"R",hr:10,drought:14,lastHR:"2026-05-22",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Bowden Francis",spHand:"R",hr9:9.6,era:4.70},
-  {name:"Lawrence Butler",team:"Athletics",pos:"RF",bat:"L",hr:10,drought:17,lastHR:"2026-05-19",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Bailey Ober",spHand:"R",hr9:8.8,era:4.25},
-  {name:"Josh Lowe",team:"Rays",pos:"RF",bat:"L",hr:9,drought:15,lastHR:"2026-05-21",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Casey Mize",spHand:"R",hr9:7.9,era:3.95},
-  {name:"Michael Toglia",team:"Rockies",pos:"1B",bat:"S",hr:9,drought:12,lastHR:"2026-05-24",opp:"Dodgers",isHome:false,venue:"Dodger Stadium",sp:"Tyler Glasnow",spHand:"R",hr9:7.0,era:3.30},
-  {name:"Colton Cowser",team:"Orioles",pos:"CF",bat:"L",hr:9,drought:19,lastHR:"2026-05-17",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Max Scherzer",spHand:"R",hr9:8.3,era:4.00}
+  {name:"Aaron Judge",team:"Yankees",pos:"RF",bat:"R",hr:34,drought:9,lastHR:"2026-05-27",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Sean Newcomb",spHand:"L",hr9:1.7,era:4.65},
+  {name:"Shohei Ohtani",team:"Dodgers",pos:"DH",bat:"L",hr:31,drought:7,lastHR:"2026-05-29",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Austin Gomber",spHand:"L",hr9:1.9,era:5.10},
+  {name:"Kyle Schwarber",team:"Phillies",pos:"DH",bat:"L",hr:29,drought:12,lastHR:"2026-05-24",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Nick Martinez",spHand:"R",hr9:1.6,era:4.20},
+  {name:"Pete Alonso",team:"Mets",pos:"1B",bat:"R",hr:27,drought:14,lastHR:"2026-05-22",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Jose Quintana",spHand:"L",hr9:1.4,era:3.95},
+  {name:"Cal Raleigh",team:"Mariners",pos:"C",bat:"S",hr:26,drought:18,lastHR:"2026-05-18",opp:"Rangers",isHome:false,venue:"Globe Life Field",sp:"Patrick Corbin",spHand:"L",hr9:1.8,era:4.80},
+  {name:"Marcell Ozuna",team:"Braves",pos:"DH",bat:"R",hr:25,drought:16,lastHR:"2026-05-20",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Mitchell Parker",spHand:"L",hr9:1.5,era:4.10},
+  {name:"Juan Soto",team:"Mets",pos:"RF",bat:"L",hr:24,drought:6,lastHR:"2026-05-30",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Freddy Peralta",spHand:"R",hr9:1.2,era:3.40},
+  {name:"Yordan Alvarez",team:"Astros",pos:"DH",bat:"L",hr:24,drought:20,lastHR:"2026-05-16",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Tyler Anderson",spHand:"L",hr9:1.3,era:4.00},
+  {name:"Vladimir Guerrero Jr.",team:"Blue Jays",pos:"1B",bat:"R",hr:22,drought:11,lastHR:"2026-05-25",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Charlie Morton",spHand:"R",hr9:1.5,era:4.45},
+  {name:"Mookie Betts",team:"Dodgers",pos:"SS",bat:"R",hr:21,drought:13,lastHR:"2026-05-23",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Kyle Freeland",spHand:"L",hr9:1.7,era:4.90},
+  {name:"Bryce Harper",team:"Phillies",pos:"1B",bat:"L",hr:21,drought:8,lastHR:"2026-05-28",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Hunter Greene",spHand:"R",hr9:1.3,era:3.65},
+  {name:"Rafael Devers",team:"Giants",pos:"DH",bat:"L",hr:20,drought:15,lastHR:"2026-05-21",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Dylan Cease",spHand:"R",hr9:1.4,era:3.85},
+  {name:"José Ramírez",team:"Guardians",pos:"3B",bat:"S",hr:20,drought:10,lastHR:"2026-05-26",opp:"Royals",isHome:false,venue:"Kauffman Stadium",sp:"Seth Lugo",spHand:"R",hr9:1.0,era:3.30},
+  {name:"Gunnar Henderson",team:"Orioles",pos:"SS",bat:"L",hr:19,drought:17,lastHR:"2026-05-19",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Kevin Gausman",spHand:"R",hr9:1.5,era:4.15},
+  {name:"Corey Seager",team:"Rangers",pos:"SS",bat:"L",hr:19,drought:22,lastHR:"2026-05-13",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Logan Gilbert",spHand:"R",hr9:1.1,era:3.50},
+  {name:"Fernando Tatis Jr.",team:"Padres",pos:"RF",bat:"R",hr:18,drought:9,lastHR:"2026-05-27",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Robbie Ray",spHand:"L",hr9:1.4,era:3.95},
+  {name:"Adolis García",team:"Rangers",pos:"RF",bat:"R",hr:18,drought:19,lastHR:"2026-05-17",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Bryan Woo",spHand:"R",hr9:1.2,era:3.60},
+  {name:"Bobby Witt Jr.",team:"Royals",pos:"SS",bat:"R",hr:17,drought:12,lastHR:"2026-05-24",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Tanner Bibee",spHand:"R",hr9:1.3,era:3.80},
+  {name:"Elly De La Cruz",team:"Reds",pos:"SS",bat:"S",hr:17,drought:7,lastHR:"2026-05-29",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Cristopher Sánchez",spHand:"L",hr9:1.1,era:3.45},
+  {name:"Teoscar Hernández",team:"Dodgers",pos:"RF",bat:"R",hr:17,drought:16,lastHR:"2026-05-20",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Germán Márquez",spHand:"R",hr9:1.6,era:4.55},
+  {name:"Austin Riley",team:"Braves",pos:"3B",bat:"R",hr:16,drought:14,lastHR:"2026-05-22",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"MacKenzie Gore",spHand:"L",hr9:1.2,era:3.70},
+  {name:"Matt Olson",team:"Braves",pos:"1B",bat:"L",hr:16,drought:21,lastHR:"2026-05-15",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Jake Irvin",spHand:"R",hr9:1.5,era:4.25},
+  {name:"Christian Walker",team:"Astros",pos:"1B",bat:"R",hr:16,drought:18,lastHR:"2026-05-18",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"José Soriano",spHand:"R",hr9:1.0,era:3.55},
+  {name:"William Contreras",team:"Brewers",pos:"C",bat:"R",hr:15,drought:10,lastHR:"2026-05-26",opp:"Mets",isHome:true,venue:"American Family Field",sp:"Kodai Senga",spHand:"R",hr9:1.1,era:3.25},
+  {name:"Anthony Santander",team:"Blue Jays",pos:"DH",bat:"S",hr:15,drought:15,lastHR:"2026-05-21",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Zach Eflin",spHand:"R",hr9:1.4,era:4.05},
+  {name:"Riley Greene",team:"Tigers",pos:"LF",bat:"L",hr:15,drought:13,lastHR:"2026-05-23",opp:"White Sox",isHome:false,venue:"Rate Field",sp:"Davis Martin",spHand:"R",hr9:1.6,era:4.70},
+  {name:"Ketel Marte",team:"Diamondbacks",pos:"2B",bat:"S",hr:14,drought:8,lastHR:"2026-05-28",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Sonny Gray",spHand:"R",hr9:1.3,era:3.90},
+  {name:"Willy Adames",team:"Giants",pos:"SS",bat:"R",hr:14,drought:17,lastHR:"2026-05-19",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Michael King",spHand:"R",hr9:1.0,era:3.20},
+  {name:"Jackson Chourio",team:"Brewers",pos:"RF",bat:"R",hr:14,drought:11,lastHR:"2026-05-25",opp:"Mets",isHome:true,venue:"American Family Field",sp:"David Peterson",spHand:"L",hr9:1.2,era:3.75},
+  {name:"Seiya Suzuki",team:"Cubs",pos:"DH",bat:"R",hr:14,drought:19,lastHR:"2026-05-17",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Mitch Keller",spHand:"R",hr9:1.4,era:4.30},
+  {name:"Spencer Steer",team:"Reds",pos:"1B",bat:"R",hr:13,drought:16,lastHR:"2026-05-20",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Aaron Nola",spHand:"R",hr9:1.5,era:4.40},
+  {name:"Brent Rooker",team:"Athletics",pos:"DH",bat:"R",hr:13,drought:20,lastHR:"2026-05-16",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Pablo López",spHand:"R",hr9:1.3,era:3.85},
+  {name:"Jake Burger",team:"Rangers",pos:"3B",bat:"R",hr:13,drought:14,lastHR:"2026-05-22",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"George Kirby",spHand:"R",hr9:1.2,era:3.60},
+  {name:"Tyler O'Neill",team:"Orioles",pos:"LF",bat:"R",hr:12,drought:18,lastHR:"2026-05-18",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"José Berríos",spHand:"R",hr9:1.4,era:4.10},
+  {name:"Isaac Paredes",team:"Astros",pos:"3B",bat:"R",hr:12,drought:15,lastHR:"2026-05-21",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Yusei Kikuchi",spHand:"L",hr9:1.5,era:4.20},
+  {name:"Josh Naylor",team:"Diamondbacks",pos:"1B",bat:"L",hr:12,drought:9,lastHR:"2026-05-27",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Miles Mikolas",spHand:"R",hr9:1.6,era:4.50},
+  {name:"Salvador Perez",team:"Royals",pos:"C",bat:"R",hr:12,drought:17,lastHR:"2026-05-19",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Gavin Williams",spHand:"R",hr9:1.3,era:3.95},
+  {name:"Eugenio Suárez",team:"Diamondbacks",pos:"3B",bat:"R",hr:12,drought:13,lastHR:"2026-05-23",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Erick Fedde",spHand:"R",hr9:1.4,era:4.05},
+  {name:"Kyle Tucker",team:"Cubs",pos:"RF",bat:"L",hr:11,drought:10,lastHR:"2026-05-26",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Paul Skenes",spHand:"R",hr9:0.9,era:2.85},
+  {name:"Corbin Carroll",team:"Diamondbacks",pos:"CF",bat:"L",hr:11,drought:15,lastHR:"2026-05-21",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Andre Pallante",spHand:"R",hr9:1.2,era:3.80},
+  {name:"Manny Machado",team:"Padres",pos:"3B",bat:"R",hr:11,drought:18,lastHR:"2026-05-18",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Logan Webb",spHand:"R",hr9:1.0,era:3.10},
+  {name:"Francisco Lindor",team:"Mets",pos:"SS",bat:"S",hr:11,drought:12,lastHR:"2026-05-24",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Quinn Priester",spHand:"R",hr9:1.3,era:4.00},
+  {name:"George Springer",team:"Blue Jays",pos:"DH",bat:"R",hr:11,drought:16,lastHR:"2026-05-20",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Tomoyuki Sugano",spHand:"R",hr9:1.5,era:4.30},
+  {name:"Jazz Chisholm Jr.",team:"Yankees",pos:"2B",bat:"L",hr:11,drought:14,lastHR:"2026-05-22",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Garrett Crochet",spHand:"L",hr9:1.1,era:3.20},
+  {name:"Oneil Cruz",team:"Pirates",pos:"CF",bat:"L",hr:11,drought:19,lastHR:"2026-05-17",opp:"Cubs",isHome:false,venue:"Wrigley Field",sp:"Shota Imanaga",spHand:"L",hr9:1.4,era:3.70},
+  {name:"Yandy Díaz",team:"Rays",pos:"1B",bat:"R",hr:10,drought:13,lastHR:"2026-05-23",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Tarik Skubal",spHand:"L",hr9:1.0,era:2.95},
+  {name:"Bo Bichette",team:"Blue Jays",pos:"SS",bat:"R",hr:10,drought:20,lastHR:"2026-05-16",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Dean Kremer",spHand:"R",hr9:1.5,era:4.40},
+  {name:"Wyatt Langford",team:"Rangers",pos:"LF",bat:"R",hr:10,drought:16,lastHR:"2026-05-20",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Luis Castillo",spHand:"R",hr9:1.3,era:3.85},
+  {name:"Nolan Arenado",team:"Cardinals",pos:"3B",bat:"R",hr:10,drought:21,lastHR:"2026-05-15",opp:"Diamondbacks",isHome:false,venue:"Chase Field",sp:"Brandon Pfaadt",spHand:"R",hr9:1.6,era:4.55},
+  {name:"Triston Casas",team:"Red Sox",pos:"1B",bat:"L",hr:10,drought:18,lastHR:"2026-05-18",opp:"Yankees",isHome:false,venue:"Yankee Stadium",sp:"Carlos Rodón",spHand:"L",hr9:1.4,era:4.10},
+  {name:"Jordan Westburg",team:"Orioles",pos:"2B",bat:"R",hr:10,drought:14,lastHR:"2026-05-22",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Bowden Francis",spHand:"R",hr9:1.7,era:4.70},
+  {name:"Lawrence Butler",team:"Athletics",pos:"RF",bat:"L",hr:10,drought:17,lastHR:"2026-05-19",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Bailey Ober",spHand:"R",hr9:1.5,era:4.25},
+  {name:"Josh Lowe",team:"Rays",pos:"RF",bat:"L",hr:9,drought:15,lastHR:"2026-05-21",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Casey Mize",spHand:"R",hr9:1.3,era:3.95},
+  {name:"Michael Toglia",team:"Rockies",pos:"1B",bat:"S",hr:9,drought:12,lastHR:"2026-05-24",opp:"Dodgers",isHome:false,venue:"Dodger Stadium",sp:"Tyler Glasnow",spHand:"R",hr9:1.1,era:3.30},
+  {name:"Colton Cowser",team:"Orioles",pos:"CF",bat:"L",hr:9,drought:19,lastHR:"2026-05-17",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Max Scherzer",spHand:"R",hr9:1.4,era:4.00}
 ];
 
 // ── STATE ──
-let state={players:[],favOnly:false,hittableOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:slateDate()};
+let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:slateDate()};
 let cashedBets=[];
 const COLS=[
   {k:"rank",label:"#",num:true,sortable:false},
   {k:"name",label:"PLAYER",num:false},
   {k:"pos",label:"POS",num:false},
   {k:"bat",label:"B",num:false},
-  {k:"hr",label:"H",num:true},
-  {k:"avg",label:"AVG",num:true},
+  {k:"hr",label:"HR",num:true},
   {k:"drought",label:"DROUGHT",num:true},
-  {k:"lastHR",label:"LAST H",num:false},
+  {k:"lastHR",label:"LAST HR",num:false},
   {k:"matchupText",label:"OPP / SP",num:false,sortable:false},
-  {k:"hr9",label:"SP H/9",num:true},
+  {k:"hr9",label:"SP HR/9",num:true},
   {k:"park",label:"PARK",num:true},
   {k:"mScore",label:"MATCH",num:true},
   {k:"due",label:"DUE",num:true},
@@ -316,7 +349,6 @@ function fmtDate(d){if(!d)return "—";try{return new Date(d+"T00:00:00").toLoca
 function onSortSelect(){state.sortKey=document.getElementById("sort-select").value;state.sortDir=-1;render();}
 function setSort(k){if(state.sortKey===k)state.sortDir*=-1;else{state.sortKey=k;state.sortDir=(k==="name"||k==="pos"||k==="bat")?1:-1;}render();}
 function toggleFav(){state.favOnly=!state.favOnly;document.getElementById("fav-toggle").classList.toggle("on",state.favOnly);render();}
-function toggleHsp(){state.hittableOnly=!state.hittableOnly;document.getElementById("hsp-toggle").classList.toggle("on",state.hittableOnly);render();}
 function sortVal(p,k){if(k==="lastHR")return p.lastHR?new Date(p.lastHR).getTime():0;if(k==="hr9")return p.hr9==null?-1:p.hr9;const v=p[k];return v==null?-Infinity:v;}
 function sorted(arr){const {sortKey,sortDir}=state;return arr.slice().sort((a,b)=>{let av=sortVal(a,sortKey),bv=sortVal(b,sortKey);if(typeof av==="string"||typeof bv==="string"){av=(""+av).toLowerCase();bv=(""+bv).toLowerCase();return av<bv?-sortDir:av>bv?sortDir:0;}return (av-bv)*sortDir;});}
 
@@ -326,11 +358,10 @@ function render(){
   // the 50 most-due hitters and always backfills to 50.
   const BOARD_SIZE=50;
   // Only hitters on a 7+ game streak who actually have a game on the slate.
-  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT && p.venue && p.opp && p.opp.name && (!p.avg||parseFloat(p.avg)>=0.25));
+  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT && p.venue && p.opp && p.opp.name);
   const board=active.slice().sort((a,b)=>(b.drought-a.drought)||(b.mScore-a.mScore)).slice(0,BOARD_SIZE);
   let players=board;
   if(state.favOnly)players=players.filter(p=>p.favorable);
-  if(state.hittableOnly)players=players.filter(p=>p.baa!=null&&p.baa>=0.25);
   players=sorted(players);
 
   if(board.length){
@@ -345,7 +376,7 @@ function render(){
     const totalBet=board.reduce((s,p)=>s+(p.bet||0),0);
     document.getElementById("st-bet").textContent="$"+totalBet.toFixed(2);
     const betCount=board.filter(p=>p.bet>0).length;
-    document.getElementById("st-bet-sub").textContent=betCount+" active bets · 1.5×/game";
+    document.getElementById("st-bet-sub").textContent=betCount+" active bets · +10%/game";
     const top=board.slice().sort((a,b)=>b.due-a.due)[0];
     document.getElementById("st-top").textContent=top?top.name:"--";
     document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
@@ -366,14 +397,13 @@ function render(){
     const mColor=p.mScore>=55?"var(--green)":"var(--yellow)";
     return `<tr class="${p.favorable?"fav":""} fade-in">
       <td class="num" style="color:var(--dim)">${i+1}</td>
-      <td><div class="pname">${p.name}${p.carried?' <span class="chip" style="background:#A78BFA20;color:var(--purple)">HELD</span>':''}${p.baa!=null&&p.baa<=0.225?' <span class="chip" style="background:#FF4D6D22;color:var(--red)">⚠ TOUGH SP</span>':(p.baa!=null&&p.baa>=0.26?' <span class="chip" style="background:#14F19522;color:var(--green)">🟢 EDGE</span>':'')}${p.platoon==="adv"?' <span class="chip" style="background:#60A5FA22;color:var(--blue)">▲ PLATOON</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
+      <td><div class="pname">${p.name}${p.carried?' <span class="chip" style="background:#A78BFA20;color:var(--purple)">HELD</span>':''}${p.waiting?' <span class="chip" style="background:#FBBF2420;color:var(--yellow)">⏸ WAIT</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
       <td style="color:var(--muted)">${p.pos||"--"}</td>
       <td style="color:var(--muted)">${p.bat||"?"}</td>
       <td class="num">${p.hr}</td>
-      <td class="num" style="color:var(--muted)">${p.avg||"—"}</td>
       <td class="num bar-cell"><span style="color:var(--orange);font-size:16px;font-weight:700">${p.drought}</span><div class="bg"><div class="fl" style="width:${droughtScore(p.drought)}%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div></td>
       <td style="color:var(--muted);font-size:12px">${fmtDate(p.lastHR)}</td>
-      <td style="font-size:12px">${p.matchupText}<div style="color:var(--dim);font-size:10px">${p.pitcher?p.pitcher.name+(p.pitcher.hand?" ("+p.pitcher.hand+")":""):"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3):""}</div></td>
+      <td style="font-size:12px">${p.matchupText}<div style="color:var(--dim);font-size:10px">${p.pitcher?p.pitcher.name+(p.pitcher.hand?" ("+p.pitcher.hand+")":""):"SP TBD"}</div></td>
       <td class="num" style="color:${hr9Color}">${hr9}</td>
       <td class="num" style="color:${parkColor}">${p.park}</td>
       <td class="num bar-cell"><span style="color:${mColor};font-size:15px">${p.mScore}</span>${p.favorable?' <span class="chip" style="background:#14F19520;color:var(--green)">FAV</span>':''}</td>
@@ -408,11 +438,12 @@ function render(){
     <div class="due-card"><div class="due-info"><div class="due-name">${c.name}</div><div class="due-meta">cashed ${fmtDate(c.date)} · ${c.drought}g drought</div></div>
     <div class="due-num"><div class="due-big" style="color:var(--green)">$${c.stake.toFixed(2)}</div><div class="due-cap">CASHED</div></div></div>`).join(""):`<div style="padding:18px;text-align:center;color:var(--dim);font-size:11px">No bets cashed in the last 5 days.</div>`;
   document.getElementById("legend").innerHTML=`
-    <b>Board</b> — top 50 hitters on a <b>3+ game</b> hitless streak; resets each day at <b>6:00 AM ET</b>. Hit → removed until a new streak builds. &nbsp;·&nbsp;
-    <b>POOL</b> — top 69 by a blend of hits + average, min .250 AVG. <b>⚠ TOUGH SP</b> = facing a stingy starter (BAA ≤ .225); <b>🟢 EDGE</b> = hittable starter (BAA ≥ .260); <b>▲ PLATOON</b> = handedness advantage. <b>DROUGHT</b> — games played without a hit &nbsp;·&nbsp;
-    <b>MATCHUP</b> — opposing SP H/9 (60%) + ballpark hit factor (40%) ± platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
+    <b>Board</b> — top 50 hitters on a <b>10+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
+    <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
+    <b>MATCHUP</b> — opposing SP HR/9 (50%) + SP BAA (20%) + ballpark HR factor (30%) ± 8 platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
     <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
-    <b>BET $</b> — $1.00 at a 3-game hitless streak, ×1.5 each additional game without a hit. &nbsp; ⚠ Informational only · not betting advice.`;
+    <b>BET $</b> — new bets are <b>matchup-gated</b>: $1.00 at a 10-game drought only when matchup ≥ 55 (⏸ WAIT until then); at 12+ games the bet is on regardless. +10% (compounding) each homerless game &nbsp;·&nbsp;
+    <b>Pool</b> — regulars only (played ≥3 of team's last 5). &nbsp; ⚠ Informational only · not betting advice.`;
 }
 
 // ── LIVE UPGRADE (best-effort; falls back silently to the built-in slate) ──
@@ -461,37 +492,49 @@ async function loadLive(manual){
       byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher,final:fin,gdate:gd};});
 
     status('<span class="spin">⟳</span> Loading live hitters…');
-    const hd=await getJSON(`${API}/stats/leaders?leaderCategories=hits&statGroup=hitting&season=${season}&sportId=1&limit=200&leaderGameTypes=R`);
+    const hd=await getJSON(`${API}/stats/leaders?leaderCategories=homeRuns&statGroup=hitting&season=${season}&sportId=1&limit=200&leaderGameTypes=R`);
     let hitters=((hd?.leagueLeaders?.[0]?.leaders)||[]).map(L=>({id:L.person.id,name:L.person.fullName,teamId:L.team?.id,team:L.team?.name,pos:L.person?.primaryPosition?.abbreviation||"",hr:+L.value||0}));
-    try{const ad=await getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=2000&gameType=R&playerPool=All`);const am={};(ad?.stats?.[0]?.splits||[]).forEach(s=>{am[s.player.id]=s.stat.avg;});hitters.forEach(h=>{h.avg=am[h.id];});}catch(e){} // AVG for blend/floor
-    {const hv=hitters.map(h=>h.hr),av=hitters.map(h=>parseFloat(h.avg)||0);const mnH=Math.min(...hv),mxH=Math.max(...hv),mnA=Math.min(...av),mxA=Math.max(...av);hitters.forEach(h=>{const nh=mxH>mnH?(h.hr-mnH)/(mxH-mnH):0;const na=mxA>mnA?((parseFloat(h.avg)||0)-mnA)/(mxA-mnA):0;h.blend=0.3*nh+0.7*na;});}
-    hitters.sort((a,b)=>b.blend-a.blend);
     hitters.forEach((h,i)=>{h.rank=i;}); // top 69 (rank<69) is the ONLY place a NEW bet can start
-    const START=3; // a bet starts once the drought reaches 10
+    const START=10; // a bet starts once the drought reaches 10
     status('<span class="spin">⟳</span> Loading game logs…');
-    const gl=await pool(hitters,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);const tg=byTeam[h.teamId];if(tg&&!tg.final&&tg.gdate)sp=sp.filter(x=>!(x.date===tg.gdate&&(+x.stat.hits||0)===0));return sp;},6,(done,total)=>{setProg(30+Math.round(done/total*55));});
-    hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.hits||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
-    const asOf=(h,T)=>{if(!h.games||!h.games.length)return h.hr||0;let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.hits||0);}return s;};
+    const gl=await pool(hitters,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);const tg=byTeam[h.teamId];if(tg&&!tg.final&&tg.gdate)sp=sp.filter(x=>!(x.date===tg.gdate&&(+x.stat.homeRuns||0)===0));return sp;},6,(done,total)=>{setProg(30+Math.round(done/total*55));});
+    hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
+    const asOf=(h,T)=>{if(!h.games||!h.games.length)return h.hr||0;let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.homeRuns||0);}return s;};
     hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart&&h.drought>START){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
     const _cut=new Date(date+"T00:00:00");_cut.setDate(_cut.getDate()-5);const _cutS=_cut.toISOString().slice(0,10);
     const cashed=[];
-    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;if(h.avg&&parseFloat(h.avg)<0.25)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.hits||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.hits||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
+    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
     cashed.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);cashedBets=cashed;
     // Injury filter: keep only players on their team's active roster (IL excluded). If a roster
     // fetch fails, that team is not filtered (fail-open) so we never drop available hitters.
     const _tids=[...new Set(Object.keys(byTeam))];
     const _active=new Set(),_rostered=new Set();
     await pool(_tids,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);if(d&&d.roster){_rostered.add(String(tid));d.roster.forEach(p=>_active.add(p.person.id));}}catch(e){}},6);
-    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]&&(!_rostered.has(String(h.teamId))||_active.has(h.id))).map(h=>({...h,g:byTeam[h.teamId]}));
+    // Regulars-only: must have appeared in ≥3 of the team's last 5 completed games —
+    // bench/platoon bats can't end a drought from the pine. Fail-open when the recent
+    // schedule can't be loaded or a team has fewer than 5 finals (early season, breaks).
+    const teamLast5={};
+    try{
+      const _s=new Date(date+"T00:00:00");_s.setDate(_s.getDate()-9);
+      const _e=new Date(date+"T00:00:00");_e.setDate(_e.getDate()-1);
+      const rs=await getJSON(`${API}/schedule?sportId=1&startDate=${_s.toISOString().slice(0,10)}&endDate=${_e.toISOString().slice(0,10)}&gameType=R`);
+      (rs?.dates||[]).forEach(dd=>(dd.games||[]).forEach(g=>{
+        if(g.status?.abstractGameState!=="Final")return;
+        [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(tid=>{if(tid!=null)(teamLast5[tid]=teamLast5[tid]||[]).push(g.officialDate);});
+      }));
+      Object.keys(teamLast5).forEach(t=>{teamLast5[t]=[...new Set(teamLast5[t])].sort().slice(-5);});
+    }catch(e){}
+    const isRegular=h=>{const t5=teamLast5[h.teamId];if(!t5||t5.length<5)return true;const pd=new Set((h.games||[]).map(g=>g.date));let n=0;t5.forEach(d=>{if(pd.has(d))n++;});return n>=3;};
+    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]&&isRegular(h)&&(!_rostered.has(String(h.teamId))||_active.has(h.id))).map(h=>({...h,g:byTeam[h.teamId]}));
     if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
     const pids=[...new Set(actionable.map(h=>h.g.sp?.id).filter(Boolean))];
     const ids=[...new Set([...actionable.map(h=>h.id),...pids])];
     const people={};
     for(let i=0;i<ids.length;i+=40){const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>people[p.id]={bat:p.batSide?.code,pitch:p.pitchHand?.code});}
     const pst={};
-    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:pH9(s),era:s.era,baa:(s.avg!=null?parseFloat(s.avg):null)}:null;});
+    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:s.homeRunsPer9!=null?+s.homeRunsPer9:null,era:s.era,baa:s.avg!=null?parseFloat(s.avg):null}:null;});
     const live=actionable.map((h)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];const o=build({
-      name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,avg:h.avg,
+      name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,
       drought:h.drought,lastHR:h.lastHR,
       opp:g.opp?.name,isHome:g.isHome,venue:g.venue,
       sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era,baa:s?.baa
