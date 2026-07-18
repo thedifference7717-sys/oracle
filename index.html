@@ -61,7 +61,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 12 · WIN/LOSS COLORS</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 13 · STICKY LOCK</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -100,8 +100,11 @@ function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"
 async function load(){
   const btn=document.getElementById("run");btn.disabled=true;
   try{
-    const end=etNow(),start=etNow();start.setDate(start.getDate()-13);
-    const endStr=ymd(end),startStr=ymd(start),season=end.getFullYear();
+    // Ranking window ends YESTERDAY so today's in-progress games can never
+    // reshuffle the list — a rebuild at any hour produces the same rankings.
+    const end=etNow(),rEnd=etNow();rEnd.setDate(rEnd.getDate()-1);
+    const start=etNow();start.setDate(start.getDate()-14);
+    const endStr=ymd(end),rankEndStr=ymd(rEnd),startStr=ymd(start),season=end.getFullYear();
     status('<span class="spin">⟳</span> Today’s schedule…');setProg(6);
     const sched=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher,team,venue`);
     const games=sched?.dates?.[0]?.games||[];
@@ -116,7 +119,7 @@ async function load(){
     await pool(tids,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);if(d&&d.roster){rostered.add(String(tid));d.roster.forEach(p=>active.add(p.person.id));}}catch(e){}},6);
 
     status('<span class="spin">⟳</span> Last-14-day hitting…');setProg(26);
-    const hd=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${startStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
+    const hd=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${startStr}&endDate=${rankEndStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
     let all=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player?.id,name:s.player?.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,
       avg:parseFloat(s.stat?.avg)||0,hr:+s.stat?.homeRuns||0,rbi:+s.stat?.rbi||0,hits:+s.stat?.hits||0,ab:+s.stat?.atBats||0,g:+s.stat?.gamesPlayed||0}));
     // Only meaningful samples, playing today, not injured
@@ -131,8 +134,8 @@ async function load(){
     let cand=pool0.slice(0,40);
 
     status('<span class="spin">⟳</span> Counting 2+ H/R/RBI games…');
-    const logs=await pool(cand,async p=>{const d=await getJSON(`${API}/people/${p.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date>=startStr&&x.date<=endStr);},6,(done,total)=>setProg(30+Math.round(done/total*60)));
-    cand.forEach((p,i)=>{let hot=0,today=null;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;if(gm.date===endStr)today=c;});p.hotG=hot;p.todayHRR=today;p.cleared=today!=null&&today>=2;});
+    const logs=await pool(cand,async p=>{const d=await getJSON(`${API}/people/${p.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date>=startStr&&x.date<=rankEndStr);},6,(done,total)=>setProg(30+Math.round(done/total*60)));
+    cand.forEach((p,i)=>{let hot=0;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;});p.hotG=hot;p.todayHRR=null;p.cleared=false;p.final=false;});
 
     // opposing starter hittability (batting-avg-against) for the matchup focus
     cand.forEach(p=>{p.g2=byTeam[p.teamId];p.park=park(p.g2.venue);});
@@ -155,8 +158,12 @@ async function load(){
     cand.sort((a,b)=>b.score-a.score);
 
     setProg(100);setTimeout(()=>setProg(0),300);
-    current=cand;render(cand,startStr,endStr);
-    status(`✓ ${cand.length} hot hitters in action · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
+    current=cand;render(cand,startStr,rankEndStr);
+    // Persist today's list so a page reload (iOS refreshes suspended tabs)
+    // restores the exact same board instead of rebuilding it mid-slate.
+    try{localStorage.setItem("parlaiy-snap",JSON.stringify({date:endStr,list:cand.map(p=>({id:p.id,name:p.name,team:p.team,teamId:p.teamId,pos:p.pos,avg:p.avg,hr:p.hr,rbi:p.rbi,hotG:p.hotG,g2:p.g2,park:p.park,baa:p.baa,hotN:p.hotN,muN:p.muN,score:p.score}))}));}catch(e){}
+    status(`✓ ${cand.length} hot hitters in action · 14 days thru ${rankEndStr} · ${new Date().toLocaleTimeString()}`,"var(--green)");
+    pollResults();
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
   finally{btn.disabled=false;}
 }
@@ -202,7 +209,7 @@ function render(list,s,e){
       <td>${resChip(p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · not facing an elite SP (BAA ≤ .215) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings lock in 1 hour before the day's first pitch — only ✅ results update after that. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · not facing an elite SP (BAA ≤ .215) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. ⚠ Watchlist only — not betting advice.`;
 }
 // Lightweight ~30s poll: today's H/R/RBI for everyone plus each game's final
 // status, so cards can turn green (cleared) or red (game over, didn't clear).
@@ -236,8 +243,12 @@ async function watchStarters(){try{
   const pastLock=lockAt!=null&&Date.now()>=lockAt;
   if(endStr!==_lastDate){_lastDate=endStr;_lastProb=-1;_locked=false;} // new day → unlock & rebuild
   if(_locked)return;                                                    // board frozen for the day
+  if(pastLock&&!current.length){                                       // fresh page open past T-60 →
+    try{const sn=JSON.parse(localStorage.getItem("parlaiy-snap")||"null"); // restore today's saved list
+      if(sn&&sn.date===endStr&&sn.list&&sn.list.length){current=sn.list;render(current);_locked=true;
+        status(`🔒 Board locked (1h before first pitch) — today's list restored · live results only`,"var(--yellow)");pollResults();return;}}catch(e){}}
   if(pastLock&&current.length){                                        // T-60min reached → lock the snapshot
-    _locked=true;status(`🔒 Board locked (1h before first pitch) — live ✅ results only · ${new Date().toLocaleTimeString()}`,"var(--yellow)");return;}
+    _locked=true;status(`🔒 Board locked (1h before first pitch) — live results only · ${new Date().toLocaleTimeString()}`,"var(--yellow)");return;}
   let prob=0;gs.forEach(g=>{if(g.teams?.home?.probablePitcher)prob++;if(g.teams?.away?.probablePitcher)prob++;});
   if(prob>_lastProb){_lastProb=prob;await load();if(pastLock)_locked=true;} // opened past T-60 → build once, then lock
 }catch(e){}}
