@@ -61,7 +61,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 14 · HARD LOCK</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 15 · LIVE BOX</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -96,14 +96,18 @@ function status(m,c="var(--blue)"){const e=document.getElementById("status");e.s
 function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
 function etNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));}
 function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
+// The "baseball day" rolls over at 6 AM ET, so late West-coast games keep
+// reporting to the correct slate after midnight Eastern.
+function slateYmd(){const d=etNow();d.setHours(d.getHours()-6);return ymd(d);}
 
 async function load(){
   const btn=document.getElementById("run");btn.disabled=true;
   try{
     // Ranking window ends YESTERDAY so today's in-progress games can never
     // reshuffle the list — a rebuild at any hour produces the same rankings.
-    const end=etNow(),rEnd=etNow();rEnd.setDate(rEnd.getDate()-1);
-    const start=etNow();start.setDate(start.getDate()-14);
+    const end=etNow();end.setHours(end.getHours()-6); // 6 AM ET slate rollover
+    const rEnd=new Date(end);rEnd.setDate(rEnd.getDate()-1);
+    const start=new Date(end);start.setDate(start.getDate()-14);
     const endStr=ymd(end),rankEndStr=ymd(rEnd),startStr=ymd(start),season=end.getFullYear();
     status('<span class="spin">⟳</span> Today’s schedule…');setProg(6);
     const sched=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher,team,venue`);
@@ -228,20 +232,30 @@ function render(list,s,e){
 
   document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · not facing an elite SP (BAA ≤ .215) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. ⚠ Watchlist only — not betting advice.`;
 }
-// Lightweight ~30s poll: today's H/R/RBI for everyone plus each game's final
-// status, so cards can turn green (cleared) or red (game over, didn't clear).
+// ~30s live poll straight from each game's BOXSCORE — the aggregate stats feed
+// lags until games end, which left covered players stuck on ⏳. Boxscores
+// update pitch-by-pitch, so green shows the moment a player clears 1.5 H/R/RBI.
 async function pollResults(){
   if(!current.length)return;
   try{
-    const endStr=ymd(etNow());
-    const d=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${endStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
-    const m={};(d?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null)m[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
+    const endStr=slateYmd();
+    const sc=await getJSON(`${API}/schedule?sportId=1&date=${endStr}`);
+    const gs=sc?.dates?.[0]?.games||[];
     const fin={};
-    try{
-      const sc=await getJSON(`${API}/schedule?sportId=1&date=${endStr}`);
-      (sc?.dates?.[0]?.games||[]).forEach(g=>{const f=g.status?.abstractGameState==="Final";
-        [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(t=>{if(t!=null)fin[t]=fin[t]||f;});});
-    }catch(e){}
+    gs.forEach(g=>{const f=g.status?.abstractGameState==="Final";
+      [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(t=>{if(t!=null)fin[t]=fin[t]||f;});});
+    // Only pull boxscores for games our tracked players are in, and only once
+    // the game has started (Live or Final).
+    const wanted=new Set(current.map(p=>p.g2&&p.g2.gameKey).filter(v=>v!=null));
+    const pks=gs.filter(g=>(wanted.size?wanted.has(g.gamePk):true)&&g.status?.abstractGameState!=="Preview").map(g=>g.gamePk);
+    const m={};
+    await pool(pks,async pk=>{try{
+      const b=await getJSON(`${API}/game/${pk}/boxscore`);
+      ["home","away"].forEach(side=>{const pl=b?.teams?.[side]?.players||{};
+        Object.values(pl).forEach(pp=>{const st=pp?.stats?.batting;
+          if(st&&pp.person?.id!=null&&((+st.gamesPlayed||0)>0||(+st.plateAppearances||0)>0||(+st.runs||0)>0))
+            m[pp.person.id]=(+st.hits||0)+(+st.runs||0)+(+st.rbi||0);});});
+    }catch(e){}},5);
     current.forEach(p=>{if(m[p.id]!=null){p.todayHRR=m[p.id];p.cleared=m[p.id]>=2;}p.final=!!fin[p.teamId];});
     render(current);
     status(`✓ live results · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
@@ -251,7 +265,7 @@ let _lastDate="",_lastProb=-1,_locked=false;
 // Rebuild the board when probable starters get posted (matchup score depends on them),
 // but FREEZE it once the day's first game starts — no more re-ranking mid-slate.
 async function watchStarters(){try{
-  const endStr=ymd(etNow());
+  const endStr=slateYmd();
   const d=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher`);
   const gs=d?.dates?.[0]?.games||[];
   const starts=gs.map(g=>Date.parse(g.gameDate)).filter(t=>!isNaN(t));
