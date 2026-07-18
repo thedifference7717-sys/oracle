@@ -61,7 +61,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 13 · STICKY LOCK</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 14 · HARD LOCK</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -109,6 +109,14 @@ async function load(){
     const sched=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher,team,venue`);
     const games=sched?.dates?.[0]?.games||[];
     if(!games.length){status(`No MLB games today (${endStr}).`,"var(--yellow)");renderEmpty();return;}
+    // HARD LOCK inside load() itself: past T-60min before first pitch, EVERY
+    // path (reload, manual refresh, timers) restores today's saved list rather
+    // than rebuilding — the board physically cannot change after the lock.
+    const _starts=games.map(g=>Date.parse(g.gameDate)).filter(t=>!isNaN(t));
+    const _pastLock=_starts.length?Date.now()>=Math.min(..._starts)-3600000:false;
+    if(_pastLock){try{const sn=JSON.parse(localStorage.getItem("parlaiy-snap")||"null");
+      if(sn&&sn.date===endStr&&sn.list&&sn.list.length){current=sn.list;render(current);
+        status(`🔒 Locked — today's list (set 1h before first pitch) · live results only`,"var(--yellow)");pollResults();return;}}catch(e){}}
     const byTeam={};
     games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away,gk=g.gamePk;
       byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName,spId:a.probablePitcher?.id,gameKey:gk};
@@ -141,7 +149,16 @@ async function load(){
     cand.forEach(p=>{p.g2=byTeam[p.teamId];p.park=park(p.g2.venue);});
     status('<span class="spin">⟳</span> Pitching matchups…');
     const spIds=[...new Set(cand.map(p=>p.g2.spId).filter(Boolean))];const baaMap={};
-    await pool(spIds,async pid=>{try{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const st=d?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]=parseFloat(st.avg);}catch(e){}},6);
+    // SP batting-avg-against computed from game logs THROUGH YESTERDAY — a
+    // pitcher's season BAA updates live while he pitches, which would make a
+    // mid-game rebuild score differently. Falls back to season BAA if logs thin.
+    await pool(spIds,async pid=>{try{
+      const d=await getJSON(`${API}/people/${pid}/stats?stats=gameLog&group=pitching&season=${season}&gameType=R`);
+      let hits=0,ab=0;(d?.stats?.[0]?.splits||[]).forEach(x=>{if(x.stat&&x.date&&x.date<=rankEndStr){hits+=(+x.stat.hits||0);ab+=(+x.stat.atBats||0);}});
+      if(ab>=30){baaMap[pid]=hits/ab;return;}
+      const d2=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);
+      const st=d2?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]=parseFloat(st.avg);
+    }catch(e){}},6);
     cand.forEach(p=>{p.baa=(p.g2.spId!=null&&baaMap[p.g2.spId]!=null)?baaMap[p.g2.spId]:null;});
     // Tightened filters: must be genuinely hot (5+ games with 2+ H/R/RBI in the
     // last 14) and not staring down an elite SP (BAA ≤ .215).
