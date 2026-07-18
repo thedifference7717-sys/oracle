@@ -5,562 +5,228 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#050510">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>ShohAI Ohtani · HR Dashboard</title>
-<link rel="manifest" href="manifest.json">
+<meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>ParlAIy · Last 14 Days</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ShohAI Ohtani">
-<link rel="apple-touch-icon" href="baseball.svg">
+<meta name="apple-mobile-web-app-title" content="ParlAIy">
 <link rel="icon" type="image/svg+xml" href="baseball.svg">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-<script src="store-id.js"></script>
 <style>
 :root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
 body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 20px 14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.logo-wrap{display:flex;align-items:center;gap:11px}
-.agent-avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #A78BFA40;border:2px solid #A78BFA40;overflow:hidden;background:#070714}
-.agent-avatar svg{width:100%;height:100%}
-.logo{font-family:'Orbitron',monospace;font-size:23px;font-weight:900;letter-spacing:.05em;color:#EDEAFF;text-shadow:0 0 14px #A78BFA66}
-.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.14em;margin-top:3px}
-.controls{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-left:auto}
-.ctrl-group{display:flex;flex-direction:column;gap:3px}
-.ctrl-lbl{font-size:10px;color:var(--muted);letter-spacing:.1em}
-.ctrl-select{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none}
-.fav-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;padding-bottom:8px}
-.fav-toggle .tg{position:relative;width:42px;height:22px;background:var(--bg3);border:1px solid var(--border);border-radius:11px;transition:all .25s;flex-shrink:0}
-.fav-toggle.on .tg{background:linear-gradient(90deg,#A78BFA,var(--green));border-color:transparent}
-.fav-toggle .tg::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s}
-.fav-toggle.on .tg::after{transform:translateX(20px)}
-.fav-toggle .tg-lbl{font-size:10px;color:var(--muted);letter-spacing:.08em}
-.refresh-btn{padding:11px 18px;background:linear-gradient(90deg,#A78BFA,#627EEA);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.08em;font-family:'Orbitron',monospace;cursor:pointer}
-.refresh-btn:disabled{opacity:.5;cursor:wait}
-#status-line{font-size:13px;color:var(--blue);letter-spacing:.04em;padding:10px 20px;min-height:16px;border-bottom:1px solid var(--border);background:var(--bg2)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:16px 20px 4px}
-.kpi{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border:1px solid var(--border);border-radius:12px;padding:15px 17px}
-.kpi-val{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;line-height:1}
-.kpi-lbl{font-size:12px;color:#D2D7E1;letter-spacing:.1em;margin-top:7px;font-weight:700}
-.kpi-sub{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;padding:14px 20px}
-@media(max-width:1080px){.grid{grid-template-columns:1fr}}
-/* On phones: drop POS, B, SP HR/9, PARK so the key columns fit cleanly */
-@media(max-width:760px){
-  table{min-width:0;font-size:14px}
-  thead th,tbody td{padding:11px 9px}
-  thead th:nth-child(3),tbody td:nth-child(3),
-  thead th:nth-child(4),tbody td:nth-child(4),
-  thead th:nth-child(9),tbody td:nth-child(9),
-  thead th:nth-child(10),tbody td:nth-child(10){display:none}
-  .kpis{grid-template-columns:1fr 1fr}
-  #topbar{padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 12px}
-  .grid{padding:12px 14px}
-}
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
-.panel-head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--border)}
-.panel-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--purple)}
-.panel-note{font-size:11px;color:var(--muted);letter-spacing:.05em}
+#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#1A0A0A,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.05em;color:#FFE9D6;text-shadow:0 0 14px #F7931A88}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
+.controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
+.navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
+.run-btn{padding:11px 18px;background:linear-gradient(90deg,#F7931A,#FF4D6D);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer}
+.run-btn:disabled{opacity:.5;cursor:wait}
+#progress-wrap{height:3px;background:var(--bg2);display:none}#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#F7931A,var(--green));transition:width .2s}
+#status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.section-h{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--orange);padding:16px 18px 8px}
+.parlay{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;padding:0 18px}
+@media(max-width:820px){.parlay{grid-template-columns:1fr}}
+.pcard{background:linear-gradient(160deg,#1A120A,var(--bg2));border:1px solid #F7931A55;border-radius:16px;padding:15px;box-shadow:0 4px 24px #F7931A14}
+.pc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pc-rank{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--orange);width:30px}
+.pc-name{font-size:17px;font-weight:700;line-height:1.1}
+.pc-team{font-size:10px;color:var(--muted);margin-top:2px}
+.pc-stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.pc-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center}
+.pc-v{font-family:'Orbitron',monospace;font-size:16px;font-weight:700}
+.pc-l{font-size:8px;color:var(--muted);margin-top:3px;letter-spacing:.05em}
+.chip{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;flex-shrink:0}.chip.ok{background:#14F19522;color:var(--green)}.chip.pend{background:#8C95A422;color:var(--muted)}.chip.miss{background:#FBBF2422;color:var(--yellow)}
+.pc-mu{font-size:12px;color:var(--text)}.pc-mu .d{color:var(--muted);font-size:11px}
+.wrap{padding:14px 18px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--purple);letter-spacing:.05em}
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
-thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:11px;letter-spacing:.07em;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
-thead th:hover{color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}
+thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:11px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);white-space:nowrap}
 thead th.num{text-align:right}
-thead th .arr{color:var(--purple)}
-tbody td{padding:11px 12px;white-space:nowrap}
-tbody tr{border-bottom:1px solid var(--border)}
-tbody tr:hover{background:#10102433}
-tbody tr.fav{background:linear-gradient(90deg,#14F1950E,transparent)}
+tbody td{padding:11px 12px;white-space:nowrap;border-bottom:1px solid var(--border)}
 td.num{text-align:right;font-family:'Orbitron',monospace}
-.pname{font-weight:700;color:var(--text);font-size:14px}
-.pteam{font-size:11px;color:var(--muted)}
-.chip{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.04em}
-.bar-cell{position:relative;min-width:96px}
-.bar-cell .bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:3px}
-.bar-cell .fl{height:100%;border-radius:3px}
-.due-card{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
-.due-card:last-child{border-bottom:none}
-.due-rank{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--dim);width:22px;flex-shrink:0}
-.due-info{min-width:0;flex:1}
-.due-name{font-size:14px;font-weight:700}
-.due-meta{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.due-num{text-align:right;flex-shrink:0}
-.due-big{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;line-height:1}
-.due-cap{font-size:8px;color:var(--muted);letter-spacing:.08em}
-.chart{padding:12px 14px}
-.chart-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
-.chart-name{font-size:12px;width:108px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
-.chart-bar-bg{flex:1;height:11px;background:var(--bg3);border-radius:5px;overflow:hidden}
-.chart-bar{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--orange),var(--red))}
-.chart-val{font-size:11px;font-family:'Orbitron',monospace;width:26px;text-align:right;color:var(--orange)}
-.legend{font-size:12px;color:var(--muted);line-height:1.9;padding:14px 20px 0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spin{display:inline-block;animation:spin .9s linear infinite}
-.fade-in{animation:fadeUp .35s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.pname{font-weight:700;font-size:14px}.pteam{font-size:10px;color:var(--muted)}
+.legend{font-size:12px;color:var(--muted);line-height:1.8;padding:10px 18px 0}
+.spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:40px 18px;text-align:center;color:var(--dim);font-size:12px}
 </style>
 </head>
 <body>
-
 <div id="topbar">
-  <div class="logo-wrap">
-    <div class="agent-avatar">
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="baseball">
-        <defs>
-          <radialGradient id="hSphere" cx="38%" cy="32%" r="72%">
-            <stop offset="0%" stop-color="#ffffff"/><stop offset="42%" stop-color="#f5f5ef"/>
-            <stop offset="78%" stop-color="#deded4"/><stop offset="100%" stop-color="#b3b3a6"/>
-          </radialGradient>
-          <radialGradient id="hAo" cx="50%" cy="50%" r="50%">
-            <stop offset="62%" stop-color="#000000" stop-opacity="0"/><stop offset="100%" stop-color="#1a1208" stop-opacity="0.42"/>
-          </radialGradient>
-          <radialGradient id="hSpec" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="hSeam" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#e8404d"/><stop offset="50%" stop-color="#d22f3b"/><stop offset="100%" stop-color="#a81f2a"/>
-          </linearGradient>
-          <filter id="hSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
-          <filter id="hDs" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.4" flood-color="#000000" flood-opacity="0.5"/></filter>
-        </defs>
-        <g transform="translate(60,60) scale(0.9) translate(-60,-60)" filter="url(#hDs)">
-          <circle cx="60" cy="60" r="50" fill="url(#hSphere)"/>
-          <g stroke="url(#hSeam)" stroke-linecap="round" fill="none">
-            <path d="M36,20 C44,40 44,80 36,100" stroke-width="2.6"/>
-            <path d="M84,20 C76,40 76,80 84,100" stroke-width="2.6"/>
-          </g>
-          <g stroke="#c8313c" stroke-width="1.8" stroke-linecap="round">
-            <line x1="32.4" y1="30.2" x2="39.6" y2="25.8"/><line x1="36.4" y1="42.2" x2="43.6" y2="37.8"/>
-            <line x1="39.4" y1="54.2" x2="46.6" y2="49.8"/><line x1="40.4" y1="62.2" x2="47.6" y2="57.8"/>
-            <line x1="39.4" y1="70.2" x2="46.6" y2="65.8"/><line x1="36.4" y1="82.2" x2="43.6" y2="77.8"/>
-            <line x1="32.4" y1="94.2" x2="39.6" y2="89.8"/>
-            <line x1="80.4" y1="25.8" x2="87.6" y2="30.2"/><line x1="76.4" y1="37.8" x2="83.6" y2="42.2"/>
-            <line x1="73.4" y1="49.8" x2="80.6" y2="54.2"/><line x1="72.4" y1="57.8" x2="79.6" y2="62.2"/>
-            <line x1="73.4" y1="65.8" x2="80.6" y2="70.2"/><line x1="76.4" y1="77.8" x2="83.6" y2="82.2"/>
-            <line x1="80.4" y1="89.8" x2="87.6" y2="94.2"/>
-          </g>
-          <circle cx="60" cy="60" r="50" fill="url(#hAo)"/>
-          <ellipse cx="44" cy="40" rx="17" ry="12" fill="url(#hSpec)" filter="url(#hSoft)"/>
-        </g>
-      </svg>
-    </div>
-    <div><div class="logo">ShohAI OHTANI</div><div class="logo-sub">HR ORACLE · BUILD 47 · SHARP MATCHUP</div></div>
-  </div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 11 · LEAD BOARD</div></div>
   <div class="controls">
-    <a href="cobb.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🏏 COBB</a>
-    <a href="hits.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🎯 AIchiro</a>
-    <a href="hot.html" style="align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none">🔥 ParlAIy</a>
-    <div class="ctrl-group"><span class="ctrl-lbl">SORT</span>
-      <select class="ctrl-select" id="sort-select" onchange="onSortSelect()">
-        <option value="drought">Longest Drought</option>
-        <option value="due">Combined Due</option>
-        <option value="mScore">Best Matchup</option>
-        <option value="hr">Most HR</option>
-      </select>
-    </div>
-    <div class="fav-toggle" id="fav-toggle" onclick="toggleFav()"><span class="tg-lbl">FAVORABLE ONLY</span><div class="tg"></div></div>
-    <button class="refresh-btn" id="refresh-btn" onclick="loadLive(true)">⟳ REFRESH</button>
+    <a class="navlink" href="hr.html">⚾ HR</a>
+    <a class="navlink" href="cobb.html">🏏 2B</a>
+    <a class="navlink" href="hits.html">🎯 AIchiro</a>
+    <button class="run-btn" id="run" onclick="load()">⟳ REFRESH</button>
   </div>
 </div>
-<div id="status-line"></div>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="status"></div>
 
-<section class="kpis" id="kpis">
-  <div class="kpi"><div class="kpi-val" id="st-players" style="color:var(--blue)">--</div><div class="kpi-lbl">HITTERS</div><div class="kpi-sub">on the board</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-fav" style="color:var(--green)">--</div><div class="kpi-lbl">FAVORABLE MATCHUPS</div><div class="kpi-sub">matchup ≥ 55</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-max" style="color:var(--orange)">--</div><div class="kpi-lbl">MAX DROUGHT</div><div class="kpi-sub" id="st-max-sub">games w/o HR</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-avg" style="color:var(--yellow)">--</div><div class="kpi-lbl">AVG DROUGHT</div><div class="kpi-sub">games</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-top" style="color:var(--purple);font-size:15px">--</div><div class="kpi-lbl">TOP DUE</div><div class="kpi-sub" id="st-top-sub">highest score</div></div>
-  <div class="kpi"><div class="kpi-val" id="st-bet" style="color:var(--green)">--</div><div class="kpi-lbl">TOTAL BET</div><div class="kpi-sub" id="st-bet-sub">$1 at 10g · +10%/game</div></div>
-</section>
+<div class="section-h">🔥 TOP 10 PARLAY WATCHLIST — 1 player per game (round-robin safe) · hottest .300+ bats vs best matchups · ✅ = cleared 1.5 H/R/RBI today</div>
+<div class="parlay" id="parlay"></div>
 
-<div class="grid">
-  <div style="min-width:0">
-    <div class="panel">
-      <div class="panel-head">
-        <span class="panel-title">⚾ HR WATCHLIST · TOP 50</span>
-        <span class="panel-note" id="row-count">tap a column to sort</span>
-      </div>
-      <div class="table-wrap"><table><thead><tr id="thead-row"></tr></thead><tbody id="tbody"></tbody></table></div>
-    </div>
+<div class="wrap">
+  <div class="panel">
+    <div class="panel-head">⚾ HOT HITTERS PLAYING TODAY</div>
+    <div class="table-wrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
   </div>
-  <aside style="min-width:0">
-    <div class="panel"><div class="panel-head"><span class="panel-title">🔥 TOP DUE</span><span class="panel-note">highest due score</span></div><div id="top-due"></div></div>
-    <div class="panel"><div class="panel-head"><span class="panel-title">📉 DROUGHT LEADERS</span><span class="panel-note">games w/o HR</span></div><div class="chart" id="chart"></div></div>
-    <div class="panel"><div class="panel-head"><span class="panel-title">🎯 BEST MATCHUPS</span><span class="panel-note">pitcher + park</span></div><div id="best-matchups"></div></div>
-    <div class="panel"><div class="panel-head"><span class="panel-title">💰 RECENTLY CASHED</span><span class="panel-note">last 5 days</span></div><div id="cashed"></div></div>
-  </aside>
 </div>
 <div class="legend" id="legend"></div>
 
 <script>
 const API="https://statsapi.mlb.com/api/v1";
+const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
+let good=null;let current=[];
+async function getJSON(url){const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}throw e||new Error("unreachable");}
+async function pool(items,fn,size,onTick){const out=new Array(items.length);let i=0,done=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}done++;onTick&&onTick(done,items.length);}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const PARK={"Coors Field":110,"Fenway Park":108,"Great American Ball Park":104,"Globe Life Field":103,"Chase Field":103,"Wrigley Field":102,"Yankee Stadium":102,"Citizens Bank Park":102,"Oriole Park at Camden Yards":101,"Rogers Centre":101,"American Family Field":101,"Truist Park":101,"Kauffman Stadium":101,"Daikin Park":100,"Minute Maid Park":100,"Nationals Park":100,"Dodger Stadium":100,"Angel Stadium":100,"Busch Stadium":99,"Target Field":99,"Progressive Field":99,"Rate Field":99,"PNC Park":99,"Comerica Park":99,"Citi Field":98,"Petco Park":97,"loanDepot park":96,"T-Mobile Park":96,"Oracle Park":95,"Sutter Health Park":100,"George M. Steinbrenner Field":101};
+function park(n){if(!n)return 100;if(PARK[n]!=null)return PARK[n];const k=Object.keys(PARK).find(k=>n.includes(k)||k.includes(n));return k?PARK[k]:100;}
+function status(m,c="var(--blue)"){const e=document.getElementById("status");e.style.color=c;e.innerHTML=m;}
+function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
+function etNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));}
+function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
 
-// Only hitters on a homerless streak of at least this many games make the board.
-const MIN_DROUGHT=10;
-// The "baseball day" rolls over at 6:00 AM Eastern, not local midnight.
-function slateDate(){
-  const et=new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));
-  et.setHours(et.getHours()-6);
-  const y=et.getFullYear(),m=String(et.getMonth()+1).padStart(2,"0"),d=String(et.getDate()).padStart(2,"0");
-  return `${y}-${m}-${d}`;
-}
-
-// ── BALLPARK HR FACTORS (100 = neutral; >100 favors HR) ──
-const PARK={
-  "Coors Field":112,"Great American Ball Park":113,"Yankee Stadium":110,"Citizens Bank Park":108,
-  "Globe Life Field":104,"Oriole Park at Camden Yards":101,"Fenway Park":99,"Dodger Stadium":103,
-  "Wrigley Field":101,"Truist Park":102,"Chase Field":103,"Daikin Park":101,"Minute Maid Park":101,
-  "Rogers Centre":103,"American Family Field":105,"Nationals Park":101,"Citi Field":96,"Petco Park":96,
-  "Oracle Park":90,"T-Mobile Park":93,"loanDepot park":95,"Comerica Park":94,"Kauffman Stadium":95,
-  "Angel Stadium":102,"Busch Stadium":96,"PNC Park":94,"Target Field":99,"Progressive Field":98,
-  "Rate Field":103,"Sutter Health Park":100,"George M. Steinbrenner Field":102
-};
-function parkFactor(name){
-  if(!name)return 100;
-  if(PARK[name]!=null)return PARK[name];
-  const k=Object.keys(PARK).find(k=>name.includes(k)||k.includes(name));
-  return k?PARK[k]:100;
-}
-
-// ── SCORING ──
-function platoon(bat,pitch){if(!bat||!pitch)return null;if(bat==="S")return "adv";return bat!==pitch?"adv":"dis";}
-function droughtScore(d){return clamp(Math.round(d*5),0,100);}
-function matchupScore(hr9,park,plt,baa){
-  const pComp=hr9==null?50:clamp((hr9-0.8)/(2.4-0.8)*100,0,100);
-  const bComp=baa==null?50:clamp((baa-0.200)/(0.290-0.200)*100,0,100); // SP contact quality
-  const parkComp=clamp((park-88)/(114-88)*100,0,100);
-  let s=pComp*0.5+bComp*0.2+parkComp*0.3;
-  if(plt==="adv")s+=8;else if(plt==="dis")s-=8;
-  return clamp(Math.round(s),0,100);
-}
-function dueScore(d,m){return Math.round(droughtScore(d)*0.55+m*0.45);}
-// Escalating wager: $1.00 once a hitter reaches a 9-game homerless drought,
-// then +10% (compounding) for every additional game without a home run.
-function betSize(drought){return drought>=10 ? Math.pow(1.1,drought-10) : 0;}
-
-// Turn a raw {name,team,pos,bat,hr,drought,lastHR,opp,isHome,venue,sp,spHand,hr9,era}
-// record into the enriched object the UI renders.
-function build(r){
-  const park=parkFactor(r.venue);
-  const plt=platoon(r.bat,r.spHand);
-  const mScore=matchupScore(r.hr9,park,plt,r.baa);
-  // Matchup gate: at a 10-11 game drought a NEW bet needs a favorable matchup
-  // (mScore ≥ 55) to enter; from 12 games the bet is on regardless (carried).
-  const waiting=r.drought>=10&&r.drought<12&&mScore<55;
-  return {
-    name:r.name,teamName:r.team,pos:r.pos,bat:r.bat,hr:r.hr,
-    drought:r.drought,lastHR:r.lastHR||null,
-    opp:{name:r.opp},isHome:r.isHome,venue:r.venue,park,
-    matchupText:(r.isHome?"vs ":"@ ")+r.opp,
-    hr9:r.hr9!=null?r.hr9:null,baa:r.baa!=null?r.baa:null,
-    pitcher:r.sp?{name:r.sp,hand:r.spHand,hr9:r.hr9,era:r.era}:null,
-    platoon:plt,mScore,due:dueScore(r.drought,mScore),favorable:mScore>=55,
-    waiting,bet:waiting?0:betSize(r.drought)
-  };
-}
-
-// ── BUILT-IN SLATE (renders instantly, no network needed) ──
-const SAMPLE=[
-  {name:"Aaron Judge",team:"Yankees",pos:"RF",bat:"R",hr:34,drought:9,lastHR:"2026-05-27",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Sean Newcomb",spHand:"L",hr9:1.7,era:4.65},
-  {name:"Shohei Ohtani",team:"Dodgers",pos:"DH",bat:"L",hr:31,drought:7,lastHR:"2026-05-29",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Austin Gomber",spHand:"L",hr9:1.9,era:5.10},
-  {name:"Kyle Schwarber",team:"Phillies",pos:"DH",bat:"L",hr:29,drought:12,lastHR:"2026-05-24",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Nick Martinez",spHand:"R",hr9:1.6,era:4.20},
-  {name:"Pete Alonso",team:"Mets",pos:"1B",bat:"R",hr:27,drought:14,lastHR:"2026-05-22",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Jose Quintana",spHand:"L",hr9:1.4,era:3.95},
-  {name:"Cal Raleigh",team:"Mariners",pos:"C",bat:"S",hr:26,drought:18,lastHR:"2026-05-18",opp:"Rangers",isHome:false,venue:"Globe Life Field",sp:"Patrick Corbin",spHand:"L",hr9:1.8,era:4.80},
-  {name:"Marcell Ozuna",team:"Braves",pos:"DH",bat:"R",hr:25,drought:16,lastHR:"2026-05-20",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Mitchell Parker",spHand:"L",hr9:1.5,era:4.10},
-  {name:"Juan Soto",team:"Mets",pos:"RF",bat:"L",hr:24,drought:6,lastHR:"2026-05-30",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Freddy Peralta",spHand:"R",hr9:1.2,era:3.40},
-  {name:"Yordan Alvarez",team:"Astros",pos:"DH",bat:"L",hr:24,drought:20,lastHR:"2026-05-16",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Tyler Anderson",spHand:"L",hr9:1.3,era:4.00},
-  {name:"Vladimir Guerrero Jr.",team:"Blue Jays",pos:"1B",bat:"R",hr:22,drought:11,lastHR:"2026-05-25",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Charlie Morton",spHand:"R",hr9:1.5,era:4.45},
-  {name:"Mookie Betts",team:"Dodgers",pos:"SS",bat:"R",hr:21,drought:13,lastHR:"2026-05-23",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Kyle Freeland",spHand:"L",hr9:1.7,era:4.90},
-  {name:"Bryce Harper",team:"Phillies",pos:"1B",bat:"L",hr:21,drought:8,lastHR:"2026-05-28",opp:"Reds",isHome:false,venue:"Great American Ball Park",sp:"Hunter Greene",spHand:"R",hr9:1.3,era:3.65},
-  {name:"Rafael Devers",team:"Giants",pos:"DH",bat:"L",hr:20,drought:15,lastHR:"2026-05-21",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Dylan Cease",spHand:"R",hr9:1.4,era:3.85},
-  {name:"José Ramírez",team:"Guardians",pos:"3B",bat:"S",hr:20,drought:10,lastHR:"2026-05-26",opp:"Royals",isHome:false,venue:"Kauffman Stadium",sp:"Seth Lugo",spHand:"R",hr9:1.0,era:3.30},
-  {name:"Gunnar Henderson",team:"Orioles",pos:"SS",bat:"L",hr:19,drought:17,lastHR:"2026-05-19",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Kevin Gausman",spHand:"R",hr9:1.5,era:4.15},
-  {name:"Corey Seager",team:"Rangers",pos:"SS",bat:"L",hr:19,drought:22,lastHR:"2026-05-13",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Logan Gilbert",spHand:"R",hr9:1.1,era:3.50},
-  {name:"Fernando Tatis Jr.",team:"Padres",pos:"RF",bat:"R",hr:18,drought:9,lastHR:"2026-05-27",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Robbie Ray",spHand:"L",hr9:1.4,era:3.95},
-  {name:"Adolis García",team:"Rangers",pos:"RF",bat:"R",hr:18,drought:19,lastHR:"2026-05-17",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Bryan Woo",spHand:"R",hr9:1.2,era:3.60},
-  {name:"Bobby Witt Jr.",team:"Royals",pos:"SS",bat:"R",hr:17,drought:12,lastHR:"2026-05-24",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Tanner Bibee",spHand:"R",hr9:1.3,era:3.80},
-  {name:"Elly De La Cruz",team:"Reds",pos:"SS",bat:"S",hr:17,drought:7,lastHR:"2026-05-29",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Cristopher Sánchez",spHand:"L",hr9:1.1,era:3.45},
-  {name:"Teoscar Hernández",team:"Dodgers",pos:"RF",bat:"R",hr:17,drought:16,lastHR:"2026-05-20",opp:"Rockies",isHome:true,venue:"Dodger Stadium",sp:"Germán Márquez",spHand:"R",hr9:1.6,era:4.55},
-  {name:"Austin Riley",team:"Braves",pos:"3B",bat:"R",hr:16,drought:14,lastHR:"2026-05-22",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"MacKenzie Gore",spHand:"L",hr9:1.2,era:3.70},
-  {name:"Matt Olson",team:"Braves",pos:"1B",bat:"L",hr:16,drought:21,lastHR:"2026-05-15",opp:"Nationals",isHome:true,venue:"Truist Park",sp:"Jake Irvin",spHand:"R",hr9:1.5,era:4.25},
-  {name:"Christian Walker",team:"Astros",pos:"1B",bat:"R",hr:16,drought:18,lastHR:"2026-05-18",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"José Soriano",spHand:"R",hr9:1.0,era:3.55},
-  {name:"William Contreras",team:"Brewers",pos:"C",bat:"R",hr:15,drought:10,lastHR:"2026-05-26",opp:"Mets",isHome:true,venue:"American Family Field",sp:"Kodai Senga",spHand:"R",hr9:1.1,era:3.25},
-  {name:"Anthony Santander",team:"Blue Jays",pos:"DH",bat:"S",hr:15,drought:15,lastHR:"2026-05-21",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Zach Eflin",spHand:"R",hr9:1.4,era:4.05},
-  {name:"Riley Greene",team:"Tigers",pos:"LF",bat:"L",hr:15,drought:13,lastHR:"2026-05-23",opp:"White Sox",isHome:false,venue:"Rate Field",sp:"Davis Martin",spHand:"R",hr9:1.6,era:4.70},
-  {name:"Ketel Marte",team:"Diamondbacks",pos:"2B",bat:"S",hr:14,drought:8,lastHR:"2026-05-28",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Sonny Gray",spHand:"R",hr9:1.3,era:3.90},
-  {name:"Willy Adames",team:"Giants",pos:"SS",bat:"R",hr:14,drought:17,lastHR:"2026-05-19",opp:"Padres",isHome:false,venue:"Petco Park",sp:"Michael King",spHand:"R",hr9:1.0,era:3.20},
-  {name:"Jackson Chourio",team:"Brewers",pos:"RF",bat:"R",hr:14,drought:11,lastHR:"2026-05-25",opp:"Mets",isHome:true,venue:"American Family Field",sp:"David Peterson",spHand:"L",hr9:1.2,era:3.75},
-  {name:"Seiya Suzuki",team:"Cubs",pos:"DH",bat:"R",hr:14,drought:19,lastHR:"2026-05-17",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Mitch Keller",spHand:"R",hr9:1.4,era:4.30},
-  {name:"Spencer Steer",team:"Reds",pos:"1B",bat:"R",hr:13,drought:16,lastHR:"2026-05-20",opp:"Phillies",isHome:true,venue:"Great American Ball Park",sp:"Aaron Nola",spHand:"R",hr9:1.5,era:4.40},
-  {name:"Brent Rooker",team:"Athletics",pos:"DH",bat:"R",hr:13,drought:20,lastHR:"2026-05-16",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Pablo López",spHand:"R",hr9:1.3,era:3.85},
-  {name:"Jake Burger",team:"Rangers",pos:"3B",bat:"R",hr:13,drought:14,lastHR:"2026-05-22",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"George Kirby",spHand:"R",hr9:1.2,era:3.60},
-  {name:"Tyler O'Neill",team:"Orioles",pos:"LF",bat:"R",hr:12,drought:18,lastHR:"2026-05-18",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"José Berríos",spHand:"R",hr9:1.4,era:4.10},
-  {name:"Isaac Paredes",team:"Astros",pos:"3B",bat:"R",hr:12,drought:15,lastHR:"2026-05-21",opp:"Angels",isHome:true,venue:"Daikin Park",sp:"Yusei Kikuchi",spHand:"L",hr9:1.5,era:4.20},
-  {name:"Josh Naylor",team:"Diamondbacks",pos:"1B",bat:"L",hr:12,drought:9,lastHR:"2026-05-27",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Miles Mikolas",spHand:"R",hr9:1.6,era:4.50},
-  {name:"Salvador Perez",team:"Royals",pos:"C",bat:"R",hr:12,drought:17,lastHR:"2026-05-19",opp:"Guardians",isHome:true,venue:"Kauffman Stadium",sp:"Gavin Williams",spHand:"R",hr9:1.3,era:3.95},
-  {name:"Eugenio Suárez",team:"Diamondbacks",pos:"3B",bat:"R",hr:12,drought:13,lastHR:"2026-05-23",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Erick Fedde",spHand:"R",hr9:1.4,era:4.05},
-  {name:"Kyle Tucker",team:"Cubs",pos:"RF",bat:"L",hr:11,drought:10,lastHR:"2026-05-26",opp:"Pirates",isHome:true,venue:"Wrigley Field",sp:"Paul Skenes",spHand:"R",hr9:0.9,era:2.85},
-  {name:"Corbin Carroll",team:"Diamondbacks",pos:"CF",bat:"L",hr:11,drought:15,lastHR:"2026-05-21",opp:"Cardinals",isHome:true,venue:"Chase Field",sp:"Andre Pallante",spHand:"R",hr9:1.2,era:3.80},
-  {name:"Manny Machado",team:"Padres",pos:"3B",bat:"R",hr:11,drought:18,lastHR:"2026-05-18",opp:"Giants",isHome:true,venue:"Petco Park",sp:"Logan Webb",spHand:"R",hr9:1.0,era:3.10},
-  {name:"Francisco Lindor",team:"Mets",pos:"SS",bat:"S",hr:11,drought:12,lastHR:"2026-05-24",opp:"Brewers",isHome:false,venue:"American Family Field",sp:"Quinn Priester",spHand:"R",hr9:1.3,era:4.00},
-  {name:"George Springer",team:"Blue Jays",pos:"DH",bat:"R",hr:11,drought:16,lastHR:"2026-05-20",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Tomoyuki Sugano",spHand:"R",hr9:1.5,era:4.30},
-  {name:"Jazz Chisholm Jr.",team:"Yankees",pos:"2B",bat:"L",hr:11,drought:14,lastHR:"2026-05-22",opp:"Red Sox",isHome:true,venue:"Yankee Stadium",sp:"Garrett Crochet",spHand:"L",hr9:1.1,era:3.20},
-  {name:"Oneil Cruz",team:"Pirates",pos:"CF",bat:"L",hr:11,drought:19,lastHR:"2026-05-17",opp:"Cubs",isHome:false,venue:"Wrigley Field",sp:"Shota Imanaga",spHand:"L",hr9:1.4,era:3.70},
-  {name:"Yandy Díaz",team:"Rays",pos:"1B",bat:"R",hr:10,drought:13,lastHR:"2026-05-23",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Tarik Skubal",spHand:"L",hr9:1.0,era:2.95},
-  {name:"Bo Bichette",team:"Blue Jays",pos:"SS",bat:"R",hr:10,drought:20,lastHR:"2026-05-16",opp:"Orioles",isHome:true,venue:"Rogers Centre",sp:"Dean Kremer",spHand:"R",hr9:1.5,era:4.40},
-  {name:"Wyatt Langford",team:"Rangers",pos:"LF",bat:"R",hr:10,drought:16,lastHR:"2026-05-20",opp:"Mariners",isHome:true,venue:"Globe Life Field",sp:"Luis Castillo",spHand:"R",hr9:1.3,era:3.85},
-  {name:"Nolan Arenado",team:"Cardinals",pos:"3B",bat:"R",hr:10,drought:21,lastHR:"2026-05-15",opp:"Diamondbacks",isHome:false,venue:"Chase Field",sp:"Brandon Pfaadt",spHand:"R",hr9:1.6,era:4.55},
-  {name:"Triston Casas",team:"Red Sox",pos:"1B",bat:"L",hr:10,drought:18,lastHR:"2026-05-18",opp:"Yankees",isHome:false,venue:"Yankee Stadium",sp:"Carlos Rodón",spHand:"L",hr9:1.4,era:4.10},
-  {name:"Jordan Westburg",team:"Orioles",pos:"2B",bat:"R",hr:10,drought:14,lastHR:"2026-05-22",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Bowden Francis",spHand:"R",hr9:1.7,era:4.70},
-  {name:"Lawrence Butler",team:"Athletics",pos:"RF",bat:"L",hr:10,drought:17,lastHR:"2026-05-19",opp:"Twins",isHome:true,venue:"Sutter Health Park",sp:"Bailey Ober",spHand:"R",hr9:1.5,era:4.25},
-  {name:"Josh Lowe",team:"Rays",pos:"RF",bat:"L",hr:9,drought:15,lastHR:"2026-05-21",opp:"Tigers",isHome:false,venue:"Comerica Park",sp:"Casey Mize",spHand:"R",hr9:1.3,era:3.95},
-  {name:"Michael Toglia",team:"Rockies",pos:"1B",bat:"S",hr:9,drought:12,lastHR:"2026-05-24",opp:"Dodgers",isHome:false,venue:"Dodger Stadium",sp:"Tyler Glasnow",spHand:"R",hr9:1.1,era:3.30},
-  {name:"Colton Cowser",team:"Orioles",pos:"CF",bat:"L",hr:9,drought:19,lastHR:"2026-05-17",opp:"Blue Jays",isHome:false,venue:"Rogers Centre",sp:"Max Scherzer",spHand:"R",hr9:1.4,era:4.00}
-];
-
-// ── STATE ──
-let state={players:[],favOnly:false,sortKey:"drought",sortDir:-1,live:false,slateDate:slateDate()};
-let cashedBets=[];
-const COLS=[
-  {k:"rank",label:"#",num:true,sortable:false},
-  {k:"name",label:"PLAYER",num:false},
-  {k:"pos",label:"POS",num:false},
-  {k:"bat",label:"B",num:false},
-  {k:"hr",label:"HR",num:true},
-  {k:"drought",label:"DROUGHT",num:true},
-  {k:"lastHR",label:"LAST HR",num:false},
-  {k:"matchupText",label:"OPP / SP",num:false,sortable:false},
-  {k:"hr9",label:"SP HR/9",num:true},
-  {k:"park",label:"PARK",num:true},
-  {k:"mScore",label:"MATCH",num:true},
-  {k:"due",label:"DUE",num:true},
-  {k:"bet",label:"BET $",num:true}
-];
-
-function status(msg,color="var(--blue)"){const el=document.getElementById("status-line");el.style.color=color;el.innerHTML=msg;}
-function fmtDate(d){if(!d)return "—";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}}
-
-function onSortSelect(){state.sortKey=document.getElementById("sort-select").value;state.sortDir=-1;render();}
-function setSort(k){if(state.sortKey===k)state.sortDir*=-1;else{state.sortKey=k;state.sortDir=(k==="name"||k==="pos"||k==="bat")?1:-1;}render();}
-function toggleFav(){state.favOnly=!state.favOnly;document.getElementById("fav-toggle").classList.toggle("on",state.favOnly);render();}
-function sortVal(p,k){if(k==="lastHR")return p.lastHR?new Date(p.lastHR).getTime():0;if(k==="hr9")return p.hr9==null?-1:p.hr9;const v=p[k];return v==null?-Infinity:v;}
-function sorted(arr){const {sortKey,sortDir}=state;return arr.slice().sort((a,b)=>{let av=sortVal(a,sortKey),bv=sortVal(b,sortKey);if(typeof av==="string"||typeof bv==="string"){av=(""+av).toLowerCase();bv=(""+bv).toLowerCase();return av<bv?-sortDir:av>bv?sortDir:0;}return (av-bv)*sortDir;});}
-
-function render(){
-  // Anyone whose latest game has a HR (drought 0) is OFF the board — the
-  // next-most-due hitters move up to fill their spots. The board is locked to
-  // the 50 most-due hitters and always backfills to 50.
-  const BOARD_SIZE=50;
-  // Only hitters on a 7+ game streak who actually have a game on the slate.
-  const active=state.players.filter(p=>p.drought>=MIN_DROUGHT && p.venue && p.opp && p.opp.name);
-  const board=active.slice().sort((a,b)=>(b.drought-a.drought)||(b.mScore-a.mScore)).slice(0,BOARD_SIZE);
-  let players=board;
-  if(state.favOnly)players=players.filter(p=>p.favorable);
-  players=sorted(players);
-
-  if(board.length){
-    const dr=board.map(p=>p.drought);
-    document.getElementById("st-players").textContent=board.length;
-    document.getElementById("st-fav").textContent=board.filter(p=>p.favorable).length;
-    const max=Math.max(...dr);
-    document.getElementById("st-max").textContent=max;
-    const leader=board.find(p=>p.drought===max);
-    document.getElementById("st-max-sub").textContent=leader?leader.name:"games w/o HR";
-    document.getElementById("st-avg").textContent=Math.round(dr.reduce((s,v)=>s+v,0)/dr.length);
-    const totalBet=board.reduce((s,p)=>s+(p.bet||0),0);
-    document.getElementById("st-bet").textContent="$"+totalBet.toFixed(2);
-    const betCount=board.filter(p=>p.bet>0).length;
-    document.getElementById("st-bet-sub").textContent=betCount+" active bets · +10%/game";
-    const top=board.slice().sort((a,b)=>b.due-a.due)[0];
-    document.getElementById("st-top").textContent=top?top.name:"--";
-    document.getElementById("st-top-sub").textContent=top?("due "+top.due+" · "+top.drought+"g drought"):"highest score";
-  }
-  document.getElementById("row-count").textContent=players.length+" shown · SLATE "+fmtDate(state.slateDate);
-
-  document.getElementById("thead-row").innerHTML=COLS.map(c=>{
-    const arr=state.sortKey===c.k?` <span class="arr">${state.sortDir<0?"▼":"▲"}</span>`:"";
-    const onclick=c.sortable===false?"":`onclick="setSort('${c.k}')"`;
-    return `<th class="${c.num?"num":""}" ${onclick} style="${c.sortable===false?"cursor:default":""}">${c.label}${arr}</th>`;
-  }).join("");
-
-  document.getElementById("tbody").innerHTML=players.map((p,i)=>{
-    const dueColor=p.due>=70?"var(--green)":p.due>=50?"var(--yellow)":"var(--muted)";
-    const hr9=p.hr9!=null?p.hr9.toFixed(2):"—";
-    const hr9Color=p.hr9!=null?(p.hr9>=1.4?"var(--green)":p.hr9<=1.0?"var(--red)":"var(--yellow)"):"var(--dim)";
-    const parkColor=p.park>=104?"var(--green)":p.park<=96?"var(--red)":"var(--yellow)";
-    const mColor=p.mScore>=55?"var(--green)":"var(--yellow)";
-    return `<tr class="${p.favorable?"fav":""} fade-in">
-      <td class="num" style="color:var(--dim)">${i+1}</td>
-      <td><div class="pname">${p.name}${p.carried?' <span class="chip" style="background:#A78BFA20;color:var(--purple)">HELD</span>':''}${p.waiting?' <span class="chip" style="background:#FBBF2420;color:var(--yellow)">⏸ WAIT</span>':''}</div><div class="pteam">${p.teamName||""}</div></td>
-      <td style="color:var(--muted)">${p.pos||"--"}</td>
-      <td style="color:var(--muted)">${p.bat||"?"}</td>
-      <td class="num">${p.hr}</td>
-      <td class="num bar-cell"><span style="color:var(--orange);font-size:16px;font-weight:700">${p.drought}</span><div class="bg"><div class="fl" style="width:${droughtScore(p.drought)}%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div></td>
-      <td style="color:var(--muted);font-size:12px">${fmtDate(p.lastHR)}</td>
-      <td style="font-size:12px">${p.matchupText}<div style="color:var(--dim);font-size:10px">${p.pitcher?p.pitcher.name+(p.pitcher.hand?" ("+p.pitcher.hand+")":""):"SP TBD"}</div></td>
-      <td class="num" style="color:${hr9Color}">${hr9}</td>
-      <td class="num" style="color:${parkColor}">${p.park}</td>
-      <td class="num bar-cell"><span style="color:${mColor};font-size:15px">${p.mScore}</span>${p.favorable?' <span class="chip" style="background:#14F19520;color:var(--green)">FAV</span>':''}</td>
-      <td class="num"><span style="color:${dueColor};font-size:17px;font-weight:700">${p.due}</span></td>
-      <td class="num">${p.bet>0?`<span style="color:var(--green);font-size:15px;font-weight:700">$${p.bet.toFixed(2)}</span>`:'<span style="color:var(--dim)">—</span>'}</td>
-    </tr>`;
-  }).join("");
-
-  const topDue=board.slice().sort((a,b)=>b.due-a.due).slice(0,6);
-  document.getElementById("top-due").innerHTML=topDue.map((p,i)=>{
-    const c=p.due>=70?"var(--green)":p.due>=50?"var(--yellow)":"var(--muted)";
-    return `<div class="due-card"><div class="due-rank">${i+1}</div>
-      <div class="due-info"><div class="due-name">${p.name}</div><div class="due-meta">${p.drought}g drought · ${p.matchupText} · ${p.pitcher?p.pitcher.name:"SP TBD"}</div></div>
-      <div class="due-num"><div class="due-big" style="color:${c}">${p.due}</div><div class="due-cap">DUE</div></div></div>`;
-  }).join("");
-
-  const dl=board.slice().sort((a,b)=>b.drought-a.drought).slice(0,10);
-  const maxD=Math.max(1,...dl.map(p=>p.drought));
-  document.getElementById("chart").innerHTML=dl.map(p=>`
-    <div class="chart-row"><div class="chart-name">${p.name}</div>
-      <div class="chart-bar-bg"><div class="chart-bar" style="width:${Math.round(p.drought/maxD*100)}%"></div></div>
-      <div class="chart-val">${p.drought}</div></div>`).join("");
-
-  const best=board.slice().filter(p=>p.favorable).sort((a,b)=>b.mScore-a.mScore).slice(0,6);
-  document.getElementById("best-matchups").innerHTML=best.length?best.map((p,i)=>`
-    <div class="due-card"><div class="due-rank">${i+1}</div>
-      <div class="due-info"><div class="due-name">${p.name}</div><div class="due-meta">${p.matchupText} · HR/9 ${p.pitcher&&p.pitcher.hr9!=null?p.pitcher.hr9.toFixed(2):"—"} · Park ${p.park}</div></div>
-      <div class="due-num"><div class="due-big" style="color:var(--green)">${p.mScore}</div><div class="due-cap">MATCH</div></div></div>`).join(""):`<div style="padding:20px;text-align:center;color:var(--dim);font-size:10px">No favorable matchups.</div>`;
-
-  const _cb=cashedBets||[];
-  document.getElementById("cashed").innerHTML=_cb.length?_cb.slice(0,8).map(c=>`
-    <div class="due-card"><div class="due-info"><div class="due-name">${c.name}</div><div class="due-meta">cashed ${fmtDate(c.date)} · ${c.drought}g drought</div></div>
-    <div class="due-num"><div class="due-big" style="color:var(--green)">$${c.stake.toFixed(2)}</div><div class="due-cap">CASHED</div></div></div>`).join(""):`<div style="padding:18px;text-align:center;color:var(--dim);font-size:11px">No bets cashed in the last 5 days.</div>`;
-  document.getElementById("legend").innerHTML=`
-    <b>Board</b> — top 50 hitters on a <b>10+ game</b> homerless streak; resets each day at <b>6:00 AM ET</b>. Homer → removed until a new streak builds. &nbsp;·&nbsp;
-    <b>DROUGHT</b> — games played without a HR &nbsp;·&nbsp;
-    <b>MATCHUP</b> — opposing SP HR/9 (50%) + SP BAA (20%) + ballpark HR factor (30%) ± 8 platoon edge; favorable ≥ 55 &nbsp;·&nbsp;
-    <b>DUE</b> — 55% drought + 45% matchup &nbsp;·&nbsp;
-    <b>BET $</b> — new bets are <b>matchup-gated</b>: $1.00 at a 10-game drought only when matchup ≥ 55 (⏸ WAIT until then); at 12+ games the bet is on regardless. +10% (compounding) each homerless game &nbsp;·&nbsp;
-    <b>Pool</b> — regulars only (played ≥3 of team's last 5). &nbsp; ⚠ Informational only · not betting advice.`;
-}
-
-// ── LIVE UPGRADE (best-effort; falls back silently to the built-in slate) ──
-// Try the official feed directly first; if cross-site rules block it, route
-// through public CORS proxies. Remember whichever source works so we don't
-// re-probe on every one of the ~100 calls per refresh.
-const SOURCES=[
-  u=>u,
-  u=>"https://corsproxy.io/?url="+encodeURIComponent(u),
-  u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
-  u=>"https://thingproxy.freeboard.io/fetch/"+u
-];
-let goodSource=null;
-async function getJSON(url){
-  const order=goodSource!=null
-    ? [goodSource,...SOURCES.map((_,i)=>i).filter(i=>i!==goodSource)]
-    : SOURCES.map((_,i)=>i);
-  let lastErr;
-  for(const i of order){
-    try{
-      const r=await fetch(SOURCES[i](url),{headers:{"Accept":"application/json"}});
-      if(!r.ok)throw new Error("HTTP "+r.status);
-      const j=await r.json();
-      goodSource=i;
-      return j;
-    }catch(e){lastErr=e;}
-  }
-  throw lastErr||new Error("unreachable");
-}
-async function pool(items,fn,size=6){const out=new Array(items.length);let i=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
-
-async function loadLive(manual){
-  if(state.loadingLive)return;state.loadingLive=true;
-  const btn=document.getElementById("refresh-btn");btn.disabled=true;
-  status('<span class="spin">⟳</span> Checking for live MLB games…');
+async function load(){
+  const btn=document.getElementById("run");btn.disabled=true;
   try{
-    const date=slateDate();          // current baseball day (6 AM ET rollover)
-    const season=+date.slice(0,4);
-    state.slateDate=date;
-    const sched=await getJSON(`${API}/schedule?sportId=1&date=${date}&hydrate=probablePitcher,team,venue`);
+    const end=etNow(),start=etNow();start.setDate(start.getDate()-13);
+    const endStr=ymd(end),startStr=ymd(start),season=end.getFullYear();
+    status('<span class="spin">⟳</span> Today’s schedule…');setProg(6);
+    const sched=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher,team,venue`);
     const games=sched?.dates?.[0]?.games||[];
-    if(!games.length){status(`No MLB games today (${date}). Showing model slate.`,"var(--yellow)");return;}
+    if(!games.length){status(`No MLB games today (${endStr}).`,"var(--yellow)");renderEmpty();return;}
     const byTeam={};
-    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away;const fin=g.status?.abstractGameState==="Final"||g.status?.codedGameState==="F";const gd=g.officialDate;
-      byTeam[h.team.id]={opp:a.team,isHome:true,venue:v,sp:a.probablePitcher,final:fin,gdate:gd};
-      byTeam[a.team.id]={opp:h.team,isHome:false,venue:v,sp:h.probablePitcher,final:fin,gdate:gd};});
+    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away,gk=g.gamePk;
+      byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName,spId:a.probablePitcher?.id,gameKey:gk};
+      byTeam[a.team.id]={opp:h.team?.abbreviation||h.team?.name,isHome:false,venue:v,sp:h.probablePitcher?.fullName,spId:h.probablePitcher?.id,gameKey:gk};});
 
-    status('<span class="spin">⟳</span> Loading live hitters…');
-    const hd=await getJSON(`${API}/stats/leaders?leaderCategories=homeRuns&statGroup=hitting&season=${season}&sportId=1&limit=200&leaderGameTypes=R`);
-    let hitters=((hd?.leagueLeaders?.[0]?.leaders)||[]).map(L=>({id:L.person.id,name:L.person.fullName,teamId:L.team?.id,team:L.team?.name,pos:L.person?.primaryPosition?.abbreviation||"",hr:+L.value||0}));
-    hitters.forEach((h,i)=>{h.rank=i;}); // top 69 (rank<69) is the ONLY place a NEW bet can start
-    const START=10; // a bet starts once the drought reaches 10
-    status('<span class="spin">⟳</span> Loading game logs…');
-    const gl=await pool(hitters,async h=>{const d=await getJSON(`${API}/people/${h.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);let sp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date);const tg=byTeam[h.teamId];if(tg&&!tg.final&&tg.gdate)sp=sp.filter(x=>!(x.date===tg.gdate&&(+x.stat.homeRuns||0)===0));return sp;},6,(done,total)=>{setProg(30+Math.round(done/total*55));});
-    hitters.forEach((h,i)=>{const sp=gl[i]||[];h.games=sp;let dr=0,last=null;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0){last=sp[j].date;break;}dr++;}h.drought=dr;h.lastHR=last;h.betStart=(dr>=START&&sp[sp.length-dr+(START-1)])?sp[sp.length-dr+(START-1)].date:null;});
-    const asOf=(h,T)=>{if(!h.games||!h.games.length)return h.hr||0;let s=0;for(const g of h.games){if(g.date<=T)s+=(+g.stat.homeRuns||0);}return s;};
-    hitters.forEach(h=>{h.betActive=false;h.held=false;if(h.drought>=START){if(h.rank<69){h.betActive=true;}else if(h.betStart&&h.drought>START){let above=0;for(const q of hitters){if(q!==h&&asOf(q,h.betStart)>h.hr){above++;if(above>=69)break;}}if(above<69){h.betActive=true;h.held=true;}}}});
-    const _cut=new Date(date+"T00:00:00");_cut.setDate(_cut.getDate()-5);const _cutS=_cut.toISOString().slice(0,10);
-    const cashed=[];
-    hitters.forEach(h=>{const sp=h.games;if(!sp||!sp.length)return;let k=-1;for(let j=sp.length-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0){k=j;break;}}if(k<0)return;let pre=0;for(let j=k-1;j>=0;j--){if((+sp[j].stat.homeRuns||0)>0)break;pre++;}if(pre<START)return;const finDate=sp[k].date;if(finDate<_cutS)return;const si=(k-pre)+(START-1);const sd=sp[si]?sp[si].date:null;if(!sd)return;const hAt=asOf(h,sd);let above=0;for(const q of hitters){if(q!==h&&asOf(q,sd)>hAt){above++;if(above>=69)break;}}if(above>=69)return;cashed.push({name:h.name,drought:pre,stake:betSize(pre),date:finDate});});
-    cashed.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);cashedBets=cashed;
-    // Injury filter: keep only players on their team's active roster (IL excluded). If a roster
-    // fetch fails, that team is not filtered (fail-open) so we never drop available hitters.
-    const _tids=[...new Set(Object.keys(byTeam))];
-    const _active=new Set(),_rostered=new Set();
-    await pool(_tids,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);if(d&&d.roster){_rostered.add(String(tid));d.roster.forEach(p=>_active.add(p.person.id));}}catch(e){}},6);
-    // Regulars-only: must have appeared in ≥3 of the team's last 5 completed games —
-    // bench/platoon bats can't end a drought from the pine. Fail-open when the recent
-    // schedule can't be loaded or a team has fewer than 5 finals (early season, breaks).
-    const teamLast5={};
-    try{
-      const _s=new Date(date+"T00:00:00");_s.setDate(_s.getDate()-9);
-      const _e=new Date(date+"T00:00:00");_e.setDate(_e.getDate()-1);
-      const rs=await getJSON(`${API}/schedule?sportId=1&startDate=${_s.toISOString().slice(0,10)}&endDate=${_e.toISOString().slice(0,10)}&gameType=R`);
-      (rs?.dates||[]).forEach(dd=>(dd.games||[]).forEach(g=>{
-        if(g.status?.abstractGameState!=="Final")return;
-        [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(tid=>{if(tid!=null)(teamLast5[tid]=teamLast5[tid]||[]).push(g.officialDate);});
-      }));
-      Object.keys(teamLast5).forEach(t=>{teamLast5[t]=[...new Set(teamLast5[t])].sort().slice(-5);});
-    }catch(e){}
-    const isRegular=h=>{const t5=teamLast5[h.teamId];if(!t5||t5.length<5)return true;const pd=new Set((h.games||[]).map(g=>g.date));let n=0;t5.forEach(d=>{if(pd.has(d))n++;});return n>=3;};
-    let actionable=hitters.filter(h=>h.betActive&&byTeam[h.teamId]&&isRegular(h)&&(!_rostered.has(String(h.teamId))||_active.has(h.id))).map(h=>({...h,g:byTeam[h.teamId]}));
-    if(!actionable.length){status(`No active bets in today’s games (${date}).`,"var(--yellow)");return;}
-    const pids=[...new Set(actionable.map(h=>h.g.sp?.id).filter(Boolean))];
-    const ids=[...new Set([...actionable.map(h=>h.id),...pids])];
-    const people={};
-    for(let i=0;i<ids.length;i+=40){const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>people[p.id]={bat:p.batSide?.code,pitch:p.pitchHand?.code});}
-    const pst={};
-    await pool(pids,async pid=>{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const s=d?.stats?.[0]?.splits?.[0]?.stat;pst[pid]=s?{hr9:s.homeRunsPer9!=null?+s.homeRunsPer9:null,era:s.era,baa:s.avg!=null?parseFloat(s.avg):null}:null;});
-    const live=actionable.map((h)=>{const g=h.g,sp=g.sp,s=pst[sp?.id];const o=build({
-      name:h.name,team:h.team,pos:h.pos,bat:people[h.id]?.bat,hr:h.hr,
-      drought:h.drought,lastHR:h.lastHR,
-      opp:g.opp?.name,isHome:g.isHome,venue:g.venue,
-      sp:sp?.fullName,spHand:sp?people[sp.id]?.pitch:null,hr9:s?.hr9,era:s?.era,baa:s?.baa
-    });o.carried=h.held;return o;});
-    if(live.length){
-      state.players=live;state.live=true;render();
-      const held=live.filter(p=>p.carried).length;
-      status(`✓ LIVE · ${live.length} active bets · ${games.length} games · ${held} held · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
-    }
-  }catch(e){
-    status(`⚠ Live feed blocked on this device — showing model slate (NOT live). [${e.message}]`,"var(--yellow)");
-  }finally{btn.disabled=false;state.loadingLive=false;}
+    status('<span class="spin">⟳</span> Active rosters…');setProg(14);
+    const tids=[...new Set(Object.keys(byTeam))];const active=new Set(),rostered=new Set();
+    await pool(tids,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);if(d&&d.roster){rostered.add(String(tid));d.roster.forEach(p=>active.add(p.person.id));}}catch(e){}},6);
+
+    status('<span class="spin">⟳</span> Last-14-day hitting…');setProg(26);
+    const hd=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${startStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
+    let all=(hd?.stats?.[0]?.splits||[]).map(s=>({id:s.player?.id,name:s.player?.fullName,teamId:s.team?.id,team:s.team?.name,pos:s.position?.abbreviation,
+      avg:parseFloat(s.stat?.avg)||0,hr:+s.stat?.homeRuns||0,rbi:+s.stat?.rbi||0,hits:+s.stat?.hits||0,ab:+s.stat?.atBats||0,g:+s.stat?.gamesPlayed||0}));
+    // Only meaningful samples, playing today, not injured
+    let pool0=all.filter(p=>p.ab>=25 && p.avg>=0.300 && byTeam[p.teamId] && (!rostered.has(String(p.teamId))||active.has(p.id)));
+    if(!pool0.length){status(`No qualifying hot hitters in today’s games.`,"var(--yellow)");renderEmpty();return;}
+
+    // quick composite to shortlist (normalize avg/hr/rbi), then fetch logs for the top ~40
+    const nrm=(arr,key)=>{const v=arr.map(x=>x[key]),mn=Math.min(...v),mx=Math.max(...v);return x=>mx>mn?(x[key]-mn)/(mx-mn):0;};
+    let na=nrm(pool0,"avg"),nh=nrm(pool0,"hr"),nr=nrm(pool0,"rbi");
+    pool0.forEach(p=>{p.pre=na(p)+nh(p)+nr(p);});
+    pool0.sort((a,b)=>b.pre-a.pre);
+    let cand=pool0.slice(0,40);
+
+    status('<span class="spin">⟳</span> Counting 2+ H/R/RBI games…');
+    const logs=await pool(cand,async p=>{const d=await getJSON(`${API}/people/${p.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date>=startStr&&x.date<=endStr);},6,(done,total)=>setProg(30+Math.round(done/total*60)));
+    cand.forEach((p,i)=>{let hot=0,today=null;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;if(gm.date===endStr)today=c;});p.hotG=hot;p.todayHRR=today;p.cleared=today!=null&&today>=2;});
+
+    // opposing starter hittability (batting-avg-against) for the matchup focus
+    cand.forEach(p=>{p.g2=byTeam[p.teamId];p.park=park(p.g2.venue);});
+    status('<span class="spin">⟳</span> Pitching matchups…');
+    const spIds=[...new Set(cand.map(p=>p.g2.spId).filter(Boolean))];const baaMap={};
+    await pool(spIds,async pid=>{try{const d=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);const st=d?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]=parseFloat(st.avg);}catch(e){}},6);
+    cand.forEach(p=>{p.baa=(p.g2.spId!=null&&baaMap[p.g2.spId]!=null)?baaMap[p.g2.spId]:null;});
+    // Tightened filters: must be genuinely hot (5+ games with 2+ H/R/RBI in the
+    // last 14) and not staring down an elite SP (BAA ≤ .215).
+    cand=cand.filter(p=>p.hotG>=5 && !(p.baa!=null&&p.baa<=0.215));
+    if(!cand.length){status(`No hitters pass the hot-bat + matchup filters today.`,"var(--yellow)");renderEmpty();return;}
+    // SCORE = 50% hot bat (2+games 40 / AVG 25 / HR 20 / RBI 15) + 50% matchup (SP BAA 70 / park 30)
+    na=nrm(cand,"avg");nh=nrm(cand,"hr");nr=nrm(cand,"rbi");const ng=nrm(cand,"hotG");
+    const bArr=cand.map(p=>p.baa).filter(v=>v!=null);const bMin=bArr.length?Math.min(...bArr):0.22,bMax=bArr.length?Math.max(...bArr):0.28;
+    const pArr=cand.map(p=>p.park);const pkMin=Math.min(...pArr),pkMax=Math.max(...pArr);
+    cand.forEach(p=>{const hot=0.40*ng(p)+0.25*na(p)+0.20*nh(p)+0.15*nr(p);
+      const nb=(p.baa!=null&&bMax>bMin)?(p.baa-bMin)/(bMax-bMin):0.5;
+      const npk=pkMax>pkMin?(p.park-pkMin)/(pkMax-pkMin):0.5;const mu=0.7*nb+0.3*npk;
+      p.hotN=Math.round(hot*100);p.muN=Math.round(mu*100);p.score=Math.round((0.5*hot+0.5*mu)*100);});
+    cand.sort((a,b)=>b.score-a.score);
+
+    setProg(100);setTimeout(()=>setProg(0),300);
+    current=cand;render(cand,startStr,endStr);
+    status(`✓ ${cand.length} hot hitters in action · last 14 days (${startStr} → ${endStr}) · ${new Date().toLocaleTimeString()}`,"var(--green)");
+  }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
+  finally{btn.disabled=false;}
 }
 
-// ── INIT: show full dashboard instantly, then try live in background ──
-state.players=SAMPLE.map(build);
-render();
-status("Model slate loaded. Connecting to live MLB data…","var(--muted)");
-loadLive(false);
-setInterval(()=>loadLive(false),120000); // refresh every 2 min (≈ per half-inning)
-// End-of-day rollover at 6 AM ET: when the baseball day changes, rebuild the
-// whole board for the new slate (homer-hitters cleared, fresh streaks pulled in).
-setInterval(()=>{
-  const today=slateDate();
-  if(today!==state.slateDate){state.slateDate=today;loadLive(false);}
-},60000);
+function renderEmpty(){document.getElementById("parlay").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="11"><div class="empty">No games / hot hitters right now.</div></td></tr>`;}
+
+function render(list,s,e){
+  // Top-10 parlay cards: ONE pick per game (round-robin parlays disallow
+  // same-game legs). list is score-desc, so keep the first hitter per game.
+  const seenG=new Set();
+  const top=list.filter(p=>{const gk=(p.g2&&p.g2.gameKey!=null)?p.g2.gameKey:("t"+p.teamId);if(seenG.has(gk))return false;seenG.add(gk);return true;}).slice(0,10);
+  document.getElementById("parlay").innerHTML=top.map((p,i)=>`
+    <div class="pcard">
+      <div class="pc-top"><div class="pc-rank">${i+1}</div><div style="flex:1;min-width:0"><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div>${p.todayHRR==null?'<span class="chip pend">⏳</span>':(p.cleared?'<span class="chip ok">✅</span>':'<span class="chip miss">'+p.todayHRR+'/2</span>')}</div>
+      <div class="pc-stats">
+        <div class="pc-box"><div class="pc-v">${p.avg.toFixed(3).replace(/^0/,"")}</div><div class="pc-l">AVG</div></div>
+        <div class="pc-box"><div class="pc-v" style="color:var(--orange)">${p.hr}</div><div class="pc-l">HR</div></div>
+        <div class="pc-box"><div class="pc-v" style="color:var(--green)">${p.rbi}</div><div class="pc-l">RBI</div></div>
+        <div class="pc-box"><div class="pc-v" style="color:var(--purple)">${p.hotG}</div><div class="pc-l">2+ G</div></div>
+      </div>
+      <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3).replace(/^0/,""):""} · Park ${p.park}</span><div style="margin-top:6px;font-size:11px"><span style="color:var(--orange)">HOT ${p.hotN}</span> · <span style="color:${p.muN>=60?'var(--green)':p.muN>=40?'var(--yellow)':'var(--red)'}">MATCH ${p.muN}</span> · <b style="color:var(--green)">SCORE ${p.score}</b></div></div>
+    </div>`).join("")||'<div class="empty">No hot hitters in action.</div>';
+
+  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","2+","OPP / SP","SP BAA","PARK","SCORE","1.5 HRR"].map((h,i)=>`<th class="${[2,3,4,5,7,8,9].includes(i)?'num':''}">${h}</th>`).join("");
+  document.getElementById("tbody").innerHTML=list.map((p,i)=>`
+    <tr>
+      <td class="num" style="color:var(--dim)">${i+1}</td>
+      <td><div class="pname">${p.name}</div><div class="pteam">${p.team||""} · ${p.pos||""}</div></td>
+      <td class="num">${p.avg.toFixed(3).replace(/^0/,"")}</td>
+      <td class="num" style="color:var(--orange)">${p.hr}</td>
+      <td class="num" style="color:var(--green)">${p.rbi}</td>
+      <td class="num" style="color:var(--purple)">${p.hotG}</td>
+      <td style="font-size:12px">${p.g2.isHome?"vs":"@"} ${p.g2.opp||"TBD"}<div style="color:var(--dim);font-size:10px">${p.g2.sp||"SP TBD"}</div></td>
+      <td class="num" style="color:${p.baa!=null?(p.baa>=0.260?'var(--green)':p.baa<=0.225?'var(--red)':'var(--yellow)'):'var(--dim)'}">${p.baa!=null?p.baa.toFixed(3).replace(/^0/,""):"—"}</td>
+      <td class="num" style="color:${p.park>=103?'var(--green)':p.park<=97?'var(--red)':'var(--yellow)'}">${p.park}</td>
+      <td class="num"><b style="color:${p.score>=65?'var(--green)':p.score>=45?'var(--yellow)':'var(--muted)'}">${p.score}</b></td>
+      <td>${p.todayHRR==null?'<span class="chip pend">⏳</span>':(p.cleared?'<span class="chip ok">✅</span>':'<span class="chip miss">'+p.todayHRR+'/2</span>')}</td>
+    </tr>`).join("");
+
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 40%, AVG 25%, HR 20%, RBI 15%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · not facing an elite SP (BAA ≤ .215) · in today's lineup · injured (IL) excluded. <b>✅</b> = already has 2+ (Over 1.5) combined H/R/RBI today · <b>⏳</b> = game not started / no result yet · <b>n/2</b> = current count. Rankings lock in 1 hour before the day's first pitch — only ✅ results update after that. ⚠ Watchlist only — not betting advice.`;
+}
+// Lightweight ~30s poll: one call returns every player's TODAY H/R/RBI; update checkmarks live.
+async function pollResults(){
+  if(!current.length)return;
+  try{
+    const endStr=ymd(etNow());
+    const d=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${endStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
+    const m={};(d?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null)m[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
+    current.forEach(p=>{if(m[p.id]!=null){p.todayHRR=m[p.id];p.cleared=m[p.id]>=2;}});
+    render(current);
+    status(`✓ live results · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+  }catch(e){}
+}
+let _lastDate="",_lastProb=-1,_locked=false;
+// Rebuild the board when probable starters get posted (matchup score depends on them),
+// but FREEZE it once the day's first game starts — no more re-ranking mid-slate.
+async function watchStarters(){try{
+  const endStr=ymd(etNow());
+  const d=await getJSON(`${API}/schedule?sportId=1&date=${endStr}&hydrate=probablePitcher`);
+  const gs=d?.dates?.[0]?.games||[];
+  const starts=gs.map(g=>Date.parse(g.gameDate)).filter(t=>!isNaN(t));
+  // Freeze the board ONE HOUR before the day's first pitch, not at first pitch.
+  const lockAt=starts.length?Math.min(...starts)-3600000:null;
+  const pastLock=lockAt!=null&&Date.now()>=lockAt;
+  if(endStr!==_lastDate){_lastDate=endStr;_lastProb=-1;_locked=false;} // new day → unlock & rebuild
+  if(_locked)return;                                                    // board frozen for the day
+  if(pastLock&&current.length){                                        // T-60min reached → lock the snapshot
+    _locked=true;status(`🔒 Board locked (1h before first pitch) — live ✅ results only · ${new Date().toLocaleTimeString()}`,"var(--yellow)");return;}
+  let prob=0;gs.forEach(g=>{if(g.teams?.home?.probablePitcher)prob++;if(g.teams?.away?.probablePitcher)prob++;});
+  if(prob>_lastProb){_lastProb=prob;await load();if(pastLock)_locked=true;} // opened past T-60 → build once, then lock
+}catch(e){}}
+watchStarters();                    // initial build + rebuild as starters post
+setInterval(watchStarters,900000);  // check for newly-posted starters every 15 min
+setInterval(pollResults,30000);     // live 1.5 H/R/RBI results every ~30s
 </script>
 </body>
 </html>
