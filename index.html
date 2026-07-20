@@ -61,7 +61,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 15 · LIVE BOX</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 16 · DUAL FEED</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -256,9 +256,18 @@ async function pollResults(){
           if(st&&pp.person?.id!=null&&((+st.gamesPlayed||0)>0||(+st.plateAppearances||0)>0||(+st.runs||0)>0))
             m[pp.person.id]=(+st.hits||0)+(+st.runs||0)+(+st.rbi||0);});});
     }catch(e){}},5);
+    // Backstop: if boxscores came back thin (proxy hiccup / shape change), fill
+    // any still-missing players from the aggregate daily feed so a covered
+    // player can never sit on pending because one source failed.
+    const missing=current.some(p=>m[p.id]==null&&p.g2&&p.g2.gameKey!=null&&pks.includes(p.g2.gameKey));
+    if(missing){try{
+      const d2=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${endStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
+      (d2?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null&&m[x.player.id]==null)m[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
+    }catch(e){}}
     current.forEach(p=>{if(m[p.id]!=null){p.todayHRR=m[p.id];p.cleared=m[p.id]>=2;}p.final=!!fin[p.teamId];});
     render(current);
-    status(`✓ live results · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
+    const reporting=current.filter(p=>p.todayHRR!=null).length;
+    status(`✓ live: ${reporting}/${current.length} players reporting · ${pks.length} games started · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){}
 }
 let _lastDate="",_lastProb=-1,_locked=false;
