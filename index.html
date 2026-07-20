@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 18 · SHARED + SP FORM</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 19 · REAL ODDS</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -96,18 +96,25 @@ let good=null;let current=[];
 // ── ROUND ROBIN LEDGER ──────────────────────────────────────────────────────
 // Top 7 picks → all C(7,2)=21 two-leg doubles. $1 per double to start; a
 // profitable day resets the stake to $1, a losing day bumps it 17%
-// (compounding). Legs assumed at -250 (1.40 decimal) — typical Over 1.5
-// H/R/RBI pricing. DNP legs are voids: the double pays as a single.
-const RR_N=7,RR_ODDS=1.40,RR_BUMP=1.17;
+// (compounding). Leg price is user-set american odds (default -110), frozen
+// per day at entry. DNP legs are voids: the double pays as a single.
+const RR_N=7,RR_BUMP=1.17,RR_DEF_ODDS=-110; // default leg price; editable in the banner
+// (-110 legs: 4-of-7 ≈ breakeven-positive, matching real Over 1.5 H+R+RBI books)
 let _rr=null;
-function rrLoad(){try{const r=JSON.parse(localStorage.getItem("parlaiy-rr")||"null");if(r&&r.days)return r;}catch(e){}return {stake:1,days:[]};}
+function amToDec(a){return a<0?1+100/(-a):1+a/100;}
+function rrLoad(){try{const r=JSON.parse(localStorage.getItem("parlaiy-rr")||"null");if(r&&r.days)return r;}catch(e){}return {stake:1,odds:RR_DEF_ODDS,days:[]};}
 function rrSave(){try{localStorage.setItem("parlaiy-rr",JSON.stringify(_rr));}catch(e){}}
-function rrPairPnl(a,b,stake){ // leg states: "win" | "loss" | "void"
+function rrPairPnl(a,b,stake,dec){ // leg states: "win" | "loss" | "void"
   if(a==="loss"||b==="loss")return -stake;
-  if(a==="win"&&b==="win")return stake*(RR_ODDS*RR_ODDS-1);
+  if(a==="win"&&b==="win")return stake*(dec*dec-1);
   if(a==="void"&&b==="void")return 0;                 // push
-  return stake*(RR_ODDS-1);                           // win + void → pays as single
+  return stake*(dec-1);                               // win + void → pays as single
 }
+function rrSetOdds(v){const n=parseInt(v,10);
+  if(!isFinite(n)||(n>-100&&n<100))return;            // american odds are ≤ -100 or ≥ +100
+  _rr.odds=n;const t=_rr.days.find(x=>x.date===slateYmd());
+  if(t&&!t.settled)t.odds=n;
+  rrSave();sharePush();rrBanner();}
 async function rrSettle(today){ // settle any past unsettled day from final stats
   for(const d of _rr.days){
     if(d.settled||d.date>=today||!d.ids||!d.ids.length)continue;
@@ -115,7 +122,8 @@ async function rrSettle(today){ // settle any past unsettled day from final stat
       const j=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${d.date}&endDate=${d.date}&sportId=1&limit=2000&gameType=R&playerPool=All`);
       const mm={};(j?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null)mm[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
       const legs=d.ids.map(id=>mm[id]==null?"void":(mm[id]>=2?"win":"loss"));
-      let pnl=0;for(let i=0;i<legs.length;i++)for(let k=i+1;k<legs.length;k++)pnl+=rrPairPnl(legs[i],legs[k],d.stake);
+      const dec=amToDec(d.odds||RR_DEF_ODDS);
+      let pnl=0;for(let i=0;i<legs.length;i++)for(let k=i+1;k<legs.length;k++)pnl+=rrPairPnl(legs[i],legs[k],d.stake,dec);
       d.pnl=Math.round(pnl*100)/100;d.legs=legs;d.settled=true;
       _rr.stake=d.pnl>0?1:Math.round(_rr.stake*RR_BUMP*100)/100;
     }catch(e){}
@@ -125,8 +133,8 @@ async function rrSettle(today){ // settle any past unsettled day from final stat
 function rrToday(today,picks){ // create/refresh today's entry (pre-lock only changes)
   let d=_rr.days.find(x=>x.date===today);
   const ids=picks.map(p=>p.id);
-  if(!d){d={date:today,ids,stake:_rr.stake,settled:false};_rr.days.push(d);}
-  else if(!d.settled){d.ids=ids;d.stake=_rr.stake;}
+  if(!d){d={date:today,ids,stake:_rr.stake,odds:_rr.odds||RR_DEF_ODDS,settled:false};_rr.days.push(d);}
+  else if(!d.settled){d.ids=ids;d.stake=_rr.stake;d.odds=_rr.odds||RR_DEF_ODDS;}
   rrSave();return d;
 }
 function rrBanner(){
@@ -139,11 +147,13 @@ function rrBanner(){
     if(p.cleared)return "win";
     if(p.final)return p.todayHRR==null?"void":"loss";
     return "pend";});
+  if(document.activeElement&&document.activeElement.id==="rr-odds")return; // don't clobber mid-edit
+  const dec=amToDec(d.odds||RR_DEF_ODDS);
   let won=0,lost=0,open=0,pnl=0;
   for(let i=0;i<legs.length;i++)for(let k=i+1;k<legs.length;k++){
     const a=legs[i],b=legs[k];
     if(a==="pend"||b==="pend"){open++;continue;}
-    const v=rrPairPnl(a,b,d.stake);pnl+=v;
+    const v=rrPairPnl(a,b,d.stake,dec);pnl+=v;
     if(v>=0)won++;else lost++;
   }
   const combos=d.ids.length*(d.ids.length-1)/2;
@@ -153,7 +163,8 @@ function rrBanner(){
     🎰 <b class="st">$${d.stake.toFixed(2)}</b> per double · ${combos} doubles · total outlay <b>$${(combos*d.stake).toFixed(2)}</b>
     &nbsp;·&nbsp; <span class="pill pw">WON ${won}</span><span class="pill pl">LOST ${lost}</span><span class="pill po">OPEN ${open}</span>
     settled P/L <b style="color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?"+":""}$${pnl.toFixed(2)}</b>
-    <div style="color:var(--muted);font-size:11px">${prevTxt} · legs priced at -250 · DNP = void (double pays as single)</div>
+    &nbsp;·&nbsp; LEG ODDS <input id="rr-odds" value="${d.odds||RR_DEF_ODDS}" onchange="rrSetOdds(this.value)" style="width:58px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:12px;padding:3px 6px;text-align:center">
+    <div style="color:var(--muted);font-size:11px">${prevTxt} · set LEG ODDS to your book's Over 1.5 H+R+RBI price (default −110) · DNP = void (double pays as single)</div>
   </div>`;
 }
 // ── SHARED STORE (all devices see the same list + stake) ────────────────────
@@ -336,7 +347,7 @@ function render(list,s,e){
       <td>${resChip(p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs assumed −250; DNP legs void. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's price (editable in the banner, default −110 — at that price 4-of-7 is roughly breakeven, 5+ is profit); DNP legs void. ⚠ Watchlist only — not betting advice.`;
   rrBanner();
 }
 // ~30s live poll straight from each game's BOXSCORE — the aggregate stats feed
