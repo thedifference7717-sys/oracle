@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 17 · RR + RUNS</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 18 · SHARED + SP FORM</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -88,6 +88,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </div>
 <div class="legend" id="legend"></div>
 
+<script src="store-id.js"></script>
 <script>
 const API="https://statsapi.mlb.com/api/v1";
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
@@ -155,6 +156,19 @@ function rrBanner(){
     <div style="color:var(--muted);font-size:11px">${prevTxt} · legs priced at -250 · DNP = void (double pays as single)</div>
   </div>`;
 }
+// ── SHARED STORE (all devices see the same list + stake) ────────────────────
+async function shareGet(){if(!window.SHARED_STORE)return null;try{const r=await fetch(window.SHARED_STORE,{headers:{Accept:"application/json"}});if(!r.ok)return null;return (await r.json())?.parlaiy||null;}catch(e){return null;}}
+async function sharePush(){if(!window.SHARED_STORE)return;try{
+  const r=await fetch(window.SHARED_STORE,{headers:{Accept:"application/json"}});
+  const b=(r.ok?await r.json():null)||{};
+  let snap=null;try{snap=JSON.parse(localStorage.getItem("parlaiy-snap")||"null");}catch(e){}
+  b.parlaiy={snap,rr:_rr,updated:new Date().toISOString()};
+  await fetch(window.SHARED_STORE,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});
+}catch(e){}}
+// Prefer whichever ledger has settled more days (i.e., knows more history).
+function pickRR(a,b){if(!a||!a.days)return b;if(!b||!b.days)return a;
+  const sa=a.days.filter(d=>d.settled).length,sb=b.days.filter(d=>d.settled).length;
+  if(sa!==sb)return sa>sb?a:b;return a.days.length>=b.days.length?a:b;}
 // ────────────────────────────────────────────────────────────────────────────
 async function getJSON(url){const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}throw e||new Error("unreachable");}
 async function pool(items,fn,size,onTick){const out=new Array(items.length);let i=0,done=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}done++;onTick&&onTick(done,items.length);}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
@@ -187,10 +201,15 @@ async function load(){
     // than rebuilding — the board physically cannot change after the lock.
     const _starts=games.map(g=>Date.parse(g.gameDate)).filter(t=>!isNaN(t));
     const _pastLock=_starts.length?Date.now()>=Math.min(..._starts)-3600000:false;
-    if(_pastLock){try{const sn=JSON.parse(localStorage.getItem("parlaiy-snap")||"null");
-      if(sn&&sn.date===endStr&&sn.list&&sn.list.length){current=sn.list;
-        _rr=_rr||rrLoad();await rrSettle(endStr);rrToday(endStr,topPicks(current));
-        render(current);
+    if(_pastLock){try{
+      let sn=null;try{sn=JSON.parse(localStorage.getItem("parlaiy-snap")||"null");}catch(e){}
+      const ok=s=>s&&s.date===endStr&&s.list&&s.list.length;
+      const shared=await shareGet(); // other devices' locked list + stake ledger
+      if(!ok(sn)&&ok(shared?.snap)){sn=shared.snap;try{localStorage.setItem("parlaiy-snap",JSON.stringify(sn));}catch(e){}}
+      _rr=pickRR(shared?.rr,_rr||rrLoad());rrSave();
+      if(ok(sn)){current=sn.list;
+        await rrSettle(endStr);rrToday(endStr,topPicks(current));
+        render(current);sharePush();
         status(`🔒 Locked — today's list (set 1h before first pitch) · live results only`,"var(--yellow)");pollResults();return;}}catch(e){}}
     const byTeam={};
     games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away,gk=g.gamePk;
@@ -227,35 +246,44 @@ async function load(){
     // SP batting-avg-against computed from game logs THROUGH YESTERDAY — a
     // pitcher's season BAA updates live while he pitches, which would make a
     // mid-game rebuild score differently. Falls back to season BAA if logs thin.
+    // Also grabs his LAST 3 STARTS' BAA to catch pitchers in hot form.
     await pool(spIds,async pid=>{try{
       const d=await getJSON(`${API}/people/${pid}/stats?stats=gameLog&group=pitching&season=${season}&gameType=R`);
-      let hits=0,ab=0;(d?.stats?.[0]?.splits||[]).forEach(x=>{if(x.stat&&x.date&&x.date<=rankEndStr){hits+=(+x.stat.hits||0);ab+=(+x.stat.atBats||0);}});
-      if(ab>=30){baaMap[pid]=hits/ab;return;}
+      const gsp=(d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date<=rankEndStr);
+      let hits=0,ab=0;gsp.forEach(x=>{hits+=(+x.stat.hits||0);ab+=(+x.stat.atBats||0);});
+      let rh=0,rab=0;gsp.slice(-3).forEach(x=>{rh+=(+x.stat.hits||0);rab+=(+x.stat.atBats||0);});
+      const rec=rab>=15?rh/rab:null;
+      if(ab>=30){baaMap[pid]={s:hits/ab,r:rec};return;}
       const d2=await getJSON(`${API}/people/${pid}/stats?stats=season&group=pitching&season=${season}&gameType=R`);
-      const st=d2?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]=parseFloat(st.avg);
+      const st=d2?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]={s:parseFloat(st.avg),r:rec};
     }catch(e){}},6);
-    cand.forEach(p=>{p.baa=(p.g2.spId!=null&&baaMap[p.g2.spId]!=null)?baaMap[p.g2.spId]:null;});
+    cand.forEach(p=>{const bm=(p.g2.spId!=null)?baaMap[p.g2.spId]:null;p.baa=bm?bm.s:null;p.rbaa=bm&&bm.r!=null?bm.r:null;});
     // Tightened filters: must be genuinely hot (5+ games with 2+ H/R/RBI in the
-    // last 14) and not staring down an elite SP (BAA ≤ .215).
-    cand=cand.filter(p=>p.hotG>=5 && !(p.baa!=null&&p.baa<=0.215));
+    // last 14), and never against a quality SP — season BAA ≤ .215 OR a
+    // pitcher holding hitters to ≤ .200 over his last 3 starts.
+    cand=cand.filter(p=>p.hotG>=5 && !(p.baa!=null&&p.baa<=0.215) && !(p.rbaa!=null&&p.rbaa<=0.200));
     if(!cand.length){status(`No hitters pass the hot-bat + matchup filters today.`,"var(--yellow)");renderEmpty();return;}
     // SCORE = 50% hot bat (2+games 35 / AVG 25 / HR 15 / RBI 12.5 / R 12.5) + 50% matchup (SP BAA 70 / park 30)
     na=nrm(cand,"avg");nh=nrm(cand,"hr");nr=nrm(cand,"rbi");nru=nrm(cand,"runs");const ng=nrm(cand,"hotG");
-    const bArr=cand.map(p=>p.baa).filter(v=>v!=null);const bMin=bArr.length?Math.min(...bArr):0.22,bMax=bArr.length?Math.max(...bArr):0.28;
+    // Matchup uses a form-weighted BAA: 60% season, 40% last-3-starts, so an
+    // SP trending hot drags the matchup down even above the hard filter line.
+    cand.forEach(p=>{p.effBaa=p.baa!=null?(p.rbaa!=null?0.6*p.baa+0.4*p.rbaa:p.baa):null;});
+    const bArr=cand.map(p=>p.effBaa).filter(v=>v!=null);const bMin=bArr.length?Math.min(...bArr):0.22,bMax=bArr.length?Math.max(...bArr):0.28;
     const pArr=cand.map(p=>p.park);const pkMin=Math.min(...pArr),pkMax=Math.max(...pArr);
     cand.forEach(p=>{const hot=0.35*ng(p)+0.25*na(p)+0.15*nh(p)+0.125*nr(p)+0.125*nru(p);
-      const nb=(p.baa!=null&&bMax>bMin)?(p.baa-bMin)/(bMax-bMin):0.5;
+      const nb=(p.effBaa!=null&&bMax>bMin)?(p.effBaa-bMin)/(bMax-bMin):0.5;
       const npk=pkMax>pkMin?(p.park-pkMin)/(pkMax-pkMin):0.5;const mu=0.7*nb+0.3*npk;
       p.hotN=Math.round(hot*100);p.muN=Math.round(mu*100);p.score=Math.round((0.5*hot+0.5*mu)*100);});
     cand.sort((a,b)=>b.score-a.score);
 
     setProg(100);setTimeout(()=>setProg(0),300);
     current=cand;
-    _rr=_rr||rrLoad();await rrSettle(endStr);rrToday(endStr,topPicks(cand));
+    _rr=pickRR((await shareGet())?.rr,_rr||rrLoad());await rrSettle(endStr);rrToday(endStr,topPicks(cand));
     render(cand,startStr,rankEndStr);
     // Persist today's list so a page reload (iOS refreshes suspended tabs)
     // restores the exact same board instead of rebuilding it mid-slate.
-    try{localStorage.setItem("parlaiy-snap",JSON.stringify({date:endStr,list:cand.map(p=>({id:p.id,name:p.name,team:p.team,teamId:p.teamId,pos:p.pos,avg:p.avg,hr:p.hr,rbi:p.rbi,runs:p.runs,hotG:p.hotG,g2:p.g2,park:p.park,baa:p.baa,hotN:p.hotN,muN:p.muN,score:p.score}))}));}catch(e){}
+    try{localStorage.setItem("parlaiy-snap",JSON.stringify({date:endStr,list:cand.map(p=>({id:p.id,name:p.name,team:p.team,teamId:p.teamId,pos:p.pos,avg:p.avg,hr:p.hr,rbi:p.rbi,runs:p.runs,hotG:p.hotG,g2:p.g2,park:p.park,baa:p.baa,rbaa:p.rbaa,hotN:p.hotN,muN:p.muN,score:p.score}))}));}catch(e){}
+    sharePush(); // publish the list + stake ledger so every device matches
     status(`✓ ${cand.length} hot hitters in action · 14 days thru ${rankEndStr} · ${new Date().toLocaleTimeString()}`,"var(--green)");
     pollResults();
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
@@ -288,7 +316,7 @@ function render(list,s,e){
         <div class="pc-box"><div class="pc-v" style="color:var(--blue)">${p.runs||0}</div><div class="pc-l">R</div></div>
         <div class="pc-box"><div class="pc-v" style="color:var(--purple)">${p.hotG}</div><div class="pc-l">2+ G</div></div>
       </div>
-      <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3).replace(/^0/,""):""} · Park ${p.park}</span><div style="margin-top:6px;font-size:11px"><span style="color:var(--orange)">HOT ${p.hotN}</span> · <span style="color:${p.muN>=60?'var(--green)':p.muN>=40?'var(--yellow)':'var(--red)'}">MATCH ${p.muN}</span> · <b style="color:var(--green)">SCORE ${p.score}</b></div></div>
+      <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3).replace(/^0/,""):""}${p.rbaa!=null?" · L3 "+p.rbaa.toFixed(3).replace(/^0/,""):""} · Park ${p.park}</span><div style="margin-top:6px;font-size:11px"><span style="color:var(--orange)">HOT ${p.hotN}</span> · <span style="color:${p.muN>=60?'var(--green)':p.muN>=40?'var(--yellow)':'var(--red)'}">MATCH ${p.muN}</span> · <b style="color:var(--green)">SCORE ${p.score}</b></div></div>
     </div>`).join("")||'<div class="empty">No hot hitters in action.</div>';
 
   document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","R","2+","OPP / SP","SP BAA","PARK","SCORE","1.5 HRR"].map((h,i)=>`<th class="${[2,3,4,5,6,8,9,10].includes(i)?'num':''}">${h}</th>`).join("");
@@ -308,7 +336,7 @@ function render(list,s,e){
       <td>${resChip(p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · not facing an elite SP (BAA ≤ .215) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs assumed −250; DNP legs void. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs assumed −250; DNP legs void. ⚠ Watchlist only — not betting advice.`;
   rrBanner();
 }
 // ~30s live poll straight from each game's BOXSCORE — the aggregate stats feed
@@ -362,16 +390,13 @@ async function watchStarters(){try{
   const pastLock=lockAt!=null&&Date.now()>=lockAt;
   if(endStr!==_lastDate){_lastDate=endStr;_lastProb=-1;_locked=false;} // new day → unlock & rebuild
   if(_locked)return;                                                    // board frozen for the day
-  if(pastLock&&!current.length){                                       // fresh page open past T-60 →
-    try{const sn=JSON.parse(localStorage.getItem("parlaiy-snap")||"null"); // restore today's saved list
-      if(sn&&sn.date===endStr&&sn.list&&sn.list.length){current=sn.list;
-        _rr=_rr||rrLoad();await rrSettle(endStr);rrToday(endStr,topPicks(current));
-        render(current);_locked=true;
-        status(`🔒 Board locked (1h before first pitch) — today's list restored · live results only`,"var(--yellow)");pollResults();return;}}catch(e){}}
-  if(pastLock&&current.length){                                        // T-60min reached → lock the snapshot
-    _locked=true;status(`🔒 Board locked (1h before first pitch) — live results only · ${new Date().toLocaleTimeString()}`,"var(--yellow)");return;}
+  if(pastLock){                                                        // past T-60min → load() itself
+    if(!current.length)await load();                                   // restores (shared/local) or builds once
+    _locked=true;
+    if(current.length)status(`🔒 Board locked (1h before first pitch) — live results only · ${new Date().toLocaleTimeString()}`,"var(--yellow)");
+    return;}
   let prob=0;gs.forEach(g=>{if(g.teams?.home?.probablePitcher)prob++;if(g.teams?.away?.probablePitcher)prob++;});
-  if(prob>_lastProb){_lastProb=prob;await load();if(pastLock)_locked=true;} // opened past T-60 → build once, then lock
+  if(prob>_lastProb){_lastProb=prob;await load();}                      // starters posted → rebuild (pre-lock only)
 }catch(e){}}
 watchStarters();                    // initial build + rebuild as starters post
 setInterval(watchStarters,900000);  // check for newly-posted starters every 15 min
