@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 19 · REAL ODDS</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 20 · 2.5 LINE</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -76,7 +76,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="status"></div>
 
-<div class="section-h">🔥 TOP 7 ROUND ROBIN — 1 player per game · 21 doubles · 🟩 green = cleared 1.5 H/R/RBI · 🟥 red = game over, missed</div>
+<div class="section-h">🔥 TOP 7 ROUND ROBIN — 1 player per game · 21 doubles · 🟩 green = cleared 2.5 H/R/RBI · 🟥 red = game over, missed</div>
 <div id="rr"></div>
 <div class="parlay" id="parlay"></div>
 
@@ -98,8 +98,8 @@ let good=null;let current=[];
 // profitable day resets the stake to $1, a losing day bumps it 17%
 // (compounding). Leg price is user-set american odds (default -110), frozen
 // per day at entry. DNP legs are voids: the double pays as a single.
-const RR_N=7,RR_BUMP=1.17,RR_DEF_ODDS=-110; // default leg price; editable in the banner
-// (-110 legs: 4-of-7 ≈ breakeven-positive, matching real Over 1.5 H+R+RBI books)
+const RR_N=7,RR_BUMP=1.17,RR_LINE=3,RR_DEF_ODDS=130; // Over 2.5 H+R+RBI → needs 3+; default +130, editable
+// (+130 legs: 4-of-7 comfortably positive; 3-of-7 slightly down)
 let _rr=null;
 function amToDec(a){return a<0?1+100/(-a):1+a/100;}
 function rrLoad(){try{const r=JSON.parse(localStorage.getItem("parlaiy-rr")||"null");if(r&&r.days)return r;}catch(e){}return {stake:1,odds:RR_DEF_ODDS,days:[]};}
@@ -121,7 +121,7 @@ async function rrSettle(today){ // settle any past unsettled day from final stat
     try{
       const j=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${d.date}&endDate=${d.date}&sportId=1&limit=2000&gameType=R&playerPool=All`);
       const mm={};(j?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null)mm[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
-      const legs=d.ids.map(id=>mm[id]==null?"void":(mm[id]>=2?"win":"loss"));
+      const legs=d.ids.map(id=>mm[id]==null?"void":(mm[id]>=(d.line||2)?"win":"loss")); // legacy 1.5-line days settle at 2
       const dec=amToDec(d.odds||RR_DEF_ODDS);
       let pnl=0;for(let i=0;i<legs.length;i++)for(let k=i+1;k<legs.length;k++)pnl+=rrPairPnl(legs[i],legs[k],d.stake,dec);
       d.pnl=Math.round(pnl*100)/100;d.legs=legs;d.settled=true;
@@ -131,10 +131,13 @@ async function rrSettle(today){ // settle any past unsettled day from final stat
   _rr.days=_rr.days.slice(-30);rrSave();
 }
 function rrToday(today,picks){ // create/refresh today's entry (pre-lock only changes)
+  // One-time migration to the 2.5 line: odds saved under the old 1.5 line
+  // don't apply, so reset to the new default (still editable).
+  if(_rr.lineV!==RR_LINE){_rr.lineV=RR_LINE;_rr.odds=RR_DEF_ODDS;}
   let d=_rr.days.find(x=>x.date===today);
   const ids=picks.map(p=>p.id);
-  if(!d){d={date:today,ids,stake:_rr.stake,odds:_rr.odds||RR_DEF_ODDS,settled:false};_rr.days.push(d);}
-  else if(!d.settled){d.ids=ids;d.stake=_rr.stake;d.odds=_rr.odds||RR_DEF_ODDS;}
+  if(!d){d={date:today,ids,stake:_rr.stake,odds:_rr.odds||RR_DEF_ODDS,line:RR_LINE,settled:false};_rr.days.push(d);}
+  else if(!d.settled){d.ids=ids;d.stake=_rr.stake;d.odds=_rr.odds||RR_DEF_ODDS;d.line=RR_LINE;}
   rrSave();return d;
 }
 function rrBanner(){
@@ -164,7 +167,7 @@ function rrBanner(){
     &nbsp;·&nbsp; <span class="pill pw">WON ${won}</span><span class="pill pl">LOST ${lost}</span><span class="pill po">OPEN ${open}</span>
     settled P/L <b style="color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?"+":""}$${pnl.toFixed(2)}</b>
     &nbsp;·&nbsp; LEG ODDS <input id="rr-odds" value="${d.odds||RR_DEF_ODDS}" onchange="rrSetOdds(this.value)" style="width:58px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:12px;padding:3px 6px;text-align:center">
-    <div style="color:var(--muted);font-size:11px">${prevTxt} · set LEG ODDS to your book's Over 1.5 H+R+RBI price (default −110) · DNP = void (double pays as single)</div>
+    <div style="color:var(--muted);font-size:11px">${prevTxt} · set LEG ODDS to your book's Over 2.5 H+R+RBI price (default +130) · DNP = void (double pays as single)</div>
   </div>`;
 }
 // ── SHARED STORE (all devices see the same list + stake) ────────────────────
@@ -246,9 +249,9 @@ async function load(){
     pool0.sort((a,b)=>b.pre-a.pre);
     let cand=pool0.slice(0,40);
 
-    status('<span class="spin">⟳</span> Counting 2+ H/R/RBI games…');
+    status('<span class="spin">⟳</span> Counting 3+ H/R/RBI games…');
     const logs=await pool(cand,async p=>{const d=await getJSON(`${API}/people/${p.id}/stats?stats=gameLog&group=hitting&season=${season}&gameType=R`);return (d?.stats?.[0]?.splits||[]).filter(x=>x.stat&&x.date&&x.date>=startStr&&x.date<=rankEndStr);},6,(done,total)=>setProg(30+Math.round(done/total*60)));
-    cand.forEach((p,i)=>{let hot=0;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=2)hot++;});p.hotG=hot;p.todayHRR=null;p.cleared=false;p.final=false;});
+    cand.forEach((p,i)=>{let hot=0;(logs[i]||[]).forEach(gm=>{const c=(+gm.stat.hits||0)+(+gm.stat.runs||0)+(+gm.stat.rbi||0);if(c>=RR_LINE)hot++;});p.hotG=hot;p.todayHRR=null;p.cleared=false;p.final=false;});
 
     // opposing starter hittability (batting-avg-against) for the matchup focus
     cand.forEach(p=>{p.g2=byTeam[p.teamId];p.park=park(p.g2.venue);});
@@ -269,12 +272,12 @@ async function load(){
       const st=d2?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]={s:parseFloat(st.avg),r:rec};
     }catch(e){}},6);
     cand.forEach(p=>{const bm=(p.g2.spId!=null)?baaMap[p.g2.spId]:null;p.baa=bm?bm.s:null;p.rbaa=bm&&bm.r!=null?bm.r:null;});
-    // Tightened filters: must be genuinely hot (5+ games with 2+ H/R/RBI in the
-    // last 14), and never against a quality SP — season BAA ≤ .215 OR a
-    // pitcher holding hitters to ≤ .200 over his last 3 starts.
-    cand=cand.filter(p=>p.hotG>=5 && !(p.baa!=null&&p.baa<=0.215) && !(p.rbaa!=null&&p.rbaa<=0.200));
+    // Tightened filters: must be genuinely hot (4+ games with 3+ H/R/RBI in the
+    // last 14 — the 2.5-line equivalent of the old 5-of-14 rule), and never
+    // against a quality SP — season BAA ≤ .215 OR ≤ .200 over his last 3 starts.
+    cand=cand.filter(p=>p.hotG>=4 && !(p.baa!=null&&p.baa<=0.215) && !(p.rbaa!=null&&p.rbaa<=0.200));
     if(!cand.length){status(`No hitters pass the hot-bat + matchup filters today.`,"var(--yellow)");renderEmpty();return;}
-    // SCORE = 50% hot bat (2+games 35 / AVG 25 / HR 15 / RBI 12.5 / R 12.5) + 50% matchup (SP BAA 70 / park 30)
+    // SCORE = 50% hot bat (3+games 35 / AVG 25 / HR 15 / RBI 12.5 / R 12.5) + 50% matchup (SP BAA 70 / park 30)
     na=nrm(cand,"avg");nh=nrm(cand,"hr");nr=nrm(cand,"rbi");nru=nrm(cand,"runs");const ng=nrm(cand,"hotG");
     // Matchup uses a form-weighted BAA: 60% season, 40% last-3-starts, so an
     // SP trending hot drags the matchup down even above the hard filter line.
@@ -311,12 +314,12 @@ function topPicks(list){
 }
 function render(list,s,e){
   const top=topPicks(list);
-  // Card background = the result: green once the player clears 1.5 H/R/RBI,
+  // Card background = the result: green once the player clears 2.5 H/R/RBI,
   // red when his game goes final without it, neutral while pending/in progress.
   const outcome=p=>p.cleared?"win":(p.final?"loss":"");
-  const resChip=p=>p.cleared?'<span class="chip ok">'+p.todayHRR+'/2</span>'
-    :p.final?'<span class="chip lose">'+(p.todayHRR==null?'DNP':p.todayHRR+'/2')+'</span>'
-    :p.todayHRR==null?'<span class="chip pend">⏳</span>':'<span class="chip miss">'+p.todayHRR+'/2</span>';
+  const resChip=p=>p.cleared?'<span class="chip ok">'+p.todayHRR+'/'+RR_LINE+'</span>'
+    :p.final?'<span class="chip lose">'+(p.todayHRR==null?'DNP':p.todayHRR+'/'+RR_LINE)+'</span>'
+    :p.todayHRR==null?'<span class="chip pend">⏳</span>':'<span class="chip miss">'+p.todayHRR+'/'+RR_LINE+'</span>';
   document.getElementById("parlay").innerHTML=top.map((p,i)=>`
     <div class="pcard ${outcome(p)}">
       <div class="pc-top"><div class="pc-rank">${i+1}</div><div style="flex:1;min-width:0"><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div>${resChip(p)}</div>
@@ -325,12 +328,12 @@ function render(list,s,e){
         <div class="pc-box"><div class="pc-v" style="color:var(--orange)">${p.hr}</div><div class="pc-l">HR</div></div>
         <div class="pc-box"><div class="pc-v" style="color:var(--green)">${p.rbi}</div><div class="pc-l">RBI</div></div>
         <div class="pc-box"><div class="pc-v" style="color:var(--blue)">${p.runs||0}</div><div class="pc-l">R</div></div>
-        <div class="pc-box"><div class="pc-v" style="color:var(--purple)">${p.hotG}</div><div class="pc-l">2+ G</div></div>
+        <div class="pc-box"><div class="pc-v" style="color:var(--purple)">${p.hotG}</div><div class="pc-l">3+ G</div></div>
       </div>
       <div class="pc-mu">${p.g2.isHome?"vs":"@"} <b>${p.g2.opp||"TBD"}</b> · <span class="d">${p.g2.sp||"SP TBD"}${p.baa!=null?" · BAA "+p.baa.toFixed(3).replace(/^0/,""):""}${p.rbaa!=null?" · L3 "+p.rbaa.toFixed(3).replace(/^0/,""):""} · Park ${p.park}</span><div style="margin-top:6px;font-size:11px"><span style="color:var(--orange)">HOT ${p.hotN}</span> · <span style="color:${p.muN>=60?'var(--green)':p.muN>=40?'var(--yellow)':'var(--red)'}">MATCH ${p.muN}</span> · <b style="color:var(--green)">SCORE ${p.score}</b></div></div>
     </div>`).join("")||'<div class="empty">No hot hitters in action.</div>';
 
-  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","R","2+","OPP / SP","SP BAA","PARK","SCORE","1.5 HRR"].map((h,i)=>`<th class="${[2,3,4,5,6,8,9,10].includes(i)?'num':''}">${h}</th>`).join("");
+  document.getElementById("thead").innerHTML=["#","PLAYER","AVG","HR","RBI","R","3+","OPP / SP","SP BAA","PARK","SCORE","2.5 HRR"].map((h,i)=>`<th class="${[2,3,4,5,6,8,9,10].includes(i)?'num':''}">${h}</th>`).join("");
   document.getElementById("tbody").innerHTML=list.map((p,i)=>`
     <tr class="${outcome(p)}">
       <td class="num" style="color:var(--dim)">${i+1}</td>
@@ -347,12 +350,12 @@ function render(list,s,e){
       <td>${resChip(p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 2+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 5+ games with 2+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 2+ (Over 1.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/2</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's price (editable in the banner, default −110 — at that price 4-of-7 is roughly breakeven, 5+ is profit); DNP legs void. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 3+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 4+ games with 3+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 3+ (Over 2.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/3</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's Over 2.5 price (editable in the banner, default +130 — 4-of-7 is solidly positive there); DNP legs void. ⚠ Watchlist only — not betting advice.`;
   rrBanner();
 }
 // ~30s live poll straight from each game's BOXSCORE — the aggregate stats feed
 // lags until games end, which left covered players stuck on ⏳. Boxscores
-// update pitch-by-pitch, so green shows the moment a player clears 1.5 H/R/RBI.
+// update pitch-by-pitch, so green shows the moment a player clears 2.5 H/R/RBI.
 async function pollResults(){
   if(!current.length)return;
   try{
@@ -382,7 +385,7 @@ async function pollResults(){
       const d2=await getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${endStr}&endDate=${endStr}&sportId=1&limit=2000&gameType=R&playerPool=All`);
       (d2?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null&&m[x.player.id]==null)m[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
     }catch(e){}}
-    current.forEach(p=>{if(m[p.id]!=null){p.todayHRR=m[p.id];p.cleared=m[p.id]>=2;}p.final=!!fin[p.teamId];});
+    current.forEach(p=>{if(m[p.id]!=null){p.todayHRR=m[p.id];p.cleared=m[p.id]>=RR_LINE;}p.final=!!fin[p.teamId];});
     render(current);
     const reporting=current.filter(p=>p.todayHRR!=null).length;
     status(`✓ live: ${reporting}/${current.length} players reporting · ${pks.length} games started · updated ${new Date().toLocaleTimeString()}`,"var(--green)");
@@ -411,7 +414,7 @@ async function watchStarters(){try{
 }catch(e){}}
 watchStarters();                    // initial build + rebuild as starters post
 setInterval(watchStarters,900000);  // check for newly-posted starters every 15 min
-setInterval(pollResults,30000);     // live 1.5 H/R/RBI results every ~30s
+setInterval(pollResults,30000);     // live 2.5 H/R/RBI results every ~30s
 </script>
 </body>
 </html>
