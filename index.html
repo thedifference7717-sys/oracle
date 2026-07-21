@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 22 · DH/PPD FIX</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 23 · PPD SUB</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -226,7 +226,8 @@ async function load(){
         render(current);sharePush();
         status(`🔒 Locked — today's list (set 1h before first pitch) · live results only`,"var(--yellow)");pollResults();return;}}catch(e){}}
     const byTeam={};
-    games.forEach(g=>{const v=g.venue?.name,h=g.teams.home,a=g.teams.away,gk=g.gamePk;
+    games.forEach(g=>{if(/postpon|suspend|cancel/i.test(g.status?.detailedState||""))return; // PPD games never seed picks
+      const v=g.venue?.name,h=g.teams.home,a=g.teams.away,gk=g.gamePk;
       byTeam[h.team.id]={opp:a.team?.abbreviation||a.team?.name,isHome:true,venue:v,sp:a.probablePitcher?.fullName,spId:a.probablePitcher?.id,gameKey:gk};
       byTeam[a.team.id]={opp:h.team?.abbreviation||h.team?.name,isHome:false,venue:v,sp:h.probablePitcher?.fullName,spId:h.probablePitcher?.id,gameKey:gk};});
 
@@ -310,14 +311,16 @@ function renderEmpty(){document.getElementById("parlay").innerHTML="";document.g
 // legs), highest score first, capped at RR_N.
 function topPicks(list){
   const seenG=new Set();
-  return list.filter(p=>{const gk=(p.g2&&p.g2.gameKey!=null)?p.g2.gameKey:("t"+p.teamId);if(seenG.has(gk))return false;seenG.add(gk);return true;}).slice(0,RR_N);
+  return list.filter(p=>{if(p.ppd)return false; // PPD → dropped, next best slides in
+    const gk=(p.g2&&p.g2.gameKey!=null)?p.g2.gameKey:("t"+p.teamId);if(seenG.has(gk))return false;seenG.add(gk);return true;}).slice(0,RR_N);
 }
 function render(list,s,e){
   const top=topPicks(list);
   // Card background = the result: green once the player clears 2.5 H/R/RBI,
   // red when his game goes final without it, neutral while pending/in progress.
-  const outcome=p=>p.cleared?"win":(p.final?"loss":"");
-  const resChip=p=>p.cleared?'<span class="chip ok">💣 '+p.todayHRR+'/'+RR_LINE+'</span>'
+  const outcome=p=>p.ppd?"":p.cleared?"win":(p.final?"loss":"");
+  const resChip=p=>p.ppd?'<span class="chip pend">☔ PPD</span>'
+    :p.cleared?'<span class="chip ok">💣 '+p.todayHRR+'/'+RR_LINE+'</span>'
     :p.final?'<span class="chip lose">💀 '+(p.todayHRR==null?'DNP':p.todayHRR+'/'+RR_LINE)+'</span>'
     :p.todayHRR==null?'<span class="chip pend">⏳</span>':'<span class="chip miss">'+p.todayHRR+'/'+RR_LINE+'</span>';
   document.getElementById("parlay").innerHTML=top.map((p,i)=>`
@@ -350,7 +353,7 @@ function render(list,s,e){
       <td>${resChip(p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 3+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 4+ games with 3+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">💣 GREEN card</b> = cleared 3+ (Over 2.5) combined H/R/RBI today · <b style="color:var(--red)">💀 RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/3</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's Over 2.5 price (editable in the banner, default +130 — 4-of-7 is solidly positive there); DNP legs void. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 3+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 4+ games with 3+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">💣 GREEN card</b> = cleared 3+ (Over 2.5) combined H/R/RBI today · <b style="color:var(--red)">💀 RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/3</b> = live count · <b>☔ PPD</b> = game postponed — dropped from the top 7, next best slides in. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's Over 2.5 price (editable in the banner, default +130 — 4-of-7 is solidly positive there); DNP legs void. ⚠ Watchlist only — not betting advice.`;
   rrBanner();
 }
 // ~30s live poll straight from each game's BOXSCORE — the aggregate stats feed
@@ -371,6 +374,11 @@ async function pollResults(){
     const fin={};
     gs.forEach(g=>{if(isPPD(g))return;const f=isFin(g);
       [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(t=>{if(t!=null)fin[t]=(t in fin)?(fin[t]&&f):f;});});
+    // A pick whose team has NO remaining non-postponed game today is PPD:
+    // dropped from the top 7 (next-best pick slides in), leg never risked.
+    const liveTeams=new Set();
+    gs.forEach(g=>{if(isPPD(g))return;[g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(t=>{if(t!=null)liveTeams.add(t);});});
+    current.forEach(p=>{p.ppd=!liveTeams.has(p.teamId);});
     // Pull boxscores for every started game involving a tracked player's TEAM
     // (both ends of a doubleheader), summing a player's H+R+RBI across them.
     const teams=new Set(current.map(p=>p.teamId).filter(v=>v!=null));
@@ -392,6 +400,9 @@ async function pollResults(){
       (d2?.stats?.[0]?.splits||[]).forEach(x=>{if(x.player?.id!=null&&m[x.player.id]==null)m[x.player.id]=(+x.stat?.hits||0)+(+x.stat?.runs||0)+(+x.stat?.rbi||0);});
     }catch(e){}}
     current.forEach(p=>{if(m[p.id]!=null){p.todayHRR=m[p.id];p.cleared=m[p.id]>=RR_LINE;}p.final=!!fin[p.teamId];});
+    // Refresh today's round-robin legs so a PPD substitution flows into the
+    // ledger (only while the day is unsettled).
+    if(_rr){const t=_rr.days.find(x=>x.date===endStr);if(t&&!t.settled)rrToday(endStr,topPicks(current));}
     render(current);
     const reporting=current.filter(p=>p.todayHRR!=null).length;
     status(`✓ live: ${reporting}/${current.length} players reporting · ${pks.length} games started · updated ${new Date().toLocaleTimeString()}`,"var(--green)");

@@ -63,6 +63,7 @@ async function computeList(endStr, games) {
 
   const byTeam = {};
   games.forEach(g => {
+    if (/postpon|suspend|cancel/i.test(g.status?.detailedState || "")) return; // PPD games never seed picks
     const v = g.venue?.name, h = g.teams.home, a = g.teams.away, gk = g.gamePk;
     byTeam[h.team.id] = { opp: a.team?.abbreviation || a.team?.name, isHome: true, venue: v, sp: a.probablePitcher?.fullName, spId: a.probablePitcher?.id, gameKey: gk };
     byTeam[a.team.id] = { opp: h.team?.abbreviation || h.team?.name, isHome: false, venue: v, sp: h.probablePitcher?.fullName, spId: h.probablePitcher?.id, gameKey: gk };
@@ -145,7 +146,12 @@ async function main() {
     if (snap) { P.snap = snap; changed = true; }
   }
   if (!snap) { console.log("Could not produce a list."); return; }
-  const picks = topPicks(snap.list);
+  // Drop picks whose team has no remaining non-postponed game today — the
+  // next-best pick slides into the 7 automatically.
+  const ppdTest = g => /postpon|suspend|cancel/i.test(g.status?.detailedState || "");
+  const liveTeams = new Set();
+  games.forEach(g => { if (ppdTest(g)) return; [g.teams?.home?.team?.id, g.teams?.away?.team?.id].forEach(t => { if (t != null) liveTeams.add(t); }); });
+  const picks = topPicks(snap.list.filter(p => liveTeams.has(p.teamId)));
 
   // ── Lock alert (once per day) ──
   if (P.alerts.lockDate !== day) {
@@ -155,8 +161,21 @@ async function main() {
       `${i + 1}. <b>${p.name}</b> (${p.team || ""}) ${p.g2.isHome ? "vs" : "@"} ${p.g2.opp || "TBD"} — ${p.g2.sp || "SP TBD"}${p.baa != null ? " · BAA " + p.baa.toFixed(3).replace(/^0/, "") : ""} · SCORE ${p.score}`).join("\n");
     const combos = picks.length * (picks.length - 1) / 2;
     await tg(`🔒 <b>ParlAIy LOCKED — ${day}</b>\nOver 2.5 H+R+RBI · round robin ${picks.length} picks / ${combos} doubles\nStake $${(+stake).toFixed(2)} per double · outlay $${(combos * stake).toFixed(2)} · legs ${odds > 0 ? "+" : ""}${odds}\n\n${lines}`);
-    P.alerts.lockDate = day; P.alerts.hits = {}; P.alerts.deads = {}; changed = true;
+    P.alerts.lockDate = day; P.alerts.hits = {}; P.alerts.deads = {}; P.alerts.pickIds = picks.map(p => p.id); changed = true;
     console.log("Lock alert sent.");
+  } else if (Array.isArray(P.alerts.pickIds)) {
+    // Post-lock PPD substitution: if the pick set changed (a game got rained
+    // out), tell the user who is out and who slid in.
+    const now = picks.map(p => p.id);
+    const out = P.alerts.pickIds.filter(id => !now.includes(id));
+    const added = now.filter(id => !P.alerts.pickIds.includes(id));
+    if (out.length || added.length) {
+      const nameOf = id => (snap.list.find(p => p.id === id) || {}).name || id;
+      const inTxt = added.map(id => { const p = snap.list.find(x => x.id === id) || {}; return `${p.name}${p.g2 ? ` ${p.g2.isHome ? "vs" : "@"} ${p.g2.opp || ""}` : ""}`; }).join(", ");
+      await tg(`☔ <b>PPD SWAP</b>\nOUT: ${out.map(nameOf).join(", ")} (game postponed)\nIN: ${inTxt || "none — down to " + picks.length + " picks"}`);
+      P.alerts.pickIds = now; changed = true;
+      console.log(`PPD swap alert sent (out: ${out.length}, in: ${added.length}).`);
+    }
   }
 
   // ── Hit + dead alerts (each pick, once) ──
