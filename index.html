@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 21 · 💣💀</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 22 · DH/PPD FIX</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -362,20 +362,26 @@ async function pollResults(){
     const endStr=slateYmd();
     const sc=await getJSON(`${API}/schedule?sportId=1&date=${endStr}`);
     const gs=sc?.dates?.[0]?.games||[];
+    // A team is "done" only when ALL its games today are truly final —
+    // doubleheader game 1 ending must not flag game-2 players, and MLB
+    // reports postponed/suspended games as "Final" (those are voids, not
+    // losses, so they never count as done here).
+    const isFin=g=>g.status?.abstractGameState==="Final"&&!/postpon|suspend|cancel/i.test(g.status?.detailedState||"");
+    const isPPD=g=>/postpon|suspend|cancel/i.test(g.status?.detailedState||"");
     const fin={};
-    gs.forEach(g=>{const f=g.status?.abstractGameState==="Final";
-      [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(t=>{if(t!=null)fin[t]=fin[t]||f;});});
-    // Only pull boxscores for games our tracked players are in, and only once
-    // the game has started (Live or Final).
-    const wanted=new Set(current.map(p=>p.g2&&p.g2.gameKey).filter(v=>v!=null));
-    const pks=gs.filter(g=>(wanted.size?wanted.has(g.gamePk):true)&&g.status?.abstractGameState!=="Preview").map(g=>g.gamePk);
+    gs.forEach(g=>{if(isPPD(g))return;const f=isFin(g);
+      [g.teams?.home?.team?.id,g.teams?.away?.team?.id].forEach(t=>{if(t!=null)fin[t]=(t in fin)?(fin[t]&&f):f;});});
+    // Pull boxscores for every started game involving a tracked player's TEAM
+    // (both ends of a doubleheader), summing a player's H+R+RBI across them.
+    const teams=new Set(current.map(p=>p.teamId).filter(v=>v!=null));
+    const pks=gs.filter(g=>(teams.has(g.teams?.home?.team?.id)||teams.has(g.teams?.away?.team?.id))&&g.status?.abstractGameState!=="Preview"&&!isPPD(g)).map(g=>g.gamePk);
     const m={};
     await pool(pks,async pk=>{try{
       const b=await getJSON(`${API}/game/${pk}/boxscore`);
       ["home","away"].forEach(side=>{const pl=b?.teams?.[side]?.players||{};
         Object.values(pl).forEach(pp=>{const st=pp?.stats?.batting;
           if(st&&pp.person?.id!=null&&((+st.gamesPlayed||0)>0||(+st.plateAppearances||0)>0||(+st.runs||0)>0))
-            m[pp.person.id]=(+st.hits||0)+(+st.runs||0)+(+st.rbi||0);});});
+            m[pp.person.id]=(m[pp.person.id]||0)+(+st.hits||0)+(+st.runs||0)+(+st.rbi||0);});});
     }catch(e){}},5);
     // Backstop: if boxscores came back thin (proxy hiccup / shape change), fill
     // any still-missing players from the aggregate daily feed so a covered

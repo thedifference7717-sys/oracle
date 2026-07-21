@@ -159,9 +159,22 @@ async function main() {
     console.log("Lock alert sent.");
   }
 
-  // ── Hit alerts (each pick, once) ──
-  const wanted = new Set(picks.map(p => p.g2?.gameKey).filter(v => v != null));
-  const startedPks = games.filter(g => wanted.has(g.gamePk) && g.status?.abstractGameState !== "Preview").map(g => g.gamePk);
+  // ── Hit + dead alerts (each pick, once) ──
+  // A team is "done" only when ALL its games today are truly final — a
+  // doubleheader game 1 ending must not flag game-2 players, and MLB reports
+  // postponed/suspended games as "Final" (those are voids, never deaths).
+  const isPPD = g => /postpon|suspend|cancel/i.test(g.status?.detailedState || "");
+  const isFin = g => g.status?.abstractGameState === "Final" && !isPPD(g);
+  const fin = {};
+  games.forEach(g => {
+    if (isPPD(g)) return;
+    const f = isFin(g);
+    [g.teams?.home?.team?.id, g.teams?.away?.team?.id].forEach(t => { if (t != null) fin[t] = (t in fin) ? (fin[t] && f) : f; });
+  });
+  // Boxscores for every started game involving a pick's TEAM (both ends of a
+  // doubleheader), summing a player's H+R+RBI across them.
+  const teams = new Set(picks.map(p => p.teamId).filter(v => v != null));
+  const startedPks = games.filter(g => (teams.has(g.teams?.home?.team?.id) || teams.has(g.teams?.away?.team?.id)) && g.status?.abstractGameState !== "Preview" && !isPPD(g)).map(g => g.gamePk);
   const m = {};
   await pool(startedPks, async pk => {
     const b = await j(`${API}/game/${pk}/boxscore`);
@@ -169,8 +182,10 @@ async function main() {
       const pl = b?.teams?.[side]?.players || {};
       Object.values(pl).forEach(pp => {
         const st = pp?.stats?.batting;
-        if (st && pp.person?.id != null && ((+st.gamesPlayed || 0) > 0 || (+st.plateAppearances || 0) > 0 || (+st.runs || 0) > 0))
-          m[pp.person.id] = { c: (+st.hits || 0) + (+st.runs || 0) + (+st.rbi || 0), h: +st.hits || 0, r: +st.runs || 0, rbi: +st.rbi || 0 };
+        if (st && pp.person?.id != null && ((+st.gamesPlayed || 0) > 0 || (+st.plateAppearances || 0) > 0 || (+st.runs || 0) > 0)) {
+          const prev = m[pp.person.id] || { c: 0, h: 0, r: 0, rbi: 0 };
+          m[pp.person.id] = { c: prev.c + (+st.hits || 0) + (+st.runs || 0) + (+st.rbi || 0), h: prev.h + (+st.hits || 0), r: prev.r + (+st.runs || 0), rbi: prev.rbi + (+st.rbi || 0) };
+        }
       });
     });
   }, 5);
