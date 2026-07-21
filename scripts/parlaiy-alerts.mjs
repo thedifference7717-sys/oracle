@@ -155,7 +155,7 @@ async function main() {
       `${i + 1}. <b>${p.name}</b> (${p.team || ""}) ${p.g2.isHome ? "vs" : "@"} ${p.g2.opp || "TBD"} — ${p.g2.sp || "SP TBD"}${p.baa != null ? " · BAA " + p.baa.toFixed(3).replace(/^0/, "") : ""} · SCORE ${p.score}`).join("\n");
     const combos = picks.length * (picks.length - 1) / 2;
     await tg(`🔒 <b>ParlAIy LOCKED — ${day}</b>\nOver 2.5 H+R+RBI · round robin ${picks.length} picks / ${combos} doubles\nStake $${(+stake).toFixed(2)} per double · outlay $${(combos * stake).toFixed(2)} · legs ${odds > 0 ? "+" : ""}${odds}\n\n${lines}`);
-    P.alerts.lockDate = day; P.alerts.hits = {}; changed = true;
+    P.alerts.lockDate = day; P.alerts.hits = {}; P.alerts.deads = {}; changed = true;
     console.log("Lock alert sent.");
   }
 
@@ -175,14 +175,23 @@ async function main() {
     });
   }, 5);
   P.alerts.hits = P.alerts.hits || {};
+  P.alerts.deads = P.alerts.deads || {};
   let cashed = Object.keys(P.alerts.hits).length;
+  let dead = Object.keys(P.alerts.deads).length;
   for (const p of picks) {
     const s = m[p.id];
     if (s && s.c >= RR_LINE && !P.alerts.hits[p.id]) {
       cashed++;
-      await tg(`🟩 <b>LEG CASHED — ${p.name}</b>\n${s.h} H · ${s.r} R · ${s.rbi} RBI (${s.c}/${RR_LINE})\n${cashed} of ${picks.length} legs in ✅`);
+      await tg(`💣 <b>LEG CASHED — ${p.name}</b>\n${s.h} H · ${s.r} R · ${s.rbi} RBI (${s.c}/${RR_LINE})\n💣 ${cashed} cashed · 💀 ${dead} dead of ${picks.length}`);
       P.alerts.hits[p.id] = s.c; changed = true;
       console.log(`Hit alert sent: ${p.name} (${s.c}).`);
+    } else if (fin[p.teamId] && !(s && s.c >= RR_LINE) && !P.alerts.hits[p.id] && !P.alerts.deads[p.id]) {
+      // game over without clearing (or never played)
+      dead++;
+      const line = s ? `${s.h} H · ${s.r} R · ${s.rbi} RBI (${s.c}/${RR_LINE})` : "DNP — never entered the game";
+      await tg(`💀 <b>LEG DEAD — ${p.name}</b>\n${line}\n💣 ${cashed} cashed · 💀 ${dead} dead of ${picks.length}`);
+      P.alerts.deads[p.id] = true; changed = true;
+      console.log(`Dead alert sent: ${p.name}.`);
     }
   }
 
@@ -190,7 +199,7 @@ async function main() {
     try { await j(STORE, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(blob) }); }
     catch (e) { console.log("Store write failed:", e.message); }
   }
-  console.log(`Done — ${cashed}/${picks.length} cashed, ${startedPks.length} games started.`);
+  console.log(`Done — ${cashed} cashed / ${dead} dead of ${picks.length}, ${startedPks.length} games started.`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

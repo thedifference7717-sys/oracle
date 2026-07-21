@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 20 · 2.5 LINE</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 21 · 💣💀</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -76,7 +76,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="status"></div>
 
-<div class="section-h">🔥 TOP 7 ROUND ROBIN — 1 player per game · 21 doubles · 🟩 green = cleared 2.5 H/R/RBI · 🟥 red = game over, missed</div>
+<div class="section-h">🔥 TOP 7 ROUND ROBIN — 1 player per game · 21 doubles · 💣 = cleared 2.5 H/R/RBI · 💀 = game over, missed</div>
 <div id="rr"></div>
 <div class="parlay" id="parlay"></div>
 
@@ -317,8 +317,8 @@ function render(list,s,e){
   // Card background = the result: green once the player clears 2.5 H/R/RBI,
   // red when his game goes final without it, neutral while pending/in progress.
   const outcome=p=>p.cleared?"win":(p.final?"loss":"");
-  const resChip=p=>p.cleared?'<span class="chip ok">'+p.todayHRR+'/'+RR_LINE+'</span>'
-    :p.final?'<span class="chip lose">'+(p.todayHRR==null?'DNP':p.todayHRR+'/'+RR_LINE)+'</span>'
+  const resChip=p=>p.cleared?'<span class="chip ok">💣 '+p.todayHRR+'/'+RR_LINE+'</span>'
+    :p.final?'<span class="chip lose">💀 '+(p.todayHRR==null?'DNP':p.todayHRR+'/'+RR_LINE)+'</span>'
     :p.todayHRR==null?'<span class="chip pend">⏳</span>':'<span class="chip miss">'+p.todayHRR+'/'+RR_LINE+'</span>';
   document.getElementById("parlay").innerHTML=top.map((p,i)=>`
     <div class="pcard ${outcome(p)}">
@@ -350,7 +350,7 @@ function render(list,s,e){
       <td>${resChip(p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 3+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 4+ games with 3+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">GREEN card</b> = cleared 3+ (Over 2.5) combined H/R/RBI today · <b style="color:var(--red)">RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/3</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's Over 2.5 price (editable in the banner, default +130 — 4-of-7 is solidly positive there); DNP legs void. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 3+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 4+ games with 3+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">💣 GREEN card</b> = cleared 3+ (Over 2.5) combined H/R/RBI today · <b style="color:var(--red)">💀 RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/3</b> = live count. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's Over 2.5 price (editable in the banner, default +130 — 4-of-7 is solidly positive there); DNP legs void. ⚠ Watchlist only — not betting advice.`;
   rrBanner();
 }
 // ~30s live poll straight from each game's BOXSCORE — the aggregate stats feed
