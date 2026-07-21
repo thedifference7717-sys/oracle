@@ -1,0 +1,33 @@
+name: ParlAIy Telegram Alerts
+
+on:
+  schedule:
+    # Every 5 minutes across MLB game hours (UTC). Covers ~10 AM–3 AM ET.
+    - cron: "*/5 14-23 * * *"
+    - cron: "*/5 0-7 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: parlaiy-alerts
+  cancel-in-progress: false
+
+jobs:
+  alerts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run alerts check
+        run: node scripts/parlaiy-alerts.mjs
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
