@@ -2,9 +2,11 @@ name: ParlAIy Telegram Alerts
 
 on:
   schedule:
-    # Every 5 minutes across MLB game hours (UTC). Covers ~10 AM–3 AM ET.
-    - cron: "*/5 14-23 * * *"
-    - cron: "*/5 0-7 * * *"
+    # GitHub throttles */5 scheduled runs to ~hourly during peak hours, so we do
+    # NOT rely on cron for cadence. Each launched job self-loops for ~57 min
+    # checking every 60s; cron just needs to (re)start a job now and then.
+    - cron: "*/15 14-23 * * *"
+    - cron: "*/15 0-7 * * *"
   workflow_dispatch:
 
 permissions: {}
@@ -16,7 +18,7 @@ concurrency:
 jobs:
   alerts:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,9 +28,8 @@ jobs:
         with:
           node-version: 20
 
-      # Restore the alert memory (state.json) saved by the previous run so we
-      # never re-send the lock alert or a leg result twice. restore-keys picks
-      # the most recent state cached under the prefix.
+      # Restore the alert memory (state.json) so we never re-send the lock alert
+      # or a leg result twice, even across separate jobs.
       - name: Restore alert state
         uses: actions/cache/restore@v4
         with:
@@ -37,13 +38,22 @@ jobs:
           restore-keys: |
             parlaiy-state-
 
-      - name: Run alerts check
-        run: node scripts/parlaiy-alerts.mjs
+      # Self-loop for ~57 minutes, checking every 60s. This gives ~1-minute alert
+      # latency regardless of how badly GitHub throttles the schedule. state.json
+      # persists dedupe across every iteration within the job.
+      - name: Run alerts loop
+        run: |
+          END=$(( $(date +%s) + 57*60 ))
+          while :; do
+            node scripts/parlaiy-alerts.mjs || true
+            [ "$(date +%s)" -ge "$END" ] && break
+            sleep 60
+          done
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
-      # Save the updated memory under a unique key so the write always succeeds.
+      # Persist the updated memory for the next job.
       - name: Save alert state
         if: always()
         continue-on-error: true
