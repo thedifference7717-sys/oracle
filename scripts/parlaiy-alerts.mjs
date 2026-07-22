@@ -112,7 +112,8 @@ async function computeList(endStr, games) {
   }, 6);
   cand.forEach(p => { const bm = p.g2.spId != null ? baaMap[p.g2.spId] : null; p.baa = bm ? bm.s : null; p.rbaa = bm && bm.r != null ? bm.r : null; });
 
-  cand = cand.filter(p => p.hotG >= 4 && !(p.baa != null && p.baa <= 0.215) && !(p.rbaa != null && p.rbaa <= 0.200));
+  // Tag preferred picks instead of dropping, so backfill can guarantee 7 legs.
+  cand.forEach(p => { p.qual = p.hotG >= 4 && !(p.baa != null && p.baa <= 0.215) && !(p.rbaa != null && p.rbaa <= 0.200); });
   if (!cand.length) return null;
 
   na = nrm(cand, "avg"); nh = nrm(cand, "hr"); nr = nrm(cand, "rbi"); nru = nrm(cand, "runs"); const ng = nrm(cand, "hotG");
@@ -123,10 +124,11 @@ async function computeList(endStr, games) {
     const hot = 0.35 * ng(p) + 0.25 * na(p) + 0.15 * nh(p) + 0.125 * nr(p) + 0.125 * nru(p);
     const nb = (p.effBaa != null && bMax > bMin) ? (p.effBaa - bMin) / (bMax - bMin) : 0.5;
     const npk = pkMax > pkMin ? (p.park - pkMin) / (pkMax - pkMin) : 0.5; const mu = 0.7 * nb + 0.3 * npk;
-    p.hotN = Math.round(hot * 100); p.muN = Math.round(mu * 100); p.score = Math.round((0.5 * hot + 0.5 * mu) * 100);
+    p.hotN = Math.round(hot * 100); p.muN = Math.round(mu * 100); p.score = Math.round((0.5 * hot + 0.5 * mu) * 100); p.fill = !p.qual;
   });
-  cand.sort((a, b) => b.score - a.score);
-  return { date: endStr, list: cand.map(p => ({ id: p.id, name: p.name, team: p.team, teamId: p.teamId, pos: p.pos, avg: p.avg, hr: p.hr, rbi: p.rbi, runs: p.runs, hotG: p.hotG, g2: p.g2, park: p.park, baa: p.baa, rbaa: p.rbaa, hotN: p.hotN, muN: p.muN, score: p.score })) };
+  // Preferred picks first (by score), then backfill (by score) to fill out 7.
+  cand.sort((a, b) => (b.qual - a.qual) || (b.score - a.score));
+  return { date: endStr, list: cand.map(p => ({ id: p.id, name: p.name, team: p.team, teamId: p.teamId, pos: p.pos, avg: p.avg, hr: p.hr, rbi: p.rbi, runs: p.runs, hotG: p.hotG, g2: p.g2, park: p.park, baa: p.baa, rbaa: p.rbaa, hotN: p.hotN, muN: p.muN, score: p.score, qual: p.qual, fill: p.fill })) };
 }
 
 async function main() {
@@ -167,7 +169,7 @@ async function main() {
     const odds = rr.odds || RR_DEF_ODDS;
     const lines = picks.map((p, i) => {
       const mu = `${p.g2.isHome ? "vs" : "@"} ${p.g2.opp || "TBD"} — ${p.g2.sp || "SP TBD"}${p.baa != null ? " (" + p.baa.toFixed(3).replace(/^0/, "") + ")" : ""}`;
-      return `${i + 1}. <b>${p.name}</b>\n    ${mu}`;
+      return `${i + 1}. <b>${p.name}</b>${p.fill ? " ⚠️" : ""}\n    ${mu}`;
     }).join("\n\n");
     const combos = picks.length * (picks.length - 1) / 2;
     await tg(

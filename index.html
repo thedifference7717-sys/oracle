@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 23 · PPD SUB</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 24 · ALWAYS 7</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -273,11 +273,13 @@ async function load(){
       const st=d2?.stats?.[0]?.splits?.[0]?.stat;if(st&&st.avg!=null)baaMap[pid]={s:parseFloat(st.avg),r:rec};
     }catch(e){}},6);
     cand.forEach(p=>{const bm=(p.g2.spId!=null)?baaMap[p.g2.spId]:null;p.baa=bm?bm.s:null;p.rbaa=bm&&bm.r!=null?bm.r:null;});
-    // Tightened filters: must be genuinely hot (4+ games with 3+ H/R/RBI in the
-    // last 14 — the 2.5-line equivalent of the old 5-of-14 rule), and never
-    // against a quality SP — season BAA ≤ .215 OR ≤ .200 over his last 3 starts.
-    cand=cand.filter(p=>p.hotG>=4 && !(p.baa!=null&&p.baa<=0.215) && !(p.rbaa!=null&&p.rbaa<=0.200));
-    if(!cand.length){status(`No hitters pass the hot-bat + matchup filters today.`,"var(--yellow)");renderEmpty();return;}
+    // Preferred pick = genuinely hot (4+ games with 3+ H/R/RBI in the last 14 —
+    // the 2.5-line equivalent of the old rule) AND not vs a quality SP (season
+    // BAA ≤ .215 or ≤ .200 over his last 3 starts). We TAG rather than drop, so
+    // that if fewer than 7 one-per-game preferred picks exist, the next-best
+    // eligible hitters backfill to guarantee a full 7-leg round robin.
+    cand.forEach(p=>{p.qual = p.hotG>=4 && !(p.baa!=null&&p.baa<=0.215) && !(p.rbaa!=null&&p.rbaa<=0.200);});
+    if(!cand.length){status(`No qualifying hot hitters in today’s games.`,"var(--yellow)");renderEmpty();return;}
     // SCORE = 50% hot bat (3+games 35 / AVG 25 / HR 15 / RBI 12.5 / R 12.5) + 50% matchup (SP BAA 70 / park 30)
     na=nrm(cand,"avg");nh=nrm(cand,"hr");nr=nrm(cand,"rbi");nru=nrm(cand,"runs");const ng=nrm(cand,"hotG");
     // Matchup uses a form-weighted BAA: 60% season, 40% last-3-starts, so an
@@ -288,8 +290,10 @@ async function load(){
     cand.forEach(p=>{const hot=0.35*ng(p)+0.25*na(p)+0.15*nh(p)+0.125*nr(p)+0.125*nru(p);
       const nb=(p.effBaa!=null&&bMax>bMin)?(p.effBaa-bMin)/(bMax-bMin):0.5;
       const npk=pkMax>pkMin?(p.park-pkMin)/(pkMax-pkMin):0.5;const mu=0.7*nb+0.3*npk;
-      p.hotN=Math.round(hot*100);p.muN=Math.round(mu*100);p.score=Math.round((0.5*hot+0.5*mu)*100);});
-    cand.sort((a,b)=>b.score-a.score);
+      p.hotN=Math.round(hot*100);p.muN=Math.round(mu*100);p.score=Math.round((0.5*hot+0.5*mu)*100);p.fill=!p.qual;});
+    // Preferred picks first (by score), then backfill picks (by score) so the
+    // top 7 are filled out even on a thin slate.
+    cand.sort((a,b)=>(b.qual-a.qual)||(b.score-a.score));
 
     setProg(100);setTimeout(()=>setProg(0),300);
     current=cand;
@@ -297,7 +301,7 @@ async function load(){
     render(cand,startStr,rankEndStr);
     // Persist today's list so a page reload (iOS refreshes suspended tabs)
     // restores the exact same board instead of rebuilding it mid-slate.
-    try{localStorage.setItem("parlaiy-snap",JSON.stringify({date:endStr,list:cand.map(p=>({id:p.id,name:p.name,team:p.team,teamId:p.teamId,pos:p.pos,avg:p.avg,hr:p.hr,rbi:p.rbi,runs:p.runs,hotG:p.hotG,g2:p.g2,park:p.park,baa:p.baa,rbaa:p.rbaa,hotN:p.hotN,muN:p.muN,score:p.score}))}));}catch(e){}
+    try{localStorage.setItem("parlaiy-snap",JSON.stringify({date:endStr,list:cand.map(p=>({id:p.id,name:p.name,team:p.team,teamId:p.teamId,pos:p.pos,avg:p.avg,hr:p.hr,rbi:p.rbi,runs:p.runs,hotG:p.hotG,g2:p.g2,park:p.park,baa:p.baa,rbaa:p.rbaa,hotN:p.hotN,muN:p.muN,score:p.score,qual:p.qual,fill:p.fill}))}));}catch(e){}
     sharePush(); // publish the list + stake ledger so every device matches
     status(`✓ ${cand.length} hot hitters in action · 14 days thru ${rankEndStr} · ${new Date().toLocaleTimeString()}`,"var(--green)");
     pollResults();
@@ -325,7 +329,7 @@ function render(list,s,e){
     :p.todayHRR==null?'<span class="chip pend">⏳</span>':'<span class="chip miss">'+p.todayHRR+'/'+RR_LINE+'</span>';
   document.getElementById("parlay").innerHTML=top.map((p,i)=>`
     <div class="pcard ${outcome(p)}">
-      <div class="pc-top"><div class="pc-rank">${i+1}</div><div style="flex:1;min-width:0"><div class="pc-name">${p.name}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div>${resChip(p)}</div>
+      <div class="pc-top"><div class="pc-rank">${i+1}</div><div style="flex:1;min-width:0"><div class="pc-name">${p.name}${p.fill?' <span class="chip" style="background:#FBBF2422;color:var(--yellow);font-size:9px">FILL</span>':''}</div><div class="pc-team">${p.team||""} · ${p.pos||""}</div></div>${resChip(p)}</div>
       <div class="pc-stats">
         <div class="pc-box"><div class="pc-v">${p.avg.toFixed(3).replace(/^0/,"")}</div><div class="pc-l">AVG</div></div>
         <div class="pc-box"><div class="pc-v" style="color:var(--orange)">${p.hr}</div><div class="pc-l">HR</div></div>
@@ -340,7 +344,7 @@ function render(list,s,e){
   document.getElementById("tbody").innerHTML=list.map((p,i)=>`
     <tr class="${outcome(p)}">
       <td class="num" style="color:var(--dim)">${i+1}</td>
-      <td><div class="pname">${p.name}</div><div class="pteam">${p.team||""} · ${p.pos||""}</div></td>
+      <td><div class="pname">${p.name}${p.fill?' <span class="chip" style="background:#FBBF2422;color:var(--yellow);font-size:9px">FILL</span>':''}</div><div class="pteam">${p.team||""} · ${p.pos||""}</div></td>
       <td class="num">${p.avg.toFixed(3).replace(/^0/,"")}</td>
       <td class="num" style="color:var(--orange)">${p.hr}</td>
       <td class="num" style="color:var(--green)">${p.rbi}</td>
@@ -353,7 +357,7 @@ function render(list,s,e){
       <td>${resChip(p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 3+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 4+ games with 3+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">💣 GREEN card</b> = cleared 3+ (Over 2.5) combined H/R/RBI today · <b style="color:var(--red)">💀 RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/3</b> = live count · <b>☔ PPD</b> = game postponed — dropped from the top 7, next best slides in. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's Over 2.5 price (editable in the banner, default +130 — 4-of-7 is solidly positive there); DNP legs void. ⚠ Watchlist only — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>SCORE</b> = 50% hot bat (last 14d: 3+ H/R/RBI games 35%, AVG 25%, HR 15%, RBI 12.5%, Runs 12.5%) + 50% matchup (opposing SP batting-avg-against 70%, ballpark 30%). Filters: ≥ .300 and ≥ 25 AB over 14 days · 4+ games with 3+ H/R/RBI in the last 14 · never vs a quality SP (season BAA ≤ .215 or ≤ .200 over his last 3 starts; matchup score uses 60/40 season/recent form) · in today's lineup · injured (IL) excluded. <b style="color:var(--green)">💣 GREEN card</b> = cleared 3+ (Over 2.5) combined H/R/RBI today · <b style="color:var(--red)">💀 RED card</b> = game final without clearing (DNP = didn't play) · <b>⏳</b> = game not started · <b>n/3</b> = live count · <b>☔ PPD</b> = game postponed — dropped from the top 7, next best slides in · <b style="color:var(--yellow)">FILL</b> = backfill pick added to guarantee 7 legs when fewer than 7 clear all filters. Rankings use a 14-day window ending YESTERDAY (today's games never reshuffle the list), lock in 1 hour before the day's first pitch, and survive page reloads — only live results update after the lock. <b>ROUND ROBIN</b> — top 7 picks → 21 doubles at the shown stake; profitable day resets the stake to $1, losing day bumps it 17% (compounding); legs at your book's Over 2.5 price (editable in the banner, default +130 — 4-of-7 is solidly positive there); DNP legs void. ⚠ Watchlist only — not betting advice.`;
   rrBanner();
 }
 // ~30s live poll straight from each game's BOXSCORE — the aggregate stats feed
