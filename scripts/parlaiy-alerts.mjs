@@ -24,6 +24,7 @@ if (!TOKEN || !CHAT) {
 const API = "https://statsapi.mlb.com/api/v1";
 const STORE = "https://jsonblob.com/api/jsonBlob/019f86aa-e3b4-79cd-b525-b619d85c0b8f";
 const RR_N = 7, RR_LINE = 3, RR_DEF_ODDS = 130;
+const SNAP_V = 2; // snapshot schema version — a stored board with an older v is rebuilt once
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `${MONTHS[mo - 1]} ${da}`; };
 
@@ -128,7 +129,7 @@ async function computeList(endStr, games) {
   });
   // Preferred picks first (by score), then backfill (by score) to fill out 7.
   cand.sort((a, b) => (b.qual - a.qual) || (b.score - a.score));
-  return { date: endStr, list: cand.map(p => ({ id: p.id, name: p.name, team: p.team, teamId: p.teamId, pos: p.pos, avg: p.avg, hr: p.hr, rbi: p.rbi, runs: p.runs, hotG: p.hotG, g2: p.g2, park: p.park, baa: p.baa, rbaa: p.rbaa, hotN: p.hotN, muN: p.muN, score: p.score, qual: p.qual, fill: p.fill })) };
+  return { date: endStr, v: SNAP_V, list: cand.map(p => ({ id: p.id, name: p.name, team: p.team, teamId: p.teamId, pos: p.pos, avg: p.avg, hr: p.hr, rbi: p.rbi, runs: p.runs, hotG: p.hotG, g2: p.g2, park: p.park, baa: p.baa, rbaa: p.rbaa, hotN: p.hotN, muN: p.muN, score: p.score, qual: p.qual, fill: p.fill })) };
 }
 
 async function main() {
@@ -161,6 +162,15 @@ async function main() {
   const ppdTest = g => /postpon|suspend|cancel/i.test(g.status?.detailedState || "");
   const liveTeams = new Set();
   games.forEach(g => { if (ppdTest(g)) return; [g.teams?.home?.team?.id, g.teams?.away?.team?.id].forEach(t => { if (t != null) liveTeams.add(t); }); });
+  const nPicks = s => topPicks(s.list.filter(p => liveTeams.has(p.teamId))).length;
+  // A board locked by an older schema (e.g. pre-backfill, only 6 picks) is
+  // rebuilt once so it fills toward 7. New snaps carry v=SNAP_V and are trusted
+  // thereafter, so this never loops even on a genuinely thin slate.
+  if (snap.v !== SNAP_V) {
+    const fresh = await computeList(day, games);
+    if (fresh) { snap = fresh; P.snap = fresh; changed = true; console.log(`Rebuilt stale board → ${nPicks(fresh)} picks.`); }
+    else console.log("Stale-board rebuild failed; keeping existing.");
+  }
   const picks = topPicks(snap.list.filter(p => liveTeams.has(p.teamId)));
 
   // ── Lock alert (once per day) ──
@@ -190,13 +200,22 @@ async function main() {
     if (out.length || added.length) {
       const nameOf = id => (snap.list.find(p => p.id === id) || {}).name || id;
       const inTxt = added.map(id => { const p = snap.list.find(x => x.id === id) || {}; return `${p.name}${p.g2 ? ` (${p.g2.isHome ? "vs" : "@"} ${p.g2.opp || ""})` : ""}`; }).join("\n         ");
-      await tg(
-        `☔ <b>RAINOUT SWAP</b>\n` +
-        `❌ OUT — ${out.map(nameOf).join(", ")} (postponed)\n` +
-        `✅ IN — ${inTxt || "none · down to " + picks.length + " picks"}`
-      );
+      if (out.length) {
+        // A game got rained out — one pick leaves, the next best slides in.
+        await tg(
+          `☔ <b>RAINOUT SWAP</b>\n` +
+          `❌ OUT — ${out.map(nameOf).join(", ")} (postponed)\n` +
+          `✅ IN — ${inTxt || "none · down to " + picks.length + " picks"}`
+        );
+      } else {
+        // Pure addition — the board filled out to a full 7.
+        await tg(
+          `➕ <b>PICK ADDED</b> — now ${picks.length} legs\n` +
+          `✅ ${inTxt}`
+        );
+      }
       P.alerts.pickIds = now; changed = true;
-      console.log(`PPD swap alert sent (out: ${out.length}, in: ${added.length}).`);
+      console.log(`Pick-change alert sent (out: ${out.length}, in: ${added.length}).`);
     }
   }
 

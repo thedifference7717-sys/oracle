@@ -65,7 +65,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 24 · ALWAYS 7</div></div>
+  <div><div class="logo">🔥 ParlAIy</div><div class="logo-sub">LAST 14 DAYS · BUILD 25 · TOP-UP</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="cobb.html">🏏 2B</a>
@@ -99,6 +99,7 @@ let good=null;let current=[];
 // (compounding). Leg price is user-set american odds (default -110), frozen
 // per day at entry. DNP legs are voids: the double pays as a single.
 const RR_N=7,RR_BUMP=1.17,RR_LINE=3,RR_DEF_ODDS=130; // Over 2.5 H+R+RBI → needs 3+; default +130, editable
+const SNAP_V=2; // snapshot schema version — bump to force a one-time rebuild of stale locked boards
 // (+130 legs: 4-of-7 comfortably positive; 3-of-7 slightly down)
 let _rr=null;
 function amToDec(a){return a<0?1+100/(-a):1+a/100;}
@@ -217,7 +218,9 @@ async function load(){
     const _pastLock=_starts.length?Date.now()>=Math.min(..._starts)-3600000:false;
     if(_pastLock){try{
       let sn=null;try{sn=JSON.parse(localStorage.getItem("parlaiy-snap")||"null");}catch(e){}
-      const ok=s=>s&&s.date===endStr&&s.list&&s.list.length;
+      // Require the current schema version: a board locked by an older build
+      // (e.g. only 6 picks, pre-backfill) fails this and is rebuilt once to 7.
+      const ok=s=>s&&s.date===endStr&&s.list&&s.list.length&&s.v===SNAP_V;
       const shared=await shareGet(); // other devices' locked list + stake ledger
       if(!ok(sn)&&ok(shared?.snap)){sn=shared.snap;try{localStorage.setItem("parlaiy-snap",JSON.stringify(sn));}catch(e){}}
       _rr=pickRR(shared?.rr,_rr||rrLoad());rrSave();
@@ -301,7 +304,7 @@ async function load(){
     render(cand,startStr,rankEndStr);
     // Persist today's list so a page reload (iOS refreshes suspended tabs)
     // restores the exact same board instead of rebuilding it mid-slate.
-    try{localStorage.setItem("parlaiy-snap",JSON.stringify({date:endStr,list:cand.map(p=>({id:p.id,name:p.name,team:p.team,teamId:p.teamId,pos:p.pos,avg:p.avg,hr:p.hr,rbi:p.rbi,runs:p.runs,hotG:p.hotG,g2:p.g2,park:p.park,baa:p.baa,rbaa:p.rbaa,hotN:p.hotN,muN:p.muN,score:p.score,qual:p.qual,fill:p.fill}))}));}catch(e){}
+    try{localStorage.setItem("parlaiy-snap",JSON.stringify({date:endStr,v:SNAP_V,list:cand.map(p=>({id:p.id,name:p.name,team:p.team,teamId:p.teamId,pos:p.pos,avg:p.avg,hr:p.hr,rbi:p.rbi,runs:p.runs,hotG:p.hotG,g2:p.g2,park:p.park,baa:p.baa,rbaa:p.rbaa,hotN:p.hotN,muN:p.muN,score:p.score,qual:p.qual,fill:p.fill}))}));}catch(e){}
     sharePush(); // publish the list + stake ledger so every device matches
     status(`✓ ${cand.length} hot hitters in action · 14 days thru ${rankEndStr} · ${new Date().toLocaleTimeString()}`,"var(--green)");
     pollResults();
