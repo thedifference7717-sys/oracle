@@ -11,6 +11,9 @@
 // Requires repo secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID; exits
 // quietly if they are not configured.
 
+import { readFileSync, writeFileSync, existsSync } from "fs";
+const STATE_FILE = "state.json"; // persisted across runs by the workflow's Actions cache
+
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT = process.env.TELEGRAM_CHAT_ID;
 if (!TOKEN || !CHAT) {
@@ -135,8 +138,11 @@ async function main() {
   const lockAt = Math.min(...starts) - 3600000;
   if (Date.now() < lockAt) { console.log(`Pre-lock (locks ${new Date(lockAt).toISOString()}) — nothing to do.`); return; }
 
+  // Alert memory lives in a local state file that the workflow's Actions cache
+  // carries between runs — durable, unlike the jsonblob (which returns OK on
+  // write but doesn't persist, causing repeat lock alerts).
   let blob = {};
-  try { blob = await j(STORE) || {}; } catch (e) { console.log("Store read failed:", e.message); }
+  try { if (existsSync(STATE_FILE)) blob = JSON.parse(readFileSync(STATE_FILE, "utf8")) || {}; } catch (e) { console.log("State read failed:", e.message); }
   const P = blob.parlaiy = blob.parlaiy || {};
   P.alerts = P.alerts || {};
   let changed = false;
@@ -252,11 +258,10 @@ async function main() {
     }
   }
 
-  if (changed) {
-    try { await j(STORE, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(blob) }); }
-    catch (e) { console.log("Store write failed:", e.message); }
-  }
-  console.log(`Done — ${cashed} cashed / ${dead} dead of ${picks.length}, ${startedPks.length} games started.`);
+  // Always persist so the cache carries the latest memory (lockDate, cashed,
+  // dead, current picks) to the next run.
+  try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); }
+  console.log(`Done — ${cashed} cashed / ${dead} dead of ${picks.length}, ${startedPks.length} games started.${changed ? " [state updated]" : ""}`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
