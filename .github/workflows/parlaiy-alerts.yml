@@ -2,11 +2,10 @@ name: ParlAIy Telegram Alerts
 
 on:
   schedule:
-    # GitHub throttles */5 scheduled runs to ~hourly during peak hours, so we do
-    # NOT rely on cron for cadence. Each launched job self-loops for ~57 min
-    # checking every 60s; cron just needs to (re)start a job now and then.
-    - cron: "*/15 14-23 * * *"
-    - cron: "*/15 0-7 * * *"
+    # Weak fallback seed only — GitHub drops most scheduled runs during US peak
+    # hours. Real coverage comes from the 6h self-loop + re-arm below (and an
+    # external daily dispatch), not from this cron.
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions: {}
@@ -18,7 +17,7 @@ concurrency:
 jobs:
   alerts:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 355
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,8 +27,6 @@ jobs:
         with:
           node-version: 20
 
-      # Restore the alert memory (state.json) so we never re-send the lock alert
-      # or a leg result twice, even across separate jobs.
       - name: Restore alert state
         uses: actions/cache/restore@v4
         with:
@@ -38,12 +35,11 @@ jobs:
           restore-keys: |
             parlaiy-state-
 
-      # Self-loop for ~57 minutes, checking every 60s. This gives ~1-minute alert
-      # latency regardless of how badly GitHub throttles the schedule. state.json
-      # persists dedupe across every iteration within the job.
+      # Self-loop for ~5h50m (just under GitHub's 6h job cap), checking every 60s.
+      # One run blankets the whole game window.
       - name: Run alerts loop
         run: |
-          END=$(( $(date +%s) + 57*60 ))
+          END=$(( $(date +%s) + 350*60 ))
           while :; do
             node scripts/parlaiy-alerts.mjs || true
             [ "$(date +%s)" -ge "$END" ] && break
@@ -53,7 +49,6 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
-      # Persist the updated memory for the next job.
       - name: Save alert state
         if: always()
         continue-on-error: true
@@ -61,3 +56,17 @@ jobs:
         with:
           path: state.json
           key: parlaiy-state-${{ github.run_id }}-${{ github.run_attempt }}
+
+      # Re-arm the next run so coverage never depends on GitHub's throttled
+      # scheduler. Uses DISPATCH_PAT (a token with repo + workflow scope) when
+      # present; if absent this fails quietly and the cron seed is the fallback.
+      - name: Re-arm next run
+        if: always()
+        continue-on-error: true
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ secrets.DISPATCH_PAT }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/parlaiy-alerts.yml/dispatches" \
+            -d '{"ref":"main"}'
