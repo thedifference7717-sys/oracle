@@ -117,6 +117,7 @@ async function main() {
   try { if (existsSync(STATE_FILE)) blob = JSON.parse(readFileSync(STATE_FILE, "utf8")) || {}; } catch (e) { console.log("State read failed:", e.message); }
   const D = blob.dd = blob.dd || {};
   D.results = D.results || {};
+  D.record = D.record || { w: 0, l: 0 }; // all-time doubles won / lost, carried across days
   let changed = false;
 
   let snap = (D.snap && D.snap.date === day && D.snap.v === SNAP_V && D.snap.doubles?.length) ? D.snap : null;
@@ -147,7 +148,7 @@ async function main() {
 
   let cashed = Object.values(D.results).filter(r => r.cashed).length;
   let dead = Object.values(D.results).filter(r => r.dead).length;
-  const tally = () => `Doubles: 💣 ${cashed} · 💀 ${dead} of ${picks.length}`;
+  const tally = () => `Today: 💣 ${cashed} · 💀 ${dead} of ${picks.length}  ·  All-time ${D.record.w}-${D.record.l}`;
   for (let i = 0; i < picks.length; i++) {
     const d = picks[i]; const key = `${d.a.id}_${d.b.id}`; const st = D.results[key] = D.results[key] || {};
     if (st.cashed || st.dead) continue;
@@ -155,11 +156,11 @@ async function main() {
     const inCount = (hA ? 1 : 0) + (hB ? 1 : 0);
     const final = !!fin[d.gk];
     if (inCount === 2) {
-      cashed++;
+      cashed++; D.record.w++;
       await tg(`💣 <b>CASHED — Double #${i + 1}</b>\nBoth hit! ${d.a.name} + ${d.b.name}\n${tally()}`);
       st.cashed = true; changed = true; console.log(`Double #${i + 1} cashed.`);
     } else if (final) {
-      dead++;
+      dead++; D.record.l++;
       const cold = [!hA ? d.a.name : null, !hB ? d.b.name : null].filter(Boolean).join(" & ");
       await tg(`💀 <b>DEAD — Double #${i + 1}</b>\nHitless: ${cold} (final)\n${tally()}`);
       st.dead = true; changed = true; console.log(`Double #${i + 1} dead.`);
@@ -168,6 +169,15 @@ async function main() {
       await tg(`✅ <b>1/2 IN — Double #${i + 1}</b>\n${got} has a hit · need ${need}`);
       st.half = true; changed = true; console.log(`Double #${i + 1} half.`);
     }
+  }
+
+  // ── Day-end summary (once, when all doubles are settled) ──
+  const allSettled = picks.every(d => { const st = D.results[`${d.a.id}_${d.b.id}`]; return st && (st.cashed || st.dead); });
+  if (allSettled && D.summaryDate !== day) {
+    const wonToday = picks.filter(d => D.results[`${d.a.id}_${d.b.id}`].cashed).length;
+    const pct = (D.record.w + D.record.l) ? Math.round(D.record.w / (D.record.w + D.record.l) * 100) : 0;
+    await tg(`📊 <b>DAY DONE</b> · ${prettyDate(day)}\nToday: <b>${wonToday}/${picks.length}</b> doubles cashed\nAll-time record: <b>${D.record.w}-${D.record.l}</b> (${pct}%)`);
+    D.summaryDate = day; changed = true; console.log("Day summary sent.");
   }
 
   try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); }
