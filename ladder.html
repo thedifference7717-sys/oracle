@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#050510">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Fib Ladder · 10-Trade Scale-In</title>
+<link rel="icon" type="image/svg+xml" href="baseball.svg">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 20px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo-wrap{display:flex;align-items:center;gap:11px}
+.btc-badge{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #A78BFA55;border:2px solid #A78BFA55;background:#070714;font-family:'Orbitron';font-weight:900;color:var(--purple);font-size:20px}
+.logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.05em;color:#EDEAFF;text-shadow:0 0 14px #A78BFA55}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.14em;margin-top:3px}
+.controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-left:auto}
+.ctrl-group{display:flex;flex-direction:column;gap:3px}
+.ctrl-lbl{font-size:10px;color:var(--muted);letter-spacing:.1em}
+.ctrl-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none;width:118px}
+.ctrl-input:focus{border-color:var(--purple)}
+.ctrl-input.hot{border-color:#A78BFA88}
+.btn{padding:11px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.ok{border-color:#14F19566;color:var(--green)}
+#status-line{font-size:13px;color:var(--blue);letter-spacing:.04em;padding:10px 20px;min-height:16px;border-bottom:1px solid var(--border);background:var(--bg2)}
+#status-line.err{color:var(--red)}
+#status-line.warn{color:var(--yellow)}
+.dir-banner{display:flex;align-items:center;gap:14px;padding:16px 20px 4px;flex-wrap:wrap}
+.pill{font-family:'Orbitron';font-weight:900;font-size:15px;letter-spacing:.08em;padding:8px 16px;border-radius:10px;border:1px solid transparent}
+.pill.long{color:var(--green);background:#14F19518;border-color:#14F19555}
+.pill.short{color:var(--red);background:#FF4D6D18;border-color:#FF4D6D55}
+.pill.none{color:var(--dim);background:#8C95A418;border-color:#8C95A455}
+.leg-info{font-size:13px;color:var(--muted);letter-spacing:.04em;line-height:1.7}
+.leg-info b{color:var(--text)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;padding:16px 20px}
+.kpi{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.kpi.accent-entry{border-color:#A78BFA55}
+.kpi.accent-size{border-color:#FBBF2455}
+.kpi.accent-sl{border-color:#FF4D6D55}
+.kpi.accent-tp{border-color:#14F19555}
+.kpi-lbl{font-size:10px;color:#D2D7E1;letter-spacing:.14em;font-weight:700;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.kpi-lbl .lbl-badge{font-size:10px;padding:1px 7px;border-radius:5px;font-weight:700;letter-spacing:.06em}
+.kpi-val{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;line-height:1.08;margin-top:9px;word-break:break-word}
+.kpi-val.pending{font-size:17px;color:var(--dim);letter-spacing:.08em}
+.kpi-sub{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.6}
+.kpi-sub b{color:var(--text)}
+.up{color:var(--green)}.down{color:var(--red)}.dim{color:var(--dim)}.warn{color:var(--yellow)}
+.wrap{padding:6px 20px 0}
+.fib-title{font-size:11px;color:#D2D7E1;letter-spacing:.14em;font-weight:700;text-transform:uppercase;margin:12px 0 8px}
+.fib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:8px}
+.fib-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;gap:10px}
+.fib-row .f{color:var(--dim);letter-spacing:.04em}
+.fib-row .p{font-family:'Orbitron',monospace;font-weight:700;color:var(--text)}
+.fib-row.zone{border-color:#A78BFA66;background:#A78BFA12}.fib-row.zone .f{color:var(--purple)}
+.fib-row.stop{border-color:#FF4D6D66;background:#FF4D6D12}.fib-row.stop .f{color:var(--red)}
+.fib-row.tp{border-color:#14F19566;background:#14F19510}.fib-row.tp .f{color:var(--green)}
+.fib-row.anchor{opacity:.7}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:14px}
+.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--purple);letter-spacing:.05em;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1010px}
+thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:10px;color:var(--muted);font-weight:400;letter-spacing:.08em;border-bottom:1px solid var(--border);white-space:nowrap}
+thead th.num{text-align:right}
+tbody td,tfoot td{padding:10px 12px;white-space:nowrap;border-bottom:1px solid var(--border)}
+tbody td.num,tfoot td.num{text-align:right;font-family:'Orbitron',monospace;font-weight:700}
+tbody tr:hover{background:#A78BFA0C}
+tbody tr.first td{background:#60A5FA0F}
+tbody tr.last td{background:#A78BFA14}
+tfoot td{background:#0A0A1C;border-bottom:none;border-top:1px solid var(--border);color:var(--text)}
+tfoot td.lbl{font-size:10px;letter-spacing:.1em;color:var(--muted)}
+.legno{font-family:'Orbitron',monospace;font-weight:900;color:var(--purple)}
+.fibtag{color:var(--blue)}
+.tptag{color:var(--green)}
+.barcell{min-width:140px}
+.bar{height:9px;border-radius:5px;background:linear-gradient(90deg,#60A5FA,#A78BFA);box-shadow:0 0 10px #A78BFA44}
+.note{font-size:12px;color:var(--dim);line-height:1.7;padding:16px 22px 0;max-width:1000px}
+.note b{color:var(--muted)}.note .hl{color:var(--text)}
+.separator{height:1px;background:var(--border);margin:16px 20px 0}
+.disclaimer{font-size:11px;color:var(--dim);padding:14px 22px 0;line-height:1.6;max-width:1000px}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div class="logo-wrap">
+    <div class="btc-badge">Φ</div>
+    <div><div class="logo">FIB LADDER</div><div class="logo-sub">.382→.618 IN · .886 STOP · −.618→−1 OUT</div></div>
+  </div>
+  <div class="controls">
+    <div class="ctrl-group"><label class="ctrl-lbl">0.382 PRICE</label><input id="in-f382" class="ctrl-input hot" type="number" step="any" placeholder="e.g. 118400"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">0.618 PRICE</label><input id="in-f618" class="ctrl-input hot" type="number" step="any" placeholder="e.g. 114200"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">TOTAL SIZE $</label><input id="in-total" class="ctrl-input" type="number" step="any" placeholder="10000"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">STOP $ OVERRIDE</label><input id="in-stop" class="ctrl-input" type="number" step="any" placeholder="auto .886"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">LEGS</label><input id="in-legs" class="ctrl-input" type="number" step="1" min="2" max="50" placeholder="10"></div>
+    <div class="ctrl-group"><label class="ctrl-lbl">LAST ÷ FIRST</label><input id="in-ratio" class="ctrl-input" type="number" step="0.1" min="1" placeholder="2"></div>
+    <a class="btn" href="btc.html">BTC DESK</a>
+  </div>
+</div>
+<div id="status-line">Enter the 0.382 and 0.618 prices to build the ladder.</div>
+<div class="dir-banner">
+  <span id="dir-pill" class="pill none">—</span>
+  <span id="leg-info" class="leg-info"></span>
+</div>
+<div class="kpis" id="kpis"></div>
+<div class="wrap">
+  <div id="levels"></div>
+  <div class="panel">
+    <div class="panel-head">
+      <span id="ladder-title">THE 10 TRADES</span>
+      <span style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="pairing" class="btn" title="Which take-profit each leg is assigned">TP: LEG 1 → −0.618</button>
+        <button id="copy" class="btn">COPY ORDERS</button>
+        <button id="reset" class="btn">RESET</button>
+      </span>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>#</th><th>FIB</th><th class="num">ENTRY $</th><th class="num">SIZE $</th>
+        <th class="barcell">WEIGHT</th><th class="num">% OF TOTAL</th><th class="num">UNITS</th>
+        <th>TP FIB</th><th class="num">TP $</th><th class="num">R</th>
+        <th class="num">RISK AT .886</th><th class="num">P/L AT TP</th>
+      </tr></thead>
+      <tbody id="rows"><tr><td colspan="12" class="dim" style="padding:18px 12px">Waiting on the two Fib prices…</td></tr></tbody>
+      <tfoot id="foot"></tfoot>
+    </table></div>
+  </div>
+</div>
+<div class="note" id="note"></div>
+<div class="separator"></div>
+<div class="disclaimer">
+  Planning aid only — it places no orders. Every level is derived from the two prices you type, so check the implied swing
+  high/low against your chart before trusting the .886 stop and the −0.618 / −1.0 targets. Sizes assume every rung fills;
+  a shallow reversal leaves you with only the early, smaller legs.
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORE = 'fibladder.v3';
+const F_IN_LO = 0.382, F_IN_HI = 0.618;     // entry zone
+const F_STOP  = 0.886;                       // stop level
+const F_TP_LO = -0.618, F_TP_HI = -1.0;      // take-profit band (extensions)
+const D = {legs: 10, ratio: 2, total: 10000};
+const IN = ['f382','f618','total','stop','legs','ratio'];
+let pairReversed = false;   // false: leg 1 → −0.618 … leg n → −1.0
+
+/* ── formatting ───────────────────────────────────────────────────────── */
+const nf = (v,dp) => v.toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp});
+function usd(v,dp){
+  if(!isFinite(v)) return '—';
+  if(dp == null) dp = Math.abs(v) >= 1000 ? 2 : (Math.abs(v) >= 1 ? 4 : 6);
+  return '$' + nf(v,dp);
+}
+function units(v){
+  if(!isFinite(v)) return '—';
+  if(v >= 1000) return nf(v,2);
+  if(v >= 1) return nf(v,4);
+  return nf(v,6);
+}
+const signed = (v,dp) => (v >= 0 ? '+' : '−') + usd(Math.abs(v),dp);
+const fib = f => (f < 0 ? '−' : '') + Math.abs(f).toFixed(3);
+
+/* ── inputs ───────────────────────────────────────────────────────────── */
+function num(id){
+  const raw = $('in-'+id).value.trim();
+  if(raw === '') return null;
+  const v = parseFloat(raw);
+  return isFinite(v) ? v : null;
+}
+function save(){
+  const o = {pairReversed};
+  IN.forEach(k => o[k] = $('in-'+k).value);
+  try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
+}
+function load(){
+  let o = {};
+  try{ o = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; }catch(e){}
+  IN.forEach(k => { if(o[k] != null) $('in-'+k).value = o[k]; });
+  pairReversed = !!o.pairReversed;
+}
+
+/* ── geometry ─────────────────────────────────────────────────────────── */
+// The 0.382 and 0.618 prices pin the whole impulse leg: they are 23.6% of the
+// leg's range apart, so range = |p382 − p618| / (0.618 − 0.382).
+//   LONG  (up-impulse, price retraces down): .382 sits ABOVE .618.
+//         anchor = swing high, price(f) = high − f·range
+//   SHORT (down-impulse, price retraces up): .382 sits BELOW .618.
+//         anchor = swing low,  price(f) = low + f·range
+// Negative f runs past the anchor into extension — the take-profit band.
+function geometry(p382, p618){
+  const isLong = p382 > p618;
+  const range = Math.abs(p382 - p618) / (F_IN_HI - F_IN_LO);
+  const s = isLong ? 1 : -1;
+  const anchor = p382 + s * F_IN_LO * range;         // 0.0 = impulse end
+  const px = f => anchor - s * f * range;            // price at any fib level
+  return {isLong, dir: isLong ? 'long' : 'short', range, anchor, px,
+          origin: px(1), stop: px(F_STOP)};
+}
+
+/* ── the ladder ───────────────────────────────────────────────────────── */
+// n entries walking .382 → .618, sizes ramping linearly so leg n is `ratio`×
+// leg 1 and the ramp sums to `total`:
+//   weight_i = 1 + (ratio − 1)·(i−1)/(n−1)   →   Σ weight = n·(1 + ratio)/2
+// Each leg also gets its own take-profit, evenly spaced across −0.618 → −1.0.
+function buildLadder(g, total, n, ratio, stop, reversed){
+  const wsum = n * (1 + ratio) / 2;
+  const legs = [];
+  let spent = 0;
+  for(let i = 0; i < n; i++){
+    const t = n === 1 ? 0 : i / (n - 1);
+    const w = 1 + (ratio - 1) * t;
+    const fIn = F_IN_LO + (F_IN_HI - F_IN_LO) * t;
+    const tt = reversed ? 1 - t : t;
+    const fTp = F_TP_LO + (F_TP_HI - F_TP_LO) * tt;
+    // Round each leg to the cent; the last leg absorbs the residue so the
+    // ladder sums to exactly `total`.
+    let size = Math.round(total * w / wsum * 100) / 100;
+    if(i === n - 1) size = Math.round((total - spent) * 100) / 100;
+    spent = Math.round((spent + size) * 100) / 100;
+    const price = g.px(fIn), tp = g.px(fTp);
+    const u = size / price;
+    const riskPer = g.isLong ? price - stop : stop - price;
+    const winPer  = g.isLong ? tp - price   : price - tp;
+    legs.push({i: i+1, fIn, fTp, price, tp, weight: w, size, units: u,
+               risk: riskPer * u, win: winPer * u,
+               R: riskPer > 0 ? winPer / riskPer : null});
+  }
+  let cumSize = 0, cumUnits = 0;
+  legs.forEach(l => { cumSize += l.size; cumUnits += l.units;
+                      l.cumSize = cumSize; l.cumUnits = cumUnits;
+                      l.avg = cumSize / cumUnits; l.pct = 100 * l.size / total; });
+  return legs;
+}
+
+function readInputs(){
+  const p382 = num('f382'), p618 = num('f618');
+  const total = num('total') != null ? num('total') : D.total;
+  let n = Math.round(num('legs') != null ? num('legs') : D.legs);
+  let ratio = num('ratio') != null ? num('ratio') : D.ratio;
+  if(p382 == null || p618 == null) return {err:'Enter the 0.382 and 0.618 prices to build the ladder.'};
+  if(p382 <= 0 || p618 <= 0) return {err:'Fib prices must be positive.'};
+  if(p382 === p618) return {err:'The 0.382 and 0.618 prices must differ — that spread sets the whole leg.'};
+  if(!(total > 0)) return {err:'Total size must be greater than zero.'};
+  if(!(ratio >= 1)) return {err:'Last ÷ first must be at least 1 (1 = flat sizing, 2 = last leg double the first).'};
+  if(!(n >= 2)) n = 2;
+  if(n > 50) n = 50;
+  if(ratio > 20) ratio = 20;
+  const g = geometry(p382, p618);
+  const stopOv = num('stop');
+  const stop = stopOv != null ? stopOv : g.stop;
+  return {p382, p618, total, n, ratio, g, stop, stopOverridden: stopOv != null,
+          legs: buildLadder(g, total, n, ratio, stop, pairReversed)};
+}
+
+/* ── render ───────────────────────────────────────────────────────────── */
+function render(){
+  save();
+  const st = $('status-line');
+  const S = readInputs();
+  $('pairing').textContent = pairReversed ? 'TP: LEG 1 → −1.000' : 'TP: LEG 1 → −0.618';
+  if(S.err){
+    st.className = 'err'; st.textContent = S.err;
+    $('kpis').innerHTML = ''; $('levels').innerHTML = ''; $('note').innerHTML = '';
+    $('foot').innerHTML = '';
+    $('dir-pill').className = 'pill none'; $('dir-pill').textContent = '—';
+    $('leg-info').innerHTML = '';
+    $('rows').innerHTML = '<tr><td colspan="12" class="dim" style="padding:18px 12px">Waiting on valid inputs…</td></tr>';
+    return;
+  }
+  const {p382, p618, total, n, ratio, g, stop, stopOverridden, legs} = S;
+  const first = legs[0], last = legs[n-1];
+  const totalUnits = last.cumUnits, avg = last.avg;
+  const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
+  const totalWin  = legs.reduce((a,l) => a + l.win, 0);
+  const blendedR  = totalRisk > 0 ? totalWin / totalRisk : null;
+  const tpNear = g.px(F_TP_LO), tpFar = g.px(F_TP_HI);
+  const span = Math.abs(p618 - p382);
+
+  const warns = [];
+  if(stopOverridden){
+    const ok = g.isLong ? stop < p618 : stop > p618;
+    if(!ok) warns.push('Stop override sits inside the entry zone — the deepest legs would never fill before it triggers.');
+  }
+  st.className = warns.length ? 'warn' : '';
+  st.textContent = warns.length ? '⚠ ' + warns.join('  ·  ')
+    : `${n} ${g.dir.toUpperCase()} entries .382 (${usd(p382,2)}) → .618 (${usd(p618,2)}) · leg ${n} is ${nf(ratio,2)}× leg 1 · `
+      + `stop ${usd(stop,2)} (.886) · targets ${usd(tpNear,2)} → ${usd(tpFar,2)} (−0.618 → −1.0).`;
+
+  // ── header ──
+  $('dir-pill').className = 'pill ' + g.dir;
+  $('dir-pill').textContent = g.isLong ? 'LONG' : 'SHORT';
+  $('leg-info').innerHTML =
+    `Implied swing <b>${usd(g.origin,2)}</b> → <b>${usd(g.anchor,2)}</b> · range <b>${usd(g.range,2)}</b><br>` +
+    `Entry zone width <b>${usd(span,2)}</b> · step <b>${usd(span/(n-1),2)}</b> · ` +
+    `direction from level order (.382 ${g.isLong ? 'above' : 'below'} .618 = ${g.dir})`;
+
+  // ── KPIs ──
+  const kpi = (cls,lbl,val,sub,valcls,badge) =>
+    `<div class="kpi ${cls}"><div class="kpi-lbl">${lbl}${badge||''}</div>` +
+    `<div class="kpi-val ${valcls||''}">${val}</div><div class="kpi-sub">${sub}</div></div>`;
+  let kpis = '';
+  kpis += kpi('accent-entry','Average fill', usd(avg,2),
+    `All ${n} legs filled · <b>${units(totalUnits)}</b> units<br>` +
+    `fib <b>${fib(F_IN_LO + (F_IN_HI-F_IN_LO)*Math.abs(avg-p382)/span)}</b> of the entry zone`);
+  kpis += kpi('accent-size','Total deployed', usd(total,2),
+    `Leg 1 <b>${usd(first.size,2)}</b> → leg ${n} <b>${usd(last.size,2)}</b><br>` +
+    `last ÷ first = <b>${nf(last.size/first.size,2)}×</b>`);
+  kpis += kpi('accent-sl','Risk at 0.886', signed(-Math.abs(totalRisk),2),
+    `Stop <b>${usd(stop,2)}</b>${stopOverridden ? ' <span class="warn">(override)</span>' : ''} · ` +
+    `${usd(Math.abs(g.isLong ? avg - stop : stop - avg),2)}/unit from the average fill<br>` +
+    `<b>${nf(100*Math.abs(totalRisk)/total,2)}%</b> of deployed size`, 'down',
+    stopOverridden ? '' : ' <span class="lbl-badge" style="background:#FF4D6D18;color:var(--red);border:1px solid #FF4D6D44">.886</span>');
+  kpis += kpi('accent-tp','P/L, all TPs hit', signed(totalWin,2),
+    `Targets <b>${usd(tpNear,2)}</b> (−0.618) → <b>${usd(tpFar,2)}</b> (−1.0)<br>` +
+    `blended R <b>${blendedR != null ? nf(blendedR,2) : '—'}</b> · ` +
+    `leg 1 → ${fib(pairReversed ? F_TP_HI : F_TP_LO)}`, totalWin >= 0 ? 'up' : 'down');
+  $('kpis').innerHTML = kpis;
+
+  // ── level map ──
+  const lv = [
+    [F_TP_HI, 'tp', 'TP band far'],
+    [F_TP_LO, 'tp', 'TP band near'],
+    [0, 'anchor', g.isLong ? 'swing high' : 'swing low'],
+    [F_IN_LO, 'zone', 'first entry'],
+    [0.5, 'anchor', 'zone midpoint'],
+    [F_IN_HI, 'zone', 'last entry'],
+    [F_STOP, 'stop', 'STOP'],
+    [1, 'anchor', g.isLong ? 'swing low' : 'swing high']
+  ];
+  $('levels').innerHTML =
+    `<div class="fib-title">Fib levels off the implied ${g.dir} leg · ${usd(g.origin,2)} → ${usd(g.anchor,2)}</div>` +
+    `<div class="fib-grid">` + lv.map(([f,k,tag]) =>
+      `<div class="fib-row ${k}"><span class="f">${fib(f)} · ${tag}</span><span class="p">${usd(g.px(f),2)}</span></div>`
+    ).join('') + `</div>`;
+
+  // ── rows ──
+  $('ladder-title').textContent = `THE ${n} TRADES · .382→.618 IN · .886 STOP · −.618→−1 OUT`;
+  const maxSize = Math.max.apply(null, legs.map(l => l.size));
+  $('rows').innerHTML = legs.map(l => {
+    const cls = l.i === 1 ? 'first' : (l.i === n ? 'last' : '');
+    return `<tr class="${cls}">` +
+      `<td class="legno">${l.i}</td>` +
+      `<td class="fibtag">${fib(l.fIn)}</td>` +
+      `<td class="num">${usd(l.price,2)}</td>` +
+      `<td class="num">${usd(l.size,2)}</td>` +
+      `<td class="barcell"><div class="bar" style="width:${(100*l.size/maxSize).toFixed(1)}%"></div></td>` +
+      `<td class="num">${nf(l.pct,2)}%</td>` +
+      `<td class="num">${units(l.units)}</td>` +
+      `<td class="tptag">${fib(l.fTp)}</td>` +
+      `<td class="num">${usd(l.tp,2)}</td>` +
+      `<td class="num">${l.R != null ? nf(l.R,2) : '—'}</td>` +
+      `<td class="num down">${signed(-Math.abs(l.risk),2)}</td>` +
+      `<td class="num ${l.win >= 0 ? 'up' : 'down'}">${signed(l.win,2)}</td>` +
+    `</tr>`;
+  }).join('');
+  $('foot').innerHTML =
+    `<tr><td class="lbl">TOTAL</td><td class="lbl">.382→.618</td>` +
+    `<td class="num">${usd(avg,2)}</td><td class="num">${usd(total,2)}</td>` +
+    `<td class="lbl">avg fill / all legs</td><td class="num">100.00%</td>` +
+    `<td class="num">${units(totalUnits)}</td>` +
+    `<td class="lbl">−.618→−1</td><td class="num">${usd((tpNear+tpFar)/2,2)}</td>` +
+    `<td class="num">${blendedR != null ? nf(blendedR,2) : '—'}</td>` +
+    `<td class="num down">${signed(-Math.abs(totalRisk),2)}</td>` +
+    `<td class="num ${totalWin >= 0 ? 'up' : 'down'}">${signed(totalWin,2)}</td></tr>`;
+
+  // ── explainer ──
+  const deepRisk = Math.abs(g.isLong ? last.price - stop : stop - last.price);
+  const shallowRisk = Math.abs(g.isLong ? first.price - stop : stop - first.price);
+  $('note').innerHTML =
+    `<b>Everything comes off the two prices you typed.</b> The 0.382 and 0.618 sit 23.6% of the impulse leg apart, so the ` +
+    `range is <span class="hl">${usd(span,2)} ÷ 0.236 = ${usd(g.range,2)}</span> and the leg runs ` +
+    `<span class="hl">${usd(g.origin,2)} → ${usd(g.anchor,2)}</span>. Every other level is measured off that: the stop is the ` +
+    `<span class="hl">0.886</span> at ${usd(stop,2)}, and the take-profit band is the <span class="hl">−0.618</span> ` +
+    `(${usd(tpNear,2)}) to the <span class="hl">−1.0</span> (${usd(tpFar,2)}) extension.<br><br>` +
+    `<b>Entries.</b> ${n} rungs evenly spaced across the zone, size ramping linearly — ` +
+    `<span class="hl">weight = 1 + (${nf(ratio,2)} − 1)·(i−1)/${n-1}</span> — so leg ${n} is exactly ` +
+    `<span class="hl">${nf(ratio,2)}×</span> leg 1 and the ladder sums to ${usd(total,2)}. Because the deep legs are both ` +
+    `bigger and closer to the stop, they buy more size for less risk per unit: leg 1 risks ` +
+    `<span class="hl">${usd(shallowRisk,2)}</span>/unit to the .886, leg ${n} only <span class="hl">${usd(deepRisk,2)}</span>.<br><br>` +
+    `<b>Exits.</b> The ${n} targets are spaced evenly across −0.618 → −1.0, one per leg. Right now ` +
+    `<span class="hl">leg 1 exits at ${fib(first.fTp)} (${usd(first.tp,2)})</span> and ` +
+    `<span class="hl">leg ${n} at ${fib(last.fTp)} (${usd(last.tp,2)})</span>` +
+    (pairReversed
+      ? ` — the reversed pairing, so the biggest legs bank first and the smallest runs furthest.`
+      : ` — the in-order pairing, so size comes off gradually as price extends and the biggest legs run to the −1.0.`) +
+    ` Tap the TP button to swap the pairing. Hitting every target on a full ladder returns ` +
+    `<span class="hl">${signed(totalWin,2)}</span> against <span class="hl">${usd(Math.abs(totalRisk),2)}</span> of risk ` +
+    `(blended R ${blendedR != null ? nf(blendedR,2) : '—'}).`;
+}
+
+/* ── copy ─────────────────────────────────────────────────────────────── */
+function ordersText(){
+  const S = readInputs();
+  if(S.err) return null;
+  const {p382, p618, total, n, ratio, g, stop, legs} = S;
+  const last = legs[n-1];
+  const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
+  const totalWin  = legs.reduce((a,l) => a + l.win, 0);
+  const lines = [
+    `${g.dir.toUpperCase()} fib ladder · ${n} entries · leg ${n} = ${nf(ratio,2)}x leg 1`,
+    `Implied leg ${usd(g.origin,2)} -> ${usd(g.anchor,2)} (range ${usd(g.range,2)})`,
+    `Entries .382 ${usd(p382,2)} -> .618 ${usd(p618,2)} | stop .886 ${usd(stop,2)} | TPs -0.618 ${usd(g.px(F_TP_LO),2)} -> -1.0 ${usd(g.px(F_TP_HI),2)}`,
+    ''
+  ];
+  legs.forEach(l => lines.push(
+    `${String(l.i).padStart(2)}. entry ${fib(l.fIn)} ${usd(l.price,2).padStart(14)}  size ${usd(l.size,2).padStart(12)}  ` +
+    `(${units(l.units)} u)  TP ${fib(l.fTp)} ${usd(l.tp,2).padStart(14)}  R ${l.R != null ? nf(l.R,2) : '—'}`));
+  lines.push('');
+  lines.push(`Total ${usd(total,2)} · ${units(last.cumUnits)} units · avg fill ${usd(last.avg,2)}`);
+  lines.push(`Leg 1 ${usd(legs[0].size,2)} -> leg ${n} ${usd(last.size,2)}`);
+  lines.push(`Stop ${usd(stop,2)} (.886) · risk ${usd(Math.abs(totalRisk),2)} if fully filled`);
+  lines.push(`All TPs hit · P/L ${signed(totalWin,2)} · blended R ${totalRisk > 0 ? nf(totalWin/totalRisk,2) : '—'}`);
+  return lines.join('\n');
+}
+
+/* ── wiring ───────────────────────────────────────────────────────────── */
+IN.forEach(k => $('in-'+k).addEventListener('input', render));
+$('pairing').addEventListener('click', () => { pairReversed = !pairReversed; render(); });
+$('copy').addEventListener('click', async () => {
+  const txt = ordersText();
+  if(!txt) return;
+  const btn = $('copy');
+  try{
+    await navigator.clipboard.writeText(txt);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e2){}
+    ta.remove();
+  }
+  btn.textContent = 'COPIED ✓'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = 'COPY ORDERS'; btn.classList.remove('ok'); }, 1600);
+});
+$('reset').addEventListener('click', () => {
+  IN.forEach(k => $('in-'+k).value = '');
+  pairReversed = false;
+  try{ localStorage.removeItem(STORE); }catch(e){}
+  render();
+});
+
+load();
+render();
+</script>
+</body>
+</html>

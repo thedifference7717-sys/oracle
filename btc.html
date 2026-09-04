@@ -26,6 +26,8 @@ body{padding-bottom:40px}
 .ctrl-input:focus{border-color:var(--purple)}
 .refresh-btn{padding:11px 18px;background:linear-gradient(90deg,#F7931A,#A78BFA);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.08em;font-family:'Orbitron',monospace;cursor:pointer}
 .refresh-btn:disabled{opacity:.5;cursor:wait}
+.navlink{align-self:flex-end;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;text-decoration:none}
+.navlink:hover{border-color:#A78BFA88}
 #status-line{font-size:13px;color:var(--blue);letter-spacing:.04em;padding:10px 20px;min-height:16px;border-bottom:1px solid var(--border);background:var(--bg2)}
 #status-line.err{color:var(--red)}
 .dir-banner{display:flex;align-items:center;gap:14px;padding:16px 20px 4px;flex-wrap:wrap}
@@ -90,6 +92,7 @@ body{padding-bottom:40px}
     <div class="ctrl-group"><label class="ctrl-lbl">LEVERAGE ×</label><input id="in-lev" class="ctrl-input" type="number" step="1" placeholder="5"></div>
     <div class="ctrl-group"><label class="ctrl-lbl">4H HIGH $ (override)</label><input id="in-high" class="ctrl-input" type="number" step="1" placeholder="auto"></div>
     <div class="ctrl-group"><label class="ctrl-lbl">4H LOW $ (override)</label><input id="in-low" class="ctrl-input" type="number" step="1" placeholder="auto"></div>
+    <a class="navlink" href="ladder.html">FIB LADDER</a>
     <button id="refresh" class="refresh-btn">REFRESH</button>
   </div>
 </div>
