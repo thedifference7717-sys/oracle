@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'probe | scan | summary'
+        description: 'probe | scan | summary | account'
         required: false
         default: 'scan'
 
@@ -51,7 +51,12 @@ jobs:
           # --- Edge thresholds ---
           ARB_MIN_PROFIT_C: ${{ vars.ARB_MIN_PROFIT_C }}
           ARB_MIN_ROI: ${{ vars.ARB_MIN_ROI }}
+          ARB_MIN_ANNUAL_ROI: ${{ vars.ARB_MIN_ANNUAL_ROI }}
           ARB_SAFETY_MARGIN_C: ${{ vars.ARB_SAFETY_MARGIN_C }}
+          # --- Risk limits (fractions of bankroll) ---
+          ARB_MAX_EVENT_FRACTION: ${{ vars.ARB_MAX_EVENT_FRACTION }}
+          ARB_MAX_VENUE_FRACTION: ${{ vars.ARB_MAX_VENUE_FRACTION }}
+          ARB_MAX_HOLD_DAYS: ${{ vars.ARB_MAX_HOLD_DAYS }}
           # --- Scanning ---
           ARB_SCAN_KALSHI: ${{ vars.ARB_SCAN_KALSHI }}
           ARB_SCAN_POLYMARKET: ${{ vars.ARB_SCAN_POLYMARKET }}
@@ -68,5 +73,6 @@ jobs:
           case "${{ github.event.inputs.mode || 'scan' }}" in
             probe)   python arb/main.py --probe ;;
             summary) python arb/main.py --summary ;;
+            account) python arb/main.py --account ;;
             *)       python arb/main.py ;;
           esac

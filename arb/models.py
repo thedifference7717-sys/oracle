@@ -4,8 +4,17 @@ Everything internal is expressed in **cents** (integers) for prices and whole
 contracts for size. Cents keep the arithmetic exact: a dutch book is decided by
 sub-penny margins, and float dollars round the answer away.
 """
+import time
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
+
+# Capital in a prediction market is returned at settlement, not at fill, so a
+# position's *duration* is as much a part of its return as its margin. Anything
+# without a known resolution date is assumed to run this long, which is
+# pessimistic on purpose: an unknown lockup should never outrank a known short
+# one just because nobody filled in the date.
+DEFAULT_HOLD_DAYS = 90.0
+SECONDS_PER_DAY = 86_400.0
 
 
 @dataclass(frozen=True)
@@ -99,6 +108,7 @@ class Opportunity:
     contracts: int
     payout_c: int                  # guaranteed gross return at settlement
     verified_pair: bool = True     # False => resolution equivalence is unproven
+    resolves_at: Optional[float] = None   # unix seconds, when capital comes back
     notes: List[str] = field(default_factory=list)
 
     @property
@@ -116,3 +126,41 @@ class Opportunity:
     @property
     def venues(self) -> Tuple[str, ...]:
         return tuple(sorted({l.quote.venue for l in self.legs}))
+
+    @property
+    def hold_days(self) -> float:
+        """Days until this basket releases its capital.
+
+        Floored well above zero: a market resolving in an hour would otherwise
+        annualise to a number so large it swamps every other candidate on
+        rounding noise alone.
+        """
+        if self.resolves_at is None:
+            return DEFAULT_HOLD_DAYS
+        days = (self.resolves_at - time.time()) / SECONDS_PER_DAY
+        return max(days, 0.25)
+
+    @property
+    def annualized_roi(self) -> float:
+        """Return per dollar per year -- the metric that actually ranks these.
+
+        Raw ROI is the wrong comparison when holding periods differ by two
+        orders of magnitude. A 2% edge resolving in three days earns far more
+        on the same dollar than a 20% edge resolving in a year, because the
+        dollar comes back and gets redeployed. Ranking on ROI systematically
+        fills the book with slow money and then has nothing free when the fast
+        opportunities appear.
+
+        Simple (not compounded) annualisation: we are not guaranteed to find a
+        replacement trade the moment this one settles, so assuming reinvestment
+        at the same rate would flatter long-dated positions less honestly.
+        """
+        if self.cost_c <= 0:
+            return 0.0
+        return self.roi * (365.0 / self.hold_days)
+
+    @property
+    def profit_per_day_c(self) -> float:
+        """Absolute cents earned per day of lockup -- the tiebreak that keeps
+        tiny-but-fast baskets from crowding out materially larger ones."""
+        return self.profit_c / self.hold_days

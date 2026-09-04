@@ -11,10 +11,14 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import time            # noqa: E402
+
 import config          # noqa: E402
 import detect          # noqa: E402
 import fees            # noqa: E402
 import ledger          # noqa: E402
+import portfolio       # noqa: E402
+import risk            # noqa: E402
 import scan            # noqa: E402
 import sizing          # noqa: E402
 from execute import execute_opportunity  # noqa: E402
@@ -33,6 +37,10 @@ def cfg(**over):
     c.safety_margin_c = 0
     c.poly_taker_bps = 0.0
     c.poly_fixed_cost_c = 0
+    c.min_annualized_roi = 0.0
+    c.max_event_fraction = 1.0
+    c.max_venue_fraction = 1.0
+    c.max_hold_days = 0.0
     for k, v in over.items():
         setattr(c, k, v)
     return c
@@ -340,6 +348,173 @@ def test_ledger(tmp="arb/.selftest-ledger.jsonl"):
     print("  ledger round-trip             OK")
 
 
+
+
+# --- 8. Capital efficiency ------------------------------------------------
+def _opp(profit_pct, days, key="kalshi:E", venue="kalshi", cost_c=10_000):
+    """Synthetic opportunity with a chosen margin and lockup."""
+    from models import Leg, Opportunity
+    qq = q("m", [(50, 1000)], venue=venue)
+    leg = Leg(qq, 100, cost_c, 0)
+    payout = int(cost_c * (1 + profit_pct))
+    return Opportunity("dutch_book", key, f"{profit_pct:.0%}/{days}d", [leg],
+                       100, payout, resolves_at=time.time() + days * 86400)
+
+
+def test_annualized_return():
+    """Lockup is part of the return. A short small edge beats a long big one."""
+    fast, slow = _opp(0.02, 3), _opp(0.20, 400)
+    assert fast.roi < slow.roi, "the slow one wins on raw ROI"
+    assert fast.annualized_roi > slow.annualized_roi, "but loses per year"
+    assert fast.annualized_roi > 2.0 and slow.annualized_roi < 0.25
+    # Unknown resolution is treated pessimistically, never optimistically.
+    from models import Opportunity, Leg
+    unknown = Opportunity("dutch_book", "k", "t",
+                          [Leg(q("m", [(50, 100)]), 100, 10_000, 0)],
+                          100, 10_200, resolves_at=None)
+    assert unknown.hold_days == 90.0
+    # A near-instant resolution must not annualise to infinity.
+    assert _opp(0.02, 0).hold_days == 0.25
+    print("  annualized return             OK")
+
+
+def test_ranking_prefers_efficiency():
+    """The ordering fix: ranking on ROI fills the book with slow money."""
+    fast, slow = _opp(0.02, 3, key="kalshi:FAST"), _opp(0.20, 400, key="kalshi:SLOW")
+    assert sizing.rank([slow, fast])[0] is fast, "must rank by annualised return"
+    # Verified structures outrank unverified ones no matter how good they look.
+    great = _opp(0.50, 1, key="cross:X")
+    great.verified_pair = False
+    assert sizing.rank([great, fast])[0] is fast
+    print("  efficiency ranking            OK")
+
+
+def test_annual_floor_rejects_slow_money():
+    c = cfg(min_annualized_roi=0.15)
+    gate = risk.RiskGate(c)
+    assert gate.check(_opp(0.02, 3)) is None
+    reason = gate.check(_opp(0.03, 400))          # ~2.7%/yr
+    assert reason and "annualised" in reason, reason
+    print("  annual return floor           OK")
+
+
+def test_hold_horizon():
+    c = cfg(max_hold_days=180)
+    gate = risk.RiskGate(c)
+    assert gate.check(_opp(0.05, 30)) is None
+    reason = gate.check(_opp(0.90, 400))
+    assert reason and "lockup" in reason, reason
+    print("  hold horizon enforced         OK")
+
+
+# --- 9. Risk limits -------------------------------------------------------
+def test_event_concentration():
+    """Several baskets on one event are one bet, not several."""
+    c = cfg(bankroll_c=100_000, max_event_fraction=0.25)
+    gate = risk.RiskGate(c)
+    a = _opp(0.05, 10, key="kalshi:E1", cost_c=20_000)
+    b = _opp(0.05, 10, key="kalshi:E1", cost_c=20_000)
+    assert gate.check(a) is None
+    gate.commit(a)
+    reason = gate.check(b)                 # 40k > 25k cap
+    assert reason and "event exposure" in reason, reason
+    # Cross-venue structures on the same event share the budget.
+    assert risk.event_root("cross:E1:kalshiYES/polyNO") == "E1"
+    assert risk.event_root("kalshi:E1") == "E1"
+    print("  event concentration cap       OK")
+
+
+def test_venue_concentration():
+    """Venue exposure is counterparty risk; hedging inside it cannot reduce it."""
+    c = cfg(bankroll_c=100_000, max_venue_fraction=0.50)
+    gate = risk.RiskGate(c)
+    a = _opp(0.05, 10, key="kalshi:E1", cost_c=30_000)
+    b = _opp(0.05, 10, key="kalshi:E2", cost_c=30_000)
+    assert gate.check(a) is None
+    gate.commit(a)
+    reason = gate.check(b)
+    assert reason and "kalshi exposure" in reason, reason
+    print("  venue concentration cap       OK")
+
+
+def test_kelly():
+    # A 60% shot at even money: Kelly says 20% of bankroll.
+    assert abs(risk.kelly_fraction(0.60, 1.0) - 0.20) < 1e-9
+    assert risk.kelly_fraction(0.40, 1.0) == 0.0      # no edge -> no bet
+    assert risk.kelly_fraction(0.99, 10.0) == 0.25    # capped, never full Kelly
+    print("  fractional kelly              OK")
+
+
+# --- 10. Portfolio --------------------------------------------------------
+def test_portfolio_capital(tmp="arb/.selftest-portfolio.jsonl"):
+    if os.path.exists(tmp):
+        os.remove(tmp)
+    now = time.time()
+    ledger.record(tmp, "execution", {
+        "key": "kalshi:OPEN", "title": "open", "status": "filled",
+        "cost_c": 20_000, "payout_c": 21_000, "filled": 100, "requested": 100,
+        "resolves_at": now + 30 * 86400, "venues": ["kalshi"], "errors": []})
+    ledger.record(tmp, "execution", {
+        "key": "kalshi:DONE", "title": "resolved", "status": "filled",
+        "cost_c": 50_000, "payout_c": 52_000, "filled": 100, "requested": 100,
+        "resolves_at": now - 30 * 86400, "venues": ["kalshi"], "errors": []})
+    book = portfolio.Portfolio.from_ledger(tmp)
+
+    # The settled position must release its capital; the open one must not.
+    assert len(book.open_positions) == 1, [p.key for p in book.open_positions]
+    assert book.locked_c == 20_000, book.locked_c
+    assert book.free_c(100_000) == 80_000
+    assert book.venue_exposure_c("kalshi") == 20_000
+    assert 29 <= book.weighted_hold_days() <= 31, book.weighted_hold_days()
+    os.remove(tmp)
+    print("  portfolio capital tracking    OK")
+
+
+def test_portfolio_partial_fill(tmp="arb/.selftest-partial.jsonl"):
+    """A partial fill locks only the capital that actually filled."""
+    if os.path.exists(tmp):
+        os.remove(tmp)
+    ledger.record(tmp, "execution", {
+        "key": "kalshi:P", "title": "partial", "status": "partial",
+        "cost_c": 10_000, "payout_c": 10_400, "filled": 30, "requested": 100,
+        "resolves_at": time.time() + 10 * 86400, "venues": ["kalshi"],
+        "errors": []})
+    book = portfolio.Portfolio.from_ledger(tmp)
+    assert book.locked_c == 3_000, book.locked_c
+    os.remove(tmp)
+    print("  partial fill capital scaled   OK")
+
+
+def test_portfolio_supersedes(tmp="arb/.selftest-super.jsonl"):
+    """Re-running a scan must not double-count the same position."""
+    if os.path.exists(tmp):
+        os.remove(tmp)
+    row = {"key": "kalshi:X", "title": "x", "status": "filled",
+           "cost_c": 10_000, "payout_c": 10_500, "filled": 100,
+           "requested": 100, "resolves_at": time.time() + 5 * 86400,
+           "venues": ["kalshi"], "errors": []}
+    ledger.record(tmp, "execution", dict(row))
+    ledger.record(tmp, "execution", dict(row))
+    book = portfolio.Portfolio.from_ledger(tmp)
+    assert book.locked_c == 10_000, book.locked_c
+    os.remove(tmp)
+    print("  duplicate positions netted    OK")
+
+
+def test_allocation_respects_open_book():
+    """Capital already locked is not available to the current scan."""
+    c = cfg(bankroll_c=30_000, max_deployed_c=30_000)
+    book = portfolio.Portfolio(positions=[portfolio.Position(
+        key="kalshi:OLD", title="old", cost_c=25_000, payout_c=26_000,
+        contracts=100, opened_ts=time.time(),
+        resolves_at=time.time() + 30 * 86400, venues=["kalshi"],
+        status="filled")])
+    want = _opp(0.05, 10, key="kalshi:NEW", cost_c=20_000)
+    accepted, skipped = sizing.allocate([want], c, book.locked_c, book)
+    assert accepted == [] and skipped, "must not spend locked capital"
+    print("  allocation sees open book     OK")
+
+
 def main():
     print("arb self-test")
     for fn in (test_fees, test_kalshi_book_mirroring, test_polymarket_rounding,
@@ -351,7 +526,12 @@ def main():
                test_execution_unwinds_when_a_leg_dies,
                test_execution_flags_failed_unwind,
                test_scan_end_to_end, test_scan_skips_inactive_outcome,
-               test_ledger):
+               test_ledger,
+               test_annualized_return, test_ranking_prefers_efficiency,
+               test_annual_floor_rejects_slow_money, test_hold_horizon,
+               test_event_concentration, test_venue_concentration, test_kelly,
+               test_portfolio_capital, test_portfolio_partial_fill,
+               test_portfolio_supersedes, test_allocation_respects_open_book):
         fn()
     print("\nALL SELF-TESTS PASSED")
 

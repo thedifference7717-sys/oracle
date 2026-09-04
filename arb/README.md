@@ -7,12 +7,73 @@ Runs paper-only by default. Two separate gates must be flipped before it can
 place a real order.
 
 ```bash
-python arb/selftest.py       # 18 offline tests, no network
+python arb/selftest.py       # 29 offline tests, no network
 python arb/main.py --probe   # connectivity + credential check, never trades
 python arb/main.py           # one scan (paper mode)
+python arb/main.py --account # positions, locked capital, release schedule
 python arb/main.py --summary # what the ledger has recorded so far
 python arb/main.py --plan 500
 ```
+
+---
+
+## The organizing principle: return per dollar per *day*
+
+This is the one idea the rest of the system is built around, and it is the
+difference between a profitable account and a collection of profitable trades.
+
+**Capital is returned at settlement, not at fill.** A prediction market position
+locks your cash until the event resolves — days to months. So ROI is the wrong
+way to rank opportunities, and ranking on it is actively harmful:
+
+| Opportunity | ROI | Resolves in | Annualised |
+|---|---|---|---|
+| A | 2% | 3 days | **243%** |
+| B | 4% | 30 days | 49% |
+| C | 20% | 400 days | 18% |
+
+Sorted by ROI you take **C** and lock your bankroll for over a year at an
+effective 18%/yr. Sorted by annualised return you take **A**, and the same
+dollar comes back in three days to do it again — roughly **13× more** return on
+the same capital.
+
+Worse, an account full of C has no free cash when A appears. The cost of
+ranking wrong is not just the weaker trade; it is every trade you then cannot
+fund. So `sizing.rank()` sorts on `annualized_roi`, `risk.py` enforces a
+minimum annualised return (default 15%/yr) and a maximum lockup (default 180d),
+and `--account` reports **utilisation** and **weighted hold days** — because a
+great edge deployed on 5% of your bankroll is a mediocre account.
+
+Unknown resolution dates are treated as 90-day locks: pessimistic on purpose,
+so a missing date can never outrank a known-short one.
+
+## Account management
+
+`portfolio.py` rebuilds open positions from the ledger on every run, rather
+than keeping a running counter — a counter drifts whenever a run dies mid-scan,
+and never notices a position settling and freeing its cash. Capital is treated
+as locked until resolution **plus a 2-day settlement buffer**, so the account
+never commits money it does not yet have back.
+
+```
+$ python arb/main.py --account
+open_positions             3
+locked_usd                 640.00
+free_usd                   360.00
+utilisation                0.64
+weighted_hold_days         18.4
+implied_annual_return      0.31
+```
+
+Risk limits in `risk.py`, all as fractions of bankroll:
+
+- **Event concentration** (default 25%) — several baskets on one event are one
+  bet on that event settling as written, not several independent edges.
+  `cross:E1:...` and `kalshi:E1` share the budget.
+- **Venue concentration** (default 60%) — counterparty risk. This is the one
+  exposure no amount of hedging *inside* a venue can reduce.
+- **Hold horizon** (default 180d) — past this, a trading strategy has quietly
+  become an unsecured loan to an exchange with no coupon.
 
 ---
 
@@ -201,6 +262,10 @@ All knobs are environment variables (repository variables/secrets in CI).
 | `ARB_MAX_CONTRACTS` | `500` | Per-leg contract ceiling |
 | `ARB_MIN_PROFIT_C` | `25` | Absolute profit floor, cents |
 | `ARB_MIN_ROI` | `0.01` | Minimum profit / capital-at-risk |
+| `ARB_MIN_ANNUAL_ROI` | `0.15` | Minimum return per dollar per **year** |
+| `ARB_MAX_EVENT_FRACTION` | `0.25` | Cap on exposure to one event |
+| `ARB_MAX_VENUE_FRACTION` | `0.60` | Cap on counterparty exposure per venue |
+| `ARB_MAX_HOLD_DAYS` | `180` | Reject baskets locking capital longer |
 | `ARB_SAFETY_MARGIN_C` | `1` | Cents/contract shaved off every edge |
 | `ARB_CROSS_VENUE` | `false` | Enable cross-venue detection |
 | `ARB_POLY_TAKER_BPS` | `0` | Polymarket taker fee, basis points |
@@ -235,11 +300,13 @@ models.py      Level / Quote / Leg / Opportunity, all in integer cents
 fees.py        Kalshi published fee curve, exact; Polymarket knobs
 venues/        kalshi.py (book mirroring), polymarket.py (Gamma + CLOB)
 detect.py      dutch book + cross venue, depth-aware, fee-inclusive
-sizing.py      portfolio allocation across a scan's findings
+sizing.py      allocation ranked by annualised return, not ROI
+portfolio.py   open positions, locked vs free capital, release schedule
+risk.py        concentration caps, hold horizon, fractional Kelly
 execute.py     IOC legs, level-down reconciliation, unwind
 ledger.py      append-only JSONL, paper and live share a schema
 scan.py        venue data -> candidates (fixture-drivable)
 main.py        entry point: scan / probe / summary / plan
-selftest.py    18 offline tests
+selftest.py    29 offline tests
 pairs.json     human-verified cross-venue pairs (edit before enabling)
 ```

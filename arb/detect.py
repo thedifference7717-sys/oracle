@@ -75,7 +75,7 @@ def _passes(profit_c, cost_c, cfg):
     return profit_c >= cfg.min_profit_c and (profit_c / cost_c) >= cfg.min_roi
 
 
-def find_dutch_book(quotes, key, title, cfg, notes=None):
+def find_dutch_book(quotes, key, title, cfg, resolves_at=None, notes=None):
     """Mutually exclusive + exhaustive basket priced under its $1 payout.
 
     ``quotes`` must be the YES leg of *every* outcome in the set. A missing
@@ -92,12 +92,13 @@ def find_dutch_book(quotes, key, title, cfg, notes=None):
         return None
     return Opportunity(
         kind="dutch_book", key=key, title=title, legs=legs, contracts=n,
-        payout_c=PAYOUT_C * n, verified_pair=True,
+        payout_c=PAYOUT_C * n, verified_pair=True, resolves_at=resolves_at,
         notes=list(notes or []),
     )
 
 
-def find_cross_venue(yes_quote, no_quote, key, title, cfg, verified, notes=None):
+def find_cross_venue(yes_quote, no_quote, key, title, cfg, verified,
+                     resolves_at=None, notes=None):
     """YES here against NO there: a two-leg basket with the same $1 payout.
 
     Structurally identical to a dutch book, but only an arb if the two markets
@@ -118,7 +119,8 @@ def find_cross_venue(yes_quote, no_quote, key, title, cfg, verified, notes=None)
                      "review before trading")
     return Opportunity(
         kind="cross_venue", key=key, title=title, legs=legs, contracts=n,
-        payout_c=PAYOUT_C * n, verified_pair=verified, notes=extra,
+        payout_c=PAYOUT_C * n, verified_pair=verified, resolves_at=resolves_at,
+        notes=extra,
     )
 
 

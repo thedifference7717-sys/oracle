@@ -3,6 +3,7 @@
 Usage:
     python arb/main.py              # one scan, paper mode
     python arb/main.py --probe      # connectivity + auth check, no trading
+    python arb/main.py --account    # positions, locked capital, release schedule
     python arb/main.py --summary    # print ledger stats
     python arb/main.py --plan 500   # capital plan for a $500 deposit
 """
@@ -16,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import config           # noqa: E402
 import ledger           # noqa: E402
 import notify           # noqa: E402
+import portfolio        # noqa: E402
 import scan             # noqa: E402
 import sizing           # noqa: E402
 import state            # noqa: E402
@@ -61,6 +63,9 @@ def main():
     cfg = config.load()
     args = sys.argv[1:]
 
+    if "--account" in args:
+        return _print_account(cfg)
+
     if "--summary" in args:
         stats = ledger.summarise(cfg.ledger_path)
         for k, v in stats.items():
@@ -86,11 +91,20 @@ def main():
         print(f"  [warn] {err}")
 
     st = state.prune(state.load_state(cfg.state_blob_url))
-    deployed_c = int(st.get("deployed_c", 0))
-    accepted, skipped = sizing.allocate(opportunities, cfg, deployed_c)
+
+    # Capital already committed comes from the ledger, not a running counter:
+    # a counter drifts every time a run dies mid-scan, and it never notices a
+    # position settling and freeing its cash back up.
+    book = portfolio.Portfolio.from_ledger(cfg.ledger_path)
+    deployed_c = book.locked_c
+    accepted, skipped = sizing.allocate(opportunities, cfg, deployed_c, book)
 
     print(f"  found={len(opportunities)} fundable={len(accepted)} "
-          f"skipped={len(skipped)} deployed=${deployed_c/100:.2f}")
+          f"skipped={len(skipped)} locked=${deployed_c/100:.2f} "
+          f"free=${book.free_c(cfg.bankroll_c or cfg.max_deployed_c)/100:.2f}")
+    if accepted:
+        print(f"  blended annual return on bankroll: "
+              f"{sizing.blended_annual_return(accepted, cfg.bankroll_c or cfg.max_deployed_c):.1%}")
     for opp, reason in skipped:
         print(f"  [skip] {opp.title[:60]} :: {reason}")
 
@@ -107,13 +121,16 @@ def main():
         dry = (not live) or (not can_execute)
 
         result = execute_opportunity(opp, executor, dry_run=dry)
-        result.update(scan_id=scan_id, cost_c=opp.cost_c, profit_c=opp.profit_c)
+        result.update(scan_id=scan_id, cost_c=opp.cost_c, profit_c=opp.profit_c,
+                      payout_c=opp.payout_c, resolves_at=opp.resolves_at,
+                      venues=list(opp.venues))
         ledger.record(cfg.ledger_path, "execution", result)
 
-        if result["status"] in ("filled", "partial"):
+        if result["status"] in ("filled", "partial", "paper"):
             deployed_c += opp.cost_c
-        print(f"  [{result['status']}] {opp.title[:60]} "
-              f"${opp.profit_c/100:.2f} on ${opp.cost_c/100:.2f}")
+        print(f"  [{result['status']}] {opp.title[:52]} "
+              f"${opp.profit_c/100:.2f} on ${opp.cost_c/100:.2f} "
+              f"| {opp.hold_days:.0f}d -> {opp.annualized_roi:.0%}/yr")
         for err in result["errors"]:
             print(f"      ! {err}")
 
@@ -165,6 +182,42 @@ def _probe(cfg):
     else:
         print("kalshi auth   SKIP  paper mode (set ARB_DRY_RUN=false ARB_LIVE=1)")
     return 0 if ok else 1
+
+
+def _print_account(cfg):
+    """What the account is holding, and when the cash comes back.
+
+    The number that matters is not profit but utilisation-adjusted return:
+    a great edge on 5% of the bankroll is a mediocre account.
+    """
+    book = portfolio.Portfolio.from_ledger(cfg.ledger_path)
+    bankroll_c = cfg.bankroll_c or cfg.max_deployed_c
+    stats = book.summary(bankroll_c)
+    for k, v in stats.items():
+        print(f"{k:26} {v}")
+
+    if not book.open_positions:
+        print("\nno open positions")
+        return 0
+
+    print("\nopen positions")
+    for p in sorted(book.open_positions,
+                    key=lambda x: x.days_remaining
+                    if x.days_remaining is not None else 1e9):
+        days = p.days_remaining
+        when = f"{days:.0f}d" if days is not None else "unknown"
+        print(f"  {p.title[:44]:46} ${p.cost_c/100:>9,.2f} "
+              f"-> +${p.profit_c/100:>7,.2f}  {when:>8}")
+
+    schedule = book.release_schedule()
+    if schedule:
+        print("\ncapital returning (next 90d)")
+        cumulative = 0
+        for days, p in schedule:
+            cumulative += p.cost_c
+            print(f"  +{days:>5.0f}d  ${p.cost_c/100:>9,.2f}  "
+                  f"(cumulative ${cumulative/100:>10,.2f})  {p.title[:34]}")
+    return 0
 
 
 def _print_plan(usd, cfg):

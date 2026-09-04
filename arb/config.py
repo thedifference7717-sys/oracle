@@ -48,7 +48,13 @@ class Config:
     # --- Edge thresholds ---
     min_profit_c: int = 0          # absolute floor, in cents
     min_roi: float = 0.0           # profit / capital-at-risk
+    min_annualized_roi: float = 0.0  # return per dollar per YEAR of lockup
     safety_margin_c: int = 0       # cents/contract shaved off every edge
+
+    # --- Risk limits (fractions of bankroll) ---
+    max_event_fraction: float = 0.0   # cap on exposure to one underlying event
+    max_venue_fraction: float = 0.0   # cap on counterparty exposure per venue
+    max_hold_days: float = 0.0        # reject baskets that lock capital longer
 
     # --- Fees ---
     kalshi_taker_rate: float = 0.07
@@ -87,7 +93,14 @@ def load() -> Config:
 
         min_profit_c=_i("ARB_MIN_PROFIT_C", 25),
         min_roi=_f("ARB_MIN_ROI", 0.01),
+        # 15%/yr is the real hurdle: below it the capital lockup and venue risk
+        # are not paid for, however good the headline ROI looks.
+        min_annualized_roi=_f("ARB_MIN_ANNUAL_ROI", 0.15),
         safety_margin_c=_i("ARB_SAFETY_MARGIN_C", 1),
+
+        max_event_fraction=_f("ARB_MAX_EVENT_FRACTION", 0.25),
+        max_venue_fraction=_f("ARB_MAX_VENUE_FRACTION", 0.60),
+        max_hold_days=_f("ARB_MAX_HOLD_DAYS", 180),
 
         kalshi_taker_rate=_f("ARB_KALSHI_TAKER_RATE", 0.07),
         poly_taker_bps=_f("ARB_POLY_TAKER_BPS", 0.0),

@@ -3,11 +3,53 @@
 Kept separate from main.py so the whole detection path can be driven from
 fixtures in selftest.py without touching the network.
 """
+import calendar
 import json
 import os
+import time
 
 import detect
 from venues import polymarket as poly
+
+
+def parse_ts(value):
+    """Parse an ISO-8601 timestamp to unix seconds, or None.
+
+    Both venues publish close/end times as ISO strings with assorted precision
+    and a Z suffix. A missing or unparseable date is returned as None rather
+    than guessed: models.Opportunity treats unknown lockup pessimistically, and
+    a wrong date would distort the capital-efficiency ranking that everything
+    downstream sorts on.
+    """
+    if not value:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    text = str(value).strip().replace("Z", "+0000")
+    if "." in text:  # drop fractional seconds, formats vary
+        head, _, tail = text.partition(".")
+        text = head + ("+" + tail.split("+", 1)[1] if "+" in tail else "")
+    for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S",
+                "%Y-%m-%d %H:%M:%S%z", "%Y-%m-%d"):
+        try:
+            parsed = time.strptime(text, fmt)
+        except ValueError:
+            continue
+        if "%z" in fmt:
+            return calendar.timegm(parsed) - (parsed.tm_gmtoff or 0)
+        return calendar.timegm(parsed)
+    return None
+
+
+def _resolves_at(items, *keys):
+    """Latest resolution time across an event's markets.
+
+    The basket only frees its capital when the *last* leg settles, so the
+    conservative aggregate is the max, not the min.
+    """
+    stamps = [parse_ts(item.get(k)) for item in items for k in keys]
+    stamps = [s for s in stamps if s]
+    return max(stamps) if stamps else None
 
 
 def _title(event, fallback=""):
@@ -56,6 +98,7 @@ def scan_kalshi(client, cfg):
             key=f"kalshi:{event.get('event_ticker')}",
             title=_title(event, event.get("event_ticker", "")),
             cfg=cfg,
+            resolves_at=_resolves_at(markets, "close_time", "expiration_time"),
             notes=[f"{len(quotes)}-way mutually exclusive event"],
         )
         if opp:
@@ -111,6 +154,7 @@ def scan_polymarket(client, cfg):
             key=f"polymarket:{event.get('slug') or event.get('id')}",
             title=_title(event, str(event.get("slug", ""))),
             cfg=cfg,
+            resolves_at=_resolves_at(markets, "endDate", "end_date_iso"),
             notes=[f"{len(quotes)}-way neg-risk event"],
         )
         if opp:
@@ -162,6 +206,7 @@ def scan_cross_venue(kalshi_client, poly_client, cfg):
             opp = detect.find_cross_venue(
                 a, b, key=f"cross:{ticker}:{tag}", title=f"{title} [{tag}]",
                 cfg=cfg, verified=verified,
+                resolves_at=parse_ts(pair.get("resolves_at")),
                 notes=[pair["note"]] if pair.get("note") else None)
             if opp:
                 found.append(opp)
