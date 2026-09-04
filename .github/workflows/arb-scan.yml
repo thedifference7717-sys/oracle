@@ -1,0 +1,72 @@
+name: Prediction market arbitrage scan
+
+# Scheduled workflows only run on the repository's DEFAULT branch (main), so
+# this activates once merged. Use "Run workflow" (workflow_dispatch) to test it
+# from any branch in the meantime.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'probe | scan | summary'
+        required: false
+        default: 'scan'
+
+permissions:
+  contents: read
+
+# Never let two scans overlap: both would size against the same free capital
+# and could double-commit the same bankroll.
+concurrency:
+  group: arb-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r arb/requirements.txt
+
+      - name: Self-test
+        run: python arb/selftest.py
+
+      - name: Run
+        env:
+          # --- Mode. Both gates must flip for real orders to be placed. ---
+          ARB_DRY_RUN: ${{ vars.ARB_DRY_RUN || 'true' }}
+          ARB_LIVE: ${{ vars.ARB_LIVE || 'false' }}
+          # --- Capital ---
+          ARB_BANKROLL_USD: ${{ vars.ARB_BANKROLL_USD }}
+          ARB_MAX_STAKE_USD: ${{ vars.ARB_MAX_STAKE_USD }}
+          ARB_MAX_DEPLOYED_USD: ${{ vars.ARB_MAX_DEPLOYED_USD }}
+          ARB_MAX_CONTRACTS: ${{ vars.ARB_MAX_CONTRACTS }}
+          # --- Edge thresholds ---
+          ARB_MIN_PROFIT_C: ${{ vars.ARB_MIN_PROFIT_C }}
+          ARB_MIN_ROI: ${{ vars.ARB_MIN_ROI }}
+          ARB_SAFETY_MARGIN_C: ${{ vars.ARB_SAFETY_MARGIN_C }}
+          # --- Scanning ---
+          ARB_SCAN_KALSHI: ${{ vars.ARB_SCAN_KALSHI }}
+          ARB_SCAN_POLYMARKET: ${{ vars.ARB_SCAN_POLYMARKET }}
+          ARB_CROSS_VENUE: ${{ vars.ARB_CROSS_VENUE }}
+          ARB_MAX_EVENTS: ${{ vars.ARB_MAX_EVENTS }}
+          # --- Credentials ---
+          KALSHI_KEY_ID: ${{ secrets.KALSHI_KEY_ID }}
+          KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
+          KALSHI_BEARER: ${{ secrets.KALSHI_BEARER }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          STATE_BLOB_URL: ${{ secrets.STATE_BLOB_URL }}
+        run: |
+          case "${{ github.event.inputs.mode || 'scan' }}" in
+            probe)   python arb/main.py --probe ;;
+            summary) python arb/main.py --summary ;;
+            *)       python arb/main.py ;;
+          esac

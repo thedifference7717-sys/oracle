@@ -1,0 +1,10 @@
+[
+  {
+    "title": "EXAMPLE - copy this shape, then delete this entry",
+    "kalshi_ticker": "KXEXAMPLE-26DEC31-T1",
+    "poly_token_yes": "0000000000000000000000000000000000000000000000000000000000000000",
+    "poly_token_no": "1111111111111111111111111111111111111111111111111111111111111111",
+    "verified": false,
+    "note": "Set verified:true ONLY after reading both venues' full resolution text and confirming they agree on: the data source, the exact cutoff time and timezone, how ties/voids/cancellations settle, and what happens if the source stops publishing. Until then this pair is alert-only and will never be traded."
+  }
+]
