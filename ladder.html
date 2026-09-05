@@ -115,7 +115,8 @@ details[open] summary::after{content:' ▴'}
   <div class="setup">
     <div class="field key"><label>0.382 price</label><input id="in-f382" type="number" step="any" inputmode="decimal" placeholder="118400"></div>
     <div class="field key"><label>0.618 price</label><input id="in-f618" type="number" step="any" inputmode="decimal" placeholder="114200"></div>
-    <div class="field"><label>Total size $</label><input id="in-total" type="number" step="any" inputmode="decimal" placeholder="10000"></div>
+    <div class="field"><label>Margin $</label><input id="in-total" type="number" step="any" inputmode="decimal" placeholder="10000"></div>
+    <div class="field"><label>Leverage ×</label><input id="in-lev" type="number" step="any" min="1" inputmode="decimal" placeholder="1"></div>
   </div>
   <div class="setup" id="tune">
     <div class="field"><label>Stop override</label><input id="in-stop" type="number" step="any" inputmode="decimal" placeholder="auto .886"></div>
@@ -161,7 +162,7 @@ const F_IN_LO = 0.382, F_IN_HI = 0.618;     // entry zone
 const F_STOP  = 0.886;                       // stop level
 const F_TP_LO = -0.618, F_TP_HI = -1.0;      // take-profit band (extensions)
 const D = {legs: 10, ratio: 2, total: 10000};
-const IN = ['f382','f618','total','stop','legs','ratio'];
+const IN = ['f382','f618','total','lev','stop','legs','ratio'];
 let pairReversed = false;   // false: leg 1 → −0.618 … leg n → −1.0
 
 /* ── formatting ───────────────────────────────────────── */
@@ -252,13 +253,17 @@ function buildLadder(g, total, n, ratio, stop, reversed){
 
 function readInputs(){
   const p382 = num('f382'), p618 = num('f618');
-  const total = num('total') != null ? num('total') : D.total;
+  const margin = num('total') != null ? num('total') : D.total;
+  let lev = num('lev') != null ? num('lev') : 1;
   let n = Math.round(num('legs') != null ? num('legs') : D.legs);
   let ratio = num('ratio') != null ? num('ratio') : D.ratio;
   if(p382 == null || p618 == null) return {err:'Enter the 0.382 and 0.618 prices to build the ladder.'};
   if(p382 <= 0 || p618 <= 0) return {err:'Fib prices must be positive.'};
   if(p382 === p618) return {err:'The 0.382 and 0.618 prices must differ — that spread sets the whole leg.'};
-  if(!(total > 0)) return {err:'Total size must be greater than zero.'};
+  if(!(margin > 0)) return {err:'Margin must be greater than zero.'};
+  if(!(lev >= 1)) return {err:'Leverage must be at least 1× (1 = unleveraged, spot-style sizing).'};
+  if(lev > 100) lev = 100;
+  const total = margin * lev;   // notional actually deployed across the ladder
   if(!(ratio >= 1)) return {err:'Last ÷ first must be at least 1 (1 = flat sizing, 2 = last leg double the first).'};
   if(!(n >= 2)) n = 2;
   if(n > 50) n = 50;
@@ -266,8 +271,14 @@ function readInputs(){
   const g = geometry(p382, p618);
   const stopOv = num('stop');
   const stop = stopOv != null ? stopOv : g.stop;
-  return {p382, p618, total, n, ratio, g, stop, stopOverridden: stopOv != null,
-          legs: buildLadder(g, total, n, ratio, stop, pairReversed)};
+  // Liquidation on the fully-filled position, isolated-margin style: the whole
+  // position is backed by `margin`, so it is gone once price moves 1/lev against
+  // the average fill. Ignores maintenance margin and fees, so it is optimistic.
+  const legs = buildLadder(g, total, n, ratio, stop, pairReversed);
+  const avg = legs[n-1].avg;
+  const liq = lev > 1 ? (g.isLong ? avg * (1 - 1/lev) : avg * (1 + 1/lev)) : null;
+  return {p382, p618, margin, lev, total, n, ratio, g, stop, stopOverridden: stopOv != null,
+          liq, legs};
 }
 
 /* ── render ───────────────────────────────────────────── */
@@ -287,7 +298,7 @@ function render(){
     $('legs').innerHTML = '<div class="dim" style="font-size:13px;padding:2px">Waiting on valid inputs…</div>';
     return;
   }
-  const {p382, p618, total, n, ratio, g, stop, stopOverridden, legs} = S;
+  const {p382, p618, margin, lev, total, n, ratio, g, stop, stopOverridden, liq, legs} = S;
   const first = legs[0], last = legs[n-1];
   const totalUnits = last.cumUnits, avg = last.avg;
   const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
@@ -295,26 +306,38 @@ function render(){
   const blendedR  = totalRisk > 0 ? totalWin / totalRisk : null;
   const tpNear = g.px(F_TP_LO), tpFar = g.px(F_TP_HI);
 
+  const liqFirst = liq != null && (g.isLong ? liq > stop : liq < stop);
   const warn = stopOverridden && (g.isLong ? stop >= p618 : stop <= p618)
-    ? 'Stop override sits inside the entry zone — the deepest legs would never fill before it triggers.' : null;
+    ? 'Stop override sits inside the entry zone — the deepest legs would never fill before it triggers.'
+    : liqFirst
+    ? 'At ' + nf(lev,2) + '× you are liquidated near ' + usd(liq,2) + ', before the ' +
+      (stopOverridden ? 'stop' : '0.886 stop') + ' at ' + usd(stop,2) + ' — cut leverage or the stop never gets a say.'
+    : null;
   st.className = warn ? 'warn' : '';
   st.textContent = warn ? '⚠ ' + warn
     : n + ' ' + g.dir.toUpperCase() + ' entries · ' + usd(p382,2) + ' → ' + usd(p618,2) +
-      ' · leg ' + n + ' is ' + nf(ratio,2) + '× leg 1.';
+      ' · leg ' + n + ' is ' + nf(ratio,2) + '× leg 1' +
+      (lev > 1 ? ' · ' + nf(lev,2) + '× on ' + usd(margin,2) + ' = ' + usd(total,2) + ' notional.' : '.');
 
   // ── summary ──
   $('sum-card').style.display = '';
   $('sum-tag').textContent = 'all ' + n + ' legs filled';
   $('stats').innerHTML =
     '<div class="kpi av"><div class="k">Average fill</div><div class="v num">' + usd(avg,2) + '</div>' +
-      '<div class="s num">' + usd(total,2) + ' · <b>' + units(totalUnits) + '</b> units<br>leg 1 ' + usd(first.size,2) + ' → leg ' + n + ' ' + usd(last.size,2) + '</div></div>' +
+      '<div class="s num">' + usd(total,2) + ' notional · <b>' + units(totalUnits) + '</b> units<br>' +
+      (lev > 1 ? usd(margin,2) + ' margin at ' + nf(lev,2) + '×' : 'leg 1 ' + usd(first.size,2) + ' → leg ' + n + ' ' + usd(last.size,2)) + '</div></div>' +
     '<div class="kpi sl"><div class="k">Risk at ' + (stopOverridden ? 'stop' : '0.886') + '</div><div class="v num b">' + signed(-Math.abs(totalRisk),2) + '</div>' +
-      '<div class="s num">Stop <b>' + usd(stop,2) + '</b>' + (stopOverridden ? ' <span class="amb">(override)</span>' : '') + '<br>' + nf(100*Math.abs(totalRisk)/total,2) + '% of deployed size</div></div>' +
+      '<div class="s num">Stop <b>' + usd(stop,2) + '</b>' + (stopOverridden ? ' <span class="amb">(override)</span>' : '') + '<br>' +
+      nf(100*Math.abs(totalRisk)/total,2) + '% of notional' +
+      (lev > 1 ? ' · <b class="' + (Math.abs(totalRisk) > margin ? 'b' : '') + '">' + nf(100*Math.abs(totalRisk)/margin,1) + '% of margin</b>' : '') +
+      '</div></div>' +
     '<div class="kpi tp"><div class="k">P/L, all TPs hit</div><div class="v num ' + (totalWin >= 0 ? 'g' : 'b') + '">' + signed(totalWin,2) + '</div>' +
       '<div class="s num">' + usd(tpNear,2) + ' → ' + usd(tpFar,2) + '<br>blended R <b>' + (blendedR != null ? nf(blendedR,2) : '—') + '</b></div></div>';
   $('meta').innerHTML =
     '<span class="pill ' + g.dir + '">' + g.dir.toUpperCase() + '</span>' +
-    '<span class="num">Implied leg <b>' + usd(g.origin,2) + '</b> → <b>' + usd(g.anchor,2) + '</b> · range <b>' + usd(g.range,2) + '</b> · step <b>' + usd(Math.abs(p618-p382)/(n-1),2) + '</b></span>';
+    '<span class="num">Implied leg <b>' + usd(g.origin,2) + '</b> → <b>' + usd(g.anchor,2) + '</b> · range <b>' + usd(g.range,2) + '</b> · step <b>' + usd(Math.abs(p618-p382)/(n-1),2) + '</b></span>' +
+    (liq != null ? '<span class="num">Est. liq <b class="' + (liqFirst ? 'b' : '') + '">' + usd(liq,2) + '</b> ' +
+      '<span style="opacity:.75">at ' + nf(lev,2) + '× on the full ladder — excludes maintenance margin and fees</span></span>' : '');
 
   // ── price map ──
   const hi = Math.max(stop, tpFar, tpNear, p382, p618), lo = Math.min(stop, tpFar, tpNear, p382, p618);
@@ -391,6 +414,13 @@ function render(){
     '<span class="hl">' + nf(ratio,2) + '×</span> leg 1 and the ladder sums to ' + usd(total,2) + '. The deep legs are bigger and ' +
     'closer to the stop, so they buy more size for less risk: leg 1 risks <span class="hl">' + usd(shallowRisk,2) + '</span>/unit, ' +
     'leg ' + n + ' only <span class="hl">' + usd(deepRisk,2) + '</span>.</p>' +
+    (lev > 1 ? '<p><b>Leverage.</b> ' + usd(margin,2) + ' of margin at <span class="hl">' + nf(lev,2) + '×</span> buys ' +
+      '<span class="hl">' + usd(total,2) + '</span> of notional, so every size, risk and P/L figure here is the leveraged one. ' +
+      'The ' + usd(Math.abs(totalRisk),2) + ' risk to the stop is <span class="hl">' + nf(100*Math.abs(totalRisk)/margin,1) + '% of your margin</span>. ' +
+      'Filled all the way, the position is wiped out around <span class="hl">' + usd(liq,2) + '</span> — ' +
+      (liqFirst ? 'which price reaches <span class="hl">before</span> the stop, so the stop never gets a say at this leverage.'
+                : 'which sits past the stop, so the stop gets there first.') +
+      ' That estimate ignores maintenance margin and fees, so treat it as the optimistic edge.</p>' : '') +
     '<p><b>Exits.</b> ' + n + ' targets evenly spaced across −0.618 → −1.0, one per leg — currently ' +
     '<span class="hl">leg 1 at ' + fib(first.fTp) + '</span> and <span class="hl">leg ' + n + ' at ' + fib(last.fTp) + '</span>' +
     (pairReversed ? ', the reversed pairing, so the biggest legs bank first.'
@@ -403,12 +433,13 @@ function render(){
 function ordersText(){
   const S = readInputs();
   if(S.err) return null;
-  const {p382, p618, total, n, ratio, g, stop, legs} = S;
+  const {p382, p618, margin, lev, total, n, ratio, g, stop, liq, legs} = S;
   const last = legs[n-1];
   const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
   const totalWin  = legs.reduce((a,l) => a + l.win, 0);
   const lines = [
-    g.dir.toUpperCase() + ' fib ladder · ' + n + ' entries · leg ' + n + ' = ' + nf(ratio,2) + 'x leg 1',
+    g.dir.toUpperCase() + ' fib ladder · ' + n + ' entries · leg ' + n + ' = ' + nf(ratio,2) + 'x leg 1' +
+      (lev > 1 ? ' · ' + nf(lev,2) + 'x leverage' : ''),
     'Implied leg ' + usd(g.origin,2) + ' -> ' + usd(g.anchor,2) + ' (range ' + usd(g.range,2) + ')',
     'Entries .382 ' + usd(p382,2) + ' -> .618 ' + usd(p618,2) + ' | stop ' + usd(stop,2) +
       ' | TPs ' + usd(g.px(F_TP_LO),2) + ' -> ' + usd(g.px(F_TP_HI),2),
@@ -419,8 +450,11 @@ function ordersText(){
     '  size ' + usd(l.size,2).padStart(12) + '  (' + units(l.units) + ' u)  TP ' + fib(l.fTp) + ' ' +
     usd(l.tp,2).padStart(14) + '  R ' + (l.R != null ? nf(l.R,2) : '—')));
   lines.push('');
-  lines.push('Total ' + usd(total,2) + ' · ' + units(last.cumUnits) + ' units · avg fill ' + usd(last.avg,2));
-  lines.push('Stop ' + usd(stop,2) + ' · risk ' + usd(Math.abs(totalRisk),2) + ' if fully filled');
+  lines.push('Total ' + usd(total,2) + ' notional · ' + units(last.cumUnits) + ' units · avg fill ' + usd(last.avg,2));
+  if(lev > 1) lines.push('Margin ' + usd(margin,2) + ' at ' + nf(lev,2) + 'x · est. liq ' + usd(liq,2) +
+    ' (excludes maintenance margin and fees)');
+  lines.push('Stop ' + usd(stop,2) + ' · risk ' + usd(Math.abs(totalRisk),2) + ' if fully filled' +
+    (lev > 1 ? ' (' + nf(100*Math.abs(totalRisk)/margin,1) + '% of margin)' : ''));
   lines.push('All TPs hit · P/L ' + signed(totalWin,2) + ' · blended R ' + (totalRisk > 0 ? nf(totalWin/totalRisk,2) : '—'));
   return lines.join('\n');
 }
