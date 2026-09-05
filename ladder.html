@@ -159,13 +159,15 @@ so check the implied swing against your chart before trusting the stop and targe
 
 <script>
 const $ = id => document.getElementById(id);
-const STORE = 'fibladder.v4';
+const STORE = 'fibladder.v5';
+const STORE_PREV = 'fibladder.v4';
 const F_IN_LO = 0.382, F_IN_HI = 0.618;     // entry zone
 const F_STOP  = 0.886;                       // stop level
 const F_TP_LO = -0.618, F_TP_HI = -1.0;      // take-profit band (extensions)
 const D = {legs: 10, ratio: 2, total: 10000};
 const IN = ['f382','f618','total','lev','stop','legs','ratio'];
-let pairReversed = false;   // false: leg 1 → −0.618 … leg n → −1.0
+let pairReversed = true;    // default: leg 1 (first filled, smallest) runs to the −1.0,
+                            // the deep legs bank first at the −0.618. false = the reverse.
 
 /* ── formatting ───────────────────────────────────────── */
 const nf = (v,dp) => v.toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp});
@@ -196,10 +198,16 @@ function save(){
   try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
 }
 function load(){
-  let o = {};
-  try{ o = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; }catch(e){}
+  let o = null;
+  try{ o = JSON.parse(localStorage.getItem(STORE) || 'null'); }catch(e){}
+  if(!o){
+    // First run on this version: keep the numbers from the previous store but
+    // let the new default pairing win.
+    try{ o = JSON.parse(localStorage.getItem(STORE_PREV) || 'null') || {}; }catch(e){ o = {}; }
+    delete o.pairReversed;
+  }
   IN.forEach(k => { if(o[k] != null) $('in-'+k).value = o[k]; });
-  pairReversed = !!o.pairReversed;
+  if(o.pairReversed != null) pairReversed = !!o.pairReversed;
   if(o.tune){ $('tune').classList.add('show'); $('tune-btn').classList.add('on'); }
 }
 
@@ -425,8 +433,8 @@ function render(){
       ' That estimate ignores maintenance margin and fees, so treat it as the optimistic edge.</p>' : '') +
     '<p><b>Exits.</b> ' + n + ' targets evenly spaced across −0.618 → −1.0, one per leg — currently ' +
     '<span class="hl">leg 1 at ' + fib(first.fTp) + '</span> and <span class="hl">leg ' + n + ' at ' + fib(last.fTp) + '</span>' +
-    (pairReversed ? ', the reversed pairing, so the biggest legs bank first.'
-                  : ', so size comes off gradually and the biggest legs run to the −1.0.') +
+    (pairReversed ? ' — the first order placed rides furthest while the big deep legs bank at the −0.618, which they reach first on the way back up.'
+                  : ' — size comes off gradually and the biggest legs run all the way to the −1.0.') +
     ' Tap the TP button to swap. Full ladder, every target hit: <span class="hl">' + signed(totalWin,2) + '</span> against ' +
     '<span class="hl">' + usd(Math.abs(totalRisk),2) + '</span> of risk (blended R ' + (blendedR != null ? nf(blendedR,2) : '—') + ').</p>';
 }
@@ -487,7 +495,7 @@ $('copy').addEventListener('click', async () => {
 });
 $('reset').addEventListener('click', () => {
   IN.forEach(k => $('in-'+k).value = '');
-  pairReversed = false;
+  pairReversed = true;
   try{ localStorage.removeItem(STORE); }catch(e){}
   render();
 });
