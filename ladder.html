@@ -23,6 +23,8 @@ body{background:var(--bg);background-image:radial-gradient(1200px 600px at 50% -
 .sublbl{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);font-weight:700;margin-top:2px}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.4px;border:1px solid var(--line2);background:var(--card);color:var(--txt);cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit}
 .btn:active{border-color:var(--blu)}
+/* Thumbs, not cursors: 44px is the smallest reliable tap target. */
+@media(pointer:coarse){.btn,.navbtn{min-height:44px;padding-top:0;padding-bottom:0}}
 .btn.on{border-color:rgba(79,140,255,.5);color:var(--blu);background:rgba(79,140,255,.1)}
 .btn.ok{border-color:rgba(46,189,133,.5);color:var(--grn);background:rgba(46,189,133,.1)}
 
