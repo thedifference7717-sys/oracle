@@ -8,7 +8,8 @@ on:
     - cron: "*/30 * * * *"
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  contents: write
 
 concurrency:
   group: parlaiy-alerts
@@ -48,6 +49,32 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # American odds the doubles are priced against, and the minimum
+          # modelled edge before one is alerted as a bet rather than tracked.
+          # Set DD_PRICE to whatever your book actually offers.
+          DD_PRICE: ${{ vars.DD_PRICE || '100' }}
+          DD_MIN_EDGE: ${{ vars.DD_MIN_EDGE || '0.02' }}
+
+      # The alerter grades every leg it published and folds the result into a
+      # calibration log. Because the eligible pool is the same faces night
+      # after night, that residual is worth real accuracy over a season — so
+      # publish it back to the repo for the dashboard to read on load. Written
+      # once a day, at settlement, so this is not a chatty commit.
+      - name: Publish calibration log
+        if: always()
+        continue-on-error: true
+        run: |
+          [ -f data/model-log.json ] || { echo "nothing to publish"; exit 0; }
+          git config user.name  "daily-double-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git add data/model-log.json
+          git diff --cached --quiet && { echo "calibration unchanged"; exit 0; }
+          git commit -m "DAIly Double: publish graded-leg calibration log"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
+            echo "push failed, retry $i"; sleep $((2**i))
+          done
+          echo "could not push calibration log"
 
       - name: Save alert state
         if: always()

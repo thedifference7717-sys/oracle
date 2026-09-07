@@ -26,48 +26,66 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .run-btn:disabled{opacity:.5;cursor:wait}
 #progress-wrap{height:3px;background:var(--bg2);display:none}#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#14F195,var(--blue));transition:width .2s}
 #status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
+/* ── bet slip bar ── */
+#slip{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;padding:12px 18px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:10px;color:var(--dim);letter-spacing:.08em}
+.fld input,.fld select{background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:9px 10px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;width:110px}
+.fld.chk{flex-direction:row;align-items:center;gap:7px;padding-bottom:9px}
+.fld.chk input{width:auto}
+.fld.chk label{font-size:11px;color:var(--muted);letter-spacing:0}
 .section-h{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.05em;color:var(--green);padding:16px 18px 8px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;padding:0 18px}
+.section-h small{display:block;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px;margin-top:4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;padding:0 18px}
 @media(max-width:900px){.cards{grid-template-columns:1fr}}
 .bet{background:linear-gradient(160deg,#0C1A14,var(--bg2));border:1px solid #14F19555;border-radius:16px;padding:16px;box-shadow:0 4px 24px #14F19514}
 .bet.r1{border-color:#14F195AA;box-shadow:0 4px 28px #14F19533}
-.bet.r2{border-color:#60A5FA88}
-.bet.r3{border-color:#A78BFA88}
+.bet.r2{border-color:#60A5FA88}.bet.r3{border-color:#A78BFA88}
+.bet.neg{border-color:#FF4D6D55;background:linear-gradient(160deg,#1A0C10,var(--bg2));box-shadow:none}
 .bet-top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
 .bet-rank{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;padding:5px 10px;border-radius:8px;background:#14F19522;color:var(--green);white-space:nowrap}
 .bet.r2 .bet-rank{background:#60A5FA22;color:var(--blue)}
 .bet.r3 .bet-rank{background:#A78BFA22;color:var(--purple)}
-.bet-top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.bet.neg .bet-rank{background:#FF4D6D22;color:var(--red)}
 .bet-game{flex:1;min-width:0;font-size:12px;color:var(--muted)}
 .bet-str{text-align:right}
 .bet-str .v{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--green);line-height:1}
+.bet.neg .bet-str .v{color:var(--red)}
 .bet-str .l{font-size:9px;color:var(--muted);letter-spacing:.06em}
 .leg{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border)}
-.leg-av{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--text);width:52px;text-align:center}
+.leg-slot{font-family:'Orbitron',monospace;font-size:11px;font-weight:900;color:var(--dim);width:26px;text-align:center;border:1px solid var(--border);border-radius:6px;padding:5px 0}
 .leg-info{flex:1;min-width:0}
-.leg-name{font-size:16px;font-weight:700;line-height:1.1}
-.leg-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.leg-name{font-size:16px;font-weight:700;line-height:1.15}
+.leg-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
 .trend-up{color:var(--green)}.trend-dn{color:var(--red)}.trend-fl{color:var(--dim)}
-.leg-prob{text-align:right;font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--blue)}
-.bet-foot{margin-top:11px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.leg-prob{text-align:right;font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--blue)}
+.leg-prob small{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);font-weight:400}
+.bet-foot{margin-top:11px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.bet-foot b{font-family:'Orbitron',monospace}
 .odds{font-family:'Orbitron',monospace;color:var(--yellow);font-weight:700}
+.tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:5px;border:1px solid var(--border);color:var(--dim);margin-left:5px;vertical-align:middle}
+.tag.ok{color:var(--green);border-color:#14F19555}
+.tag.warn{color:var(--yellow);border-color:#FBBF2455}
+.tag.corr{color:var(--purple);border-color:#A78BFA55}
 .wrap{padding:14px 18px}
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.05em}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.05em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.panel-head span{font-family:'Share Tech Mono',monospace;color:var(--dim);font-size:11px;letter-spacing:0}
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
 thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:11px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);white-space:nowrap}
 thead th.num{text-align:right}
 tbody td{padding:11px 12px;white-space:nowrap;border-bottom:1px solid var(--border)}
 td.num{text-align:right;font-family:'Orbitron',monospace}
 .legend{font-size:12px;color:var(--muted);line-height:1.8;padding:12px 18px 0}
+.legend b{color:var(--text)}
 .spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .empty{padding:40px 18px;text-align:center;color:var(--dim);font-size:12px}
 </style>
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🎲 DAIly Double</div><div class="logo-sub">2-MAN SAME-GAME HIT PARLAY · BUILD 2 · SHARPER</div></div>
+  <div><div class="logo">🎲 DAIly Double</div><div class="logo-sub">2-MAN SAME-GAME HIT PARLAY · BUILD 3 · EV ENGINE</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="hits.html">🎯 AIchiro</a>
@@ -78,177 +96,176 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="status"></div>
 
-<div class="section-h">🎲 TOP 3 DOUBLES — two hitters, one game, both to record a hit · ranked by combined probability</div>
+<div id="slip">
+  <div class="fld"><label>DOUBLE PRICE (AMERICAN)</label><input id="price" type="number" step="5" value="100"></div>
+  <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="10" value="1000"></div>
+  <div class="fld"><label>MIN EDGE (%)</label><input id="minEdge" type="number" step="0.5" value="0"></div>
+  <div class="fld chk"><input id="onlyPosted" type="checkbox"><label for="onlyPosted">Confirmed lineups only</label></div>
+  <div class="fld chk"><input id="onlyTeam" type="checkbox"><label for="onlyTeam">Same-team pairs only (correlation edge)</label></div>
+</div>
+
+<div class="section-h">🎲 TOP DOUBLES — ranked by edge over your price, not by raw probability
+  <small>The likeliest double is usually the most heavily bet and the worst priced. What pays is the gap between our number and the book's.</small></div>
 <div class="cards" id="cards"></div>
 
 <div class="wrap">
   <div class="panel">
-    <div class="panel-head">📋 BEST PAIR IN EVERY GAME TODAY</div>
+    <div class="panel-head">📋 BEST PAIR IN EVERY GAME TODAY <span id="pairsNote"></span></div>
     <div class="table-wrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head">🎯 TOP SINGLE LEGS — every hitter on the slate, best first <span id="legsNote"></span></div>
+    <div class="table-wrap"><table><thead><tr id="lhead"></tr></thead><tbody id="lbody"></tbody></table></div>
   </div>
 </div>
 <div class="legend" id="legend"></div>
 
+<script src="dd-model.js"></script>
 <script>
-const API="https://statsapi.mlb.com/api/v1";
+const M=DDModel;
+// GitHub Pages is same-origin with the API only through a proxy; keep the
+// existing fallback chain so a blocked direct fetch still resolves.
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
-let good=null;let current=[];
-async function getJSON(url){const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}throw e||new Error("unreachable");}
-async function pool(items,fn,size,onTick){const out=new Array(items.length);let i=0,done=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}done++;onTick&&onTick(done,items.length);}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function etNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"}));}
-function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
-function slateYmd(){const d=etNow();d.setHours(d.getHours()-6);return ymd(d);}
+let good=null,board=null,cal=null;
+async function getJSON(url){
+  const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);
+  let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}
+  throw e||new Error("unreachable");
+}
 function status(m,c="var(--blue)"){const el=document.getElementById("status");el.style.color=c;el.innerHTML=m;}
 function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
-// Ballpark HITS factor (100 = neutral; >100 = more hits fall in)
-const PARK={"Coors Field":112,"Fenway Park":107,"Great American Ball Park":102,"Globe Life Field":101,"Chase Field":103,"Wrigley Field":101,"Yankee Stadium":101,"Citizens Bank Park":101,"Oriole Park at Camden Yards":100,"Rogers Centre":101,"American Family Field":100,"Truist Park":100,"Kauffman Stadium":103,"Daikin Park":100,"Minute Maid Park":100,"Nationals Park":100,"Dodger Stadium":99,"Angel Stadium":100,"Busch Stadium":99,"Target Field":99,"Progressive Field":99,"Rate Field":100,"PNC Park":100,"Comerica Park":101,"Citi Field":98,"Petco Park":97,"loanDepot park":98,"T-Mobile Park":96,"Oracle Park":98,"Sutter Health Park":101,"George M. Steinbrenner Field":100};
-function park(n){if(!n)return 100;if(PARK[n]!=null)return PARK[n];const k=Object.keys(PARK).find(k=>n.includes(k)||k.includes(n));return k?PARK[k]:100;}
-function platoon(bat,pit){if(!bat||!pit)return null;if(bat==="S")return "adv";return bat!==pit?"adv":"dis";}
-// American odds from a probability
-function amOdds(p){if(!(p>0&&p<1))return "—";const dec=1/p;return dec>=2?"+"+Math.round((dec-1)*100):"-"+Math.round(100/(dec-1));}
+const pct=v=>Math.round(v*100)+"%";
+const av=v=>v==null?"—":v.toFixed(3).replace(/^0/,"");
+const money=v=>(v<0?"-$":"$")+Math.abs(v).toFixed(2);
 
-// Probability a hitter records ≥1 hit in a game, blending his bat, the pitcher's
-// hits-allowed, contact rate, platoon edge, and ballpark.
-function hitProb(seasonAVG,recentAVG,rab,spBAA,kRate,plt,pk){
-  const own = rab>=15 ? 0.5*seasonAVG + 0.5*recentAVG : seasonAVG; // lean on recent form
-  const pit = spBAA!=null ? spBAA : 0.250;
-  let x = 0.60*own + 0.40*pit;                       // hitter vs pitcher-allowed
-  if(kRate!=null) x *= clamp(1 + (0.20 - kRate)*0.8, 0.88, 1.12); // contact bonus for low-K bats
-  if(plt==="adv") x *= 1.05; else if(plt==="dis") x *= 0.95;      // platoon edge
-  x *= (0.99 + (pk-100)/100*0.2);                    // small park nudge
-  x = clamp(x, 0.15, 0.46);
-  return 1 - Math.pow(1 - x, 3.9);                    // ~3.9 at-bats
-}
+// Bet-slip settings survive a reload — this page reruns every 3 minutes.
+const SETTINGS=["price","bank","minEdge","onlyPosted","onlyTeam"];
+SETTINGS.forEach(id=>{
+  const el=document.getElementById(id),saved=localStorage.getItem("dd."+id);
+  if(saved!=null){if(el.type==="checkbox")el.checked=saved==="1";else el.value=saved;}
+  el.addEventListener("change",()=>{
+    localStorage.setItem("dd."+id,el.type==="checkbox"?(el.checked?"1":"0"):el.value);
+    if(id==="price")load(); else if(board)render();      // reprice needs a rebuild; filters do not
+  });
+});
+const setting=id=>{const el=document.getElementById(id);return el.type==="checkbox"?el.checked:+el.value;};
 
 async function load(){
   const btn=document.getElementById("run");btn.disabled=true;
   try{
-    const day=slateYmd(),season=+day.slice(0,4);
-    const rEnd=etNow();rEnd.setDate(rEnd.getDate()-1);const rStart=etNow();rStart.setDate(rStart.getDate()-14);
-    const rEndStr=ymd(rEnd),rStartStr=ymd(rStart);
-    status('<span class="spin">⟳</span> Today’s schedule…');setProg(6);
-    const sched=await getJSON(`${API}/schedule?sportId=1&date=${day}&hydrate=probablePitcher,team,venue,lineups`);
-    let games=(sched?.dates?.[0]?.games||[]).filter(g=>!/postpon|suspend|cancel/i.test(g.status?.detailedState||""));
-    if(!games.length){status(`No MLB games today (${day}).`,"var(--yellow)");renderEmpty();return;}
-    const lset=arr=>Array.isArray(arr)&&arr.length?new Set(arr.map(p=>p.id)):null; // confirmed lineup ids (null if not posted yet)
-    const G=games.map(g=>({pk:g.gamePk,venue:g.venue?.name,park:park(g.venue?.name),
-      home:{id:g.teams.home.team.id,name:g.teams.home.team.abbreviation||g.teams.home.team.name,sp:g.teams.away.probablePitcher,lineup:lset(g.lineups?.homePlayers)},
-      away:{id:g.teams.away.team.id,name:g.teams.away.team.abbreviation||g.teams.away.team.name,sp:g.teams.home.probablePitcher,lineup:lset(g.lineups?.awayPlayers)}}));
-    // NOTE: a team's opposing SP is the OTHER team's probable pitcher.
-
-    status('<span class="spin">⟳</span> Active rosters…');setProg(16);
-    const teamIds=[...new Set(G.flatMap(g=>[g.home.id,g.away.id]))];
-    const rosterByTeam={};
-    await pool(teamIds,async tid=>{try{const d=await getJSON(`${API}/teams/${tid}/roster?rosterType=active`);rosterByTeam[tid]=(d?.roster||[]).filter(p=>p.position?.type!=="Pitcher").map(p=>({id:p.person.id,name:p.person.fullName,pos:p.position?.abbreviation}));}catch(e){rosterByTeam[tid]=[];}},6);
-
-    status('<span class="spin">⟳</span> Season + last-14-day hitting…');setProg(30);
-    const [seasonD,recentD]=await Promise.all([
-      getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=3000&gameType=R&playerPool=All`),
-      getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${rStartStr}&endDate=${rEndStr}&sportId=1&limit=3000&gameType=R&playerPool=All`)
-    ]);
-    const seasonById={},recentById={};
-    (seasonD?.stats?.[0]?.splits||[]).forEach(s=>{if(s.player?.id!=null)seasonById[s.player.id]={avg:parseFloat(s.stat?.avg)||0,ab:+s.stat?.atBats||0,k:+s.stat?.strikeOuts||0,pa:+s.stat?.plateAppearances||0};});
-    (recentD?.stats?.[0]?.splits||[]).forEach(s=>{if(s.player?.id!=null)recentById[s.player.id]={ravg:parseFloat(s.stat?.avg)||0,rab:+s.stat?.atBats||0};});
-
-    // Build candidate hitters per game (confirmed starters when posted, else regulars)
-    status('<span class="spin">⟳</span> Building candidates…');setProg(46);
-    const cand=[];
-    G.forEach(g=>{
-      [["home",g.home,g.away],["away",g.away,g.home]].forEach(([side,team,opp])=>{
-        (rosterByTeam[team.id]||[]).forEach(pl=>{
-          const ss=seasonById[pl.id];if(!ss)return;
-          // Confirmed-lineup gate: if today's lineup is posted, only its starters
-          // are eligible (kills bench/rest-day misses). If not posted yet, fall
-          // back to everyday regulars (200+ AB).
-          if(team.lineup){ if(!team.lineup.has(pl.id))return; }
-          else if(ss.ab<200)return;
-          if(ss.avg<0.270)return;                             // real contact bat
-          const rr=recentById[pl.id]||{ravg:ss.avg,rab:0};
-          if(rr.rab>=25 && rr.ravg<0.200)return;              // skip ice-cold slumps
-          cand.push({id:pl.id,name:pl.name,pos:pl.pos,teamId:team.id,teamName:team.name,opp:opp.name,
-            oppSP:team.sp,gk:g.pk,park:g.park,venue:g.venue,confirmed:!!team.lineup,
-            avg:ss.avg,ab:ss.ab,krate:ss.pa>0?ss.k/ss.pa:null,ravg:rr.ravg,rab:rr.rab});
-        });
-      });
-    });
-    if(!cand.length){status(`No qualifying hitters in today’s games.`,"var(--yellow)");renderEmpty();return;}
-
-    // Opposing-SP hits-allowed (BAA) from game logs, and batter/pitcher hands
-    status('<span class="spin">⟳</span> Pitching matchups…');setProg(60);
-    const spIds=[...new Set(cand.map(c=>c.oppSP?.id).filter(Boolean))];const baaMap={},handMap={};
-    await pool(spIds,async pid=>{try{const d=await getJSON(`${API}/people/${pid}/stats?stats=gameLog&group=pitching&season=${season}&gameType=R`);let h=0,ab=0;(d?.stats?.[0]?.splits||[]).forEach(x=>{if(x.stat&&x.date&&x.date<=rEndStr){h+=(+x.stat.hits||0);ab+=(+x.stat.atBats||0);}});baaMap[pid]=ab>=40?h/ab:null;}catch(e){baaMap[pid]=null;}},6,(d,t)=>setProg(60+Math.round(d/t*18)));
-    const ids=[...new Set([...cand.map(c=>c.id),...spIds])];
-    for(let i=0;i<ids.length;i+=40){try{const d=await getJSON(`${API}/people?personIds=${ids.slice(i,i+40).join(",")}`);(d.people||[]).forEach(p=>handMap[p.id]={bat:p.batSide?.code,pit:p.pitchHand?.code});}catch(e){}}
-    setProg(82);
-
-    // Score every candidate
-    cand.forEach(c=>{const spid=c.oppSP?.id;c.baa=spid!=null?baaMap[spid]:null;
-      const plt=platoon(handMap[c.id]?.bat, spid!=null?handMap[spid]?.pit:null);
-      c.plt=plt;c.trend=c.ravg-c.avg;
-      c.p=hitProb(c.avg,c.ravg,c.rab,c.baa,c.krate,plt,c.park);});
-    // Drop anyone facing a genuinely tough starter (holds hitters to ≤ .215).
-    let elig=cand.filter(c=>!(c.baa!=null&&c.baa<=0.215));
-    if(!elig.length)elig=cand;
-
-    // Best pair per game = the two highest hit-probability hitters in that game
-    const byGame={};elig.forEach(c=>{(byGame[c.gk]=byGame[c.gk]||[]).push(c);});
-    let pairs=Object.values(byGame).map(list=>{
-      list.sort((a,b)=>b.p-a.p);
-      if(list.length<2)return null;
-      const a=list[0],b=list[1];
-      return {a,b,prob:a.p*b.p,gk:a.gk,venue:a.venue,park:a.park};
-    }).filter(Boolean);
-    pairs.sort((x,y)=>y.prob-x.prob);
-    current=pairs;
-
+    // The alerter publishes graded results here, once a day at settlement.
+    // Absent is fine — the model just runs uncalibrated. Re-checked on every
+    // pass so a page left open all evening picks the log up when it lands.
+    try{const r=await fetch("data/model-log.json?t="+Date.now());if(r.ok)cal=await r.json();}catch(e){/* uncalibrated */}
+    board=await M.buildBoard({getJSON,cal:cal||null,american:setting("price"),
+      onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
-    render(pairs);
-    status(`✓ ${pairs.length} games analyzed · ${cand.length} hitters · ${day} · ${new Date().toLocaleTimeString()}`,"var(--green)");
+    if(!board.pairs.length){status(`No qualifying pairs for ${board.date}.`,"var(--yellow)");renderEmpty();return;}
+    render();
+    const posted=board.candidates.filter(c=>c.posted).length;
+    const calN=cal&&cal.global?cal.global.n:0;
+    status(`✓ ${board.pairs.length} games · ${board.candidates.length} hitters (${posted} in confirmed lineups) · lg avg ${av(board.lg.avg)} · ${calN?calN+" graded legs feeding calibration":"calibration: no history yet"} · ${board.date} ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
   finally{btn.disabled=false;}
 }
 
-function renderEmpty(){document.getElementById("cards").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="7"><div class="empty">No games / eligible hitters right now.</div></td></tr>`;}
+function renderEmpty(){document.getElementById("cards").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="9"><div class="empty">No games / eligible hitters right now.</div></td></tr>`;document.getElementById("lbody").innerHTML="";}
+
+function filtered(){
+  let p=board.pairs.slice();
+  if(setting("onlyPosted"))p=p.filter(x=>x.bothPosted);
+  if(setting("onlyTeam"))p=p.filter(x=>x.sameTeam);
+  const me=setting("minEdge")/100;
+  if(me>0)p=p.filter(x=>x.ev&&x.ev.edge>=me);
+  return p;
+}
 
 function leg(c){
-  const tr=c.trend>=0.020?`<span class="trend-up">▲ ${(c.ravg).toFixed(3).replace(/^0/,"")} L14</span>`:c.trend<=-0.020?`<span class="trend-dn">▼ ${(c.ravg).toFixed(3).replace(/^0/,"")} L14</span>`:`<span class="trend-fl">${(c.ravg).toFixed(3).replace(/^0/,"")} L14</span>`;
-  const spTxt=c.oppSP?.fullName?`vs ${c.oppSP.fullName}${c.baa!=null?" ("+c.baa.toFixed(3).replace(/^0/,"")+")":""}`:"vs SP TBD";
-  const pl=c.plt==="adv"?' · <span class="trend-up">▲PLAT</span>':c.plt==="dis"?' · <span class="trend-dn">▽</span>':'';
+  const form=c.rAvg==null?"":(c.rAvg-c.avg>=0.02?`<span class="trend-up">▲${av(c.rAvg)} L30</span>`:c.rAvg-c.avg<=-0.02?`<span class="trend-dn">▼${av(c.rAvg)} L30</span>`:`<span class="trend-fl">${av(c.rAvg)} L30</span>`);
+  const plt=c.plt==="adv"?'<span class="tag ok">▲PLAT</span>':c.plt==="dis"?'<span class="tag warn">▽PLAT</span>':'';
+  const lu=c.posted?'<span class="tag ok">✓LU</span>':`<span class="tag warn">${pct(c.startProb)} STARTS</span>`;
+  const rec=c.rec&&c.rec.n>=8?`<span class="tag">${c.rec.hits}-${c.rec.n-c.rec.hits} logged</span>`:"";
+  const sp=c.spName?`vs ${c.spName}${c.spK!=null?" ("+Math.round(c.spK*100)+"% K, "+av(c.spBaa)+" BAA)":""}`:"vs SP TBD";
   return `<div class="leg">
-    <div class="leg-av">${c.avg.toFixed(3).replace(/^0/,"")}</div>
-    <div class="leg-info"><div class="leg-name">${c.name}${c.confirmed?' <span style="color:var(--green);font-size:10px">✓LU</span>':''}</div><div class="leg-meta">${c.teamName} · ${c.pos||""} · ${tr}${pl}<br>${spTxt}</div></div>
-    <div class="leg-prob">${Math.round(c.p*100)}%</div>
+    <div class="leg-slot">${c.slot}</div>
+    <div class="leg-info">
+      <div class="leg-name">${c.name}${lu}${plt}${rec}</div>
+      <div class="leg-meta">${c.teamName} · ${c.pos||""} · ${av(c.avg)} AVG → <b style="color:var(--text)">${av(c.projAvg)}</b> proj ${form}<br>
+      ${sp}<br><span style="color:var(--dim)">${c.eAb.toFixed(2)} exp AB · SP goes ≈${Math.round(c.spBf)} batters</span></div>
+    </div>
+    <div class="leg-prob">${pct(c.p)}<small>hit</small></div>
   </div>`;
 }
 
-function render(pairs){
-  const top=pairs.slice(0,3);
-  document.getElementById("cards").innerHTML=top.map((pr,i)=>`
-    <div class="bet r${i+1}">
-      <div class="bet-top">
-        <div class="bet-rank">${["#1 STRONGEST","#2","#3"][i]}</div>
-        <div class="bet-game">${pr.a.teamName} vs ${pr.a.opp}<br><span style="color:var(--dim)">${pr.venue||""}</span></div>
-        <div class="bet-str"><div class="v">${Math.round(pr.prob*100)}</div><div class="l">STRENGTH</div></div>
-      </div>
-      ${leg(pr.a)}
-      ${leg(pr.b)}
-      <div class="bet-foot"><span>Both to record a hit</span><span>true odds ≈ <span class="odds">${amOdds(pr.prob)}</span></span></div>
-    </div>`).join("")||'<div class="empty">No pairs available.</div>';
+function card(pr,i){
+  const ev=pr.ev,bank=setting("bank");
+  const good=ev&&ev.edge>0;
+  const stake=ev?bank*ev.quarterKelly:0;
+  const rank=["#1","#2","#3","#4","#5","#6"][i]||("#"+(i+1));
+  return `<div class="bet ${good?"r"+Math.min(i+1,3):"neg"}">
+    <div class="bet-top">
+      <div class="bet-rank">${rank}${good?"":" ✗ NO EDGE"}</div>
+      <div class="bet-game">${pr.teams}<br><span style="color:var(--dim)">${pr.venue||""} · PF ${pr.pf}</span></div>
+      <div class="bet-str"><div class="v">${ev?(ev.edge*100>=0?"+":"")+(ev.edge*100).toFixed(1):"—"}</div><div class="l">EDGE PTS</div></div>
+    </div>
+    ${leg(pr.a)}${leg(pr.b)}
+    <div class="bet-foot">
+      <span>Both to record a hit</span><span style="text-align:right"><b style="color:var(--text)">${pct(pr.prob)}</b> true</span>
+      <span>Fair price</span><span style="text-align:right" class="odds">${M.amOdds(pr.prob)}</span>
+      <span>Your price / breakeven</span><span style="text-align:right">${setting("price")>0?"+":""}${setting("price")} · ${ev?pct(ev.breakeven):"—"}</span>
+      <span>Expected value</span><span style="text-align:right"><b style="color:${good?"var(--green)":"var(--red)"}">${ev?(ev.evPct>=0?"+":"")+ev.evPct.toFixed(1)+"%":"—"}</b></span>
+      <span>¼-Kelly stake</span><span style="text-align:right"><b style="color:${stake>0?"var(--green)":"var(--dim)"}">${money(stake)}</b></span>
+      <span>${pr.sameTeam?'<span class="tag corr">SAME TEAM</span>':'<span class="tag">OPPOSING</span>'} correlation</span>
+      <span style="text-align:right" title="How much the two legs being in one game is worth versus multiplying them as independent">ρ ${pr.rho.toFixed(2)} · <b style="color:var(--purple)">+${(pr.lift*100).toFixed(1)}pts</b></span>
+    </div>
+  </div>`;
+}
 
-  document.getElementById("thead").innerHTML=["#","GAME","HITTER 1","HITTER 2","P1","P2","BOTH"].map((h,i)=>`<th class="${[4,5,6].includes(i)?'num':''}">${h}</th>`).join("");
-  document.getElementById("tbody").innerHTML=pairs.map((pr,i)=>`
-    <tr>
+function render(){
+  const pairs=filtered();
+  document.getElementById("cards").innerHTML=pairs.slice(0,6).map(card).join("")||'<div class="empty">No pairs clear your filters. Loosen the minimum edge, or uncheck a filter.</div>';
+  document.getElementById("pairsNote").textContent=`${pairs.length} shown of ${board.pairs.length}`;
+
+  document.getElementById("thead").innerHTML=["#","GAME","HITTER 1","HITTER 2","P1","P2","BOTH","FAIR","EDGE"]
+    .map((h,i)=>`<th class="${i>=4?'num':''}">${h}</th>`).join("");
+  document.getElementById("tbody").innerHTML=pairs.map((pr,i)=>{
+    const e=pr.ev?pr.ev.edge*100:0;
+    return `<tr>
       <td class="num" style="color:var(--dim)">${i+1}</td>
-      <td style="font-size:12px">${pr.a.teamName} v ${pr.a.opp}</td>
-      <td><div style="font-weight:700">${pr.a.name}</div><div style="color:var(--dim);font-size:10px">${pr.a.avg.toFixed(3).replace(/^0/,"")} · ${pr.a.oppSP?.fullName||"TBD"}</div></td>
-      <td><div style="font-weight:700">${pr.b.name}</div><div style="color:var(--dim);font-size:10px">${pr.b.avg.toFixed(3).replace(/^0/,"")} · ${pr.b.oppSP?.fullName||"TBD"}</div></td>
-      <td class="num" style="color:var(--blue)">${Math.round(pr.a.p*100)}%</td>
-      <td class="num" style="color:var(--blue)">${Math.round(pr.b.p*100)}%</td>
-      <td class="num"><b style="color:${pr.prob>=0.55?'var(--green)':pr.prob>=0.48?'var(--yellow)':'var(--muted)'}">${Math.round(pr.prob*100)}</b></td>
+      <td style="font-size:12px">${pr.teams}${pr.sameTeam?' <span class="tag corr">ST</span>':''}</td>
+      <td><div style="font-weight:700">${pr.a.name}${pr.a.posted?' <span class="tag ok">✓</span>':''}</div><div style="color:var(--dim);font-size:10px">#${pr.a.slot} · ${pr.a.spName||"TBD"}</div></td>
+      <td><div style="font-weight:700">${pr.b.name}${pr.b.posted?' <span class="tag ok">✓</span>':''}</div><div style="color:var(--dim);font-size:10px">#${pr.b.slot} · ${pr.b.spName||"TBD"}</div></td>
+      <td class="num" style="color:var(--blue)">${pct(pr.a.p)}</td>
+      <td class="num" style="color:var(--blue)">${pct(pr.b.p)}</td>
+      <td class="num"><b>${pct(pr.prob)}</b></td>
+      <td class="num" style="color:var(--yellow)">${M.amOdds(pr.prob)}</td>
+      <td class="num"><b style="color:${e>0?'var(--green)':'var(--red)'}">${e>=0?"+":""}${e.toFixed(1)}</b></td>
+    </tr>`;}).join("")||`<tr><td colspan="9"><div class="empty">Nothing clears the filters.</div></td></tr>`;
+
+  const legs=board.candidates.filter(c=>!setting("onlyPosted")||c.posted).slice(0,60);
+  document.getElementById("legsNote").textContent=`top ${legs.length}`;
+  document.getElementById("lhead").innerHTML=["HITTER","TEAM","SLOT","OPPOSING SP","PROJ AVG","EXP AB","P(HIT)","FAIR"]
+    .map((h,i)=>`<th class="${i>=4?'num':''}">${h}</th>`).join("");
+  document.getElementById("lbody").innerHTML=legs.map(c=>`<tr>
+      <td><div style="font-weight:700">${c.name}${c.posted?' <span class="tag ok">✓LU</span>':''}${c.plt==="adv"?' <span class="tag ok">▲</span>':''}</div></td>
+      <td style="font-size:12px;color:var(--muted)">${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName}</td>
+      <td class="num" style="color:var(--dim)">${c.slot}</td>
+      <td style="font-size:12px;color:var(--muted)">${c.spName||"TBD"}</td>
+      <td class="num">${av(c.projAvg)}</td>
+      <td class="num" style="color:var(--dim)">${c.eAb.toFixed(2)}</td>
+      <td class="num"><b style="color:var(--blue)">${pct(c.p)}</b></td>
+      <td class="num" style="color:var(--yellow)">${M.amOdds(c.p)}</td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>STRENGTH</b> = combined probability both hitters record ≥ 1 hit (P1 × P2, shown 0–100). Each hitter's hit probability blends: season AVG + last-14-day form (50/50), the opposing starter's hits-allowed BAA (40%), strikeout rate (low-K = more contact), platoon edge (bat vs pitcher hand), and a ballpark hits factor — over ~3.9 at-bats. <b>Filters:</b> confirmed in today's lineup when posted (else everyday regulars, 200+ AB) · season AVG ≥ .270 · not ice-cold (≥ .200 over last 14) · not facing a tough starter (SP BAA ≤ .215 excluded) · injured excluded. <b>✓LU</b> = confirmed in lineup · <b>▲/▼ L14</b> = trending up/down vs season · <b>▲PLAT</b> = platoon advantage. ⚠ Model estimate — not betting advice.`;
+  document.getElementById("legend").innerHTML=`
+  <b>How a leg is priced.</b> A hit needs two things: don't strike out, then find grass. Both are estimated separately — strikeout rate is reliable after ~70 at-bats, hit-on-contact needs ~550 — and each is combined with the pitcher's matching rate and the league's through the <b>odds ratio (log5)</b>. Every input is regressed toward league average by its own stabilisation point, so a hot fortnight nudges the number instead of hijacking it.<br>
+  <b>Then at-bats, which is where the real edge is.</b> Expected plate appearances come from an inning model — three outs an inning, and everyone who reaches buys the lineup another turn — split by <b>lineup slot</b>. Leadoff sees ~4.65 PA, the 9-hole ~3.78. That gap alone is worth ~8 points of hit probability for the identical hitter. Walks are then subtracted per hitter, so a patient bat correctly gets fewer swings at a hit.<br>
+  <b>The bullpen is modelled.</b> For each plate appearance we compute the chance the starter is still out there from his batters-faced-per-start, add the third-time-through bonus, and hand the rest to the opponent's actual relief corps. Facing an ace with a leaky pen is not the same bet as facing an ace with a lockdown pen.<br>
+  <b>Pairs are correlated, and that is the edge.</b> Two hitters in one game are not independent, so P1×P2 is the wrong number — it is too low. A Gaussian copula (ρ ${M.CFG.rhoTeammate} teammates, ${M.CFG.rhoOpponent} opponents) adds the <b style="color:var(--purple)">+pts</b> shown on each card. Any book grading the legs independently is pricing a same-team double too long.<br>
+  <b>Scratch risk is priced.</b> Confirmed in the lineup is <span class="tag ok">✓LU</span>; otherwise the leg is multiplied by his chance of actually starting, because a scratch is a guaranteed loss, not a coin flip.<br>
+  <b>Ranked by EDGE, not by probability</b> — true probability minus your price's breakeven. Stake is <b>quarter-Kelly</b>: full Kelly on a model this uncertain is how you go broke while being right.<br>
+  <span style="color:var(--dim)">Build 3 removed Build 2's hard gates (.270 AVG, 200+ AB, tough-SP exclusion). They were doing the ranking's job badly and pinning the board to the same ~60 names every day. The model sorts the pool now.</span><br>
+  ⚠ Model estimate — not betting advice. Bet only what you can afford to lose.`;
 }
 
 load();
