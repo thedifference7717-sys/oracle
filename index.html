@@ -37,6 +37,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .bet-rank{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;padding:5px 10px;border-radius:8px;background:#14F19522;color:var(--green);white-space:nowrap}
 .bet.r2 .bet-rank{background:#60A5FA22;color:var(--blue)}
 .bet.r3 .bet-rank{background:#A78BFA22;color:var(--purple)}
+.bet-top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
 .bet-game{flex:1;min-width:0;font-size:12px;color:var(--muted)}
 .bet-str{text-align:right}
 .bet-str .v{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--green);line-height:1}
@@ -66,7 +67,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🎲 DAIly Double</div><div class="logo-sub">2-MAN SAME-GAME HIT PARLAY · BUILD 1</div></div>
+  <div><div class="logo">🎲 DAIly Double</div><div class="logo-sub">2-MAN SAME-GAME HIT PARLAY · BUILD 2 · SHARPER</div></div>
   <div class="controls">
     <a class="navlink" href="hr.html">⚾ HR</a>
     <a class="navlink" href="hits.html">🎯 AIchiro</a>
@@ -110,13 +111,13 @@ function amOdds(p){if(!(p>0&&p<1))return "—";const dec=1/p;return dec>=2?"+"+M
 // Probability a hitter records ≥1 hit in a game, blending his bat, the pitcher's
 // hits-allowed, contact rate, platoon edge, and ballpark.
 function hitProb(seasonAVG,recentAVG,rab,spBAA,kRate,plt,pk){
-  const own = rab>=15 ? 0.55*seasonAVG + 0.45*recentAVG : seasonAVG;
+  const own = rab>=15 ? 0.5*seasonAVG + 0.5*recentAVG : seasonAVG; // lean on recent form
   const pit = spBAA!=null ? spBAA : 0.250;
-  let x = 0.62*own + 0.38*pit;                       // hitter vs pitcher-allowed
-  if(kRate!=null) x *= clamp(1 + (0.22 - kRate)*0.6, 0.90, 1.10); // contact bonus for low-K bats
-  if(plt==="adv") x *= 1.05; else if(plt==="dis") x *= 0.96;      // platoon edge
+  let x = 0.60*own + 0.40*pit;                       // hitter vs pitcher-allowed
+  if(kRate!=null) x *= clamp(1 + (0.20 - kRate)*0.8, 0.88, 1.12); // contact bonus for low-K bats
+  if(plt==="adv") x *= 1.05; else if(plt==="dis") x *= 0.95;      // platoon edge
   x *= (0.99 + (pk-100)/100*0.2);                    // small park nudge
-  x = clamp(x, 0.15, 0.44);
+  x = clamp(x, 0.15, 0.46);
   return 1 - Math.pow(1 - x, 3.9);                    // ~3.9 at-bats
 }
 
@@ -127,12 +128,13 @@ async function load(){
     const rEnd=etNow();rEnd.setDate(rEnd.getDate()-1);const rStart=etNow();rStart.setDate(rStart.getDate()-14);
     const rEndStr=ymd(rEnd),rStartStr=ymd(rStart);
     status('<span class="spin">⟳</span> Today’s schedule…');setProg(6);
-    const sched=await getJSON(`${API}/schedule?sportId=1&date=${day}&hydrate=probablePitcher,team,venue`);
+    const sched=await getJSON(`${API}/schedule?sportId=1&date=${day}&hydrate=probablePitcher,team,venue,lineups`);
     let games=(sched?.dates?.[0]?.games||[]).filter(g=>!/postpon|suspend|cancel/i.test(g.status?.detailedState||""));
     if(!games.length){status(`No MLB games today (${day}).`,"var(--yellow)");renderEmpty();return;}
+    const lset=arr=>Array.isArray(arr)&&arr.length?new Set(arr.map(p=>p.id)):null; // confirmed lineup ids (null if not posted yet)
     const G=games.map(g=>({pk:g.gamePk,venue:g.venue?.name,park:park(g.venue?.name),
-      home:{id:g.teams.home.team.id,name:g.teams.home.team.abbreviation||g.teams.home.team.name,sp:g.teams.away.probablePitcher,},
-      away:{id:g.teams.away.team.id,name:g.teams.away.team.abbreviation||g.teams.away.team.name,sp:g.teams.home.probablePitcher,}}));
+      home:{id:g.teams.home.team.id,name:g.teams.home.team.abbreviation||g.teams.home.team.name,sp:g.teams.away.probablePitcher,lineup:lset(g.lineups?.homePlayers)},
+      away:{id:g.teams.away.team.id,name:g.teams.away.team.abbreviation||g.teams.away.team.name,sp:g.teams.home.probablePitcher,lineup:lset(g.lineups?.awayPlayers)}}));
     // NOTE: a team's opposing SP is the OTHER team's probable pitcher.
 
     status('<span class="spin">⟳</span> Active rosters…');setProg(16);
@@ -149,22 +151,28 @@ async function load(){
     (seasonD?.stats?.[0]?.splits||[]).forEach(s=>{if(s.player?.id!=null)seasonById[s.player.id]={avg:parseFloat(s.stat?.avg)||0,ab:+s.stat?.atBats||0,k:+s.stat?.strikeOuts||0,pa:+s.stat?.plateAppearances||0};});
     (recentD?.stats?.[0]?.splits||[]).forEach(s=>{if(s.player?.id!=null)recentById[s.player.id]={ravg:parseFloat(s.stat?.avg)||0,rab:+s.stat?.atBats||0};});
 
-    // Build candidate hitters per game (regulars, not injured — active roster only)
+    // Build candidate hitters per game (confirmed starters when posted, else regulars)
     status('<span class="spin">⟳</span> Building candidates…');setProg(46);
-    const cand=[]; // {id,name,pos,teamId,teamName,oppSP,g}
+    const cand=[];
     G.forEach(g=>{
       [["home",g.home,g.away],["away",g.away,g.home]].forEach(([side,team,opp])=>{
         (rosterByTeam[team.id]||[]).forEach(pl=>{
           const ss=seasonById[pl.id];if(!ss)return;
-          if(ss.ab<120||ss.avg<0.250)return;                 // regulars with a real bat
+          // Confirmed-lineup gate: if today's lineup is posted, only its starters
+          // are eligible (kills bench/rest-day misses). If not posted yet, fall
+          // back to everyday regulars (200+ AB).
+          if(team.lineup){ if(!team.lineup.has(pl.id))return; }
+          else if(ss.ab<200)return;
+          if(ss.avg<0.270)return;                             // real contact bat
           const rr=recentById[pl.id]||{ravg:ss.avg,rab:0};
+          if(rr.rab>=25 && rr.ravg<0.200)return;              // skip ice-cold slumps
           cand.push({id:pl.id,name:pl.name,pos:pl.pos,teamId:team.id,teamName:team.name,opp:opp.name,
-            oppSP:team.sp,gk:g.pk,park:g.park,venue:g.venue,
+            oppSP:team.sp,gk:g.pk,park:g.park,venue:g.venue,confirmed:!!team.lineup,
             avg:ss.avg,ab:ss.ab,krate:ss.pa>0?ss.k/ss.pa:null,ravg:rr.ravg,rab:rr.rab});
         });
       });
     });
-    if(!cand.length){status(`No qualifying regulars in today’s games.`,"var(--yellow)");renderEmpty();return;}
+    if(!cand.length){status(`No qualifying hitters in today’s games.`,"var(--yellow)");renderEmpty();return;}
 
     // Opposing-SP hits-allowed (BAA) from game logs, and batter/pitcher hands
     status('<span class="spin">⟳</span> Pitching matchups…');setProg(60);
@@ -179,9 +187,12 @@ async function load(){
       const plt=platoon(handMap[c.id]?.bat, spid!=null?handMap[spid]?.pit:null);
       c.plt=plt;c.trend=c.ravg-c.avg;
       c.p=hitProb(c.avg,c.ravg,c.rab,c.baa,c.krate,plt,c.park);});
+    // Drop anyone facing a genuinely tough starter (holds hitters to ≤ .215).
+    let elig=cand.filter(c=>!(c.baa!=null&&c.baa<=0.215));
+    if(!elig.length)elig=cand;
 
     // Best pair per game = the two highest hit-probability hitters in that game
-    const byGame={};cand.forEach(c=>{(byGame[c.gk]=byGame[c.gk]||[]).push(c);});
+    const byGame={};elig.forEach(c=>{(byGame[c.gk]=byGame[c.gk]||[]).push(c);});
     let pairs=Object.values(byGame).map(list=>{
       list.sort((a,b)=>b.p-a.p);
       if(list.length<2)return null;
@@ -193,7 +204,7 @@ async function load(){
 
     setProg(100);setTimeout(()=>setProg(0),300);
     render(pairs);
-    status(`✓ ${pairs.length} games analyzed · ${cand.length} regulars · ${day} · ${new Date().toLocaleTimeString()}`,"var(--green)");
+    status(`✓ ${pairs.length} games analyzed · ${cand.length} hitters · ${day} · ${new Date().toLocaleTimeString()}`,"var(--green)");
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
   finally{btn.disabled=false;}
 }
@@ -206,7 +217,7 @@ function leg(c){
   const pl=c.plt==="adv"?' · <span class="trend-up">▲PLAT</span>':c.plt==="dis"?' · <span class="trend-dn">▽</span>':'';
   return `<div class="leg">
     <div class="leg-av">${c.avg.toFixed(3).replace(/^0/,"")}</div>
-    <div class="leg-info"><div class="leg-name">${c.name}</div><div class="leg-meta">${c.teamName} · ${c.pos||""} · ${tr}${pl}<br>${spTxt}</div></div>
+    <div class="leg-info"><div class="leg-name">${c.name}${c.confirmed?' <span style="color:var(--green);font-size:10px">✓LU</span>':''}</div><div class="leg-meta">${c.teamName} · ${c.pos||""} · ${tr}${pl}<br>${spTxt}</div></div>
     <div class="leg-prob">${Math.round(c.p*100)}%</div>
   </div>`;
 }
@@ -237,7 +248,7 @@ function render(pairs){
       <td class="num"><b style="color:${pr.prob>=0.55?'var(--green)':pr.prob>=0.48?'var(--yellow)':'var(--muted)'}">${Math.round(pr.prob*100)}</b></td>
     </tr>`).join("");
 
-  document.getElementById("legend").innerHTML=`<b>STRENGTH</b> = combined probability both hitters record ≥ 1 hit (P1 × P2, shown 0–100). Each hitter's hit probability blends: season AVG + last-14-day form (55/45), the opposing starter's hits-allowed BAA (38%), strikeout rate (low-K = more contact), platoon edge (bat vs pitcher hand), and a ballpark hits factor — over ~3.9 at-bats. Filters: active roster only (injured excluded), season ≥ 120 AB and ≥ .250 AVG, real probable starter. <b>▲/▼ L14</b> = trending up/down vs season · <b>▲PLAT</b> = platoon advantage. ⚠ Model estimate — not betting advice.`;
+  document.getElementById("legend").innerHTML=`<b>STRENGTH</b> = combined probability both hitters record ≥ 1 hit (P1 × P2, shown 0–100). Each hitter's hit probability blends: season AVG + last-14-day form (50/50), the opposing starter's hits-allowed BAA (40%), strikeout rate (low-K = more contact), platoon edge (bat vs pitcher hand), and a ballpark hits factor — over ~3.9 at-bats. <b>Filters:</b> confirmed in today's lineup when posted (else everyday regulars, 200+ AB) · season AVG ≥ .270 · not ice-cold (≥ .200 over last 14) · not facing a tough starter (SP BAA ≤ .215 excluded) · injured excluded. <b>✓LU</b> = confirmed in lineup · <b>▲/▼ L14</b> = trending up/down vs season · <b>▲PLAT</b> = platoon advantage. ⚠ Model estimate — not betting advice.`;
 }
 
 load();
