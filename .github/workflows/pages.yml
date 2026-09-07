@@ -29,6 +29,19 @@ jobs:
         with:
           enablement: true
 
+      # Pages serves HTML with a 10-minute max-age, and the no-cache <meta> tags
+      # the pages carry are not honoured by browsers for the document itself.
+      # A phone that already had the page open kept showing the previous build
+      # (it has bitten ladder.html and index.html both). Stamp the commit into
+      # every page that asks for it and publish the same value alongside, so a
+      # stale page can notice and pull itself forward instead of sitting there.
+      - name: Stamp the build
+        run: |
+          SHA="${GITHUB_SHA:0:7}"
+          grep -rl "__BUILD_SHA__" --include="*.html" . | xargs -r sed -i "s/__BUILD_SHA__/$SHA/g"
+          printf '{"sha":"%s","built":"%s"}\n' "$SHA" "$(date -u +%FT%TZ)" > build.json
+          echo "stamped build $SHA"
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

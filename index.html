@@ -25,6 +25,8 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .run-btn{padding:11px 18px;background:linear-gradient(90deg,#14F195,#60A5FA);border:none;border-radius:8px;color:#04120b;font-size:13px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer}
 .run-btn:disabled{opacity:.5;cursor:wait}
 #progress-wrap{height:3px;background:var(--bg2);display:none}#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#14F195,var(--blue));transition:width .2s}
+#update-bar{display:none;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;background:#3A2A00;border-bottom:1px solid var(--yellow);color:var(--yellow);font-size:12px}
+#update-bar button{margin-left:auto;padding:8px 14px;background:var(--yellow);border:none;border-radius:7px;color:#231A00;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;cursor:pointer}
 #status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
 /* ── bet slip bar ── */
 #slip{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;padding:12px 18px;background:var(--bg3);border-bottom:1px solid var(--border)}
@@ -94,6 +96,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
 
 <div id="slip">
@@ -130,7 +133,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </div>
 <div class="legend" id="legend"></div>
 
-<script src="dd-model.js?v=3"></script>
+<script src="dd-model.js?v=__BUILD_SHA__"></script>
 <script>
 // The engine lives in a separate file as of BUILD 3. If it fails to load,
 // say so in the status bar rather than throwing at parse time and leaving the
@@ -140,6 +143,35 @@ const M=window.DDModel||null;
 // existing fallback chain so a blocked direct fetch still resolves.
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
 let good=null,board=null,cal=null;
+
+// ── self-update ─────────────────────────────────────────────────────────────
+// GitHub Pages serves HTML with a 10-minute max-age, and the no-cache <meta>
+// tags this page carries are NOT honoured by browsers for the document itself
+// — only the real HTTP header counts. So a phone that already has the page
+// keeps showing the previous build long after a deploy, which is exactly the
+// "dashboard isn't updating" trap. The deploy workflow stamps the commit into
+// this file and publishes the same value in build.json; the fetch below is
+// query-busted so it always sees the truth, and pulls the page forward itself.
+const BUILD="__BUILD_SHA__";
+let liveSha=null;
+const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
+          set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}};
+function hardReload(){location.replace(location.pathname+"?b="+(liveSha||Date.now()));}
+async function checkBuild(){
+  if(BUILD.charAt(0)==="_")return;            // unstamped: local checkout or branch preview
+  try{
+    const r=await fetch("build.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok)return;
+    const j=await r.json();
+    if(!j||!j.sha||j.sha===BUILD)return;
+    liveSha=j.sha;
+    // Reloading onto a URL that carries the new sha defeats the cached entry.
+    // Try that once; if we come back still stale, stop looping and just ask.
+    const key="dd.upd."+j.sha;
+    if(!ss.get(key)){ss.set(key,"1");hardReload();return;}
+    document.getElementById("update-bar").style.display="flex";
+  }catch(e){/* offline or no build.json — nothing to do */}
+}
 async function getJSON(url){
   const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);
   let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}
@@ -167,6 +199,7 @@ const setting=id=>{const el=document.getElementById(id);
   return +el.value;};
 
 async function load(){
+  checkBuild();
   if(!M){status("✗ dd-model.js did not load — hard-refresh the page. (The scoring engine moved into its own file in BUILD 3.)","var(--red)");return;}
   const btn=document.getElementById("run");btn.disabled=true;
   try{
