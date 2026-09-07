@@ -335,10 +335,18 @@ async function buildBoard(o) {
   if (!games.length) return { date: day, games: [], candidates: [], pairs: [], note: "no games" };
 
   say("League hitting, pitching and last-30 form…"); prog(20);
+  // Only the season hitting feed is load-bearing. The other two are large
+  // payloads travelling through public CORS proxies, and putting all three in
+  // one Promise.all means a single hiccup takes down the whole board — a page
+  // that shows nothing is worse than one that shows slightly coarser numbers.
+  // Every consumer of these already falls back to league average when the data
+  // is absent, so let them fail softly and tell the user which did.
+  const degraded = [];
+  const soft = (label, p) => p.catch(() => { degraded.push(label); return null; });
   const [seasonH, recentH, seasonP] = await Promise.all([
     getJSON(`${API}/stats?stats=season&group=hitting&season=${season}&sportId=1&limit=3000&gameType=R&playerPool=All`),
-    getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${ymd(rStart)}&endDate=${ymd(rEnd)}&sportId=1&limit=3000&gameType=R&playerPool=All`),
-    getJSON(`${API}/stats?stats=season&group=pitching&season=${season}&sportId=1&limit=3000&gameType=R&playerPool=All`)
+    soft("recent form", getJSON(`${API}/stats?stats=byDateRange&group=hitting&startDate=${ymd(rStart)}&endDate=${ymd(rEnd)}&sportId=1&limit=3000&gameType=R&playerPool=All`)),
+    soft("pitching", getJSON(`${API}/stats?stats=season&group=pitching&season=${season}&sportId=1&limit=2500&gameType=R&playerPool=All`))
   ]);
   const splitsOf = d => (d && d.stats && d.stats[0] && d.stats[0].splits) || [];
 
@@ -393,12 +401,21 @@ async function buildBoard(o) {
   const lgStaffObp = LP.pa > 1000 ? (LP.h + LP.bb + LP.hbp) / LP.pa : lg.obp;
   // Rate an arm the way the model sees him, so "bad pitcher" is a measured
   // thing and not a hunch. Relievers and starters both go through here.
-  const arm = r => ({
-    kRate:  shrink(r ? r.k : 0, r ? r.ab : 0, lgPitK, r && !r.gs ? K.relief : K.pitK),
-    hrRate: shrink(r ? r.hr : 0, r ? Math.max(0, r.ab - r.k) : 0, lgPitHr, r && !r.gs ? K.relief : K.pitHR),
-    babip:  shrink(r ? r.h - r.hr : 0, r ? Math.max(0, r.ab - r.k - r.hr) : 0, lgPitBabip, r && !r.gs ? K.relief * 2 : K.pitBabip),
-    obp:    shrink(r ? r.h + r.bb + r.hbp : 0, r ? (r.bf || r.ab) : 0, lgStaffObp, K.pitOBP)
-  });
+  // Guard every field individually rather than trusting the object. A club with
+  // no relief rows yields {gs:0} with every stat undefined — truthy, so an
+  // `r ? r.k : 0` test passes it straight through and NaN reaches the board.
+  const fld = (r, k) => (r && isFinite(+r[k])) ? +r[k] : 0;
+  const arm = r => {
+    const ab = fld(r, "ab"), h = fld(r, "h"), hr = fld(r, "hr"), k = fld(r, "k"),
+          bb = fld(r, "bb"), hbp = fld(r, "hbp"), bf = fld(r, "bf") || ab;
+    const rel = !!r && !fld(r, "gs");                     // reliever priors are looser
+    return {
+      kRate:  shrink(k,      ab,                             lgPitK,     rel ? K.relief : K.pitK),
+      hrRate: shrink(hr,     Math.max(0, ab - k),            lgPitHr,    rel ? K.relief : K.pitHR),
+      babip:  shrink(h - hr, Math.max(0, ab - k - hr),       lgPitBabip, rel ? K.relief * 2 : K.pitBabip),
+      obp:    shrink(h + bb + hbp, bf,                       lgStaffObp, K.pitOBP)
+    };
+  };
 
   // Team offence and the opposing staff's on-base allowed drive the inning
   // model that produces expected plate appearances.
@@ -654,7 +671,7 @@ async function buildBoard(o) {
 
   prog(100);
   return { date: day, v: VERSION, lg, teamGames, baseline: BASELINE, games: G,
-    candidates: raw.sort((a, b) => b.p - a.p), pairs, spots, price };
+    candidates: raw.sort((a, b) => b.p - a.p), pairs, spots, price, degraded };
 }
 
 return { VERSION, API, CFG, K, PARK, park, clamp, erf, normCdf, normPdf, normInv, logit, expit,

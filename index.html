@@ -214,7 +214,10 @@ async function load(){
     render();
     const posted=board.candidates.filter(c=>c.posted).length;
     const calN=cal&&cal.global?cal.global.n:0;
-    status(`✓ ${board.pairs.length} games · ${board.candidates.length} hitters (${posted} in confirmed lineups) · lg avg ${av(board.lg.avg)} · ${calN?calN+" graded legs feeding calibration":"calibration: no history yet"} · ${board.date} ${new Date().toLocaleTimeString()}`,"var(--green)");
+    const deg=(board.degraded||[]).length
+      ? ` · <b style="color:var(--yellow)">⚠ ${board.degraded.join(" + ")} feed unavailable — those inputs fell back to league average</b>`:"";
+    status(`✓ ${board.pairs.length} games · ${board.candidates.length} hitters (${posted} in confirmed lineups) · lg avg ${av(board.lg.avg)} · ${calN?calN+" graded legs feeding calibration":"calibration: no history yet"} · ${board.date} ${new Date().toLocaleTimeString()}${deg}`,
+      (board.degraded||[]).length?"var(--yellow)":"var(--green)");
   }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
   finally{btn.disabled=false;}
 }
