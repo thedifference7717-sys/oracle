@@ -27,13 +27,13 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function platoon(bat, pit) { if (!bat || !pit) return null; if (bat === "S") return "adv"; return bat !== pit ? "adv" : "dis"; }
 function amOdds(p) { if (!(p > 0 && p < 1)) return "—"; const dec = 1 / p; return dec >= 2 ? "+" + Math.round((dec - 1) * 100) : "-" + Math.round(100 / (dec - 1)); }
 function hitProb(seasonAVG, recentAVG, rab, spBAA, kRate, plt, pk) {
-  const own = rab >= 15 ? 0.55 * seasonAVG + 0.45 * recentAVG : seasonAVG;
+  const own = rab >= 15 ? 0.5 * seasonAVG + 0.5 * recentAVG : seasonAVG;
   const pit = spBAA != null ? spBAA : 0.250;
-  let x = 0.62 * own + 0.38 * pit;
-  if (kRate != null) x *= clamp(1 + (0.22 - kRate) * 0.6, 0.90, 1.10);
-  if (plt === "adv") x *= 1.05; else if (plt === "dis") x *= 0.96;
+  let x = 0.60 * own + 0.40 * pit;
+  if (kRate != null) x *= clamp(1 + (0.20 - kRate) * 0.8, 0.88, 1.12);
+  if (plt === "adv") x *= 1.05; else if (plt === "dis") x *= 0.95;
   x *= (0.99 + (pk - 100) / 100 * 0.2);
-  x = clamp(x, 0.15, 0.44);
+  x = clamp(x, 0.15, 0.46);
   return 1 - Math.pow(1 - x, 3.9);
 }
 
@@ -60,10 +60,11 @@ async function computeDoubles(day, games) {
   const rEnd = etNow(); rEnd.setDate(rEnd.getDate() - 1); const rStart = etNow(); rStart.setDate(rStart.getDate() - 14);
   const rEndStr = ymd(rEnd), rStartStr = ymd(rStart);
 
+  const lset = arr => Array.isArray(arr) && arr.length ? new Set(arr.map(p => p.id)) : null; // confirmed lineup (null if not posted)
   const G = games.map(g => ({
     pk: g.gamePk, venue: g.venue?.name, park: park(g.venue?.name),
-    home: { id: g.teams.home.team.id, name: g.teams.home.team.abbreviation || g.teams.home.team.name, sp: g.teams.away.probablePitcher },
-    away: { id: g.teams.away.team.id, name: g.teams.away.team.abbreviation || g.teams.away.team.name, sp: g.teams.home.probablePitcher }
+    home: { id: g.teams.home.team.id, name: g.teams.home.team.abbreviation || g.teams.home.team.name, sp: g.teams.away.probablePitcher, lineup: lset(g.lineups?.homePlayers) },
+    away: { id: g.teams.away.team.id, name: g.teams.away.team.abbreviation || g.teams.away.team.name, sp: g.teams.home.probablePitcher, lineup: lset(g.lineups?.awayPlayers) }
   }));
   const teamIds = [...new Set(G.flatMap(g => [g.home.id, g.away.id]))];
   const rosterByTeam = {};
@@ -82,8 +83,13 @@ async function computeDoubles(day, games) {
     [[g.home, g.away], [g.away, g.home]].forEach(([team]) => {
       (rosterByTeam[team.id] || []).forEach(pl => {
         const ss = seasonById[pl.id]; if (!ss) return;
-        if (ss.ab < 120 || ss.avg < 0.250) return;
+        // Confirmed-lineup gate: only starters when the lineup is posted, else
+        // everyday regulars (200+ AB). Then a real contact bat, not ice-cold.
+        if (team.lineup) { if (!team.lineup.has(pl.id)) return; }
+        else if (ss.ab < 200) return;
+        if (ss.avg < 0.270) return;
         const rr = recentById[pl.id] || { ravg: ss.avg, rab: 0 };
+        if (rr.rab >= 25 && rr.ravg < 0.200) return;
         cand.push({ id: pl.id, name: pl.name, pos: pl.pos, teamName: team.name, opp: (team === g.home ? g.away : g.home).name, oppSP: team.sp, gk: g.pk, park: g.park, venue: g.venue, avg: ss.avg, krate: ss.pa > 0 ? ss.k / ss.pa : null, ravg: rr.ravg, rab: rr.rab });
       });
     });
@@ -96,8 +102,11 @@ async function computeDoubles(day, games) {
   for (let i = 0; i < ids.length; i += 40) { try { const d = await j(`${API}/people?personIds=${ids.slice(i, i + 40).join(",")}`); (d.people || []).forEach(p => handMap[p.id] = { bat: p.batSide?.code, pit: p.pitchHand?.code }); } catch (e) {} }
 
   cand.forEach(c => { const spid = c.oppSP?.id; c.baa = spid != null ? baaMap[spid] : null; const plt = platoon(handMap[c.id]?.bat, spid != null ? handMap[spid]?.pit : null); c.p = hitProb(c.avg, c.ravg, c.rab, c.baa, c.krate, plt, c.park); });
+  // Drop anyone facing a genuinely tough starter (holds hitters to ≤ .215).
+  let elig = cand.filter(c => !(c.baa != null && c.baa <= 0.215));
+  if (!elig.length) elig = cand;
 
-  const byGame = {}; cand.forEach(c => { (byGame[c.gk] = byGame[c.gk] || []).push(c); });
+  const byGame = {}; elig.forEach(c => { (byGame[c.gk] = byGame[c.gk] || []).push(c); });
   const slim = c => ({ id: c.id, name: c.name, team: c.teamName, avg: c.avg, ravg: c.ravg, baa: c.baa, p: c.p, sp: c.oppSP?.fullName || null });
   let doubles = Object.values(byGame).map(list => { list.sort((a, b) => b.p - a.p); if (list.length < 2) return null; const a = list[0], b = list[1]; return { a: slim(a), b: slim(b), prob: a.p * b.p, gk: a.gk, venue: a.venue, teams: `${a.teamName} vs ${a.opp}` }; }).filter(Boolean);
   doubles.sort((x, y) => y.prob - x.prob);
@@ -106,7 +115,7 @@ async function computeDoubles(day, games) {
 
 async function main() {
   const day = slateYmd();
-  const sched = await j(`${API}/schedule?sportId=1&date=${day}&hydrate=probablePitcher,team,venue`);
+  const sched = await j(`${API}/schedule?sportId=1&date=${day}&hydrate=probablePitcher,team,venue,lineups`);
   const games = (sched?.dates?.[0]?.games || []).filter(g => !/postpon|suspend|cancel/i.test(g.status?.detailedState || ""));
   if (!games.length) { console.log(`No MLB games ${day}.`); return; }
   const starts = games.map(g => Date.parse(g.gameDate)).filter(t => !isNaN(t));
