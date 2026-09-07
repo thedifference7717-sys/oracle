@@ -100,6 +100,12 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="fld"><label>DOUBLE PRICE (AMERICAN)</label><input id="price" type="number" step="5" value="100"></div>
   <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="10" value="1000"></div>
   <div class="fld"><label>MIN EDGE (%)</label><input id="minEdge" type="number" step="0.5" value="0"></div>
+  <div class="fld"><label>MIN SPOT (PTS)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
+  <div class="fld"><label>RANK BY</label><select id="sortBy">
+    <option value="edge">Edge over price</option>
+    <option value="spot">Softest spot</option>
+    <option value="prob">Raw probability</option>
+  </select></div>
   <div class="fld chk"><input id="onlyPosted" type="checkbox"><label for="onlyPosted">Confirmed lineups only</label></div>
   <div class="fld chk"><input id="onlyTeam" type="checkbox"><label for="onlyTeam">Same-team pairs only (correlation edge)</label></div>
 </div>
@@ -109,6 +115,10 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div class="cards" id="cards"></div>
 
 <div class="wrap">
+  <div class="panel">
+    <div class="panel-head">🔥 SOFTEST SPOTS — every lineup on the slate, worst arm first <span id="spotsNote"></span></div>
+    <div class="table-wrap"><table><thead><tr id="shead"></tr></thead><tbody id="sbody"></tbody></table></div>
+  </div>
   <div class="panel">
     <div class="panel-head">📋 BEST PAIR IN EVERY GAME TODAY <span id="pairsNote"></span></div>
     <div class="table-wrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
@@ -120,9 +130,12 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </div>
 <div class="legend" id="legend"></div>
 
-<script src="dd-model.js"></script>
+<script src="dd-model.js?v=3"></script>
 <script>
-const M=DDModel;
+// The engine lives in a separate file as of BUILD 3. If it fails to load,
+// say so in the status bar rather than throwing at parse time and leaving the
+// user staring at an empty board.
+const M=window.DDModel||null;
 // GitHub Pages is same-origin with the API only through a proxy; keep the
 // existing fallback chain so a blocked direct fetch still resolves.
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
@@ -139,7 +152,7 @@ const av=v=>v==null?"—":v.toFixed(3).replace(/^0/,"");
 const money=v=>(v<0?"-$":"$")+Math.abs(v).toFixed(2);
 
 // Bet-slip settings survive a reload — this page reruns every 3 minutes.
-const SETTINGS=["price","bank","minEdge","onlyPosted","onlyTeam"];
+const SETTINGS=["price","bank","minEdge","minSpot","sortBy","onlyPosted","onlyTeam"];
 SETTINGS.forEach(id=>{
   const el=document.getElementById(id),saved=localStorage.getItem("dd."+id);
   if(saved!=null){if(el.type==="checkbox")el.checked=saved==="1";else el.value=saved;}
@@ -148,9 +161,13 @@ SETTINGS.forEach(id=>{
     if(id==="price")load(); else if(board)render();      // reprice needs a rebuild; filters do not
   });
 });
-const setting=id=>{const el=document.getElementById(id);return el.type==="checkbox"?el.checked:+el.value;};
+const setting=id=>{const el=document.getElementById(id);
+  if(el.type==="checkbox")return el.checked;
+  if(el.tagName==="SELECT")return el.value;
+  return +el.value;};
 
 async function load(){
+  if(!M){status("✗ dd-model.js did not load — hard-refresh the page. (The scoring engine moved into its own file in BUILD 3.)","var(--red)");return;}
   const btn=document.getElementById("run");btn.disabled=true;
   try{
     // The alerter publishes graded results here, once a day at settlement.
@@ -177,8 +194,16 @@ function filtered(){
   if(setting("onlyTeam"))p=p.filter(x=>x.sameTeam);
   const me=setting("minEdge")/100;
   if(me>0)p=p.filter(x=>x.ev&&x.ev.edge>=me);
+  const ms=setting("minSpot")/100;
+  if(ms>0)p=p.filter(x=>x.spotDelta>=ms);
+  const by=setting("sortBy");
+  if(by==="spot")p.sort((a,b)=>b.spotDelta-a.spotDelta||b.prob-a.prob);
+  else if(by==="prob")p.sort((a,b)=>b.prob-a.prob);
+  else p.sort((a,b)=>(b.ev?b.ev.edge:b.prob)-(a.ev?a.ev.edge:a.prob)||b.prob-a.prob);
   return p;
 }
+const pts=v=>(v>=0?"+":"")+(v*100).toFixed(1);
+const spotColor=v=>v>=0.03?"var(--green)":v>=0?"var(--yellow)":"var(--dim)";
 
 function leg(c){
   const form=c.rAvg==null?"":(c.rAvg-c.avg>=0.02?`<span class="trend-up">▲${av(c.rAvg)} L30</span>`:c.rAvg-c.avg<=-0.02?`<span class="trend-dn">▼${av(c.rAvg)} L30</span>`:`<span class="trend-fl">${av(c.rAvg)} L30</span>`);
@@ -216,7 +241,13 @@ function card(pr,i){
       <span>Expected value</span><span style="text-align:right"><b style="color:${good?"var(--green)":"var(--red)"}">${ev?(ev.evPct>=0?"+":"")+ev.evPct.toFixed(1)+"%":"—"}</b></span>
       <span>¼-Kelly stake</span><span style="text-align:right"><b style="color:${stake>0?"var(--green)":"var(--dim)"}">${money(stake)}</b></span>
       <span>${pr.sameTeam?'<span class="tag corr">SAME TEAM</span>':'<span class="tag">OPPOSING</span>'} correlation</span>
-      <span style="text-align:right" title="How much the two legs being in one game is worth versus multiplying them as independent">ρ ${pr.rho.toFixed(2)} · <b style="color:var(--purple)">+${(pr.lift*100).toFixed(1)}pts</b></span>
+      <span style="text-align:right" title="How much the two legs being in one game is worth versus multiplying them as independent">ρ ${pr.rho.toFixed(3)} · <b style="color:var(--purple)">+${(pr.lift*100).toFixed(1)}pts</b></span>
+      <span title="Bad arm and park, offence held at league average">Soft arm/park</span>
+      <span style="text-align:right"><b style="color:${spotColor(pr.soft)}">${pts(pr.soft)}pts</b></span>
+      <span title="Quality of this lineup, opposition held at league average">Good bats</span>
+      <span style="text-align:right"><b style="color:${spotColor(pr.offIdx)}">${pts(pr.offIdx)}pts</b></span>
+      <span title="The two together — what a typical hitter in this lineup does against this arm in this park">SPOT vs league</span>
+      <span style="text-align:right"><b style="color:${spotColor(pr.spotDelta)}">${pts(pr.spotDelta)}pts</b></span>
     </div>
   </div>`;
 }
@@ -242,6 +273,24 @@ function render(){
       <td class="num"><b style="color:${e>0?'var(--green)':'var(--red)'}">${e>=0?"+":""}${e.toFixed(1)}</b></td>
     </tr>`;}).join("")||`<tr><td colspan="9"><div class="empty">Nothing clears the filters.</div></td></tr>`;
 
+  const spots=board.spots.filter(s=>!setting("onlyPosted")||s.posted);
+  document.getElementById("spotsNote").textContent=`${spots.length} lineups · league baseline leg ${pct(board.baseline)}`;
+  document.getElementById("shead").innerHTML=["LINEUP","OPPOSING STARTER","SP K%","HR/CONTACT","OBP ALLOWED","GOES","THEN PEN","TEAM PA","SOFT ARM","GOOD BATS","SPOT"]
+    .map((h,i)=>`<th class="${i>=2?'num':''}">${h}</th>`).join("");
+  document.getElementById("sbody").innerHTML=spots.map(s=>`<tr>
+      <td><div style="font-weight:700">${s.team}${s.posted?' <span class="tag ok">✓LU</span>':''}</div><div style="color:var(--dim);font-size:10px">${s.isHome?"vs":"@"} ${s.opp} · PF ${s.pf}/${s.pfHr}hr</div></td>
+      <td style="font-size:12px;color:var(--muted)">${s.spName||"TBD"}</td>
+      <td class="num">${(s.spK*100).toFixed(1)}</td>
+      <td class="num">${av(s.spHr)}</td>
+      <td class="num">${av(s.spObp)}</td>
+      <td class="num" style="color:var(--dim)">${Math.round(s.spBf)} BF</td>
+      <td class="num" style="color:var(--dim)">${Math.round((1-s.spShare)*100)}% · ${av(s.penObp)}</td>
+      <td class="num" style="color:var(--dim)">${s.paMu.toFixed(1)}</td>
+      <td class="num"><b style="color:${spotColor(s.soft)}">${pts(s.soft)}</b></td>
+      <td class="num"><b style="color:${spotColor(s.offIdx)}">${pts(s.offIdx)}</b></td>
+      <td class="num"><b style="color:${spotColor(s.spotDelta)}">${pts(s.spotDelta)}</b></td>
+    </tr>`).join("")||`<tr><td colspan="11"><div class="empty">No lineups.</div></td></tr>`;
+
   const legs=board.candidates.filter(c=>!setting("onlyPosted")||c.posted).slice(0,60);
   document.getElementById("legsNote").textContent=`top ${legs.length}`;
   document.getElementById("lhead").innerHTML=["HITTER","TEAM","SLOT","OPPOSING SP","PROJ AVG","EXP AB","P(HIT)","FAIR"]
@@ -263,6 +312,8 @@ function render(){
   <b>The bullpen is modelled.</b> For each plate appearance we compute the chance the starter is still out there from his batters-faced-per-start, add the third-time-through bonus, and hand the rest to the opponent's actual relief corps. Facing an ace with a leaky pen is not the same bet as facing an ace with a lockdown pen.<br>
   <b>Pairs are correlated, and that is the edge.</b> Two hitters in one game are not independent, so P1×P2 is the wrong number — it is too low. A Gaussian copula (ρ ${M.CFG.rhoTeammate} teammates, ${M.CFG.rhoOpponent} opponents) adds the <b style="color:var(--purple)">+pts</b> shown on each card. Any book grading the legs independently is pricing a same-team double too long.<br>
   <b>Scratch risk is priced.</b> Confirmed in the lineup is <span class="tag ok">✓LU</span>; otherwise the leg is multiplied by his chance of actually starting, because a scratch is a guaranteed loss, not a coin flip.<br>
+  <b>Targeting the spot, not just the hitter.</b> Every lineup gets three readings, each in points of hit probability against a league-neutral leg. <b>SOFT ARM</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are. <b>GOOD BATS</b> does the reverse — this lineup against league-average opposition. <b>SPOT</b> is the two together: what a typical hitter in this lineup actually does tonight. Ace to batting-practice is worth about 11 points on a single leg, so the spot is usually a bigger lever than which hitter you pick out of it.<br>
+  <b>Watch the bullpen before you commit.</b> A bad starter gets chased, which means over half the plate appearances come against relief. The same weak starter is worth <b>+5.3pts</b> in front of a leaky pen and only <b>+3.6pts</b> in front of an elite one — the THEN PEN column is the share of the night the bullpen works and its on-base allowed. A soft start behind a lockdown pen is a trap.<br>
   <b>Ranked by EDGE, not by probability</b> — true probability minus your price's breakeven. Stake is <b>quarter-Kelly</b>: full Kelly on a model this uncertain is how you go broke while being right.<br>
   <span style="color:var(--dim)">Build 3 removed Build 2's hard gates (.270 AVG, 200+ AB, tough-SP exclusion). They were doing the ranking's job badly and pinning the board to the same ~60 names every day. The model sorts the pool now.</span><br>
   ⚠ Model estimate — not betting advice. Bet only what you can afford to lose.`;

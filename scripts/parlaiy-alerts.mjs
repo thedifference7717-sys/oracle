@@ -37,6 +37,7 @@ const MIN_EDGE = +(process.env.DD_MIN_EDGE || 0.02);
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `${MONTHS[mo-1]} ${da}`; };
 const pct = v => Math.round(v * 100) + "%";
+const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
 const av = v => v == null ? "—" : v.toFixed(3).replace(/^0/, "");
 
 async function j(url, opts) { const r = await fetch(url, opts); if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`); return r.json(); }
@@ -53,7 +54,7 @@ async function tg(text) {
 const slim = c => ({
   id: c.id, name: c.name, team: c.teamName, slot: c.slot, posted: c.posted,
   avg: c.avg, proj: c.projAvg, p: c.p, eAb: c.eAb,
-  sp: c.spName, spBaa: c.spBaa, plt: c.plt
+  sp: c.spName, spBaa: c.spBaa, spHr9: c.spHr9, plt: c.plt
 });
 
 async function computeDoubles(day, games, cal) {
@@ -67,6 +68,7 @@ async function computeDoubles(day, games, cal) {
     date: day, v: SNAP_V, price: PRICE,
     doubles: board.pairs.map(d => ({
       a: slim(d.a), b: slim(d.b), prob: d.prob, naive: d.naive, lift: d.lift,
+      soft: d.soft, offIdx: d.offIdx, spotDelta: d.spotDelta,
       rho: d.rho, sameTeam: d.sameTeam, edge: d.ev ? d.ev.edge : 0,
       evPct: d.ev ? d.ev.evPct : 0, kelly: d.ev ? d.ev.quarterKelly : 0,
       gk: d.gk, venue: d.venue, teams: d.teams, bothPosted: d.bothPosted
@@ -108,11 +110,12 @@ async function main() {
 
   // ── Lock alert (once) ──
   if (D.lockDate !== day) {
-    const legLine = c => `   • <b>${c.name}</b> #${c.slot}${c.posted ? " ✓LU" : ""} · ${av(c.avg)}→${av(c.proj)} proj · ${c.eAb.toFixed(1)} AB\n     vs ${c.sp || "SP TBD"}${c.spBaa != null ? " (" + av(c.spBaa) + ")" : ""}${c.plt === "adv" ? " ▲plat" : c.plt === "dis" ? " ▽plat" : ""} · <b>${pct(c.p)}</b>`;
+    const legLine = c => `   • <b>${c.name}</b> #${c.slot}${c.posted ? " ✓LU" : ""} · ${av(c.avg)}→${av(c.proj)} proj · ${c.eAb.toFixed(1)} AB\n     vs ${c.sp || "SP TBD"}${c.spBaa != null ? " (" + av(c.spBaa) + " BAA" + (c.spHr9 != null ? ", " + c.spHr9.toFixed(1) + " HR/9" : "") + ")" : ""}${c.plt === "adv" ? " ▲plat" : c.plt === "dis" ? " ▽plat" : ""} · <b>${pct(c.p)}</b>`;
     const body = picks.map((d, i) =>
       `<b>#${i + 1}</b> · ${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} vs your ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
       `   <b>EDGE ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · EV ${(d.evPct >= 0 ? "+" : "") + d.evPct.toFixed(1)}% · stake ${(d.kelly * 100).toFixed(1)}% bank</b>\n` +
-      `   ${d.teams}${d.sameTeam ? " · SAME TEAM" : ""} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n${legLine(d.a)}\n${legLine(d.b)}`
+      `   ${d.teams}${d.sameTeam ? " · SAME TEAM" : ""} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n` +
+      `   SPOT ${pts(d.spotDelta)}pts vs league <i>(soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>\n${legLine(d.a)}\n${legLine(d.b)}`
     ).join("\n\n");
     const anyEdge = picks.some(d => d.edge >= MIN_EDGE);
     await tg(`🎲 <b>DAILY DOUBLE LOCKED</b> · ${prettyDate(day)}\n` +

@@ -100,34 +100,44 @@ const shrink = (succ, trials, lg, k) => (succ + lg * k) / ((trials || 0) + k);
 // Stabilisation points (in trials), from the standard reliability work.
 const K = {
   batK:      70,    // strikeout rate settles fast
-  batContact:550,   // hit-on-contact (BABIP-ish) settles slowly
+  batHR:     350,   // the long ball on contact — a real, separable skill
+  batBabip:  550,   // where everything else lands, slower still
   batBB:     110,
   pitK:      90,
-  pitContact:1100,  // a pitcher barely controls balls in play — regress hard
+  pitHR:     450,   // pitchers DO own the long ball
+  pitBabip:  1400,  // ...and almost nothing about the rest — regress to league
   pitBB:     150,
+  pitOBP:    350,   // on-base allowed, for the run-environment model
   teamOBP:   900,
   teamDef:   1600,
   spBF:      8,     // starts, for batters-faced-per-start
-  relief:    400
+  relief:    400,
+  teamBat:   400    // team-aggregate rates, for the spot score
 };
 
 // ── ballpark ────────────────────────────────────────────────────────────────
 // HITS factors (100 = neutral). These move balls in play, not strikeouts, so
 // they are applied to the contact term only.
 const PARK = {"Coors Field":112,"Fenway Park":107,"Great American Ball Park":102,"Globe Life Field":101,"Chase Field":103,"Wrigley Field":101,"Yankee Stadium":101,"Citizens Bank Park":101,"Oriole Park at Camden Yards":100,"Rogers Centre":101,"American Family Field":100,"Truist Park":100,"Kauffman Stadium":103,"Daikin Park":100,"Minute Maid Park":100,"Nationals Park":100,"Dodger Stadium":99,"Angel Stadium":100,"Busch Stadium":99,"Target Field":99,"Progressive Field":99,"Rate Field":100,"PNC Park":100,"Comerica Park":101,"Citi Field":98,"Petco Park":97,"loanDepot park":98,"T-Mobile Park":96,"Oracle Park":98,"Sutter Health Park":101,"George M. Steinbrenner Field":100};
-function park(n) {
+// HOME RUN factors are a different table entirely — Fenway suppresses homers
+// while inflating hits, Oracle Park is death to both, Great American inflates
+// homers far more than singles.
+const PARK_HR = {"Coors Field":112,"Great American Ball Park":113,"Yankee Stadium":110,"Citizens Bank Park":108,"Globe Life Field":104,"Oriole Park at Camden Yards":101,"Fenway Park":99,"Dodger Stadium":103,"Wrigley Field":101,"Truist Park":102,"Chase Field":103,"Daikin Park":101,"Minute Maid Park":101,"Rogers Centre":103,"American Family Field":105,"Nationals Park":101,"Citi Field":96,"Petco Park":96,"Oracle Park":90,"T-Mobile Park":93,"loanDepot park":95,"Comerica Park":94,"Kauffman Stadium":95,"Angel Stadium":102,"Busch Stadium":96,"PNC Park":94,"Target Field":99,"Progressive Field":98,"Rate Field":103,"Sutter Health Park":100,"George M. Steinbrenner Field":102};
+function lookup(tbl, n) {
   if (!n) return 100;
-  if (PARK[n] != null) return PARK[n];
-  const k = Object.keys(PARK).find(k => n.includes(k) || k.includes(n));
-  return k ? PARK[k] : 100;
+  if (tbl[n] != null) return tbl[n];
+  const k = Object.keys(tbl).find(k => n.includes(k) || k.includes(n));
+  return k ? tbl[k] : 100;
 }
+const park = n => lookup(PARK, n);
+const parkHr = n => lookup(PARK_HR, n);
 
 // ── tuning constants ────────────────────────────────────────────────────────
 const CFG = {
   // League platoon splits. Individual platoon skill needs 1000+ PA to separate
   // from the league gap, so applying the league delta to everyone is not a
   // shortcut — it is the better estimate for all but a handful of hitters.
-  platoon: { advK: 0.93, advC: 1.025, disK: 1.08, disC: 0.975, switchDamp: 0.6 },
+  platoon: { advK: 0.93, advC: 1.025, advHr: 1.09, disK: 1.08, disC: 0.975, disHr: 0.92, switchDamp: 0.6 },
   // Third time through the order. Multiplier on the starter's hit rate only.
   tto: [0.96, 1.00, 1.06, 1.10],
   teamPaSd: 4.2,          // sd of a team's plate appearances in a game
@@ -135,12 +145,19 @@ const CFG = {
   spBfMean: 23.5,         // league mean batters faced per start
   homePaAdj: 0.985,       // home side skips the 9th when it leads
   awayPaAdj: 1.010,
-  parkContactDamp: 0.80,  // how much of the park index reaches hit-on-contact
-  parkPaDamp: 0.35,       // ... and how much reaches the run environment
+  parkContactDamp: 0.80,  // how much of the hits index reaches balls in play
+  parkHrDamp: 0.90,       // ... of the homer index reaches the long ball
+  parkPaDamp: 0.35,       // ... and of the hits index reaches the run environment
   scratchPosted: 0.985,   // posted in the lineup, but late scratches happen
   scratchMax: 0.95,       // ceiling when the lineup is NOT posted yet
   rhoTeammate: 0.09,      // same lineup: shared pitcher, park, weather, innings
   rhoOpponent: 0.03,      // opposite dugouts: shared park, weather, umpire only
+  // Correlation is not a constant. Teammates hitting a soft spot rise and fall
+  // together harder than teammates facing an ace: a bad starter's blow-up
+  // inning hands several of them an extra turn at once, and the chance he is
+  // chased early is itself a shared event. Scaled off the spot score, +/-10
+  // points of environment moves rho by this much, bounded either side.
+  rhoEnvGain: 0.60,
   recencyWeight: 1.0,     // last-30-day counts get this much EXTRA weight
   calPlayerK: 50,         // shrinkage on a player's own logged residual
   calGlobalK: 400,
@@ -148,7 +165,7 @@ const CFG = {
 };
 
 // League fallbacks, only used if the aggregate feeds come back thin.
-const LG_FALLBACK = { avg: 0.244, kPerAb: 0.253, contact: 0.327, bbPerPa: 0.083, obp: 0.313, abPerPa: 0.884 };
+const LG_FALLBACK = { avg: 0.244, kPerAb: 0.253, contact: 0.327, hrPerContact: 0.044, babip: 0.292, bbPerPa: 0.083, obp: 0.313, abPerPa: 0.884 };
 
 // ── probability a hitter records at least one hit ────────────────────────────
 //
@@ -170,18 +187,32 @@ function hitProbability(bat, opp, ctx) {
   // that many batters.
   const spChance = k => 1 - normCdf((bat.slot + 9 * (k - 1) - 0.5 - opp.spBf) / CFG.spBfSd);
 
-  const hitRate = (pit, ttoMult) => {
-    // Strike out first, find grass second.
+  // Three ways to reach: don't strike out, then either clear the fence or find
+  // grass. Splitting the last two matters for judging a BAD PITCHER. A pitcher
+  // owns his home-run rate and has almost no say over where the other balls
+  // land, so lumping them together (as a single hits-allowed number does)
+  // buries the half that is real under the half that is noise.
+  const hitRate = (pit, ttoMult, plt) => {
     let kr = log5(bat.kRate, pit.kRate, lg.kPerAb);
-    let cr = log5(bat.contact, pit.contact, lg.contact);
-    // Platoon. Switch hitters always get the good side, but a damped version.
+    let hr = log5(bat.hrRate, pit.hrRate, lg.hrPerContact);
+    let bip = log5(bat.babip, pit.babip, lg.babip);
+    // Platoon. The gap is widest on the long ball. Switch hitters always get
+    // the good side, but a damped version of it.
     const damp = bat.hand === "S" ? CFG.platoon.switchDamp : 1;
-    if (pit.plt === "adv") { kr *= 1 - (1 - CFG.platoon.advK) * damp; cr *= 1 + (CFG.platoon.advC - 1) * damp; }
-    else if (pit.plt === "dis") { kr *= 1 + (CFG.platoon.disK - 1) * damp; cr *= 1 - (1 - CFG.platoon.disC) * damp; }
-    cr *= ctx.parkContact;        // park moves balls in play
-    cr *= opp.defence;            // and so does the defence behind the pitcher
-    cr *= ttoMult;                // familiarity, third time around
-    return clamp((1 - clamp(kr, 0.02, 0.60)) * clamp(cr, 0.15, 0.55), 0.05, 0.55);
+    if (plt === "adv") {
+      kr *= 1 - (1 - CFG.platoon.advK) * damp;
+      hr *= 1 + (CFG.platoon.advHr - 1) * damp;
+      bip *= 1 + (CFG.platoon.advC - 1) * damp;
+    } else if (plt === "dis") {
+      kr *= 1 + (CFG.platoon.disK - 1) * damp;
+      hr *= 1 - (1 - CFG.platoon.disHr) * damp;
+      bip *= 1 - (1 - CFG.platoon.disC) * damp;
+    }
+    hr *= ctx.parkHr;                       // homer parks, not hits parks
+    bip *= ctx.parkContact * opp.defence;   // nobody has ever fielded a homer
+    hr *= ttoMult; bip *= ttoMult;          // familiarity, third time around
+    hr = clamp(hr, 0.004, 0.16); bip = clamp(bip, 0.15, 0.50);
+    return clamp((1 - clamp(kr, 0.02, 0.60)) * (hr + (1 - hr) * bip), 0.05, 0.55);
   };
 
   let noHit = 1, ePa = 0, eAb = 0, eHit = 0;
@@ -191,8 +222,8 @@ function hitProbability(bat, opp, ctx) {
     if (q < 0.005) break;
     const w = clamp(spChance(k), 0, 1);
     const tto = CFG.tto[Math.min(k, CFG.tto.length) - 1];
-    const pSp = hitRate(opp.sp, tto);
-    const pPen = hitRate(opp.pen, 1);
+    const pSp = hitRate(opp.sp, tto, opp.plt);
+    const pPen = hitRate(opp.pen, 1, null);   // a mixed pen has no platoon edge
     const perAb = w * pSp + (1 - w) * pPen;
     const perPa = perAb * bat.abPerPa;   // a walk is not a hit
     noHit *= 1 - q * perPa;
@@ -216,7 +247,17 @@ function jointProb(p1, p2, rho) {
   const z1 = normInv(p1), z2 = normInv(p2), d = normPdf(z1) * normPdf(z2);
   return clamp(p1 * p2 + rho * d * (1 + (rho * z1 * z2) / 2), Math.max(0, p1 + p2 - 1), Math.min(p1, p2));
 }
-const rhoFor = (a, b) => (a.teamId === b.teamId ? CFG.rhoTeammate : CFG.rhoOpponent);
+// Correlation scales with how soft the spot is. Two teammates hitting a
+// batting-practice arm rise and fall together harder than two facing an ace:
+// the blow-up inning that hands one an extra turn hands the other one too, and
+// "he gets chased in the third" is a single shared event for the whole lineup.
+// The gain is a judgement call, not a measured coefficient — it is bounded to
+// half and double the base so it can shade a number without inventing one.
+function rhoFor(a, b) {
+  const base = a.teamId === b.teamId ? CFG.rhoTeammate : CFG.rhoOpponent;
+  const d = ((a.spotDelta || 0) + (b.spotDelta || 0)) / 2;
+  return clamp(base * (1 + CFG.rhoEnvGain * (d / 0.10)), base * 0.5, base * 2);
+}
 
 // ── prices, EV, staking ─────────────────────────────────────────────────────
 function amOdds(p) { if (!(p > 0 && p < 1)) return "—"; const d = 1 / p; return d >= 2 ? "+" + Math.round((d - 1) * 100) : "-" + Math.round(100 / (d - 1)); }
@@ -302,24 +343,27 @@ async function buildBoard(o) {
   const splitsOf = d => (d && d.stats && d.stats[0] && d.stats[0].splits) || [];
 
   // League baselines, measured rather than assumed.
-  const L = { h: 0, ab: 0, k: 0, bb: 0, hbp: 0, sf: 0, pa: 0 };
+  const L = { h: 0, hr: 0, ab: 0, k: 0, bb: 0, hbp: 0, sf: 0, pa: 0 };
   const hit = {}, gp = [];
   splitsOf(seasonH).forEach(s => {
     const id = s.player && s.player.id, st = s.stat || {}; if (id == null) return;
-    const r = { ab: num(st.atBats), h: num(st.hits), k: num(st.strikeOuts), bb: num(st.baseOnBalls), hbp: num(st.hitByPitch), sf: num(st.sacFlies), pa: num(st.plateAppearances), g: num(st.gamesPlayed), teamId: s.team && s.team.id };
+    const r = { ab: num(st.atBats), h: num(st.hits), hr: num(st.homeRuns), k: num(st.strikeOuts), bb: num(st.baseOnBalls), hbp: num(st.hitByPitch), sf: num(st.sacFlies), pa: num(st.plateAppearances), g: num(st.gamesPlayed), teamId: s.team && s.team.id };
     hit[id] = r;
-    L.h += r.h; L.ab += r.ab; L.k += r.k; L.bb += r.bb; L.hbp += r.hbp; L.sf += r.sf; L.pa += r.pa;
+    L.h += r.h; L.hr += r.hr; L.ab += r.ab; L.k += r.k; L.bb += r.bb; L.hbp += r.hbp; L.sf += r.sf; L.pa += r.pa;
     if (r.ab >= 200) gp.push(r.g);
   });
   splitsOf(recentH).forEach(s => {
     const id = s.player && s.player.id, st = s.stat || {}; if (id == null || !hit[id]) return;
-    hit[id].rAb = num(st.atBats); hit[id].rH = num(st.hits); hit[id].rK = num(st.strikeOuts); hit[id].rBb = num(st.baseOnBalls);
+    hit[id].rAb = num(st.atBats); hit[id].rH = num(st.hits); hit[id].rHr = num(st.homeRuns); hit[id].rK = num(st.strikeOuts); hit[id].rBb = num(st.baseOnBalls);
   });
   const lg = L.ab > 1000 ? {
     avg: L.h / L.ab, kPerAb: L.k / L.ab, contact: L.h / Math.max(1, L.ab - L.k),
+    hrPerContact: L.hr / Math.max(1, L.ab - L.k),
+    babip: (L.h - L.hr) / Math.max(1, L.ab - L.k - L.hr),
     bbPerPa: (L.bb + L.hbp) / Math.max(1, L.pa), abPerPa: L.ab / Math.max(1, L.pa),
     obp: (L.h + L.bb + L.hbp) / Math.max(1, L.pa)
   } : LG_FALLBACK;
+  if (!(lg.hrPerContact > 0)) { lg.hrPerContact = LG_FALLBACK.hrPerContact; lg.babip = LG_FALLBACK.babip; }
 
   // How deep into the season are we? Used to judge whether a hitter without a
   // posted lineup is really an everyday player.
@@ -327,43 +371,64 @@ async function buildBoard(o) {
   const teamGames = Math.max(1, gp.length ? gp[Math.floor(gp.length * 0.9)] : 60);
 
   // Pitchers: individual starters, plus each club's relief corps aggregated.
-  const pit = {}, relief = {}, LP = { h: 0, ab: 0, k: 0, bb: 0, hbp: 0, pa: 0 }, teamStaff = {};
+  const pit = {}, relief = {}, LP = { h: 0, hr: 0, ab: 0, k: 0, bb: 0, hbp: 0, pa: 0 }, teamStaff = {};
   splitsOf(seasonP).forEach(s => {
     const id = s.player && s.player.id, st = s.stat || {}; if (id == null) return;
     const tid = s.team && s.team.id;
-    const r = { ab: num(st.atBats), h: num(st.hits), k: num(st.strikeOuts), bb: num(st.baseOnBalls), hbp: num(st.hitByPitch), bf: num(st.battersFaced), gs: num(st.gamesStarted), g: num(st.gamesPlayed) };
+    const r = { ab: num(st.atBats), h: num(st.hits), hr: num(st.homeRuns), k: num(st.strikeOuts), bb: num(st.baseOnBalls), hbp: num(st.hitByPitch), bf: num(st.battersFaced), gs: num(st.gamesStarted), g: num(st.gamesPlayed) };
     pit[id] = r;
-    LP.h += r.h; LP.ab += r.ab; LP.k += r.k; LP.bb += r.bb; LP.hbp += r.hbp; LP.pa += (r.bf || r.ab);
+    LP.h += r.h; LP.hr += r.hr; LP.ab += r.ab; LP.k += r.k; LP.bb += r.bb; LP.hbp += r.hbp; LP.pa += (r.bf || r.ab);
     if (tid != null) {
-      const T = teamStaff[tid] = teamStaff[tid] || { h: 0, ab: 0, k: 0, bb: 0, hbp: 0, pa: 0 };
-      T.h += r.h; T.ab += r.ab; T.k += r.k; T.bb += r.bb; T.hbp += r.hbp; T.pa += (r.bf || r.ab);
+      const T = teamStaff[tid] = teamStaff[tid] || { h: 0, hr: 0, ab: 0, k: 0, bb: 0, hbp: 0, pa: 0 };
+      T.h += r.h; T.hr += r.hr; T.ab += r.ab; T.k += r.k; T.bb += r.bb; T.hbp += r.hbp; T.pa += (r.bf || r.ab);
       if (!r.gs) { // pure reliever
-        const R = relief[tid] = relief[tid] || { h: 0, ab: 0, k: 0 };
-        R.h += r.h; R.ab += r.ab; R.k += r.k;
+        const R = relief[tid] = relief[tid] || { h: 0, hr: 0, ab: 0, k: 0, bb: 0, hbp: 0, pa: 0 };
+        R.h += r.h; R.hr += r.hr; R.ab += r.ab; R.k += r.k; R.bb += r.bb; R.hbp += r.hbp; R.pa += (r.bf || r.ab);
       }
     }
   });
-  const lgPitContact = LP.ab > 1000 ? LP.h / Math.max(1, LP.ab - LP.k) : lg.contact;
   const lgPitK = LP.ab > 1000 ? LP.k / LP.ab : lg.kPerAb;
+  const lgPitHr = LP.ab > 1000 ? LP.hr / Math.max(1, LP.ab - LP.k) : lg.hrPerContact;
+  const lgPitBabip = LP.ab > 1000 ? (LP.h - LP.hr) / Math.max(1, LP.ab - LP.k - LP.hr) : lg.babip;
   const lgStaffObp = LP.pa > 1000 ? (LP.h + LP.bb + LP.hbp) / LP.pa : lg.obp;
+  // Rate an arm the way the model sees him, so "bad pitcher" is a measured
+  // thing and not a hunch. Relievers and starters both go through here.
+  const arm = r => ({
+    kRate:  shrink(r ? r.k : 0, r ? r.ab : 0, lgPitK, r && !r.gs ? K.relief : K.pitK),
+    hrRate: shrink(r ? r.hr : 0, r ? Math.max(0, r.ab - r.k) : 0, lgPitHr, r && !r.gs ? K.relief : K.pitHR),
+    babip:  shrink(r ? r.h - r.hr : 0, r ? Math.max(0, r.ab - r.k - r.hr) : 0, lgPitBabip, r && !r.gs ? K.relief * 2 : K.pitBabip),
+    obp:    shrink(r ? r.h + r.bb + r.hbp : 0, r ? (r.bf || r.ab) : 0, lgStaffObp, K.pitOBP)
+  });
 
   // Team offence and the opposing staff's on-base allowed drive the inning
   // model that produces expected plate appearances.
   const teamOff = {};
   Object.keys(hit).forEach(id => {
     const r = hit[id]; if (r.teamId == null) return;
-    const T = teamOff[r.teamId] = teamOff[r.teamId] || { h: 0, bb: 0, hbp: 0, pa: 0 };
-    T.h += r.h; T.bb += r.bb; T.hbp += r.hbp; T.pa += r.pa;
+    const T = teamOff[r.teamId] = teamOff[r.teamId] || { h: 0, hr: 0, ab: 0, k: 0, bb: 0, hbp: 0, sf: 0, pa: 0 };
+    T.h += r.h; T.hr += r.hr; T.ab += r.ab; T.k += r.k; T.bb += r.bb; T.hbp += r.hbp; T.sf += r.sf; T.pa += r.pa;
   });
   const obpOff = tid => { const T = teamOff[tid]; return shrink(T ? T.h + T.bb + T.hbp : 0, T ? T.pa : 0, lg.obp, K.teamOBP); };
   const obpDef = tid => { const T = teamStaff[tid]; return shrink(T ? T.h + T.bb + T.hbp : 0, T ? T.pa : 0, lgStaffObp, K.teamOBP); };
+  // A team's average hitter, as the model sees him — the "good hitting team"
+  // half of the thesis, measured rather than asserted.
+  const teamBatter = tid => {
+    const T = teamOff[tid] || { h: 0, hr: 0, ab: 0, k: 0, bb: 0, hbp: 0, sf: 0, pa: 0 };
+    return {
+      slot: 5, hand: "R", startProb: 1,
+      kRate:  shrink(T.k, T.ab, lg.kPerAb, K.teamBat),
+      hrRate: shrink(T.hr, Math.max(0, T.ab - T.k), lg.hrPerContact, K.teamBat),
+      babip:  shrink(T.h - T.hr, Math.max(0, T.ab - T.k - T.hr), lg.babip, K.teamBat),
+      abPerPa: 1 - shrink(T.bb + T.hbp + T.sf, T.pa, 1 - lg.abPerPa, K.teamBat)
+    };
+  };
   // Club-level hit suppression behind the arm. The starter is inside this
   // aggregate too, so it overlaps his own contact term slightly — but his is
   // regressed almost all the way to league (pitchers barely control balls in
   // play) and this is capped at +/-6%, so the overlap is small by construction.
   const defence = tid => {
     const T = teamStaff[tid]; if (!T || T.ab < 500) return 1;
-    return clamp(shrink(T.h, T.ab - T.k, lgPitContact, K.teamDef) / lgPitContact, 0.94, 1.06);
+    return clamp(shrink(T.h - T.hr, T.ab - T.k - T.hr, lgPitBabip, K.teamDef) / lgPitBabip, 0.94, 1.06);
   };
 
   // Rosters only for clubs that have not posted a lineup yet.
@@ -371,7 +436,8 @@ async function buildBoard(o) {
     const lu = g.lineups || {};
     const ord = arr => (Array.isArray(arr) && arr.length >= 9) ? arr : null;
     return {
-      pk: g.gamePk, venue: g.venue && g.venue.name, pf: park(g.venue && g.venue.name),
+      pk: g.gamePk, venue: g.venue && g.venue.name,
+      pf: park(g.venue && g.venue.name), pfHr: parkHr(g.venue && g.venue.name),
       startTime: g.gameDate,
       home: { id: g.teams.home.team.id, name: g.teams.home.team.abbreviation || g.teams.home.team.name, sp: g.teams.away.probablePitcher, order: ord(lu.homePlayers), isHome: true },
       away: { id: g.teams.away.team.id, name: g.teams.away.team.abbreviation || g.teams.away.team.name, sp: g.teams.home.probablePitcher, order: ord(lu.awayPlayers), isHome: false }
@@ -419,7 +485,7 @@ async function buildBoard(o) {
         }
         raw.push({ id: pl.id, name: pl.name, pos: pl.pos, slot, posted, startProb,
           teamId: team.id, teamName: team.name, oppId: opp.id, oppName: opp.name, isHome: team.isHome,
-          sp: team.sp, gk: g.pk, pf: g.pf, venue: g.venue, s });
+          sp: team.sp, gk: g.pk, pf: g.pf, pfHr: g.pfHr, venue: g.venue, s });
       });
     });
   });
@@ -436,61 +502,100 @@ async function buildBoard(o) {
     } catch (e) { /* handedness is a nicety, not a requirement */ }
   }
 
-  // Score.
+  // ── Game-side context, computed once per lineup rather than once per hitter.
+  // This is what makes a SPOT SCORE possible: hold the batter constant and let
+  // the opposing arm, the bullpen behind him, the defence and the park vary.
   say("Scoring…"); prog(85);
-  const relRates = tid => {
-    const R = relief[tid];
-    const ab = R ? R.ab : 0;
-    return {
-      kRate: shrink(R ? R.k : 0, ab, lgPitK, K.relief),
-      contact: shrink(R ? R.h : 0, Math.max(0, ab - (R ? R.k : 0)), lgPitContact, K.relief)
-    };
-  };
+
+  // League-neutral reference: an average hitter, average arm, average pen,
+  // neutral park. Everything below is quoted as points against this.
+  const lgBat = { slot: 5, hand: "R", startProb: 1, kRate: lg.kPerAb, hrRate: lg.hrPerContact, babip: lg.babip, abPerPa: lg.abPerPa };
+  const lgArm = { kRate: lgPitK, hrRate: lgPitHr, babip: lgPitBabip, obp: lgStaffObp };
+  const neutralCtx = { lg, parkContact: 1, parkHr: 1, teamPaMu: clamp(27 / (1 - lg.obp) * 0.955, 32, 45) };
+  const neutralOpp = { sp: lgArm, pen: lgArm, spBf: CFG.spBfMean, defence: 1, plt: null };
+  const BASELINE = hitProbability(lgBat, neutralOpp, neutralCtx).p;
+
+  const sides = {};
+  G.forEach(g => {
+    [[g.home, g.away], [g.away, g.home]].forEach(([team, opp]) => {
+      const spId = team.sp && team.sp.id, sp = spId != null ? pit[spId] : null;
+      const spRates = arm(sp);
+      const pen = arm(Object.assign({ gs: 0 }, relief[opp.id] || {}));
+      // How long the starter goes decides how much of the night is his. A bad
+      // one gets chased, which hands the lineup a third and fourth look at a
+      // bullpen — usually the softer target of the two.
+      const spBf = clamp(sp && sp.gs > 0 ? (sp.bf + CFG.spBfMean * K.spBF) / (sp.gs + K.spBF) : CFG.spBfMean, 10, 28);
+      const spShare = clamp(spBf / 38, 0.2, 0.9);
+
+      // Run environment. BUILD 3.0 used the opponent's whole-staff on-base
+      // allowed here; that washes out the one arm we actually know is starting.
+      // Weight the starter's own on-base allowed by the share of the game he is
+      // expected to work, and give the rest to the pen. A starter who walks the
+      // park buys this lineup extra turns, which is most of the edge in a soft
+      // spot.
+      const obpDefBlend = spShare * spRates.obp + (1 - spShare) * pen.obp;
+      const obpExp = log5(obpOff(team.id), obpDefBlend, lg.obp);
+      const paMu = clamp(27 / (1 - obpExp) * 0.955
+        * (1 + (g.pf - 100) / 100 * CFG.parkPaDamp)
+        * (team.isHome ? CFG.homePaAdj : CFG.awayPaAdj), 32, 45);
+
+      const ctx = { lg, parkContact: 1 + (g.pf - 100) / 100 * CFG.parkContactDamp,
+                    parkHr: 1 + (g.pfHr - 100) / 100 * CFG.parkHrDamp, teamPaMu: paMu };
+      const oppCtx = { sp: spRates, pen, spBf, defence: defence(opp.id), plt: null };
+
+      // Three readings of the same spot:
+      //   soft    — how bad the PITCHING and park are, offence held at league
+      //   offIdx  — how good the OFFENCE is, opposition held at league
+      //   spot    — the two together: what a typical hitter in THIS lineup does
+      //             against THIS arm in THIS park. The thesis in one number.
+      const tb = teamBatter(team.id);
+      const soft = hitProbability(lgBat, oppCtx, ctx).p - BASELINE;
+      const offIdx = hitProbability(Object.assign({}, tb), neutralOpp, neutralCtx).p - BASELINE;
+      const spot = hitProbability(Object.assign({}, tb), oppCtx, ctx).p;
+
+      sides[`${g.pk}:${team.id}`] = {
+        ctx, opp: oppCtx, spBf, spShare, paMu, sp, spRates, pen,
+        soft, offIdx, spot, spotDelta: spot - BASELINE,
+        spName: team.sp && team.sp.fullName || null,
+        spHand: spId != null && hand[spId] ? hand[spId].pit : null
+      };
+    });
+  });
+
   raw.forEach(c => {
+    const side = sides[`${c.gk}:${c.teamId}`];
     const s = c.s;
     // Recency: last 30 days counted twice, then shrunk. A 20-AB heater moves
     // the needle a little; it does not redefine the hitter.
     const w = CFG.recencyWeight;
-    const ab = s.ab + w * (s.rAb || 0), h = s.h + w * (s.rH || 0), k = s.k + w * (s.rK || 0);
-    const bbHbp = s.bb + s.hbp + s.sf, pa = s.pa;
+    const ab = s.ab + w * (s.rAb || 0), h = s.h + w * (s.rH || 0),
+          hr = s.hr + w * (s.rHr || 0), k = s.k + w * (s.rK || 0);
     const bat = {
       slot: c.slot, hand: hand[c.id] && hand[c.id].bat,
       kRate: shrink(k, ab, lg.kPerAb, K.batK),
-      contact: shrink(h, Math.max(1, ab - k), lg.contact, K.batContact),
-      abPerPa: 1 - shrink(bbHbp, pa, 1 - lg.abPerPa, K.batBB),
+      hrRate: shrink(hr, Math.max(1, ab - k), lg.hrPerContact, K.batHR),
+      babip: shrink(h - hr, Math.max(1, ab - k - hr), lg.babip, K.batBabip),
+      abPerPa: 1 - shrink(s.bb + s.hbp + s.sf, s.pa, 1 - lg.abPerPa, K.batBB),
       startProb: c.startProb
     };
-    const spId = c.sp && c.sp.id, sp = spId != null ? pit[spId] : null;
-    const plt = platoon(bat.hand, spId != null && hand[spId] ? hand[spId].pit : null);
-    const spRates = {
-      kRate: shrink(sp ? sp.k : 0, sp ? sp.ab : 0, lgPitK, K.pitK),
-      contact: shrink(sp ? sp.h : 0, sp ? Math.max(0, sp.ab - sp.k) : 0, lgPitContact, K.pitContact),
-      plt
-    };
-    const pen = relRates(c.oppId); pen.plt = null;   // unknown arm out of the pen
-    const spBf = clamp(sp && sp.gs > 0 ? (sp.bf * 1 + CFG.spBfMean * K.spBF) / (sp.gs + K.spBF) : CFG.spBfMean, 10, 28);
-
-    // Expected team plate appearances: three outs an inning, nine innings, and
-    // every man who reaches buys the lineup another turn.
-    const obpExp = log5(obpOff(c.teamId), obpDef(c.oppId), lg.obp);
-    const paMu = clamp(27 / (1 - obpExp) * 0.955
-      * (1 + (c.pf - 100) / 100 * CFG.parkPaDamp)
-      * (c.isHome ? CFG.homePaAdj : CFG.awayPaAdj), 32, 45);
-
-    const ctx = { lg, parkContact: 1 + (c.pf - 100) / 100 * CFG.parkContactDamp, teamPaMu: paMu };
-    const opp = { sp: spRates, pen, spBf, defence: defence(c.oppId) };
-    const r = hitProbability(bat, opp, ctx);
+    const plt = platoon(bat.hand, side.spHand);
+    const opp = Object.assign({}, side.opp, { plt });
+    const r = hitProbability(bat, opp, side.ctx);
 
     c.pRaw = r.p;
     c.p = calibrate(r.p, c.id, cal);
     c.pIfStarts = r.pIfStarts; c.ePa = r.ePa; c.eAb = r.eAb; c.trace = r.trace;
-    c.plt = plt; c.spBf = spBf; c.teamPaMu = paMu;
+    c.plt = plt; c.spBf = side.spBf; c.teamPaMu = side.paMu;
+    // Carry the spot readings onto every leg so the board can be sorted by
+    // them, not just by who the hitter is.
+    c.soft = side.soft; c.offIdx = side.offIdx; c.spot = side.spot; c.spotDelta = side.spotDelta;
     c.avg = s.ab > 0 ? s.h / s.ab : 0;
     c.rAvg = s.rAb > 0 ? s.rH / s.rAb : null;
-    c.projAvg = bat.contact * (1 - bat.kRate);
-    c.spName = c.sp && c.sp.fullName || null;
-    c.spBaa = sp && sp.ab > 0 ? sp.h / sp.ab : null;
-    c.spK = sp && sp.ab > 0 ? sp.k / sp.ab : null;
+    c.projAvg = (bat.hrRate + (1 - bat.hrRate) * bat.babip) * (1 - bat.kRate);
+    c.spName = side.spName;
+    c.spBaa = side.sp && side.sp.ab > 0 ? side.sp.h / side.sp.ab : null;
+    c.spK = side.sp && side.sp.ab > 0 ? side.sp.k / side.sp.ab : null;
+    c.spHr9 = side.sp && side.sp.bf > 0 ? side.sp.hr / side.sp.bf * 38 : null;  // homers per ~9 innings faced
     c.rec = cal && cal.legs && cal.legs[c.id] ? cal.legs[c.id] : null;
     delete c.s;                       // raw counting stats, not needed downstream
   });
@@ -511,7 +616,11 @@ async function buildBoard(o) {
       const prob = jointProb(a.p, b.p, rho);
       const ev = evaluate(prob, price);
       const cand = { a, b, rho, prob, naive: a.p * b.p, lift: prob - a.p * b.p, ev,
-        sameTeam: a.teamId === b.teamId, gk: +gk, venue: a.venue, pf: a.pf,
+        sameTeam: a.teamId === b.teamId, gk: +gk, venue: a.venue, pf: a.pf, pfHr: a.pfHr,
+        // A same-team pair inherits that side's spot; a cross-team pair sits
+        // between the two, which is one more reason to prefer teammates.
+        soft: (a.soft + b.soft) / 2, offIdx: (a.offIdx + b.offIdx) / 2,
+        spot: (a.spot + b.spot) / 2, spotDelta: (a.spotDelta + b.spotDelta) / 2,
         teams: `${a.teamName} vs ${a.oppName}`, bothPosted: a.posted && b.posted };
       if (!best || cand.prob > best.prob) best = cand;
     }
@@ -521,8 +630,31 @@ async function buildBoard(o) {
   // most likely double is usually also the most heavily bet and worst priced.
   pairs.sort((x, y) => (y.ev ? y.ev.edge : y.prob) - (x.ev ? x.ev.edge : x.prob) || y.prob - x.prob);
 
+  // Every lineup on the slate, ranked by how soft its spot is. This is the
+  // board for "target the bad arm", as opposed to "target the good hitter".
+  const spots = Object.keys(sides).map(key => {
+    const [gk, tid] = key.split(":");
+    const side = sides[key];
+    const mine = raw.filter(c => c.gk === +gk && c.teamId === +tid);
+    if (!mine.length) return null;
+    const g = G.find(x => x.pk === +gk);
+    const me = g && (g.home.id === +tid ? g.home : g.away);
+    const them = g && (g.home.id === +tid ? g.away : g.home);
+    return {
+      gk: +gk, teamId: +tid, team: me ? me.name : String(tid), opp: them ? them.name : "",
+      isHome: me ? me.isHome : false, venue: g && g.venue, pf: g && g.pf, pfHr: g && g.pfHr,
+      spName: side.spName, spBf: side.spBf, spShare: side.spShare, paMu: side.paMu,
+      spK: side.spRates.kRate, spHr: side.spRates.hrRate, spObp: side.spRates.obp,
+      penK: side.pen.kRate, penObp: side.pen.obp,
+      soft: side.soft, offIdx: side.offIdx, spot: side.spot, spotDelta: side.spotDelta,
+      posted: mine.some(c => c.posted), n: mine.length,
+      best: mine.slice().sort((x, y) => y.p - x.p).slice(0, 3).map(c => ({ id: c.id, name: c.name, slot: c.slot, p: c.p }))
+    };
+  }).filter(Boolean).sort((a, b) => b.spotDelta - a.spotDelta);
+
   prog(100);
-  return { date: day, v: VERSION, lg, teamGames, games: G, candidates: raw.sort((a, b) => b.p - a.p), pairs, price };
+  return { date: day, v: VERSION, lg, teamGames, baseline: BASELINE, games: G,
+    candidates: raw.sort((a, b) => b.p - a.p), pairs, spots, price };
 }
 
 return { VERSION, API, CFG, K, PARK, park, clamp, erf, normCdf, normPdf, normInv, logit, expit,
