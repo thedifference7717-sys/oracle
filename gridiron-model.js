@@ -84,7 +84,14 @@ const LEAGUES = {
                         // wins 88%). The raw sd of margin-minus-close is nearer
                         // 13.5, but football margins are peaked, and a bell
                         // curve that wide prices every favourite as too live.
-    sigTotal: 10.40,    // sd of final total
+    // Measured two ways that agree: the mean absolute error of the closing
+    // total across the 2025 backtest implies 13.05, and fitting a distribution
+    // to Kalshi's live total ladder — a real-money, near-vig-free market that
+    // quotes every half point — implies 12.78. The 10.4 this started with was
+    // far too narrow, and a too-narrow total is not a harmless approximation:
+    // it manufactures a fake edge on every deep in-the-money rung and on both
+    // sides of every posted total.
+    sigTotal: 12.90,
     avgTotal: 46.0,     // measured 2025 league mean total (23.0 a side); pace and
                         // variance are scaled against it
     hfa0: 1.90,         // home-field prior, refit from results each load
@@ -112,8 +119,12 @@ const LEAGUES = {
   },
   cfb: {
     key: "cfb", label: "CFB", path: "football/college-football", core: "college-football", groups: 80,
-    sigMargin: 15.00,   // same calibration, college spread
-    sigTotal: 12.90,
+    sigMargin: 15.70,   // same calibration as the NFL number, then held
+                        // to the 15.72 root-mean-square error the backtest
+                        // actually measured around the closing line
+    sigTotal: 15.50,    // same two measurements: backtest error implies 15.29,
+                        // the exchange ladder 18.37 (thin college rungs inflate
+                        // that one, so the outcome-based number leads)
     avgTotal: 54.6,     // measured 2025 college mean total (27.3 a side)
     hfa0: 2.40,
     keyDamp: 0.55,      // key numbers exist in college but are flatter
@@ -126,12 +137,12 @@ const LEAGUES = {
     // closing line by six hundredths of a point. College is softer than the
     // NFL, but it is not soft.
     mktW: 0.20,
-    // Zero, and it is not an oversight. Betting our disagreement with the
-    // college total lost 7.5% over 694 games last season — the one result in
-    // the whole backtest that clears two standard errors in the WRONG
-    // direction. A totals model that loses money is not a totals model, so it
-    // does not get to post plays. Raise the weight by hand if you want to see
-    // what it thinks; the backtest panel will still tell you it was a leak.
+    // Zero, and it is not an oversight. Over 694 games last season our college
+    // total showed no skill worth the name — a shade negative, well inside the
+    // noise once you measure against the right null (a bet with no skill does
+    // not return zero, it returns minus the hold). A model with nothing to say
+    // does not get to post plays. Raise the weight by hand to see what it
+    // thinks; the backtest panel will keep scoring it honestly.
     mktWTotal: 0.00,
     maxShift: 4.0,
     maxShiftTotal: 4.0,
@@ -1214,6 +1225,320 @@ async function loadGameProps(board, entry, cache, onStatus) {
   return out;
 }
 
+// ── the exchange ────────────────────────────────────────────────────────────
+// A sportsbook takes 4.5% out of a two-way market and can limit you for
+// winning. Kalshi is an exchange: the two sides of an NFL moneyline quote a
+// cent apart with six figures of size behind them, and nobody gets limited.
+// Three things follow, and they are worth more than any rating.
+//
+//  1. BEST EXECUTION. The same outcome is for sale at two venues. Taking the
+//     cheaper one is free money — no model has to be right — and on a live
+//     slate the exchange is the cheaper side of the trade about half the time,
+//     by up to two cents. Two cents on a coin flip is a 4% swing, which is the
+//     entire hold.
+//
+//  2. A VIG-FREE FAIR PRICE. The midpoint of a penny-wide two-sided market is
+//     a better estimate of the true probability than any de-vig of a
+//     sportsbook's number, because there is almost nothing to strip out.
+//
+//  3. THE WHOLE DISTRIBUTION, QUOTED. The exchange hangs every half point as
+//     its own contract, so the ladder IS the market's cumulative distribution.
+//     That is a free, real-money check on our own — and it is how the totals
+//     model got caught being far too narrow.
+//
+// Fees are charged on entry and are NOT a rounding error: 7% x price x
+// (1 - price) is 1.75 cents on a coin flip, so an edge under two cents is not
+// an edge. Every number here is quoted after them.
+const KALSHI_API = "https://api.elections.kalshi.com/trade-api/v2";
+const KALSHI_FEE = 0.07;
+const KALSHI_SERIES = {
+  nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" },
+  cfb: { ml: "KXNCAAFGAME", spread: "KXNCAAFSPREAD", total: "KXNCAAFTOTAL" }
+};
+const kalshiFee = (price, rate) => (rate == null ? KALSHI_FEE : rate) * price * (1 - price);
+
+// Kalshi serves its public data without cross-origin headers, so a browser
+// needs a bridge (kalshi-proxy/worker.js). Node talks to it directly.
+let kalshiBase = null;
+function setKalshiProxy(url) { kalshiBase = url ? String(url).replace(/\/+$/, "") : null; }
+const kalshiUrl = path => (kalshiBase || KALSHI_API) + path;
+
+const kNum = v => (v === null || v === undefined || v === "") ? null : (isFinite(parseFloat(v)) ? parseFloat(v) : null);
+const kNorm = s => String(s || "").toLowerCase().replace(/[^a-z0-9 ]/g, "").trim();
+
+async function loadKalshiSeries(ticker) {
+  const out = [];
+  let cursor = "";
+  for (let page = 0; page < 4; page++) {
+    const d = await getJSON(kalshiUrl(`/markets?series_ticker=${ticker}&status=open&limit=1000${cursor ? "&cursor=" + encodeURIComponent(cursor) : ""}`), 2);
+    (d.markets || []).forEach(m => out.push(m));
+    cursor = d.cursor || "";
+    if (!cursor || !(d.markets || []).length) break;
+  }
+  return out;
+}
+// One market, in our terms. Kalshi moved to dollar-denominated fields; the
+// older integer-cent names are kept as a fallback so this does not go dark on
+// a schema change.
+function kalshiMarket(m, kind) {
+  const dollars = (a, b) => {
+    const v = kNum(m[a]);
+    if (v != null) return v;
+    const c = kNum(m[b]);
+    return c == null ? null : c / 100;
+  };
+  return {
+    ticker: m.ticker,
+    kind,
+    label: m.yes_sub_title || m.title || m.ticker,
+    team: kNorm(m.yes_sub_title).replace(/wins by over.*/, "").trim(),
+    strike: kNum(m.floor_strike),
+    yesBid: dollars("yes_bid_dollars", "yes_bid"),
+    yesAsk: dollars("yes_ask_dollars", "yes_ask"),
+    bidSize: kNum(m.yes_bid_size_fp) || 0,
+    askSize: kNum(m.yes_ask_size_fp) || 0,
+    oi: kNum(m.open_interest_fp) || 0,
+    vol: kNum(m.volume_24h_fp) || 0,
+    close: m.close_time
+  };
+}
+// Everything the exchange has on this league, grouped by game. The event
+// ticker carries the series name, so it is stripped: the moneyline, the spread
+// ladder and the total ladder for one game must land in the same bucket.
+async function loadKalshi(leagueKey, onStatus) {
+  const S = KALSHI_SERIES[leagueKey];
+  if (!S) return { events: {}, ok: false, error: "no exchange series for " + leagueKey };
+  const kinds = ["ml", "spread", "total"];
+  let done = 0;
+  const lists = await pool(kinds, async k => {
+    const r = await loadKalshiSeries(S[k]);
+    done++; if (onStatus) onStatus("Reading the exchange…", done / kinds.length);
+    return r;
+  }, 3);
+  if (lists.every(l => !l || !l.length)) return { events: {}, ok: false, error: "exchange unreachable" };
+  const events = {};
+  kinds.forEach((k, i) => (lists[i] || []).forEach(m => {
+    const key = String(m.event_ticker || "").replace(/^KX\w+?-/, "");
+    if (!key) return;
+    const e = events[key] || (events[key] = { key, ml: [], spread: [], total: [] });
+    e[k].push(kalshiMarket(m, k));
+  }));
+  return { events, ok: true };
+}
+// Tie an exchange event to a game on our board. Kalshi truncates team names
+// ("New York G", "Los Angeles R"), so a prefix match on the full team name is
+// both the loosest thing that is still safe and the only thing that works. Two
+// teams meet once in a week, so both names matching is identification enough.
+function matchKalshi(board, kal) {
+  if (!kal || !kal.ok) return 0;
+  let n = 0;
+  Object.values(kal.events).forEach(ev => {
+    const names = ev.ml.map(m => kNorm(m.label)).filter(Boolean);
+    if (names.length < 2) return;
+    const entry = board.games.find(g => {
+      const h = kNorm(g.game.home.name), a = kNorm(g.game.away.name);
+      return names.every(nm => h.startsWith(nm) || a.startsWith(nm));
+    });
+    if (!entry) return;
+    const home = kNorm(entry.game.home.name);
+    ev.homeTeam = names.find(nm => home.startsWith(nm)) || null;
+    ev.game = entry; entry.kalshi = ev; n++;
+  });
+  return n;
+}
+// Which side of the game is this contract on? Decided against the matched
+// game's own team names, because the exchange renders the same club
+// differently in different series ("Northern Illi" on the moneyline, "Northern
+// Illinois" on the spread ladder) and a string mismatch here silently flips
+// the sign of the whole ladder. Returns null when it cannot tell, and the
+// caller skips the contract rather than guessing.
+function kalshiIsHome(ev, team) {
+  if (!team) return null;
+  if (ev.game) {
+    const h = kNorm(ev.game.game.home.name), a = kNorm(ev.game.game.away.name);
+    if (h.startsWith(team) || team.startsWith(h)) return true;
+    if (a.startsWith(team) || team.startsWith(a)) return false;
+  }
+  if (ev.homeTeam != null) return team === ev.homeTeam;
+  return null;
+}
+
+// Fit a normal to the ladder's midpoints. The exchange is quoting a whole
+// cumulative distribution; this reads its mean and its width back out, which
+// is the cheapest sanity check on our own that exists.
+function kalshiImplied(ev) {
+  const fitTo = (pts, lo, hi) => {
+    if (pts.length < 5) return null;
+    let best = null;
+    for (let mu = lo; mu <= hi; mu += 0.5) {
+      for (let sg = 6; sg <= 24; sg += 0.25) {
+        let e = 0;
+        for (const q of pts) e += Math.pow((1 - normCdf((q.s - mu) / sg)) - q.p, 2);
+        if (!best || e < best.err) best = { mu, sigma: sg, err: e, n: pts.length };
+      }
+    }
+    return best;
+  };
+  const mid = m => (m.yesBid != null && m.yesAsk != null) ? (m.yesBid + m.yesAsk) / 2 : null;
+  const tp = [];
+  ev.total.forEach(m => { const p = mid(m); if (p != null && m.strike != null) tp.push({ s: m.strike, p }); });
+  const sp = [];
+  ev.spread.forEach(m => {
+    const p = mid(m); if (p == null || m.strike == null) return;
+    const home = kalshiIsHome(ev, m.team); if (home == null) return;
+    // Put every rung on the home team's scale so one fit covers both ladders.
+    sp.push(home ? { s: m.strike, p } : { s: -m.strike, p: 1 - p });
+  });
+  return { total: fitTo(tp, 10, 90), margin: fitTo(sp, -40, 40) };
+}
+
+// Price every contract on this game against our distribution, after fees.
+// `side` is what you would actually do: buy YES at the ask, or buy NO at one
+// minus the bid. Both are quoted as a cost per $1 of payout.
+function priceKalshiGame(board, entry, opts) {
+  opts = opts || {};
+  const ev = entry.kalshi; if (!ev) return [];
+  const L = board.L;
+  const feeRate = opts.feeRate != null ? opts.feeRate : KALSHI_FEE;
+  const minSize = opts.minSize != null ? opts.minSize : 25;
+  const kf = opts.kelly != null ? opts.kelly : 0.25;
+  const w = opts.mktW != null ? opts.mktW : (board.mktW != null ? board.mktW : L.mktW);
+  const pmf = marginPmf(entry.blend.margin, entry.proj.sigMargin, L.keyDamp);
+  const ml = mlProbs(pmf);
+  const out = [];
+
+  const consider = (m, kind, pYes, label, extra) => {
+    if (pYes == null || !isFinite(pYes)) return;
+    // The midpoint of a two-sided exchange quote is a market price, and it gets
+    // the same treatment as the sportsbook's line: our number is blended toward
+    // it at the weight the backtest says our number has earned. Without this the
+    // deep rungs light up on nothing but our own tail error — a 2-point
+    // disagreement on a 12-cent contract reads as 20% EV, and it is not there.
+    const mid = (m.yesBid != null && m.yesAsk != null) ? (m.yesBid + m.yesAsk) / 2 : null;
+    const pModel = pYes;
+    if (mid != null) pYes = clamp(w * pYes + (1 - w) * mid, 1e-4, 1 - 1e-4);
+    const take = (side, cost, size, p) => {
+      if (cost == null || !(cost > 0.01) || !(cost < 0.99)) return;
+      if (!(size >= minSize)) return;
+      const all = cost + kalshiFee(cost, feeRate);
+      const ev$ = p - all;                       // dollars per $1 contract
+      const b = (1 - all) / all;
+      const f = b > 0 ? Math.max(0, (p * b - (1 - p)) / b) * kf : 0;
+      out.push({
+        venue: "kalshi", gameId: entry.game.id, league: board.league, market: kind, side,
+        home: entry.game.home, away: entry.game.away, date: entry.game.date,
+        ticker: m.ticker, label: label + (side === "no" ? " — NO" : ""),
+        p, pModel: side === "no" ? 1 - pModel : pModel, mid, w,
+        cost, allIn: all, fee: kalshiFee(cost, feeRate),
+        ev: ev$ / all,                            // return per dollar risked
+        evCents: ev$ * 100, kelly: f, size, oi: m.oi, vol: m.vol,
+        strike: m.strike, blend: entry.blend, proj: entry.proj, thin: entry.proj.thin
+      });
+    };
+    take("yes", m.yesAsk, m.askSize, pYes);
+    take("no", m.yesBid == null ? null : 1 - m.yesBid, m.bidSize, 1 - pYes);
+    if (extra) extra();
+  };
+
+  ev.ml.forEach(m => {
+    const isHome = kalshiIsHome(ev, m.team); if (isHome == null) return;
+    const p = (isHome ? ml.home : ml.away) / Math.max(1e-9, 1 - ml.push);
+    consider(m, "ml", p, m.label + " ML");
+  });
+  ev.spread.forEach(m => {
+    if (m.strike == null) return;
+    const isHome = kalshiIsHome(ev, m.team); if (isHome == null) return;
+    // "wins by over s" — strictly more than s, which spreadProbs already means.
+    const p = isHome ? spreadProbs(pmf, -m.strike).win : spreadProbs(pmf, m.strike).lose;
+    consider(m, "spread", p, m.label);
+  });
+  ev.total.forEach(m => {
+    if (m.strike == null) return;
+    consider(m, "total", totalProbs(entry.blend.total, entry.proj.sigTotal, m.strike).over, "Over " + m.strike);
+  });
+  return out;
+}
+
+// The same outcome, two venues. No model is involved and none is needed: one
+// of these prices is simply better than the other.
+function kalshiCross(entry, opts) {
+  opts = opts || {};
+  const feeRate = opts.feeRate != null ? opts.feeRate : KALSHI_FEE;
+  const ev = entry.kalshi, o = entry.odds;
+  if (!ev || !o || o.mlHome == null || o.mlAway == null) return [];
+  const rows = [];
+  ev.ml.forEach(m => {
+    const isHome = kalshiIsHome(ev, m.team); if (isHome == null) return;
+    const bookAm = isHome ? o.mlHome : o.mlAway;
+    const bookOther = isHome ? o.mlAway : o.mlHome;
+    if (bookAm == null || m.yesAsk == null) return;
+    const bookCost = amToProb(bookAm);
+    const exCost = m.yesAsk + kalshiFee(m.yesAsk, feeRate);
+    const mid = m.yesBid != null ? (m.yesBid + m.yesAsk) / 2 : null;
+    // Buy this side on the exchange, the other side at the book: if the two
+    // all-in costs come to less than a dollar, the dollar is already yours.
+    const arb = bookOther == null ? null : 1 - (exCost + amToProb(bookOther));
+    rows.push({
+      market: "ml", outcome: m.label + " ML",
+      team: m.label, isHome, bookAm, bookCost, exAsk: m.yesAsk, exCost, mid,
+      better: exCost < bookCost ? "exchange" : "book",
+      gainCents: Math.abs(bookCost - exCost) * 100,
+      size: m.askSize, oi: m.oi, arb: arb, ticker: m.ticker
+    });
+  });
+
+  // The spread. A book line of -3.5 on the home team is the same outcome as the
+  // exchange's "home wins by over 3.5" contract, so the two prices can be put
+  // side by side and the cheaper one taken.
+  if (o.spreadHome != null) {
+    const want = -o.spreadHome;                       // home must win by more than this
+    ev.spread.forEach(m => {
+      if (m.strike == null || m.yesAsk == null) return;
+      const isHome = kalshiIsHome(ev, m.team); if (isHome == null) return;
+      const covers = isHome ? (m.strike === want) : (m.strike === -want);
+      if (!covers) return;
+      const bookAm = isHome ? o.spreadOddsHome : o.spreadOddsAway;
+      if (bookAm == null) return;
+      const bookCost = amToProb(bookAm), exCost = m.yesAsk + kalshiFee(m.yesAsk, feeRate);
+      rows.push({
+        market: "spread", outcome: m.label, team: m.team, isHome, bookAm, bookCost,
+        exAsk: m.yesAsk, exCost, mid: m.yesBid != null ? (m.yesBid + m.yesAsk) / 2 : null,
+        better: exCost < bookCost ? "exchange" : "book",
+        gainCents: Math.abs(bookCost - exCost) * 100,
+        size: m.askSize, oi: m.oi, arb: null, ticker: m.ticker
+      });
+    });
+  }
+  // And the total, the same way.
+  if (o.total != null) {
+    ev.total.forEach(m => {
+      if (m.strike !== o.total || m.yesAsk == null) return;
+      const bookCost = amToProb(o.overOdds), exCost = m.yesAsk + kalshiFee(m.yesAsk, feeRate);
+      rows.push({
+        market: "total", outcome: "Over " + m.strike, team: null, isHome: null,
+        bookAm: o.overOdds, bookCost, exAsk: m.yesAsk, exCost,
+        mid: m.yesBid != null ? (m.yesBid + m.yesAsk) / 2 : null,
+        better: exCost < bookCost ? "exchange" : "book",
+        gainCents: Math.abs(bookCost - exCost) * 100,
+        size: m.askSize, oi: m.oi, arb: null, ticker: m.ticker
+      });
+      // Under is the NO side of the same contract, bought at one minus the bid.
+      if (m.yesBid != null && o.underOdds != null) {
+        const cost = 1 - m.yesBid, all = cost + kalshiFee(cost, feeRate);
+        rows.push({
+          market: "total", outcome: "Under " + m.strike, team: null, isHome: null,
+          bookAm: o.underOdds, bookCost: amToProb(o.underOdds), exAsk: cost, exCost: all,
+          mid: m.yesAsk != null ? 1 - (m.yesBid + m.yesAsk) / 2 : null,
+          better: all < amToProb(o.underOdds) ? "exchange" : "book",
+          gainCents: Math.abs(amToProb(o.underOdds) - all) * 100,
+          size: m.bidSize, oi: m.oi, arb: null, ticker: m.ticker
+        });
+      }
+    });
+  }
+  return rows;
+}
+
 // ── walk-forward backtest ───────────────────────────────────────────────────
 // Ratings for week N are rebuilt from weeks 1..N-1 plus the prior season, and
 // nothing else. Grading is against the closing number the book actually hung
@@ -1285,14 +1610,14 @@ async function backtest(leagueKey, season, weekFrom, weekTo, opts, onStatus) {
     [["home", sp.win, dv.p1, o.spreadOddsHome], ["away", sp.lose, dv.p2, o.spreadOddsAway]].forEach(([side, p, mp, price]) => {
       if (mp == null) return;
       const pn = p / Math.max(1e-9, 1 - sp.push);
-      plays.push({ market: "spread", week: g.week, side, edge: pn - mp, p: pn, price, res: gradeSpread(side) });
+      plays.push({ market: "spread", week: g.week, side, edge: pn - mp, p: pn, price, res: gradeSpread(side), nullEv: mp * amToDec(price) - 1 });
     });
     if (o.mlHome != null && o.mlAway != null) {
       const m = mlProbs(pmf), dvm = devig(o.mlHome, o.mlAway);
       const gradeML = side => actMargin === 0 ? 0.5 : ((side === "home") === (actMargin > 0) ? 1 : 0);
       [["home", m.home, dvm.p1, o.mlHome], ["away", m.away, dvm.p2, o.mlAway]].forEach(([side, p, mp, price]) => {
         const pn = p / Math.max(1e-9, 1 - m.push);
-        plays.push({ market: "ml", week: g.week, side, edge: pn - mp, p: pn, price, res: gradeML(side) });
+        plays.push({ market: "ml", week: g.week, side, edge: pn - mp, p: pn, price, res: gradeML(side), nullEv: mp * amToDec(price) - 1 });
       });
     }
     if (o.total != null) {
@@ -1300,7 +1625,7 @@ async function backtest(leagueKey, season, weekFrom, weekTo, opts, onStatus) {
       const gradeT = side => actTotal === o.total ? 0.5 : ((side === "over") === (actTotal > o.total) ? 1 : 0);
       [["over", tp.over, dvt.p1, o.overOdds], ["under", tp.under, dvt.p2, o.underOdds]].forEach(([side, p, mp, price]) => {
         const pn = p / Math.max(1e-9, 1 - tp.push);
-        plays.push({ market: "total", week: g.week, side, edge: pn - mp, p: pn, price, res: gradeT(side) });
+        plays.push({ market: "total", week: g.week, side, edge: pn - mp, p: pn, price, res: gradeT(side), nullEv: mp * amToDec(price) - 1 });
       });
     }
   });
@@ -1346,11 +1671,20 @@ function summarise(bt, thresholds) {
       const mean = rets.reduce((a, b) => a + b, 0) / n;
       const sd = Math.sqrt(rets.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / Math.max(1, n - 1));
       const se = sd / Math.sqrt(n);
+      // Testing ROI against zero asks the wrong question. A bet with NO skill
+      // at all does not return zero — it returns minus the hold. So the null is
+      // what these exact prices would have paid if our probability carried no
+      // information beyond the market's own: that is the skill, and it is the
+      // only thing that says whether the model is doing anything.
+      const nulls = sel.map(p => p.nullEv == null ? 0 : p.nullEv);
+      const nullMean = nulls.reduce((a, b) => a + b, 0) / n;
+      const skill = mean - nullMean;
       acc.buckets.push({
         market, edge: t, n, win, lose, push, pnl,
         roi: pnl / (win + lose || 1),
         avgPrice: pxSum / n, se, t: se > 0 ? mean / se : 0,
-        significant: se > 0 && Math.abs(mean / se) >= 2
+        vig: -nullMean, skill, skillT: se > 0 ? skill / se : 0,
+        significant: se > 0 && Math.abs(skill / se) >= 2
       });
     });
   });
@@ -1366,6 +1700,8 @@ return {
   buildRatings, ratingOf, projectGame, blendProjection, priceGame, keyCross, calibrateSlate, applyCal, autoMktW, autoMktWTotal,
   loadGameOdds, oddsFromScoreboard, loadLeagueBoard,
   teamVolume, loadRoster, loadPlayersNFL, loadPlayersCFB, projectPlayer, propMarkets, priceProp, loadGameProps,
-  backtest, summarise
+  backtest, summarise,
+  KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
+  loadKalshi, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross
 };
 });
