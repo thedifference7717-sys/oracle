@@ -229,7 +229,7 @@ const sgn = v => (v > 0 ? "+" : "") + v.toFixed(1);
 const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
-const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null };
+const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {} };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -512,6 +512,7 @@ function propsHTML(b, entry, list){
         '<td class="num">' + (mkt.type === "binary" ? pc(mkt.mean) : mkt.mean.toFixed(1)) + "</td>" +
         '<td class="num">' + (mkt.ourLine == null ? "—" : mkt.ourLine) + "</td>" +
         '<td class="num">' + M.fmtAm(M.probToAm(fair)) + " / " + M.fmtAm(M.probToAm(1-fair)) + "</td>" +
+        exchangeCell(b, entry, pl, mkt) +
         "<td>" + (mkt.type === "binary" ? "" :
           '<input type="number" step="0.5" placeholder="line" value="' + mkt.ourLine + '" oninput="priceRow(' + i + ')" id="pl-' + i + '">') +
           '<input type="number" step="5" placeholder="over" oninput="priceRow(' + i + ')" id="po-' + i + '">' +
@@ -522,11 +523,37 @@ function propsHTML(b, entry, list){
     });
   });
   return '<table class="ptbl"><thead><tr><th>Player</th><th>Market</th><th class="num">Projection</th><th class="num">Our line</th>' +
-    '<th class="num">Fair O / U</th><th>Your book</th><th>Verdict</th><th>Fair price ladder</th></tr></thead><tbody>' +
+    '<th class="num">Fair O / U</th><th>Exchange</th><th>Your book</th><th>Verdict</th><th>Fair price ladder</th></tr></thead><tbody>' +
     rows.join("") + "</tbody></table>" +
     '<div class="mini" style="padding:8px 2px">Projection is this game, not a season average: team plays come from pace and the projected total, ' +
-    'the pass/run split shifts with the projected margin, and the player takes his usage share of that. Type your book\'s line and price to see whether it is worth having.</div>';
+    'the pass/run split shifts with the projected margin, and the player takes his usage share of that. Type your book\'s line and price to see whether it is worth having.<br>' +
+    'The <b>Exchange</b> column is a real, tradeable price. Its spreads on players run to eight or ten cents, so crossing one costs half the spread plus the fee — a row only reads as a play when the edge clears both, ' +
+    'and our number is blended half-and-half with the exchange\'s midpoint first, because the one thing measured here is that we disagree with it by about five points in the middle and nothing says which of us is wrong.</div>';
 }
+// What the exchange is actually quoting on this player, and whether our
+// disagreement is worth crossing its spread. It usually is not — these markets
+// are eight to ten cents wide, so five points of disagreement is the spread,
+// not an edge, and saying so is more use than dressing it up.
+function exchangeCell(board, entry, pl, mkt){
+  const kp = state.kprops[board.league];
+  if (!kp || mkt.type === "binary" || mkt.ourLine == null) return '<td class="mini">—</td>';
+  const rung = M.kalshiRung(kp, entry, pl.player.name, mkt.key, mkt.ourLine);
+  if (!rung) return '<td class="mini">not listed</td>';
+  const ourP = mkt.tail(rung.strike);
+  const best = M.priceKalshiProp(rung, ourP, opts(board));
+  const quote = (rung.bid * 100).toFixed(0) + "/" + (rung.ask * 100).toFixed(0) + "c";
+  const head = "<b>" + rung.strike + "+</b> " + quote +
+    ' <span class="mini">(' + (rung.spread * 100).toFixed(0) + "c wide)</span>";
+  if (!best) return '<td class="mini">' + head + "</td>";
+  return '<td class="mini">' + head + "<br>" +
+    (best.worth
+      ? '<span style="color:var(--green)">' + best.side + " @" + (best.cost * 100).toFixed(1) + "c · " +
+        (best.ev * 100).toFixed(0) + "% EV · stake " + (best.kelly * 100).toFixed(2) + "%</span>" +
+        '<br><span class="mini">ours ' + (best.pModel * 100).toFixed(0) + "%, blended " + (best.p * 100).toFixed(0) + "%</span>"
+      : '<span class="mini">ours ' + (ourP * 100).toFixed(0) + "% vs mid " + (rung.mid * 100).toFixed(0) +
+        "c — inside the spread</span>") + "</td>";
+}
+
 function priceRow(i){
   const row = PROPROWS[i]; if (!row) return;
   const mkt = row.mkt;
@@ -597,8 +624,11 @@ function renderLegend(shown, total){
     "<b>How the number is built:</b> every result this season and last is fit into offence and defence ratings with blowouts compressed and last season discounted; " +
     "the projection is put on the market's own scale across the whole slate, then blended with the market line; " +
     "the margin is turned into a distribution that respects 3 and 7 rather than a bell curve, which is what makes half-points and moneylines price correctly.<br>" +
+    "<b>Where the money actually is:</b> best execution. The same outcome is for sale at a sportsbook and on an exchange, and on a live slate the exchange is the cheaper venue about half the time, worth roughly a cent a contract " +
+    "and up to three or four on the best of them — against a book hold of four and a half. That pays whether or not the rating is any good, which is more than the rating can say.<br>" +
     "<b>What this is not:</b> the backtest panel below is the honest scoreboard. A power rating built from public box scores does not beat a sharp NFL closing line, and the panel will tell you so. " +
-    "Where this earns its keep is line shopping across books on key numbers, a book's moneyline disagreeing with its own spread, and props, which are priced by fewer people and moved later.";
+    "The player projections have been fitted against the exchange's own ladders — the standard deviations agree with it to a fraction of a yard now — but a five-point disagreement in the middle of those ladders remains, " +
+    "and nothing here can prove whether that is our error or the market's. Every prop is priced as though it might be ours.";
 }
 
 // ── the exchange ────────────────────────────────────────────────────────────
@@ -633,6 +663,12 @@ async function loadExchange(){
       matched += M.matchKalshi(b, kal);
       total += b.games.length;
       b.kalshiLoaded = true;
+      // Player ladders too, where the exchange lists them.
+      try{
+        body.innerHTML = '<div class="empty"><span class="spin">⟳</span> reading ' + b.L.label + ' player markets…</div>';
+        const kp = await M.loadKalshiProps(lg, () => {});
+        if (kp.ok) state.kprops[lg] = kp;
+      }catch(e){ /* game markets are the prize; player ladders are a bonus */ }
     }
     state.exchange = { matched, total, at: Date.now() };
     $("ex-sub").textContent = matched + " of " + total + " games matched";

@@ -972,6 +972,31 @@ const ROLE = {
 };
 const roleOf = pos => ROLE[pos] || { tgt: 1.2, car: 1.2, att: 0.05 };
 
+// How over-dispersed each count is relative to Poisson (Var = m + m^2/k, so a
+// bigger k is closer to Poisson), and a scale on each yardage variance.
+//
+// These are FITTED, not chosen. Kalshi quotes a ladder of strikes on passing
+// yards, receiving yards and receptions for every player in every game, and a
+// ladder is a cumulative distribution: it says what the market thinks the whole
+// shape is, not just the middle. Fitting our own shape to ~2,000 live rungs is
+// the only outside check on a prop model that exists short of a season of
+// results — and it said our first pass was 11-17% too wide on every one of
+// them, which pushed our median well under the market's and would have had the
+// board recommending unders all day.
+//
+// Receptions came back essentially Poisson once the game is fixed: conditional
+// on a projection, the extra dispersion I assumed was not there.
+let DISP = { tgt: 6, rec: 20, car: 18, att: 25 };
+let VAR = { recYds: 0.85, rushYds: 0.80, passYds: 0.70 };
+// Exposed so the shape can be refitted against a live ladder rather than
+// staying frozen at whatever last season implied.
+function setPropShape(d, v) {
+  if (d) DISP = Object.assign({}, DISP, d);
+  if (v) VAR = Object.assign({}, VAR, v);
+  return { DISP: DISP, VAR: VAR };
+}
+const propShape = () => ({ DISP: Object.assign({}, DISP), VAR: Object.assign({}, VAR) });
+
 // Usage share of a projected volume, then efficiency — never a yards-per-game
 // average, which bakes in a schedule and a game script that will not repeat.
 function projectPlayer(L, pl, vol, ts) {
@@ -985,7 +1010,14 @@ function projectPlayer(L, pl, vol, ts) {
   const rawTgt = pl.tgt > 0 ? pl.tgt / gp : (pl.rec / gp) / 0.66;
   const tgtPerG = shrink(rawTgt, gp, role.tgt, 3);
   const carPerG = shrink(pl.rushAtt / gp, gp, role.car, 3);
-  const attPerG = shrink(pl.passAtt / gp, gp, role.att, 3);
+  // A quarterback's prior is not "the average rostered quarterback" — that
+  // number is a blend of starters and clipboard holders, and shrinking a
+  // seventeen-game starter toward it quietly costs him two or three attempts a
+  // game. Measured against the exchange's own passing ladders that was worth
+  // about seventeen yards of projection, every week, on every starter. The
+  // prior that belongs here is what THIS offence throws.
+  const qbPrior = pl.pos === "QB" ? Math.max(role.att, 0.92 * teamPassAtt) : role.att;
+  const attPerG = shrink(pl.passAtt / gp, gp, qbPrior, 3);
   const tgtShare = tgtPerG / Math.max(1, teamPassAtt);
   const carryShare = carPerG / Math.max(1, teamRushAtt);
   const attShare = attPerG / Math.max(1, teamPassAtt);
@@ -1003,14 +1035,14 @@ function projectPlayer(L, pl, vol, ts) {
   // Compound variance: a count of chances, each worth a spread of yards. This
   // is why a 3-target night and a 12-target night get different shapes instead
   // of one blanket standard deviation.
-  const vTgt = eTgt + eTgt * eTgt / 6;
-  const vRec = eRec + eRec * eRec / 8;
-  const vCar = eCar + eCar * eCar / 12;
-  const vPass = ePass + ePass * ePass / 25;
+  const vTgt = eTgt + eTgt * eTgt / DISP.tgt;
+  const vRec = eRec + eRec * eRec / DISP.rec;
+  const vCar = eCar + eCar * eCar / DISP.car;
+  const vPass = ePass + ePass * ePass / DISP.att;
 
-  const recYds = { mean: eRec * ypr, var: eRec * Math.pow(1.15 * ypr, 2) + vRec * ypr * ypr };
-  const rushYds = { mean: eCar * ypc, var: eCar * 30 + vCar * ypc * ypc };          // ~5.5 yd sd per carry
-  const passYds = { mean: ePass * ypa, var: ePass * 94 + vPass * ypa * ypa };       // ~9.7 yd sd per attempt
+  const recYds = { mean: eRec * ypr, var: VAR.recYds * (eRec * Math.pow(1.15 * ypr, 2) + vRec * ypr * ypr) };
+  const rushYds = { mean: eCar * ypc, var: VAR.rushYds * (eCar * 30 + vCar * ypc * ypc) };   // ~5.5 yd sd per carry
+  const passYds = { mean: ePass * ypa, var: VAR.passYds * (ePass * 94 + vPass * ypa * ypa) };// ~9.7 yd sd per attempt
 
   // Touchdowns: half the player's own scoring share, half his share of the
   // opportunities, and both measured per game so a season total is never
@@ -1027,7 +1059,7 @@ function projectPlayer(L, pl, vol, ts) {
   return {
     player: pl, eTgt, eRec, eCar, ePass, catchRate, ypr, ypc, ypa,
     recYds, rushYds, passYds,
-    rec: { mean: eRec, k: 8 }, car: { mean: eCar, k: 12 },
+    rec: { mean: eRec, k: DISP.rec }, car: { mean: eCar, k: DISP.car },
     passTD: vol.passTD * clamp(attShare / 0.9, 0, 1.05),
     anytimeTD: 1 - Math.exp(-(lamRec + lamRush)), lamRec, lamRush
   };
@@ -1539,6 +1571,118 @@ function kalshiCross(entry, opts) {
   return rows;
 }
 
+// ── the exchange, on players ────────────────────────────────────────────────
+// Player props are the softest market in football and the widest on the
+// exchange: eight to ten cents between bid and ask, against one cent on a game
+// moneyline. That cuts both ways. Nobody is arbitraging these, so the mid can
+// be wrong — but crossing a ten-cent spread costs five cents plus the fee, so
+// a disagreement has to be worth more than about seven cents before taking it
+// is anything other than paying the spread for the privilege of being right.
+//
+// Our shape was fitted against these ladders: the standard deviations now
+// agree with the market's to within a fraction of a yard. A central
+// disagreement of about five points remains and there is no way to tell from
+// here whether it is our projection or the market's — which is exactly why
+// nothing below crosses a spread on five points.
+const KALSHI_PROP_SERIES = {
+  nfl: { passYds: "KXNFLPASSYDS", recYds: "KXNFLRECYDS", rec: "KXNFLREC", passTD: "KXNFLPASSTDS" }
+};
+const kPlayerKey = t => String(t || "").split(":")[0].toLowerCase().replace(/[^a-z ]/g, "").replace(/\s+/g, " ").trim();
+
+async function loadKalshiProps(leagueKey, onStatus) {
+  const S = KALSHI_PROP_SERIES[leagueKey];
+  if (!S) return { events: {}, ok: false, error: "no player markets for " + leagueKey };
+  const kinds = Object.keys(S);
+  let done = 0;
+  const lists = await pool(kinds, async k => {
+    const r = await loadKalshiSeries(S[k]);
+    done++; if (onStatus) onStatus("Reading player markets…", done / kinds.length);
+    return r;
+  }, 4);
+  if (lists.every(l => !l || !l.length)) return { events: {}, ok: false, error: "no player markets returned" };
+  const events = {};
+  kinds.forEach((kind, i) => (lists[i] || []).forEach(m => {
+    const key = String(m.event_ticker || "").replace(/^KX\w+?-/, "");
+    const who = kPlayerKey(m.title);
+    const strike = kNum(m.floor_strike);
+    const bid = kNum(m.yes_bid_dollars), ask = kNum(m.yes_ask_dollars);
+    if (!key || !who || strike == null || bid == null || ask == null) return;
+    const ev = events[key] || (events[key] = {});
+    const pl = ev[who] || (ev[who] = {});
+    (pl[kind] || (pl[kind] = [])).push({
+      strike, bid, ask, mid: (bid + ask) / 2, spread: ask - bid,
+      askSize: kNum(m.yes_ask_size_fp) || 0, bidSize: kNum(m.yes_bid_size_fp) || 0,
+      oi: kNum(m.open_interest_fp) || 0, ticker: m.ticker
+    });
+  }));
+  Object.values(events).forEach(ev => Object.values(ev).forEach(pl =>
+    Object.values(pl).forEach(list => list.sort((a, b) => a.strike - b.strike))));
+  return { events, ok: true };
+}
+
+// The rung closest to a line we care about, if the exchange quotes one.
+function kalshiRung(props, entry, playerName, kind, line) {
+  if (!props || !props.ok || !entry || !entry.kalshi) return null;
+  const ev = props.events[entry.kalshi.key]; if (!ev) return null;
+  const pl = ev[kPlayerKey(playerName)]; if (!pl) return null;
+  const list = pl[kind]; if (!list || !list.length) return null;
+  let best = null;
+  list.forEach(r => {
+    const d = Math.abs(r.strike - line);
+    if (!best || d < best.d) best = { d, r };
+  });
+  return best ? Object.assign({ distance: best.d }, best.r) : null;
+}
+
+// Is our disagreement big enough to be worth crossing this spread? Buying the
+// yes at the ask costs the ask plus the fee; selling it means buying the no at
+// one minus the bid. Anything that does not clear both is quoted as "inside
+// the spread" rather than dressed up as a play.
+// How much of a player projection is ours and how much is the market's. Half.
+//
+// It is tempting to give our number more: our volumes agree with the exchange
+// in aggregate, our standard deviations now match it to a fraction of a yard,
+// and the game markets that feed the projection are validated to a point. It
+// is equally tempting to give the market more: it is real money. But the one
+// thing actually measured is that we and the exchange disagree by about five
+// points in the middle of these ladders, and NOTHING here can say which of us
+// is wrong. Fifty-fifty is what "I do not know" looks like when it has to be a
+// number, and it halves the stake, which is the right direction to be wrong in.
+const PROP_W = 0.5;
+
+function priceKalshiProp(rung, ourP, opts) {
+  opts = opts || {};
+  const feeRate = opts.feeRate != null ? opts.feeRate : KALSHI_FEE;
+  const kf = opts.kelly != null ? opts.kelly : 0.25;
+  const w = opts.propW != null ? opts.propW : PROP_W;
+  if (!rung || ourP == null) return null;
+  const pModel = ourP;
+  if (rung.mid != null) ourP = clamp(w * ourP + (1 - w) * rung.mid, 1e-4, 1 - 1e-4);
+  const sides = [];
+  if (rung.ask != null && rung.ask > 0.01 && rung.ask < 0.99) {
+    const cost = rung.ask + kalshiFee(rung.ask, feeRate);
+    sides.push({ side: "over", cost, p: ourP, ev: (ourP - cost) / cost, size: rung.askSize });
+  }
+  if (rung.bid != null && rung.bid > 0.01 && rung.bid < 0.99) {
+    const raw = 1 - rung.bid, cost = raw + kalshiFee(raw, feeRate);
+    sides.push({ side: "under", cost, p: 1 - ourP, ev: ((1 - ourP) - cost) / cost, size: rung.bidSize });
+  }
+  if (!sides.length) return null;
+  sides.sort((a, b) => b.ev - a.ev);
+  const best = sides[0];
+  const b = (1 - best.cost) / best.cost;
+  best.kelly = b > 0 ? Math.max(0, (best.p * b - (1 - best.p)) / b) * kf : 0;
+  best.mid = rung.mid;
+  best.pModel = best.side === "under" ? 1 - pModel : pModel;
+  best.spreadCents = rung.spread * 100;
+  best.strike = rung.strike;
+  // Crossing costs half the spread on top of the fee. An edge that does not
+  // clear both is not a trade, it is a way of paying the spread to be right.
+  best.hurdle = rung.spread / 2 + kalshiFee(best.cost, feeRate);
+  best.worth = (best.p - best.cost) > best.hurdle;
+  return best;
+}
+
 // ── walk-forward backtest ───────────────────────────────────────────────────
 // Ratings for week N are rebuilt from weeks 1..N-1 plus the prior season, and
 // nothing else. Grading is against the closing number the book actually hung
@@ -1699,9 +1843,10 @@ return {
   getJSON, pool, loadWeek, loadHistory, loadSlate, loadTeamStats,
   buildRatings, ratingOf, projectGame, blendProjection, priceGame, keyCross, calibrateSlate, applyCal, autoMktW, autoMktWTotal,
   loadGameOdds, oddsFromScoreboard, loadLeagueBoard,
-  teamVolume, loadRoster, loadPlayersNFL, loadPlayersCFB, projectPlayer, propMarkets, priceProp, loadGameProps,
+  teamVolume, loadRoster, loadPlayersNFL, loadPlayersCFB, projectPlayer, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   backtest, summarise,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
-  loadKalshi, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross
+  loadKalshi, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
+  KALSHI_PROP_SERIES, loadKalshiProps, kalshiRung, priceKalshiProp
 };
 });
