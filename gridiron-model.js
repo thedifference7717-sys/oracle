@@ -663,18 +663,42 @@ function calibrateSlate(pairs, n0) {
   const mk = good.reduce((s, p) => s + p.market, 0) / n;
   let cov = 0, varM = 0, varK = 0;
   good.forEach(p => { cov += (p.model - mm) * (p.market - mk); varM += Math.pow(p.model - mm, 2); varK += Math.pow(p.market - mk, 2); });
-  let b = varM > 1e-9 ? cov / varM : 1;
-  // Shrink the slope toward "no correction" so a light slate cannot rescale the
-  // whole model on noise, and never let it invert or run away. The intercept is
-  // then re-derived rather than shrunk: whatever the slope ends up being, the
-  // line still has to pass through the slate's own averages, or the correction
-  // quietly moves every game in the same direction — which is how you end up
-  // holding thirteen overs and no unders.
-  const k = n0 == null ? 6 : n0;
-  b = clamp((b * n + 1 * k) / (n + k), 0.70, 1.60);
+  // WHICH SLOPE, AND WHY IT MATTERS MORE THAN IT LOOKS.
+  //
+  // The obvious fit is least squares: cov/var, the slope that best PREDICTS the
+  // market from our number. It is also a trap. A best predictor is deliberately
+  // shrunk toward the average — that is what makes it best — so our calibrated
+  // number comes out systematically closer to zero than the market's. Subtract
+  // one from the other and the difference points at the underdog every single
+  // time, in every game, forever. The board fills up with dogs and unders and
+  // it looks like an insight instead of arithmetic.
+  //
+  // It is not free to be wrong about this: across the 2025 backtest, plays on
+  // the dog carried negative skill in three of four splits (college moneyline
+  // dogs worst, -8.95% over 619 bets) while plays on the favourite were mildly
+  // positive. A systematic tilt is a guaranteed leak.
+  //
+  // So we scale to match the market's SPREAD rather than to predict its level:
+  // sd(market)/sd(model), which puts our numbers on the same footing as theirs
+  // and leaves the disagreement symmetric. It amplifies our noise by 1/r, which
+  // is a real cost — but noise is not a leak, and the blend that follows damps
+  // it. Being unbiased and noisy beats being tidy and always on the dog.
+  const olsB = varM > 1e-9 ? cov / varM : 1;
+  const rmaB = (varM > 1e-9 && varK > 1e-9) ? Math.sign(cov || 1) * Math.sqrt(varK / varM) : 1;
+  // Shrink toward "no correction" so a light slate cannot rescale the model on
+  // noise, and never let it invert or run away. The intercept is then re-derived
+  // rather than shrunk: whatever the slope ends up being, the line still has to
+  // pass through the slate's own averages, or the correction quietly moves every
+  // game the same way — which is how you end up holding thirteen overs and no
+  // unders.
+  // A scale is a steadier thing to estimate than a level, so it needs less
+  // protection than the old slope did — too much and the compression it was
+  // meant to cure creeps straight back in.
+  const k = n0 == null ? 3 : n0;
+  const b = clamp((rmaB * n + 1 * k) / (n + k), 0.70, 2.50);
   const a = mk - b * mm;
   const r = (varM > 0 && varK > 0) ? cov / Math.sqrt(varM * varK) : null;
-  return { a, b, n, r };
+  return { a, b, n, r, olsB, rmaB };
 }
 const applyCal = (cal, v) => cal ? cal.a + cal.b * v : v;
 
