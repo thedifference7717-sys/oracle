@@ -25,13 +25,14 @@ const CHAT = process.env.TELEGRAM_CHAT_ID;
 if (!TOKEN || !CHAT) { console.log("Telegram secrets not set — skipping."); process.exit(0); }
 
 const API = M.API;
-const TOP = 3;                                   // doubles to alert
+const TOP = 5;                                   // doubles to alert
 const SNAP_V = M.VERSION;                        // board schema = model version
 // Price the doubles are graded against. Override with DD_PRICE (American odds)
 // in the workflow to match whatever your book is actually offering.
 const PRICE = +(process.env.DD_PRICE || 100);
-// Only alert a double whose modelled edge over that price clears this. Set
-// DD_MIN_EDGE=0 to go back to alerting the top 3 regardless.
+// The edge a double must clear over that price to be labelled a bet rather
+// than tracked. It no longer decides WHICH doubles appear — the board is the
+// top TOP regardless — so set this to taste without ever shortening the board.
 const MIN_EDGE = +(process.env.DD_MIN_EDGE || 0.02);
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -46,6 +47,25 @@ async function tg(text) {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chat_id: CHAT, text, parse_mode: "HTML", disable_web_page_preview: true })
   });
+}
+
+// Telegram rejects anything over 4096 characters outright — the whole alert is
+// lost, not truncated. A five-double board runs close enough to that to matter,
+// so split on blank lines, which fall between doubles and never inside a tag.
+const TG_LIMIT = 3900;
+async function tgLong(text) {
+  if (text.length <= TG_LIMIT) return tg(text);
+  let buf = "";
+  for (const block of text.split("\n\n")) {
+    if (block.length > TG_LIMIT) {            // shouldn't happen; send it unstyled rather than lose it
+      if (buf) { await tg(buf); buf = ""; }
+      await tg(block.replace(/<[^>]+>/g, "").slice(0, TG_LIMIT));
+      continue;
+    }
+    if (buf && buf.length + 2 + block.length > TG_LIMIT) { await tg(buf); buf = ""; }
+    buf = buf ? buf + "\n\n" + block : block;
+  }
+  if (buf) await tg(buf);
 }
 
 // Trim a scored candidate down to what the tracker and the calibration log
@@ -104,23 +124,27 @@ async function main() {
   }
   if (!snap) { console.log("Could not produce doubles."); return; }
 
-  // Alert only what clears the price. A double we would not bet is not a pick.
-  let picks = snap.doubles.filter(d => d.edge >= MIN_EDGE).slice(0, TOP);
-  if (!picks.length) picks = snap.doubles.slice(0, TOP);   // still track the best available
+  // A full board every day: the top TOP outright, already ranked by edge over
+  // the price. The edge bar labels each one instead of filtering them out, so a
+  // thin slate still sends a complete board and a marginal double is never
+  // passed off as a bet. A short slate is the only thing that shortens this.
+  const picks = snap.doubles.slice(0, TOP);
 
   // ── Lock alert (once) ──
   if (D.lockDate !== day) {
     const legLine = c => `   • <b>${c.name}</b> #${c.slot}${c.posted ? " ✓LU" : ""} · ${av(c.avg)}→${av(c.proj)} proj · ${c.eAb.toFixed(1)} AB\n     vs ${c.sp || "SP TBD"}${c.spBaa != null ? " (" + av(c.spBaa) + " BAA" + (c.spHr9 != null ? ", " + c.spHr9.toFixed(1) + " HR/9" : "") + ")" : ""}${c.plt === "adv" ? " ▲plat" : c.plt === "dis" ? " ▽plat" : ""} · <b>${pct(c.p)}</b>`;
-    const body = picks.map((d, i) =>
-      `<b>#${i + 1}</b> · ${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} vs your ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
+    const body = picks.map((d, i) => {
+      const bet = d.edge >= MIN_EDGE;
+      return `<b>#${i + 1}</b> ${bet ? "✅ <b>BET</b>" : "⚪ <i>no edge</i>"} · ${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} vs your ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
       `   <b>EDGE ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · EV ${(d.evPct >= 0 ? "+" : "") + d.evPct.toFixed(1)}% · stake ${(d.kelly * 100).toFixed(1)}% bank</b>\n` +
       `   ${d.teams}${d.sameTeam ? " · SAME TEAM" : ""} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n` +
-      `   SPOT ${pts(d.spotDelta)}pts vs league <i>(soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>\n${legLine(d.a)}\n${legLine(d.b)}`
-    ).join("\n\n");
-    const anyEdge = picks.some(d => d.edge >= MIN_EDGE);
-    await tg(`🎲 <b>DAILY DOUBLE LOCKED</b> · ${prettyDate(day)}\n` +
-      `${picks.length} two-man same-game hit parlays · priced vs ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
-      (anyEdge ? "" : `⚠️ <i>None clear the ${(MIN_EDGE * 100).toFixed(1)}pt edge bar — shown for tracking only.</i>\n`) +
+      `   SPOT ${pts(d.spotDelta)}pts vs league <i>(soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>\n${legLine(d.a)}\n${legLine(d.b)}`;
+    }).join("\n\n");
+    const nBet = picks.filter(d => d.edge >= MIN_EDGE).length;
+    await tgLong(`🎲 <b>DAILY DOUBLE LOCKED</b> · ${prettyDate(day)}\n` +
+      `Top ${picks.length} two-man same-game hit parlays · priced vs ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
+      `<b>${nBet} of ${picks.length}</b> clear the ${(MIN_EDGE * 100).toFixed(1)}pt edge bar` +
+      (nBet ? "" : " — <i>none are bets today</i>") + `\n` +
       `➖➖➖➖➖➖➖➖\n${body}`);
     D.lockDate = day; D.results = {}; changed = true;
     console.log("Lock alert sent.");
