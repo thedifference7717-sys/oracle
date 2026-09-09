@@ -152,6 +152,18 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 
 <div class="wrap">
   <div class="panel">
+    <div class="panel-head">YOUR BOOK'S LINES — paste them and the whole board re-prices <span id="bk-sub">using DraftKings</span>
+      <span><button onclick="applyBookLines()">USE MY LINES</button><button onclick="clearBookLines()">CLEAR</button></span></div>
+    <div class="wrap" style="padding:10px 15px">
+      <div class="mini" style="margin-bottom:6px">One bet per line, however your betslip writes it. Team by name or abbreviation; price optional, -110 assumed.
+        <span class="mini">"SEA -3 -108" · "Chiefs ML -145" · "SF/LAR o48.5 -110" · "NE +3" · "Ravens u44.5 -105"</span></div>
+      <textarea id="bkPaste" rows="5" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px;font-family:'Share Tech Mono',monospace;font-size:13px" placeholder="SEA -3 -108&#10;Chiefs ML -145&#10;SF/LAR o48.5 -110"></textarea>
+      <div id="bk-report" class="mini" style="margin-top:8px"></div>
+    </div>
+    <div class="note">Everything downstream uses these once applied — the ranked cards, the edges, and the book-vs-exchange table, which then tells you whether to take a bet at <b>your</b> book or on the exchange rather than comparing against a book you do not bet at. Anything you do not paste keeps the DraftKings price the feed supplies.</div>
+  </div>
+
+  <div class="panel">
     <div class="panel-head">EVERY GAME — our number against theirs <span id="games-sub"></span></div>
     <div class="table-wrap"><table id="games"><thead><tr>
       <th>Game</th><th class="num">Market</th><th class="num">Ours</th><th class="num">Diff</th>
@@ -242,7 +254,7 @@ const sgn = v => (v > 0 ? "+" : "") + v.toFixed(1);
 const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
-const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [] };
+const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -274,6 +286,7 @@ async function load(manual){
   }
 }
 function bookName(){
+  if (state.bookLines && state.bookLines.games) return "your book";
   for (const b of Object.values(state.boards))
     for (const g of b.games) if (g.odds && g.odds.book) return g.odds.book;
   return "the book on file";
@@ -792,6 +805,127 @@ function betterVenue(p){
   const row = rows.find(r => r.isHome === want);
   if (!row) return null;
   return row;
+}
+
+// ── your book's own lines ───────────────────────────────────────────────────
+// The feed serves one book. If you bet somewhere else, every edge on this page
+// is measured against a price you cannot get — which is worse than useless,
+// because it looks authoritative. Paste your own numbers and everything
+// downstream uses them instead: the cards, the edges, and the book-vs-exchange
+// table, which then answers the question you actually have.
+function teamIndex(){
+  const idx = [];
+  Object.values(state.boards).forEach(b => b.games.forEach(entry => {
+    [["home", entry.game.home], ["away", entry.game.away]].forEach(([side, t]) => {
+      const bits = new Set();
+      [t.abbr, t.name].forEach(v => { if (v) bits.add(String(v).toLowerCase()); });
+      if (t.name){
+        const parts = String(t.name).toLowerCase().split(/\s+/);
+        bits.add(parts[parts.length - 1]);                 // "seahawks"
+        if (parts.length > 1) bits.add(parts.slice(0, -1).join(" ")); // "seattle"
+      }
+      bits.forEach(k => { if (k.length >= 2) idx.push({ key: k, entry, side, board: b }); });
+    });
+  }));
+  // longest names first so "new york giants" beats "new york"
+  idx.sort((a, b) => b.key.length - a.key.length);
+  return idx;
+}
+// Deliberately loose: this is a betslip, not a form.
+function parseGameLine(raw, idx){
+  const text = String(raw || "").trim();
+  if (!text) return null;
+  const low = " " + text.toLowerCase().replace(/[,|]/g, " ") + " ";
+  const hit = idx.find(x => new RegExp("(^|[^a-z])" + x.key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^a-z]|$)").test(low));
+  if (!hit) return null;
+  const after = low.slice(low.indexOf(hit.key) + hit.key.length);
+  const prices = (after.match(/[+-]\d{3,4}(?![\d.])/g) || []).map(Number);
+  const price = prices.length ? prices[prices.length - 1] : -110;
+  const isTotal = /\b(o|u|over|under)\s*\d/.test(after) || /\b(over|under)\b/.test(after);
+  const isMl = /\b(ml|moneyline|money line|to win)\b/.test(low);
+  if (isMl) return { kind: "ml", hit, price };
+  if (isTotal){
+    const m = after.match(/\b(o|u|over|under)\s*(\d+(?:\.\d+)?)/);
+    if (!m) return null;
+    return { kind: "total", hit, side: /^(o|over)$/.test(m[1]) ? "over" : "under", line: parseFloat(m[2]), price };
+  }
+  // spread: a signed number that is not a price
+  const sp = after.match(/([+-]\d+(?:\.\d+)?)(?![\d])/);
+  if (sp && Math.abs(parseFloat(sp[1])) < 80) return { kind: "spread", hit, line: parseFloat(sp[1]), price };
+  return null;
+}
+function applyBookLines(){
+  if (!Object.keys(state.boards).length) return;
+  const idx = teamIndex();
+  const lines = String($("bkPaste").value || "").split("\n");
+  const overrides = {};
+  let used = 0; const bad = [];
+  lines.forEach(raw => {
+    if (!String(raw).trim()) return;
+    const p = parseGameLine(raw, idx);
+    if (!p){ bad.push(raw.trim()); return; }
+    const id = p.hit.entry.game.id;
+    const o = overrides[id] || (overrides[id] = { _entry: p.hit.entry });
+    const isHome = p.hit.side === "home";
+    if (p.kind === "spread"){
+      // A line is quoted from the side you named, so the home number flips.
+      o.spreadHome = isHome ? p.line : -p.line;
+      if (isHome) o.spreadOddsHome = p.price; else o.spreadOddsAway = p.price;
+    } else if (p.kind === "ml"){
+      if (isHome) o.mlHome = p.price; else o.mlAway = p.price;
+    } else {
+      o.total = p.line;
+      if (p.side === "over") o.overOdds = p.price; else o.underOdds = p.price;
+    }
+    used++;
+  });
+  // Apply over the feed's prices, keeping whatever was not pasted.
+  let games = 0;
+  Object.values(state.boards).forEach(b => b.games.forEach(entry => {
+    if (entry.baseOdds === undefined) entry.baseOdds = entry.odds;
+    const ov = overrides[entry.game.id];
+    if (!ov){ entry.odds = entry.baseOdds; entry.myBook = false; return; }
+    const merged = Object.assign({}, entry.baseOdds || {}, ov);
+    delete merged._entry;
+    // A side quoted without its opposite still needs one to de-vig against, so
+    // the feed's other side stands in and the hold is whatever the pair implies.
+    if (merged.spreadOddsHome == null) merged.spreadOddsHome = -110;
+    if (merged.spreadOddsAway == null) merged.spreadOddsAway = -110;
+    if (merged.overOdds == null) merged.overOdds = -110;
+    if (merged.underOdds == null) merged.underOdds = -110;
+    merged.book = "your book";
+    entry.odds = merged; entry.myBook = true; games++;
+  }));
+  state.bookLines = { used, games, bad: bad.length };
+  $("bk-sub").textContent = games ? ("your book on " + games + " game" + (games === 1 ? "" : "s")) : "using DraftKings";
+  if (games) status("Board rebuilt on your book's prices for " + games + " game" + (games === 1 ? "" : "s") +
+    " — the rest still on " + esc(feedBook()) + ".", "var(--green)");
+  $("bk-report").innerHTML = used
+    ? '<span style="color:var(--green)">Read ' + used + " line" + (used === 1 ? "" : "s") + " across " + games + " game" + (games === 1 ? "" : "s") + ". The board is now priced against your book where you gave it a number.</span>" +
+      (bad.length ? '<br><span style="color:var(--yellow)">Could not read: ' + bad.slice(0, 5).map(esc).join(" · ") + "</span>" : "")
+    : '<span style="color:var(--yellow)">Nothing parsed. Each line needs a team this slate contains, and a number — "SEA -3 -108".</span>';
+  render();
+}
+function clearBookLines(){
+  Object.values(state.boards).forEach(b => b.games.forEach(entry => {
+    if (entry.baseOdds !== undefined) entry.odds = entry.baseOdds;
+    entry.myBook = false;
+  }));
+  state.bookLines = null;
+  $("bkPaste").value = "";
+  $("bk-report").textContent = "";
+  $("bk-sub").textContent = "using DraftKings";
+  status("Back on the feed's prices (" + esc(feedBook()) + ").", "var(--blue)");
+  render();
+}
+// Whatever the feed actually supplied, regardless of any override on top.
+function feedBook(){
+  for (const b of Object.values(state.boards))
+    for (const g of b.games){
+      const o = g.baseOdds !== undefined ? g.baseOdds : g.odds;
+      if (o && o.book && o.book !== "your book") return o.book;
+    }
+  return "the feed";
 }
 
 // ── ranked player props ─────────────────────────────────────────────────────
