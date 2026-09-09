@@ -29,11 +29,15 @@ const SNAP_V = M.VERSION;                        // board schema = model version
 // Price the doubles are graded against. Override with DD_PRICE (American odds)
 // in the workflow to match whatever your book is actually offering.
 const PRICE = +(process.env.DD_PRICE || 100);
-// The edge a game's pair must clear to be worth alerting. Default is simply
-// "positive": if the model makes it a bet at your price, you hear about it.
-// Raise DD_MIN_EDGE to cut the marginal ones — anything under about a point is
-// inside the model's own error bars.
-const MIN_EDGE = +(process.env.DD_MIN_EDGE || 0);
+// The edge a game's pair must clear to be worth alerting, as a fraction: 0.02
+// is two points of probability over your price's breakeven. Marginal edges are
+// inside the model's own error bars, so a real bar filters more noise than it
+// costs in missed spots. Override with DD_MIN_EDGE.
+// Parsed defensively: unset, empty or malformed falls back to the 2-point bar,
+// while an explicit DD_MIN_EDGE=0 really does mean "alert anything positive"
+// (a plain || would swallow it, since 0 is falsy).
+const _minEdge = process.env.DD_MIN_EDGE;
+const MIN_EDGE = (_minEdge == null || _minEdge.trim() === "" || isNaN(+_minEdge)) ? 0.02 : +_minEdge;
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `${MONTHS[mo-1]} ${da}`; };
