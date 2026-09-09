@@ -1,0 +1,30 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="football">
+  <defs>
+    <radialGradient id="hide" cx="36%" cy="30%" r="78%">
+      <stop offset="0%" stop-color="#a4622f"/>
+      <stop offset="45%" stop-color="#8a4a22"/>
+      <stop offset="82%" stop-color="#6b3617"/>
+      <stop offset="100%" stop-color="#4a2410"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="58%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#150c05" stop-opacity="0.45"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.30"/>
+      <stop offset="46%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(-27 60 60)">
+    <path d="M60 18c19 0 40 18 40 42s-21 42-40 42-40-18-40-42S41 18 60 18z" fill="url(#hide)"/>
+    <path d="M60 18c19 0 40 18 40 42s-21 42-40 42-40-18-40-42S41 18 60 18z" fill="url(#glow)"/>
+    <path d="M60 18c19 0 40 18 40 42s-21 42-40 42" fill="none" stroke="#f3ece1" stroke-width="2.6" stroke-opacity="0.85"/>
+    <path d="M60 18c-19 0-40 18-40 42s21 42 40 42" fill="none" stroke="#3a1c0c" stroke-width="2.2" stroke-opacity="0.55"/>
+    <path d="M60 30v60" stroke="#f6f1e7" stroke-width="4" stroke-linecap="round"/>
+    <g stroke="#f6f1e7" stroke-width="3.4" stroke-linecap="round">
+      <path d="M50 45h20"/><path d="M50 55h20"/><path d="M50 65h20"/><path d="M50 75h20"/>
+    </g>
+    <path d="M60 18c19 0 40 18 40 42s-21 42-40 42-40-18-40-42S41 18 60 18z" fill="url(#sheen)"/>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+# Cloudflare Worker config for the Kalshi read-only market-data bridge.
+# Deploy with: wrangler deploy
+# There are NO secrets to set — this Worker holds no credentials and can only
+# read public market data. Paste the deployed URL into GridAIron's
+# EXCHANGE PROXY field and the board will price against the exchange live.
+name = "kalshi-readonly-bridge"
+main = "worker.js"
+compatibility_date = "2024-11-01"
