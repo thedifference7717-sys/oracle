@@ -169,6 +169,19 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   </div>
 
   <div class="panel">
+    <div class="panel-head">TOP PLAYER PROPS — ranked across the whole slate <span id="pb-sub">not loaded</span>
+      <span><button id="pbRun" onclick="rankProps()">RANK PROPS</button></span></div>
+    <div id="pb-body"><div class="empty">Props are the softest market in football. This ranks every projection we make against a real price — the exchange's, if it is loaded, or your own book's if you paste the lines in below. Ranked by stake, after fees, and only where the edge clears the cost of actually getting the bet on.</div></div>
+    <div class="wrap" style="padding:10px 15px">
+      <div class="mini" style="margin-bottom:6px">Paste your book's prop lines, one per line — <b>player, market, line, price</b>. Anything readable works:
+        <span class="mini">"Drake Maye pass yds 249.5 -115", "A.J. Brown rec yds o48.5 -110 u+105", "Kupp receptions 3.5 -130"</span></div>
+      <textarea id="pbPaste" rows="4" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px;font-family:'Share Tech Mono',monospace;font-size:13px" placeholder="Drake Maye pass yds 249.5 -115"></textarea>
+      <button class="run-btn" style="margin-top:8px" onclick="rankProps(true)">PRICE MY LINES</button>
+    </div>
+    <div class="note">A prop is only called a play when the edge clears the cost of getting it on — half the bid/ask spread plus the fee on the exchange, or the vig at your book. Our number is blended half-and-half with the market's first: the standard deviations agree with the exchange's to a fraction of a yard now, but a five-point disagreement in the middle remains and nothing here can prove whose it is.</div>
+  </div>
+
+  <div class="panel">
     <div class="panel-head">POWER RATINGS <span id="ratings-sub"></span></div>
     <div class="table-wrap"><table id="ratings"><thead><tr>
       <th>#</th><th>Team</th><th class="num">Rating</th><th class="num">Offense</th><th class="num">Defense</th><th class="num">Games</th>
@@ -229,7 +242,7 @@ const sgn = v => (v > 0 ? "+" : "") + v.toFixed(1);
 const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
-const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {} };
+const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [] };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -779,6 +792,146 @@ function betterVenue(p){
   const row = rows.find(r => r.isHome === want);
   if (!row) return null;
   return row;
+}
+
+// ── ranked player props ─────────────────────────────────────────────────────
+// Props are the softest market in football, but a projection with nothing to
+// price it against is just an opinion. So this ranks against a real price: the
+// exchange's where it is loaded, and otherwise whatever lines you paste in from
+// your own book.
+const PB_MARKETS = [
+  { key: "passYds", words: ["pass yds", "passing yards", "pass yards", "passyds", "py"] },
+  { key: "rushYds", words: ["rush yds", "rushing yards", "rush yards", "rushyds"] },
+  { key: "recYds",  words: ["rec yds", "receiving yards", "rec yards", "recyds"] },
+  { key: "rec",     words: ["receptions", "recs", "catches", "rec"] },
+  { key: "passTD",  words: ["pass td", "passing td", "passing touchdowns", "pass tds"] },
+  { key: "car",     words: ["rush att", "carries", "rushing attempts", "attempts"] },
+  { key: "atd",     words: ["anytime td", "anytime", "atd", "touchdown scorer"] }
+];
+// Deliberately forgiving: people paste from a betslip, not from a schema.
+function parsePropLine(raw){
+  const line = String(raw || "").trim();
+  if (!line) return null;
+  const low = line.toLowerCase();
+  let market = null, at = -1;
+  PB_MARKETS.forEach(m => m.words.forEach(w => {
+    const i = low.indexOf(w);
+    if (i >= 0 && (at < 0 || i < at || (i === at && w.length > (market ? 0 : 0)))) {
+      if (at < 0 || i < at) { at = i; market = m.key; }
+    }
+  }));
+  if (!market) return null;
+  const rest = line.slice(at);
+  // Prices carry a sign; the line does not. o/u prefixes are stripped first.
+  const prices = (rest.match(/[+-]\d{3,4}\b/g) || []).map(Number);
+  const nums = (rest.replace(/[+-]\d{3,4}\b/g, " ").match(/\d+(?:\.\d+)?/g) || []).map(Number);
+  const num = nums.length ? nums[0] : null;
+  const name = line.slice(0, at).replace(/[^A-Za-z.'\- ]/g, " ").trim();
+  if (!name) return null;
+  return {
+    name, market,
+    line: market === "atd" ? null : num,
+    over: prices.length ? prices[0] : null,
+    under: prices.length > 1 ? prices[1] : null,
+    raw: line
+  };
+}
+const pbNorm = s => String(s || "").toLowerCase().replace(/[^a-z ]/g, "").replace(/\s+/g, " ").trim();
+
+async function rankProps(usePaste){
+  const btn = $("pbRun"), body = $("pb-body");
+  if (!Object.keys(state.boards).length){ body.innerHTML = '<div class="empty">Load the board first.</div>'; return; }
+  btn.disabled = true;
+  const pasted = usePaste ? String($("pbPaste").value || "").split("\n").map(parsePropLine).filter(Boolean) : [];
+  try{
+    const rows = [];
+    let games = 0, players = 0;
+    for (const b of Object.values(state.boards)){
+      // The whole-slate sweep is only affordable where one feed covers the
+      // league. College needs a roster call per team, so it stays on demand.
+      if (!b.L.bulkPlayers){ continue; }
+      const kp = state.kprops[b.league];
+      for (const entry of b.games){
+        body.innerHTML = '<div class="empty"><span class="spin">⟳</span> pricing ' +
+          esc(entry.game.away.abbr) + " @ " + esc(entry.game.home.abbr) + "…</div>";
+        let list;
+        try{ list = await M.loadGameProps(b, entry, state.propCache, () => {}); }catch(e){ continue; }
+        games++;
+        list.forEach(pl => {
+          players++;
+          pl.markets.forEach(mkt => {
+            const team = pl.teamId === entry.game.home.id ? entry.game.home.abbr : entry.game.away.abbr;
+            const base = { player: pl.player.name, pos: pl.player.pos, team, entry, board: b, mkt };
+            // 1) your own book, if you pasted it
+            const hit = pasted.find(x => x.market === mkt.key && pbNorm(pl.player.name).indexOf(pbNorm(x.name)) >= 0);
+            if (hit && (hit.over != null || hit.under != null)){
+              const r = M.priceProp(mkt, hit.line != null ? hit.line : mkt.ourLine, hit.over, hit.under, parseFloat($("kf").value));
+              const sides = [];
+              if (r.over) sides.push({ n: mkt.type === "binary" ? "Yes" : "Over", d: r.over });
+              if (r.under) sides.push({ n: "Under", d: r.under });
+              sides.sort((a, c) => c.d.ev - a.d.ev);
+              if (sides.length && sides[0].d.ev > 0)
+                rows.push(Object.assign({ src: "your book", side: sides[0].n, line: hit.line, price: sides[0].d.price,
+                  ev: sides[0].d.ev, kelly: sides[0].d.kelly, edge: sides[0].d.edge, p: r.p }, base));
+              return;
+            }
+            // 2) the exchange, if it is loaded
+            if (kp && mkt.ourLine != null && mkt.type !== "binary"){
+              const rung = M.kalshiRung(kp, entry, pl.player.name, mkt.key, mkt.ourLine);
+              if (!rung) return;
+              const best = M.priceKalshiProp(rung, mkt.tail(rung.strike), opts(b));
+              if (best && best.worth)
+                rows.push(Object.assign({ src: "exchange", side: best.side, line: rung.strike, cost: best.cost,
+                  ev: best.ev, kelly: best.kelly, p: best.p, pModel: best.pModel, spreadCents: best.spreadCents,
+                  size: best.size }, base));
+            }
+          });
+        });
+      }
+    }
+    rows.sort((a, c) => c.kelly - a.kelly);
+    state.propBoard = rows;
+    renderPropBoard(rows, games, players, pasted.length, usePaste);
+  }catch(e){
+    body.innerHTML = '<div class="empty" style="color:var(--red)">Could not rank props: ' + esc(e.message || e) + "</div>";
+  }finally{ btn.disabled = false; }
+}
+
+function renderPropBoard(rows, games, players, pastedN, usePaste){
+  const bank = parseFloat($("bank").value) || 0;
+  $("pb-sub").textContent = games + " games · " + players + " players scanned";
+  const body = $("pb-body");
+  if (!rows.length){
+    body.innerHTML = '<div class="empty">' +
+      (usePaste && !pastedN
+        ? "Nothing in the paste box parsed. Each line needs a player, a market and a price — \"Drake Maye pass yds 249.5 -115\"."
+        : "Nothing clears the cost of getting it on. " +
+          (Object.keys(state.kprops).length
+            ? "That is the usual answer on props: our number and the market's are close enough that the spread eats the difference."
+            : "The exchange is not loaded and no book lines were pasted, so there is no price to rank against — load the exchange above, or paste your book's lines below.")) +
+      "</div>";
+    return;
+  }
+  body.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
+    '<th>Player</th><th>Market</th><th class="num">Our number</th><th class="num">Line</th>' +
+    '<th class="num">Price</th><th class="num">Our %</th><th class="num">EV</th><th class="num">Stake</th><th>Where</th>' +
+    "</tr></thead><tbody>" +
+    rows.slice(0, 25).map(r => {
+      const g = r.entry.game;
+      return "<tr><td>" + esc(r.player) + ' <span class="mini">' + esc(r.pos) + " · " + esc(r.team) +
+        " · " + esc(g.away.abbr) + "@" + esc(g.home.abbr) + "</span></td>" +
+        "<td>" + esc(r.mkt.label) + " <b>" + esc(r.side) + "</b></td>" +
+        '<td class="num">' + (r.mkt.type === "binary" ? pc(r.mkt.mean) : r.mkt.mean.toFixed(1)) + "</td>" +
+        '<td class="num">' + (r.line == null ? "—" : r.line) + "</td>" +
+        '<td class="num">' + (r.src === "exchange" ? (r.cost * 100).toFixed(1) + "c" : M.fmtAm(r.price)) + "</td>" +
+        '<td class="num">' + pc(r.p) + "</td>" +
+        '<td class="num pos">' + (r.ev * 100).toFixed(1) + "%</td>" +
+        '<td class="num">' + money(bank * r.kelly) + ' <span class="mini">' + pc(r.kelly, 2) + "</span></td>" +
+        "<td>" + (r.src === "exchange"
+          ? '<span class="tag ok">EXCHANGE</span> <span class="mini">' + (r.spreadCents || 0).toFixed(0) + "c wide" +
+            (r.size ? ", " + Math.round(r.size).toLocaleString() + " up" : "") + "</span>"
+          : '<span class="tag">your book</span>') + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
 }
 
 // ── boot ────────────────────────────────────────────────────────────────────
