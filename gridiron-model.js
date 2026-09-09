@@ -1358,6 +1358,36 @@ function kalshiMarket(m, kind) {
     close: m.close_time
   };
 }
+// The committed snapshot, for a browser that cannot reach the exchange itself.
+// Same shape as a live load, plus an age — which the board shows, because a
+// price an hour old is for finding a candidate, not for firing at blind.
+const KALSHI_SNAPSHOT = "data/kalshi-football.json";
+function kalshiFromSnapshot(json, leagueKey) {
+  const lg = ((json || {}).leagues || {})[leagueKey];
+  if (!lg || !lg.events) return null;
+  const events = {};
+  Object.entries(lg.events).forEach(([key, ev]) => {
+    const out = { key, ml: [], spread: [], total: [] };
+    ["ml", "spread", "total"].forEach(kind => (ev[kind] || []).forEach(m => out[kind].push({
+      ticker: m.t, kind,
+      label: m.l,
+      team: kNorm(m.l).replace(/wins by over.*/, "").trim(),
+      strike: m.s == null ? null : m.s,
+      yesBid: m.b == null ? null : m.b,
+      yesAsk: m.a == null ? null : m.a,
+      bidSize: m.bs || 0, askSize: m.as || 0, oi: m.oi || 0, vol: 0
+    })));
+    events[key] = out;
+  });
+  return { events, ok: true, snapshot: true, at: json.at || null };
+}
+async function loadKalshiSnapshot(leagueKey, url) {
+  const j = await getJSON((url || KALSHI_SNAPSHOT) + "?t=" + Date.now(), 1);
+  const k = kalshiFromSnapshot(j, leagueKey);
+  if (!k || !Object.keys(k.events).length) throw new Error("snapshot has nothing for " + leagueKey);
+  return k;
+}
+
 // Everything the exchange has on this league, grouped by game. The event
 // ticker carries the series name, so it is stripped: the moneyline, the spread
 // ladder and the total ladder for one game must land in the same bucket.
@@ -1371,7 +1401,11 @@ async function loadKalshi(leagueKey, onStatus) {
     done++; if (onStatus) onStatus("Reading the exchange…", done / kinds.length);
     return r;
   }, 3);
-  if (lists.every(l => !l || !l.length)) return { events: {}, ok: false, error: "exchange unreachable" };
+  if (lists.every(l => !l || !l.length)) {
+    // Live is out. Fall back to whatever the scheduled snapshot last committed.
+    try { return await loadKalshiSnapshot(leagueKey); }
+    catch (e) { return { events: {}, ok: false, error: "exchange unreachable and no snapshot on file" }; }
+  }
   const events = {};
   kinds.forEach((k, i) => (lists[i] || []).forEach(m => {
     const key = String(m.event_ticker || "").replace(/^KX\w+?-/, "");
@@ -1673,12 +1707,31 @@ function kalshiRung(props, entry, playerName, kind, line) {
 // is wrong. Fifty-fifty is what "I do not know" looks like when it has to be a
 // number, and it halves the stake, which is the right direction to be wrong in.
 const PROP_W = 0.5;
+// How wide a market is quoted is itself information. A contract quoted a cent
+// apart with fifteen hundred behind it is a market that has been looked at; one
+// quoted ten cents apart with ten contracts up has not. Trusting both the same
+// amount is how you end up staking four percent of a bankroll on disagreeing by
+// twenty-four points with a market that is almost certainly right.
+//
+// So our share of the blend slides with the spread: a third on a penny-wide
+// quote, two thirds on a ten-cent one. Neither extreme — even a tight prop
+// market is not a closing NFL spread, and even a wide one is real money.
+function propWeight(spread) {
+  if (spread == null || !isFinite(spread)) return PROP_W;
+  return clamp(0.33 + 0.33 * ((spread - 0.02) / 0.06), 0.33, 0.66);
+}
+// A price with nothing behind it is a quote, not a market. Ten contracts is not
+// a bet you can make.
+const PROP_MIN_SIZE = 25;
+// And no single player prop is worth a large share of a bankroll when the model
+// behind it has never been graded against a result.
+const PROP_MAX_STAKE = 0.015;
 
 function priceKalshiProp(rung, ourP, opts) {
   opts = opts || {};
   const feeRate = opts.feeRate != null ? opts.feeRate : KALSHI_FEE;
   const kf = opts.kelly != null ? opts.kelly : 0.25;
-  const w = opts.propW != null ? opts.propW : PROP_W;
+  const w = opts.propW != null ? opts.propW : propWeight(rung ? rung.spread : null);
   if (!rung || ourP == null) return null;
   const pModel = ourP;
   if (rung.mid != null) ourP = clamp(w * ourP + (1 - w) * rung.mid, 1e-4, 1 - 1e-4);
@@ -1695,7 +1748,8 @@ function priceKalshiProp(rung, ourP, opts) {
   sides.sort((a, b) => b.ev - a.ev);
   const best = sides[0];
   const b = (1 - best.cost) / best.cost;
-  best.kelly = b > 0 ? Math.max(0, (best.p * b - (1 - best.p)) / b) * kf : 0;
+  best.kelly = b > 0 ? Math.min(PROP_MAX_STAKE, Math.max(0, (best.p * b - (1 - best.p)) / b) * kf) : 0;
+  best.w = w;
   best.mid = rung.mid;
   best.pModel = best.side === "under" ? 1 - pModel : pModel;
   best.spreadCents = rung.spread * 100;
@@ -1703,7 +1757,9 @@ function priceKalshiProp(rung, ourP, opts) {
   // Crossing costs half the spread on top of the fee. An edge that does not
   // clear both is not a trade, it is a way of paying the spread to be right.
   best.hurdle = rung.spread / 2 + kalshiFee(best.cost, feeRate);
-  best.worth = (best.p - best.cost) > best.hurdle;
+  const minSize = opts.minSize != null ? opts.minSize : PROP_MIN_SIZE;
+  best.tradeable = best.size >= minSize;
+  best.worth = (best.p - best.cost) > best.hurdle && best.tradeable;
   return best;
 }
 
@@ -1870,7 +1926,7 @@ return {
   teamVolume, loadRoster, loadPlayersNFL, loadPlayersCFB, projectPlayer, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   backtest, summarise,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
-  loadKalshi, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
-  KALSHI_PROP_SERIES, loadKalshiProps, kalshiRung, priceKalshiProp
+  loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
+  KALSHI_PROP_SERIES, loadKalshiProps, kalshiRung, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
 };
 });

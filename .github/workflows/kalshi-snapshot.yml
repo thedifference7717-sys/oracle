@@ -1,0 +1,52 @@
+name: Kalshi Snapshot
+
+# Kalshi will not talk to a browser (no cross-origin headers) and the public
+# CORS proxies are gone, key-walled, or rate-limited by Kalshi itself. Deploying
+# kalshi-proxy/ gives live prices and is the better answer.
+#
+# This is the no-setup answer: snapshot the exchange on a schedule and commit
+# it, so the board can read it from its own origin. Prices are as old as the
+# last run — good for FINDING a candidate, not for firing at blind. The page
+# shows the age and says so.
+
+on:
+  schedule:
+    # Every two hours. GitHub drops scheduled runs under load, which is fine
+    # here: a missed snapshot just means the next one is what the board reads.
+    - cron: "7 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kalshi-snapshot
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Pull the exchange
+        run: node scripts/kalshi-snapshot.mjs
+
+      - name: Commit if anything moved
+        run: |
+          git config user.name  "gridiron-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git add data/kalshi-football.json
+          git diff --cached --quiet && { echo "prices unchanged"; exit 0; }
+          git commit -m "Kalshi snapshot: refresh exchange prices"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
+            echo "push failed, retry $i"; sleep $((2**i))
+          done
+          echo "could not push the snapshot"
+          exit 1
