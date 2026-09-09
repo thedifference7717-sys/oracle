@@ -154,11 +154,47 @@ async function main() {
   if (D.cal.v !== SNAP_V) { console.log("Model version changed — resetting calibration."); D.cal = { v: SNAP_V, legs: {}, global: { n: 0, hits: 0, sump: 0 } }; }
   let changed = false;
 
-  // Retire the state shapes of the board-based schemes. Anything they were
-  // still tracking has long since settled; carrying it forward would only
-  // replay old slates under new keys.
+  // ── Migrate off the board-based schemes ───────────────────────────────────
+  // The changeover happens mid-evening with games in flight, so adopt today's
+  // already-locked doubles rather than dropping them: without this their
+  // CASHED/DEAD never arrives and they never reach the record. Seeding `seen`
+  // at the same time stops a game that was already decided today from getting
+  // a second, per-game alert.
+  const adopt = (d, results) => {
+    if (!d || d.gk == null) return;
+    const k = `${day}:${d.gk}`;
+    if (!D.bets[k]) D.bets[k] = { date: day, teams: d.teams, gk: d.gk, double: d, results: results || {} };
+    D.seen[k] = "bet"; changed = true;
+  };
+  for (const b of Object.values(D.boards || {})) {
+    if (b.date !== day) continue;
+    (b.picks || []).forEach(d => adopt(d, (b.results || {})[`${d.a.id}_${d.b.id}`]));
+    // Watchlist doubles were shown but never bet — mark their games decided so
+    // they are not re-alerted, without inventing a bet that was never placed.
+    (b.watch || []).forEach(d => { const k = `${day}:${d.gk}`; if (!D.seen[k]) { D.seen[k] = "noedge"; changed = true; } });
+  }
+  if (D.snap && D.snap.date === day) {
+    (D.snap.doubles || []).slice(0, 3).forEach(d => adopt(d, (D.results || {})[`${d.a.id}_${d.b.id}`]));
+  }
+  // Any game the old scheme had locked but that produced no adopted bet is
+  // still a decided game.
+  for (const k of Object.keys(D.lockedGames || {})) {
+    if (k.startsWith(`${day}:`) && !D.seen[k]) { D.seen[k] = "noedge"; changed = true; }
+  }
+  const migrated = Object.keys(D.bets).filter(k => k.startsWith(`${day}:`)).length;
   for (const k of ["snap", "lockDate", "results", "boards", "lockedGames", "waveSent"]) {
     if (D[k] !== undefined) { delete D[k]; changed = true; }
+  }
+  if (migrated) console.log(`Carried ${migrated} of today's doubles across from the board scheme.`);
+
+  // Keyed per game per day now, so prune anything older than a few days to
+  // stop state.json growing without bound.
+  const keepFrom = M.ymd(new Date(Date.now() - 3 * 86400000));
+  for (const store of [D.bets, D.seen, D.cal.graded || {}]) {
+    for (const k of Object.keys(store)) {
+      const d0 = k.slice(0, 10);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(d0) && d0 < keepFrom) { delete store[k]; changed = true; }
+    }
   }
 
   const now = Date.now();
