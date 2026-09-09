@@ -905,10 +905,10 @@ function renderPropBoard(rows, games, players, pastedN, usePaste){
     body.innerHTML = '<div class="empty">' +
       (usePaste && !pastedN
         ? "Nothing in the paste box parsed. Each line needs a player, a market and a price — \"Drake Maye pass yds 249.5 -115\"."
-        : "Nothing clears the cost of getting it on. " +
-          (Object.keys(state.kprops).length
-            ? "That is the usual answer on props: our number and the market's are close enough that the spread eats the difference."
-            : "The exchange is not loaded and no book lines were pasted, so there is no price to rank against — load the exchange above, or paste your book's lines below.")) +
+        : (Object.keys(state.kprops).length
+            ? "Nothing clears the cost of getting it on. That is the usual answer on props: our number and the market's are close enough that the spread eats the difference."
+            : "There is no price to rank against yet. Player prices come from the exchange — press LOAD EXCHANGE above — or from your own book: paste the lines into the box below and press PRICE MY LINES. " +
+              "College props are not listed anywhere, so this board is NFL only.")) +
       "</div>";
     return;
   }

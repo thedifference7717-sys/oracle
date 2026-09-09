@@ -1647,6 +1647,27 @@ const KALSHI_PROP_SERIES = {
 };
 const kPlayerKey = t => String(t || "").split(":")[0].toLowerCase().replace(/[^a-z ]/g, "").replace(/\s+/g, " ").trim();
 
+// Player ladders out of the committed snapshot, same shape as a live load.
+function kalshiPropsFromSnapshot(json, leagueKey) {
+  const lg = ((json || {}).leagues || {})[leagueKey];
+  if (!lg || !lg.props) return null;
+  const events = {};
+  Object.entries(lg.props).forEach(([key, players]) => {
+    const ev = events[key] || (events[key] = {});
+    Object.entries(players).forEach(([name, kinds]) => {
+      const who = kPlayerKey(name);
+      const pl = ev[who] || (ev[who] = {});
+      Object.entries(kinds).forEach(([kind, list]) => {
+        pl[kind] = (list || []).map(m => ({
+          strike: m.s, bid: m.b, ask: m.a, mid: (m.b + m.a) / 2, spread: m.a - m.b,
+          askSize: m.as || 0, bidSize: m.bs || 0, oi: m.oi || 0, ticker: m.t
+        })).sort((a, b) => a.strike - b.strike);
+      });
+    });
+  });
+  return Object.keys(events).length ? { events, ok: true, snapshot: true, at: json.at || null } : null;
+}
+
 async function loadKalshiProps(leagueKey, onStatus) {
   const S = KALSHI_PROP_SERIES[leagueKey];
   if (!S) return { events: {}, ok: false, error: "no player markets for " + leagueKey };
@@ -1657,7 +1678,15 @@ async function loadKalshiProps(leagueKey, onStatus) {
     done++; if (onStatus) onStatus("Reading player markets…", done / kinds.length);
     return r;
   }, 4);
-  if (lists.every(l => !l || !l.length)) return { events: {}, ok: false, error: "no player markets returned" };
+  if (lists.every(l => !l || !l.length)) {
+    // Live is out — read the player ladders the scheduled snapshot committed.
+    try {
+      const j = await getJSON(KALSHI_SNAPSHOT + "?t=" + Date.now(), 1);
+      const k = kalshiPropsFromSnapshot(j, leagueKey);
+      if (k) return k;
+    } catch (e) { /* fall through to the honest answer */ }
+    return { events: {}, ok: false, error: "no player markets for " + leagueKey };
+  }
   const events = {};
   kinds.forEach((kind, i) => (lists[i] || []).forEach(m => {
     const key = String(m.event_ticker || "").replace(/^KX\w+?-/, "");
@@ -1927,6 +1956,6 @@ return {
   backtest, summarise,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
   loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
-  KALSHI_PROP_SERIES, loadKalshiProps, kalshiRung, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
+  KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
 };
 });

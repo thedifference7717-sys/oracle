@@ -12,15 +12,20 @@
 // FINDING a candidate and not for trading on blind. Check the live number
 // before you send an order.
 //
-// Game markets only. The player ladders are another few thousand contracts and
-// would bloat the repository for something that changes by the minute; those
-// need the Worker.
 
 const KALSHI = "https://api.elections.kalshi.com/trade-api/v2";
 const SERIES = {
   nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" },
   cfb: { ml: "KXNCAAFGAME", spread: "KXNCAAFSPREAD", total: "KXNCAAFTOTAL" }
 };
+// Player ladders. Only the NFL has them; college props are not listed. Trimmed
+// the same way as the game ladders, they cost about 15KB gzipped, which is
+// nothing — and without them the ranked props board has no price to rank
+// against and simply sits there empty, which is exactly what it did.
+const PROP_SERIES = {
+  nfl: { passYds: "KXNFLPASSYDS", recYds: "KXNFLRECYDS", rec: "KXNFLREC", passTD: "KXNFLPASSTDS" }
+};
+const PROP_MAX_RUNGS = 8;
 const DAYS = 8;                       // anything kicking off later is not this week's problem
 // A ladder has rungs nobody will ever trade — a contract at three cents is
 // there for completeness, not for business. Keeping only what is near the
@@ -112,8 +117,43 @@ for (const [league, S] of Object.entries(SERIES)) {
   // A game with no moneyline cannot be matched to the board, so it is dead weight.
   Object.keys(events).forEach(k => { if (events[k].ml.length < 2) delete events[k]; });
   let after = 0; Object.values(events).forEach(e => after += e.ml.length + e.spread.length + e.total.length);
-  total = total - 0; snap.leagues[league] = { events };
   console.log(`${league}: kept ${after} contracts after trimming ladders`);
+
+  // Player ladders, keyed by game and then by player.
+  const props = {};
+  const PS = PROP_SERIES[league] || {};
+  for (const [kind, ticker] of Object.entries(PS)) {
+    let list = [];
+    try { list = await series(ticker); }
+    catch (e) { console.log(`  ${ticker}: ${e.message}`); continue; }
+    let kept = 0;
+    list.forEach(m => {
+      const close = Date.parse(m.close_time || "");
+      if (isFinite(close) && close > cutoff) return;
+      const t = trim(m);
+      const mid = (t.b == null || t.a == null) ? null : (t.b + t.a) / 2;
+      if (t.s == null || mid == null || mid < NEAR[0] || mid > NEAR[1]) return;
+      const key = String(m.event_ticker || "").replace(/^KX\w+?-/, "");
+      const who = String(m.title || "").split(":")[0].trim();
+      if (!key || !who) return;
+      const ev = props[key] || (props[key] = {});
+      const pl = ev[who] || (ev[who] = {});
+      (pl[kind] || (pl[kind] = [])).push({ t: t.t, s: t.s, b: t.b, a: t.a, bs: t.bs, as: t.as, oi: t.oi });
+      kept++;
+    });
+    console.log(`  ${ticker}: ${kept} player rungs near the money`);
+    total += kept;
+  }
+  let props_after = 0;
+  Object.values(props).forEach(ev => Object.values(ev).forEach(pl => Object.keys(pl).forEach(k => {
+    if (pl[k].length > PROP_MAX_RUNGS) {
+      pl[k] = pl[k].map(m => ({ m, d: Math.abs(((m.b || 0) + (m.a || 0)) / 2 - 0.5) }))
+        .sort((x, y) => x.d - y.d).slice(0, PROP_MAX_RUNGS).map(x => x.m);
+    }
+    props_after += pl[k].length;
+  })));
+  if (props_after) console.log(`${league}: kept ${props_after} player rungs`);
+  snap.leagues[league] = { events, props };
   console.log(`${league}: ${Object.keys(events).length} games`);
 }
 
