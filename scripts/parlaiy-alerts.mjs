@@ -96,16 +96,24 @@ async function computeDoubles(day, games, cal) {
   };
 }
 
-// ── waves ───────────────────────────────────────────────────────────────────
-// A slate is not one event. Lineups post about 3-4 hours before each game, so
-// a single lock set by the EARLIEST first pitch judges the whole night on
-// lineups that do not exist yet — and scratch risk is the largest term in the
-// model, so an unposted game is penalised ~19% and can never reach the board.
-// The result was a "top 5" that was really the top 5 of whichever games
-// started first. Splitting the slate lets each half be judged when its own
-// lineups are up.
+// ── waves and locking ───────────────────────────────────────────────────────
+// A slate is not one event, and a game is not bettable until its lineup is up.
+// Lineups post about 3-4 hours before first pitch, and the two code paths in
+// the model are not variations on each other — with a posted lineup the
+// candidates ARE the nine men batting, in their real slots; without one they
+// are the whole roster with slots guessed from plate appearances per game and
+// a 19% scratch haircut. Locking a game early therefore does not produce a
+// slightly worse pick, it produces different players entirely. So nothing is
+// locked until its own lineup is confirmed.
 const WAVE_GAP_MS = 3 * 3600000;   // games within 3h of the first are one wave
 const HOUR = 3600000;
+
+// Both lineups posted, nine deep — the same test buildBoard applies.
+const posted = g => {
+  const lu = g.lineups || {};
+  return Array.isArray(lu.homePlayers) && lu.homePlayers.length >= 9
+      && Array.isArray(lu.awayPlayers) && lu.awayPlayers.length >= 9;
+};
 
 function splitWaves(games) {
   const rows = games.map(g => ({ g, t: Date.parse(g.gameDate) }))
@@ -121,23 +129,32 @@ function splitWaves(games) {
 
 const legLine = c => `   • <b>${c.name}</b> #${c.slot}${c.posted ? " ✓LU" : ""} · ${av(c.avg)}→${av(c.proj)} proj · ${c.eAb.toFixed(1)} AB\n     vs ${c.sp || "SP TBD"}${c.spBaa != null ? " (" + av(c.spBaa) + " BAA" + (c.spHr9 != null ? ", " + c.spHr9.toFixed(1) + " HR/9" : "") + ")" : ""}${c.plt === "adv" ? " ▲plat" : c.plt === "dis" ? " ▽plat" : ""} · <b>${pct(c.p)}</b>`;
 
-async function sendBoard(w, day, picks) {
-  const body = picks.map((d, i) => {
-    const bet = d.edge >= MIN_EDGE;
-    return `<b>#${i + 1}</b> ${bet ? "✅ <b>BET</b>" : "⚪ <i>no edge</i>"} · ${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} vs your ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
-      `   <b>EDGE ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · EV ${(d.evPct >= 0 ? "+" : "") + d.evPct.toFixed(1)}% · stake ${(d.kelly * 100).toFixed(1)}% bank</b>\n` +
-      `   ${d.teams}${d.sameTeam ? " · SAME TEAM" : ""} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n` +
-      `   SPOT ${pts(d.spotDelta)}pts vs league <i>(soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>\n${legLine(d.a)}\n${legLine(d.b)}`;
-  }).join("\n\n");
-  const nBet = picks.filter(d => d.edge >= MIN_EDGE).length;
-  const conf = picks.filter(d => d.bothPosted).length;
-  const first = new Date(w.firstPitch).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
-  await tgLong(`🎲 <b>${w.label} LOCKED</b> · ${prettyDate(day)}\n` +
-    `Top ${picks.length} of ${w.games.length} games · first pitch ${first} ET · priced vs ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
-    `<b>${nBet} of ${picks.length}</b> clear the ${(MIN_EDGE * 100).toFixed(1)}pt edge bar` +
-    (nBet ? "" : " — <i>none are bets</i>") +
-    ` · ${conf}/${picks.length} on confirmed lineups\n` +
-    `➖➖➖➖➖➖➖➖\n${body}`);
+const betBlock = (d, i) =>
+  `<b>#${i + 1}</b> · ${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} vs your ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
+  `   <b>EDGE ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · EV ${(d.evPct >= 0 ? "+" : "") + d.evPct.toFixed(1)}% · stake ${(d.kelly * 100).toFixed(1)}% bank</b>\n` +
+  `   ${d.teams}${d.sameTeam ? " · SAME TEAM" : ""} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n` +
+  `   SPOT ${pts(d.spotDelta)}pts vs league <i>(soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>\n${legLine(d.a)}\n${legLine(d.b)}`;
+
+const watchLine = d =>
+  `   ${d.teams} — ${d.a.name} + ${d.b.name} · ${pct(d.prob)} · fair ${M.amOdds(d.prob)} · edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts`;
+
+async function sendBoard(label, day, gameCount, firstPitch, bets, watch) {
+  const first = new Date(firstPitch).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
+  const head = `🎲 <b>${label}</b> · ${prettyDate(day)}\n${gameCount} confirmed lineup${gameCount === 1 ? "" : "s"} · first pitch ${first} ET · priced vs ${PRICE > 0 ? "+" : ""}${PRICE}\n`;
+  if (!bets.length) {
+    // Nothing clears the bar. Say so in two lines rather than dumping five
+    // doubles that would only ever be talked out of.
+    const best = watch.slice(0, 2).map(watchLine).join("\n");
+    await tgLong(head + `🚫 <b>NO BETS</b> — nothing clears the ${(MIN_EDGE * 100).toFixed(1)}pt edge bar.\n` +
+      (best ? `➖➖➖➖➖➖➖➖\nClosest, for reference only:\n${best}` : ""));
+    return;
+  }
+  const body = bets.map(betBlock).join("\n\n");
+  const tail = watch.length
+    ? `\n\n👀 <b>WATCHLIST</b> — <i>not locked, not tracked, not bet</i>\n${watch.map(watchLine).join("\n")}`
+    : "";
+  await tgLong(head + `🔒 <b>${bets.length} LOCKED</b> · clearing the ${(MIN_EDGE * 100).toFixed(1)}pt edge bar\n` +
+    `➖➖➖➖➖➖➖➖\n${body}${tail}`);
 }
 
 async function main() {
@@ -153,56 +170,78 @@ async function main() {
   const D = blob.dd = blob.dd || {};
   D.record = D.record || { w: 0, l: 0 };
   D.boards = D.boards || {};
-  // The calibration log. Because the eligible pool barely turns over, a
-  // per-player residual accumulates real signal across a season.
+  D.lockedGames = D.lockedGames || {};
+  D.waveSent = D.waveSent || {};
   D.cal = D.cal || { v: SNAP_V, legs: {}, global: { n: 0, hits: 0, sump: 0 } };
   if (D.cal.v !== SNAP_V) { console.log("Model version changed — resetting calibration."); D.cal = { v: SNAP_V, legs: {}, global: { n: 0, hits: 0, sump: 0 } }; }
   let changed = false;
 
-  // One-time migration off the single-lock scheme. Adopt a board already
-  // alerted under the old shape so the changeover neither re-sends a locked
-  // slate nor drops its live tracking. It kept the top 3, so that is what
-  // stays tracked — widening it now would grade doubles never sent.
+  // Migration off the single-lock scheme: adopt a board already alerted under
+  // the old shape so the changeover neither re-sends a locked slate nor drops
+  // its tracking. It kept the top 3, so that is what stays tracked.
   if (D.snap && D.lockDate === D.snap.date && !D.boards[`${D.snap.date}:all`]) {
-    D.boards[`${D.snap.date}:all`] = { date: D.snap.date, wave: "all", label: "DAILY DOUBLE",
-      v: D.snap.v, picks: (D.snap.doubles || []).slice(0, 3), alerted: true, results: D.results || {} };
+    D.boards[`${D.snap.date}:all`] = { date: D.snap.date, label: "DAILY DOUBLE",
+      v: D.snap.v, picks: (D.snap.doubles || []).slice(0, 3), watch: [], results: D.results || {} };
     console.log("Migrated the single-lock board into the wave scheme.");
     changed = true;
   }
   if (D.snap || D.lockDate || D.results) { delete D.snap; delete D.lockDate; delete D.results; changed = true; }
 
   const now = Date.now();
-  for (const w of waves) {
-    const key = `${day}:${w.key}`;
-    if (D.boards[key]) continue;                       // already handled today
-    if (now < w.lockAt) { console.log(`${w.key}: pre-lock (locks ${new Date(w.lockAt).toISOString()}).`); continue; }
-    // Never send a board whose games are already underway — a betting alert
-    // after first pitch is noise, and this is what stops a restart or a
-    // scheme change from replaying a slate that is long over.
-    if (now >= w.firstPitch) {
-      console.log(`${w.key}: first pitch already thrown — skipping a stale board.`);
-      D.boards[key] = { date: day, wave: w.key, label: w.label, v: SNAP_V, picks: [], alerted: true, stale: true, results: {} };
-      changed = true; continue;
-    }
-    console.log(`${w.key}: computing (${w.games.length} games)…`);
-    const snap = await computeDoubles(day, w.games, D.cal);
-    if (!snap) { console.log(`${w.key}: could not produce doubles.`); continue; }
-    const picks = snap.doubles.slice(0, TOP);
-    await sendBoard(w, day, picks);
-    D.boards[key] = { date: day, wave: w.key, label: w.label, v: SNAP_V, picks, alerted: true, results: {} };
-    changed = true;
-    console.log(`${w.key}: alerted ${picks.length} doubles.`);
+  const waveOf = {};
+  waves.forEach(w => w.games.forEach(g => { waveOf[g.gamePk] = w; }));
+
+  // A game is ready to lock when its lineup is CONFIRMED, its wave (or its own
+  // hour mark, whichever is sooner) has arrived, and it has not started.
+  const ready = games.filter(g => {
+    const t = Date.parse(g.gameDate); if (isNaN(t)) return false;
+    if (D.lockedGames[`${day}:${g.gamePk}`]) return false;
+    if (!posted(g)) return false;
+    const w = waveOf[g.gamePk];
+    const openAt = Math.min(w ? w.lockAt : Infinity, t - HOUR);
+    return now >= openAt && now < t;
+  }).sort((a, b) => Date.parse(a.gameDate) - Date.parse(b.gameDate));
+
+  const waiting = games.filter(g => {
+    const t = Date.parse(g.gameDate);
+    const w = waveOf[g.gamePk];
+    return !isNaN(t) && !D.lockedGames[`${day}:${g.gamePk}`] && now < t
+      && now >= Math.min(w ? w.lockAt : Infinity, t - HOUR) && !posted(g);
+  });
+  if (waiting.length) console.log(`${waiting.length} game(s) past their lock but lineup not posted — held back, not bet blind.`);
+
+  if (ready.length) {
+    const w = waveOf[ready[0].gamePk];
+    const key = w ? w.key : "late";
+    const label = (w && !D.waveSent[`${day}:${key}`]) ? `${w.label} LOCKED` : "LATE ADD";
+    console.log(`Locking ${ready.length} confirmed game(s) as ${label}…`);
+    const snap = await computeDoubles(day, ready, D.cal);
+    if (snap) {
+      const all = snap.doubles;
+      const bets = all.filter(d => d.edge >= MIN_EDGE).slice(0, TOP);
+      const watch = all.filter(d => !bets.includes(d)).slice(0, Math.max(0, TOP - bets.length));
+      await sendBoard(label, day, ready.length, Date.parse(ready[0].gameDate), bets, watch);
+      const id = `${day}:${key}:${Object.keys(D.boards).length}`;
+      D.boards[id] = { date: day, label, picks: bets, watch, results: {} };
+      ready.forEach(g => { D.lockedGames[`${day}:${g.gamePk}`] = 1; });
+      if (w) D.waveSent[`${day}:${key}`] = 1;
+      changed = true;
+      console.log(`${label}: ${bets.length} locked, ${watch.length} watchlist.`);
+    } else console.log("Could not produce doubles for the ready games.");
   }
 
-  // ── Live tracking across every board alerted today ──
-  const boards = waves.map(w => D.boards[`${day}:${w.key}`]).filter(b => b && b.picks && b.picks.length);
-  const allPicks = boards.flatMap(b => b.picks.map((d, i) => ({ d, b, tag: `${boards.length > 1 ? b.label.split(" ")[0] + " " : ""}#${i + 1}` })));
-  if (!allPicks.length) {
+  // ── Live tracking: only what was actually locked ──
+  const boards = Object.values(D.boards).filter(b => b.date === day);
+  const allPicks = boards.flatMap(b => (b.picks || []).map((d, i) => ({ d, b, tag: `${b.label.replace(" LOCKED", "")} #${i + 1}` })));
+  // Watchlist legs are graded for calibration but never messaged or recorded —
+  // they measure the model, they are not bets.
+  const gradeOnly = boards.flatMap(b => (b.watch || []).map(d => ({ d, b })));
+  if (!allPicks.length && !gradeOnly.length) {
     try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); }
-    console.log("Nothing to track yet."); return;
+    console.log("Nothing locked yet."); return;
   }
 
-  const gks = [...new Set(allPicks.map(x => x.d.gk))];
+  const gks = [...new Set([...allPicks, ...gradeOnly].map(x => x.d.gk))];
   const fin = {};
   games.forEach(g => { if (gks.includes(g.gamePk)) fin[g.gamePk] = g.status?.abstractGameState === "Final" && !/postpon|suspend|cancel/i.test(g.status?.detailedState || ""); });
   const hitsById = {};
@@ -219,8 +258,6 @@ async function main() {
   let dead = allRes().filter(r => r.dead).length;
   const tally = () => `Today: 💣 ${cashed} · 💀 ${dead} of ${allPicks.length}  ·  All-time ${D.record.w}-${D.record.l}`;
 
-  // Fold a leg into the calibration log exactly once, whatever happens to the
-  // double it sat in. Graded on the final boxscore only.
   const gradeLeg = (leg, gotHit) => {
     const seen = D.cal.graded = D.cal.graded || {};
     const k = `${day}:${leg.id}`;
@@ -253,13 +290,22 @@ async function main() {
       st.half = true; changed = true; console.log(`${tag} half.`);
     }
   }
+  // Silent grading of the watchlist once its games are final.
+  for (const { d } of gradeOnly) {
+    if (!fin[d.gk]) continue;
+    gradeLeg(d.a, (hitsById[d.a.id] || 0) >= 1);
+    gradeLeg(d.b, (hitsById[d.b.id] || 0) >= 1);
+  }
 
-  // ── Day-end summary + publish calibration (once every wave has landed) ──
-  const everyWaveHandled = waves.every(w => D.boards[`${day}:${w.key}`]);
-  const allSettled = everyWaveHandled && allPicks.every(({ d, b }) => {
+  // ── Day-end summary (once every game has locked or started, and all settled) ──
+  const everyGameResolved = games.every(g => {
+    const t = Date.parse(g.gameDate);
+    return D.lockedGames[`${day}:${g.gamePk}`] || isNaN(t) || now >= t;
+  });
+  const allSettled = everyGameResolved && allPicks.every(({ d, b }) => {
     const st = b.results[`${d.a.id}_${d.b.id}`]; return st && (st.cashed || st.dead);
   });
-  if (allSettled && D.summaryDate !== day) {
+  if (allSettled && allPicks.length && D.summaryDate !== day) {
     const won = allPicks.filter(({ d, b }) => b.results[`${d.a.id}_${d.b.id}`].cashed).length;
     const n = D.record.w + D.record.l;
     const pctW = n ? Math.round(D.record.w / n * 100) : 0;
@@ -268,13 +314,11 @@ async function main() {
       ? `\nModel calibration: predicted <b>${pct(g.sump / g.n)}</b> per leg, actual <b>${pct(g.hits / g.n)}</b> over ${g.n} graded legs`
       : "";
     const perBoard = boards.length > 1
-      ? "\n" + boards.map(b => `${b.label}: ${b.picks.filter(d => b.results[`${d.a.id}_${d.b.id}`]?.cashed).length}/${b.picks.length}`).join(" · ")
+      ? "\n" + boards.filter(b => b.picks?.length).map(b => `${b.label.replace(" LOCKED", "")}: ${b.picks.filter(d => b.results[`${d.a.id}_${d.b.id}`]?.cashed).length}/${b.picks.length}`).join(" · ")
       : "";
-    await tg(`📊 <b>DAY DONE</b> · ${prettyDate(day)}\nToday: <b>${won}/${allPicks.length}</b> doubles cashed${perBoard}\nAll-time record: <b>${D.record.w}-${D.record.l}</b> (${pctW}%)${calLine}`);
+    await tg(`📊 <b>DAY DONE</b> · ${prettyDate(day)}\nBets: <b>${won}/${allPicks.length}</b> cashed${perBoard}\nAll-time record: <b>${D.record.w}-${D.record.l}</b> (${pctW}%)${calLine}`);
     D.summaryDate = day; changed = true; console.log("Day summary sent.");
 
-    // Publish the calibration log for the dashboard. Keep it small: drop the
-    // per-day dedupe keys, which are state, not signal.
     try {
       mkdirSync("data", { recursive: true });
       const pub = { v: D.cal.v, updated: new Date().toISOString(), through: day, record: D.record, global: g, legs: D.cal.legs };
@@ -285,7 +329,7 @@ async function main() {
   }
 
   try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); }
-  console.log(`Done — 💣 ${cashed} / 💀 ${dead} of ${allPicks.length}.${changed ? " [state updated]" : ""}`);
+  console.log(`Done — 💣 ${cashed} / 💀 ${dead} of ${allPicks.length} locked.${changed ? " [state updated]" : ""}`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
