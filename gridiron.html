@@ -377,6 +377,7 @@ function why(p){
   if (b.capped) bits.push("Our rating wanted to move this line further than a model built on last season is allowed to; the pull has been clipped to " + p.board.L.maxShift + " points.");
   if (p.push > 0.02) bits.push("A push is live at <b>" + pc(p.push) + "</b>; the stake is sized on the outcomes that actually resolve.");
   if (p.thin) bits.push("<span style='color:var(--yellow)'>Thin data: one of these teams has barely played, so the rating is mostly prior season.</span>");
+  if (p.muted) bits.push("<span style='color:var(--yellow)'>One of these teams is outside the league and shares a single pooled rating with every other such team, so we cannot rate this game at all. No stake.</span>");
   return bits.join(" ");
 }
 function renderCards(top, total, sortKey){

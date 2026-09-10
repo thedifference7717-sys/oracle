@@ -711,9 +711,53 @@ function calibrateSlate(pairs, n0) {
   const b = clamp((rmaB * n + 1 * k) / (n + k), 0.70, 2.50);
   const a = mk - b * mm;
   const r = (varM > 0 && varK > 0) ? cov / Math.sqrt(varM * varK) : null;
-  return { a, b, n, r, olsB, rmaB };
+
+  // A SINGLE SCALE IS NOT ENOUGH, and the college board proved it. Measured
+  // against the market by size of line, our numbers came out 1.46x too extreme
+  // on games inside a touchdown and barely HALF the market's on games outside
+  // thirty — we said 19 where the book said 39. No straight line fixes both
+  // ends, and the one we had was splitting the difference: slightly too big on
+  // close games, wildly too small on mismatches, which quietly put every large
+  // underdog on the board and nothing else.
+  //
+  // The compression is structural rather than accidental: blowouts are capped
+  // through tanh before the fit ever sees them, and the ridge pulls the extreme
+  // teams hardest, so the very games with the biggest lines are the ones our
+  // ratings understate most.
+  //
+  // So the mapping is monotone rather than linear. Our games are ranked, the
+  // market's are ranked, and ours is placed at the market's number for its own
+  // rank. Ordering is what the model actually claims to know; scale is the
+  // market's to set. What survives is disagreement about which team is better,
+  // which is the only thing worth betting.
+  const qs = good.slice().sort((x, y) => x.model - y.model).map(x => x.model);
+  const qk = good.map(x => x.market).sort((x, y) => x - y);
+  return { a, b, n, r, olsB, rmaB, qs, qk };
 }
-const applyCal = (cal, v) => cal ? cal.a + cal.b * v : v;
+// Where v sits among our own numbers, read off at the market's number for that
+// place. Falls back to the straight line when a slate is too small to rank.
+function applyCal(cal, v) {
+  if (!cal) return v;
+  const lin = cal.a + cal.b * v;
+  const qs = cal.qs, qk = cal.qk;
+  if (!qs || qs.length < 10) return lin;
+  const n = qs.length;
+  let i = 0; while (i < n && qs[i] < v) i++;
+  let mapped;
+  if (i === 0) {
+    // Below everything we have: shift by the offset at the bottom of the range.
+    mapped = qk[0] + (v - qs[0]);
+  } else if (i >= n) {
+    mapped = qk[n - 1] + (v - qs[n - 1]);
+  } else {
+    const span = qs[i] - qs[i - 1];
+    const t = span > 1e-9 ? (v - qs[i - 1]) / span : 0;
+    mapped = qk[i - 1] + t * (qk[i] - qk[i - 1]);
+  }
+  // Half a step toward the straight line, so one odd slate cannot bend the
+  // mapping into a shape the next slate will not recognise.
+  return 0.75 * mapped + 0.25 * lin;
+}
 
 // ── pricing a game ──────────────────────────────────────────────────────────
 // Blend our projection toward the market before pricing anything. The market
@@ -788,6 +832,15 @@ function priceGame(R, L, game, odds, opts) {
   const proj = projectGame(R, L, game.home.id, game.away.id, game.neutral);
   // No opinion worth having on a game where one side is a pooled average.
   const wUse = proj.pooled ? 0 : w;
+  // And with the weight at zero, the ONLY thing that could still generate a
+  // play is our spread-to-moneyline conversion disagreeing with the book's own
+  // moneyline. Measured across a live slate that conversion sits within about
+  // 1.8 points of the book at every spread size, with no bias on these games in
+  // particular — so a four-point disagreement is not an insight, it is the
+  // noise in our own conversion. Betting it on a game where we cannot even rate
+  // one of the teams is indefensible. The game still shows in the table; it
+  // just does not get to ask for money.
+  const mute = proj.pooled;
   const bl = blendProjection(proj, odds, wUse, opts.cal, L,
     proj.pooled ? 0 : (opts.mktWTotal != null ? opts.mktWTotal : w));
   const pmf = marginPmf(bl.margin, proj.sigMargin, L.keyDamp);
@@ -801,13 +854,14 @@ function priceGame(R, L, game, odds, opts) {
     const fair = probToAm(p / Math.max(1e-9, 1 - pushP));
     return Object.assign({
       gameId: game.id, league: L.key, market, side, label,
+      muted: mute, kellyRaw: kelly(p, pushP, american, kf),
       home: game.home, away: game.away, date: game.date, neutral: game.neutral,
       venue: game.venue, indoor: game.indoor, weather: game.weather,
       book: odds ? odds.book : null,
       p, push: pushP, price: american, fair,
       mktP: mktP == null ? null : mktP,
       edge: mktP == null ? null : p / Math.max(1e-9, 1 - pushP) - mktP,
-      ev, kelly: kelly(p, pushP, american, kf),
+      ev, kelly: mute ? 0 : kelly(p, pushP, american, kf),
       proj: proj, blend: bl, thin: proj.thin
     }, extra || {});
   };
@@ -1226,9 +1280,16 @@ async function loadLeagueBoard(leagueKey, opts, onStatus) {
   // slate, a second to actually price. Anything else is comparing a shrunk
   // projection to an unshrunk line and calling the difference an edge.
   const raw = live.map((g, i) => ({ g, o: oddsList[i], p: projectGame(ratings, L, g.home.id, g.away.id, g.neutral) }));
+  // Fit the mapping ONLY on games we can actually rate. A game against a team
+  // outside the league carries a pooled average on one side and a thirty-point
+  // line on the other, and feeding those to the fit bends it for every real
+  // game on the board — on a college slate it dragged our numbers to 0.72 of
+  // the market's scale, which is most of why large underdogs were filling the
+  // card. Excluding them puts it back at 0.96.
+  const fitRows = raw.filter(x => !x.p.pooled);
   const cal = {
-    margin: calibrateSlate(raw.filter(x => x.o && x.o.spreadHome != null).map(x => ({ model: x.p.margin, market: -x.o.spreadHome }))),
-    total: calibrateSlate(raw.filter(x => x.o && x.o.total != null).map(x => ({ model: x.p.total, market: x.o.total })))
+    margin: calibrateSlate(fitRows.filter(x => x.o && x.o.spreadHome != null).map(x => ({ model: x.p.margin, market: -x.o.spreadHome }))),
+    total: calibrateSlate(fitRows.filter(x => x.o && x.o.total != null).map(x => ({ model: x.p.total, market: x.o.total })))
   };
 
   say("Pricing the board…", 0.96);
@@ -1864,6 +1925,7 @@ async function backtest(leagueKey, season, weekFrom, weekTo, opts, onStatus) {
       if (g.week !== w) return;
       const o = oddsList[i]; if (!o) return;
       const p = projectGame(R, L, g.home.id, g.away.id, g.neutral);
+      if (p.pooled) return;              // same exclusion the live board uses
       rows.push({ o, p });
     });
     calByWeek[w] = {
