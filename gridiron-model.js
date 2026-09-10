@@ -540,6 +540,11 @@ function ratingOf(R, id) {
 // ── projection ──────────────────────────────────────────────────────────────
 function projectGame(R, L, homeId, awayId, neutral) {
   const h = ratingOf(R, homeId), a = ratingOf(R, awayId);
+  // Everyone outside the league shares one pooled rating, so "Alabama State"
+  // and "North Dakota State" are the same number to this model. That is fine
+  // for rating the FBS team that played them and useless for pricing the game
+  // itself, so a game with a pooled side gets flagged and the market keeps it.
+  const pooled = !R.teams[homeId] || !R.teams[awayId];
   const adj = neutral ? 0 : R.hfa / 2;
   const hp = R.mu + h.off - a.def + adj;
   const ap = R.mu + a.off - h.def - adj;
@@ -551,7 +556,8 @@ function projectGame(R, L, homeId, awayId, neutral) {
     homePts: hp, awayPts: ap, margin: hp - ap, total: total,
     sigMargin: L.sigMargin * (0.55 + 0.45 * paceF),
     sigTotal: L.sigTotal * (0.45 + 0.55 * paceF),
-    thin: Math.min(h.gp, a.gp) < 4
+    thin: Math.min(h.gp, a.gp) < 4,
+    pooled: pooled
   };
 }
 
@@ -593,11 +599,18 @@ function parseCoreOdds(o) {
 // off which team is actually laying the points rather than trusted as given.
 function homeSpread(raw) {
   const H = raw.homeTeamOdds || {};
-  const mag = Math.abs(num(raw.spread));
-  if (!isFinite(mag)) return null;
+  // A book that posts NO spread is not posting a pick-em, and the difference is
+  // not academic: Math.abs(null) is 0 in this language, so an absent number used
+  // to arrive as a coin flip. On Alabama State at Troy — no spread posted, the
+  // moneyline -1650/+950 — that made the model believe the market had an FCS
+  // visitor even with a Sun Belt team, and it put nearly nine percent of a
+  // bankroll on the dog at +950. Absent has to mean absent.
+  const raw$ = num(raw.spread);
+  if (raw$ == null) return null;
+  const mag = Math.abs(raw$);
   if (H.favorite === true) return -mag;
   if (H.favorite === false) return mag;
-  return num(raw.spread);
+  return raw$;
 }
 // The number the book hung when it first put the game up, which is the only way
 // to see which way the money has since pushed it.
@@ -716,7 +729,20 @@ function blendProjection(proj, odds, w, cal, L, wTotal) {
     calMargin: cm, calTotal: ct,
     mktMargin: null, mktTotal: null, mktFrom: null, w: 1
   };
-  if (odds && odds.spreadHome != null) {
+  // A posted spread is only worth anchoring to if the book's own moneyline
+  // agrees with it. When the two disagree by more than about ten points of
+  // probability, one of them is stale or malformed, and the moneyline is the
+  // one with real money behind it.
+  let spreadOk = odds && odds.spreadHome != null;
+  if (spreadOk && L && odds.mlHome != null && odds.mlAway != null) {
+    const dv = devig(odds.mlHome, odds.mlAway);
+    if (dv.p1 != null) {
+      const fromSpread = mlProbs(marginPmf(-odds.spreadHome, proj.sigMargin, L.keyDamp));
+      const pSpread = fromSpread.home / Math.max(1e-9, 1 - fromSpread.push);
+      if (Math.abs(pSpread - dv.p1) > 0.10) { spreadOk = false; out.spreadRejected = true; }
+    }
+  }
+  if (spreadOk) {
     out.mktMargin = -odds.spreadHome;
     out.mktFrom = "spread";
   } else if (odds && odds.mlHome != null && odds.mlAway != null && L) {
@@ -760,7 +786,10 @@ function priceGame(R, L, game, odds, opts) {
   const w = opts.mktW != null ? opts.mktW : L.mktW;
   const kf = opts.kelly != null ? opts.kelly : 0.25;
   const proj = projectGame(R, L, game.home.id, game.away.id, game.neutral);
-  const bl = blendProjection(proj, odds, w, opts.cal, L, opts.mktWTotal != null ? opts.mktWTotal : w);
+  // No opinion worth having on a game where one side is a pooled average.
+  const wUse = proj.pooled ? 0 : w;
+  const bl = blendProjection(proj, odds, wUse, opts.cal, L,
+    proj.pooled ? 0 : (opts.mktWTotal != null ? opts.mktWTotal : w));
   const pmf = marginPmf(bl.margin, proj.sigMargin, L.keyDamp);
   const ml = mlProbs(pmf);
   const plays = [];
