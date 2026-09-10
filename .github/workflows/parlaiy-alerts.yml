@@ -38,10 +38,26 @@ jobs:
 
       # Self-loop for ~5h50m (just under GitHub's 6h job cap), checking every 60s.
       # One run blankets the whole game window.
+      #
+      # It also refreshes its own code before every pass. This job holds the
+      # `parlaiy-alerts` concurrency group for the whole six hours, so any run
+      # carrying newer code is cancelled in the queue having executed nothing —
+      # a fix could sit unreachable for most of a day while this loop kept
+      # running the version it was checked out at. Pulling the alerter each
+      # pass means a change is live within a minute of landing on main.
+      #
+      # `git restore --worktree` deliberately leaves the index alone, so the
+      # calibration-publish step below still stages only its own data file.
       - name: Run alerts loop
         run: |
           END=$(( $(date +%s) + 350*60 ))
+          echo "starting on $(git rev-parse --short HEAD)"
           while :; do
+            if git fetch --depth=1 -q origin main 2>/dev/null; then
+              git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js 2>/dev/null || true
+              LIVE=$(git rev-parse --short FETCH_HEAD || echo unknown)
+              if [ "$LIVE" != "${LAST:-}" ]; then echo "alerter now at $LIVE"; LAST=$LIVE; fi
+            fi
             node scripts/parlaiy-alerts.mjs || true
             [ "$(date +%s)" -ge "$END" ] && break
             sleep 60
