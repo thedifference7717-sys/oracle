@@ -188,6 +188,20 @@ const pct=v=>Math.round(v*100)+"%";
 const av=v=>v==null?"—":v.toFixed(3).replace(/^0/,"");
 const money=v=>(v<0?"-$":"$")+Math.abs(v).toFixed(2);
 
+// The stake rate's default moved $1.50 -> $2.50. Anyone who touched that field
+// on the old build has $1.50 saved in their browser, where it silently beats
+// the new default — and on a phone the fix would be typing into a number box.
+// A stored $1.50 is far more likely to be the stale default than a deliberate
+// choice, so drop it once. The marker means a later, deliberate $1.50 is never
+// touched again.
+try{
+  if(!localStorage.getItem("dd.rateV2")){
+    const v=localStorage.getItem("dd.perEdge");
+    if(v!==null&&Math.abs(+v-1.50)<1e-9)localStorage.removeItem("dd.perEdge");
+    localStorage.setItem("dd.rateV2","1");
+  }
+}catch(e){/* private mode: nothing stored, nothing to migrate */}
+
 // Bet-slip settings survive a reload — this page reruns every 3 minutes.
 const SETTINGS=["price","bank","perEdge","minEdge","minSpot","sortBy","onlyPosted","onlyTeam"];
 SETTINGS.forEach(id=>{
