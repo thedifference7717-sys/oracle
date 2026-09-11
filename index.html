@@ -377,6 +377,15 @@ function render(){
 
 load();
 setInterval(load,180000); // refresh every 3 min
+
+// The build check is one tiny fetch, so it should not be rationed at the
+// board's 3-minute cadence — that is the difference between noticing a deploy
+// straight away and staring at a stale page wondering. Poll it every 30s, and
+// again the moment the tab is looked at, which is exactly when staleness gets
+// noticed.
+setInterval(checkBuild,30000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkBuild();});
+window.addEventListener("pageshow",e=>{if(e.persisted)checkBuild();});
 </script>
 </body>
 </html>
