@@ -20,6 +20,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 #topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A1A16,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.04em;color:#D6FFE9;text-shadow:0 0 14px #14F19566}
 .logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
+#buildsha{color:var(--green);font-weight:700}
 .controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
 .navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
 .run-btn{padding:11px 18px;background:linear-gradient(90deg,#14F195,#60A5FA);border:none;border-radius:8px;color:#04120b;font-size:13px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer}
@@ -90,7 +91,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🎲 DAIly Double</div><div class="logo-sub">2-MAN SAME-GAME HIT PARLAY · BUILD 3 · EV ENGINE</div></div>
+  <div><div class="logo">🎲 DAIly Double</div><div class="logo-sub">2-MAN SAME-GAME HIT PARLAY · BUILD 3 · <span id="buildsha">__BUILD_SHA__</span></div></div>
   <div class="controls">
     <a class="navlink" href="gridiron.html">🏈 GridAIron</a>
     <a class="navlink" href="hr.html">⚾ HR</a>
