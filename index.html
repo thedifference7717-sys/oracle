@@ -106,7 +106,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="slip">
   <div class="fld"><label>DOUBLE PRICE (AMERICAN)</label><input id="price" type="number" step="5" value="100"></div>
   <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="10" value="1000"></div>
-  <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="1.50"></div>
+  <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50"></div>
   <div class="fld"><label>MIN EDGE (%)</label><input id="minEdge" type="number" step="0.5" value="0"></div>
   <div class="fld"><label>MIN SPOT (PTS)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
   <div class="fld"><label>RANK BY</label><select id="sortBy">
@@ -265,8 +265,8 @@ function leg(c){
 
 // Edge points, rounded the way the card shows them, times your dollars-per-
 // point. Deriving the stake from the DISPLAYED number rather than the raw one
-// means the arithmetic on screen checks out by hand: 5.5 x $1.50 is $8.25, not
-// $8.30 from an unrounded 5.53.
+// means the arithmetic on screen checks out by hand: 5.5 x $2.50 is $13.75, not
+// $13.83 from an unrounded 5.53.
 const edgePts=ev=>ev?+(ev.edge*100).toFixed(1):0;
 const betSize=ev=>{const p=edgePts(ev);return p>0?p*setting("perEdge"):0;};
 
@@ -369,7 +369,7 @@ function render(){
   <b>Scratch risk is priced.</b> Confirmed in the lineup is <span class="tag ok">✓LU</span>; otherwise the leg is multiplied by his chance of actually starting, because a scratch is a guaranteed loss, not a coin flip.<br>
   <b>Targeting the spot, not just the hitter.</b> Every lineup gets three readings, each in points of hit probability against a league-neutral leg. <b>SOFT ARM</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are. <b>GOOD BATS</b> does the reverse — this lineup against league-average opposition. <b>SPOT</b> is the two together: what a typical hitter in this lineup actually does tonight. Ace to batting-practice is worth about 11 points on a single leg, so the spot is usually a bigger lever than which hitter you pick out of it.<br>
   <b>Watch the bullpen before you commit.</b> A bad starter gets chased, which means over half the plate appearances come against relief. The same weak starter is worth <b>+5.3pts</b> in front of a leaky pen and only <b>+3.6pts</b> in front of an elite one — the THEN PEN column is the share of the night the bullpen works and its on-base allowed. A soft start behind a lockdown pen is a trap.<br>
-  <b>BET</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $1.50), so a +5.5pt game stakes $8.25 and a +2.0pt game stakes $3.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.<br>
+  <b>BET</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $2.50), so a +5.5pt game stakes $13.75 and a +2.0pt game stakes $5.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.<br>
   <b>Ranked by EDGE, not by probability</b> — true probability minus your price's breakeven. Stake is <b>quarter-Kelly</b>: full Kelly on a model this uncertain is how you go broke while being right.<br>
   <span style="color:var(--dim)">Build 3 removed Build 2's hard gates (.270 AVG, 200+ AB, tough-SP exclusion). They were doing the ranking's job badly and pinning the board to the same ~60 names every day. The model sorts the pool now.</span><br>
   ⚠ Model estimate — not betting advice. Bet only what you can afford to lose.`;
