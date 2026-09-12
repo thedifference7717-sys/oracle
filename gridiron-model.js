@@ -1882,6 +1882,133 @@ function priceKalshiProp(rung, ourP, opts) {
   return best;
 }
 
+// ── keeping score ───────────────────────────────────────────────────────────
+// A losing bet tells you nothing. Twenty losing bets tell you almost nothing:
+// at these prices a real 3% edge still loses eight of twenty about a fifth of
+// the time. Profit and loss is the slowest possible way to learn whether a
+// system works, and the most expensive.
+//
+// Closing line value is the fast way. If the number moves toward your side
+// after you bet it, you are consistently buying better than the market's final
+// opinion, and that shows up in twenty bets rather than two thousand. If it
+// moves away, no run of winners means the process is sound — you are getting
+// the worst of it and being paid by variance, which stops.
+//
+// So this grades both, and reports the error bar on each, because a record of
+// 3-7 and a record of 7-3 are the same evidence about a coin.
+
+// Final scores for a whole day in one call — lighter than a game at a time.
+async function loadResults(L, yyyymmdd) {
+  const g = L.groups ? "&groups=" + L.groups : "";
+  const d = await getJSON(`${SITE}/${L.path}/scoreboard?limit=400${g}&dates=${yyyymmdd}`, 2);
+  const out = {};
+  (d.events || []).forEach(ev => {
+    const p = parseEvent(ev, L.key);
+    if (p) out[p.id] = p;
+  });
+  return out;
+}
+// What the book settled on. The difference between this and what you took is
+// the only early read on whether the process is any good.
+async function loadClosingLine(L, eventId) {
+  const d = await getJSON(`${CORE}/${L.core}/events/${eventId}/competitions/${eventId}/odds`, 2);
+  const raw = pickBook(d.items);
+  if (!raw) return null;
+  const H = raw.homeTeamOdds || {}, A = raw.awayTeamOdds || {};
+  const close = k => {
+    const c = (H.close || {})[k] || {};
+    return c.american != null ? num(String(c.american).replace("+", "")) : null;
+  };
+  const closeA = k => {
+    const c = (A.close || {})[k] || {};
+    return c.american != null ? num(String(c.american).replace("+", "")) : null;
+  };
+  return {
+    book: (raw.provider || {}).name || "book",
+    spreadHome: close("pointSpread"),
+    mlHome: close("moneyLine"),
+    mlAway: closeA("moneyLine"),
+    total: raw.overUnder != null ? num(raw.overUnder) : null
+  };
+}
+// Win, lose or push, from the score that actually happened.
+function gradeBet(bet, res) {
+  if (!res || !res.final || res.hs == null || res.as == null) return null;
+  const margin = res.hs - res.as, total = res.hs + res.as;
+  if (bet.market === "spread") {
+    const v = bet.side === "home" ? margin + bet.line : -margin + bet.line;
+    return v > 1e-9 ? 1 : (v < -1e-9 ? 0 : 0.5);
+  }
+  if (bet.market === "ml") {
+    if (margin === 0) return 0.5;
+    return (bet.side === "home") === (margin > 0) ? 1 : 0;
+  }
+  if (bet.market === "total") {
+    if (total === bet.line) return 0.5;
+    return (bet.side === "over") === (total > bet.line) ? 1 : 0;
+  }
+  return null;
+}
+const betReturn = (bet, res) => res == null ? null
+  : (res === 0.5 ? 0 : (res === 1 ? (amToDec(bet.price) - 1) * bet.stake : -bet.stake));
+
+// Expected value of the bet you made, priced at the CLOSING number. Positive
+// means you bought better than the market's last word, which is the thing that
+// predicts whether this works long before the money does.
+function betCLV(bet, close, L) {
+  if (!close) return null;
+  const dec = amToDec(bet.price); if (!dec) return null;
+  let p = null, push = 0;
+  if (bet.market === "ml") {
+    if (close.mlHome == null || close.mlAway == null) return null;
+    const dv = devig(close.mlHome, close.mlAway);
+    p = bet.side === "home" ? dv.p1 : dv.p2;
+  } else if (bet.market === "spread") {
+    if (close.spreadHome == null) return null;
+    const pmf = marginPmf(-close.spreadHome, L.sigMargin, L.keyDamp);
+    const sp = spreadProbs(pmf, bet.side === "home" ? bet.line : -bet.line);
+    p = bet.side === "home" ? sp.win : sp.lose;
+    push = sp.push;
+  } else if (bet.market === "total") {
+    if (close.total == null) return null;
+    const tp = totalProbs(close.total, L.sigTotal, bet.line);
+    p = bet.side === "over" ? tp.over : tp.under;
+    push = tp.push;
+  }
+  if (p == null) return null;
+  return {
+    ev: evUnit(p, push, bet.price),      // per $1 staked, at closing fair value
+    fair: probToAm(p / Math.max(1e-9, 1 - push)),
+    closeLine: bet.market === "total" ? close.total : (bet.market === "spread" ? close.spreadHome : null),
+    closeMl: bet.side === "home" ? close.mlHome : close.mlAway
+  };
+}
+// The scoreboard for a pile of bets: money, and the thing that matters sooner.
+function betSummary(bets) {
+  const done = bets.filter(b => b.result != null);
+  const rets = done.map(b => betReturn(b, b.result));
+  const staked = done.reduce((a, b) => a + (b.result === 0.5 ? 0 : b.stake), 0);
+  const pnl = rets.reduce((a, v) => a + v, 0);
+  const n = done.length;
+  const unit = done.map((b, i) => b.stake > 0 ? rets[i] / b.stake : 0);   // per $1
+  const mean = n ? unit.reduce((a, v) => a + v, 0) / n : 0;
+  const sd = n > 1 ? Math.sqrt(unit.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / (n - 1)) : 0;
+  const se = n ? sd / Math.sqrt(n) : null;
+  const clvs = bets.map(b => b.clv && b.clv.ev != null ? b.clv.ev : null).filter(v => v != null);
+  const cMean = clvs.length ? clvs.reduce((a, v) => a + v, 0) / clvs.length : null;
+  const cSd = clvs.length > 1 ? Math.sqrt(clvs.reduce((a, v) => a + Math.pow(v - cMean, 2), 0) / (clvs.length - 1)) : 0;
+  const cSe = clvs.length ? cSd / Math.sqrt(clvs.length) : null;
+  return {
+    n, open: bets.length - n,
+    win: done.filter(b => b.result === 1).length,
+    lose: done.filter(b => b.result === 0).length,
+    push: done.filter(b => b.result === 0.5).length,
+    pnl, staked, roi: staked > 0 ? pnl / staked : null,
+    roiSe: se, roiT: se > 0 ? mean / se : null,
+    clvN: clvs.length, clv: cMean, clvSe: cSe, clvT: cSe > 0 ? cMean / cSe : null
+  };
+}
+
 // ── walk-forward backtest ───────────────────────────────────────────────────
 // Ratings for week N are rebuilt from weeks 1..N-1 plus the prior season, and
 // nothing else. Grading is against the closing number the book actually hung
@@ -2045,6 +2172,7 @@ return {
   loadGameOdds, oddsFromScoreboard, loadLeagueBoard,
   teamVolume, loadRoster, loadPlayersNFL, loadPlayersCFB, projectPlayer, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   backtest, summarise,
+  loadResults, loadClosingLine, gradeBet, betReturn, betCLV, betSummary,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
   loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
   KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE

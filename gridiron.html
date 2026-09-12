@@ -152,6 +152,13 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 
 <div class="wrap">
   <div class="panel">
+    <div class="panel-head">MY BETS — what actually happened <span id="bets-sub">nothing logged yet</span>
+      <span><button onclick="gradeAll()" id="btGrade">GRADE</button><button onclick="exportBets()">EXPORT</button><button onclick="importBets()">IMPORT</button></span></div>
+    <div id="bets-body"><div class="empty">Press <b>LOG</b> on any card to record a bet. Each one is graded from the final score, and priced against the number the book closed at — which is the part that matters. Profit and loss takes hundreds of bets to say anything; whether you are consistently buying better than the closing line shows up in about twenty.</div></div>
+    <div class="note">Bets are stored in this browser only — nothing leaves the page. <b>EXPORT</b> saves them to a file, <b>IMPORT</b> reads one back, so they survive a cleared cache or move to another device.</div>
+  </div>
+
+  <div class="panel">
     <div class="panel-head">YOUR BOOK'S LINES — paste them and the whole board re-prices <span id="bk-sub">using DraftKings</span>
       <span><button onclick="applyBookLines()">USE MY LINES</button><button onclick="clearBookLines()">CLEAR</button></span></div>
     <div class="wrap" style="padding:10px 15px">
@@ -254,7 +261,7 @@ const sgn = v => (v > 0 ? "+" : "") + v.toFixed(1);
 const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
-const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null };
+const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [] };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -332,7 +339,8 @@ function render(){
   const sort = $("sort").value;
   const key = p => sort === "edge" ? (p.edge == null ? -9 : p.edge) : (sort === "kelly" ? p.kelly : p.ev);
   const top = plays.filter(p => p.ev != null && p.ev >= minEv && p.kelly > 0).sort((a,b) => key(b) - key(a));
-  renderCards(top.slice(0, 12), plays.length, sort);
+  SHOWN = top.slice(0, 12);
+  renderCards(SHOWN, plays.length, sort);
   renderGames();
   renderExchange();
   renderRatings();
@@ -422,6 +430,7 @@ function renderCards(top, total, sortKey){
       "</div>" +
       venueLine(p) +
       '<div class="why">' + why(p) + "</div>" +
+      '<button class="run-btn" style="margin-top:11px;width:100%;padding:9px" onclick=\'logBet(' + i + ')\'>LOG THIS BET — ' + money(stake) + "</button>" +
     "</div>";
   }).join("");
 }
@@ -808,6 +817,165 @@ function betterVenue(p){
   return row;
 }
 
+// ── keeping score ───────────────────────────────────────────────────────────
+// Stored in this browser and nowhere else. Graded from the final score, and
+// priced against the number the book closed at — because profit and loss needs
+// hundreds of bets to mean anything and closing line value needs about twenty.
+const BETS_KEY = "gi.bets";
+function loadBets(){
+  try{ return JSON.parse(localStorage.getItem(BETS_KEY) || "[]"); }catch(e){ return []; }
+}
+function saveBets(list){
+  try{ localStorage.setItem(BETS_KEY, JSON.stringify(list)); }catch(e){}
+  state.bets = list;
+}
+let SHOWN = [];                       // the cards currently on screen, for LOG
+
+function logBet(i){
+  const p = SHOWN[i]; if (!p) return;
+  const bank = parseFloat($("bank").value) || 0;
+  const stake = Math.round(bank * p.kelly * 100) / 100;
+  const entered = prompt("Stake in dollars for " + p.label + " at " + M.fmtAm(p.price) + "?", stake || 10);
+  if (entered == null) return;
+  const amt = parseFloat(entered);
+  if (!isFinite(amt) || amt <= 0) return;
+  const bets = loadBets();
+  bets.push({
+    id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+    league: p.league, gameId: p.gameId, date: p.date,
+    game: p.away.abbr + " @ " + p.home.abbr,
+    market: p.market, side: p.side, label: p.label,
+    line: p.line != null ? p.line : null,
+    price: p.price, stake: amt,
+    p: p.p, edge: p.edge, placed: new Date().toISOString(),
+    result: null, clv: null
+  });
+  saveBets(bets);
+  renderBets();
+  status("Logged " + p.label + " at " + M.fmtAm(p.price) + " for " + money(amt) + ".", "var(--green)");
+}
+
+const ymd = d => d.getUTCFullYear() + String(d.getUTCMonth() + 1).padStart(2, "0") + String(d.getUTCDate()).padStart(2, "0");
+// A night game kicks off after midnight UTC but the feed files it under the
+// evening before, in Eastern time. Asking for the UTC day alone misses every
+// one of them — which is why nothing graded the first time. A day either side
+// costs nothing and cannot miss.
+function dayRange(iso){
+  const d = new Date(iso);
+  const back = new Date(d.getTime() - 86400e3), fwd = new Date(d.getTime() + 86400e3);
+  return ymd(back) + "-" + ymd(fwd);
+}
+
+async function gradeAll(){
+  const bets = loadBets();
+  if (!bets.length) return;
+  const btn = $("btGrade"); btn.disabled = true;
+  try{
+    // One scoreboard call per league-day covers every bet on it.
+    const days = {};
+    bets.forEach(b => { if (b.result == null) days[b.league + "|" + dayRange(b.date)] = true; });
+    const results = {};
+    for (const key of Object.keys(days)){
+      const [lg, day] = key.split("|");
+      try{ Object.assign(results, await M.loadResults(M.LEAGUES[lg], day)); }catch(e){}
+    }
+    for (const b of bets){
+      const r = results[b.gameId];
+      if (b.result == null && r) b.result = M.gradeBet(b, r);
+      // Closing line once the game has gone off, for the value read.
+      if (b.clv == null && (b.result != null || new Date(b.date) < new Date())){
+        try{
+          const close = await M.loadClosingLine(M.LEAGUES[b.league], b.gameId);
+          const c = M.betCLV(b, close, M.LEAGUES[b.league]);
+          if (c) b.clv = c;
+        }catch(e){}
+      }
+    }
+    saveBets(bets);
+    renderBets();
+  }finally{ btn.disabled = false; }
+}
+
+function renderBets(){
+  const bets = loadBets();
+  const body = $("bets-body");
+  if (!bets.length){ $("bets-sub").textContent = "nothing logged yet"; return; }
+  const s = M.betSummary(bets);
+  $("bets-sub").textContent = s.n + " settled · " + s.open + " open";
+  const money2 = v => (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toFixed(2);
+
+  // The verdict has to be honest about how little a small sample says.
+  let verdict;
+  if (s.clvN < 10){
+    verdict = "Too early to say anything. Closing line value starts to mean something around twenty bets; profit and loss takes hundreds.";
+  } else if (s.clv > 0 && s.clvT >= 2){
+    verdict = '<span style="color:var(--green)">You are consistently buying better than the closing line. That is the signal that matters, and it is holding up.</span>';
+  } else if (s.clv < 0 && s.clvT <= -2){
+    verdict = '<span style="color:var(--red)">You are consistently buying WORSE than the closing line. No run of winners makes that a good process — stop and work out where the prices are going wrong.</span>';
+  } else {
+    verdict = "Closing line value is inside its own error bar — nothing proven either way yet. Keep the stakes small until it separates.";
+  }
+
+  body.innerHTML =
+    '<div class="wrap" style="padding:12px 15px 2px"><div class="mini" style="font-size:12px;line-height:1.9">' +
+      "Record <b>" + s.win + "-" + s.lose + "-" + s.push + "</b> · " +
+      "P&amp;L <b style=\"color:" + (s.pnl >= 0 ? "var(--green)" : "var(--red)") + '">' + money2(s.pnl) + "</b>" +
+      (s.roi != null ? " on " + money(s.staked) + " risked — ROI <b>" + (s.roi * 100).toFixed(1) + "%</b>" +
+        (s.roiSe != null ? ' <span class="mini">± ' + (s.roiSe * 100).toFixed(1) + "</span>" : "") : "") + "<br>" +
+      (s.clvN
+        ? "Closing line value over " + s.clvN + " bet" + (s.clvN === 1 ? "" : "s") + ": <b style=\"color:" +
+          (s.clv >= 0 ? "var(--green)" : "var(--red)") + '">' + (s.clv >= 0 ? "+" : "") + (s.clv * 100).toFixed(2) + "%</b>" +
+          (s.clvSe != null ? ' <span class="mini">± ' + (s.clvSe * 100).toFixed(2) + " per bet</span>" : "")
+        : "No closing lines read yet — press GRADE after the games kick off.") +
+      "<br>" + verdict +
+    "</div></div>" +
+    '<div class="table-wrap"><table><thead><tr><th>Bet</th><th>Game</th><th class="num">Price</th>' +
+    '<th class="num">Stake</th><th>Result</th><th class="num">P&amp;L</th><th class="num">vs close</th></tr></thead><tbody>' +
+    bets.slice().reverse().map(b => {
+      const ret = M.betReturn(b, b.result);
+      const rs = b.result == null ? '<span class="mini">open</span>'
+        : b.result === 1 ? '<span class="pos">won</span>'
+        : b.result === 0 ? '<span class="neg">lost</span>' : '<span class="mini">push</span>';
+      return "<tr><td>" + esc(b.label) + ' <span class="mini">' + esc(M.LEAGUES[b.league].label) + "</span></td>" +
+        "<td>" + esc(b.game) + "</td>" +
+        '<td class="num">' + M.fmtAm(b.price) + "</td>" +
+        '<td class="num">' + money(b.stake) + "</td>" +
+        "<td>" + rs + "</td>" +
+        '<td class="num ' + (ret > 0 ? "pos" : ret < 0 ? "neg" : "") + '">' + (ret == null ? "—" : money2(ret)) + "</td>" +
+        '<td class="num ' + (b.clv ? (b.clv.ev > 0 ? "pos" : "neg") : "") + '">' +
+          (b.clv ? (b.clv.ev >= 0 ? "+" : "") + (b.clv.ev * 100).toFixed(1) + "%" : "—") + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+}
+
+function exportBets(){
+  const blob = new Blob([JSON.stringify(loadBets(), null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "gridiron-bets-" + new Date().toISOString().slice(0, 10) + ".json";
+  a.click();
+}
+function importBets(){
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "application/json";
+  inp.onchange = () => {
+    const f = inp.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const add = JSON.parse(r.result);
+        if (!Array.isArray(add)) throw new Error("that file is not a bet list");
+        const have = loadBets(), seen = {};
+        have.forEach(b => seen[b.id] = 1);
+        add.forEach(b => { if (b && b.id && !seen[b.id]) have.push(b); });
+        saveBets(have); renderBets();
+        status("Imported " + add.length + " bets.", "var(--green)");
+      }catch(e){ status("Could not read that file: " + esc(e.message), "var(--red)"); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
 // ── your book's own lines ───────────────────────────────────────────────────
 // The feed serves one book. If you bet somewhere else, every edge on this page
 // is measured against a price you cannot get — which is worse than useless,
@@ -1075,8 +1243,9 @@ function renderPropBoard(rows, games, players, pastedN, usePaste){
   const sel = $("btSeason");
   for (let s = y; s >= y - 4; s--) sel.innerHTML += '<option value="' + s + '"' + (s === y - 1 ? " selected" : "") + ">" + s + "</option>";
   initProxy();
+  renderBets();
   checkBuild();
-  load();
+  load().then(() => { if (loadBets().some(b => b.result == null || b.clv == null)) gradeAll(); });
 })();
 </script>
 </body>
