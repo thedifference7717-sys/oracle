@@ -2663,6 +2663,36 @@ async function loadClosingLine(L, eventId) {
   };
 }
 // Win, lose or push, from the score that actually happened.
+// What each player actually did, from the finished game's box score. Props are
+// graded off this — a scoreboard gives you the final score and nothing else,
+// so without it every prop logged would sit open forever.
+const STAT_KEYS = {
+  passing:   { passAtt: "completions/passingAttempts", passYds: "passingYards", passTD: "passingTouchdowns" },
+  rushing:   { car: "rushingAttempts", rushYds: "rushingYards", rushTD: "rushingTouchdowns" },
+  receiving: { rec: "receptions", recYds: "receivingYards", recTD: "receivingTouchdowns" }
+};
+const statNum = v => { const n = parseFloat(String(v).split("/").pop()); return isFinite(n) ? n : 0; };
+const statAtt = v => { const p = String(v).split("/"); const n = parseFloat(p[1] != null ? p[1] : p[0]); return isFinite(n) ? n : 0; };
+async function loadPlayerStats(L, eventId) {
+  const d = await getJSON(`${SITE}/${L.path}/summary?event=${eventId}`, 2);
+  const teams = ((d || {}).boxscore || {}).players || [];
+  const out = {};
+  teams.forEach(T => (T.statistics || []).forEach(cat => {
+    const map = STAT_KEYS[cat.name]; if (!map) return;
+    const keys = cat.keys || [];
+    (cat.athletes || []).forEach(a => {
+      const nm = a.athlete && a.athlete.displayName; if (!nm) return;
+      const r = out[kPlayerKey(nm)] || (out[kPlayerKey(nm)] = { name: nm });
+      Object.keys(map).forEach(k => {
+        const i = keys.indexOf(map[k]); if (i < 0) return;
+        r[k] = k === "passAtt" ? statAtt(a.stats[i]) : statNum(a.stats[i]);
+      });
+    });
+  }));
+  Object.values(out).forEach(r => { r.atd = ((r.rushTD || 0) + (r.recTD || 0)) > 0 ? 1 : 0; });
+  return out;
+}
+
 function gradeBet(bet, res) {
   if (!res || !res.final || res.hs == null || res.as == null) return null;
   const margin = res.hs - res.as, total = res.hs + res.as;
@@ -2677,6 +2707,15 @@ function gradeBet(bet, res) {
   if (bet.market === "total") {
     if (total === bet.line) return 0.5;
     return (bet.side === "over") === (total > bet.line) ? 1 : 0;
+  }
+  if (bet.market === "prop") {
+    const pl = res.players && res.players[kPlayerKey(bet.player || "")];
+    if (!pl) return null;                          // no line for him: leave it open
+    if (bet.propKey === "atd") return pl.atd ? 1 : 0;
+    const v = pl[bet.propKey];
+    if (v == null) return null;
+    if (v === bet.line) return 0.5;                // a whole-number line can push
+    return (String(bet.side).toLowerCase().indexOf("under") < 0) === (v > bet.line) ? 1 : 0;
   }
   return null;
 }
@@ -2907,7 +2946,7 @@ return {
   rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
   simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
   backtest, summarise,
-  loadResults, loadClosingLine, gradeBet, betReturn, betCLV, betSummary,
+  loadResults, loadClosingLine, loadPlayerStats, gradeBet, betReturn, betCLV, betSummary,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
   loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
   KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, calibrateProbs, applyProbCal, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
