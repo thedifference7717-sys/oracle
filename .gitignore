@@ -1,3 +1,4 @@
 # alert/calibration state, carried by the Actions cache — never committed
 state.json
 build.json
+.cache/

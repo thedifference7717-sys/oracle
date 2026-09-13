@@ -157,7 +157,19 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
       <textarea id="pbPaste" rows="4" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px;font-family:'Share Tech Mono',monospace;font-size:13px" placeholder="Drake Maye pass yds 249.5 -115"></textarea>
       <button class="run-btn" style="margin-top:8px" onclick="rankProps(true)">PRICE MY LINES</button>
     </div>
-    <div class="note">A prop is only called a play when the edge clears the cost of getting it on — half the bid/ask spread plus the fee on the exchange, or the vig at your book. Our number is blended half-and-half with the market's first: the standard deviations agree with the exchange's to a fraction of a yard now, but a five-point disagreement in the middle remains and nothing here can prove whose it is.</div>
+    <div class="note"><b>LOW · NUMBER · HIGH</b> is the middle half of ten thousand simulated games — the 25th, the median and the 75th, with the 10th and 90th dimmed underneath. A receiver whose number is 54 yards lands outside the low-to-high band a quarter of the time, and that is not the model being vague; that is what a football game is. <b>SPOT</b> is how far this particular afternoon sits from a neutral one in his own units; hover it to see which of the four levers moved it — game script, the defence opposite, who is out, and weather.<br>
+      A prop is only called a play when the edge clears the cost of getting it on — half the bid/ask spread plus the fee on the exchange, or the vig at your book. Our number is blended half-and-half with the market's first: the standard deviations agree with the exchange's to a fraction of a yard now, but a five-point disagreement in the middle remains and nothing here can prove whose it is.</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">SAME-GAME PARLAYS — where the book's arithmetic is wrong <span id="pl-sub">not built</span>
+      <span>
+        <select id="plSize" onchange="rankParlays()"><option value="2" selected>2 legs</option><option value="3">3 legs</option></select>
+        <select id="plRank" onchange="rankParlays()"><option value="ev">Rank by edge</option><option value="lift">Rank by correlation</option></select>
+        <label class="mini" style="margin-left:8px"><input type="checkbox" id="plSame" onchange="rankParlays()"> allow same player</label>
+        <button id="plRun" onclick="rankParlays()">BUILD</button></span></div>
+    <div id="pl-body"><div class="empty">A parlay pays the product of its legs&rsquo; decimal odds &mdash; priced as though the legs were independent. In one football game they are nothing of the sort: a quarterback&rsquo;s passing yards <i>are</i> his receivers&rsquo; yards added up, and two backs share one pile of carries. Rank props first; this then simulates each game ten thousand times and prices every combination off the same simulated afternoons.</div></div>
+    <div class="note">The number that matters is <b>LIFT</b>: how much the true joint probability beats the product of the singles. Positive lift means the payout was computed on an assumption that is false, in your favour. Negative lift means the opposite, and those tickets are the ones that feel clever and lose.</div>
   </div>
 
   <div class="panel">
@@ -254,7 +266,7 @@ const sgn = v => (v > 0 ? "+" : "") + v.toFixed(1);
 const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
-const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null };
+const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null, sims: {}, legs: [], parlays: [] };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -1169,15 +1181,22 @@ async function rankProps(usePaste){
         let list;
         try{ list = await M.loadGameProps(b, entry, state.propCache, () => {}, { unitStrength: unitStrength() }); }catch(e){ continue; }
         games++;
+        // Simulate the game once. Everything below — the range on each prop,
+        // and every parlay built later — reads off these same afternoons.
+        const sim = simFor(entry, list);
         list.forEach(pl => {
           players++;
           pl.markets.forEach(mkt => {
             const team = pl.teamId === entry.game.home.id ? entry.game.home.abbr : entry.game.away.abbr;
             const opp = pl.teamId === entry.game.home.id ? entry.game.away.abbr : entry.game.home.abbr;
+            const sm = sim ? (sim.byPlayer[pl.player.id] || {})[mkt.key] : null;
             const base = { player: pl.player.name, pos: pl.player.pos, team, entry, board: b, mkt,
                            status: pl.status || null, opp: opp, def: pl.matchup ? pl.matchup.def : null,
                            wx: pl.matchup ? pl.matchup.wx : null,
-                           units: pl.matchup ? pl.matchup.units : null };
+                           units: pl.matchup ? pl.matchup.units : null,
+                           range: sm ? sm.range : null, sim: sm || null,
+                           man: sim ? sim.manOf[pl.player.id] : null,
+                           spot: spotFor(b, entry, pl, mkt.key) };
             // 1) your own book, if you pasted it
             const hit = pasted.find(x => x.market === mkt.key && pbNorm(pl.player.name).indexOf(pbNorm(x.name)) >= 0);
             if (hit && (hit.over != null || hit.under != null)){
@@ -1217,9 +1236,56 @@ async function rankProps(usePaste){
     rows.sort((a, c) => c.kelly - a.kelly);
     state.propBoard = rows;
     renderPropBoard(rows, games, players, pasted.length, usePaste, probCal);
+    buildLegs(rows);
+    rankParlays();
   }catch(e){
     body.innerHTML = '<div class="empty" style="color:var(--red)">Could not rank props: ' + esc(e.message || e) + "</div>";
   }finally{ btn.disabled = false; }
+}
+
+// ── the range ───────────────────────────────────────────────────────────────
+// One number on a prop is a fiction. What the simulation actually says is that
+// a receiver projected for 54 yards finishes between about 25 and 75 half the
+// time, and outside even that a quarter of the time. LOW and HIGH are the 25th
+// and 75th of ten thousand simulated afternoons; the dim figures under them are
+// the 10th and 90th, which is where the week actually goes wrong.
+function rangeCells(r){
+  const f = v => r.mkt.type === "count" ? v.toFixed(1) : Math.round(v);
+  if (r.mkt.type === "binary")
+    return '<td class="num">—</td><td class="num">' + pc(r.mkt.mean) + '</td><td class="num">—</td>';
+  if (!r.range)
+    return '<td class="num">—</td><td class="num">' + r.mkt.mean.toFixed(1) + '</td><td class="num">—</td>';
+  const R = r.range;
+  return '<td class="num" style="color:var(--muted)">' + f(R.p25) +
+           ' <span class="mini" style="display:block">' + f(R.p10) + '</span></td>' +
+         '<td class="num"><b>' + f(R.median) + '</b>' +
+           ' <span class="mini" style="display:block">mean ' + f(R.mean) + '</span></td>' +
+         '<td class="num" style="color:var(--muted)">' + f(R.p75) +
+           ' <span class="mini" style="display:block">' + f(R.p90) + '</span></td>';
+}
+// ── the number system ───────────────────────────────────────────────────────
+// SPOT is how far this afternoon sits from a neutral one, in his own units.
+// The tooltip splits it into the four things that moved it, which is the part
+// worth reading: a +9 that is all game script is a different bet from a +9
+// that is all a bad secondary.
+function spotCell(r){
+  const sp = r.spot;
+  if (!sp || !isFinite(sp.spot)) return '<td class="num">—</td>';
+  const u = r.mkt.type === "count" ? 1 : 0;
+  const f = v => (v >= 0 ? "+" : "") + (u ? v.toFixed(1) : Math.round(v));
+  const col = sp.spot > 0.5 ? "var(--green)" : (sp.spot < -0.5 ? "var(--red)" : "var(--dim)");
+  const tip = "Neutral afternoon: " + (u ? sp.base.toFixed(1) : Math.round(sp.base)) +
+    "  ·  this one: " + (u ? sp.full.toFixed(1) : Math.round(sp.full)) + "\n" +
+    "game script and pace  " + f(sp.volume) + "\n" +
+    "the defence opposite  " + f(sp.matchup) + "\n" +
+    "who is out            " + f(sp.bodies) + "\n" +
+    "weather               " + f(sp.weather);
+  const parts = [["script", sp.volume], ["D", sp.matchup], ["bodies", sp.bodies], ["wx", sp.weather]]
+    .filter(x => Math.abs(x[1]) >= (u ? 0.15 : 1.5))
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 2)
+    .map(x => x[0] + " " + f(x[1])).join(", ");
+  return '<td class="num" title="' + esc(tip) + '" style="color:' + col + '"><b>' + f(sp.spot) + "</b>" +
+    (parts ? ' <span class="mini" style="display:block">' + esc(parts) + "</span>" : "") + "</td>";
 }
 
 function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
@@ -1239,7 +1305,8 @@ function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
     return;
   }
   body.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
-    '<th>Player</th><th>Market</th><th class="num">Our number</th><th class="num">Line</th>' +
+    '<th>Player</th><th>Market</th><th class="num">Low</th><th class="num">Number</th><th class="num">High</th>' +
+    '<th class="num">Spot</th><th class="num">Line</th>' +
     '<th class="num">Price</th><th class="num">Our %</th><th class="num">EV</th><th class="num">Stake</th><th>Where</th>' +
     "</tr></thead><tbody>" +
     rows.slice(0, 25).map(r => {
@@ -1250,7 +1317,7 @@ function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
       return "<tr><td>" + esc(r.player) + ' <span class="mini">' + esc(r.pos) + " · " + esc(r.team) +
         " vs " + esc(r.opp) + "</span>" + note + "</td>" +
         "<td>" + esc(r.mkt.label) + " <b>" + esc(r.side) + "</b></td>" +
-        '<td class="num">' + (r.mkt.type === "binary" ? pc(r.mkt.mean) : r.mkt.mean.toFixed(1)) + "</td>" +
+        rangeCells(r) + spotCell(r) +
         '<td class="num">' + (r.line == null ? "—" : r.line) + "</td>" +
         '<td class="num">' + (r.src === "exchange" ? (r.cost * 100).toFixed(1) + "c" : M.fmtAm(r.price)) + "</td>" +
         '<td class="num">' + pc(r.p) + "</td>" +
@@ -1260,6 +1327,129 @@ function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
           ? '<span class="tag ok">EXCHANGE</span> <span class="mini">' + (r.spreadCents || 0).toFixed(0) + "c wide" +
             (r.size ? ", " + Math.round(r.size).toLocaleString() + " up" : "") + "</span>"
           : '<span class="tag">your book</span>') + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+}
+
+
+// ── the simulation, the ranges and the parlays ──────────────────────────────
+// One simulated game serves everything: the range printed beside each prop,
+// and every ticket priced below. Cached per game so a re-rank is instant and
+// so the numbers do not shuffle under you between refreshes.
+const SIM_N = 10000;
+function simFor(entry, list){
+  const key = entry.game.id;
+  if (state.sims[key]) return state.sims[key];
+  try{
+    const home = list.filter(p => p.teamId === entry.game.home.id);
+    const away = list.filter(p => p.teamId === entry.game.away.id);
+    if (!home.length && !away.length) return null;
+    // Seeded off the game, so the same fixture always draws the same ten
+    // thousand afternoons.
+    const seed = String(key).split("").reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7);
+    const sim = M.simulateGame([home, away], { n: SIM_N, seed });
+    sim.byPlayer = {}; sim.manOf = {};
+    sim.men.forEach(man => {
+      sim.manOf[man.pl.player.id] = man;
+      const by = {};
+      M.simMarkets(man).forEach(mk => by[mk.key] = mk);
+      sim.byPlayer[man.pl.player.id] = by;
+    });
+    state.sims[key] = sim;
+    return sim;
+  }catch(e){ return null; }
+}
+// The four levers, each priced on its own, in the prop's own units.
+function spotFor(board, entry, pl, key){
+  try{
+    const tid = pl.teamId, oppId = pl.matchup ? pl.matchup.oppId : null;
+    const home = tid === entry.game.home.id;
+    return M.propSpot(board.L, pl.player, board.teamStats[tid], {
+      pts: home ? entry.proj.homePts : entry.proj.awayPts,
+      total: entry.blend.total,
+      mgn: home ? entry.blend.margin : -entry.blend.margin,
+      def: pl.matchup ? pl.matchup.def : null,
+      wx: pl.matchup ? pl.matchup.wx : null,
+      units: pl.matchup ? pl.matchup.units : null,
+      scale: null
+    }, key);
+  }catch(e){ return null; }
+}
+
+// Turn the priced prop rows into parlay legs. A leg needs two things the
+// board already has: which simulated afternoons it won on, and what it pays.
+function buildLegs(rows){
+  const legs = [];
+  rows.forEach(r => {
+    if (!r.man || !r.sim || r.line == null) return;
+    const dec = r.src === "exchange"
+      ? (r.cost > 0.01 ? 1 / r.cost : null)         // a contract costing 38c pays 100c
+      : M.amToDec(r.price);
+    if (!(dec > 1.01)) return;
+    const leg = M.simLeg(r.man, r.sim, r.side, r.line);
+    leg.dec = dec; leg.gameId = r.entry.game.id; leg.row = r;
+    leg.label = r.player + " " + r.mkt.label + " " + r.side + " " + r.line;
+    leg.where = r.src;
+    legs.push(leg);
+  });
+  state.legs = legs;
+  return legs;
+}
+
+function rankParlays(){
+  const body = $("pl-body");
+  if (!state.legs.length){
+    $("pl-sub").textContent = "not built";
+    body.innerHTML = '<div class="empty">Rank the props first — parlays are built out of the same legs, priced off the same simulated games.</div>';
+    return;
+  }
+  const size = parseInt($("plSize").value, 10) || 2;
+  const allowSame = $("plSame").checked;
+  const rank = $("plRank").value;
+  const bank = parseFloat($("bank").value) || 0;
+  const kf = parseFloat($("kf").value) || 0.25;
+
+  // Parlays are built INSIDE one game. Across two games the legs really are
+  // independent, the product really is the right price, and there is nothing
+  // there for us — so there is no point enumerating them.
+  const byGame = {};
+  state.legs.forEach(l => (byGame[l.gameId] = byGame[l.gameId] || []).push(l));
+  let out = [];
+  Object.values(byGame).forEach(legs => {
+    if (legs.length < size) return;
+    out = out.concat(M.buildParlays(legs, { size, rank, kelly: kf, pool: 12, minP: 0.02 }));
+  });
+  if (!allowSame) out = out.filter(p => !p.samePlayer);
+  out.sort((a, b) => (rank === "lift" ? b.lift - a.lift : b.ev - a.ev) || b.p - a.p);
+  state.parlays = out;
+
+  $("pl-sub").textContent = out.length.toLocaleString() + " tickets priced off " +
+    Object.keys(byGame).length + " simulated games · " + SIM_N.toLocaleString() + " draws each";
+  if (!out.length){ body.innerHTML = '<div class="empty">No combination clears the price on offer.</div>'; return; }
+
+  body.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
+    "<th>Ticket</th><th class=\"num\">Book pays</th><th class=\"num\">If independent</th>" +
+    "<th class=\"num\">Our true %</th><th class=\"num\">Lift</th><th class=\"num\">Fair price</th>" +
+    "<th class=\"num\">EV</th><th class=\"num\">Stake</th>" +
+    "</tr></thead><tbody>" +
+    out.slice(0, 20).map(t => {
+      const g = t.legs[0].row.entry.game;
+      const good = t.lift > 0;
+      return "<tr><td>" +
+        t.legs.map(l => esc(l.label) + ' <span class="mini">' + esc(l.where) +
+          (l.dec ? " @ " + M.fmtAm(M.probToAm(1 / l.dec)) : "") + "</span>").join("<br>") +
+        '<br><span class="mini">' + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
+        (t.samePlayer ? ' <span class="tag warn">same player</span>' : (t.sameTeam ? ' <span class="tag corr">same team</span>' : "")) +
+        "</span></td>" +
+        '<td class="num">' + M.fmtAm(t.american) + "</td>" +
+        '<td class="num">' + pc(t.naive) + "</td>" +
+        '<td class="num"><b>' + pc(t.p) + "</b></td>" +
+        '<td class="num" style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
+          (good ? "+" : "") + (t.lift * 100).toFixed(1) + "pp" +
+          ' <span class="mini">' + (good ? "+" : "") + (t.liftPct * 100).toFixed(0) + "%</span></td>" +
+        '<td class="num">' + M.fmtAm(t.fair) + "</td>" +
+        '<td class="num" style="color:' + (t.ev > 0 ? "var(--green)" : "var(--dim)") + '">' +
+          (t.ev >= 0 ? "+" : "") + (t.ev * 100).toFixed(1) + "%</td>" +
+        '<td class="num">' + (t.kelly > 0 ? money(bank * t.kelly) : "—") + "</td></tr>";
     }).join("") + "</tbody></table></div>";
 }
 

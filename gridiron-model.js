@@ -1392,6 +1392,479 @@ function priceProp(mkt, line, over, under, kf) {
   return res;
 }
 
+// ── simulating the game ─────────────────────────────────────────────────────
+// Everything above prices one leg at a time. A parlay is not one leg at a
+// time. Legs in the same game move together, and multiplying their
+// probabilities is the most expensive mistake available in this market.
+//
+// So the board simulates the afternoon instead. One pass draws a whole game —
+// the script, each side's volume, how the targets and carries fell, how each
+// man did with them — and every leg reads its answer off the same draw. Three
+// things fall out of that which per-leg pricing cannot give you:
+//
+//   1. A RANGE. The middle half of ten thousand simulated afternoons is what
+//      "he'll get about this much" actually means, and it is wider than
+//      anyone's intuition.
+//   2. PARLAYS PRICED PROPERLY, at any number of legs, with no correlation
+//      matrix to invert and no copula to fray in the tails.
+//   3. SAME-PLAYER LEGS THAT AGREE. Two catches cannot make ninety yards. A
+//      copula will cheerfully say they can; a simulation that draws the
+//      catches first cannot.
+//
+// Every constant here is fitted on the 2023 season and scored on 2024, in
+// scripts/nfl-prop-shape.mjs. The fitted shapes reproduce the real
+// distribution of player games to within a chi-square of about 30 on 19
+// degrees of freedom, out of sample, against 120-320 for what this replaced.
+
+// Deterministic: the same slate has to produce the same board twice, or every
+// refresh moves the numbers under the user.
+function rng(seed) {
+  let a = (seed >>> 0) || 0x2F6E2B1;
+  return function () {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function normalDraw(r) {
+  let u = r(); if (u <= 1e-12) u = 1e-12;
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.283185307179586 * r());
+}
+function normInv(p) {
+  p = clamp(p, 1e-9, 1 - 1e-9);
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  let q, r;
+  if (p < 0.02425) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  if (p > 0.97575) { q = Math.sqrt(-2 * Math.log(1-p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  q = p - 0.5; r = q * q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+function poisDraw(lam, r) {
+  if (!(lam > 0)) return 0;
+  if (lam < 25) {
+    const L = Math.exp(-lam);
+    let k = 0, p = 1;
+    do { k++; p *= r(); } while (p > L);
+    return k - 1;
+  }
+  const n = Math.round(lam + Math.sqrt(lam) * normalDraw(r));
+  return n > 0 ? n : 0;
+}
+function binomDraw(n, p, r) {
+  if (!(n > 0) || !(p > 0)) return 0;
+  if (p >= 1) return n;
+  if (n <= 40) { let k = 0; for (let i = 0; i < n; i++) if (r() < p) k++; return k; }
+  const k = Math.round(n * p + Math.sqrt(n * p * (1 - p)) * normalDraw(r));
+  return clamp(k, 0, n);
+}
+// Marsaglia-Tsang, with the standard boost below shape 1.
+function gammaDraw(shape, scale, r) {
+  if (!(shape > 0) || !(scale > 0)) return 0;
+  if (shape < 1) return gammaDraw(shape + 1, scale, r) * Math.pow(r() || 1e-12, 1 / shape);
+  const d = shape - 1 / 3, c = 1 / Math.sqrt(9 * d);
+  for (let guard = 0; guard < 500; guard++) {
+    let x, v;
+    do { x = normalDraw(r); v = 1 + c * x; } while (v <= 0);
+    v = v * v * v;
+    const u = r();
+    if (u < 1 - 0.0331 * x * x * x * x || Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v * scale;
+  }
+  return d * scale;
+}
+// A multiplier with mean 1 and the given log-variance. Used for the volume
+// shocks, where a lognormal and a gamma are indistinguishable at these
+// dispersions and the lognormal is monotone in a normal draw, which is what
+// lets one script latent move two teams in opposite directions.
+function logNormOf(z, cv) {
+  if (!(cv > 0)) return 1;
+  const s2 = Math.log(1 + cv * cv);
+  return Math.exp(Math.sqrt(s2) * z - s2 / 2);
+}
+
+// ── fitted shapes, per role ─────────────────────────────────────────────────
+//   volCv   how much of his usual workload he gets, week to week
+//   volDud  and how often that collapses outright (hurt, benched, game gone)
+//   effS2   the spread on each catch / carry / attempt, as a share of the
+//           average gain squared
+//   effDud  a day where the yards are not there at all — shadowed, jammed,
+//           thrown at underneath all afternoon
+const SIM_ROLE = {
+  QB:  { volCv: 0.173, volDud: 0.02, volDudAt: 0.10, effS2: 0.60, effDud: 0.08, effDudAt: 0.50 },
+  RB:  { volCv: 0.374, volDud: 0.02, volDudAt: 0.10, effS2: 1.60, effDud: 0.04, effDudAt: 0.30 },
+  REC: { volCv: 0.224, volDud: 0.12, volDudAt: 0.70, effS2: 0.40, effDud: 0.18, effDudAt: 0.50 }
+};
+// Team level, measured over 1,140 team-games.
+const SIM_TEAM = {
+  passCv: 0.153,       // week-to-week swing in a team's pass attempts
+  rushCv: 0.195,
+  // The two sides of one game do not move independently. Rush attempts run at
+  // -0.51 against each other — the clearest single correlation in football,
+  // and why two opposing backs is a worse parlay than it looks. Pass attempts
+  // run at -0.15. Our passing against their rushing is 0.01, i.e. nothing,
+  // which is why the script needs two latents and not one.
+  passScript: 0.389,   // sqrt(0.151)
+  rushScript: 0.713,   // sqrt(0.508)
+  // How much a man's share of his own offence moves week to week. A Dirichlet
+  // was the obvious choice and it is wrong: with one concentration it hands a
+  // third receiver three times the relative swing of a first, and the real
+  // spread of a WR3's receptions is nothing like that. So each man's share
+  // gets its own lognormal wobble at a constant RELATIVE size, and the shares
+  // are then renormalised — which also produces the push between teammates
+  // for free, since a bigger slice for one is a smaller slice for the rest.
+  // Fitted so the simulated spread of receptions and carries matches the real
+  // one. Carries move more than twice as much as targets do: the committee
+  // backfield, stated as a number.
+  tgtShareCv: 0.170,
+  carShareCv: 0.400,
+  // Within one team, throwing and running trade off at -0.33: get ahead and
+  // you run it out, fall behind and you throw. Across the two teams it is
+  // -0.15 on pass attempts and -0.51 on rush attempts, while OUR passing
+  // against THEIR running is 0.01 — nothing. No single script latent can
+  // produce all four; two can, with the leftovers correlated inside each team.
+  withinTeam: -0.507,
+  leakCatch: 0.64      // catch rate for the targets nobody is pricing
+};
+function setSimShape(role, team) {
+  if (role) Object.keys(role).forEach(k => { SIM_ROLE[k] = Object.assign({}, SIM_ROLE[k], role[k]); });
+  if (team) Object.assign(SIM_TEAM, team);
+  return { SIM_ROLE: SIM_ROLE, SIM_TEAM: SIM_TEAM };
+}
+const simShape = () => ({ SIM_ROLE: JSON.parse(JSON.stringify(SIM_ROLE)), SIM_TEAM: Object.assign({}, SIM_TEAM) });
+const simRole = pos => pos === "QB" ? "QB" : (pos === "RB" || pos === "FB" ? "RB" : "REC");
+// A two-point multiplier with mean 1: the bad day, and every other day.
+function dudMul(u, rate, level) {
+  if (!(rate > 0)) return 1;
+  return (u < rate ? level : 1) / (rate * level + 1 - rate);
+}
+
+// Simulate one game N times. `sides` is [home, away]; each is the player list
+// loadGameProps produced for that team.
+//
+// The ORDER is the whole point. Team volume is drawn first; targets and
+// carries are then shared out of that fixed pool; the quarterback's passing
+// line is the sum of what his receivers did. So a receiver's big day IS the
+// quarterback's big day, two backs splitting one pile of carries push against
+// each other, and nothing anywhere has to be told to correlate with anything.
+function simulateGame(sides, opts) {
+  opts = opts || {};
+  const N = opts.n || 10000;
+  const r = rng(opts.seed != null ? opts.seed : 0x9E3779B9);
+  const T = SIM_TEAM;
+  const MK = ["rec", "recYds", "car", "rushYds", "passAtt", "passYds", "passTD", "atd"];
+
+  const men = [];
+  sides.forEach((list, si) => (list || []).forEach(pl => {
+    const role = simRole((pl.player || {}).pos);
+    const out = {}; MK.forEach(k => out[k] = new Float32Array(N));
+    men.push({ si, pl, role, R: SIM_ROLE[role], p: pl.proj, out });
+  }));
+
+  const side = sides.map((list, si) => {
+    const mine = men.filter(m => m.si === si);
+    const vol = (list && list[0] && list[0].vol) || {};
+    const qb = mine.filter(m => m.role === "QB").sort((a, b) => b.p.ePass - a.p.ePass)[0] || null;
+    const tgtSum = mine.reduce((s, m) => s + (m.p.eTgt || 0), 0);
+    const carSum = mine.reduce((s, m) => s + (m.p.eCar || 0), 0);
+    const passAtt = Math.max(tgtSum, vol.passAtt || tgtSum || 1);
+    const rushAtt = Math.max(carSum, vol.rushAtt || carSum || 1);
+    // The quarterback's projected yards are the anchor. Whatever the priced
+    // receivers do not account for belongs to everybody else on the roster.
+    const qbYds = qb ? qb.p.passYds.mean : mine.reduce((s, m) => s + m.p.recYds.mean, 0) / 0.82;
+    const mineYds = mine.reduce((s, m) => s + (m.p.recYds.mean || 0), 0);
+    const leakTgt = Math.max(0, passAtt - tgtSum), leakCar = Math.max(0, rushAtt - carSum);
+    return { mine, vol, qb, passAtt, rushAtt, leakTgt, leakCar,
+      leakYpr: leakTgt > 0.2 ? Math.max(0, qbYds - mineYds) / (leakTgt * T.leakCatch) : 0,
+      leakYpc: Math.max(2.5, vol.ypc || 4.2),
+      passTD: vol.passTD || 1.4 };
+  });
+
+  // Share a fixed pool out exactly, so the parts always add to the whole.
+  // Independent draws per man would let five receivers between them be thrown
+  // at more times than the team threw, which is where a naive simulation
+  // quietly loses the correlation it was built to capture.
+  const alloc = new Float64Array(64);
+  function multinomial(n, w, k, r) {
+    let left = n, wl = 0;
+    for (let i = 0; i < k; i++) wl += w[i];
+    for (let i = 0; i < k; i++) {
+      if (left <= 0 || wl <= 1e-12) { alloc[i] = 0; continue; }
+      const a = binomDraw(left, clamp(w[i] / wl, 0, 1), r);
+      alloc[i] = a; left -= a; wl -= w[i];
+    }
+    return left;                                   // whatever was not handed out
+  }
+  const wT = new Float64Array(64), wC = new Float64Array(64);
+
+  for (let it = 0; it < N; it++) {
+    const zPass = normalDraw(r), zRush = normalDraw(r);
+    for (let si = 0; si < side.length; si++) {
+      const S = side[si], k = S.mine.length; if (!k) continue;
+      const sgn = si === 0 ? 1 : -1;
+      // A team that gets ahead throws less and runs more; the other side does
+      // the reverse. One draw seen from two ends, not two assumptions.
+      const e1 = normalDraw(r);
+      const e2 = T.withinTeam * e1 + Math.sqrt(1 - T.withinTeam * T.withinTeam) * normalDraw(r);
+      const zp = -T.passScript * sgn * zPass + Math.sqrt(1 - T.passScript * T.passScript) * e1;
+      const zr =  T.rushScript * sgn * zRush + Math.sqrt(1 - T.rushScript * T.rushScript) * e2;
+      const nPass = poisDraw(S.passAtt * logNormOf(zp, T.passCv), r);
+      const nRush = poisDraw(S.rushAtt * logNormOf(zr, T.rushCv), r);
+
+      // Usage: his slice of the week, times whether he is right today.
+      for (let i = 0; i < k; i++) {
+        const m = S.mine[i], R = m.R;
+        m._dud = dudMul(r(), R.volDud, R.volDudAt);
+        wT[i] = m.p.eTgt > 1e-6 ? m.p.eTgt * logNormOf(normalDraw(r), T.tgtShareCv) * m._dud : 0;
+        wC[i] = m.p.eCar > 1e-6 ? m.p.eCar * logNormOf(normalDraw(r), T.carShareCv) * m._dud : 0;
+      }
+      wT[k] = S.leakTgt > 1e-6 ? S.leakTgt * logNormOf(normalDraw(r), T.tgtShareCv) : 0;
+      wC[k] = S.leakCar > 1e-6 ? S.leakCar * logNormOf(normalDraw(r), T.carShareCv) : 0;
+
+      multinomial(nPass, wT, k + 1, r);
+      const tgt = alloc.slice(0, k + 1);
+      multinomial(nRush, wC, k + 1, r);
+      const car = alloc.slice(0, k + 1);
+
+      let teamRecYds = 0;
+      for (let i = 0; i < k; i++) {
+        const m = S.mine[i], R = m.R, P = m.p;
+        const eff = dudMul(r(), R.effDud, R.effDudAt);
+        let rec = 0, recYds = 0;
+        if (tgt[i] > 0) {
+          rec = binomDraw(tgt[i], clamp(P.catchRate, 0.05, 0.98), r);
+          if (rec > 0) {
+            const mu = rec * P.ypr * eff, vr = rec * R.effS2 * P.ypr * P.ypr * eff * eff;
+            recYds = vr > 1e-9 ? gammaDraw(mu * mu / vr, vr / mu, r) : mu;
+          }
+        }
+        let rushYds = 0;
+        if (car[i] > 0) {
+          const e2 = m.role === "QB" ? 1 : eff;
+          const mu = car[i] * P.ypc * e2, vr = car[i] * SIM_ROLE.RB.effS2 * P.ypc * P.ypc * e2 * e2;
+          rushYds = vr > 1e-9 ? gammaDraw(mu * mu / vr, vr / mu, r) : mu;
+        }
+        m.out.rec[it] = rec; m.out.recYds[it] = recYds;
+        m.out.car[it] = car[i]; m.out.rushYds[it] = rushYds;
+        teamRecYds += recYds;
+      }
+      // What the men nobody prices did with the rest of it.
+      let leakYds = 0;
+      if (tgt[k] > 0 && S.leakYpr > 0) {
+        const rec = binomDraw(tgt[k], T.leakCatch, r);
+        if (rec > 0) {
+          const le = dudMul(r(), SIM_ROLE.REC.effDud, SIM_ROLE.REC.effDudAt);
+          const mu = rec * S.leakYpr * le, vr = rec * SIM_ROLE.REC.effS2 * S.leakYpr * S.leakYpr * le * le;
+          leakYds = gammaDraw(mu * mu / vr, vr / mu, r);
+        }
+      }
+      // The quarterback's line IS his receivers' lines added up.
+      if (S.qb) {
+        const py = teamRecYds + leakYds;
+        S.qb.out.passAtt[it] = nPass;
+        S.qb.out.passYds[it] = py;
+        S.qb.out.passTD[it] = poisDraw(S.passTD * clamp(py / Math.max(40, S.qb.p.passYds.mean), 0.15, 2.6), r);
+      }
+      // Scoring rides on the afternoon he actually had, not his season
+      // average: a back who got nine carries in a blowout the wrong way does
+      // not vulture a one-yard touchdown.
+      for (let i = 0; i < k; i++) {
+        const m = S.mine[i], P = m.p;
+        const lam = (P.lamRec || 0) * clamp(m.out.recYds[it] / Math.max(8, P.recYds.mean), 0.1, 3) +
+                    (P.lamRush || 0) * clamp(m.out.rushYds[it] / Math.max(8, P.rushYds.mean), 0.1, 3);
+        m.out.atd[it] = poisDraw(lam, r) > 0 ? 1 : 0;
+      }
+    }
+  }
+  return { n: N, men, side };
+}
+
+// ── reading the simulation ──────────────────────────────────────────────────
+// The quantiles of what was simulated. This is the range the board shows, and
+// it is not decoration: a receiver whose number is 54 yards has a middle half
+// running roughly 25 to 75, and a quarter of the time he finishes outside even
+// that. Anyone betting a prop should see that before the price.
+function quantiles(arr, qs) {
+  const a = Float64Array.from(arr); a.sort();
+  const n = a.length;
+  return qs.map(q => {
+    const i = (n - 1) * clamp(q, 0, 1), lo = Math.floor(i), hi = Math.ceil(i);
+    return lo === hi ? a[lo] : a[lo] + (a[hi] - a[lo]) * (i - lo);
+  });
+}
+const RANGE_QS = [0.10, 0.25, 0.50, 0.75, 0.90];
+function simRange(samples) {
+  const q = quantiles(samples, RANGE_QS);
+  let s = 0; for (let i = 0; i < samples.length; i++) s += samples[i];
+  return { mean: s / samples.length, p10: q[0], p25: q[1], median: q[2], p75: q[3], p90: q[4] };
+}
+
+// Every market the board would hang on one simulated player, with the range
+// and an exact tail off the simulation rather than off a fitted curve.
+function simMarkets(man) {
+  const out = [], pos = (man.pl.player || {}).pos || "", isQB = pos === "QB", N = man.out.rec.length;
+  const add = (key, label, type, samples, min, step) => {
+    const R = simRange(samples);
+    if (type !== "binary" && !(R.mean >= min)) return;
+    const sorted = Float64Array.from(samples); sorted.sort();
+    out.push({ key, label, type, range: R, mean: R.mean, n: N, step,
+      // P(X > line), read straight off the sorted draws.
+      tail: line => {
+        let lo = 0, hi = N;
+        while (lo < hi) { const m = (lo + hi) >> 1; if (sorted[m] > line) hi = m; else lo = m + 1; }
+        return (N - lo) / N;
+      },
+      ourLine: null });
+  };
+  if (isQB) add("passYds", "Pass yds", "yards", man.out.passYds, 90, 5);
+  if (isQB) add("passAtt", "Pass att", "count", man.out.passAtt, 15, 0.5);
+  if (isQB) add("passTD", "Pass TD", "count", man.out.passTD, 0.6, 0.5);
+  add("rushYds", "Rush yds", "yards", man.out.rushYds, 15, 2.5);
+  add("car", "Rush att", "count", man.out.car, 5, 0.5);
+  if (!isQB) add("recYds", "Rec yds", "yards", man.out.recYds, 15, 2.5);
+  if (!isQB) add("rec", "Receptions", "count", man.out.rec, 1.6, 0.5);
+  {
+    let s = 0; for (let i = 0; i < N; i++) s += man.out.atd[i];
+    if (s / N >= 0.08) out.push({ key: "atd", label: "Anytime TD", type: "binary",
+      mean: s / N, n: N, range: null, step: null, ourLine: null, tail: () => s / N });
+  }
+  out.forEach(m => {
+    if (m.type === "binary") return;
+    m.ourLine = m.type === "count" ? Math.max(0.5, Math.round(m.range.median) - 0.5)
+                                   : Math.round(m.range.median / m.step) * m.step - m.step / 2;
+    if (m.ourLine <= 0) m.ourLine = m.step / 2;
+  });
+  return out;
+}
+
+// A leg, carrying the one thing a parlay needs: which of the simulated
+// afternoons it won on.
+function simLeg(man, mkt, side, line) {
+  const src = man.out[mkt.key], N = src.length;
+  const hit = new Uint8Array(N);
+  let w = 0;
+  for (let i = 0; i < N; i++) {
+    const ok = mkt.type === "binary" ? src[i] > 0.5 : (side === "Under" ? src[i] < line : src[i] > line);
+    hit[i] = ok ? 1 : 0; w += ok ? 1 : 0;
+  }
+  return { man, mkt, side, line, hit, p: w / N, n: N,
+    player: (man.pl.player || {}).name, pos: (man.pl.player || {}).pos, teamId: man.pl.teamId };
+}
+// The joint probability of a set of legs: the share of simulated afternoons on
+// which all of them came in. No copula, no matrix, no independence assumption
+// — and it costs one pass over a byte array.
+function parlayProb(legs) {
+  if (!legs.length) return 0;
+  const N = legs[0].n;
+  let w = 0;
+  outer: for (let i = 0; i < N; i++) {
+    for (let j = 0; j < legs.length; j++) if (!legs[j].hit[i]) continue outer;
+    w++;
+  }
+  return w / N;
+}
+// What the legs multiply out to if you pretend they are independent — which is
+// what a book that prices each leg separately is charging you for.
+const naiveProb = legs => legs.reduce((a, l) => a * l.p, 1);
+
+// ── building the ticket ─────────────────────────────────────────────────────
+// A straight parlay pays the product of its legs' decimal odds. That is the
+// whole opportunity: the PAYOUT is computed as though the legs were
+// independent, and they are not. Where the true joint probability beats the
+// product of the singles, the book is handing out a price it did not mean to.
+//
+// This is the same trade the baseball board makes on a two-man hit double, and
+// the football version is bigger, because a quarterback's yards are literally
+// the sum of his receivers' yards while a book still prices them apart.
+function buildParlays(legs, opts) {
+  opts = opts || {};
+  const size = clamp(opts.size || 2, 2, 4);
+  const minP = opts.minP != null ? opts.minP : 0.03;
+  const kf = opts.kelly != null ? opts.kelly : 0.25;
+  const priced = legs.filter(l => l.dec > 1);          // only legs we can actually price
+  const top = clamp(opts.pool || 14, 2, 24);
+  const pool = priced.slice().sort((a, b) => b.p - a.p).slice(0, top);
+  const out = [];
+  const idx = new Array(size).fill(0);
+  (function rec(start, depth) {
+    if (depth === size) {
+      const set = idx.map(i => pool[i]);
+      // A man appearing twice in the same ticket is usually barred, and where
+      // it is allowed it is the most correlated ticket on the board, so it is
+      // offered but flagged rather than quietly mixed in.
+      const names = {}; let samePlayer = false;
+      set.forEach(l => { if (names[l.player]) samePlayer = true; names[l.player] = 1; });
+      const p = parlayProb(set);
+      if (p >= minP) {
+        const naive = naiveProb(set);
+        const dec = set.reduce((a, l) => a * l.dec, 1);
+        const ev = p * dec - 1;
+        const b = dec - 1;
+        out.push({ legs: set, p, naive, lift: p - naive,
+          liftPct: naive > 0 ? p / naive - 1 : 0,
+          dec, american: probToAm(1 / dec), fair: probToAm(p), ev,
+          kelly: b > 0 ? Math.max(0, kf * (p * dec - 1) / b) : 0,
+          samePlayer, sameTeam: set.every(l => l.teamId === set[0].teamId),
+          sameGame: set.every(l => l.gameId === set[0].gameId) });
+      }
+      return;
+    }
+    for (let i = start; i < pool.length; i++) { idx[depth] = i; rec(i + 1, depth + 1); }
+  })(0, 0);
+  out.sort((a, b) => (opts.rank === "lift" ? b.lift - a.lift : b.ev - a.ev) || b.p - a.p);
+  return out;
+}
+
+// ── the number system ───────────────────────────────────────────────────────
+// One number on a prop tells you nothing about why. The baseball board splits
+// a hitter's night into how bad the arm is and how good the bats are; this is
+// the football version, and it has four levers instead of two.
+//
+// Each is the projection re-run with that lever alone switched on, so the
+// parts add up to the whole by construction rather than by assertion:
+//
+//   VOLUME   the game itself — pace, total, and which way the script runs.
+//            A back in a game his team is favoured to lead gets carries a
+//            back in a shootout never sees.
+//   MATCHUP  the eleven men opposite: what that defence gives up, per attempt
+//            and per target, against what the league gives up.
+//   BODIES   who is out. The biggest mover of a prop line in the hour before
+//            kickoff, and the one the market is slowest on.
+//   WEATHER  cold and wet, and honestly labelled: the feed does not carry
+//            wind, which is the only weather that really moves a passing line.
+//
+// SPOT is the four of them together: how far this afternoon sits from a
+// neutral one, in the prop's own units and as points of probability at his
+// line. It is the thesis of the bet in one number.
+function propSpot(L, pl, ts, ctx, key) {
+  const neutral = { pts: L.avgTotal / 2, total: L.avgTotal, mgn: 0 };
+  const mkVol = (g, def, wx, uf) => teamVolume(L, ts,
+    g ? ctx.pts : neutral.pts, g ? ctx.total : neutral.total, g ? ctx.mgn : neutral.mgn,
+    def || null, wx || null, uf || null);
+  const meanOf = (vol, scale) => {
+    const pr = projectPlayer(L, pl, vol, ts, scale || null);
+    if (key === "atd") return pr.anytimeTD;
+    if (key === "passTD") return pr.passTD;
+    if (key === "rec") return pr.rec.mean;
+    if (key === "car") return pr.car.mean;
+    const d = pr[key];
+    return d && d.mean != null ? d.mean : null;
+  };
+  const base   = meanOf(mkVol(false, null, null, null));
+  const vol    = meanOf(mkVol(true,  null, null, null));
+  const match  = meanOf(mkVol(true,  ctx.def, null, null));
+  const wthr   = meanOf(mkVol(true,  ctx.def, ctx.wx, null));
+  const units  = meanOf(mkVol(true,  ctx.def, ctx.wx, ctx.units));
+  const full   = meanOf(mkVol(true,  ctx.def, ctx.wx, ctx.units), ctx.scale);
+  if (base == null) return null;
+  return { base, full, spot: full - base,
+    volume: vol - base, matchup: match - vol, weather: wthr - match,
+    bodies: (units - wthr) + (full - units),
+    pct: base > 1e-9 ? full / base - 1 : 0 };
+}
+
 // ── the slate ───────────────────────────────────────────────────────────────
 async function loadSlate(L, opts) {
   opts = opts || {};
@@ -2431,6 +2904,8 @@ return {
   teamVolume, loadRoster, loadPlayersNFL, projectPlayer,
   defenceProfile, defFactor, log5, DEF_CARRY, weatherFactor, injuryWeight, loadInjuries, LEAGUE,
   loadDepthChart, unitsOut, unitFactors, UNIT_OF, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
+  rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
+  simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
   backtest, summarise,
   loadResults, loadClosingLine, gradeBet, betReturn, betCLV, betSummary,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
