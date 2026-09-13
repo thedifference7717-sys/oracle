@@ -180,7 +180,8 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="slip">
   <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="50" value="1000" oninput="render()"></div>
   <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="0.50" oninput="render()"></div>
-  <div class="fld"><label>BET BAR (EDGE PTS)</label><input id="minEdge" type="number" step="0.5" value="2" oninput="render()"></div>
+  <div class="fld"><label>BET BAR (MEASURED PTS)</label><input id="minEdge" type="number" step="0.5" value="2" oninput="render()"
+    title="A game is only posted if the MEASURED part of its edge — the correlation two seasons of real games say is there — clears this. Our disagreement with the market does not count toward it."></div>
   <details id="more">
     <summary>⚙ More settings</summary>
     <div class="morewrap">
@@ -209,6 +210,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
       <div class="fld"><label>EXCHANGE BRIDGE URL</label><input id="kproxy" type="text" placeholder="https://&hellip;workers.dev" style="width:210px" onchange="saveProxy()"></div>
       <div class="fld chk"><input id="onlyPosted" type="checkbox" onchange="render()"><label for="onlyPosted" title="Drop any leg whose man is questionable, doubtful or out.">Confirmed players only</label></div>
       <div class="fld chk"><input id="onlyTeam" type="checkbox" onchange="render()"><label for="onlyTeam" title="Two men in the same offence move together.">Same-team pairs only</label></div>
+      <div class="fld chk"><input id="showOpinion" type="checkbox" onchange="render()"><label for="showOpinion" title="Cards whose edge is mostly our number arguing with a live market rather than the measured correlation.">Also post OPINION cards</label></div>
       <div class="fld chk"><input id="allowSame" type="checkbox" onchange="render()"><label for="allowSame" title="Two markets on ONE man. Barred at most books.">Allow same-player pairs</label></div>
       <div class="fld chk"><input id="unitInj" type="checkbox" onchange="state.propCache={};rankProps()"><label for="unitInj" title="Measured against the exchange this makes the projections LESS accurate, so it is off by default.">Line/secondary injuries move the number</label></div>
     </div>
@@ -434,7 +436,7 @@ function render(){
   allPlays();                             // keeps entry.live fresh for the games table
   state.doubles = buildDoubles();
   const all = filteredDoubles();
-  SHOWN = all.filter(d => d.edge >= betBar());
+  SHOWN = all.filter(d => defensibleEdge(d) >= betBar() && d.edge > 0 && (setting("showOpinion") || !isOpinion(d)));
   renderPairCards(SHOWN, all);
   renderPairTable(all);
   renderSpots();
@@ -618,7 +620,7 @@ function pairCard(d, i){
   const size = betSize(d), bank = setting("bank");
   const kelly = M.kelly(d.prob, 0, d.price, setting("kf"));
   const g = d.entry.game, S = d.spot;
-  const opinion = d.edgeView != null && d.edgeCorr != null && d.edgeView > Math.max(0.02, d.edgeCorr * 2);
+  const opinion = isOpinion(d);
   const row = (label, value, title) => '<span' + (title ? ' title="' + esc(title) + '"' : "") + ">" + label + "</span>" +
     '<span style="text-align:right">' + value + "</span>";
   return '<div class="bet ' + (good ? "r" + Math.min(i + 1, 3) : "neg") + '">' +
@@ -629,7 +631,7 @@ function pairCard(d, i){
         '<br><span style="color:var(--dim)">' + esc(kickoff(g.date)) + (g.venue ? " \u00b7 " + esc(g.venue) : "") + "</span></div>" +
       '<div class="bet-str">' +
         '<div class="v">' + (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + "</div>" +
-        '<div class="l">EDGE PTS</div>' +
+        '<div class="l">MEASURED EDGE</div>' +
         '<div class="stake">' + (size > 0 ? money(size) : "\u2014") + "</div>" +
         '<div class="stake-l">' + (size > 0 ? "BET \u00b7 $" + setting("perEdge").toFixed(2) + "/PT" : "NO BET") + "</div>" +
       "</div>" +
@@ -637,6 +639,8 @@ function pairCard(d, i){
     pairLeg(d.a) + pairLeg(d.c) +
     '<div class="bet-foot">' +
       row("Both to clear", '<b>' + pc(d.prob) + "</b> true") +
+      row("Total edge over the price", '<b>' + (d.edge >= 0 ? "+" : "") + (d.edge * 100).toFixed(1) + "pts</b>",
+        "The whole gap between our probability and what the price needs. The card stakes on the measured part of it, not this.") +
       row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
       row("Your price / breakeven", '<span class="odds">' + M.fmtAm(d.price) + "</span> \u00b7 " + pc(d.breakeven)) +
       row("Expected value", '<b style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
@@ -1746,6 +1750,10 @@ const setting = id => { const el = $(id); if (!el) return null;
   if (el.tagName === "SELECT") return el.value;
   return +el.value; };
 const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
+// Most of the edge is us arguing with the market rather than the measured
+// correlation. Off the board by default: the whole point of a posting
+// threshold is that it keeps something out.
+const isOpinion = d => d.edgeView != null && d.edgeCorr != null && d.edgeView > Math.max(0.02, d.edgeCorr * 2);
 const spotColour = v => v >= 0.08 ? "var(--green)" : (v >= 0 ? "var(--yellow)" : "var(--dim)");
 
 // Legs worth putting in a double. Not the ranked singles — those are only the
@@ -1916,14 +1924,27 @@ function filteredDoubles(){
   const by = setting("sort");
   if (by === "spot") p.sort((a, b) => ((b.spot&&b.spot.spot)||0) - ((a.spot&&a.spot.spot)||0) || b.prob - a.prob);
   else if (by === "prob") p.sort((a, b) => b.prob - a.prob);
-  else p.sort((a, b) => b.edge - a.edge || b.prob - a.prob);
+  else p.sort((a, b) => defensibleEdge(b) - defensibleEdge(a) || b.prob - a.prob);
   return p;
 }
 // The bets: every game clearing the bar, and only those. No cap — a card per
 // qualifying game, so the board and any alert cannot disagree about what
 // counts as a bet.
 const betBar = () => setting("minEdge") / 100;
-const edgePts = d => +(d.edge * 100).toFixed(1);
+// THE number: the part of the edge that is measured rather than argued.
+//
+// Total edge was the headline, the stake and the bar, and it is dominated by
+// our number disagreeing with a live market. That is why a bar of +2 posted
+// fourteen games out of fourteen: almost every card clears it, so the bar
+// selected nothing and "posted" meant "exists".
+//
+// The measured part is what two seasons of real games say about these legs
+// moving together, against a payout that assumes they do not. It does not need
+// us to be better informed than the money. So it is the number on the card,
+// the number the stake comes from, and the number the bar tests — one
+// quantity, all the way through, instead of three that disagree.
+const defensibleEdge = d => d.edgeCorr != null ? d.edgeCorr : 0;
+const edgePts = d => +(defensibleEdge(d) * 100).toFixed(1);
 // Stake from the DISPLAYED edge, so the arithmetic on screen checks out by
 // hand: 5.5 x $2.50 is $13.75, not $13.83 from an unrounded 5.53.
 const betSize = d => { const p = edgePts(d); return p > 0 ? p * setting("perEdge") : 0; };
