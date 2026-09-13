@@ -2779,6 +2779,73 @@ function betSummary(bets) {
   };
 }
 
+
+// ── the running record ──────────────────────────────────────────────────────
+// One pooled win-loss line hides the only question worth asking once the board
+// carries two different kinds of bet: WHICH of them is working. A spread and a
+// receiving-yards prop are not the same wager, are not priced by the same
+// people, and there is no reason for them to be right or wrong together. So
+// the record is kept whole AND split, and the split is where the answer lives.
+//
+// Everything here is reported with its error bar, because a 6-3 record is not
+// evidence of anything and saying so is the whole job.
+function betRecord(bets) {
+  const all = (bets || []).slice().sort((a, b) =>
+    new Date(a.date || a.placed || 0) - new Date(b.date || b.placed || 0));
+  const overall = betSummary(all);
+
+  // Split by what kind of bet it is. Props are one bucket rather than one per
+  // stat — receiving yards and receptions are the same skill being tested.
+  const groups = { spread: [], ml: [], total: [], prop: [] };
+  all.forEach(b => { if (groups[b.market]) groups[b.market].push(b); });
+  const byMarket = {};
+  Object.keys(groups).forEach(k => { if (groups[k].length) byMarket[k] = betSummary(groups[k]); });
+
+  // The running line: cumulative profit after every settled bet, in the order
+  // the games actually went off.
+  const curve = [];
+  let run = 0;
+  all.forEach(b => {
+    if (b.result == null) return;
+    run += betReturn(b, b.result) || 0;
+    curve.push({ pnl: run, result: b.result, date: b.date || b.placed, label: b.label, market: b.market });
+  });
+
+  // Recent form, newest last, so a streak reads left to right like a season.
+  const form = curve.slice(-20).map(c => c.result === 1 ? "W" : (c.result === 0 ? "L" : "P"));
+
+  // A losing streak is worth naming, because the temptation to raise stakes
+  // arrives exactly when the record says to lower them.
+  let streak = 0, streakKind = null;
+  for (let i = curve.length - 1; i >= 0; i--) {
+    const r = curve[i].result;
+    if (r === 0.5) continue;
+    const k = r === 1 ? "W" : "L";
+    if (streakKind == null) streakKind = k;
+    if (k !== streakKind) break;
+    streak++;
+  }
+
+  // How unusual is this record if every bet were a coin flip at the price paid?
+  // Without this a 3-1 start reads as proof, and it is not.
+  const settled = all.filter(b => b.result != null && b.result !== 0.5);
+  const expWin = settled.reduce((a, b) => a + (b.p != null ? b.p : 1 / Math.max(1.01, amToDec(b.price))), 0);
+  const varWin = settled.reduce((a, b) => {
+    const p = b.p != null ? b.p : 1 / Math.max(1.01, amToDec(b.price));
+    return a + p * (1 - p);
+  }, 0);
+  const wins = settled.filter(b => b.result === 1).length;
+  const sd = Math.sqrt(varWin);
+  return {
+    overall, byMarket, curve, form,
+    streak, streakKind,
+    expWin: settled.length ? expWin : null,
+    winZ: sd > 0.3 ? (wins - expWin) / sd : null,     // how far from what we predicted
+    best: curve.reduce((m, c) => Math.max(m, c.pnl), 0),
+    worst: curve.reduce((m, c) => Math.min(m, c.pnl), 0)
+  };
+}
+
 // ── walk-forward backtest ───────────────────────────────────────────────────
 // Ratings for week N are rebuilt from weeks 1..N-1 plus the prior season, and
 // nothing else. Grading is against the closing number the book actually hung
@@ -2946,7 +3013,7 @@ return {
   rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
   simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
   backtest, summarise,
-  loadResults, loadClosingLine, loadPlayerStats, gradeBet, betReturn, betCLV, betSummary,
+  loadResults, loadClosingLine, loadPlayerStats, gradeBet, betReturn, betCLV, betSummary, betRecord,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
   loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
   KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, calibrateProbs, applyProbCal, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE

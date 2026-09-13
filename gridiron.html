@@ -58,6 +58,17 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .bar .track{flex:1;height:7px;background:#00000066;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
 .bar .fill{height:100%;border-radius:3px}
 .bar .n{font-family:'Orbitron',monospace;font-size:11px;width:46px;text-align:right;color:var(--text)}
+#record{display:none;align-items:center;gap:16px;flex-wrap:wrap;padding:11px 18px;background:linear-gradient(90deg,#07140F,var(--bg2));border-bottom:1px solid var(--border);font-size:12px}
+#record .rec-wl{font-family:'Orbitron',monospace;font-size:19px;font-weight:900;letter-spacing:.03em}
+#record .rec-lab{font-size:9px;color:var(--dim);letter-spacing:.1em;display:block;margin-top:2px}
+#record .rec-cell{line-height:1.25}
+#record .rec-v{font-family:'Orbitron',monospace;font-size:15px;font-weight:700}
+#record .rec-form{display:flex;gap:3px;align-items:center}
+#record .rec-form i{display:inline-block;width:11px;height:11px;border-radius:3px;font-style:normal}
+#record .f-W{background:var(--green)}#record .f-L{background:var(--red)}#record .f-P{background:var(--dim)}
+#record .rec-note{color:var(--muted);flex:1;min-width:180px;font-size:11px;line-height:1.5}
+#record .rec-spark{display:flex;align-items:flex-end;gap:1px;height:26px}
+#record .rec-spark i{display:block;width:3px;background:var(--blue);border-radius:1px;font-style:normal;min-height:1px}
 .rangewrap{margin:12px 0 4px}
 .rangerow{display:flex;align-items:center;gap:9px}
 .rangelab{font-size:10px;color:var(--dim);width:78px;flex:none;letter-spacing:.05em}
@@ -125,6 +136,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
+<div id="record"></div>
 
 <div id="slip">
   <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="50" value="1000" oninput="render()"></div>
@@ -1089,7 +1101,76 @@ async function gradeAll(){
   }finally{ btn.disabled = false; }
 }
 
+// ── the running record, kept where it cannot be avoided ─────────────────────
+// Directly under the status line, visible before any bet on the board is. The
+// point of keeping score is to see it when you are about to bet again, not to
+// go looking for it afterwards.
+function renderRecord(){
+  const el = $("record");
+  const bets = loadBets();
+  const settled = bets.filter(b => b.result != null);
+  if (!settled.length){ el.style.display = "none"; return; }
+  const R = M.betRecord(bets);
+  const s = R.overall;
+  const money2 = v => (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toFixed(2);
+  const col = v => v > 0 ? "var(--green)" : (v < 0 ? "var(--red)" : "var(--muted)");
+
+  // The sparkline is the running profit after every settled bet, which is the
+  // only shape that shows a drawdown for what it was.
+  const c = R.curve.map(x => x.pnl);
+  const lo = Math.min(0, ...c), hi = Math.max(0, ...c), span = Math.max(1e-6, hi - lo);
+  const spark = c.slice(-60).map(v =>
+    '<i style="height:' + (3 + 23 * (v - lo) / span).toFixed(0) + "px;background:" +
+    (v >= 0 ? "var(--green)" : "var(--red)") + '"></i>').join("");
+
+  // What the record is worth as evidence. A 6-3 start is not evidence, and the
+  // strip says so rather than letting a hot week feel like a finding.
+  let note;
+  if (s.n < 10){
+    note = "<b>" + s.n + " settled.</b> Far too few to mean anything — a 6-3 start happens to a coin about a fifth of the time. Keep the stakes where they are.";
+  } else if (R.winZ != null && Math.abs(R.winZ) < 1.5){
+    note = "Running about where the model said it would (" +
+      (R.expWin != null ? R.expWin.toFixed(1) + " wins expected, " + s.win + " actual" : "") +
+      "). Nothing proven either way yet.";
+  } else if (R.winZ >= 1.5){
+    note = '<span style="color:var(--green)">Winning more than the model predicted (' +
+      R.expWin.toFixed(1) + " expected, " + s.win + " actual). Pleasant, but variance does this too.</span>";
+  } else {
+    note = '<span style="color:var(--red)">Winning less than the model predicted (' +
+      R.expWin.toFixed(1) + " expected, " + s.win + " actual). If it holds up past thirty bets the number is wrong, not the luck.</span>";
+  }
+  if (R.streak >= 3) note += " <b>" + R.streak + " " + (R.streakKind === "W" ? "wins" : "losses") + " in a row.</b>";
+
+  // Which KIND of bet is working. The pooled line cannot answer that, and once
+  // props and spreads are on one board it is the only question that matters.
+  const LABEL = { spread: "Spreads", ml: "Moneylines", total: "Totals", prop: "Props" };
+  // A market that has only ever pushed is not a record, it is a blank row.
+  const split = Object.keys(R.byMarket).filter(k => R.byMarket[k].win + R.byMarket[k].lose > 0).map(k => {
+    const m = R.byMarket[k];
+    return '<span class="rec-cell" style="margin-right:12px">' +
+      '<span class="rec-v" style="color:' + col(m.pnl) + '">' + m.win + "-" + m.lose + (m.push ? "-" + m.push : "") + "</span>" +
+      '<span class="rec-lab">' + LABEL[k].toUpperCase() + " " + money2(m.pnl) + "</span></span>";
+  }).join("");
+
+  el.style.display = "flex";
+  el.innerHTML =
+    '<span class="rec-cell"><span class="rec-wl" style="color:' + col(s.pnl) + '">' +
+      s.win + "-" + s.lose + (s.push ? "-" + s.push : "") + "</span>" +
+      '<span class="rec-lab">RECORD' + (s.open ? " · " + s.open + " OPEN" : "") + "</span></span>" +
+    '<span class="rec-cell"><span class="rec-v" style="color:' + col(s.pnl) + '">' + money2(s.pnl) + "</span>" +
+      '<span class="rec-lab">' + (s.roi != null ? "ROI " + (s.roi * 100).toFixed(1) + "%" +
+        (s.roiSe != null ? " ±" + (s.roiSe * 100).toFixed(0) : "") : "P&amp;L") + "</span></span>" +
+    (split ? '<span style="border-left:1px solid var(--border);padding-left:14px">' + split + "</span>" : "") +
+    (R.form.length ? '<span class="rec-cell"><span class="rec-form">' +
+      R.form.map(f => '<i class="f-' + f + '" title="' + f + '"></i>').join("") +
+      '</span><span class="rec-lab">LAST ' + R.form.length + "</span></span>" : "") +
+    (c.length > 2 ? '<span class="rec-cell"><span class="rec-spark">' + spark + "</span>" +
+      '<span class="rec-lab">RUNNING P&amp;L' + (R.worst < -0.005 ? " · WORST " + money2(R.worst) : "") + "</span></span>" : "") +
+    '<span class="rec-note">' + note + "</span>";
+}
+
 function renderBets(){
+  renderRecord();
   const bets = loadBets();
   const body = $("bets-body");
   if (!bets.length){ $("bets-sub").textContent = "nothing logged yet"; return; }
