@@ -125,7 +125,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🏈 GridAIron</div><div class="logo-sub">NFL · SPREADS · MONEYLINES · TOTALS · PLAYER PROPS · EDGE ENGINE</div></div>
+  <div><div class="logo">🏈 GridAIron</div><div class="logo-sub">NFL · 2-LEG SAME-GAME PROP PARLAY · BUILD 4 · <span id="buildsha">__BUILD_SHA__</span></div></div>
   <div class="controls">
     <a class="navlink" href="index.html">🎲 Double</a>
     <a class="navlink" href="hr.html">⚾ HR</a>
@@ -139,14 +139,18 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="record"></div>
 
 <div id="slip">
+  <div class="fld"><label>PARLAY PRICE (0 = AUTO)</label><input id="price" type="number" step="5" value="0" oninput="render()"
+    title="Left at 0 the price is built from the two legs' own market prices with a book's margin on each, which is how a parlay is actually priced. Type what your book is really offering to reprice the whole board against it."></div>
   <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="50" value="1000" oninput="render()"></div>
+  <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50" oninput="render()"></div>
+  <div class="fld"><label>BET BAR (EDGE PTS)</label><input id="minEdge" type="number" step="0.5" value="2" oninput="render()"></div>
+  <div class="fld"><label>MIN SPOT (PTS)</label><input id="minSpot" type="number" step="1" value="0" oninput="render()"></div>
   <div class="fld"><label>KELLY FRACTION</label><select id="kf" onchange="render()">
     <option value="0.125">⅛ Kelly (careful)</option>
     <option value="0.25" selected>¼ Kelly (standard)</option>
     <option value="0.5">½ Kelly (aggressive)</option>
     <option value="1">Full Kelly (don't)</option>
   </select></div>
-  <div class="fld"><label>MIN EV (%)</label><input id="minEv" type="number" step="0.5" value="1" oninput="render()"></div>
   <div class="fld"><label>OUR NUMBER'S WEIGHT</label><select id="mw" onchange="render()">
     <option value="auto" selected>Auto (measured, ramped by week)</option>
     <option value="0">0% — market only, cross-market edges</option>
@@ -156,21 +160,20 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     <option value="1">100% — pure model, no market</option>
   </select></div>
   <div class="fld"><label>RANK BY</label><select id="sort" onchange="render()">
-    <option value="kelly" selected>Stake size (Kelly)</option>
-    <option value="ev">Expected value %</option>
-    <option value="edge">Edge over no-vig</option>
+    <option value="edge" selected>Edge over price</option>
+    <option value="spot">Softest spot</option>
+    <option value="prob">Raw probability</option>
   </select></div>
   <div class="fld"><label>EXCHANGE BRIDGE URL</label><input id="kproxy" type="text" placeholder="https://…workers.dev" style="width:210px" onchange="saveProxy()"></div>
   <div class="fld chk"><input id="unitInj" type="checkbox" onchange="state.propCache={};rankProps()"><label for="unitInj" title="Line, secondary and front-seven injuries. Measured against the exchange this makes the projections LESS accurate, so it is off by default — the missing units are shown either way.">Let line/secondary injuries move the number</label></div>
-  <div class="fld chk"><input id="mSpread" type="checkbox" onchange="render()"><label for="mSpread">Spread</label></div>
-  <div class="fld chk"><input id="mMl" type="checkbox" onchange="render()"><label for="mMl">Moneyline</label></div>
-  <div class="fld chk"><input id="mTotal" type="checkbox" onchange="render()"><label for="mTotal">Total</label></div>
-  <div class="fld chk"><input id="mProp" type="checkbox" checked onchange="render()"><label for="mProp">Player props</label></div>
+  <div class="fld chk"><input id="onlyPosted" type="checkbox" onchange="render()"><label for="onlyPosted" title="Drop any leg whose man is questionable, doubtful or out.">Confirmed players only</label></div>
+  <div class="fld chk"><input id="onlyTeam" type="checkbox" onchange="render()"><label for="onlyTeam" title="Two men in the same offence move together — the correlation that makes a same-game parlay worth playing.">Same-team pairs only (correlation edge)</label></div>
+  <div class="fld chk"><input id="allowSame" type="checkbox" onchange="render()"><label for="allowSame" title="Two markets on ONE man. The biggest mispricing on the board where a book allows it, and barred at most books.">Allow same-player pairs</label></div>
 </div>
 
-<div class="section-h">🏈 BEST PLAYER PROPS ON THE BOARD — ranked by what they are worth staking, not by confidence
-  <small>Props are the softest market in football and the one our number is checked against a real ladder on every rung, so the cards are props. Spreads, moneylines and totals are still priced and still listed under EVERY GAME below — tick <b>Spread</b>, <b>Moneyline</b> or <b>Total</b> above to put them back on the cards alongside these.<br>
-  The play we are most sure of is usually the one the market has already priced. What pays is the gap between our number and the price on offer — and a fat EV percentage on a longshot is worth less of your roll than a thin one on a coin flip, which is why the default order is stake size rather than EV.</small></div>
+<div class="section-h">🏈 THE DOUBLES — two props in one game, and the book's arithmetic on them is wrong
+  <small>A parlay pays the product of its legs' decimal odds, which prices them as if they were independent. Two men in one football game are nothing of the sort: a quarterback's passing yards <i>are</i> his receivers' yards added up, two backs share one pile of carries, and the side that gets ahead stops throwing. Every pair below is priced off ten thousand simulated afternoons instead, so the joint probability is the real one.<br>
+  A card is issued for every game whose best pair clears the <b>bet bar</b>, and for nothing below it. The headline is <b>edge points</b> — our probability minus what your price needs — and the stake is that number times your dollars-per-point.</small></div>
 <div class="cards" id="cards"></div>
 
 <div class="wrap">
@@ -189,14 +192,15 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   </div>
 
   <div class="panel">
-    <div class="panel-head">SAME-GAME PARLAYS — where the book's arithmetic is wrong <span id="pl-sub">not built</span>
-      <span>
-        <select id="plSize" onchange="rankParlays()"><option value="2" selected>2 legs</option><option value="3">3 legs</option></select>
-        <select id="plRank" onchange="rankParlays()"><option value="ev">Rank by edge</option><option value="lift">Rank by correlation</option></select>
-        <label class="mini" style="margin-left:8px"><input type="checkbox" id="plSame" onchange="rankParlays()"> allow same player</label>
-        <button id="plRun" onclick="rankParlays()">BUILD</button></span></div>
-    <div id="pl-body"><div class="empty">A parlay pays the product of its legs&rsquo; decimal odds &mdash; priced as though the legs were independent. In one football game they are nothing of the sort: a quarterback&rsquo;s passing yards <i>are</i> his receivers&rsquo; yards added up, and two backs share one pile of carries. Rank props first; this then simulates each game ten thousand times and prices every combination off the same simulated afternoons.</div></div>
-    <div class="note">The number that matters is <b>LIFT</b>: how much the true joint probability beats the product of the singles. Positive lift means the payout was computed on an assumption that is false, in your favour. Negative lift means the opposite, and those tickets are the ones that feel clever and lose.</div>
+    <div class="panel-head">EVERY GAME'S BEST DOUBLE — the whole slate, bet bar or not <span id="pl-sub">not built</span></div>
+    <div id="pl-body"><div class="empty">Not priced yet.</div></div>
+    <div class="note">The card section above shows only the games clearing the bet bar. This is all of them, in the same order, so a game that just misses is still visible. <b>LIFT</b> is how much the true joint probability beats the product of the two singles — positive means the payout was computed on an assumption that is false, in your favour; negative means those legs fight each other, and those are the doubles that feel clever and lose.</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">THE SPOTS — every offence, by how soft its afternoon is <span id="spot-sub">not priced</span></div>
+    <div id="spot-body"><div class="empty">Not priced yet.</div></div>
+    <div class="note">Three readings of the same afternoon, each in percent of what a league-average receiver does against nobody in particular. <b>SOFT DEFENCE</b> holds the offence at league average and asks only how bad the men opposite are. <b>GOOD OFFENCE</b> does the reverse. <b>SPOT</b> is the two together: what a typical pass-catcher in this offence actually does today. Best defence to worst is worth about fifty points on this slate, so the spot is usually a bigger lever than which receiver you pick out of it — the same thing the baseball board finds with pitching.</div>
   </div>
 
   <div class="panel">
@@ -293,7 +297,8 @@ const sgn = v => (v > 0 ? "+" : "") + v.toFixed(1);
 const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
-const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null, sims: {}, legs: [], parlays: [] };
+const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null, sims: {}, legs: [], parlays: [],
+  legPools: {}, spots: {}, doubles: [], lgTs: null };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -358,58 +363,119 @@ function allPlays(){
       r.plays.forEach(p => { p.board = b; p.entry = entry; out.push(p); });
     });
   });
-  // Props are bets on the same games, so they belong on the same board, ranked
-  // against the spread and the moneyline by the same number — not exiled to a
-  // table further down the page where you have to go and look for them.
-  state.propBoard.forEach(r => { const p = propAsPlay(r); if (p) out.push(p); });
   return out;
-}
-
-// A ranked prop, in the shape the cards already speak. The exchange quotes a
-// cost in cents rather than American odds, so that is converted here; the rest
-// is the same fields under the same names.
-function propAsPlay(r){
-  if (!r || !r.entry || r.kelly == null) return null;
-  const g = r.entry.game;
-  const cost = r.src === "exchange" ? r.cost : null;
-  const price = cost != null ? M.probToAm(cost) : r.price;
-  if (price == null) return null;
-  return {
-    market: "prop", propKey: r.mkt.key, side: r.side, line: r.line,
-    label: r.player + " " + r.mkt.label.toLowerCase() + " " + r.side.toLowerCase() +
-           (r.mkt.type === "binary" ? "" : " " + r.line),
-    league: r.board.league, board: r.board, entry: r.entry,
-    gameId: g.id, date: g.date, venue: g.venue, neutral: g.neutral,
-    home: g.home, away: g.away,
-    price, cost, p: r.p, push: 0,
-    mktP: cost != null ? cost : (r.mktP != null ? r.mktP : null),
-    fair: M.probToAm(r.p), hold: null,
-    ev: r.ev, kelly: r.kelly, edge: r.edge != null ? r.edge : (cost != null ? r.p - cost : null),
-    keys: [], thin: r.src === "exchange" && r.size != null && r.size < 200,
-    prop: r
-  };
-}
-function wanted(p){
-  if (p.market === "spread" && !$("mSpread").checked) return false;
-  if (p.market === "ml" && !$("mMl").checked) return false;
-  if (p.market === "total" && !$("mTotal").checked) return false;
-  if (p.market === "prop" && !$("mProp").checked) return false;
-  return true;
 }
 
 function render(){
   if (!Object.keys(state.boards).length) return;
-  const plays = allPlays().filter(wanted);
-  const minEv = (parseFloat($("minEv").value) || 0) / 100;
-  const sort = $("sort").value;
-  const key = p => sort === "edge" ? (p.edge == null ? -9 : p.edge) : (sort === "kelly" ? p.kelly : p.ev);
-  const top = plays.filter(p => p.ev != null && p.ev >= minEv && p.kelly > 0).sort((a,b) => key(b) - key(a));
-  SHOWN = pickCards(top, sort);
-  renderCards(SHOWN, plays.length, sort);
+  allPlays();                             // keeps entry.live fresh for the games table
+  state.doubles = buildDoubles();
+  const all = filteredDoubles();
+  SHOWN = all.filter(d => d.edge >= betBar());
+  renderPairCards(SHOWN, all);
+  renderPairTable(all);
+  renderSpots();
   renderGames();
   renderExchange();
   renderRatings();
-  renderLegend(top.length, plays.length);
+  renderLegend(SHOWN.length, all.length);
+}
+function renderPairCards(top, all){
+  const el = $("cards");
+  if (!top.length){
+    const pricing = !Object.keys(state.legPools).length;
+    el.innerHTML = '<div class="empty">' + (pricing
+      ? '<span class="spin">⟳</span> Pricing the slate — usage, rosters, injuries and depth charts for every game, then ten thousand simulated afternoons apiece. Fifteen seconds or so.'
+      : all.length
+        ? "No double on the board clears <b>+" + setting("minEdge").toFixed(1) + " edge points</b> at " + M.fmtAm(setting("price")) +
+          ". That is a normal slate — of " + all.length + " games priced, the best pair is " +
+          (all[0] ? (all[0].edge * 100).toFixed(1) + " points" : "—") + ". Drop the bet bar to see the near misses, or check the price your book is really paying."
+        : "Nothing priced yet.") + "</div>";
+    return;
+  }
+  el.innerHTML = top.map(pairCard).join("");
+}
+// Every game, ordered, bet bar NOT applied — this is meant to be the whole
+// slate so a game that just misses is still visible.
+function renderPairTable(all){
+  const body = $("pl-body");
+  $("pl-sub").textContent = all.length ? all.length + " games priced · best pair in each" : "not built";
+  if (!all.length){ body.innerHTML = '<div class="empty">Nothing priced yet.</div>'; return; }
+  const bar = betBar();
+  body.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
+    "<th>Game</th><th>The double</th><th class=\"num\">True</th><th class=\"num\">If independent</th>" +
+    "<th class=\"num\">Lift</th><th class=\"num\">Fair</th><th class=\"num\">Edge pts</th><th class=\"num\">Spot</th><th class=\"num\">Bet</th>" +
+    "</tr></thead><tbody>" +
+    all.map(d => {
+      const g = d.entry.game, on = d.edge >= bar;
+      return "<tr" + (on ? ' style="background:#14F1950A"' : "") + "><td>" + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
+        '<br><span class="mini">' + (d.samePlayer ? "same man" : d.sameTeam ? "same team" : "opposing") + "</span></td>" +
+        "<td>" + esc(d.a.player) + " " + esc(d.a.market.toLowerCase()) + " " + esc(d.a.side.toLowerCase()) + " " + d.a.line +
+        "<br>" + esc(d.c.player) + " " + esc(d.c.market.toLowerCase()) + " " + esc(d.c.side.toLowerCase()) + " " + d.c.line + "</td>" +
+        '<td class="num"><b>' + pc(d.prob) + "</b></td>" +
+        '<td class="num">' + pc(d.naive) + "</td>" +
+        '<td class="num" style="color:' + (d.lift >= 0 ? "var(--green)" : "var(--red)") + '">' +
+          (d.lift >= 0 ? "+" : "") + (d.lift * 100).toFixed(1) + "</td>" +
+        '<td class="num">' + M.fmtAm(M.probToAm(d.prob)) + "</td>" +
+        '<td class="num"><b style="color:' + (d.edge > 0 ? "var(--green)" : "var(--red)") + '">' +
+          (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + "</b></td>" +
+        '<td class="num" style="color:' + (d.spot ? spotColour(d.spot.spot) : "var(--dim)") + '">' +
+          (d.spot ? pts(d.spot.spot) : "—") + "</td>" +
+        '<td class="num">' + (on ? money(betSize(d)) : '<span class="mini">—</span>') + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+}
+// Every offence on the slate, ranked by how soft its spot is. This is the
+// board for "target the bad defence" as opposed to "target the good player",
+// and on the baseball side the spot is usually the bigger lever of the two.
+function renderSpots(){
+  const body = $("spot-body"); if (!body) return;
+  const rows = [];
+  Object.values(state.boards).forEach(b => b.games.forEach(entry => {
+    const S = state.spots[entry.game.id]; if (!S) return;
+    [entry.game.home, entry.game.away].forEach(t => {
+      const sp = S[t.id]; if (!sp) return;
+      const them = t.id === entry.game.home.id ? entry.game.away : entry.game.home;
+      rows.push({ team: t.abbr, opp: them.abbr, home: t.id === entry.game.home.id, sp, entry });
+    });
+  }));
+  if (!rows.length){ body.innerHTML = '<div class="empty">Not priced yet.</div>'; return; }
+  rows.sort((a, b) => b.sp.spot - a.sp.spot);
+  $("spot-sub").textContent = rows.length + " offences";
+  body.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
+    "<th>Offence</th><th>Against</th><th class=\"num\">Soft defence</th><th class=\"num\">Good offence</th>" +
+    "<th class=\"num\">SPOT</th><th class=\"num\">Ref receiver</th></tr></thead><tbody>" +
+    rows.map(r => "<tr><td>" + esc(r.team) + ' <span class="mini">' + (r.home ? "home" : "away") + "</span></td>" +
+      "<td>" + esc(r.opp) + "</td>" +
+      '<td class="num" style="color:' + spotColour(r.sp.soft) + '">' + pts(r.sp.soft) + "</td>" +
+      '<td class="num" style="color:' + spotColour(r.sp.good) + '">' + pts(r.sp.good) + "</td>" +
+      '<td class="num"><b style="color:' + spotColour(r.sp.spot) + '">' + pts(r.sp.spot) + "</b></td>" +
+      '<td class="num">' + Math.round(r.sp.base * (1 + r.sp.spot)) + ' <span class="mini">vs ' + Math.round(r.sp.base) + "</span></td></tr>").join("") +
+    "</tbody></table></div>";
+}
+// Logging a double records it as one bet with two legs, so the record cannot
+// count it as two.
+function logDouble(i){
+  const d = SHOWN[i]; if (!d) return;
+  const size = betSize(d) || setting("bank") * M.kelly(d.prob, 0, d.price, setting("kf"));
+  const entered = prompt("Stake in dollars for this double at " + M.fmtAm(d.price) + "?", Math.round(size * 100) / 100 || 10);
+  if (entered == null) return;
+  const amt = parseFloat(entered); if (!isFinite(amt) || amt <= 0) return;
+  const g = d.entry.game;
+  const legOf = l => ({ player: l.player, propKey: l.key, side: l.side, line: l.line, p: l.p, market: l.market });
+  const bets = loadBets();
+  bets.push({
+    id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+    league: d.board.league, gameId: g.id, date: g.date,
+    game: g.away.abbr + " @ " + g.home.abbr,
+    market: "double", side: null,
+    label: d.a.player + " " + d.a.market.toLowerCase() + " " + d.a.side.toLowerCase() + " " + d.a.line +
+           "  +  " + d.c.player + " " + d.c.market.toLowerCase() + " " + d.c.side.toLowerCase() + " " + d.c.line,
+    line: null, price: d.price, stake: amt,
+    p: d.prob, edge: d.edge, placed: new Date().toISOString(),
+    result: null, clv: null, legs: [legOf(d.a), legOf(d.c)]
+  });
+  saveBets(bets); renderBets();
+  status("Logged the double at " + M.fmtAm(d.price) + " for " + money(amt) + ".", "var(--green)");
 }
 
 // ── the board ───────────────────────────────────────────────────────────────
@@ -425,217 +491,96 @@ function sideName(p){
   if (p.market === "total") return p.side === "over" ? "Over" : "Under";
   return p.side === "home" ? p.home.abbr : p.away.abbr;
 }
-// The sentence that has to survive a hangover: what we think, what they think,
-// and why the difference is supposed to be real.
-// What we think, what they think, and why the difference is supposed to be
-// real — the same sentence a spread card has to survive, for a prop.
-function whyProp(p){
-  const r = p.prop, R = r.range, bits = [];
-  const count = r.mkt.type === "count";
+// ── the card ────────────────────────────────────────────────────────────────
+// Laid out the way the baseball board lays a double out, because the shape is
+// right: the edge and the stake in the corner where the eye lands, the two
+// legs stacked in the middle with their own numbers, and everything that
+// justifies the bet in a foot you can read after you have decided.
+function pairLeg(l){
+  const count = l.mkt.type === "count";
   const f = v => count ? v.toFixed(1) : Math.round(v);
-  const over = r.side.toLowerCase().indexOf("under") < 0;
-  const mkt = r.mkt.label.toLowerCase();
-  if (R){
-    bits.push("We make " + esc(r.player) + " <b>" + f(R.median) + "</b> " + esc(mkt) +
-      " against a line of <b>" + r.line + "</b>. Half his simulated afternoons land between <b>" +
-      f(R.p25) + "</b> and <b>" + f(R.p75) + "</b>, so this is not a lock in either direction — it is a price disagreement.");
-  }
-  if (p.mktP != null){
-    const gap = (r.p - p.mktP) * 100;
-    bits.push("The market has the " + (over ? "over" : "under") + " at <b>" + pc(p.mktP) +
-      "</b>; we have it at <b>" + pc(r.p) + "</b>, a <b>" + Math.abs(gap).toFixed(1) + "pp</b> disagreement.");
-  }
-  if (r.src === "exchange"){
-    bits.push("Quoted on the exchange <b>" + (r.spreadCents || 0).toFixed(0) + "c</b> wide" +
-      (r.size ? " with " + Math.round(r.size).toLocaleString() + " contracts offered" : "") +
-      ", and the edge is after the fee and half that spread.");
-  } else {
-    bits.push("Priced against the line you pasted from your book.");
-  }
-  bits.push("<span class=\"mini\">Our number is blended half-and-half with the market's before the edge is taken, because nothing here can prove whose middle is right.</span>");
-  return bits.join(" ");
-}
-function why(p){
-  if (p.market === "prop") return whyProp(p);
-  const bits = [];
-  const b = p.blend;
-  if (p.market === "spread"){
-    const ourL = -b.margin, diff = Math.abs(b.margin - (b.mktMargin == null ? b.margin : b.mktMargin));
-    bits.push("We make this game <b>" + p.home.abbr + " " + M.fmtLine(ourL) + "</b> against the book's <b>" + M.fmtLine(p.line) + "</b> — " + diff.toFixed(1) + " points of disagreement.");
-    if (p.keys && p.keys.length) bits.push("That gap crosses <b>" + p.keys.join(" and ") + "</b>, where football margins actually pile up, so it is worth several times what the same gap would be worth anywhere else on the number line.");
-  } else if (p.market === "ml"){
-    bits.push("Our margin has this at <b>" + sgn(b.margin) + "</b> for " + p.home.abbr + ", which prices " + sideName(p) + " at <b>" + M.fmtAm(p.fair) + "</b> against the <b>" + M.fmtAm(p.price) + "</b> on offer.");
-    if (Math.abs(b.margin - (b.mktMargin == null ? b.margin : b.mktMargin)) < 0.35)
-      bits.push("We barely disagree with their spread, so this is the book's own two markets disagreeing with each other rather than us disagreeing with the book.");
-  } else {
-    bits.push("We project <b>" + b.total.toFixed(1) + "</b> points against a posted <b>" + p.line + "</b>.");
-  }
-  if (p.move != null && Math.abs(p.move) >= 0.5){
-    const towardHome = p.move < 0;
-    const withUs = (p.side === "home") === towardHome;
-    bits.push("The line has moved <b>" + Math.abs(p.move).toFixed(1) + "</b> toward " + (towardHome ? p.home.abbr : p.away.abbr) + " since it opened — " + (withUs ? "the money agrees with us" : "we are taking the other side of the move") + ".");
-  }
-  if (b.mktFrom === "moneyline") bits.push("No spread is posted on this game, so the book's own moneyline is the number we are measured against — there is no second market here to disagree with.");
-  if (b.capped) bits.push("Our rating wanted to move this line further than a model built on last season is allowed to; the pull has been clipped to " + p.board.L.maxShift + " points.");
-  if (p.push > 0.02) bits.push("A push is live at <b>" + pc(p.push) + "</b>; the stake is sized on the outcomes that actually resolve.");
-  if (p.thin) bits.push("<span style='color:var(--yellow)'>Thin data: one of these teams has barely played, so the rating is mostly prior season.</span>");
-  if (p.muted) bits.push("<span style='color:var(--yellow)'>One of these teams is outside the league and shares a single pooled rating with every other such team, so we cannot rate this game at all. No stake.</span>");
-  return bits.join(" ");
-}
-// Which plays get a card.
-//
-// Two things have to be defended against, and neither is a matter of taste.
-//
-// A prop on the exchange routinely shows 10-20% EV where a spread shows 2%, so
-// ranking the two together on EV alone hands every card to props and the game
-// board disappears. They are different bets with different confidence behind
-// them, so each kind gets its own guaranteed room and they are then interleaved
-// in the order the ranking actually says.
-//
-// And a man's receptions and his receiving yards are the SAME OPINION — we
-// measured them at 0.80 — so showing both as two cards invites betting one
-// view twice at two prices. One card per player, his best one.
-const CARD_MAX = 16, GAME_SLOTS = 8;
-function pickCards(sorted, sort){
-  const key = p => sort === "edge" ? (p.edge == null ? -9 : p.edge) : (sort === "kelly" ? p.kelly : p.ev);
-  // Game markets are off the cards unless asked for. When they are asked for
-  // they get half the room, because otherwise props take everything: an
-  // exchange prop routinely shows 10-20% EV where a spread shows 2%, and the
-  // two are not comparable enough for one ranking to arbitrate between them.
-  const gameSlots = Math.min(sorted.filter(p => p.market !== "prop").length, GAME_SLOTS);
-  const cap = { game: gameSlots, prop: CARD_MAX - gameSlots };
-  const seen = {}, byKind = { game: [], prop: [] };
-  sorted.forEach(p => {
-    const kind = p.market === "prop" ? "prop" : "game";
-    if (kind === "prop"){
-      const who = p.prop.player;
-      if (seen[who]) return;                 // one opinion per man
-      seen[who] = 1;
-    }
-    if (byKind[kind].length >= cap[kind]) return;
-    byKind[kind].push(p);
-  });
-  return byKind.game.concat(byKind.prop).sort((a, b) => key(b) - key(a));
-}
-function renderCards(top, total, sortKey){
-  const el = $("cards");
-  if (!top.length){
-    // The cards are props now, and props take a few seconds longer than the
-    // game board: usage, rosters, injuries and depth charts for every game,
-    // then ten thousand simulated afternoons each. An empty board during that
-    // window is work in progress, not an answer, and saying "nothing clears"
-    // would be a lie.
-    const pricing = $("mProp").checked && !state.propBoard.length;
-    el.innerHTML = '<div class="empty">' + (pricing
-      ? '<span class="spin">⟳</span> Pricing player props — usage, rosters, injuries and depth charts for every game, then ten thousand simulated afternoons apiece. Fifteen seconds or so.'
-      : "Nothing on the board clears your minimum. That is a normal night — of " + total +
-        " prices checked, none is far enough off our number to be worth the vig. Drop the minimum EV to see the near misses" +
-        ($("mProp").checked ? ", or tick Spread, Moneyline or Total above to put the game markets back on the cards" : "") + ".") +
-      "</div>";
-    return;
-  }
-  const bank = parseFloat($("bank").value) || 0;
-  el.innerHTML = top.map((p, i) => {
-    const cls = i === 0 ? "r1" : i === 1 ? "r2" : i === 2 ? "r3" : "";
-    const pn = p.p / Math.max(1e-9, 1 - p.push);
-    const mk = p.mktP == null ? null : p.mktP;
-    const stake = bank * p.kelly;
-    // The headline number is whatever the board is sorted by, so the cards read
-    // in the order their big number says they should.
-    const head = sortKey === "kelly" ? { v: money(stake), l: "STAKE" }
-               : sortKey === "edge"  ? { v: ((p.edge||0)*100).toFixed(1) + "pp", l: "EDGE VS NO-VIG" }
-               :                       { v: (p.ev*100).toFixed(1) + "%", l: "EV / $1" };
-    const keys = (p.keys || []).length ? '<span class="tag key">KEY ' + p.keys.join("/") + "</span>" : "";
-    const thin = p.thin ? '<span class="tag warn">THIN</span>' : "";
-    const lg = p.market === "prop"
-      ? '<span class="tag corr">' + esc(p.prop.pos) + " PROP</span>"
-      : '<span class="tag">' + M.LEAGUES[p.league].label + "</span>";
-    return '<div class="bet ' + cls + '">' +
-      '<div class="bet-top">' +
-        '<div class="bet-rank">#' + (i+1) + "</div>" +
-        '<div class="bet-game">' + esc(p.away.abbr) + " @ " + esc(p.home.abbr) + lg + keys + thin +
-          "<br>" + esc(kickoff(p.date)) + (p.neutral ? " · neutral" : "") + (p.venue ? " · " + esc(p.venue) : "") + "</div>" +
-        '<div class="bet-str"><div class="v">' + head.v + '</div><div class="l">' + head.l + "</div></div>" +
+  const R = l.range;
+  const tag = l.status ? '<span class="tag warn">' + esc(l.status) + "</span>" : '<span class="tag ok">✓ IN</span>';
+  const ex = l.rung ? '<span class="tag">' + (l.rung.spread * 100).toFixed(0) + "c wide</span>" : "";
+  const sp = l.spot && isFinite(l.spot.spot)
+    ? " · spot <b style=\"color:" + (l.spot.spot > 0 ? "var(--green)" : l.spot.spot < 0 ? "var(--red)" : "var(--dim)") +
+      '">' + (l.spot.spot >= 0 ? "+" : "") + f(l.spot.spot) + "</b>"
+    : "";
+  const d = l.matchup && l.matchup.def;
+  const wx = l.matchup && l.matchup.wx && l.matchup.wx.note ? " · " + esc(l.matchup.wx.note) : "";
+  return '<div class="leg">' +
+    '<div class="leg-slot">' + esc(l.side === "Under" ? "U" : "O") + "</div>" +
+    '<div class="leg-info">' +
+      '<div class="leg-name">' + esc(l.player) + " " + esc(l.market.toLowerCase()) + " " + esc(l.side.toLowerCase()) + " " + l.line + tag + ex + "</div>" +
+      '<div class="leg-meta">' + esc(l.pos) + " · " +
+        (R ? "we make him <b style=\"color:var(--text)\">" + f(R.median) + "</b>, middle half " + f(R.p25) + "–" + f(R.p75) : "") + sp + "<br>" +
+        '<span style="color:var(--dim)">' +
+        (R ? "one afternoon in ten under " + f(R.p10) + ", one in ten over " + f(R.p90) : "") + wx + "</span>" +
       "</div>" +
-      '<div class="pick">' + esc(p.label) + '<span class="px">' + M.fmtAm(p.price) + "</span></div>" +
-      (p.market === "prop" ? rangeBar(p) :
-      '<div class="bars">' +
-        bar("our number", pn, "var(--green)") +
-        (mk == null ? "" : bar("no-vig price", mk, "var(--blue)")) +
-      "</div>") +
-      '<div class="bet-foot">' +
-        "<div>Stake <b>" + money(stake) + "</b> <span class=\"mini\">(" + pc(p.kelly, 2) + " of roll)</span></div>" +
-        "<div>Edge <b>" + (p.edge == null ? "—" : (p.edge >= 0 ? "+" : "") + (p.edge*100).toFixed(1) + "pp") + "</b></div>" +
-        "<div>EV <b>" + (p.ev >= 0 ? "+" : "") + (p.ev*100).toFixed(1) + "%</b> per $1</div>" +
-        "<div>Fair price <b>" + M.fmtAm(p.fair) + "</b></div>" +
-        (p.market === "prop"
-          ? "<div>" + (p.prop.src === "exchange"
-              ? "Spread <b>" + (p.prop.spreadCents || 0).toFixed(0) + "c</b> <span class=\"mini\">" +
-                (p.prop.size ? Math.round(p.prop.size).toLocaleString() + " up" : "thin") + "</span>"
-              : "At <b>your book</b>") + "</div>"
-          : "<div>Book hold <b>" + (p.hold == null ? "—" : (p.hold*100).toFixed(1) + "%") + "</b></div>") +
+    '<div class="leg-prob">' + pc(l.p) + "<small>clears</small></div>" +
+  "</div>";
+}
+function pairCard(d, i){
+  const good = d.edge > 0;
+  const size = betSize(d), bank = setting("bank");
+  const kelly = M.kelly(d.prob, 0, d.price, setting("kf"));
+  const g = d.entry.game;
+  const S = d.spot;
+  const row = (label, value, title) => '<span' + (title ? ' title="' + esc(title) + '"' : "") + ">" + label + "</span>" +
+    '<span style="text-align:right">' + value + "</span>";
+  return '<div class="bet ' + (good ? "r" + Math.min(i + 1, 3) : "neg") + '">' +
+    '<div class="bet-top">' +
+      '<div class="bet-rank">#' + (i + 1) + (good ? "" : " ✗ NO EDGE") + "</div>" +
+      '<div class="bet-game">' + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
+        (d.samePlayer ? ' <span class="tag warn">SAME MAN</span>' : (d.sameTeam ? ' <span class="tag corr">SAME TEAM</span>' : ' <span class="tag">OPPOSING</span>')) +
+        (d.edgeView != null && d.edgeCorr != null && d.edgeView > Math.max(0.02, d.edgeCorr * 2)
+          ? ' <span class="tag warn" title="Most of this card\u2019s edge is our number disagreeing with a live market, not the measured correlation. Treat it as an opinion.">MOSTLY OPINION</span>' : "") +
+        "<br><span style=\"color:var(--dim)\">" + esc(kickoff(g.date)) + (g.venue ? " · " + esc(g.venue) : "") + "</span></div>" +
+      '<div class="bet-str">' +
+        '<div class="v">' + (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + "</div>" +
+        '<div class="l">EDGE PTS</div>' +
+        '<div class="stake">' + (size > 0 ? money(size) : "—") + "</div>" +
+        '<div class="stake-l">' + (size > 0 ? "BET · $" + setting("perEdge").toFixed(2) + "/PT" : "NO BET") + "</div>" +
       "</div>" +
-      (p.market === "prop" ? spotLine(p) : venueLine(p)) +
-      '<div class="why">' + why(p) + "</div>" +
-      '<button class="run-btn" style="margin-top:11px;width:100%;padding:9px" onclick=\'logBet(' + i + ')\'>LOG THIS BET — ' + money(stake) + "</button>" +
-    "</div>";
-  }).join("");
-}
-// ── a prop, drawn as a card ─────────────────────────────────────────────────
-// A spread gets two probability bars because there are two numbers worth
-// comparing. A prop has a whole distribution, so it gets the distribution: the
-// middle half of ten thousand simulated games as a solid band, the 10th-to-90th
-// as a faint one, and the line marked on it. Where the line sits inside that
-// picture IS the bet, and it is quicker to read than any percentage.
-function rangeBar(p){
-  const r = p.prop, R = r.range;
-  if (!R) return '<div class="bars">' + bar("our number", r.p, "var(--green)") + "</div>";
-  const count = r.mkt.type === "count";
-  const f = v => count ? v.toFixed(1) : Math.round(v);
-  const lo = Math.min(R.p10, r.line), hi = Math.max(R.p90, r.line);
-  const span = Math.max(1e-6, hi - lo);
-  const at = v => ((v - lo) / span) * 100;
-  const over = r.side.toLowerCase().indexOf("under") < 0;
-  return '<div class="rangewrap">' +
-    '<div class="rangerow"><span class="rangelab">likely range</span>' +
-      '<span class="rangetrack">' +
-        '<span class="rangefaint" style="left:' + at(R.p10).toFixed(1) + '%;width:' + (at(R.p90)-at(R.p10)).toFixed(1) + '%"></span>' +
-        '<span class="rangefill" style="left:' + at(R.p25).toFixed(1) + '%;width:' + (at(R.p75)-at(R.p25)).toFixed(1) + '%"></span>' +
-        '<span class="rangemed" style="left:' + at(R.median).toFixed(1) + '%"></span>' +
-        '<span class="rangeline" style="left:' + at(r.line).toFixed(1) + '%"></span>' +
-      "</span>" +
     "</div>" +
-    '<div class="rangekeys">' +
-      "<span>" + f(R.p10) + "</span>" +
-      "<span><b>" + f(R.p25) + " – " + f(R.p75) + "</b> middle half</span>" +
-      "<span>" + f(R.p90) + "</span>" +
+    pairLeg(d.a) + pairLeg(d.c) +
+    '<div class="bet-foot">' +
+      row("Both to clear", '<b style="color:var(--text)">' + pc(d.prob) + "</b> true") +
+      row("Our two legs multiplied", pc(d.naive), "What the same two legs come to if you pretend they are independent — which is what the payout assumes") +
+      (d.mktProd == null ? "" :
+        row("The market's two multiplied", pc(d.mktProd), "The exchange's own midpoints on these two rungs, multiplied")) +
+      row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
+      row("Price / breakeven", M.fmtAm(d.price) + " · " + pc(d.breakeven) +
+        (setting("price") && Math.abs(setting("price")) >= 100 ? ' <span class="mini">yours</span>'
+                                                               : ' <span class="mini">from the legs</span>')) +
+      row("Expected value", '<b style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
+        (d.ev >= 0 ? "+" : "") + (d.ev * 100).toFixed(1) + "%</b>") +
+      row("¼-Kelly stake", '<b style="color:' + (kelly > 0 ? "var(--green)" : "var(--dim)") + '">' + money(bank * kelly) + "</b>") +
+      row("Correlation", 'ρ ' + d.rho.toFixed(3) + ' · <b style="color:var(--purple)">' +
+        (d.lift >= 0 ? "+" : "") + (d.lift * 100).toFixed(1) + "pts</b>",
+        "How much the two legs being in one game is worth against multiplying them as independent") +
+      (d.edgeCorr == null ? "" :
+        row("&nbsp;&nbsp;↳ of the edge, from correlation",
+          '<b style="color:var(--purple)">' + (d.edgeCorr >= 0 ? "+" : "") + (d.edgeCorr * 100).toFixed(1) + "pts</b>",
+          "Measured on two seasons of real games. This part does not need our number to be better than the market's — only for the two legs to move together, which they do.") +
+        row("&nbsp;&nbsp;↳ from our number vs the market",
+          '<b style="color:' + (Math.abs(d.edgeView) > Math.abs(d.edgeCorr) * 1.5 ? "var(--yellow)" : "var(--muted)") + '">' +
+          (d.edgeView >= 0 ? "+" : "") + (d.edgeView * 100).toFixed(1) + "pts</b>",
+          "A claim that we price these two legs better than a live money market does. The bigger this is relative to the correlation, the more of the card is opinion rather than arithmetic.") +
+        row("&nbsp;&nbsp;↳ the book's margin",
+          '<span style="color:var(--red)">' + (d.vig * 100).toFixed(1) + "pts</span>",
+          "What the vig on the two legs costs you")) +
+      (S ? row("Soft defence", '<b style="color:' + spotColour(S.soft) + '">' + pts(S.soft) + "pts</b>",
+              "How bad the defence opposite is, with the offence held at league average") : "") +
+      (S ? row("Good offence", '<b style="color:' + spotColour(S.good) + '">' + pts(S.good) + "pts</b>",
+              "How good this offence is, with the opposition held at league average") : "") +
+      (S ? row("SPOT vs league", '<b style="color:' + spotColour(S.spot) + '">' + pts(S.spot) + "pts</b>",
+              "The two together — what a typical pass-catcher in this offence does against this defence today") : "") +
     "</div>" +
-    '<div class="rangenote">Our number <b>' + f(R.median) + "</b> · line <b>" + r.line + "</b> · " +
-      "we have him " + (over ? "over" : "under") + " it <b>" + pc(r.p) + "</b> of the time" +
-      (p.mktP != null ? ' <span class="mini">(market ' + pc(p.mktP) + ")</span>" : "") +
-    "</div></div>";
+    '<button class="run-btn" style="margin-top:11px;width:100%;padding:9px" onclick=\'logDouble(' + i + ')\'>LOG THIS DOUBLE — ' + money(size > 0 ? size : bank * kelly) + "</button>" +
+  "</div>";
 }
-// The four levers, spelled out. This is the same decomposition the props table
-// shows in its SPOT column, written as a sentence because a card has room.
-function spotLine(p){
-  const sp = p.prop.spot;
-  if (!sp || !isFinite(sp.spot)) return "";
-  const count = p.prop.mkt.type === "count";
-  const f = v => (v >= 0 ? "+" : "") + (count ? v.toFixed(1) : Math.round(v));
-  const big = Math.abs(count ? 0.15 : 1.5);
-  const parts = [
-    ["game script and pace", sp.volume],
-    ["the defence opposite", sp.matchup],
-    ["who is out", sp.bodies],
-    ["weather", sp.weather]
-  ].filter(x => Math.abs(x[1]) >= big).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
-  const col = sp.spot > 0 ? "var(--green)" : (sp.spot < 0 ? "var(--red)" : "var(--muted)");
-  return '<div class="why" style="border-top-style:solid">' +
-    '<b style="color:' + col + '">Spot ' + f(sp.spot) + "</b> against a neutral afternoon" +
-    (parts.length ? " — " + parts.map(x => x[0] + " " + f(x[1])).join(", ") : " — nothing much moving it") +
-    (p.prop.status ? ' <span class="tag warn">' + esc(p.prop.status) + "</span>" : "") +
-    "</div>";
-}
+
 function bar(label, v, colour){
   return '<div class="bar"><span style="width:78px">' + label + '</span><span class="track"><span class="fill" style="width:' +
     Math.max(1, Math.min(100, v*100)).toFixed(1) + "%;background:" + colour + '"></span></span><span class="n">' + pc(v) + "</span></div>";
@@ -858,27 +803,19 @@ async function runBacktest(){
 }
 
 function renderLegend(shown, total){
-  const nProp = SHOWN.filter(p => p.market === "prop").length;
-  const nGame = SHOWN.length - nProp;
+  const on = state.doubles.filter(d => d.edgeCorr != null);
+  const mostlyCorr = on.filter(d => d.edgeCorr >= d.edgeView).length;
   $("legend").innerHTML =
-    "<b>" + shown + "</b> of " + total + " prices on the board clear your filters. " +
-    (nProp
-      ? "The cards are <b>" + nProp + " player props</b>" + (nGame ? " and <b>" + nGame + " game bets</b>" : "") +
-        " — one card per player, because a man's receptions and his receiving yards are the same opinion twice and betting it twice is not diversification. " +
-        (nGame ? "" : "Spreads, moneylines and totals are still priced and still in the table below; tick them above to card them too. ")
-      : "") +
-    "<b>EV</b> is what one dollar on that price returns on average if our number is right; <b>edge</b> is our probability minus the book's own price with its margin stripped out. " +
-    "Stakes are " + $("kf").selectedOptions[0].text.split(" ")[0] + " of the Kelly fraction on the outcomes that actually resolve — a push refunds, so it is not a loss.<br>" +
-    "<b>How the number is built:</b> every result this season and last is fit into offence and defence ratings with blowouts compressed and last season discounted; " +
-    "the projection is put on the market's own scale across the whole slate, then blended with the market line; " +
-    "the margin is turned into a distribution that respects 3 and 7 rather than a bell curve, which is what makes half-points and moneylines price correctly.<br>" +
-    "<b>Where the money actually is:</b> best execution. The same outcome is for sale at a sportsbook and on an exchange, and on a live slate the exchange is the cheaper venue about half the time, worth roughly a cent a contract " +
-    "and up to three or four on the best of them — against a book hold of four and a half. That pays whether or not the rating is any good, which is more than the rating can say.<br>" +
-    "<b>NFL only.</b> College is gone: every systematic error this board has had came from it — a pooled rating shared by every team outside the league, lines the book never posted, and a calibration bent by games that could not be rated. " +
-    "Player props took its place because they are the softest market in football and the one our number is checked against a real ladder on every rung.<br>" +
-    "<b>What this is not:</b> the backtest panel below is the honest scoreboard. A power rating built from public box scores does not beat a sharp NFL closing line, and the panel will tell you so. " +
-    "The player projections have been fitted against the exchange's own ladders — the standard deviations agree with it to a fraction of a yard now — but a five-point disagreement in the middle of those ladders remains, " +
-    "and nothing here can prove whether that is our error or the market's. Every prop is priced as though it might be ours.";
+    "<b>" + shown + "</b> of " + total + " games have a double clearing the bet bar. " +
+    "<b>Edge points</b> is our probability for the pair minus what the price needs; the stake is that number times your dollars-per-point, so the arithmetic on the card checks out by hand.<br>" +
+    "<b>Where the edge comes from, and how much of it to believe.</b> Every card splits its edge three ways. " +
+    "The part <b>from correlation</b> is arithmetic: two seasons of real games say these legs move together by this much and the payout assumes they do not, and that part does not need our number to beat the market's. " +
+    "The part <b>from our number vs the market</b> is a claim that we price the legs better than a live money market does — a much bigger claim, and historically the one that has been wrong. " +
+    (on.length ? "On this slate <b>" + mostlyCorr + " of " + on.length + "</b> doubles are correlation-dominant; the rest are flagged <b>MOSTLY OPINION</b> and should be read as one. " : "") + "<br>" +
+    "<b>Every leg is a real, quoted rung.</b> A leg the exchange does not price is left out entirely rather than carried at our number with nothing to check it — that is where a model's worst mistakes end up, and it would not be a bet you could get down anyway. " +
+    "Each leg's probability is the simulation's, put through the slate calibration fitted on every rung the exchange quotes, then blended with that rung's own midpoint, weighted by how tightly it is quoted.<br>" +
+    "<b>The spot</b> is the same idea the baseball board runs on: how soft this afternoon is for a league-average pass-catcher, split into the defence opposite and the offence he is in. Best defence to worst is worth about fifty points on this slate, which is a bigger lever than which receiver you pick out of it.<br>" +
+    "<b>What this is not:</b> a promise. The backtest panel below is the honest scoreboard, and a power rating built from public box scores does not beat a sharp NFL closing line.";
 }
 
 // ── the exchange ────────────────────────────────────────────────────────────
@@ -1003,23 +940,6 @@ function renderExchange(){
       : '<div class="note">Our number finds nothing on the exchange worth two cents after fees once it is blended toward the exchange\'s own midpoint at the weight the backtest says it has earned. That is the usual answer, and it is the honest one: the deep rungs light up only when you trust our tails more than a real market\'s.</div>');
 }
 
-// The same bet, priced at the other venue, printed on the card. This is the
-// line that actually saves money: the model can be wrong and this still pays.
-function venueLine(p){
-  const r = betterVenue(p);
-  if (!r) return "";
-  const cheaper = r.better === "exchange";
-  const save = r.gainCents.toFixed(1);
-  if (r.gainCents < 0.2) return '<div class="why" style="border-top-style:solid">Book and exchange are the same price here.</div>';
-  return '<div class="why" style="border-top-style:solid;color:' + (cheaper ? "var(--green)" : "var(--muted)") + '">' +
-    (cheaper
-      ? "<b>Cheaper on the exchange:</b> " + (r.exCost * 100).toFixed(1) + "c all-in against the book's " + (r.bookCost * 100).toFixed(1) +
-        "c — <b>" + save + "c</b> saved on every dollar of payout" + (r.size ? ', <span class="mini">' + Math.round(r.size).toLocaleString() + " contracts offered</span>" : "")
-      : "Book has the better price here: " + (r.bookCost * 100).toFixed(1) + "c against the exchange's " + (r.exCost * 100).toFixed(1) + "c all-in.") +
-    (r.arb != null && r.arb > 0.002 ? ' <span class="tag ok">ARB +' + (r.arb * 100).toFixed(1) + "c</span>" : "") +
-    "</div>";
-}
-
 // What a play on the main board would cost at the other venue.
 function betterVenue(p){
   const entry = p.entry;
@@ -1101,7 +1021,7 @@ async function gradeAll(){
     // Props need the box score as well as the score. One call per game, and
     // only for games that actually have an open prop on them.
     const needPlayers = {};
-    bets.forEach(b => { if (b.result == null && b.market === "prop" && results[b.gameId]) needPlayers[b.league + "|" + b.gameId] = true; });
+    bets.forEach(b => { if (b.result == null && (b.market === "prop" || b.market === "double") && results[b.gameId]) needPlayers[b.league + "|" + b.gameId] = true; });
     for (const key of Object.keys(needPlayers)){
       const [lg, gid] = key.split("|");
       try{ results[gid].players = await M.loadPlayerStats(M.LEAGUES[lg], gid); }catch(e){}
@@ -1110,7 +1030,7 @@ async function gradeAll(){
       const r = results[b.gameId];
       if (b.result == null && r) b.result = M.gradeBet(b, r);
       // Closing line once the game has gone off, for the value read.
-      if (b.market !== "prop" && b.clv == null && (b.result != null || new Date(b.date) < new Date())){
+      if (b.market !== "prop" && b.market !== "double" && b.clv == null && (b.result != null || new Date(b.date) < new Date())){
         try{
           const close = await M.loadClosingLine(M.LEAGUES[b.league], b.gameId);
           const c = M.betCLV(b, close, M.LEAGUES[b.league]);
@@ -1474,7 +1394,8 @@ async function rankProps(usePaste){
     // the exchange quotes? That is what the calibration is fitted on, and it
     // has to be fitted before a single prop is priced, or a five-point offset
     // decides every recommendation on the board.
-    const found = [], pairs = [];
+    const found = [], pairs = [], pending = [];
+    state.legPools = {}; state.spots = {};
     for (const b of Object.values(state.boards)){
       if (!b.L.bulkPlayers){ continue; }
       const kp = state.kprops[b.league];
@@ -1487,6 +1408,22 @@ async function rankProps(usePaste){
         // Simulate the game once. Everything below — the range on each prop,
         // and every parlay built later — reads off these same afternoons.
         const sim = simFor(entry, list);
+        // The spots need nothing fitted, so they can be built here. The leg
+        // pools cannot: they depend on the slate calibration, which is not
+        // fitted until every game has been seen.
+        if (sim){
+          pending.push({ b, entry, list, sim });
+          if (!state.lgTs) state.lgTs = M.leagueTeamStats(b.teamStats);
+          const S = state.spots[entry.game.id] = {};
+          [[entry.game.home, entry.game.away, entry.proj.homePts, entry.blend.margin],
+           [entry.game.away, entry.game.home, entry.proj.awayPts, -entry.blend.margin]].forEach(([me, them, ptsF, mgn]) => {
+            try{
+              S[me.id] = M.sideSpot(b.L, b.teamStats[me.id], state.lgTs, {
+                pts: ptsF, total: entry.blend.total, mgn,
+                def: M.defenceProfile(b.teamStats[them.id]), wx: M.weatherFactor(entry.game) });
+            }catch(e){ S[me.id] = null; }
+          });
+        }
         list.forEach(pl => {
           players++;
           pl.markets.forEach(mkt => {
@@ -1528,6 +1465,9 @@ async function rankProps(usePaste){
     // Fit our probabilities onto the market's scale, then price what is left.
     const probCal = M.calibrateProbs(pairs);
     state.probCal = probCal;
+    // Now the calibration exists, the doubles can be built on numbers that
+    // have been through it.
+    pending.forEach(x => { state.legPools[x.entry.game.id] = legPool(x.b, x.entry, x.list, x.sim); });
     found.forEach(f => {
       const o = Object.assign({}, opts(f.board), { probCal });
       const best = M.priceKalshiProp(f.rung, f.ourP, o);
@@ -1539,9 +1479,7 @@ async function rankProps(usePaste){
     rows.sort((a, c) => c.kelly - a.kelly);
     state.propBoard = rows;
     renderPropBoard(rows, games, players, pasted.length, usePaste, probCal);
-    buildLegs(rows);
-    rankParlays();
-    render();                 // the props are bets now; put them on the board
+    render();
   }catch(e){
     body.innerHTML = '<div class="empty" style="color:var(--red)">Could not rank props: ' + esc(e.message || e) + "</div>";
   }finally{ btn.disabled = false; }
@@ -1635,6 +1573,208 @@ function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
 }
 
 
+
+// ── the doubles ─────────────────────────────────────────────────────────────
+// The baseball board's whole product is a two-man same-game hit double, and
+// the reason is not novelty: a book prices a parlay as the product of its
+// legs' decimal odds, which is only correct if the legs are independent. Two
+// men in one game never are. That gap is the bet, and it is the one edge on
+// either board that does not depend on our number being better than the
+// market's — only on the two legs moving together, which is measurable.
+//
+// Every pair here is priced off the same ten thousand simulated afternoons, so
+// the joint probability is read rather than assumed, at any correlation, in
+// either direction, with no copula to fray in the tails.
+
+// What a book would actually pay for this double.
+//
+// The baseball board can take ONE price off the user, because every leg there
+// is the same event — a hitter records a hit — and those sit in a narrow band
+// around two-thirds, so a single double price is meaningful. Prop legs are
+// nothing like that: ours run from 30% to 88%, and quoting all of them at the
+// same +264 hands a card 29 edge points for the crime of containing a heavy
+// favourite. The price has to be built from the legs.
+//
+// Each leg is priced at what the market has it at, plus a book's margin, and
+// the parlay pays the product — which is exactly the assumption this whole
+// board exists to attack. Where the exchange quotes the rung we use its
+// midpoint; where it does not, the leg is priced at OUR number, so it
+// contributes no edge rather than inventing one.
+const BOOK_JUICE = 0.9545;            // a fair 50/50 offered at -110
+function legMarketP(l){
+  if (l.rung && l.rung.mid != null) return l.side === "Under" ? 1 - l.rung.mid : l.rung.mid;
+  return null;
+}
+function legBookDec(l){
+  const m = legMarketP(l);
+  return BOOK_JUICE / clamp01(m == null ? l.p : m);
+}
+const clamp01 = v => Math.max(0.02, Math.min(0.98, v));
+// The user's box overrides it: type what your book is really offering and the
+// whole board reprices against that instead. Leave it at 0 for auto.
+function parlayDec(d){
+  const typed = setting("price");
+  if (typed && Math.abs(typed) >= 100) return M.amToDec(typed);
+  return legBookDec(d.a) * legBookDec(d.c);
+}
+
+const setting = id => { const el = $(id); if (!el) return null;
+  if (el.type === "checkbox") return el.checked;
+  if (el.tagName === "SELECT") return el.value;
+  return +el.value; };
+const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
+const spotColour = v => v >= 0.08 ? "var(--green)" : (v >= 0 ? "var(--yellow)" : "var(--dim)");
+
+// Legs worth putting in a double. Not the ranked singles — those are only the
+// ones that beat their own price, and a leg can be perfectly good inside a
+// pair without being a bet on its own. The line is the exchange's strike where
+// it quotes one, because that is a number you can actually get down on.
+const LEG_LO = 0.30, LEG_HI = 0.88;
+function legPool(b, entry, list, sim){
+  const kp = state.kprops[b.league];
+  const out = [];
+  list.forEach(pl => {
+    const man = sim && sim.manOf[pl.player.id];
+    if (!man) return;
+    const avail = pl.avail == null ? 1 : pl.avail;
+    pl.markets.forEach(mkt => {
+      // Only markets the simulation itself publishes. simMarketFor will build
+      // one from raw samples for the display fallback, and that has no minimum
+      // — which put a backup quarterback projected at zero passing yards into
+      // the pool as a 77% "under". A market nobody would hang is not a leg.
+      const sm = (sim.byPlayer[pl.player.id] || {})[mkt.key];
+      if (!sm || sm.type === "binary") return;
+      if (!kp || mkt.ourLine == null) return;
+      // And only where the exchange actually quotes the rung. A leg with no
+      // market price carries our number at full weight with nothing to check
+      // it, which is exactly where a model's worst mistakes end up — and it
+      // would not be a bet you could get down anyway.
+      const rung = M.kalshiRung(kp, entry, pl.player.name, mkt.key, mkt.ourLine);
+      if (!rung || rung.mid == null) return;
+      const line = rung.strike;
+      ["Over", "Under"].forEach(side => {
+        const leg = M.simLeg(man, sm, side, line);
+        // The raw simulated tail is NOT the number to bet. It goes through the
+        // same two steps a single does, in the same order: the slate-level
+        // calibration fitted on every rung the exchange quotes, then a blend
+        // with the market's own mid weighted by how tightly that rung is
+        // quoted. Skipping this is how a double ends up claiming 79% on a
+        // market priced at 8% and asking you to stake on it.
+        leg.pRaw = leg.p;
+        let p = state.probCal ? M.applyProbCal(state.probCal, leg.p) : leg.p;
+        leg.pModel = p;
+        if (rung && rung.mid != null){
+          const mp = side === "Under" ? 1 - rung.mid : rung.mid;
+          const w = M.propWeight(rung.spread);
+          p = Math.max(1e-4, Math.min(1 - 1e-4, w * p + (1 - w) * mp));
+        }
+        leg.p = p;
+        // The simulation's hit mask still carries the raw view, so the joint
+        // probability is rescaled by how far the calibrated leg moved. Without
+        // this the pair reads off one set of numbers and the legs another.
+        leg.shift = leg.pRaw > 1e-6 ? p / leg.pRaw : 1;
+        if (!(leg.p >= LEG_LO && leg.p <= LEG_HI)) return;
+        leg.teamId = pl.teamId;
+        leg.player = pl.player.name;
+        leg.pos = pl.player.pos;
+        leg.status = pl.status || null;
+        leg.avail = avail;
+        leg.market = mkt.label;
+        leg.key = mkt.key;
+        leg.range = sm.range;
+        leg.rung = rung;
+        leg.spot = spotFor(b, entry, pl, mkt.key);
+        leg.matchup = pl.matchup;
+        out.push(leg);
+      });
+    });
+  });
+  return out;
+}
+
+// The best pair in each game, at the price on offer. Every combination is
+// enumerated rather than assuming the two likeliest legs make the best double
+// — once correlation is priced in, a quarterback and his own receiver often
+// beat two higher singles from opposite sides.
+function buildDoubles(){
+  const out = [];
+  Object.values(state.boards).forEach(b => {
+    b.games.forEach(entry => {
+      const pool = (state.legPools[entry.game.id] || []).filter(l => {
+        if (setting("onlyPosted") && l.status) return false;
+        return true;
+      });
+      if (pool.length < 2) return;
+      // Cap the pool by probability before enumerating: 24 legs is 276 pairs a
+      // game, which is instant, and the legs below that are not going to win a
+      // ranking anyway.
+      const top = pool.slice().sort((a, c) => c.p - a.p).slice(0, 24);
+      let best = null;
+      for (let i = 0; i < top.length; i++) for (let j = i + 1; j < top.length; j++){
+        const a = top[i], c = top[j];
+        const samePlayer = a.player === c.player;
+        if (samePlayer && !setting("allowSame")) continue;
+        const sameTeam = a.teamId === c.teamId;
+        if (setting("onlyTeam") && !sameTeam) continue;
+        // The joint comes off the simulation, then carries both legs'
+        // calibration shifts. That keeps "both clear" consistent with the two
+        // leg percentages printed above it on the card.
+        const rawJoint = M.parlayProb([a, c]);
+        const prob = Math.max(1e-4, Math.min(1 - 1e-4, rawJoint * (a.shift || 1) * (c.shift || 1)));
+        const naive = a.p * c.p;
+        const dec = parlayDec({ a, c }) || 1;
+        const ev = prob * dec - 1;
+        // Split the edge into the part that is defensible and the part that is
+        // not. Correlation is measured — two seasons of real games say these
+        // legs move together by this much, and the book's price says they do
+        // not. Our disagreement with the market on the legs themselves is a
+        // claim that we know the number better than a live money market does,
+        // which is a much bigger claim and the one that has historically been
+        // wrong. A card whose edge is nearly all disagreement should be read
+        // as an opinion; one whose edge is mostly correlation is arithmetic.
+        const mpA = legMarketP(a), mpC = legMarketP(c);
+        const mktProd = (mpA == null || mpC == null) ? null : mpA * mpC;
+        const liftRatio = naive > 1e-9 ? prob / naive : 1;
+        const edgeCorr = mktProd == null ? null : mktProd * liftRatio - mktProd;
+        const edgeView = mktProd == null ? null : prob - mktProd * liftRatio;
+        const cand = { a, c, prob, naive, lift: prob - naive, price: M.probToAm(1 / dec),
+          mktProd, edgeCorr, edgeView, vig: mktProd == null ? null : mktProd - 1 / dec,
+          rho: naive > 0 && naive < 1 ? (prob - naive) / Math.sqrt(Math.max(1e-9, a.p*(1-a.p)*c.p*(1-c.p))) : 0,
+          ev, breakeven: 1 / dec, edge: prob - 1 / dec, dec,
+          samePlayer, sameTeam, entry, board: b,
+          spot: sameTeam ? sideSpotOf(entry, a.teamId)
+                         : avgSpot(sideSpotOf(entry, a.teamId), sideSpotOf(entry, c.teamId)) };
+        if (!best || cand.edge > best.edge) best = cand;
+      }
+      if (best) out.push(best);
+    });
+  });
+  return out;
+}
+const avgSpot = (x, y) => (!x || !y) ? (x || y) : { soft: (x.soft+y.soft)/2, good: (x.good+y.good)/2, spot: (x.spot+y.spot)/2, base: x.base };
+function sideSpotOf(entry, teamId){ return (state.spots[entry.game.id] || {})[teamId] || null; }
+
+// The whole slate, ordered, with the display filters applied but NOT the bet
+// bar — this is the table below, and it is meant to be every game.
+function filteredDoubles(){
+  let p = state.doubles.slice();
+  const ms = setting("minSpot") / 100;
+  if (ms > 0) p = p.filter(x => x.spot && x.spot.spot >= ms);
+  const by = setting("sort");
+  if (by === "spot") p.sort((a, b) => ((b.spot&&b.spot.spot)||0) - ((a.spot&&a.spot.spot)||0) || b.prob - a.prob);
+  else if (by === "prob") p.sort((a, b) => b.prob - a.prob);
+  else p.sort((a, b) => b.edge - a.edge || b.prob - a.prob);
+  return p;
+}
+// The bets: every game clearing the bar, and only those. No cap — a card per
+// qualifying game, so the board and any alert cannot disagree about what
+// counts as a bet.
+const betBar = () => setting("minEdge") / 100;
+const edgePts = d => +(d.edge * 100).toFixed(1);
+// Stake from the DISPLAYED edge, so the arithmetic on screen checks out by
+// hand: 5.5 x $2.50 is $13.75, not $13.83 from an unrounded 5.53.
+const betSize = d => { const p = edgePts(d); return p > 0 ? p * setting("perEdge") : 0; };
+
 // ── the simulation, the ranges and the parlays ──────────────────────────────
 // One simulated game serves everything: the range printed beside each prop,
 // and every ticket priced below. Cached per game so a re-rank is instant and
@@ -1677,84 +1817,6 @@ function spotFor(board, entry, pl, key){
       scale: null
     }, key);
   }catch(e){ return null; }
-}
-
-// Turn the priced prop rows into parlay legs. A leg needs two things the
-// board already has: which simulated afternoons it won on, and what it pays.
-function buildLegs(rows){
-  const legs = [];
-  rows.forEach(r => {
-    if (!r.man || !r.sim || r.line == null) return;
-    const dec = r.src === "exchange"
-      ? (r.cost > 0.01 ? 1 / r.cost : null)         // a contract costing 38c pays 100c
-      : M.amToDec(r.price);
-    if (!(dec > 1.01)) return;
-    const leg = M.simLeg(r.man, r.sim, r.side, r.line);
-    leg.dec = dec; leg.gameId = r.entry.game.id; leg.row = r;
-    leg.label = r.player + " " + r.mkt.label + " " + r.side + " " + r.line;
-    leg.where = r.src;
-    legs.push(leg);
-  });
-  state.legs = legs;
-  return legs;
-}
-
-function rankParlays(){
-  const body = $("pl-body");
-  if (!state.legs.length){
-    $("pl-sub").textContent = "not built";
-    body.innerHTML = '<div class="empty">Rank the props first — parlays are built out of the same legs, priced off the same simulated games.</div>';
-    return;
-  }
-  const size = parseInt($("plSize").value, 10) || 2;
-  const allowSame = $("plSame").checked;
-  const rank = $("plRank").value;
-  const bank = parseFloat($("bank").value) || 0;
-  const kf = parseFloat($("kf").value) || 0.25;
-
-  // Parlays are built INSIDE one game. Across two games the legs really are
-  // independent, the product really is the right price, and there is nothing
-  // there for us — so there is no point enumerating them.
-  const byGame = {};
-  state.legs.forEach(l => (byGame[l.gameId] = byGame[l.gameId] || []).push(l));
-  let out = [];
-  Object.values(byGame).forEach(legs => {
-    if (legs.length < size) return;
-    out = out.concat(M.buildParlays(legs, { size, rank, kelly: kf, pool: 12, minP: 0.02 }));
-  });
-  if (!allowSame) out = out.filter(p => !p.samePlayer);
-  out.sort((a, b) => (rank === "lift" ? b.lift - a.lift : b.ev - a.ev) || b.p - a.p);
-  state.parlays = out;
-
-  $("pl-sub").textContent = out.length.toLocaleString() + " tickets priced off " +
-    Object.keys(byGame).length + " simulated games · " + SIM_N.toLocaleString() + " draws each";
-  if (!out.length){ body.innerHTML = '<div class="empty">No combination clears the price on offer.</div>'; return; }
-
-  body.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
-    "<th>Ticket</th><th class=\"num\">Book pays</th><th class=\"num\">If independent</th>" +
-    "<th class=\"num\">Our true %</th><th class=\"num\">Lift</th><th class=\"num\">Fair price</th>" +
-    "<th class=\"num\">EV</th><th class=\"num\">Stake</th>" +
-    "</tr></thead><tbody>" +
-    out.slice(0, 20).map(t => {
-      const g = t.legs[0].row.entry.game;
-      const good = t.lift > 0;
-      return "<tr><td>" +
-        t.legs.map(l => esc(l.label) + ' <span class="mini">' + esc(l.where) +
-          (l.dec ? " @ " + M.fmtAm(M.probToAm(1 / l.dec)) : "") + "</span>").join("<br>") +
-        '<br><span class="mini">' + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
-        (t.samePlayer ? ' <span class="tag warn">same player</span>' : (t.sameTeam ? ' <span class="tag corr">same team</span>' : "")) +
-        "</span></td>" +
-        '<td class="num">' + M.fmtAm(t.american) + "</td>" +
-        '<td class="num">' + pc(t.naive) + "</td>" +
-        '<td class="num"><b>' + pc(t.p) + "</b></td>" +
-        '<td class="num" style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
-          (good ? "+" : "") + (t.lift * 100).toFixed(1) + "pp" +
-          ' <span class="mini">' + (good ? "+" : "") + (t.liftPct * 100).toFixed(0) + "%</span></td>" +
-        '<td class="num">' + M.fmtAm(t.fair) + "</td>" +
-        '<td class="num" style="color:' + (t.ev > 0 ? "var(--green)" : "var(--dim)") + '">' +
-          (t.ev >= 0 ? "+" : "") + (t.ev * 100).toFixed(1) + "%</td>" +
-        '<td class="num">' + (t.kelly > 0 ? money(bank * t.kelly) : "—") + "</td></tr>";
-    }).join("") + "</tbody></table></div>";
 }
 
 // ── boot ────────────────────────────────────────────────────────────────────

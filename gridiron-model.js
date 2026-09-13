@@ -1392,6 +1392,61 @@ function priceProp(mkt, line, over, under, kf) {
   return res;
 }
 
+
+// ── the spot, read three ways ───────────────────────────────────────────────
+// The baseball board splits a hitter's night into how bad the arm is and how
+// good the bats are, and reports both in points against a league-neutral leg.
+// It is the most useful number on that page, because it says WHERE to look
+// before it says who to bet, and the arm is usually a bigger lever than the
+// hitter.
+//
+// This is the football version. A league-average receiver is run through four
+// worlds and the differences are the readings:
+//
+//   SOFT D    league-average offence against THIS defence, in THIS weather.
+//             How bad the men opposite are, with our own side held neutral.
+//   GOOD OFF  THIS offence against a league-average defence. How good the side
+//             is, with the opposition held neutral.
+//   SPOT      both at once: what a typical pass-catcher in THIS offence
+//             actually does against THIS defence today. The thesis in one
+//             number.
+//
+// Reported as percent of a neutral afternoon, which is the natural unit for a
+// yardage prop the way probability points are for a hit.
+const SPOT_REF = { pos: "WR", gp: 17, tgt: 17 * 6.0, rec: 17 * 3.9, recYds: 17 * 48,
+                   rushAtt: 0, rushYds: 0, passAtt: 0, passYds: 0, recTD: 5, rushTD: 0 };
+function sideSpot(L, ts, lgTs, ctx) {
+  if (!ts || !lgTs) return null;
+  const neutral = { pts: L.avgTotal / 2, total: L.avgTotal, mgn: 0 };
+  const run = (stats, game, def, wx) => {
+    const vol = teamVolume(L, stats,
+      game ? ctx.pts : neutral.pts, game ? ctx.total : neutral.total, game ? ctx.mgn : neutral.mgn,
+      def || null, wx || null, null);
+    const pr = projectPlayer(L, SPOT_REF, vol, stats);
+    return pr.recYds.mean;
+  };
+  const base = run(lgTs, false, null, null);
+  if (!(base > 1)) return null;
+  const soft = run(lgTs, false, ctx.def, ctx.wx);      // their defence, our side neutral
+  const good = run(ts,   true,  null,    null);        // our side, their defence neutral
+  const spot = run(ts,   true,  ctx.def, ctx.wx);      // both
+  return { base,
+    soft: soft / base - 1,
+    good: good / base - 1,
+    spot: spot / base - 1,
+    spotYds: spot - base };
+}
+// The league-average team, for the neutral side of that comparison. Averaged
+// over every club on the board rather than assumed.
+function leagueTeamStats(teamStats) {
+  const rows = Object.values(teamStats || {}).filter(t => t && t.gp > 0);
+  if (!rows.length) return null;
+  const out = {}, keys = {};
+  rows.forEach(r => Object.keys(r).forEach(k => { if (typeof r[k] === "number") keys[k] = 1; }));
+  Object.keys(keys).forEach(k => { out[k] = rows.reduce((a, r) => a + (r[k] || 0), 0) / rows.length; });
+  return out;
+}
+
 // ── simulating the game ─────────────────────────────────────────────────────
 // Everything above prices one leg at a time. A parlay is not one leg at a
 // time. Legs in the same game move together, and multiplying their
@@ -2043,7 +2098,7 @@ async function loadGameProps(board, entry, cache, onStatus, opts) {
     // it returns to the modelled players; the rest leaks, which is nearer the
     // truth than handing every last target to the second receiver.
     const LEAK = 0.85;
-    ["eTgt", "eCar", "ePass"].forEach(k => {
+    ["eTgt", "eCar"].forEach(k => {
       const before = rows.reduce((a, r) => a + (r.pr[k] || 0), 0);
       const after = rows.reduce((a, r) => a + (r.pr[k] || 0) * r.avail, 0);
       const back = after > 1e-9 ? before / after : 1;
@@ -2052,6 +2107,74 @@ async function loadGameProps(board, entry, cache, onStatus, opts) {
         r.scale[k] = r.avail * (1 + LEAK * (back - 1));
       });
     });
+    // Pass attempts are NOT a share of a pool that leaks — they are a
+    // partition. Whoever is under centre throws all of them, and that is a
+    // hard constraint the "put the total back where it was" rule above cannot
+    // express.
+    //
+    // It got this badly wrong. Every quarterback on a roster is shrunk toward
+    // what THIS offence throws, so two quarterbacks each come out at sixty-odd
+    // percent of the team's attempts and the pair sums to more than one game.
+    // Rule the starter out and the restoration hands the whole inflated total
+    // to his backup: Cooper Rush, a sensible 21.5 attempts on his own, was
+    // being multiplied by 3.46 to SEVENTY-FOUR attempts in a game with
+    // thirty-four, and 484 projected passing yards with it. The board then
+    // offered that as a play at +1074.
+    //
+    // So the men who can actually play share the attempts the team is
+    // projected to throw, in proportion to what each was worth before anyone
+    // was ruled out.
+    // Splitting them in proportion to what each man was worth is still wrong,
+    // because it is not a timeshare: one quarterback takes essentially every
+    // snap, and a 19/11 split describes uncertainty about WHO starts rather
+    // than a game either of them will play. The depth chart, already loaded
+    // for the injury work, says who that is — so the man at the top of it
+    // gets the attempts, and the rest get the sliver that a blowout or a knock
+    // actually hands them.
+    {
+      const chart = depth[tid] || {};
+      const rankOf = r => { const d = chart[String(r.pl.id)]; return d && d.unit === "qb" ? d.rank : null; };
+      const qbs = rows.filter(r => r.pl.pos === "QB" && r.avail > 0 && (r.pr.ePass || 0) > 0.5);
+      const ranked = qbs.some(r => rankOf(r) != null);
+      const weightOf = r => {
+        if (!ranked) return (r.pr.ePass || 0) * r.avail;    // no chart: fall back to form
+        const k = rankOf(r);
+        return (k === 1 ? 1 : k === 2 ? 0.06 : 0.02) * r.avail;
+      };
+      const w = qbs.reduce((a, r) => a + weightOf(r), 0);
+      rows.forEach(r => { r.scale = r.scale || {}; });
+      if (w > 1e-9 && vol.passAtt > 0) {
+        qbs.forEach(r => { r.scale.ePass = (vol.passAtt * weightOf(r) / w) / r.pr.ePass; });
+        // Anybody who is not a quarterback keeps his own tiny trick-play
+        // number, and anyone ruled out gets nothing.
+        rows.forEach(r => { if (qbs.indexOf(r) < 0) r.scale.ePass = r.avail; });
+      } else {
+        rows.forEach(r => { r.scale.ePass = r.avail; });
+      }
+    }
+    // The parts have to add up to the whole, and for carries they were not
+    // close. Every back on a roster is shrunk toward the same eight-and-a-half
+    // carries a game, so a club dressing six of them projects fifty-five
+    // carries in a game that will have twenty-four — and the simulator, which
+    // takes the team's rush attempts as the LARGER of its own projection and
+    // the sum of the men, then ran the whole afternoon at fifty-five. Every
+    // rushing prop on the board was inflated by it.
+    //
+    // Scaling proportionally is the least-assumption fix: it leaves each man's
+    // SHARE of the backfield exactly where the model put it, and only corrects
+    // the total. The lead back keeps his share of a real number of carries.
+    // Targets get the same treatment against a looser bound, since a target
+    // cannot exist without an attempt but the receivers we do not model are
+    // entitled to some of them.
+    const fit = (k, budget) => {
+      const sum = rows.reduce((a, r) => a + (r.pr[k] || 0) * (r.scale[k] != null ? r.scale[k] : r.avail), 0);
+      if (!(sum > budget) || !(budget > 0)) return;
+      const f = budget / sum;
+      rows.forEach(r => { r.scale[k] = (r.scale[k] != null ? r.scale[k] : r.avail) * f; });
+    };
+    fit("eCar", vol.rushAtt * 0.95);      // the rest is a scramble or a man nobody prices
+    fit("eTgt", vol.passAtt);             // a target cannot exist without an attempt
+
     rows.forEach(r => {
       if (r.avail <= 0) return;                       // out: no line at all
       const pr = projectPlayer(L, r.pl, vol, ts, r.scale);
@@ -2708,16 +2831,28 @@ function gradeBet(bet, res) {
     if (total === bet.line) return 0.5;
     return (bet.side === "over") === (total > bet.line) ? 1 : 0;
   }
-  if (bet.market === "prop") {
-    const pl = res.players && res.players[kPlayerKey(bet.player || "")];
-    if (!pl) return null;                          // no line for him: leave it open
-    if (bet.propKey === "atd") return pl.atd ? 1 : 0;
-    const v = pl[bet.propKey];
-    if (v == null) return null;
-    if (v === bet.line) return 0.5;                // a whole-number line can push
-    return (String(bet.side).toLowerCase().indexOf("under") < 0) === (v > bet.line) ? 1 : 0;
+  if (bet.market === "prop") return gradeLeg(bet, res);
+  // A double is one bet with two legs: it wins only if both clear. A pushed
+  // leg drops out and the double settles on the other, which is what a book
+  // does with a voided leg — and if both push, so does the bet.
+  if (bet.market === "double") {
+    const legs = (bet.legs || []).map(l => gradeLeg(l, res));
+    if (legs.some(v => v == null)) return null;    // a man with no box-score line: stay open
+    const live = legs.filter(v => v !== 0.5);
+    if (!live.length) return 0.5;
+    return live.every(v => v === 1) ? 1 : 0;
   }
   return null;
+}
+// One prop leg against the box score.
+function gradeLeg(leg, res) {
+  const pl = res.players && res.players[kPlayerKey(leg.player || "")];
+  if (!pl) return null;
+  if (leg.propKey === "atd") return pl.atd ? 1 : 0;
+  const v = pl[leg.propKey];
+  if (v == null) return null;
+  if (v === leg.line) return 0.5;                  // a whole-number line can push
+  return (String(leg.side).toLowerCase().indexOf("under") < 0) === (v > leg.line) ? 1 : 0;
 }
 const betReturn = (bet, res) => res == null ? null
   : (res === 0.5 ? 0 : (res === 1 ? (amToDec(bet.price) - 1) * bet.stake : -bet.stake));
@@ -3012,8 +3147,9 @@ return {
   loadDepthChart, unitsOut, unitFactors, UNIT_OF, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
   simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
+  sideSpot, leagueTeamStats, SPOT_REF,
   backtest, summarise,
-  loadResults, loadClosingLine, loadPlayerStats, gradeBet, betReturn, betCLV, betSummary, betRecord,
+  loadResults, loadClosingLine, loadPlayerStats, gradeBet, gradeLeg, betReturn, betCLV, betSummary, betRecord,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
   loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
   KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, calibrateProbs, applyProbCal, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
