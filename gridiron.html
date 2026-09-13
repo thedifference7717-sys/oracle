@@ -1501,11 +1501,25 @@ async function rankProps(usePaste){
     for (const b of Object.values(state.boards)){
       if (!b.L.bulkPlayers){ continue; }
       const kp = state.kprops[b.league];
-      for (const entry of b.games){
+      // Games were loaded one after another, and each one is five round trips
+      // — two rosters, two depth charts, injuries. Fourteen games of that in
+      // series is most of the wait. They do not depend on each other, so they
+      // are fetched five at a time; the shared loads are promise-cached in the
+      // model so the five do not each start their own copy of the big one.
+      let done = 0;
+      const loaded = await M.pool(b.games, async entry => {
+        try{
+          const r = await M.loadGameProps(b, entry, state.propCache, () => {}, { unitStrength: unitStrength() });
+          return { entry, list: r };
+        }catch(e){ return null; }
+      }, 5, n => {
+        done = n;
         body.innerHTML = '<div class="empty"><span class="spin">⟳</span> pricing ' +
-          esc(entry.game.away.abbr) + " @ " + esc(entry.game.home.abbr) + "…</div>";
-        let list;
-        try{ list = await M.loadGameProps(b, entry, state.propCache, () => {}, { unitStrength: unitStrength() }); }catch(e){ continue; }
+          done + " of " + b.games.length + " games…</div>";
+      });
+      for (const got of loaded){
+        if (!got) continue;
+        const entry = got.entry, list = got.list;
         games++;
         // Simulate the game once. Everything below — the range on each prop,
         // and every parlay built later — reads off these same afternoons.
