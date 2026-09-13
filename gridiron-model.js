@@ -116,38 +116,6 @@ const LEAGUES = {
     maxShiftTotal: 3.0,
     rushTDshare: 0.36,  // share of offensive TDs that come on the ground
     bulkPlayers: true   // league-wide player stat feed carries values
-  },
-  cfb: {
-    key: "cfb", label: "CFB", path: "football/college-football", core: "college-football", groups: 80,
-    sigMargin: 15.70,   // same calibration as the NFL number, then held
-                        // to the 15.72 root-mean-square error the backtest
-                        // actually measured around the closing line
-    sigTotal: 15.50,    // same two measurements: backtest error implies 15.29,
-                        // the exchange ladder 18.37 (thin college rungs inflate
-                        // that one, so the outcome-based number leads)
-    avgTotal: 54.6,     // measured 2025 college mean total (27.3 a side)
-    hfa0: 2.40,
-    keyDamp: 0.55,      // key numbers exist in college but are flatter
-    carry: 0.22,
-    decay: 0.940,
-    ridge: 2.6,         // college keeps less: more roster turnover, ~50%
-    movCap: 28,
-    weeks: 16,
-    // Same sweep on college: the margin optimum is 0.20 and it beats the
-    // closing line by six hundredths of a point. College is softer than the
-    // NFL, but it is not soft.
-    mktW: 0.20,
-    // Zero, and it is not an oversight. Over 694 games last season our college
-    // total showed no skill worth the name — a shade negative, well inside the
-    // noise once you measure against the right null (a bet with no skill does
-    // not return zero, it returns minus the hold). A model with nothing to say
-    // does not get to post plays. Raise the weight by hand to see what it
-    // thinks; the backtest panel will keep scoring it honestly.
-    mktWTotal: 0.00,
-    maxShift: 4.0,
-    maxShiftTotal: 4.0,
-    rushTDshare: 0.45,
-    bulkPlayers: false  // college feed ranks players but withholds the numbers
   }
 };
 
@@ -930,7 +898,13 @@ async function loadTeamStats(L, season) {
       completions: own.completions || 0, points: own.totalPoints || 0,
       passTD: own.passingTouchdowns || 0, rushTD: own.rushingTouchdowns || 0,
       passYds: own.passingYards || 0, rushYds: own.rushingYards || 0,
-      dPassYds: opp.passingYards || 0, dRushYds: opp.rushingYards || 0, dPoints: opp.totalPoints || 0
+      // What this team's OPPONENTS did against it — the defence, which the feed
+      // has been handing over all along and which nothing was reading.
+      dPassAtt: opp.passingAttempts || 0, dCompletions: opp.completions || 0,
+      dPassYds: opp.passingYards || 0, dPassTD: opp.passingTouchdowns || 0,
+      dRushAtt: opp.rushingAttempts || 0, dRushYds: opp.rushingYards || 0,
+      dRushTD: opp.rushingTouchdowns || 0, dSacks: opp.sacks || 0,
+      dPoints: opp.totalPoints || 0
     };
   });
   return out;
@@ -940,7 +914,7 @@ async function loadTeamStats(L, season) {
 // forces move it: pace (a projected shootout is more plays and more scoring
 // chances) and game script (a team projected to trail throws more, and the
 // effect is worth several attempts a game, which is most of a prop line).
-function teamVolume(L, ts, projPts, projTotal, projMargin) {
+function teamVolume(L, ts, projPts, projTotal, projMargin, def, wx, uf) {
   const gp = Math.max(1, ts ? ts.gp : 1);
   const base = ts ? {
     pass: ts.passAtt / gp, sack: ts.sacks / gp, rush: ts.rushAtt / gp, comp: ts.completions / gp,
@@ -951,13 +925,17 @@ function teamVolume(L, ts, projPts, projTotal, projMargin) {
   const drops = base.pass + base.sack;
   const plays = Math.max(30, drops + base.rush);
   const passRate = clamp(drops / plays, 0.3, 0.78);
-  const pace = 1 + 0.25 * (projTotal / L.avgTotal - 1);
+  // Pace is our own, the defence's willingness to allow snaps, and the weather.
+  const dPace = def ? defFactor((def.passAttPG + def.rushAttPG), LEAGUE.passAttPG + LEAGUE.rushAttPG, def.n, 0.10) : 1;
+  const pace = (1 + 0.25 * (projTotal / L.avgTotal - 1)) * dPace;
   // ~0.45 percentage points of pass rate per point of expected margin, capped
   // so a 30-point favourite does not end up in the wildcat.
   const shift = clamp(-0.0045 * projMargin, -0.09, 0.09);
-  const playsAdj = plays * clamp(pace, 0.85, 1.18);
-  const dropsAdj = playsAdj * clamp(passRate + shift, 0.25, 0.82);
-  const sackRate = drops > 0 ? base.sack / drops : 0.07;
+  const playsAdj = plays * clamp(pace, 0.82, 1.20);
+  const wxPass = wx ? wx.pass : 1;
+  const unitPass = uf ? uf.passRate : 1;
+  const dropsAdj = playsAdj * clamp((passRate + shift) * wxPass * unitPass, 0.25, 0.82);
+  const sackRate = clamp((drops > 0 ? base.sack / drops : 0.07) * (uf ? uf.sack : 1), 0.01, 0.20);
   const passAtt = dropsAdj * (1 - sackRate);
   const rushAtt = playsAdj - dropsAdj;
 
@@ -965,7 +943,7 @@ function teamVolume(L, ts, projPts, projTotal, projMargin) {
   // should not be handed the league's red-zone conversion.
   const evid = ts ? (ts.n != null ? ts.n : ts.gp) : 0;
   const tdPerPt = base.pts > 0 ? clamp((base.passTD + base.rushTD) / base.pts, 0.06, 0.14) : 0.10;
-  const td = projPts * shrink(tdPerPt, evid, 0.100, 6);
+  const td = projPts * shrink(tdPerPt, evid, 0.100, 6);   // projPts already carries the matchup
   const rushTDshare = (base.passTD + base.rushTD) > 0
     ? shrink(base.rushTD / (base.passTD + base.rushTD), evid, L.rushTDshare, 6)
     : L.rushTDshare;
@@ -974,8 +952,214 @@ function teamVolume(L, ts, projPts, projTotal, projMargin) {
     plays: playsAdj, passAtt, rushAtt, sacks: dropsAdj - passAtt,
     passRate: dropsAdj / playsAdj, basePassAtt: base.pass, baseRushAtt: base.rush,
     td, passTD: td * (1 - rushTDshare), rushTD: td * rushTDshare,
-    ypa: base.ypa, ypc: base.ypc, pts: projPts
+    // Efficiency the offence brings, already moved for who it is facing and
+    // what the weather is doing.
+    ypa: base.ypa * (def ? defFactor(def.ypa, LEAGUE.ypa, def.n) : 1) * (wx ? wx.ypa : 1) * (uf ? uf.ypa : 1),
+    ypc: base.ypc * (def ? defFactor(def.ypc, LEAGUE.ypc, def.n) : 1) * (uf ? uf.ypc : 1),
+    defCatch: def ? def.catch : LEAGUE.catch,
+    defN: def ? def.n : 0,
+    tdFactor: def ? defFactor(def.ptsPG, LEAGUE.ptsPG, def.n, 0.20) : 1,
+    pts: projPts, wx: wx || null, units: uf || null
   };
+}
+
+// ── the other side of the ball ──────────────────────────────────────────────
+// Until now a projection knew how much of his offence a player gets and
+// nothing whatsoever about who he is playing. A slot receiver drew the same
+// number against the best secondary in the league as against the worst, which
+// is not a model of anything.
+//
+// The fix is the same one the baseball board uses: a rate is the player's own
+// rate, moved by the opponent's rate, relative to the league. For a
+// probability that is log5 — the odds-ratio — and for a per-attempt yardage it
+// is the multiplicative form of the same idea. Both are shrunk by how much of
+// the defence we have actually seen, because a run defence after two games is
+// mostly the two offences it happened to draw.
+const LEAGUE = { ypa: 7.0, ypc: 4.3, catch: 0.645, passAttPG: 32.1, rushAttPG: 26.8, ptsPG: 23.0, sackRate: 0.068 };
+
+const DEF_CARRY = 0.15;                 // a prior-season game, in this-season games
+function defenceProfile(ts) {
+  if (!ts) return null;
+  // Trust grows on its own as this season accumulates, which is the behaviour
+  // we want: nearly deaf to the matchup in September, listening by November.
+  const gp = ts.nCur != null
+    ? Math.max(0.5, ts.nCur + DEF_CARRY * (ts.nPrior || 0))
+    : Math.max(1, ts.n != null ? ts.n : ts.gp);
+  const perG = v => (v || 0) / Math.max(1, ts.gp);
+  const passAtt = perG(ts.dPassAtt), rushAtt = perG(ts.dRushAtt);
+  return {
+    n: gp,
+    ypa: ts.dPassAtt ? ts.dPassYds / ts.dPassAtt : LEAGUE.ypa,
+    ypc: ts.dRushAtt ? ts.dRushYds / ts.dRushAtt : LEAGUE.ypc,
+    catch: ts.dPassAtt ? clamp(ts.dCompletions / ts.dPassAtt, 0.4, 0.8) : LEAGUE.catch,
+    passAttPG: passAtt || LEAGUE.passAttPG,
+    rushAttPG: rushAtt || LEAGUE.rushAttPG,
+    ptsPG: perG(ts.dPoints) || LEAGUE.ptsPG,
+    passTDPG: perG(ts.dPassTD), rushTDPG: perG(ts.dRushTD)
+  };
+}
+// How much to move a rate for this defence: 1.0 is neutral. Shrunk toward
+// neutral by the games behind it, and capped, because no defence is worth a
+// forty percent swing on a receiving line.
+function defFactor(allowed, league, n, cap) {
+  if (!(league > 0) || !(allowed > 0)) return 1;
+  const raw = allowed / league;
+  const w = clamp((n || 0) / ((n || 0) + 6), 0, 1);      // six games to half-trust it
+  const lim = cap == null ? 0.18 : cap;
+  return clamp(1 + w * (raw - 1), 1 - lim, 1 + lim);
+}
+// Log5 for genuine probabilities: the player's rate, the defence's rate, and
+// the league's, combined as odds rather than averaged.
+function log5(p, d, lg) {
+  if (!(lg > 0) || !(lg < 1)) return p;
+  const o = (x) => clamp(x, 1e-4, 1 - 1e-4) / (1 - clamp(x, 1e-4, 1 - 1e-4));
+  const odds = o(p) * o(d) / o(lg);
+  return odds / (1 + odds);
+}
+
+// Weather, with a caveat that matters more than the adjustment. The feed gives
+// a temperature and a phrase; it does NOT give wind, and wind is the only
+// weather that seriously moves a passing line. So this is a small, honest
+// nudge for cold and wet and nothing more — it should not be mistaken for a
+// weather model.
+function weatherFactor(game) {
+  const out = { pass: 1, ypa: 1, total: 1, note: null };
+  if (!game || game.indoor) return out;
+  const w = game.weather || {};
+  const t = num(w.temperature);
+  const cond = String(w.displayValue || "").toLowerCase();
+  const wet = /rain|shower|snow|storm|sleet|drizzle|flurr/.test(cond);
+  if (t != null && t <= 32) {
+    out.ypa *= 0.97; out.total *= 0.97;
+    out.note = "cold (" + t + "°F)";
+  }
+  if (wet) {
+    out.pass *= 0.97; out.ypa *= 0.96; out.total *= 0.96;
+    out.note = (out.note ? out.note + ", " : "") + cond;
+  }
+  return out;
+}
+
+// Injuries. A player who is out should not be projected at all, and the snaps
+// he is not taking have to go somewhere — usually to the man behind him, which
+// is the single biggest thing that moves a prop line in the last hour before
+// kickoff.
+const INJ_PLAY = { out: 0, doubtful: 0.12, questionable: 0.72, probable: 0.95 };
+function injuryWeight(status) {
+  if (!status) return 1;
+  const k = String(status).toLowerCase();
+  if (k.indexOf("out") >= 0 || k.indexOf("injured reserve") >= 0 || k.indexOf("suspend") >= 0) return INJ_PLAY.out;
+  if (k.indexOf("doubtful") >= 0) return INJ_PLAY.doubtful;
+  if (k.indexOf("question") >= 0) return INJ_PLAY.questionable;
+  if (k.indexOf("probable") >= 0) return INJ_PLAY.probable;
+  return 1;
+}
+// WHICH injuries, not how many. A backup corner being out is worth nothing; the
+// starting corner being out is worth a percent or two on the other team's
+// passing game, and the two are indistinguishable in a list of names. The depth
+// chart settles it — rank 1 at a position is the starter.
+const UNIT_OF = {
+  lt: "oline", lg: "oline", c: "oline", rg: "oline", rt: "oline",
+  lcb: "secondary", rcb: "secondary", ss: "secondary", fs: "secondary", nb: "secondary",
+  lde: "front7", rde: "front7", nt: "front7", dt: "front7", ldt: "front7", rdt: "front7",
+  wlb: "front7", slb: "front7", lilb: "front7", rilb: "front7", mlb: "front7", lolb: "front7", rolb: "front7",
+  qb: "qb", rb: "skill", wr: "skill", te: "skill", fb: "skill"
+};
+async function loadDepthChart(L, teamId, season) {
+  const d = await getJSON(`${CORE}/${L.core}/seasons/${season}/teams/${teamId}/depthcharts`, 2);
+  const out = {};
+  (d.items || []).forEach(grp => {
+    const pos = grp.positions || {};
+    Object.keys(pos).forEach(key => {
+      const unit = UNIT_OF[key];
+      if (!unit) return;
+      (pos[key].athletes || []).forEach(a => {
+        const ref = ((a.athlete || {})["$ref"]) || "";
+        const id = ref.split("/athletes/")[1];
+        if (!id) return;
+        const aid = id.split("?")[0];
+        // Keep the best rank a player holds anywhere on the chart.
+        const rank = a.rank != null ? a.rank : 99;
+        if (!out[aid] || rank < out[aid].rank) out[aid] = { rank, key, unit };
+      });
+    });
+  });
+  return out;
+}
+// How much of each unit is missing, counted in starters. A doubtful starter is
+// most of a starter gone; a questionable one is a fraction.
+//
+// The MAGNITUDES BELOW ARE JUDGEMENT, not measurement, and they are capped
+// accordingly. The defensive rates elsewhere in this model come from what a
+// defence has actually allowed; these do not, because the feed will never tell
+// us how a line played without its left tackle. They are deliberately small —
+// the direction is confident, the size is not.
+function unitsOut(injByTeam, depth) {
+  const out = { oline: 0, secondary: 0, front7: 0, qb: 0 };
+  if (!injByTeam || !depth) return out;
+  Object.keys(injByTeam).forEach(aid => {
+    const d = depth[aid];
+    if (!d || d.rank !== 1) return;                 // only starters count
+    const missing = 1 - injuryWeight(injByTeam[aid]);
+    if (missing <= 0) return;
+    if (out[d.unit] != null) out[d.unit] += missing;
+  });
+  Object.keys(out).forEach(k => { out[k] = clamp(out[k], 0, 3); });
+  return out;
+}
+// What a missing starter is worth. Own line first, then what the opponent is
+// missing — a depleted secondary is why a quarterback throws more than his
+// season rate says he will, which is the whole point of doing this by unit.
+// `strength` dials the whole thing. It defaults to ZERO, and the reason is
+// written down rather than buried: swept against the exchange's own ladders the
+// effect is monotonically harmful — 7.09pp of error with it off, 7.10 at a
+// quarter strength, 7.14 at full, 7.20 at double. Not noise either: paired on
+// 2,222 identical rungs it is t = -3.6 against us.
+//
+// The idea is sound and I still believe the mechanism is real. The likeliest
+// explanation is that a liquid market has already priced a public injury report
+// before we get to it, so an adjustment laid on top of our own projection
+// pushes past what the market has already done — and the magnitudes here were
+// my judgement rather than anything measured, which I said when I wrote them.
+//
+// So it ships visible and inert: the board shows you which units are missing,
+// and does not move the number unless you ask it to.
+function unitFactors(own, opp, strength) {
+  const k = strength == null ? 0 : strength;
+  const sc = v => (v || 0) * k;
+  const o = { oline: sc((own || {}).oline) };
+  const d = { secondary: sc((opp || {}).secondary), front7: sc((opp || {}).front7) };
+  return {
+    ypc: (1 - 0.035 * o.oline) * (1 + 0.025 * d.front7),
+    ypa: (1 - 0.015 * o.oline) * (1 + 0.030 * d.secondary) * (1 + 0.010 * d.front7),
+    sack: 1 + 0.12 * o.oline,
+    // Coaches throw at a hurt secondary and run at a hurt front. Both show up
+    // as play-calling before they show up as efficiency.
+    passRate: 1 + 0.015 * d.secondary - 0.012 * d.front7 - 0.010 * o.oline,
+    strength: k,
+    note: [
+      (own || {}).oline >= 0.5 ? (own.oline).toFixed(1) + " OL out" : null,
+      (opp || {}).secondary >= 0.5 ? "opp " + (opp.secondary).toFixed(1) + " DB out" : null,
+      (opp || {}).front7 >= 0.5 ? "opp " + (opp.front7).toFixed(1) + " front-7 out" : null
+    ].filter(Boolean).join(", ") || null
+  };
+}
+
+// The game summary carries both teams' reports. It is a heavy payload, so it
+// is fetched once per game and cached.
+async function loadInjuries(L, eventId) {
+  const d = await getJSON(`${SITE}/${L.path}/summary?event=${eventId}`, 2);
+  const out = {};
+  (d.injuries || []).forEach(t => {
+    const tid = String((t.team || {}).id || "");
+    if (!tid) return;
+    const m = out[tid] || (out[tid] = {});
+    (t.injuries || []).forEach(x => {
+      const aid = String(((x.athlete || {}).id) || "");
+      if (aid) m[aid] = x.status || (x.type || {}).description || "";
+    });
+  });
+  return out;
 }
 
 // ── players ─────────────────────────────────────────────────────────────────
@@ -1033,35 +1217,6 @@ async function rosterCached(L, teamId, cache) {
   return cache[k];
 }
 
-// College: the league-wide feed ranks players but ships every value as a dash,
-// so the numbers have to be pulled per athlete. That is affordable for the two
-// rosters in ONE game, which is why college props load per game on demand.
-const CORE_STAT = (cats, cat, name) => {
-  const c = (cats || []).find(x => (x.name || "").toLowerCase() === cat);
-  if (!c) return 0;
-  const s = (c.stats || []).find(x => x.name === name);
-  return s ? num(s.value != null ? s.value : s.displayValue) || 0 : 0;
-};
-async function loadPlayersCFB(L, season, teamIds, cache, onProgress) {
-  const rosters = await pool(teamIds, async id => rosterCached(L, id, cache || {}), 4);
-  const flat = [];
-  rosters.forEach(r => { if (r) r.slice(0, 42).forEach(p => flat.push(p)); });
-  let done = 0;
-  const stats = await pool(flat, async p => {
-    const d = await getJSON(`${CORE}/${L.core}/seasons/${season}/types/2/athletes/${p.id}/statistics`, 1);
-    const cats = ((d.splits || {}).categories) || [];
-    return {
-      gp: CORE_STAT(cats, "general", "gamesPlayed"),
-      passAtt: CORE_STAT(cats, "passing", "passingAttempts"), passYds: CORE_STAT(cats, "passing", "passingYards"), passTD: CORE_STAT(cats, "passing", "passingTouchdowns"),
-      rushAtt: CORE_STAT(cats, "rushing", "rushingAttempts"), rushYds: CORE_STAT(cats, "rushing", "rushingYards"), rushTD: CORE_STAT(cats, "rushing", "rushingTouchdowns"),
-      tgt: CORE_STAT(cats, "receiving", "receivingTargets"), rec: CORE_STAT(cats, "receiving", "receptions"), recYds: CORE_STAT(cats, "receiving", "receivingYards"), recTD: CORE_STAT(cats, "receiving", "receivingTouchdowns")
-    };
-  }, 8, () => { done++; if (onProgress) onProgress(done / Math.max(1, flat.length)); });
-  const out = [];
-  flat.forEach((p, i) => { const s = stats[i]; if (s && s.gp > 0) out.push(Object.assign({ short: p.name }, p, s)); });
-  return out;
-}
-
 // ── prop projections ────────────────────────────────────────────────────────
 // Per-game usage a player of this position would have if we knew nothing else
 // about him. These are priors for the shrinkage, and they matter most for the
@@ -1106,7 +1261,7 @@ const propShape = () => ({ DISP: Object.assign({}, DISP), VAR: Object.assign({},
 
 // Usage share of a projected volume, then efficiency — never a yards-per-game
 // average, which bakes in a schedule and a game script that will not repeat.
-function projectPlayer(L, pl, vol, ts) {
+function projectPlayer(L, pl, vol, ts, scale) {
   const gp = Math.max(1, pl.gp);
   const teamPassAtt = ts && ts.gp ? ts.passAtt / ts.gp : vol.basePassAtt;
   const teamRushAtt = ts && ts.gp ? ts.rushAtt / ts.gp : vol.baseRushAtt;
@@ -1129,15 +1284,23 @@ function projectPlayer(L, pl, vol, ts) {
   const carryShare = carPerG / Math.max(1, teamRushAtt);
   const attShare = attPerG / Math.max(1, teamPassAtt);
 
-  const catchRate = pl.tgt > 0 ? shrink(pl.rec / pl.tgt, pl.tgt, 0.645, 25) : 0.645;
-  const ypr = pl.rec > 0 ? shrink(pl.recYds / pl.rec, pl.rec, 11.6, 20) : 11.6;
+  // Catch rate is a probability, so the defence enters through log5 rather than
+  // as a multiplier — the odds-ratio, the same combination the baseball board
+  // uses for a hitter against a pitcher.
+  const ownCatch = pl.tgt > 0 ? shrink(pl.rec / pl.tgt, pl.tgt, LEAGUE.catch, 25) : LEAGUE.catch;
+  const catchRate = clamp(log5(ownCatch, vol.defCatch != null ? vol.defCatch : LEAGUE.catch, LEAGUE.catch), 0.35, 0.92);
+  // Yardage rates are per-attempt, so the matchup is multiplicative. vol.ypa
+  // and vol.ypc already carry the defence and the weather.
+  const yprBase = pl.rec > 0 ? shrink(pl.recYds / pl.rec, pl.rec, 11.6, 20) : 11.6;
+  const ypr = yprBase * (vol.ypa / LEAGUE.ypa);
   const ypc = pl.rushAtt > 0 ? shrink(pl.rushYds / pl.rushAtt, pl.rushAtt, vol.ypc, 45) : vol.ypc;
   const ypa = pl.passAtt > 0 ? shrink(pl.passYds / pl.passAtt, pl.passAtt, vol.ypa, 80) : vol.ypa;
 
-  const eTgt = tgtShare * vol.passAtt;
+  const sc = scale || {};
+  const eTgt = tgtShare * vol.passAtt * (sc.eTgt != null ? sc.eTgt : 1);
   const eRec = eTgt * catchRate;
-  const eCar = carryShare * vol.rushAtt;
-  const ePass = attShare * vol.passAtt;
+  const eCar = carryShare * vol.rushAtt * (sc.eCar != null ? sc.eCar : 1);
+  const ePass = attShare * vol.passAtt * (sc.ePass != null ? sc.ePass : 1);
 
   // Compound variance: a count of chances, each worth a spread of yards. This
   // is why a 3-target night and a 12-target night get different shapes instead
@@ -1160,8 +1323,9 @@ function projectPlayer(L, pl, vol, ts) {
   const teamRushTDpg = ts && ts.gp ? ts.rushTD / ts.gp : vol.rushTD;
   const ownRecShare = teamRecTDpg > 0.05 ? clamp((pl.recTD / gp) / teamRecTDpg, 0, 1) : tgtShare;
   const ownRushShare = teamRushTDpg > 0.05 ? clamp((pl.rushTD / gp) / teamRushTDpg, 0, 1) : carryShare;
-  const lamRec = vol.passTD * clamp(0.5 * shrink(ownRecShare, pl.recTD, tgtShare, 3) + 0.5 * tgtShare, 0, 0.6);
-  const lamRush = vol.rushTD * clamp(0.5 * shrink(ownRushShare, pl.rushTD, carryShare, 3) + 0.5 * carryShare, 0, 0.75);
+  const tdF = vol.tdFactor != null ? vol.tdFactor : 1;
+  const lamRec = vol.passTD * tdF * clamp(0.5 * shrink(ownRecShare, pl.recTD, tgtShare, 3) + 0.5 * tgtShare, 0, 0.6);
+  const lamRush = vol.rushTD * tdF * clamp(0.5 * shrink(ownRushShare, pl.rushTD, carryShare, 3) + 0.5 * carryShare, 0, 0.75);
 
   return {
     player: pl, eTgt, eRec, eCar, ePass, catchRate, ypr, ypc, ypa,
@@ -1226,6 +1390,479 @@ function priceProp(mkt, line, over, under, kf) {
     res.under = { price: under, ev: evUnit(1 - p, 0, under), kelly: kelly(1 - p, 0, under, kf), mktP: dv ? dv.p2 : amToProb(under), edge: (1 - p) - (dv ? dv.p2 : amToProb(under)) };
   }
   return res;
+}
+
+// ── simulating the game ─────────────────────────────────────────────────────
+// Everything above prices one leg at a time. A parlay is not one leg at a
+// time. Legs in the same game move together, and multiplying their
+// probabilities is the most expensive mistake available in this market.
+//
+// So the board simulates the afternoon instead. One pass draws a whole game —
+// the script, each side's volume, how the targets and carries fell, how each
+// man did with them — and every leg reads its answer off the same draw. Three
+// things fall out of that which per-leg pricing cannot give you:
+//
+//   1. A RANGE. The middle half of ten thousand simulated afternoons is what
+//      "he'll get about this much" actually means, and it is wider than
+//      anyone's intuition.
+//   2. PARLAYS PRICED PROPERLY, at any number of legs, with no correlation
+//      matrix to invert and no copula to fray in the tails.
+//   3. SAME-PLAYER LEGS THAT AGREE. Two catches cannot make ninety yards. A
+//      copula will cheerfully say they can; a simulation that draws the
+//      catches first cannot.
+//
+// Every constant here is fitted on the 2023 season and scored on 2024, in
+// scripts/nfl-prop-shape.mjs. The fitted shapes reproduce the real
+// distribution of player games to within a chi-square of about 30 on 19
+// degrees of freedom, out of sample, against 120-320 for what this replaced.
+
+// Deterministic: the same slate has to produce the same board twice, or every
+// refresh moves the numbers under the user.
+function rng(seed) {
+  let a = (seed >>> 0) || 0x2F6E2B1;
+  return function () {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function normalDraw(r) {
+  let u = r(); if (u <= 1e-12) u = 1e-12;
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.283185307179586 * r());
+}
+function normInv(p) {
+  p = clamp(p, 1e-9, 1 - 1e-9);
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  let q, r;
+  if (p < 0.02425) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  if (p > 0.97575) { q = Math.sqrt(-2 * Math.log(1-p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  q = p - 0.5; r = q * q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+function poisDraw(lam, r) {
+  if (!(lam > 0)) return 0;
+  if (lam < 25) {
+    const L = Math.exp(-lam);
+    let k = 0, p = 1;
+    do { k++; p *= r(); } while (p > L);
+    return k - 1;
+  }
+  const n = Math.round(lam + Math.sqrt(lam) * normalDraw(r));
+  return n > 0 ? n : 0;
+}
+function binomDraw(n, p, r) {
+  if (!(n > 0) || !(p > 0)) return 0;
+  if (p >= 1) return n;
+  if (n <= 40) { let k = 0; for (let i = 0; i < n; i++) if (r() < p) k++; return k; }
+  const k = Math.round(n * p + Math.sqrt(n * p * (1 - p)) * normalDraw(r));
+  return clamp(k, 0, n);
+}
+// Marsaglia-Tsang, with the standard boost below shape 1.
+function gammaDraw(shape, scale, r) {
+  if (!(shape > 0) || !(scale > 0)) return 0;
+  if (shape < 1) return gammaDraw(shape + 1, scale, r) * Math.pow(r() || 1e-12, 1 / shape);
+  const d = shape - 1 / 3, c = 1 / Math.sqrt(9 * d);
+  for (let guard = 0; guard < 500; guard++) {
+    let x, v;
+    do { x = normalDraw(r); v = 1 + c * x; } while (v <= 0);
+    v = v * v * v;
+    const u = r();
+    if (u < 1 - 0.0331 * x * x * x * x || Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v * scale;
+  }
+  return d * scale;
+}
+// A multiplier with mean 1 and the given log-variance. Used for the volume
+// shocks, where a lognormal and a gamma are indistinguishable at these
+// dispersions and the lognormal is monotone in a normal draw, which is what
+// lets one script latent move two teams in opposite directions.
+function logNormOf(z, cv) {
+  if (!(cv > 0)) return 1;
+  const s2 = Math.log(1 + cv * cv);
+  return Math.exp(Math.sqrt(s2) * z - s2 / 2);
+}
+
+// ── fitted shapes, per role ─────────────────────────────────────────────────
+//   volCv   how much of his usual workload he gets, week to week
+//   volDud  and how often that collapses outright (hurt, benched, game gone)
+//   effS2   the spread on each catch / carry / attempt, as a share of the
+//           average gain squared
+//   effDud  a day where the yards are not there at all — shadowed, jammed,
+//           thrown at underneath all afternoon
+const SIM_ROLE = {
+  QB:  { volCv: 0.173, volDud: 0.02, volDudAt: 0.10, effS2: 0.60, effDud: 0.08, effDudAt: 0.50 },
+  RB:  { volCv: 0.374, volDud: 0.02, volDudAt: 0.10, effS2: 1.60, effDud: 0.04, effDudAt: 0.30 },
+  REC: { volCv: 0.224, volDud: 0.12, volDudAt: 0.70, effS2: 0.40, effDud: 0.18, effDudAt: 0.50 }
+};
+// Team level, measured over 1,140 team-games.
+const SIM_TEAM = {
+  passCv: 0.153,       // week-to-week swing in a team's pass attempts
+  rushCv: 0.195,
+  // The two sides of one game do not move independently. Rush attempts run at
+  // -0.51 against each other — the clearest single correlation in football,
+  // and why two opposing backs is a worse parlay than it looks. Pass attempts
+  // run at -0.15. Our passing against their rushing is 0.01, i.e. nothing,
+  // which is why the script needs two latents and not one.
+  passScript: 0.389,   // sqrt(0.151)
+  rushScript: 0.713,   // sqrt(0.508)
+  // How much a man's share of his own offence moves week to week. A Dirichlet
+  // was the obvious choice and it is wrong: with one concentration it hands a
+  // third receiver three times the relative swing of a first, and the real
+  // spread of a WR3's receptions is nothing like that. So each man's share
+  // gets its own lognormal wobble at a constant RELATIVE size, and the shares
+  // are then renormalised — which also produces the push between teammates
+  // for free, since a bigger slice for one is a smaller slice for the rest.
+  // Fitted so the simulated spread of receptions and carries matches the real
+  // one. Carries move more than twice as much as targets do: the committee
+  // backfield, stated as a number.
+  tgtShareCv: 0.170,
+  carShareCv: 0.400,
+  // Within one team, throwing and running trade off at -0.33: get ahead and
+  // you run it out, fall behind and you throw. Across the two teams it is
+  // -0.15 on pass attempts and -0.51 on rush attempts, while OUR passing
+  // against THEIR running is 0.01 — nothing. No single script latent can
+  // produce all four; two can, with the leftovers correlated inside each team.
+  withinTeam: -0.507,
+  leakCatch: 0.64      // catch rate for the targets nobody is pricing
+};
+function setSimShape(role, team) {
+  if (role) Object.keys(role).forEach(k => { SIM_ROLE[k] = Object.assign({}, SIM_ROLE[k], role[k]); });
+  if (team) Object.assign(SIM_TEAM, team);
+  return { SIM_ROLE: SIM_ROLE, SIM_TEAM: SIM_TEAM };
+}
+const simShape = () => ({ SIM_ROLE: JSON.parse(JSON.stringify(SIM_ROLE)), SIM_TEAM: Object.assign({}, SIM_TEAM) });
+const simRole = pos => pos === "QB" ? "QB" : (pos === "RB" || pos === "FB" ? "RB" : "REC");
+// A two-point multiplier with mean 1: the bad day, and every other day.
+function dudMul(u, rate, level) {
+  if (!(rate > 0)) return 1;
+  return (u < rate ? level : 1) / (rate * level + 1 - rate);
+}
+
+// Simulate one game N times. `sides` is [home, away]; each is the player list
+// loadGameProps produced for that team.
+//
+// The ORDER is the whole point. Team volume is drawn first; targets and
+// carries are then shared out of that fixed pool; the quarterback's passing
+// line is the sum of what his receivers did. So a receiver's big day IS the
+// quarterback's big day, two backs splitting one pile of carries push against
+// each other, and nothing anywhere has to be told to correlate with anything.
+function simulateGame(sides, opts) {
+  opts = opts || {};
+  const N = opts.n || 10000;
+  const r = rng(opts.seed != null ? opts.seed : 0x9E3779B9);
+  const T = SIM_TEAM;
+  const MK = ["rec", "recYds", "car", "rushYds", "passAtt", "passYds", "passTD", "atd"];
+
+  const men = [];
+  sides.forEach((list, si) => (list || []).forEach(pl => {
+    const role = simRole((pl.player || {}).pos);
+    const out = {}; MK.forEach(k => out[k] = new Float32Array(N));
+    men.push({ si, pl, role, R: SIM_ROLE[role], p: pl.proj, out });
+  }));
+
+  const side = sides.map((list, si) => {
+    const mine = men.filter(m => m.si === si);
+    const vol = (list && list[0] && list[0].vol) || {};
+    const qb = mine.filter(m => m.role === "QB").sort((a, b) => b.p.ePass - a.p.ePass)[0] || null;
+    const tgtSum = mine.reduce((s, m) => s + (m.p.eTgt || 0), 0);
+    const carSum = mine.reduce((s, m) => s + (m.p.eCar || 0), 0);
+    const passAtt = Math.max(tgtSum, vol.passAtt || tgtSum || 1);
+    const rushAtt = Math.max(carSum, vol.rushAtt || carSum || 1);
+    // The quarterback's projected yards are the anchor. Whatever the priced
+    // receivers do not account for belongs to everybody else on the roster.
+    const qbYds = qb ? qb.p.passYds.mean : mine.reduce((s, m) => s + m.p.recYds.mean, 0) / 0.82;
+    const mineYds = mine.reduce((s, m) => s + (m.p.recYds.mean || 0), 0);
+    const leakTgt = Math.max(0, passAtt - tgtSum), leakCar = Math.max(0, rushAtt - carSum);
+    return { mine, vol, qb, passAtt, rushAtt, leakTgt, leakCar,
+      leakYpr: leakTgt > 0.2 ? Math.max(0, qbYds - mineYds) / (leakTgt * T.leakCatch) : 0,
+      leakYpc: Math.max(2.5, vol.ypc || 4.2),
+      passTD: vol.passTD || 1.4 };
+  });
+
+  // Share a fixed pool out exactly, so the parts always add to the whole.
+  // Independent draws per man would let five receivers between them be thrown
+  // at more times than the team threw, which is where a naive simulation
+  // quietly loses the correlation it was built to capture.
+  const alloc = new Float64Array(64);
+  function multinomial(n, w, k, r) {
+    let left = n, wl = 0;
+    for (let i = 0; i < k; i++) wl += w[i];
+    for (let i = 0; i < k; i++) {
+      if (left <= 0 || wl <= 1e-12) { alloc[i] = 0; continue; }
+      const a = binomDraw(left, clamp(w[i] / wl, 0, 1), r);
+      alloc[i] = a; left -= a; wl -= w[i];
+    }
+    return left;                                   // whatever was not handed out
+  }
+  const wT = new Float64Array(64), wC = new Float64Array(64);
+
+  for (let it = 0; it < N; it++) {
+    const zPass = normalDraw(r), zRush = normalDraw(r);
+    for (let si = 0; si < side.length; si++) {
+      const S = side[si], k = S.mine.length; if (!k) continue;
+      const sgn = si === 0 ? 1 : -1;
+      // A team that gets ahead throws less and runs more; the other side does
+      // the reverse. One draw seen from two ends, not two assumptions.
+      const e1 = normalDraw(r);
+      const e2 = T.withinTeam * e1 + Math.sqrt(1 - T.withinTeam * T.withinTeam) * normalDraw(r);
+      const zp = -T.passScript * sgn * zPass + Math.sqrt(1 - T.passScript * T.passScript) * e1;
+      const zr =  T.rushScript * sgn * zRush + Math.sqrt(1 - T.rushScript * T.rushScript) * e2;
+      const nPass = poisDraw(S.passAtt * logNormOf(zp, T.passCv), r);
+      const nRush = poisDraw(S.rushAtt * logNormOf(zr, T.rushCv), r);
+
+      // Usage: his slice of the week, times whether he is right today.
+      for (let i = 0; i < k; i++) {
+        const m = S.mine[i], R = m.R;
+        m._dud = dudMul(r(), R.volDud, R.volDudAt);
+        wT[i] = m.p.eTgt > 1e-6 ? m.p.eTgt * logNormOf(normalDraw(r), T.tgtShareCv) * m._dud : 0;
+        wC[i] = m.p.eCar > 1e-6 ? m.p.eCar * logNormOf(normalDraw(r), T.carShareCv) * m._dud : 0;
+      }
+      wT[k] = S.leakTgt > 1e-6 ? S.leakTgt * logNormOf(normalDraw(r), T.tgtShareCv) : 0;
+      wC[k] = S.leakCar > 1e-6 ? S.leakCar * logNormOf(normalDraw(r), T.carShareCv) : 0;
+
+      multinomial(nPass, wT, k + 1, r);
+      const tgt = alloc.slice(0, k + 1);
+      multinomial(nRush, wC, k + 1, r);
+      const car = alloc.slice(0, k + 1);
+
+      let teamRecYds = 0;
+      for (let i = 0; i < k; i++) {
+        const m = S.mine[i], R = m.R, P = m.p;
+        const eff = dudMul(r(), R.effDud, R.effDudAt);
+        let rec = 0, recYds = 0;
+        if (tgt[i] > 0) {
+          rec = binomDraw(tgt[i], clamp(P.catchRate, 0.05, 0.98), r);
+          if (rec > 0) {
+            const mu = rec * P.ypr * eff, vr = rec * R.effS2 * P.ypr * P.ypr * eff * eff;
+            recYds = vr > 1e-9 ? gammaDraw(mu * mu / vr, vr / mu, r) : mu;
+          }
+        }
+        let rushYds = 0;
+        if (car[i] > 0) {
+          const e2 = m.role === "QB" ? 1 : eff;
+          const mu = car[i] * P.ypc * e2, vr = car[i] * SIM_ROLE.RB.effS2 * P.ypc * P.ypc * e2 * e2;
+          rushYds = vr > 1e-9 ? gammaDraw(mu * mu / vr, vr / mu, r) : mu;
+        }
+        m.out.rec[it] = rec; m.out.recYds[it] = recYds;
+        m.out.car[it] = car[i]; m.out.rushYds[it] = rushYds;
+        teamRecYds += recYds;
+      }
+      // What the men nobody prices did with the rest of it.
+      let leakYds = 0;
+      if (tgt[k] > 0 && S.leakYpr > 0) {
+        const rec = binomDraw(tgt[k], T.leakCatch, r);
+        if (rec > 0) {
+          const le = dudMul(r(), SIM_ROLE.REC.effDud, SIM_ROLE.REC.effDudAt);
+          const mu = rec * S.leakYpr * le, vr = rec * SIM_ROLE.REC.effS2 * S.leakYpr * S.leakYpr * le * le;
+          leakYds = gammaDraw(mu * mu / vr, vr / mu, r);
+        }
+      }
+      // The quarterback's line IS his receivers' lines added up.
+      if (S.qb) {
+        const py = teamRecYds + leakYds;
+        S.qb.out.passAtt[it] = nPass;
+        S.qb.out.passYds[it] = py;
+        S.qb.out.passTD[it] = poisDraw(S.passTD * clamp(py / Math.max(40, S.qb.p.passYds.mean), 0.15, 2.6), r);
+      }
+      // Scoring rides on the afternoon he actually had, not his season
+      // average: a back who got nine carries in a blowout the wrong way does
+      // not vulture a one-yard touchdown.
+      for (let i = 0; i < k; i++) {
+        const m = S.mine[i], P = m.p;
+        const lam = (P.lamRec || 0) * clamp(m.out.recYds[it] / Math.max(8, P.recYds.mean), 0.1, 3) +
+                    (P.lamRush || 0) * clamp(m.out.rushYds[it] / Math.max(8, P.rushYds.mean), 0.1, 3);
+        m.out.atd[it] = poisDraw(lam, r) > 0 ? 1 : 0;
+      }
+    }
+  }
+  return { n: N, men, side };
+}
+
+// ── reading the simulation ──────────────────────────────────────────────────
+// The quantiles of what was simulated. This is the range the board shows, and
+// it is not decoration: a receiver whose number is 54 yards has a middle half
+// running roughly 25 to 75, and a quarter of the time he finishes outside even
+// that. Anyone betting a prop should see that before the price.
+function quantiles(arr, qs) {
+  const a = Float64Array.from(arr); a.sort();
+  const n = a.length;
+  return qs.map(q => {
+    const i = (n - 1) * clamp(q, 0, 1), lo = Math.floor(i), hi = Math.ceil(i);
+    return lo === hi ? a[lo] : a[lo] + (a[hi] - a[lo]) * (i - lo);
+  });
+}
+const RANGE_QS = [0.10, 0.25, 0.50, 0.75, 0.90];
+function simRange(samples) {
+  const q = quantiles(samples, RANGE_QS);
+  let s = 0; for (let i = 0; i < samples.length; i++) s += samples[i];
+  return { mean: s / samples.length, p10: q[0], p25: q[1], median: q[2], p75: q[3], p90: q[4] };
+}
+
+// Every market the board would hang on one simulated player, with the range
+// and an exact tail off the simulation rather than off a fitted curve.
+function simMarkets(man) {
+  const out = [], pos = (man.pl.player || {}).pos || "", isQB = pos === "QB", N = man.out.rec.length;
+  const add = (key, label, type, samples, min, step) => {
+    const R = simRange(samples);
+    if (type !== "binary" && !(R.mean >= min)) return;
+    const sorted = Float64Array.from(samples); sorted.sort();
+    out.push({ key, label, type, range: R, mean: R.mean, n: N, step,
+      // P(X > line), read straight off the sorted draws.
+      tail: line => {
+        let lo = 0, hi = N;
+        while (lo < hi) { const m = (lo + hi) >> 1; if (sorted[m] > line) hi = m; else lo = m + 1; }
+        return (N - lo) / N;
+      },
+      ourLine: null });
+  };
+  if (isQB) add("passYds", "Pass yds", "yards", man.out.passYds, 90, 5);
+  if (isQB) add("passAtt", "Pass att", "count", man.out.passAtt, 15, 0.5);
+  if (isQB) add("passTD", "Pass TD", "count", man.out.passTD, 0.6, 0.5);
+  add("rushYds", "Rush yds", "yards", man.out.rushYds, 15, 2.5);
+  add("car", "Rush att", "count", man.out.car, 5, 0.5);
+  if (!isQB) add("recYds", "Rec yds", "yards", man.out.recYds, 15, 2.5);
+  if (!isQB) add("rec", "Receptions", "count", man.out.rec, 1.6, 0.5);
+  {
+    let s = 0; for (let i = 0; i < N; i++) s += man.out.atd[i];
+    if (s / N >= 0.08) out.push({ key: "atd", label: "Anytime TD", type: "binary",
+      mean: s / N, n: N, range: null, step: null, ourLine: null, tail: () => s / N });
+  }
+  out.forEach(m => {
+    if (m.type === "binary") return;
+    m.ourLine = m.type === "count" ? Math.max(0.5, Math.round(m.range.median) - 0.5)
+                                   : Math.round(m.range.median / m.step) * m.step - m.step / 2;
+    if (m.ourLine <= 0) m.ourLine = m.step / 2;
+  });
+  return out;
+}
+
+// A leg, carrying the one thing a parlay needs: which of the simulated
+// afternoons it won on.
+function simLeg(man, mkt, side, line) {
+  const src = man.out[mkt.key], N = src.length;
+  const hit = new Uint8Array(N);
+  let w = 0;
+  for (let i = 0; i < N; i++) {
+    const ok = mkt.type === "binary" ? src[i] > 0.5 : (side === "Under" ? src[i] < line : src[i] > line);
+    hit[i] = ok ? 1 : 0; w += ok ? 1 : 0;
+  }
+  return { man, mkt, side, line, hit, p: w / N, n: N,
+    player: (man.pl.player || {}).name, pos: (man.pl.player || {}).pos, teamId: man.pl.teamId };
+}
+// The joint probability of a set of legs: the share of simulated afternoons on
+// which all of them came in. No copula, no matrix, no independence assumption
+// — and it costs one pass over a byte array.
+function parlayProb(legs) {
+  if (!legs.length) return 0;
+  const N = legs[0].n;
+  let w = 0;
+  outer: for (let i = 0; i < N; i++) {
+    for (let j = 0; j < legs.length; j++) if (!legs[j].hit[i]) continue outer;
+    w++;
+  }
+  return w / N;
+}
+// What the legs multiply out to if you pretend they are independent — which is
+// what a book that prices each leg separately is charging you for.
+const naiveProb = legs => legs.reduce((a, l) => a * l.p, 1);
+
+// ── building the ticket ─────────────────────────────────────────────────────
+// A straight parlay pays the product of its legs' decimal odds. That is the
+// whole opportunity: the PAYOUT is computed as though the legs were
+// independent, and they are not. Where the true joint probability beats the
+// product of the singles, the book is handing out a price it did not mean to.
+//
+// This is the same trade the baseball board makes on a two-man hit double, and
+// the football version is bigger, because a quarterback's yards are literally
+// the sum of his receivers' yards while a book still prices them apart.
+function buildParlays(legs, opts) {
+  opts = opts || {};
+  const size = clamp(opts.size || 2, 2, 4);
+  const minP = opts.minP != null ? opts.minP : 0.03;
+  const kf = opts.kelly != null ? opts.kelly : 0.25;
+  const priced = legs.filter(l => l.dec > 1);          // only legs we can actually price
+  const top = clamp(opts.pool || 14, 2, 24);
+  const pool = priced.slice().sort((a, b) => b.p - a.p).slice(0, top);
+  const out = [];
+  const idx = new Array(size).fill(0);
+  (function rec(start, depth) {
+    if (depth === size) {
+      const set = idx.map(i => pool[i]);
+      // A man appearing twice in the same ticket is usually barred, and where
+      // it is allowed it is the most correlated ticket on the board, so it is
+      // offered but flagged rather than quietly mixed in.
+      const names = {}; let samePlayer = false;
+      set.forEach(l => { if (names[l.player]) samePlayer = true; names[l.player] = 1; });
+      const p = parlayProb(set);
+      if (p >= minP) {
+        const naive = naiveProb(set);
+        const dec = set.reduce((a, l) => a * l.dec, 1);
+        const ev = p * dec - 1;
+        const b = dec - 1;
+        out.push({ legs: set, p, naive, lift: p - naive,
+          liftPct: naive > 0 ? p / naive - 1 : 0,
+          dec, american: probToAm(1 / dec), fair: probToAm(p), ev,
+          kelly: b > 0 ? Math.max(0, kf * (p * dec - 1) / b) : 0,
+          samePlayer, sameTeam: set.every(l => l.teamId === set[0].teamId),
+          sameGame: set.every(l => l.gameId === set[0].gameId) });
+      }
+      return;
+    }
+    for (let i = start; i < pool.length; i++) { idx[depth] = i; rec(i + 1, depth + 1); }
+  })(0, 0);
+  out.sort((a, b) => (opts.rank === "lift" ? b.lift - a.lift : b.ev - a.ev) || b.p - a.p);
+  return out;
+}
+
+// ── the number system ───────────────────────────────────────────────────────
+// One number on a prop tells you nothing about why. The baseball board splits
+// a hitter's night into how bad the arm is and how good the bats are; this is
+// the football version, and it has four levers instead of two.
+//
+// Each is the projection re-run with that lever alone switched on, so the
+// parts add up to the whole by construction rather than by assertion:
+//
+//   VOLUME   the game itself — pace, total, and which way the script runs.
+//            A back in a game his team is favoured to lead gets carries a
+//            back in a shootout never sees.
+//   MATCHUP  the eleven men opposite: what that defence gives up, per attempt
+//            and per target, against what the league gives up.
+//   BODIES   who is out. The biggest mover of a prop line in the hour before
+//            kickoff, and the one the market is slowest on.
+//   WEATHER  cold and wet, and honestly labelled: the feed does not carry
+//            wind, which is the only weather that really moves a passing line.
+//
+// SPOT is the four of them together: how far this afternoon sits from a
+// neutral one, in the prop's own units and as points of probability at his
+// line. It is the thesis of the bet in one number.
+function propSpot(L, pl, ts, ctx, key) {
+  const neutral = { pts: L.avgTotal / 2, total: L.avgTotal, mgn: 0 };
+  const mkVol = (g, def, wx, uf) => teamVolume(L, ts,
+    g ? ctx.pts : neutral.pts, g ? ctx.total : neutral.total, g ? ctx.mgn : neutral.mgn,
+    def || null, wx || null, uf || null);
+  const meanOf = (vol, scale) => {
+    const pr = projectPlayer(L, pl, vol, ts, scale || null);
+    if (key === "atd") return pr.anytimeTD;
+    if (key === "passTD") return pr.passTD;
+    if (key === "rec") return pr.rec.mean;
+    if (key === "car") return pr.car.mean;
+    const d = pr[key];
+    return d && d.mean != null ? d.mean : null;
+  };
+  const base   = meanOf(mkVol(false, null, null, null));
+  const vol    = meanOf(mkVol(true,  null, null, null));
+  const match  = meanOf(mkVol(true,  ctx.def, null, null));
+  const wthr   = meanOf(mkVol(true,  ctx.def, ctx.wx, null));
+  const units  = meanOf(mkVol(true,  ctx.def, ctx.wx, ctx.units));
+  const full   = meanOf(mkVol(true,  ctx.def, ctx.wx, ctx.units), ctx.scale);
+  if (base == null) return null;
+  return { base, full, spot: full - base,
+    volume: vol - base, matchup: match - vol, weather: wthr - match,
+    bodies: (units - wthr) + (full - units),
+    pct: base > 1e-9 ? full / base - 1 : 0 };
 }
 
 // ── the slate ───────────────────────────────────────────────────────────────
@@ -1316,6 +1953,13 @@ async function loadLeagueBoard(leagueKey, opts, onStatus) {
     // Everything is now a per-game rate, so gp is 1 — but `n` remembers how many
     // games are actually behind it, which is what the shrinkage needs.
     mix.gp = 1; mix.n = a.gp * (1 - wb) + b.gp * wb; mix.id = a.id; mix.abbr = a.abbr;
+    // Keep the two sample sizes apart. How far to trust a DEFENSIVE rate is a
+    // different question from how far to trust an offence's pace, because last
+    // season's defence is a much weaker guide to this one — sweeping the trust
+    // against the exchange's ladders put last season's seventeen games at about
+    // the worth of two and a half of this season's, and full trust in it was
+    // measurably WORSE than ignoring the defence altogether.
+    mix.nCur = b.gp; mix.nPrior = a.gp;
     stats[k] = mix;
   });
 
@@ -1325,7 +1969,8 @@ async function loadLeagueBoard(leagueKey, opts, onStatus) {
 // Props for one game, on demand. NFL pulls a league-wide feed once and reuses
 // it; college has to walk two rosters, which is why it is a button and not a
 // default.
-async function loadGameProps(board, entry, cache, onStatus) {
+async function loadGameProps(board, entry, cache, onStatus, opts) {
+  opts = opts || {};
   const L = board.L;
   const homeId = entry.game.home.id, awayId = entry.game.away.id;
   // Four games is about where this season's usage stops being a rounding error
@@ -1348,22 +1993,74 @@ async function loadGameProps(board, entry, cache, onStatus) {
       rosters.forEach((r, i) => r.forEach(a => { seat[a.id] = i === 0 ? homeId : awayId; }));
       players = players.filter(p => seat[p.id]).map(p => Object.assign({}, p, { teamId: seat[p.id] }));
     } catch (e) { /* roster feed down: fall back to the team the stats came with */ }
-  } else {
-    const gk = key + ":" + entry.game.id;
-    if (!cache[gk]) {
-      if (onStatus) onStatus("Loading both rosters…", 0.1);
-      cache[gk] = await loadPlayersCFB(L, statSeason, [homeId, awayId], cache, p => onStatus && onStatus("Loading player usage…", 0.1 + 0.8 * p));
-    }
-    players = cache[gk];
   }
+  // Who is not playing. A man who is out should not be projected at all, and
+  // the snaps he is not taking go to the players behind him — which is the
+  // single biggest thing that moves a prop line in the hour before kickoff.
+  let inj = {};
+  const ik = "inj:" + entry.game.id;
+  if (cache[ik] === undefined) {
+    try { cache[ik] = await loadInjuries(L, entry.game.id); }
+    catch (e) { cache[ik] = null; }
+  }
+  inj = cache[ik] || {};
+  const wx = weatherFactor(entry.game);
+
+  // Depth charts tell us which of those names are starters. Cached per team.
+  const depthOf = async tid => {
+    const dk = "depth:" + L.key + ":" + tid;
+    if (cache[dk] === undefined) {
+      try { cache[dk] = await loadDepthChart(L, tid, board.season); }
+      catch (e) { cache[dk] = null; }
+    }
+    return cache[dk];
+  };
+  const depth = {};
+  depth[homeId] = await depthOf(homeId);
+  depth[awayId] = await depthOf(awayId);
+  const units = {};
+  units[homeId] = unitsOut(inj[homeId], depth[homeId]);
+  units[awayId] = unitsOut(inj[awayId], depth[awayId]);
+
   const out = [];
-  [[homeId, entry.proj.homePts, entry.blend.margin], [awayId, entry.proj.awayPts, -entry.blend.margin]].forEach(([tid, pts, mgn]) => {
+  [[homeId, entry.proj.homePts, entry.blend.margin, awayId], [awayId, entry.proj.awayPts, -entry.blend.margin, homeId]]
+    .forEach(([tid, pts, mgn, oppId]) => {
     const ts = board.teamStats[tid];
-    const vol = teamVolume(L, ts, pts, entry.blend.total, mgn);
-    players.filter(p => p.teamId === tid).forEach(pl => {
-      const pr = projectPlayer(L, pl, vol, ts);
+    const def = defenceProfile(board.teamStats[oppId]);
+    const uf = unitFactors(units[tid], units[oppId], opts.unitStrength);
+    const vol = teamVolume(L, ts, pts, entry.blend.total, mgn, def, wx, uf);
+    const squad = players.filter(p => p.teamId === tid);
+    const rows = squad.map(pl => {
+      const status = (inj[tid] || {})[String(pl.id)] || null;
+      return { pl, status, avail: injuryWeight(status), pr: projectPlayer(L, pl, vol, ts) };
+    });
+    // Redistribute: scale everyone by availability, then put the team's volume
+    // back where it was, so what the absent man is not getting is shared out
+    // rather than quietly vanishing from the offence.
+    // Not all of it comes back to the men on this list. A team hangs props on
+    // five or six players and fields more than that, so some of an absent
+    // starter's work goes to somebody nobody is pricing. Eighty-five percent of
+    // it returns to the modelled players; the rest leaks, which is nearer the
+    // truth than handing every last target to the second receiver.
+    const LEAK = 0.85;
+    ["eTgt", "eCar", "ePass"].forEach(k => {
+      const before = rows.reduce((a, r) => a + (r.pr[k] || 0), 0);
+      const after = rows.reduce((a, r) => a + (r.pr[k] || 0) * r.avail, 0);
+      const back = after > 1e-9 ? before / after : 1;
+      rows.forEach(r => {
+        r.scale = r.scale || {};
+        r.scale[k] = r.avail * (1 + LEAK * (back - 1));
+      });
+    });
+    rows.forEach(r => {
+      if (r.avail <= 0) return;                       // out: no line at all
+      const pr = projectPlayer(L, r.pl, vol, ts, r.scale);
       const mkts = propMarkets(pr);
-      if (mkts.length) out.push({ teamId: tid, player: pl, proj: pr, markets: mkts, vol });
+      if (mkts.length) out.push({
+        teamId: tid, player: r.pl, proj: pr, markets: mkts, vol,
+        status: r.status, avail: r.avail,
+        matchup: { def, wx, oppId, units: uf, own: units[tid], opp: units[oppId] }
+      });
     });
   });
   // Rank by how much of the offence a player is actually being handed.
@@ -1398,8 +2095,7 @@ async function loadGameProps(board, entry, cache, onStatus) {
 const KALSHI_API = "https://api.elections.kalshi.com/trade-api/v2";
 const KALSHI_FEE = 0.07;
 const KALSHI_SERIES = {
-  nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" },
-  cfb: { ml: "KXNCAAFGAME", spread: "KXNCAAFSPREAD", total: "KXNCAAFTOTAL" }
+  nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" }
 };
 const kalshiFee = (price, rate) => (rate == null ? KALSHI_FEE : rate) * price * (1 - price);
 
@@ -1797,6 +2493,38 @@ async function loadKalshiProps(leagueKey, onStatus) {
   return { events, ok: true };
 }
 
+// Our prop probabilities carry a systematic offset against the exchange, and
+// it is big enough to decide every recommendation. Measured across a slate our
+// number sits about five points BELOW the market's in the middle of the
+// ladders, so the board fills up with unders — twenty-five of twenty-five on
+// the first run, several of them against markets quoted a cent wide with eight
+// hundred contracts behind them. A market that tight is not five points wrong.
+//
+// So the same discipline the game board already uses: fit our probabilities
+// onto the market's scale across the whole slate, in log-odds where
+// probabilities actually live, and keep only what disagrees after that. The
+// slope catches over-confidence, the intercept catches the offset, and both
+// are shrunk so one odd week cannot bend the curve.
+const logit = p => Math.log(clamp(p, 1e-4, 1 - 1e-4) / (1 - clamp(p, 1e-4, 1 - 1e-4)));
+const expit = z => 1 / (1 + Math.exp(-z));
+
+function calibrateProbs(pairs, n0) {
+  const good = (pairs || []).filter(q => q && isFinite(q.p) && isFinite(q.market) &&
+    q.p > 0.02 && q.p < 0.98 && q.market > 0.02 && q.market < 0.98);
+  const n = good.length;
+  if (n < 40) return { a: 0, b: 1, n, applied: false };
+  const xs = good.map(q => logit(q.p)), ys = good.map(q => logit(q.market));
+  const mx = xs.reduce((a, v) => a + v, 0) / n, my = ys.reduce((a, v) => a + v, 0) / n;
+  let cov = 0, varX = 0;
+  for (let i = 0; i < n; i++) { cov += (xs[i] - mx) * (ys[i] - my); varX += Math.pow(xs[i] - mx, 2); }
+  let b = varX > 1e-9 ? cov / varX : 1;
+  const k = n0 == null ? 120 : n0;                   // shrink toward no correction
+  b = clamp((b * n + 1 * k) / (n + k), 0.6, 1.6);
+  const a = my - b * mx;
+  return { a, b, n, applied: true };
+}
+const applyProbCal = (cal, p) => (cal && cal.applied) ? expit(cal.a + cal.b * logit(p)) : p;
+
 // The rung closest to a line we care about, if the exchange quotes one.
 function kalshiRung(props, entry, playerName, kind, line) {
   if (!props || !props.ok || !entry || !entry.kalshi) return null;
@@ -1852,6 +2580,8 @@ function priceKalshiProp(rung, ourP, opts) {
   const kf = opts.kelly != null ? opts.kelly : 0.25;
   const w = opts.propW != null ? opts.propW : propWeight(rung ? rung.spread : null);
   if (!rung || ourP == null) return null;
+  const pRaw = ourP;
+  if (opts.probCal) ourP = applyProbCal(opts.probCal, ourP);
   const pModel = ourP;
   if (rung.mid != null) ourP = clamp(w * ourP + (1 - w) * rung.mid, 1e-4, 1 - 1e-4);
   const sides = [];
@@ -1871,6 +2601,7 @@ function priceKalshiProp(rung, ourP, opts) {
   best.w = w;
   best.mid = rung.mid;
   best.pModel = best.side === "under" ? 1 - pModel : pModel;
+  best.pRaw = best.side === "under" ? 1 - pRaw : pRaw;
   best.spreadCents = rung.spread * 100;
   best.strike = rung.strike;
   // Crossing costs half the spread on top of the fee. An edge that does not
@@ -1880,6 +2611,133 @@ function priceKalshiProp(rung, ourP, opts) {
   best.tradeable = best.size >= minSize;
   best.worth = (best.p - best.cost) > best.hurdle && best.tradeable;
   return best;
+}
+
+// ── keeping score ───────────────────────────────────────────────────────────
+// A losing bet tells you nothing. Twenty losing bets tell you almost nothing:
+// at these prices a real 3% edge still loses eight of twenty about a fifth of
+// the time. Profit and loss is the slowest possible way to learn whether a
+// system works, and the most expensive.
+//
+// Closing line value is the fast way. If the number moves toward your side
+// after you bet it, you are consistently buying better than the market's final
+// opinion, and that shows up in twenty bets rather than two thousand. If it
+// moves away, no run of winners means the process is sound — you are getting
+// the worst of it and being paid by variance, which stops.
+//
+// So this grades both, and reports the error bar on each, because a record of
+// 3-7 and a record of 7-3 are the same evidence about a coin.
+
+// Final scores for a whole day in one call — lighter than a game at a time.
+async function loadResults(L, yyyymmdd) {
+  const g = L.groups ? "&groups=" + L.groups : "";
+  const d = await getJSON(`${SITE}/${L.path}/scoreboard?limit=400${g}&dates=${yyyymmdd}`, 2);
+  const out = {};
+  (d.events || []).forEach(ev => {
+    const p = parseEvent(ev, L.key);
+    if (p) out[p.id] = p;
+  });
+  return out;
+}
+// What the book settled on. The difference between this and what you took is
+// the only early read on whether the process is any good.
+async function loadClosingLine(L, eventId) {
+  const d = await getJSON(`${CORE}/${L.core}/events/${eventId}/competitions/${eventId}/odds`, 2);
+  const raw = pickBook(d.items);
+  if (!raw) return null;
+  const H = raw.homeTeamOdds || {}, A = raw.awayTeamOdds || {};
+  const close = k => {
+    const c = (H.close || {})[k] || {};
+    return c.american != null ? num(String(c.american).replace("+", "")) : null;
+  };
+  const closeA = k => {
+    const c = (A.close || {})[k] || {};
+    return c.american != null ? num(String(c.american).replace("+", "")) : null;
+  };
+  return {
+    book: (raw.provider || {}).name || "book",
+    spreadHome: close("pointSpread"),
+    mlHome: close("moneyLine"),
+    mlAway: closeA("moneyLine"),
+    total: raw.overUnder != null ? num(raw.overUnder) : null
+  };
+}
+// Win, lose or push, from the score that actually happened.
+function gradeBet(bet, res) {
+  if (!res || !res.final || res.hs == null || res.as == null) return null;
+  const margin = res.hs - res.as, total = res.hs + res.as;
+  if (bet.market === "spread") {
+    const v = bet.side === "home" ? margin + bet.line : -margin + bet.line;
+    return v > 1e-9 ? 1 : (v < -1e-9 ? 0 : 0.5);
+  }
+  if (bet.market === "ml") {
+    if (margin === 0) return 0.5;
+    return (bet.side === "home") === (margin > 0) ? 1 : 0;
+  }
+  if (bet.market === "total") {
+    if (total === bet.line) return 0.5;
+    return (bet.side === "over") === (total > bet.line) ? 1 : 0;
+  }
+  return null;
+}
+const betReturn = (bet, res) => res == null ? null
+  : (res === 0.5 ? 0 : (res === 1 ? (amToDec(bet.price) - 1) * bet.stake : -bet.stake));
+
+// Expected value of the bet you made, priced at the CLOSING number. Positive
+// means you bought better than the market's last word, which is the thing that
+// predicts whether this works long before the money does.
+function betCLV(bet, close, L) {
+  if (!close) return null;
+  const dec = amToDec(bet.price); if (!dec) return null;
+  let p = null, push = 0;
+  if (bet.market === "ml") {
+    if (close.mlHome == null || close.mlAway == null) return null;
+    const dv = devig(close.mlHome, close.mlAway);
+    p = bet.side === "home" ? dv.p1 : dv.p2;
+  } else if (bet.market === "spread") {
+    if (close.spreadHome == null) return null;
+    const pmf = marginPmf(-close.spreadHome, L.sigMargin, L.keyDamp);
+    const sp = spreadProbs(pmf, bet.side === "home" ? bet.line : -bet.line);
+    p = bet.side === "home" ? sp.win : sp.lose;
+    push = sp.push;
+  } else if (bet.market === "total") {
+    if (close.total == null) return null;
+    const tp = totalProbs(close.total, L.sigTotal, bet.line);
+    p = bet.side === "over" ? tp.over : tp.under;
+    push = tp.push;
+  }
+  if (p == null) return null;
+  return {
+    ev: evUnit(p, push, bet.price),      // per $1 staked, at closing fair value
+    fair: probToAm(p / Math.max(1e-9, 1 - push)),
+    closeLine: bet.market === "total" ? close.total : (bet.market === "spread" ? close.spreadHome : null),
+    closeMl: bet.side === "home" ? close.mlHome : close.mlAway
+  };
+}
+// The scoreboard for a pile of bets: money, and the thing that matters sooner.
+function betSummary(bets) {
+  const done = bets.filter(b => b.result != null);
+  const rets = done.map(b => betReturn(b, b.result));
+  const staked = done.reduce((a, b) => a + (b.result === 0.5 ? 0 : b.stake), 0);
+  const pnl = rets.reduce((a, v) => a + v, 0);
+  const n = done.length;
+  const unit = done.map((b, i) => b.stake > 0 ? rets[i] / b.stake : 0);   // per $1
+  const mean = n ? unit.reduce((a, v) => a + v, 0) / n : 0;
+  const sd = n > 1 ? Math.sqrt(unit.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / (n - 1)) : 0;
+  const se = n ? sd / Math.sqrt(n) : null;
+  const clvs = bets.map(b => b.clv && b.clv.ev != null ? b.clv.ev : null).filter(v => v != null);
+  const cMean = clvs.length ? clvs.reduce((a, v) => a + v, 0) / clvs.length : null;
+  const cSd = clvs.length > 1 ? Math.sqrt(clvs.reduce((a, v) => a + Math.pow(v - cMean, 2), 0) / (clvs.length - 1)) : 0;
+  const cSe = clvs.length ? cSd / Math.sqrt(clvs.length) : null;
+  return {
+    n, open: bets.length - n,
+    win: done.filter(b => b.result === 1).length,
+    lose: done.filter(b => b.result === 0).length,
+    push: done.filter(b => b.result === 0.5).length,
+    pnl, staked, roi: staked > 0 ? pnl / staked : null,
+    roiSe: se, roiT: se > 0 ? mean / se : null,
+    clvN: clvs.length, clv: cMean, clvSe: cSe, clvT: cSe > 0 ? cMean / cSe : null
+  };
 }
 
 // ── walk-forward backtest ───────────────────────────────────────────────────
@@ -2043,10 +2901,15 @@ return {
   getJSON, pool, loadWeek, loadHistory, loadSlate, loadTeamStats,
   buildRatings, ratingOf, projectGame, blendProjection, priceGame, keyCross, calibrateSlate, applyCal, autoMktW, autoMktWTotal,
   loadGameOdds, oddsFromScoreboard, loadLeagueBoard,
-  teamVolume, loadRoster, loadPlayersNFL, loadPlayersCFB, projectPlayer, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
+  teamVolume, loadRoster, loadPlayersNFL, projectPlayer,
+  defenceProfile, defFactor, log5, DEF_CARRY, weatherFactor, injuryWeight, loadInjuries, LEAGUE,
+  loadDepthChart, unitsOut, unitFactors, UNIT_OF, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
+  rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
+  simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
   backtest, summarise,
+  loadResults, loadClosingLine, gradeBet, betReturn, betCLV, betSummary,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
   loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
-  KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
+  KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, calibrateProbs, applyProbCal, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
 };
 });
