@@ -2098,7 +2098,7 @@ async function loadGameProps(board, entry, cache, onStatus, opts) {
     // it returns to the modelled players; the rest leaks, which is nearer the
     // truth than handing every last target to the second receiver.
     const LEAK = 0.85;
-    ["eTgt", "eCar", "ePass"].forEach(k => {
+    ["eTgt", "eCar"].forEach(k => {
       const before = rows.reduce((a, r) => a + (r.pr[k] || 0), 0);
       const after = rows.reduce((a, r) => a + (r.pr[k] || 0) * r.avail, 0);
       const back = after > 1e-9 ? before / after : 1;
@@ -2107,6 +2107,74 @@ async function loadGameProps(board, entry, cache, onStatus, opts) {
         r.scale[k] = r.avail * (1 + LEAK * (back - 1));
       });
     });
+    // Pass attempts are NOT a share of a pool that leaks — they are a
+    // partition. Whoever is under centre throws all of them, and that is a
+    // hard constraint the "put the total back where it was" rule above cannot
+    // express.
+    //
+    // It got this badly wrong. Every quarterback on a roster is shrunk toward
+    // what THIS offence throws, so two quarterbacks each come out at sixty-odd
+    // percent of the team's attempts and the pair sums to more than one game.
+    // Rule the starter out and the restoration hands the whole inflated total
+    // to his backup: Cooper Rush, a sensible 21.5 attempts on his own, was
+    // being multiplied by 3.46 to SEVENTY-FOUR attempts in a game with
+    // thirty-four, and 484 projected passing yards with it. The board then
+    // offered that as a play at +1074.
+    //
+    // So the men who can actually play share the attempts the team is
+    // projected to throw, in proportion to what each was worth before anyone
+    // was ruled out.
+    // Splitting them in proportion to what each man was worth is still wrong,
+    // because it is not a timeshare: one quarterback takes essentially every
+    // snap, and a 19/11 split describes uncertainty about WHO starts rather
+    // than a game either of them will play. The depth chart, already loaded
+    // for the injury work, says who that is — so the man at the top of it
+    // gets the attempts, and the rest get the sliver that a blowout or a knock
+    // actually hands them.
+    {
+      const chart = depth[tid] || {};
+      const rankOf = r => { const d = chart[String(r.pl.id)]; return d && d.unit === "qb" ? d.rank : null; };
+      const qbs = rows.filter(r => r.pl.pos === "QB" && r.avail > 0 && (r.pr.ePass || 0) > 0.5);
+      const ranked = qbs.some(r => rankOf(r) != null);
+      const weightOf = r => {
+        if (!ranked) return (r.pr.ePass || 0) * r.avail;    // no chart: fall back to form
+        const k = rankOf(r);
+        return (k === 1 ? 1 : k === 2 ? 0.06 : 0.02) * r.avail;
+      };
+      const w = qbs.reduce((a, r) => a + weightOf(r), 0);
+      rows.forEach(r => { r.scale = r.scale || {}; });
+      if (w > 1e-9 && vol.passAtt > 0) {
+        qbs.forEach(r => { r.scale.ePass = (vol.passAtt * weightOf(r) / w) / r.pr.ePass; });
+        // Anybody who is not a quarterback keeps his own tiny trick-play
+        // number, and anyone ruled out gets nothing.
+        rows.forEach(r => { if (qbs.indexOf(r) < 0) r.scale.ePass = r.avail; });
+      } else {
+        rows.forEach(r => { r.scale.ePass = r.avail; });
+      }
+    }
+    // The parts have to add up to the whole, and for carries they were not
+    // close. Every back on a roster is shrunk toward the same eight-and-a-half
+    // carries a game, so a club dressing six of them projects fifty-five
+    // carries in a game that will have twenty-four — and the simulator, which
+    // takes the team's rush attempts as the LARGER of its own projection and
+    // the sum of the men, then ran the whole afternoon at fifty-five. Every
+    // rushing prop on the board was inflated by it.
+    //
+    // Scaling proportionally is the least-assumption fix: it leaves each man's
+    // SHARE of the backfield exactly where the model put it, and only corrects
+    // the total. The lead back keeps his share of a real number of carries.
+    // Targets get the same treatment against a looser bound, since a target
+    // cannot exist without an attempt but the receivers we do not model are
+    // entitled to some of them.
+    const fit = (k, budget) => {
+      const sum = rows.reduce((a, r) => a + (r.pr[k] || 0) * (r.scale[k] != null ? r.scale[k] : r.avail), 0);
+      if (!(sum > budget) || !(budget > 0)) return;
+      const f = budget / sum;
+      rows.forEach(r => { r.scale[k] = (r.scale[k] != null ? r.scale[k] : r.avail) * f; });
+    };
+    fit("eCar", vol.rushAtt * 0.95);      // the rest is a scramble or a man nobody prices
+    fit("eTgt", vol.passAtt);             // a target cannot exist without an attempt
+
     rows.forEach(r => {
       if (r.avail <= 0) return;                       // out: no line at all
       const pr = projectPlayer(L, r.pl, vol, ts, r.scale);
