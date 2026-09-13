@@ -162,14 +162,15 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   </select></div>
   <div class="fld"><label>EXCHANGE BRIDGE URL</label><input id="kproxy" type="text" placeholder="https://…workers.dev" style="width:210px" onchange="saveProxy()"></div>
   <div class="fld chk"><input id="unitInj" type="checkbox" onchange="state.propCache={};rankProps()"><label for="unitInj" title="Line, secondary and front-seven injuries. Measured against the exchange this makes the projections LESS accurate, so it is off by default — the missing units are shown either way.">Let line/secondary injuries move the number</label></div>
-  <div class="fld chk"><input id="mSpread" type="checkbox" checked onchange="render()"><label for="mSpread">Spread</label></div>
-  <div class="fld chk"><input id="mMl" type="checkbox" checked onchange="render()"><label for="mMl">Moneyline</label></div>
-  <div class="fld chk"><input id="mTotal" type="checkbox" checked onchange="render()"><label for="mTotal">Total</label></div>
+  <div class="fld chk"><input id="mSpread" type="checkbox" onchange="render()"><label for="mSpread">Spread</label></div>
+  <div class="fld chk"><input id="mMl" type="checkbox" onchange="render()"><label for="mMl">Moneyline</label></div>
+  <div class="fld chk"><input id="mTotal" type="checkbox" onchange="render()"><label for="mTotal">Total</label></div>
   <div class="fld chk"><input id="mProp" type="checkbox" checked onchange="render()"><label for="mProp">Player props</label></div>
 </div>
 
-<div class="section-h">🏈 BEST ADVANTAGES ON THE BOARD — ranked by what they are worth staking, not by confidence
-  <small>The play we are most sure of is usually the one the market has already priced. What pays is the gap between our number and the price on offer — and a fat EV percentage on a longshot is worth less of your roll than a thin one on a coin flip, which is why the default order is stake size rather than EV.</small></div>
+<div class="section-h">🏈 BEST PLAYER PROPS ON THE BOARD — ranked by what they are worth staking, not by confidence
+  <small>Props are the softest market in football and the one our number is checked against a real ladder on every rung, so the cards are props. Spreads, moneylines and totals are still priced and still listed under EVERY GAME below — tick <b>Spread</b>, <b>Moneyline</b> or <b>Total</b> above to put them back on the cards alongside these.<br>
+  The play we are most sure of is usually the one the market has already priced. What pays is the gap between our number and the price on offer — and a fat EV percentage on a longshot is worth less of your roll than a thin one on a coin flip, which is why the default order is stake size rather than EV.</small></div>
 <div class="cards" id="cards"></div>
 
 <div class="wrap">
@@ -494,9 +495,15 @@ function why(p){
 // And a man's receptions and his receiving yards are the SAME OPINION — we
 // measured them at 0.80 — so showing both as two cards invites betting one
 // view twice at two prices. One card per player, his best one.
-const CARD_SLOTS = { game: 8, prop: 8 };
+const CARD_MAX = 16, GAME_SLOTS = 8;
 function pickCards(sorted, sort){
   const key = p => sort === "edge" ? (p.edge == null ? -9 : p.edge) : (sort === "kelly" ? p.kelly : p.ev);
+  // Game markets are off the cards unless asked for. When they are asked for
+  // they get half the room, because otherwise props take everything: an
+  // exchange prop routinely shows 10-20% EV where a spread shows 2%, and the
+  // two are not comparable enough for one ranking to arbitrate between them.
+  const gameSlots = Math.min(sorted.filter(p => p.market !== "prop").length, GAME_SLOTS);
+  const cap = { game: gameSlots, prop: CARD_MAX - gameSlots };
   const seen = {}, byKind = { game: [], prop: [] };
   sorted.forEach(p => {
     const kind = p.market === "prop" ? "prop" : "game";
@@ -505,7 +512,7 @@ function pickCards(sorted, sort){
       if (seen[who]) return;                 // one opinion per man
       seen[who] = 1;
     }
-    if (byKind[kind].length >= CARD_SLOTS[kind]) return;
+    if (byKind[kind].length >= cap[kind]) return;
     byKind[kind].push(p);
   });
   return byKind.game.concat(byKind.prop).sort((a, b) => key(b) - key(a));
@@ -513,8 +520,18 @@ function pickCards(sorted, sort){
 function renderCards(top, total, sortKey){
   const el = $("cards");
   if (!top.length){
-    el.innerHTML = '<div class="empty">Nothing on the board clears your minimum. That is a normal night — of ' + total +
-      ' prices checked, none is far enough off our number to be worth the vig. Drop the minimum EV to see the near misses.</div>';
+    // The cards are props now, and props take a few seconds longer than the
+    // game board: usage, rosters, injuries and depth charts for every game,
+    // then ten thousand simulated afternoons each. An empty board during that
+    // window is work in progress, not an answer, and saying "nothing clears"
+    // would be a lie.
+    const pricing = $("mProp").checked && !state.propBoard.length;
+    el.innerHTML = '<div class="empty">' + (pricing
+      ? '<span class="spin">⟳</span> Pricing player props — usage, rosters, injuries and depth charts for every game, then ten thousand simulated afternoons apiece. Fifteen seconds or so.'
+      : "Nothing on the board clears your minimum. That is a normal night — of " + total +
+        " prices checked, none is far enough off our number to be worth the vig. Drop the minimum EV to see the near misses" +
+        ($("mProp").checked ? ", or tick Spread, Moneyline or Total above to put the game markets back on the cards" : "") + ".") +
+      "</div>";
     return;
   }
   const bank = parseFloat($("bank").value) || 0;
@@ -842,9 +859,14 @@ async function runBacktest(){
 
 function renderLegend(shown, total){
   const nProp = SHOWN.filter(p => p.market === "prop").length;
+  const nGame = SHOWN.length - nProp;
   $("legend").innerHTML =
-    "<b>" + shown + "</b> of " + total + " prices on the board clear your filters" +
-    (nProp ? ", and " + nProp + " of the cards above are player props — ranked beside the game bets, one card per player, because his receptions and his receiving yards are the same opinion twice" : "") + ". " +
+    "<b>" + shown + "</b> of " + total + " prices on the board clear your filters. " +
+    (nProp
+      ? "The cards are <b>" + nProp + " player props</b>" + (nGame ? " and <b>" + nGame + " game bets</b>" : "") +
+        " — one card per player, because a man's receptions and his receiving yards are the same opinion twice and betting it twice is not diversification. " +
+        (nGame ? "" : "Spreads, moneylines and totals are still priced and still in the table below; tick them above to card them too. ")
+      : "") +
     "<b>EV</b> is what one dollar on that price returns on average if our number is right; <b>edge</b> is our probability minus the book's own price with its margin stripped out. " +
     "Stakes are " + $("kf").selectedOptions[0].text.split(" ")[0] + " of the Kelly fraction on the outcomes that actually resolve — a push refunds, so it is not a loss.<br>" +
     "<b>How the number is built:</b> every result this season and last is fit into offence and defence ratings with blowouts compressed and last season discounted; " +
@@ -1420,6 +1442,26 @@ function parsePropLine(raw){
 }
 const pbNorm = s => String(s || "").toLowerCase().replace(/[^a-z ]/g, "").replace(/\s+/g, " ").trim();
 
+// The simulated view of one market. simMarkets only publishes a market where
+// the SIMULATED mean clears its minimum, and the analytic projection that
+// produced pl.markets uses its own mean — so at the margin one can offer a
+// market the other does not, and that card would lose its range and could not
+// be a parlay leg. The samples exist either way, so build the view from them.
+function simMarketFor(sim, playerId, mkt){
+  if (!sim) return null;
+  const got = (sim.byPlayer[playerId] || {})[mkt.key];
+  if (got) return got;
+  const man = sim.manOf[playerId];
+  const src = man && man.out[mkt.key];
+  if (!src) return null;
+  const sorted = Float64Array.from(src); sorted.sort();
+  const N = sorted.length;
+  return { key: mkt.key, label: mkt.label, type: mkt.type, n: N,
+    range: M.simRange(src), mean: M.simRange(src).mean, step: mkt.step, ourLine: mkt.ourLine,
+    tail: line => { let lo = 0, hi = N;
+      while (lo < hi){ const m = (lo + hi) >> 1; if (sorted[m] > line) hi = m; else lo = m + 1; }
+      return (N - lo) / N; } };
+}
 async function rankProps(usePaste){
   const btn = $("pbRun"), body = $("pb-body");
   if (!Object.keys(state.boards).length){ body.innerHTML = '<div class="empty">Load the board first.</div>'; return; }
@@ -1450,7 +1492,7 @@ async function rankProps(usePaste){
           pl.markets.forEach(mkt => {
             const team = pl.teamId === entry.game.home.id ? entry.game.home.abbr : entry.game.away.abbr;
             const opp = pl.teamId === entry.game.home.id ? entry.game.away.abbr : entry.game.home.abbr;
-            const sm = sim ? (sim.byPlayer[pl.player.id] || {})[mkt.key] : null;
+            const sm = simMarketFor(sim, pl.player.id, mkt);
             const base = { player: pl.player.name, pos: pl.player.pos, team, entry, board: b, mkt,
                            status: pl.status || null, opp: opp, def: pl.matchup ? pl.matchup.def : null,
                            wx: pl.matchup ? pl.matchup.wx : null,
