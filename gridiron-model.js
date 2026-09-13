@@ -898,7 +898,13 @@ async function loadTeamStats(L, season) {
       completions: own.completions || 0, points: own.totalPoints || 0,
       passTD: own.passingTouchdowns || 0, rushTD: own.rushingTouchdowns || 0,
       passYds: own.passingYards || 0, rushYds: own.rushingYards || 0,
-      dPassYds: opp.passingYards || 0, dRushYds: opp.rushingYards || 0, dPoints: opp.totalPoints || 0
+      // What this team's OPPONENTS did against it — the defence, which the feed
+      // has been handing over all along and which nothing was reading.
+      dPassAtt: opp.passingAttempts || 0, dCompletions: opp.completions || 0,
+      dPassYds: opp.passingYards || 0, dPassTD: opp.passingTouchdowns || 0,
+      dRushAtt: opp.rushingAttempts || 0, dRushYds: opp.rushingYards || 0,
+      dRushTD: opp.rushingTouchdowns || 0, dSacks: opp.sacks || 0,
+      dPoints: opp.totalPoints || 0
     };
   });
   return out;
@@ -908,7 +914,7 @@ async function loadTeamStats(L, season) {
 // forces move it: pace (a projected shootout is more plays and more scoring
 // chances) and game script (a team projected to trail throws more, and the
 // effect is worth several attempts a game, which is most of a prop line).
-function teamVolume(L, ts, projPts, projTotal, projMargin) {
+function teamVolume(L, ts, projPts, projTotal, projMargin, def, wx) {
   const gp = Math.max(1, ts ? ts.gp : 1);
   const base = ts ? {
     pass: ts.passAtt / gp, sack: ts.sacks / gp, rush: ts.rushAtt / gp, comp: ts.completions / gp,
@@ -919,12 +925,15 @@ function teamVolume(L, ts, projPts, projTotal, projMargin) {
   const drops = base.pass + base.sack;
   const plays = Math.max(30, drops + base.rush);
   const passRate = clamp(drops / plays, 0.3, 0.78);
-  const pace = 1 + 0.25 * (projTotal / L.avgTotal - 1);
+  // Pace is our own, the defence's willingness to allow snaps, and the weather.
+  const dPace = def ? defFactor((def.passAttPG + def.rushAttPG), LEAGUE.passAttPG + LEAGUE.rushAttPG, def.n, 0.10) : 1;
+  const pace = (1 + 0.25 * (projTotal / L.avgTotal - 1)) * dPace;
   // ~0.45 percentage points of pass rate per point of expected margin, capped
   // so a 30-point favourite does not end up in the wildcat.
   const shift = clamp(-0.0045 * projMargin, -0.09, 0.09);
-  const playsAdj = plays * clamp(pace, 0.85, 1.18);
-  const dropsAdj = playsAdj * clamp(passRate + shift, 0.25, 0.82);
+  const playsAdj = plays * clamp(pace, 0.82, 1.20);
+  const wxPass = wx ? wx.pass : 1;
+  const dropsAdj = playsAdj * clamp((passRate + shift) * wxPass, 0.25, 0.82);
   const sackRate = drops > 0 ? base.sack / drops : 0.07;
   const passAtt = dropsAdj * (1 - sackRate);
   const rushAtt = playsAdj - dropsAdj;
@@ -933,7 +942,7 @@ function teamVolume(L, ts, projPts, projTotal, projMargin) {
   // should not be handed the league's red-zone conversion.
   const evid = ts ? (ts.n != null ? ts.n : ts.gp) : 0;
   const tdPerPt = base.pts > 0 ? clamp((base.passTD + base.rushTD) / base.pts, 0.06, 0.14) : 0.10;
-  const td = projPts * shrink(tdPerPt, evid, 0.100, 6);
+  const td = projPts * shrink(tdPerPt, evid, 0.100, 6);   // projPts already carries the matchup
   const rushTDshare = (base.passTD + base.rushTD) > 0
     ? shrink(base.rushTD / (base.passTD + base.rushTD), evid, L.rushTDshare, 6)
     : L.rushTDshare;
@@ -942,8 +951,118 @@ function teamVolume(L, ts, projPts, projTotal, projMargin) {
     plays: playsAdj, passAtt, rushAtt, sacks: dropsAdj - passAtt,
     passRate: dropsAdj / playsAdj, basePassAtt: base.pass, baseRushAtt: base.rush,
     td, passTD: td * (1 - rushTDshare), rushTD: td * rushTDshare,
-    ypa: base.ypa, ypc: base.ypc, pts: projPts
+    // Efficiency the offence brings, already moved for who it is facing and
+    // what the weather is doing.
+    ypa: base.ypa * (def ? defFactor(def.ypa, LEAGUE.ypa, def.n) : 1) * (wx ? wx.ypa : 1),
+    ypc: base.ypc * (def ? defFactor(def.ypc, LEAGUE.ypc, def.n) : 1),
+    defCatch: def ? def.catch : LEAGUE.catch,
+    defN: def ? def.n : 0,
+    tdFactor: def ? defFactor(def.ptsPG, LEAGUE.ptsPG, def.n, 0.20) : 1,
+    pts: projPts, wx: wx || null
   };
+}
+
+// ── the other side of the ball ──────────────────────────────────────────────
+// Until now a projection knew how much of his offence a player gets and
+// nothing whatsoever about who he is playing. A slot receiver drew the same
+// number against the best secondary in the league as against the worst, which
+// is not a model of anything.
+//
+// The fix is the same one the baseball board uses: a rate is the player's own
+// rate, moved by the opponent's rate, relative to the league. For a
+// probability that is log5 — the odds-ratio — and for a per-attempt yardage it
+// is the multiplicative form of the same idea. Both are shrunk by how much of
+// the defence we have actually seen, because a run defence after two games is
+// mostly the two offences it happened to draw.
+const LEAGUE = { ypa: 7.0, ypc: 4.3, catch: 0.645, passAttPG: 32.1, rushAttPG: 26.8, ptsPG: 23.0, sackRate: 0.068 };
+
+function defenceProfile(ts) {
+  if (!ts) return null;
+  const gp = Math.max(1, ts.n != null ? ts.n : ts.gp);
+  const perG = v => (v || 0) / Math.max(1, ts.gp);
+  const passAtt = perG(ts.dPassAtt), rushAtt = perG(ts.dRushAtt);
+  return {
+    n: gp,
+    ypa: ts.dPassAtt ? ts.dPassYds / ts.dPassAtt : LEAGUE.ypa,
+    ypc: ts.dRushAtt ? ts.dRushYds / ts.dRushAtt : LEAGUE.ypc,
+    catch: ts.dPassAtt ? clamp(ts.dCompletions / ts.dPassAtt, 0.4, 0.8) : LEAGUE.catch,
+    passAttPG: passAtt || LEAGUE.passAttPG,
+    rushAttPG: rushAtt || LEAGUE.rushAttPG,
+    ptsPG: perG(ts.dPoints) || LEAGUE.ptsPG,
+    passTDPG: perG(ts.dPassTD), rushTDPG: perG(ts.dRushTD)
+  };
+}
+// How much to move a rate for this defence: 1.0 is neutral. Shrunk toward
+// neutral by the games behind it, and capped, because no defence is worth a
+// forty percent swing on a receiving line.
+function defFactor(allowed, league, n, cap) {
+  if (!(league > 0) || !(allowed > 0)) return 1;
+  const raw = allowed / league;
+  const w = clamp((n || 0) / ((n || 0) + 6), 0, 1);      // six games to half-trust it
+  const lim = cap == null ? 0.18 : cap;
+  return clamp(1 + w * (raw - 1), 1 - lim, 1 + lim);
+}
+// Log5 for genuine probabilities: the player's rate, the defence's rate, and
+// the league's, combined as odds rather than averaged.
+function log5(p, d, lg) {
+  if (!(lg > 0) || !(lg < 1)) return p;
+  const o = (x) => clamp(x, 1e-4, 1 - 1e-4) / (1 - clamp(x, 1e-4, 1 - 1e-4));
+  const odds = o(p) * o(d) / o(lg);
+  return odds / (1 + odds);
+}
+
+// Weather, with a caveat that matters more than the adjustment. The feed gives
+// a temperature and a phrase; it does NOT give wind, and wind is the only
+// weather that seriously moves a passing line. So this is a small, honest
+// nudge for cold and wet and nothing more — it should not be mistaken for a
+// weather model.
+function weatherFactor(game) {
+  const out = { pass: 1, ypa: 1, total: 1, note: null };
+  if (!game || game.indoor) return out;
+  const w = game.weather || {};
+  const t = num(w.temperature);
+  const cond = String(w.displayValue || "").toLowerCase();
+  const wet = /rain|shower|snow|storm|sleet|drizzle|flurr/.test(cond);
+  if (t != null && t <= 32) {
+    out.ypa *= 0.97; out.total *= 0.97;
+    out.note = "cold (" + t + "°F)";
+  }
+  if (wet) {
+    out.pass *= 0.97; out.ypa *= 0.96; out.total *= 0.96;
+    out.note = (out.note ? out.note + ", " : "") + cond;
+  }
+  return out;
+}
+
+// Injuries. A player who is out should not be projected at all, and the snaps
+// he is not taking have to go somewhere — usually to the man behind him, which
+// is the single biggest thing that moves a prop line in the last hour before
+// kickoff.
+const INJ_PLAY = { out: 0, doubtful: 0.12, questionable: 0.72, probable: 0.95 };
+function injuryWeight(status) {
+  if (!status) return 1;
+  const k = String(status).toLowerCase();
+  if (k.indexOf("out") >= 0 || k.indexOf("injured reserve") >= 0 || k.indexOf("suspend") >= 0) return INJ_PLAY.out;
+  if (k.indexOf("doubtful") >= 0) return INJ_PLAY.doubtful;
+  if (k.indexOf("question") >= 0) return INJ_PLAY.questionable;
+  if (k.indexOf("probable") >= 0) return INJ_PLAY.probable;
+  return 1;
+}
+// The game summary carries both teams' reports. It is a heavy payload, so it
+// is fetched once per game and cached.
+async function loadInjuries(L, eventId) {
+  const d = await getJSON(`${SITE}/${L.path}/summary?event=${eventId}`, 2);
+  const out = {};
+  (d.injuries || []).forEach(t => {
+    const tid = String((t.team || {}).id || "");
+    if (!tid) return;
+    const m = out[tid] || (out[tid] = {});
+    (t.injuries || []).forEach(x => {
+      const aid = String(((x.athlete || {}).id) || "");
+      if (aid) m[aid] = x.status || (x.type || {}).description || "";
+    });
+  });
+  return out;
 }
 
 // ── players ─────────────────────────────────────────────────────────────────
@@ -1045,7 +1164,7 @@ const propShape = () => ({ DISP: Object.assign({}, DISP), VAR: Object.assign({},
 
 // Usage share of a projected volume, then efficiency — never a yards-per-game
 // average, which bakes in a schedule and a game script that will not repeat.
-function projectPlayer(L, pl, vol, ts) {
+function projectPlayer(L, pl, vol, ts, scale) {
   const gp = Math.max(1, pl.gp);
   const teamPassAtt = ts && ts.gp ? ts.passAtt / ts.gp : vol.basePassAtt;
   const teamRushAtt = ts && ts.gp ? ts.rushAtt / ts.gp : vol.baseRushAtt;
@@ -1068,15 +1187,23 @@ function projectPlayer(L, pl, vol, ts) {
   const carryShare = carPerG / Math.max(1, teamRushAtt);
   const attShare = attPerG / Math.max(1, teamPassAtt);
 
-  const catchRate = pl.tgt > 0 ? shrink(pl.rec / pl.tgt, pl.tgt, 0.645, 25) : 0.645;
-  const ypr = pl.rec > 0 ? shrink(pl.recYds / pl.rec, pl.rec, 11.6, 20) : 11.6;
+  // Catch rate is a probability, so the defence enters through log5 rather than
+  // as a multiplier — the odds-ratio, the same combination the baseball board
+  // uses for a hitter against a pitcher.
+  const ownCatch = pl.tgt > 0 ? shrink(pl.rec / pl.tgt, pl.tgt, LEAGUE.catch, 25) : LEAGUE.catch;
+  const catchRate = clamp(log5(ownCatch, vol.defCatch != null ? vol.defCatch : LEAGUE.catch, LEAGUE.catch), 0.35, 0.92);
+  // Yardage rates are per-attempt, so the matchup is multiplicative. vol.ypa
+  // and vol.ypc already carry the defence and the weather.
+  const yprBase = pl.rec > 0 ? shrink(pl.recYds / pl.rec, pl.rec, 11.6, 20) : 11.6;
+  const ypr = yprBase * (vol.ypa / LEAGUE.ypa);
   const ypc = pl.rushAtt > 0 ? shrink(pl.rushYds / pl.rushAtt, pl.rushAtt, vol.ypc, 45) : vol.ypc;
   const ypa = pl.passAtt > 0 ? shrink(pl.passYds / pl.passAtt, pl.passAtt, vol.ypa, 80) : vol.ypa;
 
-  const eTgt = tgtShare * vol.passAtt;
+  const sc = scale || {};
+  const eTgt = tgtShare * vol.passAtt * (sc.eTgt != null ? sc.eTgt : 1);
   const eRec = eTgt * catchRate;
-  const eCar = carryShare * vol.rushAtt;
-  const ePass = attShare * vol.passAtt;
+  const eCar = carryShare * vol.rushAtt * (sc.eCar != null ? sc.eCar : 1);
+  const ePass = attShare * vol.passAtt * (sc.ePass != null ? sc.ePass : 1);
 
   // Compound variance: a count of chances, each worth a spread of yards. This
   // is why a 3-target night and a 12-target night get different shapes instead
@@ -1099,8 +1226,9 @@ function projectPlayer(L, pl, vol, ts) {
   const teamRushTDpg = ts && ts.gp ? ts.rushTD / ts.gp : vol.rushTD;
   const ownRecShare = teamRecTDpg > 0.05 ? clamp((pl.recTD / gp) / teamRecTDpg, 0, 1) : tgtShare;
   const ownRushShare = teamRushTDpg > 0.05 ? clamp((pl.rushTD / gp) / teamRushTDpg, 0, 1) : carryShare;
-  const lamRec = vol.passTD * clamp(0.5 * shrink(ownRecShare, pl.recTD, tgtShare, 3) + 0.5 * tgtShare, 0, 0.6);
-  const lamRush = vol.rushTD * clamp(0.5 * shrink(ownRushShare, pl.rushTD, carryShare, 3) + 0.5 * carryShare, 0, 0.75);
+  const tdF = vol.tdFactor != null ? vol.tdFactor : 1;
+  const lamRec = vol.passTD * tdF * clamp(0.5 * shrink(ownRecShare, pl.recTD, tgtShare, 3) + 0.5 * tgtShare, 0, 0.6);
+  const lamRush = vol.rushTD * tdF * clamp(0.5 * shrink(ownRushShare, pl.rushTD, carryShare, 3) + 0.5 * carryShare, 0, 0.75);
 
   return {
     player: pl, eTgt, eRec, eCar, ePass, catchRate, ypr, ypc, ypa,
@@ -1288,14 +1416,56 @@ async function loadGameProps(board, entry, cache, onStatus) {
       players = players.filter(p => seat[p.id]).map(p => Object.assign({}, p, { teamId: seat[p.id] }));
     } catch (e) { /* roster feed down: fall back to the team the stats came with */ }
   }
+  // Who is not playing. A man who is out should not be projected at all, and
+  // the snaps he is not taking go to the players behind him — which is the
+  // single biggest thing that moves a prop line in the hour before kickoff.
+  let inj = {};
+  const ik = "inj:" + entry.game.id;
+  if (cache[ik] === undefined) {
+    try { cache[ik] = await loadInjuries(L, entry.game.id); }
+    catch (e) { cache[ik] = null; }
+  }
+  inj = cache[ik] || {};
+  const wx = weatherFactor(entry.game);
+
   const out = [];
-  [[homeId, entry.proj.homePts, entry.blend.margin], [awayId, entry.proj.awayPts, -entry.blend.margin]].forEach(([tid, pts, mgn]) => {
+  [[homeId, entry.proj.homePts, entry.blend.margin, awayId], [awayId, entry.proj.awayPts, -entry.blend.margin, homeId]]
+    .forEach(([tid, pts, mgn, oppId]) => {
     const ts = board.teamStats[tid];
-    const vol = teamVolume(L, ts, pts, entry.blend.total, mgn);
-    players.filter(p => p.teamId === tid).forEach(pl => {
-      const pr = projectPlayer(L, pl, vol, ts);
+    const def = defenceProfile(board.teamStats[oppId]);
+    const vol = teamVolume(L, ts, pts, entry.blend.total, mgn, def, wx);
+    const squad = players.filter(p => p.teamId === tid);
+    const rows = squad.map(pl => {
+      const status = (inj[tid] || {})[String(pl.id)] || null;
+      return { pl, status, avail: injuryWeight(status), pr: projectPlayer(L, pl, vol, ts) };
+    });
+    // Redistribute: scale everyone by availability, then put the team's volume
+    // back where it was, so what the absent man is not getting is shared out
+    // rather than quietly vanishing from the offence.
+    // Not all of it comes back to the men on this list. A team hangs props on
+    // five or six players and fields more than that, so some of an absent
+    // starter's work goes to somebody nobody is pricing. Eighty-five percent of
+    // it returns to the modelled players; the rest leaks, which is nearer the
+    // truth than handing every last target to the second receiver.
+    const LEAK = 0.85;
+    ["eTgt", "eCar", "ePass"].forEach(k => {
+      const before = rows.reduce((a, r) => a + (r.pr[k] || 0), 0);
+      const after = rows.reduce((a, r) => a + (r.pr[k] || 0) * r.avail, 0);
+      const back = after > 1e-9 ? before / after : 1;
+      rows.forEach(r => {
+        r.scale = r.scale || {};
+        r.scale[k] = r.avail * (1 + LEAK * (back - 1));
+      });
+    });
+    rows.forEach(r => {
+      if (r.avail <= 0) return;                       // out: no line at all
+      const pr = projectPlayer(L, r.pl, vol, ts, r.scale);
       const mkts = propMarkets(pr);
-      if (mkts.length) out.push({ teamId: tid, player: pl, proj: pr, markets: mkts, vol });
+      if (mkts.length) out.push({
+        teamId: tid, player: r.pl, proj: pr, markets: mkts, vol,
+        status: r.status, avail: r.avail,
+        matchup: { def, wx, oppId }
+      });
     });
   });
   // Rank by how much of the offence a player is actually being handed.
@@ -2136,7 +2306,8 @@ return {
   getJSON, pool, loadWeek, loadHistory, loadSlate, loadTeamStats,
   buildRatings, ratingOf, projectGame, blendProjection, priceGame, keyCross, calibrateSlate, applyCal, autoMktW, autoMktWTotal,
   loadGameOdds, oddsFromScoreboard, loadLeagueBoard,
-  teamVolume, loadRoster, loadPlayersNFL, projectPlayer, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
+  teamVolume, loadRoster, loadPlayersNFL, projectPlayer,
+  defenceProfile, defFactor, log5, weatherFactor, injuryWeight, loadInjuries, LEAGUE, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   backtest, summarise,
   loadResults, loadClosingLine, gradeBet, betReturn, betCLV, betSummary,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,

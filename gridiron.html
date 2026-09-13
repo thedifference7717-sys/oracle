@@ -538,7 +538,8 @@ function propsHTML(b, entry, list){
         return '<span class="rung"><b>' + (Math.round(L*2)/2) + "</b> o" + M.fmtAm(M.probToAm(p)) + "</span>";
       }).join("");
       rows.push("<tr>" +
-        "<td>" + esc(pl.player.name) + ' <span class="mini">' + esc(pl.player.pos) + " · " + esc(team) + "</span></td>" +
+        "<td>" + esc(pl.player.name) + ' <span class="mini">' + esc(pl.player.pos) + " · " + esc(team) + "</span>" +
+          (pl.status ? ' <span class="tag warn">' + esc(pl.status) + "</span>" : "") + "</td>" +
         "<td>" + esc(mkt.label) + "</td>" +
         '<td class="num">' + (mkt.type === "binary" ? pc(mkt.mean) : mkt.mean.toFixed(1)) + "</td>" +
         '<td class="num">' + (mkt.ourLine == null ? "—" : mkt.ourLine) + "</td>" +
@@ -557,7 +558,9 @@ function propsHTML(b, entry, list){
     '<th class="num">Fair O / U</th><th>Exchange</th><th>Your book</th><th>Verdict</th><th>Fair price ladder</th></tr></thead><tbody>' +
     rows.join("") + "</tbody></table>" +
     '<div class="mini" style="padding:8px 2px">Projection is this game, not a season average: team plays come from pace and the projected total, ' +
-    'the pass/run split shifts with the projected margin, and the player takes his usage share of that. Type your book\'s line and price to see whether it is worth having.<br>' +
+    'the pass/run split shifts with the projected margin, and the player takes his usage share of that. Then the matchup: catch rate is combined with the defence through the odds ratio, ' +
+    'per-attempt yardage is moved by what that defence actually allows, and anyone ruled out is dropped with his work handed to the players behind him. ' +
+    'Weather is a small nudge for cold and wet only — the feed carries no wind, which is the one that would matter. Type your book\'s line and price to see whether it is worth having.<br>' +
     'The <b>Exchange</b> column is a real, tradeable price. Its spreads on players run to eight or ten cents, so crossing one costs half the spread plus the fee — a row only reads as a play when the edge clears both, ' +
     'and our number is blended half-and-half with the exchange\'s midpoint first, because the one thing measured here is that we disagree with it by about five points in the middle and nothing says which of us is wrong.</div>';
 }
@@ -1164,7 +1167,10 @@ async function rankProps(usePaste){
           players++;
           pl.markets.forEach(mkt => {
             const team = pl.teamId === entry.game.home.id ? entry.game.home.abbr : entry.game.away.abbr;
-            const base = { player: pl.player.name, pos: pl.player.pos, team, entry, board: b, mkt };
+            const opp = pl.teamId === entry.game.home.id ? entry.game.away.abbr : entry.game.home.abbr;
+            const base = { player: pl.player.name, pos: pl.player.pos, team, entry, board: b, mkt,
+                           status: pl.status || null, opp: opp, def: pl.matchup ? pl.matchup.def : null,
+                           wx: pl.matchup ? pl.matchup.wx : null };
             // 1) your own book, if you pasted it
             const hit = pasted.find(x => x.market === mkt.key && pbNorm(pl.player.name).indexOf(pbNorm(x.name)) >= 0);
             if (hit && (hit.over != null || hit.under != null)){
@@ -1231,8 +1237,10 @@ function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
     "</tr></thead><tbody>" +
     rows.slice(0, 25).map(r => {
       const g = r.entry.game;
+      const note = (r.status ? ' <span class="tag warn">' + esc(r.status) + "</span>" : "") +
+        (r.wx && r.wx.note ? ' <span class="tag">' + esc(r.wx.note) + "</span>" : "");
       return "<tr><td>" + esc(r.player) + ' <span class="mini">' + esc(r.pos) + " · " + esc(r.team) +
-        " · " + esc(g.away.abbr) + "@" + esc(g.home.abbr) + "</span></td>" +
+        " vs " + esc(r.opp) + "</span>" + note + "</td>" +
         "<td>" + esc(r.mkt.label) + " <b>" + esc(r.side) + "</b></td>" +
         '<td class="num">' + (r.mkt.type === "binary" ? pc(r.mkt.mean) : r.mkt.mean.toFixed(1)) + "</td>" +
         '<td class="num">' + (r.line == null ? "—" : r.line) + "</td>" +
