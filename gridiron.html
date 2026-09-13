@@ -58,6 +58,37 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .bar .track{flex:1;height:7px;background:#00000066;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
 .bar .fill{height:100%;border-radius:3px}
 .bar .n{font-family:'Orbitron',monospace;font-size:11px;width:46px;text-align:right;color:var(--text)}
+/* A closed <details> inside a flex parent does not hide its own content in
+   every engine — reproduced in a three-line isolation test, which is why all
+   ten advanced controls were still on screen after they had been folded away.
+   So the folding is stated explicitly rather than left to the element. */
+#more:not([open]) .morewrap{display:none}
+details.fold:not([open])>.panel{display:none}
+details.why-more:not([open])>.bet-foot{display:none}
+#more{width:100%;margin-top:4px}
+#more>summary{cursor:pointer;font-size:11px;color:var(--dim);letter-spacing:.08em;padding:6px 0;list-style:none;user-select:none}
+#more>summary::-webkit-details-marker{display:none}
+#more>summary:hover{color:var(--text)}
+#more[open]>summary{color:var(--text)}
+.morewrap{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;padding:10px 0 2px;border-top:1px solid var(--border);margin-top:4px}
+details.why-more{margin-top:10px}
+details.why-more>summary{cursor:pointer;font-size:11px;color:var(--dim);letter-spacing:.05em;list-style:none;padding:6px 0;border-top:1px solid var(--border)}
+details.why-more>summary::-webkit-details-marker{display:none}
+details.why-more>summary:hover{color:var(--text)}
+details.fold{margin-bottom:14px}
+details.fold>summary{cursor:pointer;list-style:none;padding:13px 15px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.04em;user-select:none}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"\25b8 ";color:var(--dim)}
+details.fold[open]>summary{border-radius:12px 12px 0 0;border-bottom:none;color:var(--text)}
+details.fold[open]>summary::before{content:"\25be "}
+details.fold>.panel{border-radius:0 0 12px 12px;margin-bottom:0}
+.headline{margin-top:12px;padding-top:11px;border-top:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.6}
+.headline b{color:var(--text);font-family:'Orbitron',monospace}
+.bet-str .v{font-size:30px}
+.leg-name{font-size:17px}
+.leg-meta{font-size:13px;margin-top:4px}
+.leg-prob{font-size:19px}
 #record{display:none;align-items:center;gap:16px;flex-wrap:wrap;padding:11px 18px;background:linear-gradient(90deg,#07140F,var(--bg2));border-bottom:1px solid var(--border);font-size:12px}
 #record .rec-wl{font-family:'Orbitron',monospace;font-size:19px;font-weight:900;letter-spacing:.03em}
 #record .rec-lab{font-size:9px;color:var(--dim);letter-spacing:.1em;display:block;margin-top:2px}
@@ -139,36 +170,41 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="record"></div>
 
 <div id="slip">
-  <div class="fld"><label>PARLAY PRICE (0 = AUTO)</label><input id="price" type="number" step="5" value="0" oninput="render()"
-    title="Left at 0 the price is built from the two legs' own market prices with a book's margin on each, which is how a parlay is actually priced. Type what your book is really offering to reprice the whole board against it."></div>
   <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="50" value="1000" oninput="render()"></div>
-  <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50" oninput="render()"></div>
+  <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="0.50" oninput="render()"></div>
   <div class="fld"><label>BET BAR (EDGE PTS)</label><input id="minEdge" type="number" step="0.5" value="2" oninput="render()"></div>
-  <div class="fld"><label>MIN SPOT (PTS)</label><input id="minSpot" type="number" step="1" value="0" oninput="render()"></div>
-  <div class="fld"><label>KELLY FRACTION</label><select id="kf" onchange="render()">
-    <option value="0.125">⅛ Kelly (careful)</option>
-    <option value="0.25" selected>¼ Kelly (standard)</option>
-    <option value="0.5">½ Kelly (aggressive)</option>
-    <option value="1">Full Kelly (don't)</option>
-  </select></div>
-  <div class="fld"><label>OUR NUMBER'S WEIGHT</label><select id="mw" onchange="render()">
-    <option value="auto" selected>Auto (measured, ramped by week)</option>
-    <option value="0">0% — market only, cross-market edges</option>
-    <option value="0.1">10%</option>
-    <option value="0.25">25%</option>
-    <option value="0.5">50%</option>
-    <option value="1">100% — pure model, no market</option>
-  </select></div>
-  <div class="fld"><label>RANK BY</label><select id="sort" onchange="render()">
-    <option value="edge" selected>Edge over price</option>
-    <option value="spot">Softest spot</option>
-    <option value="prob">Raw probability</option>
-  </select></div>
-  <div class="fld"><label>EXCHANGE BRIDGE URL</label><input id="kproxy" type="text" placeholder="https://…workers.dev" style="width:210px" onchange="saveProxy()"></div>
-  <div class="fld chk"><input id="unitInj" type="checkbox" onchange="state.propCache={};rankProps()"><label for="unitInj" title="Line, secondary and front-seven injuries. Measured against the exchange this makes the projections LESS accurate, so it is off by default — the missing units are shown either way.">Let line/secondary injuries move the number</label></div>
-  <div class="fld chk"><input id="onlyPosted" type="checkbox" onchange="render()"><label for="onlyPosted" title="Drop any leg whose man is questionable, doubtful or out.">Confirmed players only</label></div>
-  <div class="fld chk"><input id="onlyTeam" type="checkbox" onchange="render()"><label for="onlyTeam" title="Two men in the same offence move together — the correlation that makes a same-game parlay worth playing.">Same-team pairs only (correlation edge)</label></div>
-  <div class="fld chk"><input id="allowSame" type="checkbox" onchange="render()"><label for="allowSame" title="Two markets on ONE man. The biggest mispricing on the board where a book allows it, and barred at most books.">Allow same-player pairs</label></div>
+  <details id="more">
+    <summary>⚙ More settings</summary>
+    <div class="morewrap">
+      <div class="fld"><label>PARLAY PRICE (0 = AUTO)</label><input id="price" type="number" step="5" value="0" oninput="render()"
+        title="Left at 0 the price is built from the two legs' own market prices with a book's margin on each, which is how a parlay is actually priced. Type what your book is really offering to reprice the whole board against it."></div>
+      <div class="fld"><label>MIN SPOT (PTS)</label><input id="minSpot" type="number" step="1" value="0" oninput="render()"></div>
+      <div class="fld"><label>RANK BY</label><select id="sort" onchange="render()">
+        <option value="edge" selected>Edge over price</option>
+        <option value="spot">Softest spot</option>
+        <option value="prob">Raw probability</option>
+      </select></div>
+      <div class="fld"><label>KELLY FRACTION</label><select id="kf" onchange="render()">
+        <option value="0.125">&#8539; Kelly (careful)</option>
+        <option value="0.25" selected>&frac14; Kelly (standard)</option>
+        <option value="0.5">&frac12; Kelly (aggressive)</option>
+        <option value="1">Full Kelly (don't)</option>
+      </select></div>
+      <div class="fld"><label>OUR NUMBER'S WEIGHT</label><select id="mw" onchange="render()">
+        <option value="auto" selected>Auto (measured, ramped by week)</option>
+        <option value="0">0% &mdash; market only</option>
+        <option value="0.1">10%</option>
+        <option value="0.25">25%</option>
+        <option value="0.5">50%</option>
+        <option value="1">100% &mdash; pure model</option>
+      </select></div>
+      <div class="fld"><label>EXCHANGE BRIDGE URL</label><input id="kproxy" type="text" placeholder="https://&hellip;workers.dev" style="width:210px" onchange="saveProxy()"></div>
+      <div class="fld chk"><input id="onlyPosted" type="checkbox" onchange="render()"><label for="onlyPosted" title="Drop any leg whose man is questionable, doubtful or out.">Confirmed players only</label></div>
+      <div class="fld chk"><input id="onlyTeam" type="checkbox" onchange="render()"><label for="onlyTeam" title="Two men in the same offence move together.">Same-team pairs only</label></div>
+      <div class="fld chk"><input id="allowSame" type="checkbox" onchange="render()"><label for="allowSame" title="Two markets on ONE man. Barred at most books.">Allow same-player pairs</label></div>
+      <div class="fld chk"><input id="unitInj" type="checkbox" onchange="state.propCache={};rankProps()"><label for="unitInj" title="Measured against the exchange this makes the projections LESS accurate, so it is off by default.">Line/secondary injuries move the number</label></div>
+    </div>
+  </details>
 </div>
 
 <div class="section-h">🏈 THE DOUBLES — two props in one game, and the book's arithmetic on them is wrong
@@ -177,7 +213,8 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div class="cards" id="cards"></div>
 
 <div class="wrap">
-  <div class="panel">
+  <details class="fold"><summary>Single props, if you would rather bet one leg</summary>
+<div class="panel">
     <div class="panel-head">TOP PLAYER PROPS — ranked across the whole slate <span id="pb-sub">not loaded</span>
       <span><button id="pbRun" onclick="rankProps()">RANK PROPS</button></span></div>
     <div id="pb-body"><div class="empty">Props are the softest market in football. This ranks every projection we make against a real price — the exchange's, if it is loaded, or your own book's if you paste the lines in below. Ranked by stake, after fees, and only where the edge clears the cost of actually getting the bet on.</div></div>
@@ -190,18 +227,25 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     <div class="note"><b>LOW · NUMBER · HIGH</b> is the middle half of ten thousand simulated games — the 25th, the median and the 75th, with the 10th and 90th dimmed underneath. A receiver whose number is 54 yards lands outside the low-to-high band a quarter of the time, and that is not the model being vague; that is what a football game is. <b>SPOT</b> is how far this particular afternoon sits from a neutral one in his own units; hover it to see which of the four levers moved it — game script, the defence opposite, who is out, and weather.<br>
       A prop is only called a play when the edge clears the cost of getting it on — half the bid/ask spread plus the fee on the exchange, or the vig at your book. Our number is blended half-and-half with the market's first: the standard deviations agree with the exchange's to a fraction of a yard now, but a five-point disagreement in the middle remains and nothing here can prove whose it is.</div>
   </div>
+</details>
 
-  <div class="panel">
+  <details class="fold"><summary>Every game's best double</summary>
+<details class="fold"><summary>Every game — spreads, totals, moneylines</summary>
+<div class="panel">
     <div class="panel-head">EVERY GAME'S BEST DOUBLE — the whole slate, bet bar or not <span id="pl-sub">not built</span></div>
     <div id="pl-body"><div class="empty">Not priced yet.</div></div>
     <div class="note">The card section above shows only the games clearing the bet bar. This is all of them, in the same order, so a game that just misses is still visible. <b>LIFT</b> is how much the true joint probability beats the product of the two singles — positive means the payout was computed on an assumption that is false, in your favour; negative means those legs fight each other, and those are the doubles that feel clever and lose.</div>
   </div>
+</details>
+</details>
 
-  <div class="panel">
+  <details class="fold"><summary>The spots — which offences have the softest afternoon</summary>
+<div class="panel">
     <div class="panel-head">THE SPOTS — every offence, by how soft its afternoon is <span id="spot-sub">not priced</span></div>
     <div id="spot-body"><div class="empty">Not priced yet.</div></div>
     <div class="note">Three readings of the same afternoon, each in percent of what a league-average receiver does against nobody in particular. <b>SOFT DEFENCE</b> holds the offence at league average and asks only how bad the men opposite are. <b>GOOD OFFENCE</b> does the reverse. <b>SPOT</b> is the two together: what a typical pass-catcher in this offence actually does today. Best defence to worst is worth about fifty points on this slate, so the spot is usually a bigger lever than which receiver you pick out of it — the same thing the baseball board finds with pitching.</div>
   </div>
+</details>
 
   <div class="panel">
     <div class="panel-head">MY BETS — what actually happened <span id="bets-sub">nothing logged yet</span>
@@ -210,7 +254,8 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     <div class="note">Bets are stored in this browser only — nothing leaves the page. <b>EXPORT</b> saves them to a file, <b>IMPORT</b> reads one back, so they survive a cleared cache or move to another device.</div>
   </div>
 
-  <div class="panel">
+  <details class="fold"><summary>Paste your book's lines</summary>
+<div class="panel">
     <div class="panel-head">YOUR BOOK'S LINES — paste them and the whole board re-prices <span id="bk-sub">using DraftKings</span>
       <span><button onclick="applyBookLines()">USE MY LINES</button><button onclick="clearBookLines()">CLEAR</button></span></div>
     <div class="wrap" style="padding:10px 15px">
@@ -221,6 +266,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     </div>
     <div class="note">Everything downstream uses these once applied — the ranked cards, the edges, and the book-vs-exchange table, which then tells you whether to take a bet at <b>your</b> book or on the exchange rather than comparing against a book you do not bet at. Anything you do not paste keeps the DraftKings price the feed supplies.</div>
   </div>
+</details>
 
   <div class="panel">
     <div class="panel-head">EVERY GAME — our number against theirs <span id="games-sub"></span></div>
@@ -232,22 +278,27 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     <div class="note">Tap a row for player props on that game. <b>Diff</b> is how far our number sits from the book's after blending — the whole edge on a side lives in that column. <b>Move</b> is how the spread has travelled since it opened; a play that agrees with the move is riding the money, one that fights it is fading it.</div>
   </div>
 
-  <div class="panel">
+  <details class="fold"><summary>Book vs exchange</summary>
+<div class="panel">
     <div class="panel-head">BOOK vs EXCHANGE — the same bet, two venues <span id="ex-sub">not loaded</span>
       <span><button id="exRun" onclick="loadExchange()">LOAD EXCHANGE</button></span></div>
     <div id="ex-body"><div class="empty">A sportsbook keeps about 4.5% of a two-way market. Kalshi is an exchange: the two sides of an NFL moneyline quote a cent apart with six figures of size behind them, and it hangs a contract on every half point. Loading it lets the board buy the same outcome at whichever venue is actually cheaper — which needs no model to be right, and is the most reliable money on this page.</div></div>
     <div class="note">Every exchange price here is quoted <b>all-in</b>: the ask plus the trading fee, which is 7% × price × (1−price) — 1.75 cents on a coin flip, so an edge under two cents is not an edge. Kalshi serves its data without cross-origin headers, so a browser needs a bridge: deploy <b>kalshi-proxy/worker.js</b> (it is read-only, holds no credentials and cannot trade) and paste its URL above.</div>
   </div>
+</details>
 
-  <div class="panel">
+  <details class="fold"><summary>Power ratings</summary>
+<div class="panel">
     <div class="panel-head">POWER RATINGS <span id="ratings-sub"></span></div>
     <div class="table-wrap"><table id="ratings"><thead><tr>
       <th>#</th><th>Team</th><th class="num">Rating</th><th class="num">Offense</th><th class="num">Defense</th><th class="num">Games</th>
     </tr></thead><tbody></tbody></table></div>
     <div class="note">Points above an average team on a neutral field, fit from every result with the blowouts compressed and last season carried at a discount. Offense is points scored above average against the defenses faced; defense is points prevented.</div>
   </div>
+</details>
 
-  <div class="panel">
+  <details class="fold"><summary>Backtest — does any of this actually win?</summary>
+<div class="panel">
     <div class="panel-head">DOES ANY OF THIS ACTUALLY WIN? — walk-forward backtest
       <span>
         <select id="btSeason" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px;font-family:'Orbitron',monospace;font-size:11px"></select>
@@ -256,6 +307,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     <div id="bt-body"><div class="empty">Rebuilds the ratings week by week from only what was known at the time, prices every game against the closing line the book actually hung, and grades it against the score that actually happened. Takes about a minute.</div></div>
     <div class="note">A backtest without an error bar is a story. One season is a few hundred bets and the standard error on that is several percent, so anything inside two standard errors of zero is noise no matter how good the ROI looks — this panel says so out loud rather than letting you talk yourself into it.</div>
   </div>
+</details>
 </div>
 
 <div class="legend" id="legend"></div>
@@ -521,86 +573,89 @@ function pairLeg(l){
   const count = l.mkt.type === "count";
   const f = v => count ? v.toFixed(1) : Math.round(v);
   const R = l.range;
-  const tag = l.status ? '<span class="tag warn">' + esc(l.status) + "</span>" : '<span class="tag ok">✓ IN</span>';
-  const ex = l.rung ? '<span class="tag">' + (l.rung.spread * 100).toFixed(0) + "c wide</span>" : "";
-  const sp = l.spot && isFinite(l.spot.spot)
-    ? " · spot <b style=\"color:" + (l.spot.spot > 0 ? "var(--green)" : l.spot.spot < 0 ? "var(--red)" : "var(--dim)") +
-      '">' + (l.spot.spot >= 0 ? "+" : "") + f(l.spot.spot) + "</b>"
-    : "";
-  const d = l.matchup && l.matchup.def;
-  const wx = l.matchup && l.matchup.wx && l.matchup.wx.note ? " · " + esc(l.matchup.wx.note) : "";
+  const warn = l.status ? ' <span class="tag warn">' + esc(l.status) + "</span>" : "";
   return '<div class="leg">' +
-    '<div class="leg-slot">' + esc(l.side === "Under" ? "U" : "O") + "</div>" +
+    '<div class="leg-slot">' + (l.side === "Under" ? "U" : "O") + "</div>" +
     '<div class="leg-info">' +
-      '<div class="leg-name">' + esc(l.player) + " " + esc(l.market.toLowerCase()) + " " + esc(l.side.toLowerCase()) + " " + l.line + tag + ex + "</div>" +
-      '<div class="leg-meta">' + esc(l.pos) + " · " +
-        (R ? "we make him <b style=\"color:var(--text)\">" + f(R.median) + "</b>, middle half " + f(R.p25) + "–" + f(R.p75) : "") + sp + "<br>" +
-        '<span style="color:var(--dim)">' +
-        (R ? "one afternoon in ten under " + f(R.p10) + ", one in ten over " + f(R.p90) : "") + wx + "</span>" +
-      "</div>" +
-    '<div class="leg-prob">' + pc(l.p) + "<small>clears</small></div>" +
+      '<div class="leg-name">' + esc(l.player) + warn + "</div>" +
+      '<div class="leg-meta">' + esc(l.side.toUpperCase()) + " <b>" + l.line + "</b> " + esc(l.market.toLowerCase()) +
+        (R ? ' <span style="color:var(--dim)">&middot; we make him ' + f(R.median) + "</span>" : "") + "</div>" +
+    "</div>" +
+    '<div class="leg-prob">' + pc(l.p, 0) + "<small>to clear</small></div>" +
   "</div>";
 }
+// The card answers one question — what do I bet, and on what — and folds
+// everything that justifies it out of sight until asked. Eleven rows of
+// probability arithmetic under every card is not more informative, it is
+// less: the number you act on stops being findable.
 function pairCard(d, i){
   const good = d.edge > 0;
   const size = betSize(d), bank = setting("bank");
   const kelly = M.kelly(d.prob, 0, d.price, setting("kf"));
-  const g = d.entry.game;
-  const S = d.spot;
+  const g = d.entry.game, S = d.spot;
+  const opinion = d.edgeView != null && d.edgeCorr != null && d.edgeView > Math.max(0.02, d.edgeCorr * 2);
   const row = (label, value, title) => '<span' + (title ? ' title="' + esc(title) + '"' : "") + ">" + label + "</span>" +
     '<span style="text-align:right">' + value + "</span>";
   return '<div class="bet ' + (good ? "r" + Math.min(i + 1, 3) : "neg") + '">' +
     '<div class="bet-top">' +
-      '<div class="bet-rank">#' + (i + 1) + (good ? "" : " ✗ NO EDGE") + "</div>" +
+      '<div class="bet-rank">#' + (i + 1) + "</div>" +
       '<div class="bet-game">' + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
-        (d.samePlayer ? ' <span class="tag warn">SAME MAN</span>' : (d.sameTeam ? ' <span class="tag corr">SAME TEAM</span>' : ' <span class="tag">OPPOSING</span>')) +
-        (d.edgeView != null && d.edgeCorr != null && d.edgeView > Math.max(0.02, d.edgeCorr * 2)
-          ? ' <span class="tag warn" title="Most of this card\u2019s edge is our number disagreeing with a live market, not the measured correlation. Treat it as an opinion.">MOSTLY OPINION</span>' : "") +
-        "<br><span style=\"color:var(--dim)\">" + esc(kickoff(g.date)) + (g.venue ? " · " + esc(g.venue) : "") + "</span></div>" +
+        (opinion ? ' <span class="tag warn" title="Most of this card\u2019s edge is our number disagreeing with a live market rather than the measured correlation. Treat it as an opinion.">OPINION</span>' : "") +
+        "<br><span style=\"color:var(--dim)\">" + esc(kickoff(g.date)) + "</span></div>" +
       '<div class="bet-str">' +
-        '<div class="v">' + (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + "</div>" +
-        '<div class="l">EDGE PTS</div>' +
-        '<div class="stake">' + (size > 0 ? money(size) : "—") + "</div>" +
-        '<div class="stake-l">' + (size > 0 ? "BET · $" + setting("perEdge").toFixed(2) + "/PT" : "NO BET") + "</div>" +
+        '<div class="v">' + (size > 0 ? money(size) : "—") + "</div>" +
+        '<div class="l">BET THIS</div>' +
       "</div>" +
     "</div>" +
     pairLeg(d.a) + pairLeg(d.c) +
-    '<div class="bet-foot">' +
-      row("Both to clear", '<b style="color:var(--text)">' + pc(d.prob) + "</b> true") +
-      row("Our two legs multiplied", pc(d.naive), "What the same two legs come to if you pretend they are independent — which is what the payout assumes") +
-      (d.mktProd == null ? "" :
-        row("The market's two multiplied", pc(d.mktProd), "The exchange's own midpoints on these two rungs, multiplied")) +
-      row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
-      row("Price / breakeven", M.fmtAm(d.price) + " · " + pc(d.breakeven) +
-        (setting("price") && Math.abs(setting("price")) >= 100 ? ' <span class="mini">yours</span>'
-                                                               : ' <span class="mini">from the legs</span>')) +
-      row("Expected value", '<b style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
-        (d.ev >= 0 ? "+" : "") + (d.ev * 100).toFixed(1) + "%</b>") +
-      row("¼-Kelly stake", '<b style="color:' + (kelly > 0 ? "var(--green)" : "var(--dim)") + '">' + money(bank * kelly) + "</b>") +
-      row("Correlation", 'ρ ' + d.rho.toFixed(3) + ' · <b style="color:var(--purple)">' +
-        (d.lift >= 0 ? "+" : "") + (d.lift * 100).toFixed(1) + "pts</b>",
-        "How much the two legs being in one game is worth against multiplying them as independent") +
-      (d.edgeCorr == null ? "" :
-        row("&nbsp;&nbsp;↳ of the edge, from correlation",
-          '<b style="color:var(--purple)">' + (d.edgeCorr >= 0 ? "+" : "") + (d.edgeCorr * 100).toFixed(1) + "pts</b>",
-          "Measured on two seasons of real games. This part does not need our number to be better than the market's — only for the two legs to move together, which they do.") +
-        row("&nbsp;&nbsp;↳ from our number vs the market",
-          '<b style="color:' + (Math.abs(d.edgeView) > Math.abs(d.edgeCorr) * 1.5 ? "var(--yellow)" : "var(--muted)") + '">' +
-          (d.edgeView >= 0 ? "+" : "") + (d.edgeView * 100).toFixed(1) + "pts</b>",
-          "A claim that we price these two legs better than a live money market does. The bigger this is relative to the correlation, the more of the card is opinion rather than arithmetic.") +
-        row("&nbsp;&nbsp;↳ the book's margin",
-          '<span style="color:var(--red)">' + (d.vig * 100).toFixed(1) + "pts</span>",
-          "What the vig on the two legs costs you")) +
-      (S ? row("Soft defence", '<b style="color:' + spotColour(S.soft) + '">' + pts(S.soft) + "pts</b>",
-              "How bad the defence opposite is, with the offence held at league average") : "") +
-      (S ? row("Good offence", '<b style="color:' + spotColour(S.good) + '">' + pts(S.good) + "pts</b>",
-              "How good this offence is, with the opposition held at league average") : "") +
-      (S ? row("SPOT vs league", '<b style="color:' + spotColour(S.spot) + '">' + pts(S.spot) + "pts</b>",
-              "The two together — what a typical pass-catcher in this offence does against this defence today") : "") +
+    // One sentence, in money and plain words. Everything else is optional.
+    '<div class="headline">Both must clear. Pays <b class="odds">' + M.fmtAm(d.price) + "</b> &mdash; " +
+      "we make it <b>" + pc(d.prob, 0) + "</b>, the price needs <b>" + pc(d.breakeven, 0) + "</b>." +
+      '<span class="mini" style="display:block;margin-top:4px">' +
+        (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + " edge points \u00d7 $" + setting("perEdge").toFixed(2) +
+        " a point = " + money(size) + "</span>" +
     "</div>" +
-    '<button class="run-btn" style="margin-top:11px;width:100%;padding:9px" onclick=\'logDouble(' + i + ')\'>LOG THIS DOUBLE — ' + money(size > 0 ? size : bank * kelly) + "</button>" +
+    '<details class="why-more"><summary>Why this one? &middot; the numbers behind it</summary>' +
+      '<div class="bet-foot">' +
+        row("Our two legs multiplied", pc(d.naive), "What the same two legs come to if you pretend they are independent, which is what the payout assumes") +
+        (d.mktProd == null ? "" : row("The market's two multiplied", pc(d.mktProd), "The exchange's own midpoints on these two rungs")) +
+        row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
+        row("Expected value", '<b style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
+          (d.ev >= 0 ? "+" : "") + (d.ev * 100).toFixed(1) + "%</b>") +
+        row("\u00bc-Kelly would stake", money(bank * kelly)) +
+        row("Correlation", "\u03c1 " + d.rho.toFixed(2) + ' \u00b7 <b style="color:var(--purple)">' +
+          (d.lift >= 0 ? "+" : "") + (d.lift * 100).toFixed(1) + "pts</b>",
+          "How much the two legs being in one game is worth against multiplying them as independent") +
+        (d.edgeCorr == null ? "" :
+          row("&nbsp;&nbsp;\u21b3 edge from correlation",
+            '<b style="color:var(--purple)">' + (d.edgeCorr >= 0 ? "+" : "") + (d.edgeCorr * 100).toFixed(1) + "pts</b>",
+            "Measured on two seasons of real games. This part does not need our number to beat the market's.") +
+          row("&nbsp;&nbsp;\u21b3 edge from our number",
+            '<b style="color:' + (opinion ? "var(--yellow)" : "var(--muted)") + '">' +
+            (d.edgeView >= 0 ? "+" : "") + (d.edgeView * 100).toFixed(1) + "pts</b>",
+            "A claim we price these legs better than a live money market. The bigger this is next to the correlation, the more of the card is opinion.") +
+          row("&nbsp;&nbsp;\u21b3 the book's margin",
+            '<span style="color:var(--red)">' + (d.vig * 100).toFixed(1) + "pts</span>")) +
+        (S ? row("Soft defence", '<b style="color:' + spotColour(S.soft) + '">' + pts(S.soft) + "</b>",
+                "How bad the defence opposite is, offence held at league average") : "") +
+        (S ? row("Good offence", '<b style="color:' + spotColour(S.good) + '">' + pts(S.good) + "</b>",
+                "How good this offence is, opposition held at league average") : "") +
+        (S ? row("SPOT vs league", '<b style="color:' + spotColour(S.spot) + '">' + pts(S.spot) + "</b>",
+                "The two together: what a typical pass-catcher here does today") : "") +
+        row(esc(d.a.player.split(" ").slice(-1)[0]) + " range",
+          d.a.range ? legRange(d.a) : "—", "The middle half of ten thousand simulated games") +
+        row(esc(d.c.player.split(" ").slice(-1)[0]) + " range",
+          d.c.range ? legRange(d.c) : "—", "The middle half of ten thousand simulated games") +
+      "</div>" +
+    "</details>" +
+    '<button class="run-btn" style="margin-top:11px;width:100%;padding:10px" onclick=\'logDouble(' + i + ')\'>LOG IT &mdash; ' + money(size > 0 ? size : bank * kelly) + "</button>" +
   "</div>";
 }
+function legRange(l){
+  const count = l.mkt.type === "count", f = v => count ? v.toFixed(1) : Math.round(v), R = l.range;
+  return f(R.p25) + "&ndash;" + f(R.p75) + ' <span class="mini">(' + f(R.p10) + "&ndash;" + f(R.p90) + ")</span>";
+}
+
 
 function bar(label, v, colour){
   return '<div class="bar"><span style="width:78px">' + label + '</span><span class="track"><span class="fill" style="width:' +
@@ -827,16 +882,20 @@ function renderLegend(shown, total){
   const on = state.doubles.filter(d => d.edgeCorr != null);
   const mostlyCorr = on.filter(d => d.edgeCorr >= d.edgeView).length;
   $("legend").innerHTML =
-    "<b>" + shown + "</b> of " + total + " games have a double clearing the bet bar. " +
-    "<b>Edge points</b> is our probability for the pair minus what the price needs; the stake is that number times your dollars-per-point, so the arithmetic on the card checks out by hand.<br>" +
-    "<b>Where the edge comes from, and how much of it to believe.</b> Every card splits its edge three ways. " +
-    "The part <b>from correlation</b> is arithmetic: two seasons of real games say these legs move together by this much and the payout assumes they do not, and that part does not need our number to beat the market's. " +
-    "The part <b>from our number vs the market</b> is a claim that we price the legs better than a live money market does — a much bigger claim, and historically the one that has been wrong. " +
-    (on.length ? "On this slate <b>" + mostlyCorr + " of " + on.length + "</b> doubles are correlation-dominant; the rest are flagged <b>MOSTLY OPINION</b> and should be read as one. " : "") + "<br>" +
-    "<b>Every leg is a real, quoted rung.</b> A leg the exchange does not price is left out entirely rather than carried at our number with nothing to check it — that is where a model's worst mistakes end up, and it would not be a bet you could get down anyway. " +
-    "Each leg's probability is the simulation's, put through the slate calibration fitted on every rung the exchange quotes, then blended with that rung's own midpoint, weighted by how tightly it is quoted.<br>" +
-    "<b>The spot</b> is the same idea the baseball board runs on: how soft this afternoon is for a league-average pass-catcher, split into the defence opposite and the offence he is in. Best defence to worst is worth about fifty points on this slate, which is a bigger lever than which receiver you pick out of it.<br>" +
-    "<b>What this is not:</b> a promise. The backtest panel below is the honest scoreboard, and a power rating built from public box scores does not beat a sharp NFL closing line.";
+    '<details class="fold" style="margin:0"><summary>How to read this board</summary>' +
+    '<div class="panel" style="padding:14px 16px;line-height:1.9">' +
+      "<b>" + shown + "</b> of " + total + " games have a double clearing your bet bar.<br>" +
+      "<b>The bet is the two legs together.</b> Both have to clear. A parlay pays the product of its legs' prices, " +
+      "which assumes they are independent — and two men in one football game never are. That gap is the bet.<br>" +
+      "<b>Edge points</b> is our probability minus what the price needs. The stake is that number times your dollars-per-point, " +
+      "so the sum on the card checks out by hand.<br>" +
+      "<b>Open &ldquo;why this one&rdquo;</b> on any card and the edge splits three ways. <b>From correlation</b> is arithmetic — " +
+      "two seasons of real games say those legs move together and the payout assumes they don't. <b>From our number</b> is a claim " +
+      "we price a leg better than a live money market, which is the claim this board has been wrong about before. " +
+      (on.length ? "On this slate <b>" + mostlyCorr + " of " + on.length + "</b> stand mostly on correlation; the rest are tagged <b>OPINION</b>. " : "") +
+      "<br><b>Every leg is a real quoted rung</b> — a prop the exchange does not price is left out rather than carried at our number with nothing to check it.<br>" +
+      "<b>What this is not:</b> a promise. Open the backtest below; a power rating built from public box scores does not beat a sharp NFL closing line, and it says so." +
+    "</div></details>";
 }
 
 // ── the exchange ────────────────────────────────────────────────────────────
