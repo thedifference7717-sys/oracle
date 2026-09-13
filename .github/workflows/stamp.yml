@@ -1,0 +1,64 @@
+# Stamp the build into the pages that are actually served.
+#
+# Pages on this repository publishes from the `main` branch, not from the
+# deploy workflow's artifact. So the deploy's own "stamp the build" step writes
+# the commit id into an artifact that is then thrown away: every live page has
+# always carried the literal __BUILD_SHA__, build.json has always 404'd, and
+# checkBuild() has therefore bailed on its first line since the day it was
+# written. With Pages serving HTML on a ten-minute cache, a stale page has
+# never been able to notice it is stale — which is why "it was working a minute
+# ago, now there is nothing" keeps coming back.
+#
+# Switching Pages to serve the artifact would fix it, but that is a repository
+# setting. This does the same job from inside the repo, so it works either way:
+# stamp the files ON MAIN, where they are served from.
+#
+# The commit is pushed with GITHUB_TOKEN, and GitHub deliberately does not
+# start new workflow runs from GITHUB_TOKEN pushes — so this cannot loop.
+name: Stamp the build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stamp
+  cancel-in-progress: false
+
+jobs:
+  stamp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Write the commit id into every page that asks for one
+        run: |
+          SHA="${GITHUB_SHA:0:7}"
+          # Two forms: the original token on a page that has never been
+          # stamped, and a previous stamp on one that has. Both become the
+          # current commit, so this is idempotent and cannot drift.
+          grep -rl '__BUILD_SHA__' --include='*.html' . | xargs -r sed -i "s/__BUILD_SHA__/$SHA/g"
+          grep -rl 'const BUILD = "' --include='*.html' . \
+            | xargs -r sed -i -E "s/const BUILD = \"[^\"]*\"/const BUILD = \"$SHA\"/"
+          grep -rl 'id="buildsha"' --include='*.html' . \
+            | xargs -r sed -i -E "s#(<span id=\"buildsha\">)[^<]*(</span>)#\1$SHA\2#"
+          printf '{"sha":"%s","built":"%s"}\n' "$SHA" "$(date -u +%FT%TZ)" > build.json
+          echo "stamped $SHA"
+
+      - name: Commit it back, if anything moved
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "already stamped at this commit — nothing to do"
+            exit 0
+          fi
+          git add -A ':(glob)**/*.html' build.json
+          git commit -m "Stamp build ${GITHUB_SHA:0:7}"
+          git push origin main
