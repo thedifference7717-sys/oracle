@@ -51,6 +51,20 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .bet-str{text-align:right}
 .bet-str .v{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--green);line-height:1}
 .bet-str .l{font-size:9px;color:var(--muted);letter-spacing:.06em}
+.bet.neg{border-color:#FF4D6D55;background:linear-gradient(160deg,#1A0C10,var(--bg2));box-shadow:none}
+.bet.neg .bet-rank{background:#FF4D6D22;color:var(--red)}
+.bet.neg .bet-str .v{color:var(--red)}
+.bet-str .stake{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;color:var(--yellow);margin-top:6px;line-height:1}
+.bet-str .stake-l{font-size:8px;color:var(--dim);letter-spacing:.06em}
+.bet.neg .bet-str .stake{color:var(--dim)}
+.leg{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border)}
+.leg-slot{font-family:'Orbitron',monospace;font-size:11px;font-weight:900;color:var(--dim);width:26px;text-align:center;border:1px solid var(--border);border-radius:6px;padding:5px 0}
+.leg-info{flex:1;min-width:0}
+.leg-name{font-size:16px;font-weight:700;line-height:1.15}
+.leg-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
+.trend-up{color:var(--green)}.trend-dn{color:var(--red)}.trend-fl{color:var(--dim)}
+.leg-prob{text-align:right;font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--blue)}
+.leg-prob small{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);font-weight:400}
 .pick{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;line-height:1.15;margin-bottom:2px}
 .pick .px{color:var(--yellow);font-size:15px;margin-left:8px}
 .bars{margin:11px 0 8px}
@@ -83,12 +97,6 @@ details.fold>summary::before{content:"\25b8 ";color:var(--dim)}
 details.fold[open]>summary{border-radius:12px 12px 0 0;border-bottom:none;color:var(--text)}
 details.fold[open]>summary::before{content:"\25be "}
 details.fold>.panel{border-radius:0 0 12px 12px;margin-bottom:0}
-.headline{margin-top:12px;padding-top:11px;border-top:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.6}
-.headline b{color:var(--text);font-family:'Orbitron',monospace}
-.bet-str .v{font-size:30px}
-.leg-name{font-size:17px}
-.leg-meta{font-size:13px;margin-top:4px}
-.leg-prob{font-size:19px}
 #record{display:none;align-items:center;gap:16px;flex-wrap:wrap;padding:11px 18px;background:linear-gradient(90deg,#07140F,var(--bg2));border-bottom:1px solid var(--border);font-size:12px}
 #record .rec-wl{font-family:'Orbitron',monospace;font-size:19px;font-weight:900;letter-spacing:.03em}
 #record .rec-lab{font-size:9px;color:var(--dim);letter-spacing:.1em;display:block;margin-top:2px}
@@ -569,25 +577,42 @@ function sideName(p){
 // right: the edge and the stake in the corner where the eye lands, the two
 // legs stacked in the middle with their own numbers, and everything that
 // justifies the bet in a foot you can read after you have decided.
+// ── the card, laid out the way the baseball board lays a double out ─────────
+// Same skeleton, same classes, same reading order: the rank chip and the
+// fixture on the left, the edge and the stake stacked on the right where the
+// eye lands, the two legs between them with their own numbers, and a
+// two-column foot carrying what justifies the bet. The football content is
+// different; the shape is not, because the shape was already right.
 function pairLeg(l){
   const count = l.mkt.type === "count";
   const f = v => count ? v.toFixed(1) : Math.round(v);
   const R = l.range;
-  const warn = l.status ? ' <span class="tag warn">' + esc(l.status) + "</span>" : "";
+  const status = l.status ? '<span class="tag warn">' + esc(l.status) + "</span>" : '<span class="tag ok">\u2713 IN</span>';
+  const quote = l.rung ? '<span class="tag">' + (l.rung.spread * 100).toFixed(0) + "c</span>" : "";
+  // The middle line is the same trio the baseball card carries: what he does
+  // normally, what we make him today, and which way today has moved him.
+  const sp = l.spot && isFinite(l.spot.spot)
+    ? (l.spot.spot > 0.4 ? '<span class="trend-up">\u25b2' + f(l.spot.spot) + " spot</span>"
+      : l.spot.spot < -0.4 ? '<span class="trend-dn">\u25bc' + f(Math.abs(l.spot.spot)) + " spot</span>"
+      : '<span class="trend-fl">flat spot</span>')
+    : "";
+  const d = l.matchup && l.matchup.def;
+  const wx = l.matchup && l.matchup.wx && l.matchup.wx.note ? " \u00b7 " + esc(l.matchup.wx.note) : "";
   return '<div class="leg">' +
     '<div class="leg-slot">' + (l.side === "Under" ? "U" : "O") + "</div>" +
     '<div class="leg-info">' +
-      '<div class="leg-name">' + esc(l.player) + warn + "</div>" +
-      '<div class="leg-meta">' + esc(l.side.toUpperCase()) + " <b>" + l.line + "</b> " + esc(l.market.toLowerCase()) +
-        (R ? ' <span style="color:var(--dim)">&middot; we make him ' + f(R.median) + "</span>" : "") + "</div>" +
-    "</div>" +
-    '<div class="leg-prob">' + pc(l.p, 0) + "<small>to clear</small></div>" +
+      '<div class="leg-name">' + esc(l.player) + status + quote + "</div>" +
+      '<div class="leg-meta">' + esc(l.pos) + " \u00b7 " + esc(l.market.toLowerCase()) +
+        " \u00b7 line <b style=\"color:var(--text)\">" + l.line + "</b> \u2192 we make him <b style=\"color:var(--text)\">" +
+        (R ? f(R.median) : "\u2014") + "</b> " + sp + "<br>" +
+        (R ? "middle half " + f(R.p25) + "\u2013" + f(R.p75) + ", one game in ten outside " + f(R.p10) + "\u2013" + f(R.p90) : "") + "<br>" +
+        '<span style="color:var(--dim)">vs ' + esc(l.oppAbbr || "opp") +
+        (d && d.n ? " (" + d.n + " games of defence seen)" : "") + esc(wx) + "</span>" +
+      "</div>" +                 // closes leg-meta
+    "</div>" +                   // closes leg-info
+    '<div class="leg-prob">' + pc(l.p, 0) + "<small>clears</small></div>" +
   "</div>";
 }
-// The card answers one question — what do I bet, and on what — and folds
-// everything that justifies it out of sight until asked. Eleven rows of
-// probability arithmetic under every card is not more informative, it is
-// less: the number you act on stops being findable.
 function pairCard(d, i){
   const good = d.edge > 0;
   const size = betSize(d), bank = setting("bank");
@@ -598,63 +623,55 @@ function pairCard(d, i){
     '<span style="text-align:right">' + value + "</span>";
   return '<div class="bet ' + (good ? "r" + Math.min(i + 1, 3) : "neg") + '">' +
     '<div class="bet-top">' +
-      '<div class="bet-rank">#' + (i + 1) + "</div>" +
+      '<div class="bet-rank">#' + (i + 1) + (good ? "" : " \u2717 NO EDGE") + "</div>" +
       '<div class="bet-game">' + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
         (opinion ? ' <span class="tag warn" title="Most of this card\u2019s edge is our number disagreeing with a live market rather than the measured correlation. Treat it as an opinion.">OPINION</span>' : "") +
-        "<br><span style=\"color:var(--dim)\">" + esc(kickoff(g.date)) + "</span></div>" +
+        '<br><span style="color:var(--dim)">' + esc(kickoff(g.date)) + (g.venue ? " \u00b7 " + esc(g.venue) : "") + "</span></div>" +
       '<div class="bet-str">' +
-        '<div class="v">' + (size > 0 ? money(size) : "—") + "</div>" +
-        '<div class="l">BET THIS</div>' +
+        '<div class="v">' + (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + "</div>" +
+        '<div class="l">EDGE PTS</div>' +
+        '<div class="stake">' + (size > 0 ? money(size) : "\u2014") + "</div>" +
+        '<div class="stake-l">' + (size > 0 ? "BET \u00b7 $" + setting("perEdge").toFixed(2) + "/PT" : "NO BET") + "</div>" +
       "</div>" +
     "</div>" +
     pairLeg(d.a) + pairLeg(d.c) +
-    // One sentence, in money and plain words. Everything else is optional.
-    '<div class="headline">Both must clear. Pays <b class="odds">' + M.fmtAm(d.price) + "</b> &mdash; " +
-      "we make it <b>" + pc(d.prob, 0) + "</b>, the price needs <b>" + pc(d.breakeven, 0) + "</b>." +
-      '<span class="mini" style="display:block;margin-top:4px">' +
-        (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + " edge points \u00d7 $" + setting("perEdge").toFixed(2) +
-        " a point = " + money(size) + "</span>" +
+    '<div class="bet-foot">' +
+      row("Both to clear", '<b>' + pc(d.prob) + "</b> true") +
+      row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
+      row("Your price / breakeven", '<span class="odds">' + M.fmtAm(d.price) + "</span> \u00b7 " + pc(d.breakeven)) +
+      row("Expected value", '<b style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
+        (d.ev >= 0 ? "+" : "") + (d.ev * 100).toFixed(1) + "%</b>") +
+      row("\u00bc-Kelly stake", '<b style="color:' + (kelly > 0 ? "var(--green)" : "var(--dim)") + '">' + money(bank * kelly) + "</b>") +
+      row((d.samePlayer ? '<span class="tag warn">SAME MAN</span>' : d.sameTeam ? '<span class="tag corr">SAME TEAM</span>' : '<span class="tag">OPPOSING</span>') + " correlation",
+        "\u03c1 " + d.rho.toFixed(3) + ' \u00b7 <b style="color:var(--purple)">' + (d.lift >= 0 ? "+" : "") + (d.lift * 100).toFixed(1) + "pts</b>",
+        "How much the two legs being in one game is worth against multiplying them as independent") +
+      (S ? row("Soft defence", '<b style="color:' + spotColour(S.soft) + '">' + pts(S.soft) + "pts</b>",
+              "How bad the defence opposite is, offence held at league average") : "") +
+      (S ? row("Good offence", '<b style="color:' + spotColour(S.good) + '">' + pts(S.good) + "pts</b>",
+              "How good this offence is, opposition held at league average") : "") +
+      (S ? row("SPOT vs league", '<b style="color:' + spotColour(S.spot) + '">' + pts(S.spot) + "pts</b>",
+              "The two together: what a typical pass-catcher in this offence does against this defence today") : "") +
     "</div>" +
-    '<details class="why-more"><summary>Why this one? &middot; the numbers behind it</summary>' +
+    // The one thing the baseball card has no equivalent for: how much of this
+    // edge is measured and how much is us arguing with a live market. Folded,
+    // because it is the second question, not the first.
+    '<details class="why-more"><summary>Where the edge comes from</summary>' +
       '<div class="bet-foot">' +
-        row("Our two legs multiplied", pc(d.naive), "What the same two legs come to if you pretend they are independent, which is what the payout assumes") +
+        row("Our two legs multiplied", pc(d.naive), "What the two come to if you pretend they are independent") +
         (d.mktProd == null ? "" : row("The market's two multiplied", pc(d.mktProd), "The exchange's own midpoints on these two rungs")) +
-        row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
-        row("Expected value", '<b style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
-          (d.ev >= 0 ? "+" : "") + (d.ev * 100).toFixed(1) + "%</b>") +
-        row("\u00bc-Kelly would stake", money(bank * kelly)) +
-        row("Correlation", "\u03c1 " + d.rho.toFixed(2) + ' \u00b7 <b style="color:var(--purple)">' +
-          (d.lift >= 0 ? "+" : "") + (d.lift * 100).toFixed(1) + "pts</b>",
-          "How much the two legs being in one game is worth against multiplying them as independent") +
         (d.edgeCorr == null ? "" :
-          row("&nbsp;&nbsp;\u21b3 edge from correlation",
-            '<b style="color:var(--purple)">' + (d.edgeCorr >= 0 ? "+" : "") + (d.edgeCorr * 100).toFixed(1) + "pts</b>",
-            "Measured on two seasons of real games. This part does not need our number to beat the market's.") +
-          row("&nbsp;&nbsp;\u21b3 edge from our number",
-            '<b style="color:' + (opinion ? "var(--yellow)" : "var(--muted)") + '">' +
+          row("\u21b3 from correlation", '<b style="color:var(--purple)">' + (d.edgeCorr >= 0 ? "+" : "") + (d.edgeCorr * 100).toFixed(1) + "pts</b>",
+            "Measured on two seasons of real games. Does not need our number to beat the market's.") +
+          row("\u21b3 from our number", '<b style="color:' + (opinion ? "var(--yellow)" : "var(--muted)") + '">' +
             (d.edgeView >= 0 ? "+" : "") + (d.edgeView * 100).toFixed(1) + "pts</b>",
-            "A claim we price these legs better than a live money market. The bigger this is next to the correlation, the more of the card is opinion.") +
-          row("&nbsp;&nbsp;\u21b3 the book's margin",
-            '<span style="color:var(--red)">' + (d.vig * 100).toFixed(1) + "pts</span>")) +
-        (S ? row("Soft defence", '<b style="color:' + spotColour(S.soft) + '">' + pts(S.soft) + "</b>",
-                "How bad the defence opposite is, offence held at league average") : "") +
-        (S ? row("Good offence", '<b style="color:' + spotColour(S.good) + '">' + pts(S.good) + "</b>",
-                "How good this offence is, opposition held at league average") : "") +
-        (S ? row("SPOT vs league", '<b style="color:' + spotColour(S.spot) + '">' + pts(S.spot) + "</b>",
-                "The two together: what a typical pass-catcher here does today") : "") +
-        row(esc(d.a.player.split(" ").slice(-1)[0]) + " range",
-          d.a.range ? legRange(d.a) : "—", "The middle half of ten thousand simulated games") +
-        row(esc(d.c.player.split(" ").slice(-1)[0]) + " range",
-          d.c.range ? legRange(d.c) : "—", "The middle half of ten thousand simulated games") +
+            "A claim we price these legs better than a live money market.") +
+          row("\u21b3 the book's margin", '<span style="color:var(--red)">' + (d.vig * 100).toFixed(1) + "pts</span>")) +
       "</div>" +
     "</details>" +
-    '<button class="run-btn" style="margin-top:11px;width:100%;padding:10px" onclick=\'logDouble(' + i + ')\'>LOG IT &mdash; ' + money(size > 0 ? size : bank * kelly) + "</button>" +
+    '<button class="run-btn" style="margin-top:11px;width:100%;padding:9px" onclick=\'logDouble(' + i + ')\'>LOG THIS DOUBLE \u2014 ' + money(size > 0 ? size : bank * kelly) + "</button>" +
   "</div>";
 }
-function legRange(l){
-  const count = l.mkt.type === "count", f = v => count ? v.toFixed(1) : Math.round(v), R = l.range;
-  return f(R.p25) + "&ndash;" + f(R.p75) + ' <span class="mini">(' + f(R.p10) + "&ndash;" + f(R.p90) + ")</span>";
-}
+
 
 
 function bar(label, v, colour){
@@ -1722,6 +1739,15 @@ const spotColour = v => v >= 0.08 ? "var(--green)" : (v >= 0 ? "var(--yellow)" :
 // pair without being a bet on its own. The line is the exchange's strike where
 // it quotes one, because that is a number you can actually get down on.
 const LEG_LO = 0.30, LEG_HI = 0.88;
+// How far our number may sit from a live market before we conclude the fault
+// is ours. Thirty points is already an enormous disagreement.
+const MAX_DISAGREE = 0.30;
+// A quote forty cents wide is not a market, it is two people a long way apart
+// with nothing in between, and its midpoint carries no information at all —
+// yet the parlay price is built out of exactly that midpoint. Legs have to be
+// quoted tightly enough, and with enough behind them, for the price we are
+// measuring ourselves against to mean something.
+const MAX_SPREAD = 0.12, MIN_LEG_SIZE = 25;
 function legPool(b, entry, list, sim){
   const kp = state.kprops[b.league];
   const out = [];
@@ -1743,6 +1769,17 @@ function legPool(b, entry, list, sim){
       // would not be a bet you could get down anyway.
       const rung = M.kalshiRung(kp, entry, pl.player.name, mkt.key, mkt.ourLine);
       if (!rung || rung.mid == null) return;
+      // kalshiRung returns the CLOSEST quoted strike with no limit on how
+      // close that is, and a strike far enough away is not a disagreement —
+      // it is the two of us describing different players. Christian Watson's
+      // 40-yard line was being matched to a 139.5-yard rung the market had at
+      // 64c: a hundred yards away, and the resulting "edge" was the largest
+      // on the board at eleven hundred percent. Whatever the cause — a role
+      // we have not caught up with, a name colliding — it is not a bet.
+      const sd = sm.range ? Math.max(1e-6, (sm.range.p75 - sm.range.p25) / 1.35) : null;
+      if (sd && Math.abs(rung.strike - mkt.ourLine) > 1.5 * sd) return;
+      if (!(rung.spread <= MAX_SPREAD)) return;
+      if (Math.max(rung.askSize || 0, rung.bidSize || 0) < MIN_LEG_SIZE) return;
       const line = rung.strike;
       ["Over", "Under"].forEach(side => {
         const leg = M.simLeg(man, sm, side, line);
@@ -1757,6 +1794,15 @@ function legPool(b, entry, list, sim){
         leg.pModel = p;
         if (rung && rung.mid != null){
           const mp = side === "Under" ? 1 - rung.mid : rung.mid;
+          // Beyond a certain distance a disagreement stops being an edge and
+          // starts being a broken input. Ladd McConkey's rung was quoted at
+          // 93c and our model had the same event at 7% — eighty-six points
+          // apart, on a live money market. Splitting that difference left us
+          // at 52% and produced the biggest "edge" on the board. No model
+          // built from public box scores is eighty points better informed
+          // than the money; something upstream is wrong, and the bet to make
+          // is none.
+          if (Math.abs(p - mp) > MAX_DISAGREE) return;
           const w = M.propWeight(rung.spread);
           p = Math.max(1e-4, Math.min(1 - 1e-4, w * p + (1 - w) * mp));
         }
@@ -1777,6 +1823,7 @@ function legPool(b, entry, list, sim){
         leg.rung = rung;
         leg.spot = spotFor(b, entry, pl, mkt.key);
         leg.matchup = pl.matchup;
+        leg.oppAbbr = pl.teamId === entry.game.home.id ? entry.game.away.abbr : entry.game.home.abbr;
         out.push(leg);
       });
     });
