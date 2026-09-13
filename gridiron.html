@@ -63,6 +63,12 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .leg-name{font-size:16px;font-weight:700;line-height:1.15}
 .leg-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
 .trend-up{color:var(--green)}.trend-dn{color:var(--red)}.trend-fl{color:var(--dim)}
+.leg-ou{margin-top:4px;font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--muted);line-height:1.3}
+.ou{padding:2px 7px;border-radius:6px;letter-spacing:.04em}
+.ou-o{background:#14F19522;color:var(--green)}
+.ou-u{background:#FF4D6D22;color:var(--red)}
+.leg-slot.slot-o{color:var(--green);border-color:#14F19555}
+.leg-slot.slot-u{color:var(--red);border-color:#FF4D6D55}
 .leg-prob{text-align:right;font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--blue)}
 .leg-prob small{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);font-weight:400}
 .pick{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;line-height:1.15;margin-bottom:2px}
@@ -600,19 +606,33 @@ function pairLeg(l){
     : "";
   const d = l.matchup && l.matchup.def;
   const wx = l.matchup && l.matchup.wx && l.matchup.wx.note ? " \u00b7 " + esc(l.matchup.wx.note) : "";
+  // OVER or UNDER is the whole bet, and it was a single dim letter in a box.
+  // It now says the word, in the line you read first, coloured and in the
+  // heading font — you should not have to decode a chip to know which way you
+  // are betting.
+  const over = l.side !== "Under";
+  const call = '<span class="ou ' + (over ? "ou-o" : "ou-u") + '">' + (over ? "OVER" : "UNDER") + " " + l.line + "</span>";
   return '<div class="leg">' +
-    '<div class="leg-slot">' + (l.side === "Under" ? "U" : "O") + "</div>" +
+    '<div class="leg-slot ' + (over ? "slot-o" : "slot-u") + '">' + (over ? "O" : "U") + "</div>" +
     '<div class="leg-info">' +
       '<div class="leg-name">' + esc(l.player) + status + quote + "</div>" +
-      '<div class="leg-meta">' + esc(l.pos) + " \u00b7 " + esc(l.market.toLowerCase()) +
-        " \u00b7 line <b style=\"color:var(--text)\">" + l.line + "</b> \u2192 we make him <b style=\"color:var(--text)\">" +
-        (R ? f(R.median) : "\u2014") + "</b> " + sp + "<br>" +
+      '<div class="leg-ou">' + call + " " + esc(l.market.toLowerCase()) + "</div>" +
+      '<div class="leg-meta">' + esc(l.pos) + " \u00b7 we make him <b style=\"color:var(--text)\">" +
+        (R ? f(R.median) : "\u2014") + "</b> " + sp +
+        // The median is OUR number; the percentage on the right is that number
+        // blended with the market's. Left unexplained they can point opposite
+        // ways — "we make him 282, bet the under 274.5" reads as a mistake —
+        // so both halves and the result are shown.
+        (l.pMkt != null && l.pModel != null
+          ? '<br><span style="color:var(--dim)">our read ' + pc(over ? l.pModel : 1 - l.pModel, 0) +
+            " \u00b7 market " + pc(l.pMkt, 0) + " \u00b7 blended <b style=\"color:var(--text)\">" + pc(l.p, 0) + "</b></span>"
+          : "") + "<br>" +
         (R ? "middle half " + f(R.p25) + "\u2013" + f(R.p75) + ", one game in ten outside " + f(R.p10) + "\u2013" + f(R.p90) : "") + "<br>" +
         '<span style="color:var(--dim)">vs ' + esc(l.oppAbbr || "opp") +
         (d && d.n ? " (" + d.n + " games of defence seen)" : "") + esc(wx) + "</span>" +
       "</div>" +                 // closes leg-meta
     "</div>" +                   // closes leg-info
-    '<div class="leg-prob">' + pc(l.p, 0) + "<small>clears</small></div>" +
+    '<div class="leg-prob">' + pc(l.p, 0) + "<small>" + (over ? "over" : "under") + "</small></div>" +
   "</div>";
 }
 function pairCard(d, i){
@@ -1829,6 +1849,7 @@ function legPool(b, entry, list, sim){
           p = Math.max(1e-4, Math.min(1 - 1e-4, w * p + (1 - w) * mp));
         }
         leg.p = p;
+        leg.pMkt = (rung && rung.mid != null) ? (side === "Under" ? 1 - rung.mid : rung.mid) : null;
         // The simulation's hit mask still carries the raw view, so the joint
         // probability is rescaled by how far the calibrated leg moved. Without
         // this the pair reads off one set of numbers and the legs another.
