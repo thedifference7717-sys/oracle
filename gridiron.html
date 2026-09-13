@@ -275,6 +275,9 @@ const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return nu
              set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} } };
 function hardReload(){ location.replace(location.pathname + "?b=" + (liveSha || Date.now())); }
 async function checkBuild(){
+  // An unstamped page cannot tell whether it is stale, so it must not claim to
+  // be current either. The stamp now happens on main, where Pages actually
+  // serves from, so this should never be the token in the wild.
   if (BUILD.charAt(0) === "_") return;
   try{
     const r = await fetch("build.json?t=" + Date.now(), { cache:"no-store" });
