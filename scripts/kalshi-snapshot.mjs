@@ -15,17 +15,16 @@
 
 const KALSHI = "https://api.elections.kalshi.com/trade-api/v2";
 const SERIES = {
-  nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" },
-  cfb: { ml: "KXNCAAFGAME", spread: "KXNCAAFSPREAD", total: "KXNCAAFTOTAL" }
+  nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" }
 };
-// Player ladders. Only the NFL has them; college props are not listed. Trimmed
-// the same way as the game ladders, they cost about 15KB gzipped, which is
-// nothing — and without them the ranked props board has no price to rank
-// against and simply sits there empty, which is exactly what it did.
+// Player ladders — the whole point of the board now that college is gone.
+// Dropping the college game ladders freed about two thousand contracts, so
+// these get the room: more rungs per player and further into the tails, which
+// is where a prop line you can actually beat tends to sit.
 const PROP_SERIES = {
   nfl: { passYds: "KXNFLPASSYDS", recYds: "KXNFLRECYDS", rec: "KXNFLREC", passTD: "KXNFLPASSTDS" }
 };
-const PROP_MAX_RUNGS = 8;
+const PROP_MAX_RUNGS = 14;
 const DAYS = 8;                       // anything kicking off later is not this week's problem
 // A ladder has rungs nobody will ever trade — a contract at three cents is
 // there for completeness, not for business. Keeping only what is near the
@@ -33,7 +32,7 @@ const DAYS = 8;                       // anything kicking off later is not this 
 // without the repository growing a megabyte an hour, and loses nothing: best
 // execution compares against the book's posted number, which is by definition
 // near the money.
-const NEAR = [0.05, 0.95];            // keep rungs whose midpoint is in here
+const NEAR = [0.03, 0.97];            // keep rungs whose midpoint is in here
 const MAX_RUNGS = 10;                 // per game, per market, closest to even first
 const OUT = "data/kalshi-football.json";
 

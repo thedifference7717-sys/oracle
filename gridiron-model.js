@@ -116,38 +116,6 @@ const LEAGUES = {
     maxShiftTotal: 3.0,
     rushTDshare: 0.36,  // share of offensive TDs that come on the ground
     bulkPlayers: true   // league-wide player stat feed carries values
-  },
-  cfb: {
-    key: "cfb", label: "CFB", path: "football/college-football", core: "college-football", groups: 80,
-    sigMargin: 15.70,   // same calibration as the NFL number, then held
-                        // to the 15.72 root-mean-square error the backtest
-                        // actually measured around the closing line
-    sigTotal: 15.50,    // same two measurements: backtest error implies 15.29,
-                        // the exchange ladder 18.37 (thin college rungs inflate
-                        // that one, so the outcome-based number leads)
-    avgTotal: 54.6,     // measured 2025 college mean total (27.3 a side)
-    hfa0: 2.40,
-    keyDamp: 0.55,      // key numbers exist in college but are flatter
-    carry: 0.22,
-    decay: 0.940,
-    ridge: 2.6,         // college keeps less: more roster turnover, ~50%
-    movCap: 28,
-    weeks: 16,
-    // Same sweep on college: the margin optimum is 0.20 and it beats the
-    // closing line by six hundredths of a point. College is softer than the
-    // NFL, but it is not soft.
-    mktW: 0.20,
-    // Zero, and it is not an oversight. Over 694 games last season our college
-    // total showed no skill worth the name — a shade negative, well inside the
-    // noise once you measure against the right null (a bet with no skill does
-    // not return zero, it returns minus the hold). A model with nothing to say
-    // does not get to post plays. Raise the weight by hand to see what it
-    // thinks; the backtest panel will keep scoring it honestly.
-    mktWTotal: 0.00,
-    maxShift: 4.0,
-    maxShiftTotal: 4.0,
-    rushTDshare: 0.45,
-    bulkPlayers: false  // college feed ranks players but withholds the numbers
   }
 };
 
@@ -1033,35 +1001,6 @@ async function rosterCached(L, teamId, cache) {
   return cache[k];
 }
 
-// College: the league-wide feed ranks players but ships every value as a dash,
-// so the numbers have to be pulled per athlete. That is affordable for the two
-// rosters in ONE game, which is why college props load per game on demand.
-const CORE_STAT = (cats, cat, name) => {
-  const c = (cats || []).find(x => (x.name || "").toLowerCase() === cat);
-  if (!c) return 0;
-  const s = (c.stats || []).find(x => x.name === name);
-  return s ? num(s.value != null ? s.value : s.displayValue) || 0 : 0;
-};
-async function loadPlayersCFB(L, season, teamIds, cache, onProgress) {
-  const rosters = await pool(teamIds, async id => rosterCached(L, id, cache || {}), 4);
-  const flat = [];
-  rosters.forEach(r => { if (r) r.slice(0, 42).forEach(p => flat.push(p)); });
-  let done = 0;
-  const stats = await pool(flat, async p => {
-    const d = await getJSON(`${CORE}/${L.core}/seasons/${season}/types/2/athletes/${p.id}/statistics`, 1);
-    const cats = ((d.splits || {}).categories) || [];
-    return {
-      gp: CORE_STAT(cats, "general", "gamesPlayed"),
-      passAtt: CORE_STAT(cats, "passing", "passingAttempts"), passYds: CORE_STAT(cats, "passing", "passingYards"), passTD: CORE_STAT(cats, "passing", "passingTouchdowns"),
-      rushAtt: CORE_STAT(cats, "rushing", "rushingAttempts"), rushYds: CORE_STAT(cats, "rushing", "rushingYards"), rushTD: CORE_STAT(cats, "rushing", "rushingTouchdowns"),
-      tgt: CORE_STAT(cats, "receiving", "receivingTargets"), rec: CORE_STAT(cats, "receiving", "receptions"), recYds: CORE_STAT(cats, "receiving", "receivingYards"), recTD: CORE_STAT(cats, "receiving", "receivingTouchdowns")
-    };
-  }, 8, () => { done++; if (onProgress) onProgress(done / Math.max(1, flat.length)); });
-  const out = [];
-  flat.forEach((p, i) => { const s = stats[i]; if (s && s.gp > 0) out.push(Object.assign({ short: p.name }, p, s)); });
-  return out;
-}
-
 // ── prop projections ────────────────────────────────────────────────────────
 // Per-game usage a player of this position would have if we knew nothing else
 // about him. These are priors for the shrinkage, and they matter most for the
@@ -1348,13 +1287,6 @@ async function loadGameProps(board, entry, cache, onStatus) {
       rosters.forEach((r, i) => r.forEach(a => { seat[a.id] = i === 0 ? homeId : awayId; }));
       players = players.filter(p => seat[p.id]).map(p => Object.assign({}, p, { teamId: seat[p.id] }));
     } catch (e) { /* roster feed down: fall back to the team the stats came with */ }
-  } else {
-    const gk = key + ":" + entry.game.id;
-    if (!cache[gk]) {
-      if (onStatus) onStatus("Loading both rosters…", 0.1);
-      cache[gk] = await loadPlayersCFB(L, statSeason, [homeId, awayId], cache, p => onStatus && onStatus("Loading player usage…", 0.1 + 0.8 * p));
-    }
-    players = cache[gk];
   }
   const out = [];
   [[homeId, entry.proj.homePts, entry.blend.margin], [awayId, entry.proj.awayPts, -entry.blend.margin]].forEach(([tid, pts, mgn]) => {
@@ -1398,8 +1330,7 @@ async function loadGameProps(board, entry, cache, onStatus) {
 const KALSHI_API = "https://api.elections.kalshi.com/trade-api/v2";
 const KALSHI_FEE = 0.07;
 const KALSHI_SERIES = {
-  nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" },
-  cfb: { ml: "KXNCAAFGAME", spread: "KXNCAAFSPREAD", total: "KXNCAAFTOTAL" }
+  nfl: { ml: "KXNFLGAME", spread: "KXNFLSPREAD", total: "KXNFLTOTAL" }
 };
 const kalshiFee = (price, rate) => (rate == null ? KALSHI_FEE : rate) * price * (1 - price);
 
@@ -1797,6 +1728,38 @@ async function loadKalshiProps(leagueKey, onStatus) {
   return { events, ok: true };
 }
 
+// Our prop probabilities carry a systematic offset against the exchange, and
+// it is big enough to decide every recommendation. Measured across a slate our
+// number sits about five points BELOW the market's in the middle of the
+// ladders, so the board fills up with unders — twenty-five of twenty-five on
+// the first run, several of them against markets quoted a cent wide with eight
+// hundred contracts behind them. A market that tight is not five points wrong.
+//
+// So the same discipline the game board already uses: fit our probabilities
+// onto the market's scale across the whole slate, in log-odds where
+// probabilities actually live, and keep only what disagrees after that. The
+// slope catches over-confidence, the intercept catches the offset, and both
+// are shrunk so one odd week cannot bend the curve.
+const logit = p => Math.log(clamp(p, 1e-4, 1 - 1e-4) / (1 - clamp(p, 1e-4, 1 - 1e-4)));
+const expit = z => 1 / (1 + Math.exp(-z));
+
+function calibrateProbs(pairs, n0) {
+  const good = (pairs || []).filter(q => q && isFinite(q.p) && isFinite(q.market) &&
+    q.p > 0.02 && q.p < 0.98 && q.market > 0.02 && q.market < 0.98);
+  const n = good.length;
+  if (n < 40) return { a: 0, b: 1, n, applied: false };
+  const xs = good.map(q => logit(q.p)), ys = good.map(q => logit(q.market));
+  const mx = xs.reduce((a, v) => a + v, 0) / n, my = ys.reduce((a, v) => a + v, 0) / n;
+  let cov = 0, varX = 0;
+  for (let i = 0; i < n; i++) { cov += (xs[i] - mx) * (ys[i] - my); varX += Math.pow(xs[i] - mx, 2); }
+  let b = varX > 1e-9 ? cov / varX : 1;
+  const k = n0 == null ? 120 : n0;                   // shrink toward no correction
+  b = clamp((b * n + 1 * k) / (n + k), 0.6, 1.6);
+  const a = my - b * mx;
+  return { a, b, n, applied: true };
+}
+const applyProbCal = (cal, p) => (cal && cal.applied) ? expit(cal.a + cal.b * logit(p)) : p;
+
 // The rung closest to a line we care about, if the exchange quotes one.
 function kalshiRung(props, entry, playerName, kind, line) {
   if (!props || !props.ok || !entry || !entry.kalshi) return null;
@@ -1852,6 +1815,8 @@ function priceKalshiProp(rung, ourP, opts) {
   const kf = opts.kelly != null ? opts.kelly : 0.25;
   const w = opts.propW != null ? opts.propW : propWeight(rung ? rung.spread : null);
   if (!rung || ourP == null) return null;
+  const pRaw = ourP;
+  if (opts.probCal) ourP = applyProbCal(opts.probCal, ourP);
   const pModel = ourP;
   if (rung.mid != null) ourP = clamp(w * ourP + (1 - w) * rung.mid, 1e-4, 1 - 1e-4);
   const sides = [];
@@ -1871,6 +1836,7 @@ function priceKalshiProp(rung, ourP, opts) {
   best.w = w;
   best.mid = rung.mid;
   best.pModel = best.side === "under" ? 1 - pModel : pModel;
+  best.pRaw = best.side === "under" ? 1 - pRaw : pRaw;
   best.spreadCents = rung.spread * 100;
   best.strike = rung.strike;
   // Crossing costs half the spread on top of the fee. An edge that does not
@@ -2170,11 +2136,11 @@ return {
   getJSON, pool, loadWeek, loadHistory, loadSlate, loadTeamStats,
   buildRatings, ratingOf, projectGame, blendProjection, priceGame, keyCross, calibrateSlate, applyCal, autoMktW, autoMktWTotal,
   loadGameOdds, oddsFromScoreboard, loadLeagueBoard,
-  teamVolume, loadRoster, loadPlayersNFL, loadPlayersCFB, projectPlayer, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
+  teamVolume, loadRoster, loadPlayersNFL, projectPlayer, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   backtest, summarise,
   loadResults, loadClosingLine, gradeBet, betReturn, betCLV, betSummary,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
   loadKalshi, loadKalshiSnapshot, kalshiFromSnapshot, KALSHI_SNAPSHOT, matchKalshi, kalshiImplied, priceKalshiGame, kalshiCross,
-  KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
+  KALSHI_PROP_SERIES, loadKalshiProps, kalshiPropsFromSnapshot, kalshiRung, calibrateProbs, applyProbCal, priceKalshiProp, propWeight, PROP_MAX_STAKE, PROP_MIN_SIZE
 };
 });
