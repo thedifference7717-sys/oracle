@@ -73,6 +73,25 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .tag.ok{color:var(--green);border-color:#14F19555}
 .tag.warn{color:var(--yellow);border-color:#FBBF2455}
 .tag.corr{color:var(--purple);border-color:#A78BFA55}
+.rr{grid-column:1/-1;background:linear-gradient(160deg,#140C1E,var(--bg2));border:1px solid #A78BFA66;border-radius:16px;padding:16px}
+.rr-legs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 16px}
+.rr-leg{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--border)}
+.rr-leg .n{font-family:'Orbitron',monospace;font-size:11px;color:var(--purple);width:18px}
+.rr-leg .i{flex:1;min-width:0}
+.rr-leg .i b{font-size:14px}
+.rr-leg .i div{font-size:10px;color:var(--dim);margin-top:2px}
+.rr-leg .p{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--blue)}
+.rr-strip{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 0;padding-top:11px;border-top:1px solid var(--border)}
+.rr-box{flex:1;min-width:88px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 10px;text-align:center}
+.rr-box .v{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--text)}
+.rr-box .l{font-size:8px;color:var(--dim);letter-spacing:.06em;margin-top:2px}
+.rr-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;min-width:0}
+.rr-tbl th{text-align:right;padding:6px 7px;font-size:9px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border)}
+.rr-tbl th:first-child{text-align:left}
+.rr-tbl td{text-align:right;padding:7px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace}
+.rr-tbl td:first-child{text-align:left;font-family:'Share Tech Mono',monospace;color:var(--muted)}
+.rr-be{margin-top:11px;padding:10px;background:#1A1230;border:1px solid #A78BFA55;border-radius:9px;font-size:12px;color:var(--muted);text-align:center}
+.rr-be b{font-family:'Orbitron',monospace;font-size:16px;color:var(--purple)}
 .wrap{padding:14px 18px}
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
 .panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.05em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -108,6 +127,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="fld"><label>DOUBLE PRICE (AMERICAN)</label><input id="price" type="number" step="5" value="100"></div>
   <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="10" value="1000"></div>
   <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50"></div>
+  <div class="fld"><label>LEG PRICE (HIT PROP)</label><input id="legPrice" type="number" step="5" value="-250"></div>
   <div class="fld"><label>BET BAR (EDGE PTS)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
   <div class="fld"><label>MIN SPOT (PTS)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
   <div class="fld"><label>RANK BY</label><select id="sortBy">
@@ -122,6 +142,10 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div class="section-h">🎲 BET CARDS — one per game clearing the bet bar <span id="cardsNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
   <small>A card for every game whose double beats your price by more than the bar, and nothing else — the same rule the Telegram alerts use. The likeliest double is usually the most heavily bet and the worst priced; what pays is the gap between our number and the book's.</small></div>
 <div class="cards" id="cards"></div>
+
+<div class="section-h" style="color:var(--purple)">🎰 ROUND ROBIN — top 7 hitters, one per game <span id="rrNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
+  <small>Seven single "to record a hit" legs from seven different games, so they share no pitcher, park or innings and are near enough independent. Boxing them creates no edge on its own — it multiplies whatever edge each leg already has, in both directions. The breakeven leg price is the number to act on.</small></div>
+<div class="cards" id="rrcard"></div>
 
 <div class="wrap">
   <div class="panel">
@@ -204,7 +228,7 @@ try{
 }catch(e){/* private mode: nothing stored, nothing to migrate */}
 
 // Bet-slip settings survive a reload — this page reruns every 3 minutes.
-const SETTINGS=["price","bank","perEdge","minEdge","minSpot","sortBy","onlyPosted","onlyTeam"];
+const SETTINGS=["price","bank","perEdge","legPrice","minEdge","minSpot","sortBy","onlyPosted","onlyTeam"];
 SETTINGS.forEach(id=>{
   const el=document.getElementById(id),saved=localStorage.getItem("dd."+id);
   if(saved!=null){if(el.type==="checkbox")el.checked=saved==="1";else el.value=saved;}
@@ -326,6 +350,57 @@ function card(pr,i){
   </div>`;
 }
 
+// The seven best single legs on the slate, capped at one per game so the
+// round robin's independence assumption actually holds. candidates arrives
+// sorted by probability, so the first time a game appears is its best bat.
+function topSeven(){
+  const seen=new Set(),out=[];
+  for(const c of board.candidates){
+    if(setting("onlyPosted")&&!c.posted)continue;
+    if(seen.has(c.gk))continue;
+    seen.add(c.gk);out.push(c);
+    if(out.length===7)break;
+  }
+  return out;
+}
+
+function renderRR(){
+  const legs=topSeven(),el=document.getElementById("rrcard");
+  if(legs.length<2){el.innerHTML='<div class="empty">Need at least two games with a rated hitter.</div>';
+    document.getElementById("rrNote").textContent="";return;}
+  const ps=legs.map(c=>c.p);
+  const rr=M.roundRobin(ps,setting("legPrice"),[2,3,4]);
+  const atLeast=k=>rr.atLeast[k]!=null?pct(rr.atLeast[k]):"—";
+  document.getElementById("rrNote").textContent=`${legs.length} legs · ${legs.length} games`;
+  el.innerHTML=`<div class="rr">
+    <div class="rr-legs">${legs.map((c,i)=>`
+      <div class="rr-leg">
+        <div class="n">${i+1}</div>
+        <div class="i"><b>${c.name}</b>${c.posted?' <span class="tag ok">✓LU</span>':` <span class="tag warn">${pct(c.startProb)}</span>`}
+          <div>#${c.slot} · ${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName} · ${c.spName||"SP TBD"}</div></div>
+        <div class="p">${pct(c.p)}</div>
+      </div>`).join("")}</div>
+    <div class="rr-strip">
+      <div class="rr-box"><div class="v">${rr.expHits.toFixed(1)}</div><div class="l">EXP HITS OF ${legs.length}</div></div>
+      <div class="rr-box"><div class="v">${atLeast(legs.length)}</div><div class="l">ALL ${legs.length}</div></div>
+      <div class="rr-box"><div class="v">${atLeast(legs.length-1)}</div><div class="l">${legs.length-1}+</div></div>
+      <div class="rr-box"><div class="v">${atLeast(legs.length-2)}</div><div class="l">${legs.length-2}+</div></div>
+      <div class="rr-box"><div class="v">${atLeast(legs.length-3)}</div><div class="l">${legs.length-3}+</div></div>
+    </div>
+    <div class="table-wrap"><table class="rr-tbl">
+      <thead><tr><th>ROUND ROBIN</th><th>TICKETS</th><th>EXP WINNERS</th><th>TICKET HIT%</th><th>EV / $ STAKED</th></tr></thead>
+      <tbody>${rr.rows.map(r=>`<tr>
+        <td>by ${r.m}s</td>
+        <td style="color:var(--dim)">${r.tickets}</td>
+        <td>${r.expWin.toFixed(2)}</td>
+        <td style="color:var(--blue)">${Math.round(r.hitRate*100)}%</td>
+        <td><b style="color:${r.ev>0?'var(--green)':'var(--red)'}">${r.ev==null?"—":(r.ev>=0?"+":"")+(r.ev*100).toFixed(1)+"%"}</b></td>
+      </tr>`).join("")}</tbody>
+    </table></div>
+    <div class="rr-be">Break even at <b>${rr.rows[0]?rr.rows[0].breakevenLeg:"—"}</b> per leg — that number barely moves with the box size, because boxing independent legs multiplies your per-leg edge rather than creating any. Shop the legs, not the round robin.</div>
+  </div>`;
+}
+
 function render(){
   const pairs=filtered();
   const B=bets();
@@ -354,6 +429,7 @@ function render(){
       <td class="num"><b style="color:${betSize(pr.ev)>0?'var(--yellow)':'var(--dim)'}">${betSize(pr.ev)>0?money(betSize(pr.ev)):"—"}</b></td>
     </tr>`;}).join("")||`<tr><td colspan="10"><div class="empty">Nothing clears the filters.</div></td></tr>`;
 
+  renderRR();
   const spots=board.spots.filter(s=>!setting("onlyPosted")||s.posted);
   document.getElementById("spotsNote").textContent=`${spots.length} lineups · league baseline leg ${pct(board.baseline)}`;
   document.getElementById("shead").innerHTML=["LINEUP","OPPOSING STARTER","SP K%","HR/CONTACT","OBP ALLOWED","GOES","THEN PEN","TEAM PA","SOFT ARM","GOOD BATS","SPOT"]

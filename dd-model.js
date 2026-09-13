@@ -259,6 +259,61 @@ function rhoFor(a, b) {
   return clamp(base * (1 + CFG.rhoEnvGain * (d / 0.10)), base * 0.5, base * 2);
 }
 
+// ── round robin over independent legs ───────────────────────────────────────
+// A round robin takes n legs and bets every m-sized combination of them. When
+// the legs sit in DIFFERENT games they share no pitcher, park or innings, so
+// unlike a same-game double they are near enough independent — which makes the
+// whole thing exactly solvable rather than something to simulate.
+//
+// The elementary symmetric polynomial e_m of the leg probabilities IS the
+// expected number of winning m-leg tickets: every m-subset contributes the
+// product of its legs, which is precisely that ticket's chance of cashing.
+// Computing it by expanding prod(1 + p_i*x) costs n*m instead of enumerating
+// C(n,m) tickets.
+function esp(ps) {
+  let e = [1];
+  for (const p of ps) {
+    const next = new Array(e.length + 1).fill(0);
+    for (let k = 0; k < e.length; k++) { next[k] += e[k]; next[k + 1] += e[k] * p; }
+    e = next;
+  }
+  return e;                       // e[m] = expected winning m-leg tickets
+}
+
+// How many of the n legs actually land, as a full distribution. Same DP shape,
+// but carrying "exactly k hits" rather than subset products (Poisson-binomial:
+// the legs have different probabilities, so this is not a binomial).
+function hitCountDist(ps) {
+  let d = [1];
+  for (const p of ps) {
+    const next = new Array(d.length + 1).fill(0);
+    for (let k = 0; k < d.length; k++) { next[k] += d[k] * (1 - p); next[k + 1] += d[k] * p; }
+    d = next;
+  }
+  return d;                       // d[k] = P(exactly k of the legs hit)
+}
+
+const nCr = (n, m) => { let r = 1; for (let i = 0; i < m; i++) r = r * (n - i) / (i + 1); return Math.round(r); };
+
+// Price a round robin at an assumed per-leg price. Every m-leg ticket pays the
+// leg's decimal odds compounded m times, so expected return is that payout
+// times e_m, against C(n,m) tickets staked.
+function roundRobin(ps, legAmerican, sizes) {
+  const n = ps.length, e = esp(ps), dist = hitCountDist(ps);
+  const decLeg = decFromAmerican(legAmerican);
+  const rows = (sizes || [2, 3, 4]).filter(m => m >= 2 && m <= n).map(m => {
+    const tickets = nCr(n, m), expWin = e[m] || 0;
+    const payout = decLeg ? Math.pow(decLeg, m) : null;          // decimal, per unit staked
+    const ev = payout != null ? (payout * expWin) / tickets - 1 : null;
+    // The per-leg price at which this round robin breaks even.
+    const beDec = expWin > 0 ? Math.pow(tickets / expWin, 1 / m) : null;
+    return { m, tickets, expWin, hitRate: expWin / tickets, payout, ev,
+             breakevenLeg: beDec ? (beDec >= 2 ? "+" + Math.round((beDec - 1) * 100) : "-" + Math.round(100 / (beDec - 1))) : "—" };
+  });
+  return { n, dist, atLeast: dist.map((_, k) => dist.slice(k).reduce((a, b) => a + b, 0)),
+           expHits: ps.reduce((a, b) => a + b, 0), allHit: ps.reduce((a, b) => a * b, 1), rows };
+}
+
 // ── prices, EV, staking ─────────────────────────────────────────────────────
 function amOdds(p) { if (!(p > 0 && p < 1)) return "—"; const d = 1 / p; return d >= 2 ? "+" + Math.round((d - 1) * 100) : "-" + Math.round(100 / (d - 1)); }
 function decFromAmerican(a) { a = +a; if (!a) return null; return a > 0 ? 1 + a / 100 : 1 + 100 / Math.abs(a); }
@@ -676,5 +731,6 @@ async function buildBoard(o) {
 
 return { VERSION, API, CFG, K, PARK, park, clamp, erf, normCdf, normPdf, normInv, logit, expit,
   log5, shrink, hitProbability, jointProb, rhoFor, amOdds, decFromAmerican, evaluate,
+  esp, hitCountDist, nCr, roundRobin,
   calibrate, record, etNow, ymd, slateYmd, platoon, pool, buildBoard };
 });
