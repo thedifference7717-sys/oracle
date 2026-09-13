@@ -1213,8 +1213,8 @@ async function loadRoster(L, teamId) {
 }
 async function rosterCached(L, teamId, cache) {
   const k = "roster:" + L.key + ":" + teamId;
-  if (!cache[k]) cache[k] = await loadRoster(L, teamId);
-  return cache[k];
+  if (!cache[k]) cache[k] = loadRoster(L, teamId);      // promise, for the same reason
+  return await cache[k];
 }
 
 // ── prop projections ────────────────────────────────────────────────────────
@@ -2034,11 +2034,14 @@ async function loadGameProps(board, entry, cache, onStatus, opts) {
   const key = "players:" + board.league + ":" + statSeason;
   let players;
   if (L.bulkPlayers) {
+    // The PROMISE is cached, not the result. With the games loaded in
+    // parallel, caching the result means every one of them sees an empty
+    // cache at the same moment and starts its own copy of a large bulk fetch.
     if (!cache[key]) {
       if (onStatus) onStatus("Loading player usage…", 0.1);
-      cache[key] = await loadPlayersNFL(L, statSeason, p => onStatus && onStatus("Loading player usage…", 0.1 + 0.7 * p));
+      cache[key] = loadPlayersNFL(L, statSeason, p => onStatus && onStatus("Loading player usage…", 0.1 + 0.7 * p));
     }
-    players = cache[key];
+    players = await cache[key];
     // Re-seat everyone on the roster they are on today, and drop the ones who
     // are not on either of these two teams any more.
     try {
@@ -2054,25 +2057,19 @@ async function loadGameProps(board, entry, cache, onStatus, opts) {
   // single biggest thing that moves a prop line in the hour before kickoff.
   let inj = {};
   const ik = "inj:" + entry.game.id;
-  if (cache[ik] === undefined) {
-    try { cache[ik] = await loadInjuries(L, entry.game.id); }
-    catch (e) { cache[ik] = null; }
-  }
-  inj = cache[ik] || {};
+  if (cache[ik] === undefined) cache[ik] = loadInjuries(L, entry.game.id).catch(() => null);
+  inj = (await cache[ik]) || {};
   const wx = weatherFactor(entry.game);
 
   // Depth charts tell us which of those names are starters. Cached per team.
   const depthOf = async tid => {
     const dk = "depth:" + L.key + ":" + tid;
-    if (cache[dk] === undefined) {
-      try { cache[dk] = await loadDepthChart(L, tid, board.season); }
-      catch (e) { cache[dk] = null; }
-    }
-    return cache[dk];
+    if (cache[dk] === undefined) cache[dk] = loadDepthChart(L, tid, board.season).catch(() => null);
+    return await cache[dk];
   };
   const depth = {};
-  depth[homeId] = await depthOf(homeId);
-  depth[awayId] = await depthOf(awayId);
+  const [dh, da] = await Promise.all([depthOf(homeId), depthOf(awayId)]);
+  depth[homeId] = dh; depth[awayId] = da;
   const units = {};
   units[homeId] = unitsOut(inj[homeId], depth[homeId]);
   units[awayId] = unitsOut(inj[awayId], depth[awayId]);
@@ -2300,9 +2297,21 @@ async function loadKalshiSnapshot(leagueKey, url) {
 // Everything the exchange has on this league, grouped by game. The event
 // ticker carries the series name, so it is stripped: the moneyline, the spread
 // ladder and the total ladder for one game must land in the same bucket.
+// A browser cannot read Kalshi directly — the API serves no cross-origin
+// headers — so without a bridge configured every one of these calls is a
+// request we already know will fail. There are fifty-six of them across the
+// game and player series, and they all have to time out before the snapshot
+// fallback even starts. In the browser, with no bridge, go straight to the
+// snapshot; Node has no such restriction and still reads live.
+const canReachKalshi = () => kalshiBase != null || typeof window === "undefined";
+
 async function loadKalshi(leagueKey, onStatus) {
   const S = KALSHI_SERIES[leagueKey];
   if (!S) return { events: {}, ok: false, error: "no exchange series for " + leagueKey };
+  if (!canReachKalshi()) {
+    try { return await loadKalshiSnapshot(leagueKey); }
+    catch (e) { return { events: {}, ok: false, error: "no bridge configured and no snapshot on file" }; }
+  }
   const kinds = ["ml", "spread", "total"];
   let done = 0;
   const lists = await pool(kinds, async k => {
@@ -2580,6 +2589,14 @@ function kalshiPropsFromSnapshot(json, leagueKey) {
 async function loadKalshiProps(leagueKey, onStatus) {
   const S = KALSHI_PROP_SERIES[leagueKey];
   if (!S) return { events: {}, ok: false, error: "no player markets for " + leagueKey };
+  if (!canReachKalshi()) {
+    try {
+      const r = await getJSON(KALSHI_SNAPSHOT + "?t=" + Date.now(), 1);
+      const k = kalshiPropsFromSnapshot(r, leagueKey);
+      if (k) return k;
+    } catch (e) { /* fall through to the honest answer */ }
+    return { events: {}, ok: false, error: "no player markets for " + leagueKey };
+  }
   const kinds = Object.keys(S);
   let done = 0;
   const lists = await pool(kinds, async k => {
