@@ -136,6 +136,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
     <option value="edge">Edge over no-vig</option>
   </select></div>
   <div class="fld"><label>EXCHANGE BRIDGE URL</label><input id="kproxy" type="text" placeholder="https://…workers.dev" style="width:210px" onchange="saveProxy()"></div>
+  <div class="fld chk"><input id="unitInj" type="checkbox" onchange="state.propCache={};rankProps()"><label for="unitInj" title="Line, secondary and front-seven injuries. Measured against the exchange this makes the projections LESS accurate, so it is off by default — the missing units are shown either way.">Let line/secondary injuries move the number</label></div>
   <div class="fld chk"><input id="mSpread" type="checkbox" checked onchange="render()"><label for="mSpread">Spread</label></div>
   <div class="fld chk"><input id="mMl" type="checkbox" checked onchange="render()"><label for="mMl">Moneyline</label></div>
   <div class="fld chk"><input id="mTotal" type="checkbox" checked onchange="render()"><label for="mTotal">Total</label></div>
@@ -512,7 +513,7 @@ async function toggleProps(key){
   try{
     const rows = await M.loadGameProps(b, entry, state.propCache, (m, p) => {
       if (cell) cell.innerHTML = '<span class="spin">⟳</span> ' + esc(m) + " " + Math.round((p||0)*100) + "%";
-    });
+    }, { unitStrength: unitStrength() });
     state.openProps[key] = propsHTML(b, entry, rows);
   }catch(e){
     state.openProps[key] = '<span style="color:var(--red)">Could not load player usage for this game: ' + esc(e.message || e) + "</span>";
@@ -1102,6 +1103,11 @@ function feedBook(){
 // price it against is just an opinion. So this ranks against a real price: the
 // exchange's where it is loaded, and otherwise whatever lines you paste in from
 // your own book.
+// Off unless asked for. The missing units are still shown — knowing the other
+// side is without two corners is worth seeing even when it is not moving the
+// projection, and on the evidence it should not be moving the projection.
+const unitStrength = () => $("unitInj") && $("unitInj").checked ? 1 : 0;
+
 const PB_MARKETS = [
   { key: "passYds", words: ["pass yds", "passing yards", "pass yards", "passyds", "py"] },
   { key: "rushYds", words: ["rush yds", "rushing yards", "rush yards", "rushyds"] },
@@ -1161,7 +1167,7 @@ async function rankProps(usePaste){
         body.innerHTML = '<div class="empty"><span class="spin">⟳</span> pricing ' +
           esc(entry.game.away.abbr) + " @ " + esc(entry.game.home.abbr) + "…</div>";
         let list;
-        try{ list = await M.loadGameProps(b, entry, state.propCache, () => {}); }catch(e){ continue; }
+        try{ list = await M.loadGameProps(b, entry, state.propCache, () => {}, { unitStrength: unitStrength() }); }catch(e){ continue; }
         games++;
         list.forEach(pl => {
           players++;
@@ -1170,7 +1176,8 @@ async function rankProps(usePaste){
             const opp = pl.teamId === entry.game.home.id ? entry.game.away.abbr : entry.game.home.abbr;
             const base = { player: pl.player.name, pos: pl.player.pos, team, entry, board: b, mkt,
                            status: pl.status || null, opp: opp, def: pl.matchup ? pl.matchup.def : null,
-                           wx: pl.matchup ? pl.matchup.wx : null };
+                           wx: pl.matchup ? pl.matchup.wx : null,
+                           units: pl.matchup ? pl.matchup.units : null };
             // 1) your own book, if you pasted it
             const hit = pasted.find(x => x.market === mkt.key && pbNorm(pl.player.name).indexOf(pbNorm(x.name)) >= 0);
             if (hit && (hit.over != null || hit.under != null)){
@@ -1238,7 +1245,8 @@ function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
     rows.slice(0, 25).map(r => {
       const g = r.entry.game;
       const note = (r.status ? ' <span class="tag warn">' + esc(r.status) + "</span>" : "") +
-        (r.wx && r.wx.note ? ' <span class="tag">' + esc(r.wx.note) + "</span>" : "");
+        (r.wx && r.wx.note ? ' <span class="tag">' + esc(r.wx.note) + "</span>" : "") +
+        (r.units && r.units.note ? ' <span class="tag corr">' + esc(r.units.note) + "</span>" : "");
       return "<tr><td>" + esc(r.player) + ' <span class="mini">' + esc(r.pos) + " · " + esc(r.team) +
         " vs " + esc(r.opp) + "</span>" + note + "</td>" +
         "<td>" + esc(r.mkt.label) + " <b>" + esc(r.side) + "</b></td>" +

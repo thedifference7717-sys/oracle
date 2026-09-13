@@ -914,7 +914,7 @@ async function loadTeamStats(L, season) {
 // forces move it: pace (a projected shootout is more plays and more scoring
 // chances) and game script (a team projected to trail throws more, and the
 // effect is worth several attempts a game, which is most of a prop line).
-function teamVolume(L, ts, projPts, projTotal, projMargin, def, wx) {
+function teamVolume(L, ts, projPts, projTotal, projMargin, def, wx, uf) {
   const gp = Math.max(1, ts ? ts.gp : 1);
   const base = ts ? {
     pass: ts.passAtt / gp, sack: ts.sacks / gp, rush: ts.rushAtt / gp, comp: ts.completions / gp,
@@ -933,8 +933,9 @@ function teamVolume(L, ts, projPts, projTotal, projMargin, def, wx) {
   const shift = clamp(-0.0045 * projMargin, -0.09, 0.09);
   const playsAdj = plays * clamp(pace, 0.82, 1.20);
   const wxPass = wx ? wx.pass : 1;
-  const dropsAdj = playsAdj * clamp((passRate + shift) * wxPass, 0.25, 0.82);
-  const sackRate = drops > 0 ? base.sack / drops : 0.07;
+  const unitPass = uf ? uf.passRate : 1;
+  const dropsAdj = playsAdj * clamp((passRate + shift) * wxPass * unitPass, 0.25, 0.82);
+  const sackRate = clamp((drops > 0 ? base.sack / drops : 0.07) * (uf ? uf.sack : 1), 0.01, 0.20);
   const passAtt = dropsAdj * (1 - sackRate);
   const rushAtt = playsAdj - dropsAdj;
 
@@ -953,12 +954,12 @@ function teamVolume(L, ts, projPts, projTotal, projMargin, def, wx) {
     td, passTD: td * (1 - rushTDshare), rushTD: td * rushTDshare,
     // Efficiency the offence brings, already moved for who it is facing and
     // what the weather is doing.
-    ypa: base.ypa * (def ? defFactor(def.ypa, LEAGUE.ypa, def.n) : 1) * (wx ? wx.ypa : 1),
-    ypc: base.ypc * (def ? defFactor(def.ypc, LEAGUE.ypc, def.n) : 1),
+    ypa: base.ypa * (def ? defFactor(def.ypa, LEAGUE.ypa, def.n) : 1) * (wx ? wx.ypa : 1) * (uf ? uf.ypa : 1),
+    ypc: base.ypc * (def ? defFactor(def.ypc, LEAGUE.ypc, def.n) : 1) * (uf ? uf.ypc : 1),
     defCatch: def ? def.catch : LEAGUE.catch,
     defN: def ? def.n : 0,
     tdFactor: def ? defFactor(def.ptsPG, LEAGUE.ptsPG, def.n, 0.20) : 1,
-    pts: projPts, wx: wx || null
+    pts: projPts, wx: wx || null, units: uf || null
   };
 }
 
@@ -976,9 +977,14 @@ function teamVolume(L, ts, projPts, projTotal, projMargin, def, wx) {
 // mostly the two offences it happened to draw.
 const LEAGUE = { ypa: 7.0, ypc: 4.3, catch: 0.645, passAttPG: 32.1, rushAttPG: 26.8, ptsPG: 23.0, sackRate: 0.068 };
 
+const DEF_CARRY = 0.15;                 // a prior-season game, in this-season games
 function defenceProfile(ts) {
   if (!ts) return null;
-  const gp = Math.max(1, ts.n != null ? ts.n : ts.gp);
+  // Trust grows on its own as this season accumulates, which is the behaviour
+  // we want: nearly deaf to the matchup in September, listening by November.
+  const gp = ts.nCur != null
+    ? Math.max(0.5, ts.nCur + DEF_CARRY * (ts.nPrior || 0))
+    : Math.max(1, ts.n != null ? ts.n : ts.gp);
   const perG = v => (v || 0) / Math.max(1, ts.gp);
   const passAtt = perG(ts.dPassAtt), rushAtt = perG(ts.dRushAtt);
   return {
@@ -1048,6 +1054,97 @@ function injuryWeight(status) {
   if (k.indexOf("probable") >= 0) return INJ_PLAY.probable;
   return 1;
 }
+// WHICH injuries, not how many. A backup corner being out is worth nothing; the
+// starting corner being out is worth a percent or two on the other team's
+// passing game, and the two are indistinguishable in a list of names. The depth
+// chart settles it — rank 1 at a position is the starter.
+const UNIT_OF = {
+  lt: "oline", lg: "oline", c: "oline", rg: "oline", rt: "oline",
+  lcb: "secondary", rcb: "secondary", ss: "secondary", fs: "secondary", nb: "secondary",
+  lde: "front7", rde: "front7", nt: "front7", dt: "front7", ldt: "front7", rdt: "front7",
+  wlb: "front7", slb: "front7", lilb: "front7", rilb: "front7", mlb: "front7", lolb: "front7", rolb: "front7",
+  qb: "qb", rb: "skill", wr: "skill", te: "skill", fb: "skill"
+};
+async function loadDepthChart(L, teamId, season) {
+  const d = await getJSON(`${CORE}/${L.core}/seasons/${season}/teams/${teamId}/depthcharts`, 2);
+  const out = {};
+  (d.items || []).forEach(grp => {
+    const pos = grp.positions || {};
+    Object.keys(pos).forEach(key => {
+      const unit = UNIT_OF[key];
+      if (!unit) return;
+      (pos[key].athletes || []).forEach(a => {
+        const ref = ((a.athlete || {})["$ref"]) || "";
+        const id = ref.split("/athletes/")[1];
+        if (!id) return;
+        const aid = id.split("?")[0];
+        // Keep the best rank a player holds anywhere on the chart.
+        const rank = a.rank != null ? a.rank : 99;
+        if (!out[aid] || rank < out[aid].rank) out[aid] = { rank, key, unit };
+      });
+    });
+  });
+  return out;
+}
+// How much of each unit is missing, counted in starters. A doubtful starter is
+// most of a starter gone; a questionable one is a fraction.
+//
+// The MAGNITUDES BELOW ARE JUDGEMENT, not measurement, and they are capped
+// accordingly. The defensive rates elsewhere in this model come from what a
+// defence has actually allowed; these do not, because the feed will never tell
+// us how a line played without its left tackle. They are deliberately small —
+// the direction is confident, the size is not.
+function unitsOut(injByTeam, depth) {
+  const out = { oline: 0, secondary: 0, front7: 0, qb: 0 };
+  if (!injByTeam || !depth) return out;
+  Object.keys(injByTeam).forEach(aid => {
+    const d = depth[aid];
+    if (!d || d.rank !== 1) return;                 // only starters count
+    const missing = 1 - injuryWeight(injByTeam[aid]);
+    if (missing <= 0) return;
+    if (out[d.unit] != null) out[d.unit] += missing;
+  });
+  Object.keys(out).forEach(k => { out[k] = clamp(out[k], 0, 3); });
+  return out;
+}
+// What a missing starter is worth. Own line first, then what the opponent is
+// missing — a depleted secondary is why a quarterback throws more than his
+// season rate says he will, which is the whole point of doing this by unit.
+// `strength` dials the whole thing. It defaults to ZERO, and the reason is
+// written down rather than buried: swept against the exchange's own ladders the
+// effect is monotonically harmful — 7.09pp of error with it off, 7.10 at a
+// quarter strength, 7.14 at full, 7.20 at double. Not noise either: paired on
+// 2,222 identical rungs it is t = -3.6 against us.
+//
+// The idea is sound and I still believe the mechanism is real. The likeliest
+// explanation is that a liquid market has already priced a public injury report
+// before we get to it, so an adjustment laid on top of our own projection
+// pushes past what the market has already done — and the magnitudes here were
+// my judgement rather than anything measured, which I said when I wrote them.
+//
+// So it ships visible and inert: the board shows you which units are missing,
+// and does not move the number unless you ask it to.
+function unitFactors(own, opp, strength) {
+  const k = strength == null ? 0 : strength;
+  const sc = v => (v || 0) * k;
+  const o = { oline: sc((own || {}).oline) };
+  const d = { secondary: sc((opp || {}).secondary), front7: sc((opp || {}).front7) };
+  return {
+    ypc: (1 - 0.035 * o.oline) * (1 + 0.025 * d.front7),
+    ypa: (1 - 0.015 * o.oline) * (1 + 0.030 * d.secondary) * (1 + 0.010 * d.front7),
+    sack: 1 + 0.12 * o.oline,
+    // Coaches throw at a hurt secondary and run at a hurt front. Both show up
+    // as play-calling before they show up as efficiency.
+    passRate: 1 + 0.015 * d.secondary - 0.012 * d.front7 - 0.010 * o.oline,
+    strength: k,
+    note: [
+      (own || {}).oline >= 0.5 ? (own.oline).toFixed(1) + " OL out" : null,
+      (opp || {}).secondary >= 0.5 ? "opp " + (opp.secondary).toFixed(1) + " DB out" : null,
+      (opp || {}).front7 >= 0.5 ? "opp " + (opp.front7).toFixed(1) + " front-7 out" : null
+    ].filter(Boolean).join(", ") || null
+  };
+}
+
 // The game summary carries both teams' reports. It is a heavy payload, so it
 // is fetched once per game and cached.
 async function loadInjuries(L, eventId) {
@@ -1383,6 +1480,13 @@ async function loadLeagueBoard(leagueKey, opts, onStatus) {
     // Everything is now a per-game rate, so gp is 1 — but `n` remembers how many
     // games are actually behind it, which is what the shrinkage needs.
     mix.gp = 1; mix.n = a.gp * (1 - wb) + b.gp * wb; mix.id = a.id; mix.abbr = a.abbr;
+    // Keep the two sample sizes apart. How far to trust a DEFENSIVE rate is a
+    // different question from how far to trust an offence's pace, because last
+    // season's defence is a much weaker guide to this one — sweeping the trust
+    // against the exchange's ladders put last season's seventeen games at about
+    // the worth of two and a half of this season's, and full trust in it was
+    // measurably WORSE than ignoring the defence altogether.
+    mix.nCur = b.gp; mix.nPrior = a.gp;
     stats[k] = mix;
   });
 
@@ -1392,7 +1496,8 @@ async function loadLeagueBoard(leagueKey, opts, onStatus) {
 // Props for one game, on demand. NFL pulls a league-wide feed once and reuses
 // it; college has to walk two rosters, which is why it is a button and not a
 // default.
-async function loadGameProps(board, entry, cache, onStatus) {
+async function loadGameProps(board, entry, cache, onStatus, opts) {
+  opts = opts || {};
   const L = board.L;
   const homeId = entry.game.home.id, awayId = entry.game.away.id;
   // Four games is about where this season's usage stops being a rounding error
@@ -1428,12 +1533,29 @@ async function loadGameProps(board, entry, cache, onStatus) {
   inj = cache[ik] || {};
   const wx = weatherFactor(entry.game);
 
+  // Depth charts tell us which of those names are starters. Cached per team.
+  const depthOf = async tid => {
+    const dk = "depth:" + L.key + ":" + tid;
+    if (cache[dk] === undefined) {
+      try { cache[dk] = await loadDepthChart(L, tid, board.season); }
+      catch (e) { cache[dk] = null; }
+    }
+    return cache[dk];
+  };
+  const depth = {};
+  depth[homeId] = await depthOf(homeId);
+  depth[awayId] = await depthOf(awayId);
+  const units = {};
+  units[homeId] = unitsOut(inj[homeId], depth[homeId]);
+  units[awayId] = unitsOut(inj[awayId], depth[awayId]);
+
   const out = [];
   [[homeId, entry.proj.homePts, entry.blend.margin, awayId], [awayId, entry.proj.awayPts, -entry.blend.margin, homeId]]
     .forEach(([tid, pts, mgn, oppId]) => {
     const ts = board.teamStats[tid];
     const def = defenceProfile(board.teamStats[oppId]);
-    const vol = teamVolume(L, ts, pts, entry.blend.total, mgn, def, wx);
+    const uf = unitFactors(units[tid], units[oppId], opts.unitStrength);
+    const vol = teamVolume(L, ts, pts, entry.blend.total, mgn, def, wx, uf);
     const squad = players.filter(p => p.teamId === tid);
     const rows = squad.map(pl => {
       const status = (inj[tid] || {})[String(pl.id)] || null;
@@ -1464,7 +1586,7 @@ async function loadGameProps(board, entry, cache, onStatus) {
       if (mkts.length) out.push({
         teamId: tid, player: r.pl, proj: pr, markets: mkts, vol,
         status: r.status, avail: r.avail,
-        matchup: { def, wx, oppId }
+        matchup: { def, wx, oppId, units: uf, own: units[tid], opp: units[oppId] }
       });
     });
   });
@@ -2307,7 +2429,8 @@ return {
   buildRatings, ratingOf, projectGame, blendProjection, priceGame, keyCross, calibrateSlate, applyCal, autoMktW, autoMktWTotal,
   loadGameOdds, oddsFromScoreboard, loadLeagueBoard,
   teamVolume, loadRoster, loadPlayersNFL, projectPlayer,
-  defenceProfile, defFactor, log5, weatherFactor, injuryWeight, loadInjuries, LEAGUE, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
+  defenceProfile, defFactor, log5, DEF_CARRY, weatherFactor, injuryWeight, loadInjuries, LEAGUE,
+  loadDepthChart, unitsOut, unitFactors, UNIT_OF, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   backtest, summarise,
   loadResults, loadClosingLine, gradeBet, betReturn, betCLV, betSummary,
   KALSHI_API, KALSHI_SERIES, KALSHI_FEE, kalshiFee, setKalshiProxy,
