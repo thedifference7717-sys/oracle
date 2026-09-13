@@ -298,7 +298,7 @@ const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
 const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null, sims: {}, legs: [], parlays: [],
-  legPools: {}, spots: {}, doubles: [], lgTs: null };
+  legPools: {}, spots: {}, doubles: [], lgTs: null, rankError: null, pricedAt: null };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -383,7 +383,13 @@ function render(){
 function renderPairCards(top, all){
   const el = $("cards");
   if (!top.length){
-    const pricing = !Object.keys(state.legPools).length;
+    const nothingPriced = !Object.keys(state.legPools).length;
+    if (nothingPriced && state.rankError){
+      el.innerHTML = '<div class="empty" style="color:var(--yellow);line-height:1.8">Could not price the slate: <b>' +
+        esc(state.rankError) + "</b>.<br>The feeds go down for a minute at a time on a Sunday morning — press <b>⟳ REFRESH</b> and it usually comes straight back.</div>";
+      return;
+    }
+    const pricing = nothingPriced;
     el.innerHTML = '<div class="empty">' + (pricing
       ? '<span class="spin">⟳</span> Pricing the slate — usage, rosters, injuries and depth charts for every game, then ten thousand simulated afternoons apiece. Fifteen seconds or so.'
       : all.length
@@ -394,6 +400,18 @@ function renderPairCards(top, all){
     return;
   }
   el.innerHTML = top.map(pairCard).join("");
+  // A board can be perfectly good and half an hour stale, which matters on a
+  // Sunday morning when a man gets ruled out. Say when it was priced, and say
+  // loudly if the last attempt to reprice it failed.
+  const age = state.pricedAt ? Math.round((Date.now() - state.pricedAt) / 60000) : null;
+  if (age != null && (age >= 5 || state.rankError)){
+    el.innerHTML += '<div class="empty" style="grid-column:1/-1;margin:0;padding:12px 0 0;color:' +
+      (state.rankError ? "var(--yellow)" : "var(--dim)") + '">' +
+      (state.rankError
+        ? "⚠ These cards were priced <b>" + age + " min</b> ago and the last refresh failed: <b>" + esc(state.rankError) +
+          "</b>. Press ⟳ REFRESH."
+        : "Priced " + age + " min ago. Press ⟳ REFRESH for the latest injuries and prices.") + "</div>";
+  }
 }
 // Every game, ordered, bet bar NOT applied — this is meant to be the whole
 // slate so a game that just misses is still visible.
@@ -1395,7 +1413,12 @@ async function rankProps(usePaste){
     // has to be fitted before a single prop is priced, or a five-point offset
     // decides every recommendation on the board.
     const found = [], pairs = [], pending = [];
-    state.legPools = {}; state.spots = {};
+    // Built into locals and committed only once the whole pass has succeeded.
+    // Clearing state.legPools up front meant a single flaky call — one roster
+    // fetch, one rate limit — emptied the entire card board and left it
+    // showing "pricing the slate" for ever, with the last good board thrown
+    // away. A failed refresh must cost you the refresh, not the board.
+    const pools = {}, spots = {};
     for (const b of Object.values(state.boards)){
       if (!b.L.bulkPlayers){ continue; }
       const kp = state.kprops[b.league];
@@ -1414,7 +1437,7 @@ async function rankProps(usePaste){
         if (sim){
           pending.push({ b, entry, list, sim });
           if (!state.lgTs) state.lgTs = M.leagueTeamStats(b.teamStats);
-          const S = state.spots[entry.game.id] = {};
+          const S = spots[entry.game.id] = {};
           [[entry.game.home, entry.game.away, entry.proj.homePts, entry.blend.margin],
            [entry.game.away, entry.game.home, entry.proj.awayPts, -entry.blend.margin]].forEach(([me, them, ptsF, mgn]) => {
             try{
@@ -1467,7 +1490,10 @@ async function rankProps(usePaste){
     state.probCal = probCal;
     // Now the calibration exists, the doubles can be built on numbers that
     // have been through it.
-    pending.forEach(x => { state.legPools[x.entry.game.id] = legPool(x.b, x.entry, x.list, x.sim); });
+    pending.forEach(x => { pools[x.entry.game.id] = legPool(x.b, x.entry, x.list, x.sim); });
+    // Commit. Anything that threw above never gets here, and the board that is
+    // already on screen stays there.
+    if (Object.keys(pools).length){ state.legPools = pools; state.spots = spots; state.pricedAt = Date.now(); state.rankError = null; }
     found.forEach(f => {
       const o = Object.assign({}, opts(f.board), { probCal });
       const best = M.priceKalshiProp(f.rung, f.ourP, o);
@@ -1482,6 +1508,10 @@ async function rankProps(usePaste){
     render();
   }catch(e){
     body.innerHTML = '<div class="empty" style="color:var(--red)">Could not rank props: ' + esc(e.message || e) + "</div>";
+    // And say so on the cards, which is where the eye is. Silently leaving a
+    // spinner there is how "it was working a minute ago" happens.
+    state.rankError = (e && e.message) || String(e);
+    render();
   }finally{ btn.disabled = false; }
 }
 
