@@ -1,4 +1,4 @@
-// Kalshi → GridAIron snapshot.
+// Kalshi → PlAIybook snapshot.
 //
 // Kalshi serves its public market data without cross-origin headers, so a page
 // on GitHub Pages cannot read it directly, and the public CORS proxies are all

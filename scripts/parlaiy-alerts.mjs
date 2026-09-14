@@ -1,4 +1,4 @@
-// DAIly Double — Telegram alerts (GitHub Actions cron, self-looping every ~60s).
+// Two BAIgger — Telegram alerts (GitHub Actions cron, self-looping every ~60s).
 //
 // 1. At lock (1h before the day's first pitch) sends the strongest two-man
 //    same-game hit parlays that actually clear the price on offer.
@@ -127,7 +127,7 @@ const legLine = c => `• <b>${c.name}</b> #${c.slot} · ${av(c.avg)}→${av(c.p
 async function alertGame(day, g, d) {
   const first = new Date(g.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
   await tgLong(
-    `🎲 <b>DAILY DOUBLE</b> · ${d.teams}\n` +
+    `⚾ <b>TWO BAIGGER</b> · ${d.teams}\n` +
     `First pitch ${first} ET · ${d.venue || ""}\n` +
     `➖➖➖➖➖➖➖➖\n` +
     `✅ <b>EDGE ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · EV ${(d.evPct >= 0 ? "+" : "") + d.evPct.toFixed(1)}% · stake ${(d.kelly * 100).toFixed(1)}% bank</b>\n` +
