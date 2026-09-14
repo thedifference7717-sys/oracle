@@ -1,19 +1,31 @@
 {
-  "name": "ShohAI Ohtani — HR Oracle",
-  "short_name": "ShohAI Ohtani",
-  "description": "Real-time MLB home run dashboard: top-100 hitters ranked by HR drought + favorable matchup. Auto-refreshes hourly.",
+  "name": "SportsAI",
+  "short_name": "SportsAI",
+  "description": "Two BAIgger and PlAIybook \u2014 model-priced same-game parlays with live edge and stake sizing.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#050510",
-  "theme_color": "#050510",
+  "background_color": "#05050E",
+  "theme_color": "#05050E",
   "icons": [
     {
-      "src": "baseball.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "sportsai-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "sportsai-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "sportsai-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
