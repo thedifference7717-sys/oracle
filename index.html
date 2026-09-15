@@ -106,11 +106,13 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .ld-in{width:78px;background:#0A0A1C;border:1px solid var(--border);border-radius:6px;padding:4px 5px;font-family:'Orbitron',monospace;font-size:11px;text-align:right}
 .ld-foot{font-size:10px;color:var(--dim);margin-top:8px;line-height:1.5}
 .ld-steps{display:flex;gap:7px;margin:14px 0 0;flex-wrap:wrap}
-.ld-step{flex:1;min-width:64px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 4px;text-align:center}
+.ld-step{flex:1;min-width:78px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 4px;text-align:center}
 .ld-step.done{border-color:var(--green);background:#06200F}
 .ld-step.now{border-color:var(--yellow);background:#241C04;box-shadow:0 0 0 1px #FACC1533}
 .ld-step .d{font-size:8px;color:var(--dim);letter-spacing:.06em}
 .ld-step .v{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;margin-top:2px}
+.ld-step .o{font-size:7.5px;color:var(--dim);margin-top:3px;letter-spacing:.03em}
+.ld-step.next{border-color:var(--blue);background:#06162A}
 .ld-strip{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--border)}
 .ld-box{flex:1;min-width:92px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 10px;text-align:center}
 .ld-box .v{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--text)}
@@ -482,14 +484,28 @@ function renderLadder(){
   const nextIfWin=closes?Math.max(0,(st.account+(ret-st.base)))*C.basePct:ret;
   const nextIfLose=st.base*(1+C.missGain);
 
-  // The rungs ahead compound at the price typed for today — it is the only
-  // real price on the board, so it is the least wrong assumption available.
+  // Only two rungs on this staircase are real numbers: the ones already bet,
+  // at the prices those bets were actually taken at, and today's. Tomorrow is
+  // computable ONLY because today's price is now known — it is this stake
+  // times this price, nothing more. Day four cannot be priced from day two;
+  // that leg has no odds yet and inventing them is how a projection becomes a
+  // promise. So the rungs past tomorrow say so instead of showing a figure.
+  const mine_=st.rows.filter(r=>r.cycle===st.cycle&&r.status==="won");
+  const byRung={}; mine_.forEach(r=>{byRung[r.rung]=r;});
   const steps=Array.from({length:C.rungs},(_,i)=>{
-    const cls= i+1<st.rung?"done": i+1===st.rung?"now":"";
-    const ahead=stake*Math.pow(dec,i+1-st.rung);
-    const col= cls==="now"?"var(--yellow)":cls==="done"?"var(--green)":"var(--dim)";
-    return `<div class="ld-step ${cls}"><div class="d">DAY ${i+1}</div>
-      <div class="v" style="color:${col}">${cls==="done"?"✓":money(ahead)}</div></div>`;
+    const d=i+1, done=byRung[d];
+    if(done)return `<div class="ld-step done"><div class="d">DAY ${d} ✓</div>
+      <div class="v" style="color:var(--green)">${money(done.stake)}</div>
+      <div class="o">at ${done.price>0?"+":""}${done.price}</div></div>`;
+    if(d===st.rung)return `<div class="ld-step now"><div class="d">DAY ${d} · TODAY</div>
+      <div class="v" style="color:var(--yellow)">${money(stake)}</div>
+      <div class="o">at ${todayOdds>0?"+":""}${todayOdds}</div></div>`;
+    if(d===st.rung+1)return `<div class="ld-step next"><div class="d">DAY ${d} · IF TODAY HITS</div>
+      <div class="v" style="color:var(--blue)">${money(ret)}</div>
+      <div class="o">then price it again</div></div>`;
+    return `<div class="ld-step"><div class="d">DAY ${d}</div>
+      <div class="v" style="color:var(--dim)">—</div>
+      <div class="o">priced on the day</div></div>`;
   }).join("");
 
   const oddsBox=`<div class="ld-odds">
@@ -527,7 +543,7 @@ function renderLadder(){
     </div>`:'<div class="ld-pick"><div class="sub">No board loaded.</div></div>';
 
   const warn=risk?`<div class="ld-warn">
-    <b>What this actually is.</b> Five legs at ${pct(p)} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally <b>${money(risk.cycleProfit)}</b>. Do not size it as though it wins often.
+    <b>What this actually is.</b> Five legs at ${pct(p)} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally a large win — <b>${money(risk.cycleProfit)}</b> <i>if</i> all five legs priced like today's, which is a what-if and not a forecast: only tomorrow's stake is a real number. Do not size it as though it wins often.
   </div>`:"";
 
   // Every settled rung's price is editable too — get a different number three
