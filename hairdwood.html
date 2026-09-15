@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#000000">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<title>SportsAI · HAIdwood</title>
+<title>SportsAI · HAIrdwood</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SportsAI">
@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="sportsai-180.png">
 <link rel="manifest" href="manifest.json">
 <style>
-/* ── HAIdwood ───────────────────────────────────────────────────────────────
+/* ── HAIrdwood ───────────────────────────────────────────────────────────────
    Same design system as the baseball board and the record page: Apple's dark
    system palette, the system font stack, tabular figures, and colour used only
    where it MEANS something (graded, won, lost, money, at risk). The one thing
@@ -299,7 +299,7 @@ td.num{text-align:right}
 <div id="topbar">
   <div>
     <div class="brand">SPORTSAI</div>
-    <div class="logo">🏀 HAIdwood</div>
+    <div class="logo">🏀 HAIrdwood</div>
     <div class="logo-sub">
       NBA props · the ladder + same-game doubles · Build 1 ·
       <!-- stamped by the deploy; keep on its own line -->
@@ -379,12 +379,12 @@ td.num{text-align:right}
 
 <div class="legend" id="legend"></div>
 
-<script src="haidwood-model.js?v=1"></script>
+<script src="hairdwood-model.js?v=1"></script>
 <script>
 // The engine lives in its own file so the page and any alerter price the same
 // board. If it fails to load, say so in the status bar rather than throwing at
 // parse time and leaving the user staring at an empty page.
-const M=window.HaidwoodModel||null;
+const M=window.HairdwoodModel||null;
 // GitHub Pages is same-origin with ESPN only through a proxy; keep the same
 // fallback chain the other boards use so a blocked direct fetch still resolves.
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
@@ -504,7 +504,7 @@ function scoreBars(sc){
      <div class="sc-note">${esc(p.note||"")}</div></div>`).join("");
   return `<div class="sc">${rows}${pen}
     <div class="sc-row" style="margin-top:6px;border-top:.5px solid var(--hair);padding-top:8px">
-      <div class="lb" style="color:var(--text);font-weight:600">HAIdwood score</div><div class="bar"><i style="width:${sc.score}%;background:var(--green)"></i></div>
+      <div class="lb" style="color:var(--text);font-weight:600">HAIrdwood score</div><div class="bar"><i style="width:${sc.score}%;background:var(--green)"></i></div>
       <div class="vv" style="font-size:14px">${sc.score.toFixed(1)}</div>
       <div class="sc-note">${sc.earned!=null?`${sc.earned} earned out of the ${sc.available} points this bet could be measured on`:`out of ${sc.available} measurable points`} — ${esc(sc.note)}</div>
     </div></div>`;
@@ -521,13 +521,13 @@ const injTag=l=>l.status?`<span class="tag ${/out/i.test(l.status)?"bad":"warn"}
 async function load(force){
   checkBuild();
   if(force&&M)M.clearCache();
-  if(!M){status("✗ haidwood-model.js did not load — hard-refresh the page.","var(--red)");return;}
+  if(!M){status("✗ hairdwood-model.js did not load — hard-refresh the page.","var(--red)");return;}
   const btn=document.getElementById("run");btn.disabled=true;
   try{
     // The ladder's settled history, written by whatever settles it. Absent
     // means the ladder has not started, and the card then shows rung one off
     // the seed rather than hiding itself.
-    try{const r=await fetch("data/haidwood-ladder.json?t="+Date.now());if(r.ok)ladderHist=await r.json();}catch(e){/* not started */}
+    try{const r=await fetch("data/hairdwood-ladder.json?t="+Date.now());if(r.ok)ladderHist=await r.json();}catch(e){/* not started */}
     board=await M.buildBoard({getJSON,target:setting("target")/100,
       onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
@@ -550,7 +550,7 @@ function renderOffseason(){
   document.getElementById("ladder").innerHTML=`<div class="offseason">
     <div class="h">🏀 No NBA games today</div>
     <div class="b">${next
-      ? `The next slate on ESPN's schedule is <b style="color:var(--text)">${next}</b>. HAIdwood grades a slate on the day it is played — minutes, absences and the posted total are all same-day facts — so there is nothing to publish until then. The board fills itself in on the morning of that game.`
+      ? `The next slate on ESPN's schedule is <b style="color:var(--text)">${next}</b>. HAIrdwood grades a slate on the day it is played — minutes, absences and the posted total are all same-day facts — so there is nothing to publish until then. The board fills itself in on the morning of that game.`
       : `ESPN has no scheduled games in the next six weeks either, which in September means the schedule for the coming season is not out yet. This page will fill itself in the moment it is.`}</div>
     ${next?`<div class="d">${days} day${days===1?"":"s"}</div>`:""}
   </div>`;
@@ -646,7 +646,7 @@ function card(s,i){
 <script>
 // ── THE LADDER ──────────────────────────────────────────────────────────────
 // The day's single best-graded prop, staked off the compounding ladder. History
-// comes from data/haidwood-ladder.json; the state is replayed from it by the
+// comes from data/hairdwood-ladder.json; the state is replayed from it by the
 // shared engine, so this card and any alerter can never disagree about which
 // rung we are on.
 const etTime=ms=>new Date(ms).toLocaleTimeString("en-US",{timeZone:"America/New_York",hour:"numeric",minute:"2-digit"});
@@ -775,7 +775,7 @@ function renderLadder(){
       </div></details>
     </div>`:"";
 
-  // The alternate-line ladder is a HAIdwood-specific thing worth showing: the
+  // The alternate-line ladder is a HAIrdwood-specific thing worth showing: the
   // pick is not "this man, this number", it is "this man, as far up his own
   // ladder as the target hit rate will carry him", and the rungs either side
   // are what you would be taking if your book prices them better.
@@ -820,7 +820,7 @@ function renderLadder(){
         <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
         <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table>
     <div class="ld-foot">Green odds are prices you typed; grey are what was assumed. Edit any of them and every stake above it recompounds. A void returns the stake and re-runs the same rung.</div></div>`
-    :`<div class="ld-warn" style="background:rgba(255,159,10,.10);color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/haidwood-ladder.json</code> the day it is placed, so every stake and result is timestamped in the repo before tip-off — the same tamper-evident rule the record page runs on.</div>`;
+    :`<div class="ld-warn" style="background:rgba(255,159,10,.10);color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/hairdwood-ladder.json</code> the day it is placed, so every stake and result is timestamped in the repo before tip-off — the same tamper-evident rule the record page runs on.</div>`;
 
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
@@ -951,7 +951,7 @@ function legendHtml(){
     <p><b>The line is chosen, not given.</b> Books hang a ladder of alternate lines on every one of these markets, so the question is never "is 24.5 a good bet" — it is how far up that ladder you can go and still be as likely as you asked for. Every prop is written at the <b>highest half-point line that still clears your target hit rate</b> (${board&&board.target?Math.round(board.target*100):70}%), and the ladder card shows the rungs either side with their fair prices.</p>
   </div></details>
   <details class="disc"><summary>Overs only, and why</summary><div class="disc-b">
-    <p>HAIdwood publishes <b>overs</b>. An under is mostly a bet on a player getting hurt, rested or blown out — the three things this model knows least about — and the outcome that would make it a lock, a DNP, <i>voids</i> the ticket instead of cashing it. That asymmetry is real money, and rather than model it badly the board does not offer the side.</p>
+    <p>HAIrdwood publishes <b>overs</b>. An under is mostly a bet on a player getting hurt, rested or blown out — the three things this model knows least about — and the outcome that would make it a lock, a DNP, <i>voids</i> the ticket instead of cashing it. That asymmetry is real money, and rather than model it badly the board does not offer the side.</p>
     <p>The same asymmetry is why a questionable tag here costs grade points instead of being multiplied into the probability the way a baseball scratch is: if he sits, you get your stake back and the ladder re-runs the rung.</p>
   </div></details>
   <details class="disc"><summary>Why a same-game double is not two singles</summary><div class="disc-b">

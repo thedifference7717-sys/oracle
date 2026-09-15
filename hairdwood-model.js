@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// HAIdwood — NBA player-prop pricing engine
+// HAIrdwood — NBA player-prop pricing engine
 //
 // One file, two consumers: the dashboard loads it as a classic script
-// (window.HaidwoodModel), Node imports it as a CJS default. Same pipeline both
+// (window.HairdwoodModel), Node imports it as a CJS default. Same pipeline both
 // ways, so the board on screen and any alerter can never drift apart — the
 // same rule the baseball and football engines in this repo run under.
 //
@@ -59,7 +59,7 @@
 //     instead of cashing it. The board publishes overs.
 //
 //  7. THE GRADE IS PUBLISHED, NOT A BLACK BOX. Every bet carries a 100-point
-//     HAIdwood score built from seven components and five penalties, each one
+//     HAIrdwood score built from seven components and five penalties, each one
 //     shown with its own points on the card. When a component's input is
 //     missing the component is dropped AND its weight comes out of the
 //     denominator, so a bet is never quietly rewarded for what we could not
@@ -75,7 +75,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
-  else root.HaidwoodModel = factory();
+  else root.HairdwoodModel = factory();
 })(typeof self !== "undefined" ? self : this, function () {
 "use strict";
 
@@ -888,7 +888,7 @@ function ladderLines(key, mean, sp, extra, target) {
   return { rungs: out, pick };
 }
 
-// ── the HAIdwood score ──────────────────────────────────────────────────────
+// ── the HAIrdwood score ──────────────────────────────────────────────────────
 // A hundred points, published in full, because a ranking nobody can check is
 // just a number in a large font. Seven things earn points and five take them
 // away, and every one appears on the card with its own line and its own reason.
