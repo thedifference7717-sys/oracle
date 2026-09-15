@@ -222,8 +222,23 @@ async function ladderPlace(day, games) {
   // Is any game inside its hour? That is the moment we must choose.
   const locking = games.some(g => { const t = Date.parse(g.gameDate); return !isNaN(t) && now >= t - HOUR && now < t; });
   if (!locking) return;
-  const live = games.filter(g => posted(g) && now < Date.parse(g.gameDate));
-  if (!live.length) { console.log("ladder: at lock, no posted lineup to bet — skipping today."); return; }
+  // EVERY game that has not started, not just the ones with a lineup up. The
+  // model already prices an unposted bat off his projected slot and multiplies
+  // by his real chance of starting (starts per team game, capped at 0.95;
+  // posted is 0.985, and anyone under 0.55 is dropped as a part-timer). So a
+  // projected leg and a confirmed leg are directly comparable in expected
+  // value, and a confirmed regular outranks an unposted equivalent on its own
+  // without needing a rule to say so.
+  //
+  // Restricting this to posted lineups threw away most of the slate: at the
+  // first lock of the day only the earliest game or two has a lineup up, so
+  // the ladder was picking the best of two games and calling it the best play
+  // of the day. The doubles alerter still waits for a confirmed lineup per
+  // game — that is a different bet on a single game, and it can afford to
+  // wait because each game locks on its own clock. The ladder cannot: it
+  // chooses once, for the whole slate.
+  const live = games.filter(g => now < Date.parse(g.gameDate));
+  if (!live.length) { console.log("ladder: at lock, every game has already started — skipping today."); return; }
 
   const st = M.ladder(L.bets);
   if (!st.canFund) {
@@ -242,11 +257,10 @@ async function ladderPlace(day, games) {
   const lbe = 1 / M.decFromAmerican(LEG_PRICE);
   let best = null;
   for (const c of board.candidates) {
-    if (!c.posted) continue;
-    const edge = c.p - lbe;
+    const edge = c.p - lbe;                       // c.p already carries scratch risk
     if (!best || edge > best.edge) best = { c, edge };
   }
-  if (!best) { console.log("ladder: no posted candidate could be scored."); return; }
+  if (!best) { console.log("ladder: no candidate could be scored."); return; }
   if (best.edge < MIN_EDGE) {
     console.log(`ladder: best leg ${best.c.name} at ${(best.edge * 100).toFixed(1)}pts — under the bar, no rung today.`);
     L.bets.push({ date: day, status: "noplay", reason: `best leg ${(best.edge * 100).toFixed(1)}pts, under the +${(MIN_EDGE * 100).toFixed(1)}pt bar`,
@@ -263,6 +277,7 @@ async function ladderPlace(day, games) {
     cycle: st.cycle, rung: st.rung, seed: st.base,
     stake: st.stake, price: LEG_PRICE, p: c.p, edge: best.edge,
     pick: c.name, playerId: c.id, slot: c.slot, gk: c.gk,
+    posted: !!c.posted, startProb: c.startProb,
     teams: `${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName}`, sp: c.spName || null,
     fromGames: live.length, status: "open"
   });
@@ -278,7 +293,8 @@ async function ladderPlace(day, games) {
     `vs ${c.spName || "SP TBD"}\n\n` +
     `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(c.p - MIN_EDGE)}</b>\n` +
     `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${LEG_PRICE}\n` +
-    `Best of ${board.candidates.filter(x => x.posted).length} posted bats across ${live.length} game${live.length === 1 ? "" : "s"}\n\n` +
+    `${c.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.slot}, ${pct(c.startProb)} to start (already priced in)`}\n` +
+    `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n\n` +
     `<i>Your money at risk: ${money(st.base)} (the seed). Riding on top of it: ${money(st.stake - st.base)} of theirs.\n` +
     (risk ? `Five straight at this rate completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${money(risk.cycleProfit)}. Account ${money(st.account)}.` : "") +
     `</i>`

@@ -146,7 +146,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 6 · <span id="buildsha">c598378</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 7 · <span id="buildsha">c598378</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
@@ -508,10 +508,15 @@ setInterval(tickLadderClock,1000);
 // and this bet has no second leg to carry it.
 function ladderPick(){
   const lbe=1/M.decFromAmerican(setting("legPrice"));
-  const pool=board.candidates.filter(c=>c.posted);
-  const src=pool.length?pool:board.candidates;
+  // Every bat on the slate, posted or not — the same pool the alerter picks
+  // from, so the card and the committed rung cannot disagree. c.p already
+  // carries scratch risk (starts per team game, capped at 0.95, against 0.985
+  // for a confirmed lineup), so a projected leg and a confirmed one compare
+  // directly on expected value and no rule is needed to prefer one. The
+  // "confirmed lineups only" filter deliberately does NOT apply here: it
+  // governs what you browse, not what the ladder will actually bet.
   let best=null;
-  for(const c of src){const e=c.p-lbe; if(!best||e>best.edge)best={c,edge:e,provisional:!pool.length};}
+  for(const c of board.candidates){const e=c.p-lbe; if(!best||e>best.edge)best={c,edge:e};}
   return best;
 }
 
@@ -616,7 +621,8 @@ function renderLadder(){
   const lockedHtml=locked?`
     <div class="ld-pick">
       <div class="nm">${locked.pick} <span class="tag ok">LOCKED</span></div>
-      <div class="sub">#${locked.slot||"—"} · ${locked.teams||""} · ${locked.sp||"SP TBD"}</div>
+      <div class="sub">#${locked.slot||"—"} · ${locked.teams||""} · ${locked.sp||"SP TBD"}
+        ${locked.posted===false?`<span style="color:var(--yellow)"> · projected lineup, ${pct(locked.startProb||0)} to start</span>`:locked.posted?' · <span style="color:var(--green)">confirmed lineup</span>':""}</div>
       <div class="num">
         <span style="color:var(--blue)">${pct(locked.p)} to hit</span>
         <span style="color:var(--yellow)">fair ${M.amOdds(locked.p)}</span>
@@ -631,8 +637,8 @@ function renderLadder(){
     <div class="ld-pick ld-wait">
       <div class="l">PICK LOCKS IN</div>
       <div class="v" id="ldClock">—:—:—</div>
-      <div class="s">One hour before the first pitch of the day (${etTime(lk.first)} ET), chosen from the lineups posted at that moment.
-      It stays blank until then on purpose: before lineups are in, the best bat on the board changes every time one posts, and a pick that quietly swaps itself is not a pick.</div>
+      <div class="s">One hour before the first pitch of the day (${etTime(lk.first)} ET), chosen from every game on the slate — projected lineups included, with each bat's chance of actually starting already priced into his number.
+      It stays blank until then on purpose: the board re-ranks every time a lineup posts and scratch risk resolves, and a pick that quietly swaps itself is not a pick. The lock is the commitment.</div>
     </div>`:"";
 
   const pickHtml=pick?`
@@ -648,7 +654,7 @@ function renderLadder(){
         ${qualifies?`BET ONLY BETTER THAN ${M.amOdds(pick.c.p-bar)}`
                    :`${todayOdds>0?"+":""}${todayOdds} is below the +${(bar*100).toFixed(1)}pt bar — no rung today. The ladder waits; it does not lower its price.`}
       </div>
-      ${pick.provisional?'<div class="sub" style="color:var(--yellow);margin-top:5px">⚠ No lineup posted yet — provisional. The alerter picks again once lineups are in.</div>':""}
+      ${pick.c.posted?"":`<div class="sub" style="color:var(--yellow);margin-top:5px">⚠ Lineup not posted — projected #${pick.c.slot}, ${pct(pick.c.startProb)} to start. That chance is already multiplied into the ${pct(pick.c.p)} above, so this competes with confirmed bats on equal terms.</div>`}
     </div>`:'<div class="ld-pick"><div class="sub">No board loaded.</div></div>';
 
   const warn=risk?`<div class="ld-warn">
