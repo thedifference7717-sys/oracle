@@ -107,8 +107,16 @@ function cash(bets){
     run.push({id:b.id,bal:pnl});
   }
   const bal=Object.fromEntries(run.map(r=>[r.id,r.bal]));
-  return {done,pnl,staked,roi:staked?pnl/staked:0,avg:done.length?staked/done.length:0,
-          best,worst,maxDD,bal};
+  // Is scaling stakes by edge actually helping? Replay the same bets with the
+  // same total money risked, spread evenly, and compare. Scaling should win:
+  // it puts the bigger stakes on the higher-probability bets. If this ever
+  // goes the other way over a real sample, the staking rule is the problem,
+  // not the model.
+  const flatStake = done.length ? staked/done.length : 0;
+  let flatPnl = 0;
+  for(const b of done) flatPnl += b.status==="won" ? flatStake*(dec(b.price)-1) : -flatStake;
+  return {done,pnl,staked,roi:staked?pnl/staked:0,avg:flatStake,
+          best,worst,maxDD,bal,flatPnl,flatStake};
 }
 
 function stats(bets){
@@ -187,8 +195,12 @@ function render(L, agg){
               <td class="lead">${C.worst?C.worst.b.teams+" · "+C.worst.b.date:"—"}</td></tr>
           <tr><td>Worst drawdown</td><td class="num" style="color:var(--yellow)">${money(-C.maxDD)}</td>
               <td class="lead">Largest peak-to-trough fall in the balance. What you would have had to sit through.</td></tr>
+          <tr><td>Same money, flat stakes</td><td class="num" style="color:${C.flatPnl>=0?'var(--green)':'var(--red)'}">${money(C.flatPnl)}</td>
+              <td class="lead">These exact bets at ${money(C.flatStake)} each — identical turnover, spread evenly.</td></tr>
+          <tr><td>Worth of scaling by edge</td><td class="num"><b style="color:${(C.pnl-C.flatPnl)>=0?'var(--green)':'var(--red)'}">${(C.pnl-C.flatPnl)>=0?"+":""}${money(C.pnl-C.flatPnl).replace("-","")}</b></td>
+              <td class="lead">What the staking rule added over flat. It should be positive: bigger stakes sit on the likelier bets.</td></tr>
           <tr><td>Flat 1u comparison</td><td class="num" style="color:var(--dim)">${S.pnl>=0?"+":""}${S.pnl.toFixed(2)}u</td>
-              <td class="lead">The same bets at one flat unit each, for comparing against services that quote units.</td></tr>
+              <td class="lead">The same bets at one unit each, for comparing against services that quote units.</td></tr>
         </tbody>
       </table></div>
     </div>
