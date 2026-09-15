@@ -1,0 +1,51 @@
+{
+ "v": 1,
+ "sport": "MLB",
+ "cfg": {
+  "account": 100,
+  "seed": 10,
+  "basePct": 0.1,
+  "rungs": 5,
+  "missGain": 0.25
+ },
+ "bets": [
+  {
+   "id": "2026-09-15:ladder",
+   "date": "2026-09-15",
+   "sport": "MLB",
+   "published": "2026-09-15T22:35:31.259Z",
+   "firstPitch": "2026-09-16T00:40:00Z",
+   "cycle": 1,
+   "rung": 1,
+   "seed": 10,
+   "stake": 10,
+   "price": -250,
+   "p": 0.8360695457155581,
+   "edge": 0.12178383142984384,
+   "pick": "Fernando Tatis Jr.",
+   "playerId": 665487,
+   "slot": 1,
+   "gk": 824307,
+   "posted": true,
+   "startProb": 0.985,
+   "teams": "SD @ COL",
+   "sp": "Kyle Freeland",
+   "fromGames": 15,
+   "status": "open"
+  }
+ ],
+ "updated": "2026-09-15T22:35:31.259Z",
+ "state": {
+  "account": 100,
+  "base": 10,
+  "stake": 10,
+  "rung": 1,
+  "cycle": 1,
+  "pl": 0,
+  "cycles": {
+   "done": 0,
+   "busted": 0
+  },
+  "canFund": true
+ }
+}
