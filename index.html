@@ -81,25 +81,31 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .tag.ok{color:var(--green);border-color:#14F19555}
 .tag.warn{color:var(--yellow);border-color:#FBBF2455}
 .tag.corr{color:var(--purple);border-color:#A78BFA55}
-.rr{grid-column:1/-1;background:linear-gradient(160deg,#140C1E,var(--bg2));border:1px solid #A78BFA66;border-radius:16px;padding:16px}
-.rr-legs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 16px}
-.rr-leg{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--border)}
-.rr-leg .n{font-family:'Orbitron',monospace;font-size:11px;color:var(--purple);width:18px}
-.rr-leg .i{flex:1;min-width:0}
-.rr-leg .i b{font-size:14px}
-.rr-leg .i div{font-size:10px;color:var(--dim);margin-top:2px}
-.rr-leg .p{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--blue)}
-.rr-strip{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 0;padding-top:11px;border-top:1px solid var(--border)}
-.rr-box{flex:1;min-width:88px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 10px;text-align:center}
-.rr-box .v{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--text)}
-.rr-box .l{font-size:8px;color:var(--dim);letter-spacing:.06em;margin-top:2px}
-.rr-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;min-width:0}
-.rr-tbl th{text-align:right;padding:6px 7px;font-size:9px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border)}
-.rr-tbl th:first-child{text-align:left}
-.rr-tbl td{text-align:right;padding:7px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace}
-.rr-tbl td:first-child{text-align:left;font-family:'Share Tech Mono',monospace;color:var(--muted)}
-.rr-be{margin-top:11px;padding:10px;background:#1A1230;border:1px solid #A78BFA55;border-radius:9px;font-size:12px;color:var(--muted);text-align:center}
-.rr-be b{font-family:'Orbitron',monospace;font-size:16px;color:var(--purple)}
+.ld{background:linear-gradient(160deg,#140C1E,var(--bg2));border:1px solid #A78BFA88;border-radius:16px;padding:16px;margin:0 0 18px}
+.ld-top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;justify-content:space-between}
+.ld-stake{font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--yellow);line-height:1}
+.ld-stake small{display:block;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:400;color:var(--dim);letter-spacing:.08em;margin-top:5px}
+.ld-pick{flex:1;min-width:210px;background:#0A0A1C;border:1px solid var(--border);border-radius:11px;padding:11px 13px}
+.ld-pick .nm{font-size:17px;font-weight:800}
+.ld-pick .sub{font-size:11px;color:var(--dim);margin-top:3px}
+.ld-pick .num{font-family:'Orbitron',monospace;font-size:12px;margin-top:7px;display:flex;gap:12px;flex-wrap:wrap}
+.ld-steps{display:flex;gap:7px;margin:14px 0 0;flex-wrap:wrap}
+.ld-step{flex:1;min-width:64px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 4px;text-align:center}
+.ld-step.done{border-color:var(--green);background:#06200F}
+.ld-step.now{border-color:var(--yellow);background:#241C04;box-shadow:0 0 0 1px #FACC1533}
+.ld-step .d{font-size:8px;color:var(--dim);letter-spacing:.06em}
+.ld-step .v{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;margin-top:2px}
+.ld-strip{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--border)}
+.ld-box{flex:1;min-width:92px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 10px;text-align:center}
+.ld-box .v{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--text)}
+.ld-box .l{font-size:8px;color:var(--dim);letter-spacing:.06em;margin-top:2px}
+.ld-warn{margin-top:12px;padding:10px 12px;background:#2A0E0E;border:1px solid #F8717166;border-radius:9px;font-size:11.5px;color:#FCA5A5;line-height:1.55}
+.ld-warn b{color:#FCA5A5;font-family:'Orbitron',monospace}
+.ld-hist{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:12px}
+.ld-hist th{text-align:right;padding:5px 7px;font-size:9px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border)}
+.ld-hist th:first-child,.ld-hist td:first-child{text-align:left}
+.ld-hist td{text-align:right;padding:6px 7px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace}
+.ld-hist td:nth-child(2){text-align:left;font-family:'Share Tech Mono',monospace;color:var(--muted)}
 .wrap{padding:14px 18px}
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
 .panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.05em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -118,7 +124,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">2-MAN SAME-GAME HIT PARLAY · BUILD 3 · <span id="buildsha">__BUILD_SHA__</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 4 · <span id="buildsha">__BUILD_SHA__</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
@@ -146,13 +152,14 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   <div class="fld chk"><input id="onlyTeam" type="checkbox"><label for="onlyTeam">Same-team pairs only (correlation edge)</label></div>
 </div>
 
+<div class="section-h" style="color:var(--purple)">🪜 THE LADDER — one bet, one hit, best play of the day <span id="ldNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
+  <small>A single "to record a hit" leg — the highest-edge hitter on the board — staked from a $100 account. Win and the whole return rides tomorrow; five straight closes the cycle and the money comes off the table. A miss ends the cycle and the next one starts 25&#37; bigger. Only the cycle's seed is ever your money, so a day-4 miss costs exactly what a day-1 miss costs. Read the red panel before you run it.</small></div>
+<div id="ladder"></div>
+
 <div class="section-h">🎲 BET CARDS — one per game clearing the bet bar <span id="cardsNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
   <small>A card for every game whose double beats your price by more than the bar, and nothing else — the same rule the Telegram alerts use. The likeliest double is usually the most heavily bet and the worst priced; what pays is the gap between our number and the book's.</small></div>
 <div class="cards" id="cards"></div>
 
-<div class="section-h" style="color:var(--purple)">🎰 ROUND ROBIN — top 7 hitters, one per game <span id="rrNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
-  <small>Seven single "to record a hit" legs from seven different games, so they share no pitcher, park or innings and are near enough independent. Boxing them creates no edge on its own — it multiplies whatever edge each leg already has, in both directions. The breakeven leg price is the number to act on.</small></div>
-<div class="cards" id="rrcard"></div>
 
 <div class="wrap">
   <div class="panel">
@@ -269,6 +276,9 @@ async function load(){
     // Absent is fine — the model just runs uncalibrated. Re-checked on every
     // pass so a page left open all evening picks the log up when it lands.
     try{const r=await fetch("data/model-log.json?t="+Date.now());if(r.ok)cal=await r.json();}catch(e){/* uncalibrated */}
+    // The ladder's settled history. Absent means the ladder has not started;
+    // the card then shows rung one off the seed rather than hiding itself.
+    try{const r=await fetch("data/ladder.json?t="+Date.now());if(r.ok)ladderHist=await r.json();}catch(e){/* not started */}
     board=await M.buildBoard({getJSON,cal:cal||null,american:setting("price"),
       onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
@@ -284,7 +294,7 @@ async function load(){
   finally{btn.disabled=false;}
 }
 
-function renderEmpty(){document.getElementById("cards").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="10"><div class="empty">No games / eligible hitters right now.</div></td></tr>`;document.getElementById("lbody").innerHTML="";}
+function renderEmpty(){renderLadder();document.getElementById("cards").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="10"><div class="empty">No games / eligible hitters right now.</div></td></tr>`;document.getElementById("lbody").innerHTML="";}
 
 // The whole slate, ordered, with the display filters applied but NOT the bet
 // bar — this is what the table below shows, and it is meant to be every game.
@@ -384,54 +394,99 @@ function card(pr,i){
   </div>`;
 }
 
-// The seven best single legs on the slate, capped at one per game so the
-// round robin's independence assumption actually holds. candidates arrives
-// sorted by probability, so the first time a game appears is its best bat.
-function topSeven(){
-  const seen=new Set(),out=[];
-  for(const c of board.candidates){
-    if(setting("onlyPosted")&&!c.posted)continue;
-    if(seen.has(c.gk))continue;
-    seen.add(c.gk);out.push(c);
-    if(out.length===7)break;
-  }
-  return out;
+// ── THE LADDER ──────────────────────────────────────────────────────────────
+// The day's single best leg, staked off the compounding ladder. History comes
+// from data/ladder.json, written by the alerter at settlement; the state is
+// replayed from it by the shared engine, so this card and the Telegram alert
+// can never disagree about which rung we are on.
+let ladderHist=null;
+
+// Best play of the day = highest edge against the leg price. Restricted to
+// confirmed lineups whenever any exist, because a scratch is a guaranteed loss
+// and this bet has no second leg to carry it.
+function ladderPick(){
+  const lbe=1/M.decFromAmerican(setting("legPrice"));
+  const pool=board.candidates.filter(c=>c.posted);
+  const src=pool.length?pool:board.candidates;
+  let best=null;
+  for(const c of src){const e=c.p-lbe; if(!best||e>best.edge)best={c,edge:e,provisional:!pool.length};}
+  return best;
 }
 
-function renderRR(){
-  const legs=topSeven(),el=document.getElementById("rrcard");
-  if(legs.length<2){el.innerHTML='<div class="empty">Need at least two games with a rated hitter.</div>';
-    document.getElementById("rrNote").textContent="";return;}
-  const ps=legs.map(c=>c.p);
-  const rr=M.roundRobin(ps,setting("legPrice"),[2,3,4]);
-  const atLeast=k=>rr.atLeast[k]!=null?pct(rr.atLeast[k]):"—";
-  document.getElementById("rrNote").textContent=`${legs.length} legs · ${legs.length} games`;
-  el.innerHTML=`<div class="rr">
-    <div class="rr-legs">${legs.map((c,i)=>`
-      <div class="rr-leg">
-        <div class="n">${i+1}</div>
-        <div class="i"><b>${c.name}</b>${c.posted?' <span class="tag ok">✓LU</span>':` <span class="tag warn">${pct(c.startProb)}</span>`}
-          <div>#${c.slot} · ${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName} · ${c.spName||"SP TBD"}</div></div>
-        <div class="p">${pct(c.p)}</div>
-      </div>`).join("")}</div>
-    <div class="rr-strip">
-      <div class="rr-box"><div class="v">${rr.expHits.toFixed(1)}</div><div class="l">EXP HITS OF ${legs.length}</div></div>
-      <div class="rr-box"><div class="v">${atLeast(legs.length)}</div><div class="l">ALL ${legs.length}</div></div>
-      <div class="rr-box"><div class="v">${atLeast(legs.length-1)}</div><div class="l">${legs.length-1}+</div></div>
-      <div class="rr-box"><div class="v">${atLeast(legs.length-2)}</div><div class="l">${legs.length-2}+</div></div>
-      <div class="rr-box"><div class="v">${atLeast(legs.length-3)}</div><div class="l">${legs.length-3}+</div></div>
+function renderLadder(){
+  const el=document.getElementById("ladder"),note=document.getElementById("ldNote");
+  const st=M.ladder(ladderHist&&Array.isArray(ladderHist.bets)?ladderHist.bets:[]);
+  const C=st.cfg, lp=setting("legPrice"), pick=board?ladderPick():null;
+  const p=pick?pick.c.p:null;
+  const risk=p?M.ladderRisk(p,lp,st):null;
+  const stake=st.stake, mine=st.atRisk, house=st.onTable;
+  const bar=betBar(), qualifies=pick&&pick.edge>=bar;
+  note.textContent=`cycle ${st.cycle} · day ${st.rung} of ${C.rungs} · account ${money(st.account)}`;
+
+  // The staircase. Rungs already climbed are ticked; today is the live stake;
+  // the rungs ahead are what the stake becomes if it keeps winning at this
+  // price, which is the whole point — day five risks the book's money, not
+  // fifty of yours.
+  const decLeg=M.decFromAmerican(lp)||1;
+  const steps=Array.from({length:C.rungs},(_,i)=>{
+    const cls= i+1<st.rung?"done": i+1===st.rung?"now":"";
+    const ahead=stake*Math.pow(decLeg,i+1-st.rung);
+    const col= cls==="now"?"var(--yellow)":cls==="done"?"var(--green)":"var(--dim)";
+    return `<div class="ld-step ${cls}"><div class="d">DAY ${i+1}</div>
+      <div class="v" style="color:${col}">${cls==="done"?"✓":money(ahead)}</div></div>`;
+  }).join("");
+
+  const pickHtml=pick?`
+    <div class="ld-pick">
+      <div class="nm">${pick.c.name}${pick.c.posted?' <span class="tag ok">✓LU</span>':` <span class="tag warn">${pct(pick.c.startProb)} to start</span>`}</div>
+      <div class="sub">#${pick.c.slot} · ${pick.c.teamName} ${pick.c.isHome?"vs":"@"} ${pick.c.oppName} · ${pick.c.spName||"SP TBD"}</div>
+      <div class="num">
+        <span style="color:var(--blue)">${pct(pick.c.p)} to hit</span>
+        <span style="color:var(--yellow)">fair ${M.amOdds(pick.c.p)}</span>
+        <span style="color:${pick.edge>=bar?"var(--green)":"var(--red)"}">${pick.edge>=0?"+":""}${(pick.edge*100).toFixed(1)}pts vs ${lp>0?"+":""}${lp}</span>
+      </div>
+      <div class="sub" style="margin-top:7px;color:${qualifies?"var(--green)":"var(--red)"}">
+        ${qualifies?`BET ONLY BETTER THAN ${M.amOdds(pick.c.p-bar)}`
+                   :`Below the +${(bar*100).toFixed(1)}pt bar — no rung today. The ladder waits; it does not lower its price.`}
+      </div>
+      ${pick.provisional?'<div class="sub" style="color:var(--yellow);margin-top:5px">⚠ No lineup posted yet — provisional. The alerter picks again once lineups are in.</div>':""}
+    </div>`:'<div class="ld-pick"><div class="sub">No board loaded.</div></div>';
+
+  const warn=risk?`<div class="ld-warn">
+    <b>What this actually is.</b> Five legs at ${pct(p)} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. The ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally <b>${money(risk.cycleProfit)}</b>. Do not size it as though it wins often.
+  </div>`:"";
+
+  const hist=(st.rows||[]).slice(-12).reverse();
+  const histHtml=hist.length?`<div class="table-wrap"><table class="ld-hist">
+    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>RESULT</th><th>P&amp;L</th><th>ACCOUNT</th></tr></thead>
+    <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
+      return out.slice(-12).reverse().map(({r,acc})=>`<tr>
+        <td style="color:var(--dim)">${r.date}</td>
+        <td>${r.pick||"—"}</td>
+        <td style="color:var(--dim)">${r.cycle}·${r.rung}</td>
+        <td>${money(r.stake)}</td>
+        <td style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
+        <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
+        <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table></div>`
+    :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;
+
+  el.innerHTML=`<div class="ld">
+    <div class="ld-top">
+      <div><div class="ld-stake">${money(stake)}<small>TODAY · CYCLE ${st.cycle} · DAY ${st.rung} OF ${C.rungs}</small></div></div>
+      ${pickHtml}
     </div>
-    <div class="table-wrap"><table class="rr-tbl">
-      <thead><tr><th>ROUND ROBIN</th><th>TICKETS</th><th>EXP WINNERS</th><th>TICKET HIT%</th><th>EV / $ STAKED</th></tr></thead>
-      <tbody>${rr.rows.map(r=>`<tr>
-        <td>by ${r.m}s</td>
-        <td style="color:var(--dim)">${r.tickets}</td>
-        <td>${r.expWin.toFixed(2)}</td>
-        <td style="color:var(--blue)">${Math.round(r.hitRate*100)}%</td>
-        <td><b style="color:${r.ev>0?'var(--green)':'var(--red)'}">${r.ev==null?"—":(r.ev>=0?"+":"")+(r.ev*100).toFixed(1)+"%"}</b></td>
-      </tr>`).join("")}</tbody>
-    </table></div>
-    <div class="rr-be">Break even at <b>${rr.rows[0]?rr.rows[0].breakevenLeg:"—"}</b> per leg — that number barely moves with the box size, because boxing independent legs multiplies your per-leg edge rather than creating any. Shop the legs, not the round robin.</div>
+    <div class="ld-steps">${steps}</div>
+    <div class="ld-strip">
+      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">ACCOUNT</div></div>
+      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${st.pl>=0?"+":""}${money(st.pl)}</div><div class="l">P&amp;L</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">YOUR MONEY AT RISK</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--purple)">${money(house)}</div><div class="l">HOUSE MONEY RIDING</div></div>
+      <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">CYCLES DONE–BUST</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--red)">${money(st.maxDD)}</div><div class="l">MAX DRAWDOWN</div></div>
+    </div>
+    ${st.canFund?"":`<div class="ld-warn"><b>The account cannot fund this rung.</b> ${money(stake)} is more than the ${money(st.account)} left. That is where the escalation ends — the ladder has no next move that is not a deposit.</div>`}
+    ${warn}
+    ${histHtml}
   </div>`;
 }
 
@@ -464,7 +519,7 @@ function render(){
       <td class="num"><b style="color:${betSize(_ev)>0?'var(--yellow)':'var(--dim)'}">${betSize(_ev)>0?money(betSize(_ev)):"—"}</b></td>
     </tr>`;}).join("")||`<tr><td colspan="10"><div class="empty">Nothing clears the filters.</div></td></tr>`;
 
-  renderRR();
+  renderLadder();
   const spots=board.spots.filter(s=>!setting("onlyPosted")||s.posted);
   document.getElementById("spotsNote").textContent=`${spots.length} lineups · league baseline leg ${pct(board.baseline)}`;
   document.getElementById("shead").innerHTML=["LINEUP","OPPOSING STARTER","SP K%","HR/CONTACT","OBP ALLOWED","GOES","THEN PEN","TEAM PA","SOFT ARM","GOOD BATS","SPOT"]
@@ -518,6 +573,7 @@ function render(){
   <b>Targeting the spot, not just the hitter.</b> Every lineup gets three readings, each in points of hit probability against a league-neutral leg. <b>SOFT ARM</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are. <b>GOOD BATS</b> does the reverse — this lineup against league-average opposition. <b>SPOT</b> is the two together: what a typical hitter in this lineup actually does tonight. Ace to batting-practice is worth about 11 points on a single leg, so the spot is usually a bigger lever than which hitter you pick out of it.<br>
   <b>Watch the bullpen before you commit.</b> A bad starter gets chased, which means over half the plate appearances come against relief. The same weak starter is worth <b>+5.3pts</b> in front of a leaky pen and only <b>+3.6pts</b> in front of an elite one — the THEN PEN column is the share of the night the bullpen works and its on-base allowed. A soft start behind a lockdown pen is a trap.<br>
   <b>BET</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $2.50), so a +5.5pt game stakes $13.75 and a +2.0pt game stakes $5.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.<br>
+  <b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and a $100 account funds only a handful of them. Both the completion rate and the chance of running the account dry are computed live on the card. Rank it by the red panel, not by the payout.<br>
   <b>Singles usually beat the double.</b> A two-leg parlay pays the book's margin twice; a single hit prop pays it once. Two legs at 78% and 76% make a 60.1% double — against a −158 parlay needing 61.24% that is a losing bet, while the same two legs at −250 each return +9.2% and +6.4%. The SINGLE HIT PROPS table below prices every hitter against your leg price and sorts by edge; it is often where the only real bet on the slate is.<br>
   <b>A card per qualifying game.</b> Every game whose double clears the bet bar (default +2.0 edge points) gets its own card, however many that is — no top-N cap — and games below the bar get none. That is the same test the Telegram alerter applies, so the board and your phone cannot disagree about what counts as a bet. The table underneath still lists every game on the slate, bar or no bar.<br>
   <b>Ranked by EDGE, not by probability</b> — true probability minus your price's breakeven. Stake is <b>quarter-Kelly</b>: full Kelly on a model this uncertain is how you go broke while being right.<br>
