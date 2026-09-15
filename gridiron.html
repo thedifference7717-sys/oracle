@@ -173,7 +173,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">🏈 PlAIybook</div><div class="logo-sub">NFL · 2-LEG SAME-GAME PROP PARLAY · BUILD 4 · <span id="buildsha">f4223c4</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">🏈 PlAIybook</div><div class="logo-sub">NFL · 2-LEG SAME-GAME PROP PARLAY · BUILD 4 · <span id="buildsha">c598378</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="index.html">⚾ Two BAIgger</a>
@@ -347,7 +347,7 @@ const M = window.GridModel;
 // on every load forever. This file had the spaces and escaped it, but the
 // hazard was structural, not typographical: one source of truth cannot
 // disagree with itself.
-const BUILD = (document.getElementById("buildsha")||{textContent:"__BUILD_SHA__"}).textContent.trim();
+const BUILD = (document.getElementById("buildsha")||{textContent:"c598378"}).textContent.trim();
 let liveSha = null;
 const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
              set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} } };
