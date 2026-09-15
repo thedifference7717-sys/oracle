@@ -142,7 +142,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 5 · <span id="buildsha">f4223c4</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 5 · <span id="buildsha">c598378</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
@@ -251,7 +251,7 @@ function setLadderOdds(day,v){
 // build.json and declared the page stale on every single load, forever, which
 // no amount of reloading could clear. One source of truth cannot disagree
 // with itself.
-const BUILD=(document.getElementById("buildsha")||{textContent:"__BUILD_SHA__"}).textContent.trim();
+const BUILD=(document.getElementById("buildsha")||{textContent:"c598378"}).textContent.trim();
 let liveSha=null;
 const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
           set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}};
