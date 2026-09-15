@@ -74,7 +74,10 @@ const API = M.API;
 const SNAP_V = M.VERSION;                        // board schema = model version
 // Price the doubles are graded against. Override with DD_PRICE (American odds)
 // in the workflow to match whatever your book is actually offering.
-const PRICE = +(process.env.DD_PRICE || 100);
+// The double is genuinely offered around -150 to -175, not +100. Defaulting to
+// the worst end keeps the board conservative: a bet that clears at -175 clears
+// at any better price, while the reverse is how you alert losers.
+const PRICE = +(process.env.DD_PRICE || -175);
 // The edge a game's pair must clear to be worth alerting, as a fraction: 0.02
 // is two points of probability over your price's breakeven. Marginal edges are
 // inside the model's own error bars, so a real bar filters more noise than it
