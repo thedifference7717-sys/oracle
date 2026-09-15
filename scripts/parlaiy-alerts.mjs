@@ -158,19 +158,24 @@ async function computeDoubles(day, games, cal) {
 }
 
 // ── per-game locking ────────────────────────────────────────────────────────
-// One game, one pair, one alert, an hour before that game. No slate-wide
-// ranking and no waves: cross-game competition was never real edge, it just
-// meant a good spot lost its slot to a better one somewhere else. A game is
-// judged on its own merits and alerted only if the model would actually bet
-// it at your price.
+// One game, one pair, one alert, the moment BOTH its lineups are posted. No
+// slate-wide ranking and no waves: cross-game competition was never real edge,
+// it just meant a good spot lost its slot to a better one somewhere else. A
+// game is judged on its own merits and alerted only if the model would
+// actually bet it at your price.
 //
-// Nothing is locked until that game's own lineup is confirmed. The two paths
-// in the model are not variations on each other — with a posted lineup the
-// candidates ARE the nine men batting, in their real slots, at a 0.985 scratch
-// factor; without one they are the whole roster with slots guessed from plate
-// appearances per game and a 0.887 factor. Locking early does not give a
-// slightly worse pick, it gives different players.
-const HOUR = 3600000;
+// The lineups are the lock, and a clock is not. An earlier version also waited
+// until an hour before first pitch, which held a pick back long after the
+// information that decides it was already public — lineups usually post three
+// to four hours out — and spent the difference doing nothing except shortening
+// the window to shop the price.
+//
+// What has not changed is that nothing locks blind. The two paths in the model
+// are not variations on each other: with a posted lineup the candidates ARE
+// the nine men batting, in their real slots, at a 0.985 scratch factor;
+// without one they are the whole roster with slots guessed from plate
+// appearances per game. Locking early does not give a slightly worse pick, it
+// gives different players — so a game with no lineup is simply not eligible.
 
 // Both lineups posted, nine deep — the same test buildBoard applies.
 const posted = g => {
@@ -252,9 +257,20 @@ async function ladderPlace(day, games) {
     return;
   }
   const now = Date.now();
-  // Is any game inside its hour? That is the moment we must choose.
-  const locking = games.some(g => { const t = Date.parse(g.gameDate); return !isNaN(t) && now >= t - HOUR && now < t; });
-  if (!locking) return;
+  // The ladder must choose before the earliest game starts, because that game
+  // is eligible. So the moment to choose is when that game's lineups are both
+  // posted: from then on we have confirmed information about the one game that
+  // constrains us, and waiting only risks it starting. Games later in the
+  // evening may still be projected, which the model already prices.
+  const upcoming = games.filter(g => { const t = Date.parse(g.gameDate); return !isNaN(t) && now < t; })
+                        .sort((a, b) => Date.parse(a.gameDate) - Date.parse(b.gameDate));
+  const firstGame = upcoming[0];
+  if (!firstGame) { console.log("ladder: every game has started — nothing to lock."); return; }
+  if (!posted(firstGame)) {
+    const et = new Date(firstGame.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
+    console.log(`ladder: waiting on lineups for the first game (${et} ET) — not locking yet.`);
+    return;
+  }
   // EVERY game that has not started, not just the ones with a lineup up. The
   // model already prices an unposted bat off his projected slot and multiplies
   // by his real chance of starting (starts per team game, capped at 0.95;
@@ -327,7 +343,8 @@ async function ladderPlace(day, games) {
     `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(c.p - MIN_EDGE)}</b>\n` +
     `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${LEG_PRICE}\n` +
     `${c.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.slot}, ${pct(c.startProb)} to start (already priced in)`}\n` +
-    `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n\n` +
+    `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n` +
+    `Locked on confirmed lineups (${live.filter(posted).length} of ${live.length} games posted)\n\n` +
     `<i>Your money at risk: ${money(st.base)} (the seed). Riding on top of it: ${money(st.stake - st.base)} of theirs.\n` +
     (risk ? `Five straight at this rate completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${money(risk.cycleProfit)}. Account ${money(st.account)}.` : "") +
     `</i>`
@@ -471,13 +488,18 @@ async function main() {
     const t = Date.parse(g.gameDate); if (isNaN(t)) continue;
     const key = `${day}:${g.gamePk}`;
     if (D.seen[key]) continue;                       // already decided on this game
-    if (now < t - HOUR) continue;                    // its hour has not come
     if (now >= t) {                                  // never alert a game already underway
       D.seen[key] = "missed"; changed = true;
       console.log(`game ${g.gamePk}: first pitch passed without a lineup — skipped.`);
       continue;
     }
-    if (!posted(g)) { console.log(`game ${g.gamePk}: inside the hour but lineup not posted — waiting, not betting blind.`); continue; }
+    // Both lineups posted IS the lock. The clock is not: waiting for a fixed
+    // hour before first pitch held a pick back long after the information that
+    // decides it was already public, which costs shopping time on the price
+    // for no gain. Lineups usually post three to four hours out, so this locks
+    // earlier and on better information — and it never locks blind, because a
+    // game with no lineup simply is not eligible yet.
+    if (!posted(g)) continue;
 
     const snap = await computeDoubles(day, [g], D.cal);
     const d = snap && snap.doubles && snap.doubles[0];
