@@ -57,16 +57,31 @@ jobs:
           # Publish anything the alerter wrote to data/, right now rather than at
           # day end. A pick is only verifiable if its commit predates first
           # pitch, so the commit has to happen when the pick is sent.
+          # Commit anything new, THEN push whenever HEAD is ahead of origin —
+          # not only when this pass produced changes.
+          #
+          # The previous version returned at `git diff --cached --quiet` before
+          # reaching any push, so a commit whose push had failed was never
+          # retried: the "will retry next pass" it printed was false, and the
+          # row died with the runner. A ladder rung that was already announced
+          # on Telegram could therefore vanish from the record, and the next
+          # run — starting from a clean checkout with no data/ladder.json —
+          # would place and announce a second rung for the same day. Two
+          # alerts, one published pick.
           publish() {
             git add -A data 2>/dev/null || true
-            git diff --cached --quiet -- data && return 0
-            git commit -q -m "SportsAI: publish picks and results" || return 0
+            if ! git diff --cached --quiet -- data; then
+              git commit -q -m "SportsAI: publish picks and results" || true
+            fi
+            git fetch -q origin main 2>/dev/null || true
+            # Nothing of ours outstanding? Then there is genuinely nothing to do.
+            [ -z "$(git rev-list origin/main..HEAD 2>/dev/null)" ] && return 0
             for k in 1 2 3; do
               git pull --rebase --autostash -q origin main >/dev/null 2>&1 \
                 && git push -q origin HEAD:main >/dev/null 2>&1 && { echo "published data/"; return 0; }
               sleep $((k*3))
             done
-            echo "could not push data/ this pass — will retry next pass"
+            echo "could not push data/ this pass — $(git rev-list --count origin/main..HEAD) commit(s) still local, will retry next pass"
           }
           while :; do
             if git fetch --depth=1 -q origin main 2>/dev/null; then

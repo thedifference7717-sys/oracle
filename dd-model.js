@@ -342,14 +342,20 @@ function evaluate(p, american) {
 // at 78% is 0.78^5 = 28.9%, so roughly seven cycles in ten end in a bust, and
 // the +25% escalation after each one compounds. Both numbers are computed and
 // shown, because a ladder sold without them is a martingale in a good suit.
+// The seed is DERIVED from the account rather than fixed, so the whole ladder
+// scales to whatever bankroll the person running it actually has. A $100
+// account seeds $10 and a $2,500 account seeds $250; the shape of the thing —
+// five rungs, 10% seed, +25% after a bust — is identical either way. Nothing
+// here should carry one particular person's bankroll as though it were part
+// of the system.
 const LADDER = {
-  account: 100,    // starting bankroll
-  seed: 10,        // day-1 stake of the first cycle
-  basePct: 0.10,   // after a completed cycle, the next seed is 10% of the account
+  account: 100,    // default only; every viewer sets their own
+  basePct: 0.10,   // a cycle seeds at this share of the account
   rungs: 5,        // wins needed to close a cycle
   missGain: 0.25   // a busted cycle restarts this much bigger
 };
 const round2 = v => Math.round(v * 100) / 100;
+const seedFor = C => round2(Math.max(0, C.account) * C.basePct);
 
 // Replay the settled history and return where the ladder stands right now.
 // `history` is chronological: { date, price (American), stake, status:
@@ -357,12 +363,17 @@ const round2 = v => Math.round(v * 100) / 100;
 // rung they occupy is the rung the ladder is on.
 function ladder(history, cfg) {
   const C = Object.assign({}, LADDER, cfg || {});
-  let account = C.account, base = C.seed, stake = C.seed, rung = 1, cycle = 1;
+  const seed0 = C.seed != null ? C.seed : seedFor(C);
+  let account = C.account, base = seed0, stake = seed0, rung = 1, cycle = 1;
   let peak = account, maxDD = 0, staked = 0, cycles = { done: 0, busted: 0 };
   const rows = [];
   for (const b of history || []) {
     const dec = decFromAmerican(b.price) || 1;
-    const at = b.stake != null ? +b.stake : stake;          // what was actually risked
+    // Derived, never read back from the row. The published ledger records the
+    // publisher's own stake; replaying that would show every viewer somebody
+    // else's bankroll. The rung, the cycle and the result are shared — the
+    // dollars are each viewer's own.
+    const at = stake;
     const row = { date: b.date, cycle, rung, stake: at, price: b.price, pick: b.pick || null,
                   p: b.p != null ? b.p : null, status: b.status, pl: 0, closed: null };
     if (b.status === "won") {
@@ -398,7 +409,7 @@ function ladderRisk(p, american, state) {
   const C = (state && state.cfg) || LADDER;
   const dec = decFromAmerican(american);
   if (!dec || !(p > 0 && p < 1)) return null;
-  const base = (state && state.base) || C.seed;
+  const base = (state && state.base) || (C.seed != null ? C.seed : seedFor(C));
   const account = (state && state.account) || C.account;
   const cycleWin = Math.pow(p, C.rungs);
   const fullReturn = base * Math.pow(dec, C.rungs);

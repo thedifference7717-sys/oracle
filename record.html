@@ -275,7 +275,7 @@ const ERA_NOTE  = "per-game model · confirmed lineups · +2pt bar";
 
 const $=id=>document.getElementById(id);
 const pct=v=>(v*100).toFixed(1)+"%";
-const money=v=>(v<0?"-":"")+"$"+Math.abs(v).toFixed(2);
+const money=v=>(v<0?"-":"")+"$"+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const dec=a=>a>0?1+a/100:1+100/Math.abs(a);
 const fmtT=s=>{try{return new Date(s).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}catch(e){return s||"—";}};
 

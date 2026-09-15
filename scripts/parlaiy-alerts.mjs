@@ -15,6 +15,7 @@
 // TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { execSync } from "child_process";
 import M from "../dd-model.js";
 
 const STATE_FILE = "state.json";
@@ -198,9 +199,41 @@ const LADDER_FILE = "data/ladder.json";
 // and it decides both whether there is a bet and how fast the ladder climbs.
 const LEG_PRICE = +(process.env.DD_LEG_PRICE || -250);
 
-function readLadderFile() {
+// Read the ledger as the UNION of this runner's copy and what is actually
+// published on origin/main.
+//
+// Either one alone is unsafe. The local file alone misses a rung another run
+// published, so a fresh checkout would place a second rung for the same day
+// and announce it. Origin alone misses a rung this run placed but has not
+// managed to push yet, so it would announce that one twice. Taking both, keyed
+// by date, means a rung announced anywhere is never announced again — which is
+// the only guarantee that matters, because a Telegram message cannot be
+// unsent.
+function readLadderLocal() {
   try { const L = JSON.parse(readFileSync(LADDER_FILE, "utf8")); if (Array.isArray(L.bets)) return L; } catch (e) {}
-  return { v: 1, sport: "MLB", cfg: M.LADDER, bets: [] };
+  return null;
+}
+function readLadderOrigin() {
+  try {
+    const raw = execSync(`git show origin/main:${LADDER_FILE} 2>/dev/null`, { encoding: "utf8" });
+    const L = JSON.parse(raw);
+    return Array.isArray(L.bets) ? L : null;
+  } catch (e) { return null; }   // not fetched, not committed yet, or no git
+}
+function readLadderFile() {
+  const local = readLadderLocal(), origin = readLadderOrigin();
+  const base = local || origin || { v: 1, sport: "MLB", cfg: M.LADDER, bets: [] };
+  if (!local || !origin) return base;
+  const byDate = new Map();
+  // Origin first, so a row that reached the repo wins over a local draft of
+  // the same day; then anything local that origin has not seen.
+  for (const b of origin.bets) byDate.set(b.date, b);
+  for (const b of local.bets) if (!byDate.has(b.date)) byDate.set(b.date, b);
+  const merged = [...byDate.values()].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+  if (merged.length !== local.bets.length) {
+    console.log(`ladder: merged ledger — ${local.bets.length} local + ${origin.bets.length} published = ${merged.length} rows.`);
+  }
+  return { ...base, bets: merged };
 }
 function writeLadderFile(L) {
   L.updated = new Date().toISOString();
