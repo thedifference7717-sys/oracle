@@ -245,6 +245,12 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
   </div>
 </details>
 
+  <div class="panel">
+    <div class="panel-head">📊 HOW THE BOARD HAS DONE — every double it posted, graded <span id="res-sub">not loaded</span></div>
+    <div id="res-body"><div class="empty">Loading the record…</div></div>
+    <div class="note">This is the board's OWN picks, graded from the box scores — not the bets you logged. Every double it posted, whether you backed it or not, priced off the exchange snapshot taken before kickoff. <b>Units</b> are flat stakes, one per double, because dollars-per-point is a setting rather than a fact about the pick. The number worth watching is not the record but <b>expected wins against actual</b>: that says whether the probabilities are honest, and it separates from noise far sooner than profit does.</div>
+  </div>
+
   <details class="fold"><summary>Every game's best double</summary>
 <details class="fold"><summary>Every game — spreads, totals, moneylines</summary>
 <div class="panel">
@@ -369,7 +375,7 @@ const money = v => "$" + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
 const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null, sims: {}, legs: [], parlays: [],
-  legPools: {}, spots: {}, doubles: [], lgTs: null, rankError: null, pricedAt: null };
+  legPools: {}, spots: {}, propRows: {}, doubles: [], log: null, lgTs: null, rankError: null, pricedAt: null };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -442,7 +448,7 @@ function render(){
   allPlays();                             // keeps entry.live fresh for the games table
   state.doubles = buildDoubles();
   const all = filteredDoubles();
-  SHOWN = all.filter(d => defensibleEdge(d) >= betBar() && d.edge > 0 && (setting("showOpinion") || !isOpinion(d)));
+  SHOWN = all.filter(d => M.doubleQualifies(d, { bar: betBar(), showOpinion: setting("showOpinion") }));
   renderPairCards(SHOWN, all);
   renderPairTable(all);
   renderSpots();
@@ -1164,6 +1170,86 @@ async function gradeAll(){
   }finally{ btn.disabled = false; }
 }
 
+// ── the board's own record ──────────────────────────────────────────────────
+// MY BETS holds what you personally pressed LOG on. This is different, and more
+// honest: every double the board POSTED, graded from the box scores, whether
+// you backed it or not. Written by scripts/gridiron-log.mjs against the
+// exchange snapshot taken BEFORE kickoff, so it cannot become a record of
+// prices that only existed once the games were over.
+async function loadRecord(){
+  try{
+    const r = await fetch("data/gridiron-log.json?t=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) throw new Error("not published yet");
+    state.log = await r.json();
+  }catch(e){ state.log = null; }
+  renderRecordPanel();
+}
+function renderRecordPanel(){
+  const body = $("res-body"), sub = $("res-sub");
+  if (!body) return;
+  const L = state.log;
+  if (!L || !L.record || !L.record.n){
+    sub.textContent = "nothing graded yet";
+    body.innerHTML = '<div class="empty">No week graded yet. The grader runs once a slate is finished and publishes the record here.</div>';
+    return;
+  }
+  const R = L.record;
+  const weeks = Object.values(L.weeks || {}).sort((a, b) => (b.season - a.season) || (b.week - a.week));
+  sub.textContent = R.n + " doubles graded across " + weeks.length + " week" + (weeks.length === 1 ? "" : "s");
+
+  // Expected wins against actual is the honest read. A record is mostly
+  // variance at this sample size; whether the PROBABILITIES were right is
+  // answerable much sooner, and it is the thing that decides whether any of
+  // this works.
+  const gap = R.w - R.expectedWins;
+  const sd = Math.sqrt(Math.max(0.25, R.expectedWins * (1 - R.expectedWins / Math.max(1, R.n))));
+  const z = sd > 0 ? gap / sd : 0;
+  let verdict;
+  if (R.n < 20){
+    verdict = "<b>" + R.n + " graded — far too few to mean anything either way.</b> At this sample a coin looks like this about as often as skill does. The line worth reading is the one above: the model said " +
+      R.expectedWins.toFixed(1) + " wins and got " + R.w + ".";
+  } else if (Math.abs(z) < 1.5){
+    verdict = "Landing about where the model said it would. The probabilities are behaving; nothing is proven about profit yet.";
+  } else if (z > 0){
+    verdict = '<span style="color:var(--green)">Winning more than the model predicted. Pleasant — and variance does this too.</span>';
+  } else {
+    verdict = '<span style="color:var(--red)">Winning less than the model predicted. If that holds past fifty bets the number is wrong, not the luck.</span>';
+  }
+
+  body.innerHTML =
+    '<div class="wrap" style="padding:12px 15px 2px"><div class="mini" style="font-size:12px;line-height:1.9">' +
+      "Record <b>" + R.w + "-" + R.l + (R.push ? "-" + R.push : "") + "</b> · " +
+      '<b style="color:' + (R.units >= 0 ? "var(--green)" : "var(--red)") + '">' +
+      (R.units >= 0 ? "+" : "") + R.units.toFixed(2) + " units</b> at flat stakes · " +
+      "model expected <b>" + R.expectedWins.toFixed(1) + "</b> wins, got <b>" + R.w + "</b><br>" +
+      verdict +
+    "</div></div>" +
+    weeks.map(wk => {
+      const pk = (wk.picks || []).filter(p => p.result != null);
+      if (!pk.length) return "";
+      const ww = pk.filter(p => p.result === 1).length, wl = pk.filter(p => p.result === 0).length;
+      const wu = pk.reduce((a, p) => a + (p.result === 0.5 ? 0 : p.result === 1 ? (M.amToDec(p.price) - 1) : -1), 0);
+      return '<div class="panel-head" style="border-top:1px solid var(--border)">Week ' + wk.week + ", " + wk.season +
+        " <span>" + ww + "-" + wl + " · " + (wu >= 0 ? "+" : "") + wu.toFixed(2) + " units · priced off the " +
+        String(wk.pricedFrom || "").slice(11, 16) + "Z snapshot</span></div>" +
+        '<div class="table-wrap"><table><thead><tr><th>Game</th><th>The double</th>' +
+        '<th class="num">Price</th><th class="num">Our %</th><th>Result</th></tr></thead><tbody>' +
+        pk.map(p => {
+          const cls = p.result === 1 ? "pos" : p.result === 0 ? "neg" : "mini";
+          const word = p.result === 1 ? "won" : p.result === 0 ? "lost" : "push";
+          return "<tr><td>" + esc(p.game) + "</td><td>" +
+            p.legs.map(l => esc(l.player) + " " + esc(String(l.side).toLowerCase()) + " " + l.line +
+              ' <span class="mini">' + esc(String(l.market).toLowerCase()) +
+              (l.got == null ? "" : " → " + l.got) + "</span>" +
+              (l.result == null ? "" : l.result === 1 ? ' <span class="pos">✓</span>' : ' <span class="neg">✗</span>')
+            ).join("<br>") + "</td>" +
+            '<td class="num">' + M.fmtAm(p.price) + "</td>" +
+            '<td class="num">' + pc(p.prob, 0) + "</td>" +
+            '<td class="' + cls + '">' + word + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+    }).join("");
+}
+
 // ── the running record, kept where it cannot be avoided ─────────────────────
 // Directly under the status line, visible before any bet on the board is. The
 // point of keeping score is to see it when you are about to bet again, not to
@@ -1521,7 +1607,7 @@ async function rankProps(usePaste){
     // fetch, one rate limit — emptied the entire card board and left it
     // showing "pricing the slate" for ever, with the last good board thrown
     // away. A failed refresh must cost you the refresh, not the board.
-    const pools = {}, spots = {};
+    const pools = {}, spots = {}, propRows = {};
     for (const b of Object.values(state.boards)){
       if (!b.L.bulkPlayers){ continue; }
       const kp = state.kprops[b.league];
@@ -1747,191 +1833,33 @@ function renderPropBoard(rows, games, players, pastedN, usePaste, probCal){
 // board exists to attack. Where the exchange quotes the rung we use its
 // midpoint; where it does not, the leg is priced at OUR number, so it
 // contributes no edge rather than inventing one.
-const BOOK_JUICE = 0.9545;            // a fair 50/50 offered at -110
-function legMarketP(l){
-  if (l.rung && l.rung.mid != null) return l.side === "Under" ? 1 - l.rung.mid : l.rung.mid;
-  return null;
-}
-function legBookDec(l){
-  const m = legMarketP(l);
-  return BOOK_JUICE / clamp01(m == null ? l.p : m);
-}
-const clamp01 = v => Math.max(0.02, Math.min(0.98, v));
-// The user's box overrides it: type what your book is really offering and the
-// whole board reprices against that instead. Leave it at 0 for auto.
-function parlayDec(d){
-  const typed = setting("price");
-  if (typed && Math.abs(typed) >= 100) return M.amToDec(typed);
-  return legBookDec(d.a) * legBookDec(d.c);
-}
-
-const setting = id => { const el = $(id); if (!el) return null;
-  if (el.type === "checkbox") return el.checked;
-  if (el.tagName === "SELECT") return el.value;
-  return +el.value; };
-const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
-// Most of the edge is us arguing with the market rather than the measured
-// correlation. Off the board by default: the whole point of a posting
-// threshold is that it keeps something out.
-const isOpinion = d => d.edgeView != null && d.edgeCorr != null && d.edgeView > Math.max(0.02, d.edgeCorr * 2);
-const spotColour = v => v >= 0.08 ? "var(--green)" : (v >= 0 ? "var(--yellow)" : "var(--dim)");
-
-// Legs worth putting in a double. Not the ranked singles — those are only the
-// ones that beat their own price, and a leg can be perfectly good inside a
-// pair without being a bet on its own. The line is the exchange's strike where
-// it quotes one, because that is a number you can actually get down on.
-const LEG_LO = 0.30, LEG_HI = 0.88;
-// How far our number may sit from a live market before we conclude the fault
-// is ours. Thirty points is already an enormous disagreement.
-const MAX_DISAGREE = 0.30;
-// A quote forty cents wide is not a market, it is two people a long way apart
-// with nothing in between, and its midpoint carries no information at all —
-// yet the parlay price is built out of exactly that midpoint. Legs have to be
-// quoted tightly enough, and with enough behind them, for the price we are
-// measuring ourselves against to mean something.
-const MAX_SPREAD = 0.12, MIN_LEG_SIZE = 25;
-function legPool(b, entry, list, sim){
-  const kp = state.kprops[b.league];
-  const out = [];
-  list.forEach(pl => {
-    const man = sim && sim.manOf[pl.player.id];
-    if (!man) return;
-    const avail = pl.avail == null ? 1 : pl.avail;
-    pl.markets.forEach(mkt => {
-      // Only markets the simulation itself publishes. simMarketFor will build
-      // one from raw samples for the display fallback, and that has no minimum
-      // — which put a backup quarterback projected at zero passing yards into
-      // the pool as a 77% "under". A market nobody would hang is not a leg.
-      const sm = (sim.byPlayer[pl.player.id] || {})[mkt.key];
-      if (!sm || sm.type === "binary") return;
-      if (!kp || mkt.ourLine == null) return;
-      // And only where the exchange actually quotes the rung. A leg with no
-      // market price carries our number at full weight with nothing to check
-      // it, which is exactly where a model's worst mistakes end up — and it
-      // would not be a bet you could get down anyway.
-      const rung = M.kalshiRung(kp, entry, pl.player.name, mkt.key, mkt.ourLine);
-      if (!rung || rung.mid == null) return;
-      // kalshiRung returns the CLOSEST quoted strike with no limit on how
-      // close that is, and a strike far enough away is not a disagreement —
-      // it is the two of us describing different players. Christian Watson's
-      // 40-yard line was being matched to a 139.5-yard rung the market had at
-      // 64c: a hundred yards away, and the resulting "edge" was the largest
-      // on the board at eleven hundred percent. Whatever the cause — a role
-      // we have not caught up with, a name colliding — it is not a bet.
-      const sd = sm.range ? Math.max(1e-6, (sm.range.p75 - sm.range.p25) / 1.35) : null;
-      if (sd && Math.abs(rung.strike - mkt.ourLine) > 1.5 * sd) return;
-      if (!(rung.spread <= MAX_SPREAD)) return;
-      if (Math.max(rung.askSize || 0, rung.bidSize || 0) < MIN_LEG_SIZE) return;
-      const line = rung.strike;
-      ["Over", "Under"].forEach(side => {
-        const leg = M.simLeg(man, sm, side, line);
-        // The raw simulated tail is NOT the number to bet. It goes through the
-        // same two steps a single does, in the same order: the slate-level
-        // calibration fitted on every rung the exchange quotes, then a blend
-        // with the market's own mid weighted by how tightly that rung is
-        // quoted. Skipping this is how a double ends up claiming 79% on a
-        // market priced at 8% and asking you to stake on it.
-        leg.pRaw = leg.p;
-        let p = state.probCal ? M.applyProbCal(state.probCal, leg.p) : leg.p;
-        leg.pModel = p;
-        if (rung && rung.mid != null){
-          const mp = side === "Under" ? 1 - rung.mid : rung.mid;
-          // Beyond a certain distance a disagreement stops being an edge and
-          // starts being a broken input. Ladd McConkey's rung was quoted at
-          // 93c and our model had the same event at 7% — eighty-six points
-          // apart, on a live money market. Splitting that difference left us
-          // at 52% and produced the biggest "edge" on the board. No model
-          // built from public box scores is eighty points better informed
-          // than the money; something upstream is wrong, and the bet to make
-          // is none.
-          if (Math.abs(p - mp) > MAX_DISAGREE) return;
-          const w = M.propWeight(rung.spread);
-          p = Math.max(1e-4, Math.min(1 - 1e-4, w * p + (1 - w) * mp));
-        }
-        leg.p = p;
-        leg.pMkt = (rung && rung.mid != null) ? (side === "Under" ? 1 - rung.mid : rung.mid) : null;
-        // The simulation's hit mask still carries the raw view, so the joint
-        // probability is rescaled by how far the calibrated leg moved. Without
-        // this the pair reads off one set of numbers and the legs another.
-        leg.shift = leg.pRaw > 1e-6 ? p / leg.pRaw : 1;
-        if (!(leg.p >= LEG_LO && leg.p <= LEG_HI)) return;
-        leg.teamId = pl.teamId;
-        leg.player = pl.player.name;
-        leg.pos = pl.player.pos;
-        leg.status = pl.status || null;
-        leg.avail = avail;
-        leg.market = mkt.label;
-        leg.key = mkt.key;
-        leg.range = sm.range;
-        leg.rung = rung;
-        leg.spot = spotFor(b, entry, pl, mkt.key);
-        leg.matchup = pl.matchup;
-        leg.oppAbbr = pl.teamId === entry.game.home.id ? entry.game.away.abbr : entry.game.home.abbr;
-        out.push(leg);
-      });
-    });
-  });
-  return out;
-}
-
-// The best pair in each game, at the price on offer. Every combination is
-// enumerated rather than assuming the two likeliest legs make the best double
-// — once correlation is priced in, a quarterback and his own receiver often
-// beat two higher singles from opposite sides.
+// The page's job is to gather the pools and hand them to the model. The
+// pairing, the pricing and the edge split all live in gridiron-model.js, so
+// the board shown here and the board a grader scores are the same board.
 function buildDoubles(){
+  const o = {
+    price: setting("price"), allowSame: setting("allowSame"),
+    onlyTeam: setting("onlyTeam"), onlyPosted: setting("onlyPosted")
+  };
   const out = [];
   Object.values(state.boards).forEach(b => {
     b.games.forEach(entry => {
-      const pool = (state.legPools[entry.game.id] || []).filter(l => {
-        if (setting("onlyPosted") && l.status) return false;
-        return true;
-      });
-      if (pool.length < 2) return;
-      // Cap the pool by probability before enumerating: 24 legs is 276 pairs a
-      // game, which is instant, and the legs below that are not going to win a
-      // ranking anyway.
-      const top = pool.slice().sort((a, c) => c.p - a.p).slice(0, 24);
-      let best = null;
-      for (let i = 0; i < top.length; i++) for (let j = i + 1; j < top.length; j++){
-        const a = top[i], c = top[j];
-        const samePlayer = a.player === c.player;
-        if (samePlayer && !setting("allowSame")) continue;
-        const sameTeam = a.teamId === c.teamId;
-        if (setting("onlyTeam") && !sameTeam) continue;
-        // The joint comes off the simulation, then carries both legs'
-        // calibration shifts. That keeps "both clear" consistent with the two
-        // leg percentages printed above it on the card.
-        const rawJoint = M.parlayProb([a, c]);
-        const prob = Math.max(1e-4, Math.min(1 - 1e-4, rawJoint * (a.shift || 1) * (c.shift || 1)));
-        const naive = a.p * c.p;
-        const dec = parlayDec({ a, c }) || 1;
-        const ev = prob * dec - 1;
-        // Split the edge into the part that is defensible and the part that is
-        // not. Correlation is measured — two seasons of real games say these
-        // legs move together by this much, and the book's price says they do
-        // not. Our disagreement with the market on the legs themselves is a
-        // claim that we know the number better than a live money market does,
-        // which is a much bigger claim and the one that has historically been
-        // wrong. A card whose edge is nearly all disagreement should be read
-        // as an opinion; one whose edge is mostly correlation is arithmetic.
-        const mpA = legMarketP(a), mpC = legMarketP(c);
-        const mktProd = (mpA == null || mpC == null) ? null : mpA * mpC;
-        const liftRatio = naive > 1e-9 ? prob / naive : 1;
-        const edgeCorr = mktProd == null ? null : mktProd * liftRatio - mktProd;
-        const edgeView = mktProd == null ? null : prob - mktProd * liftRatio;
-        const cand = { a, c, prob, naive, lift: prob - naive, price: M.probToAm(1 / dec),
-          mktProd, edgeCorr, edgeView, vig: mktProd == null ? null : mktProd - 1 / dec,
-          rho: naive > 0 && naive < 1 ? (prob - naive) / Math.sqrt(Math.max(1e-9, a.p*(1-a.p)*c.p*(1-c.p))) : 0,
-          ev, breakeven: 1 / dec, edge: prob - 1 / dec, dec,
-          samePlayer, sameTeam, entry, board: b,
-          spot: sameTeam ? sideSpotOf(entry, a.teamId)
-                         : avgSpot(sideSpotOf(entry, a.teamId), sideSpotOf(entry, c.teamId)) };
-        if (!best || cand.edge > best.edge) best = cand;
-      }
-      if (best) out.push(best);
+      const best = M.bestDouble(state.legPools[entry.game.id] || [], o);
+      if (!best) return;
+      best.entry = entry; best.board = b;
+      best.spot = best.sameTeam ? sideSpotOf(entry, best.a.teamId)
+        : avgSpot(sideSpotOf(entry, best.a.teamId), sideSpotOf(entry, best.c.teamId));
+      // The spot readings the legs carry are per-player and per-market; they
+      // are attached here rather than in the model, which has no view of them.
+      [best.a, best.c].forEach(l => { l.spot = l.spot || spotForLeg(b, entry, l); });
+      out.push(best);
     });
   });
   return out;
+}
+function spotForLeg(b, entry, l){
+  const pl = (state.propRows[entry.game.id] || []).find(p => p.player.name === l.player);
+  return pl ? spotFor(b, entry, pl, l.key) : null;
 }
 const avgSpot = (x, y) => (!x || !y) ? (x || y) : { soft: (x.soft+y.soft)/2, good: (x.good+y.good)/2, spot: (x.spot+y.spot)/2, base: x.base };
 function sideSpotOf(entry, teamId){ return (state.spots[entry.game.id] || {})[teamId] || null; }
@@ -1964,7 +1892,7 @@ const betBar = () => setting("minEdge") / 100;
 // us to be better informed than the money. So it is the number on the card,
 // the number the stake comes from, and the number the bar tests — one
 // quantity, all the way through, instead of three that disagree.
-const defensibleEdge = d => d.edgeCorr != null ? d.edgeCorr : 0;
+const defensibleEdge = M.defensibleEdge;
 const edgePts = d => +(defensibleEdge(d) * 100).toFixed(1);
 // Stake from the DISPLAYED edge, so the arithmetic on screen checks out by
 // hand: 5.5 x $2.50 is $13.75, not $13.83 from an unrounded 5.53.
@@ -2021,6 +1949,7 @@ function spotFor(board, entry, pl, key){
   for (let s = y; s >= y - 4; s--) sel.innerHTML += '<option value="' + s + '"' + (s === y - 1 ? " selected" : "") + ">" + s + "</option>";
   initProxy();
   renderBets();
+  loadRecord();
   checkBuild();
   load().then(() => { if (loadBets().some(b => b.result == null || b.clv == null)) gradeAll(); });
 })();

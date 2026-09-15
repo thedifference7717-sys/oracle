@@ -1920,6 +1920,174 @@ function propSpot(L, pl, ts, ctx, key) {
     pct: base > 1e-9 ? full / base - 1 : 0 };
 }
 
+
+// ── the doubles ─────────────────────────────────────────────────────────────
+// This lives in the model, not the page, for the same reason the baseball
+// engine does: the board a grader scores has to be the board the dashboard
+// showed. If the two were computed in different files they would drift, and
+// the record would be of something nobody ever saw.
+
+// What a book would actually pay for a double.
+//
+// One price cannot be taken off the user the way the baseball board takes it,
+// because every leg there is the same event and those sit in a narrow band.
+// Prop legs run 30% to 88%, and quoting them all at the same number hands a
+// card enormous edge for the crime of containing a favourite. Each leg is
+// priced at what the market has it at, plus a book's margin, and the parlay
+// pays the product — which is exactly the assumption this whole board exists
+// to attack.
+const BOOK_JUICE = 0.9545;            // a fair 50/50 offered at -110
+const clampP = v => Math.max(0.02, Math.min(0.98, v));
+function legMarketP(l) {
+  if (l.rung && l.rung.mid != null) return l.side === "Under" ? 1 - l.rung.mid : l.rung.mid;
+  return null;
+}
+const legBookDec = l => BOOK_JUICE / clampP(legMarketP(l) == null ? l.p : legMarketP(l));
+function doublePrice(a, c, override) {
+  if (override && Math.abs(override) >= 100) return amToDec(override);
+  return legBookDec(a) * legBookDec(c);
+}
+
+// Which legs are worth putting in a double. Not the ranked singles — a leg can
+// be perfectly good inside a pair without beating its own price.
+const LEG_LO = 0.30, LEG_HI = 0.88;
+// How far our number may sit from a live market before we conclude the fault is
+// ours. Thirty points is already an enormous disagreement.
+const MAX_DISAGREE = 0.30;
+// A quote forty cents wide is not a market, it is two people a long way apart
+// with nothing in between, and its midpoint carries no information — yet the
+// parlay price is built out of exactly that midpoint.
+const MAX_SPREAD = 0.12, MIN_LEG_SIZE = 25;
+
+function propLegs(entry, list, sim, opts) {
+  opts = opts || {};
+  const kp = opts.kprops, probCal = opts.probCal || null;
+  const out = [];
+  (list || []).forEach(pl => {
+    const man = sim && sim.manOf[pl.player.id];
+    if (!man) return;
+    pl.markets.forEach(mkt => {
+      // Only markets the simulation itself publishes: the display fallback has
+      // no minimum, and that put a backup quarterback projected at zero
+      // passing yards into the pool as a 77% "under".
+      const sm = (sim.byPlayer[pl.player.id] || {})[mkt.key];
+      if (!sm || sm.type === "binary" || !kp || mkt.ourLine == null) return;
+      // Only where the exchange actually quotes the rung. A leg with no market
+      // price carries our number at full weight with nothing to check it, and
+      // would not be a bet you could get down anyway.
+      const rung = kalshiRung(kp, entry, pl.player.name, mkt.key, mkt.ourLine);
+      if (!rung || rung.mid == null) return;
+      // kalshiRung returns the CLOSEST strike with no limit on how close that
+      // is. Christian Watson's 40-yard line was matched to a 139.5-yard rung —
+      // a hundred yards away — and the resulting "edge" was the largest on the
+      // board. A strike that far off is not a disagreement; it is the two of us
+      // describing different players.
+      const sd = sm.range ? Math.max(1e-6, (sm.range.p75 - sm.range.p25) / 1.35) : null;
+      if (sd && Math.abs(rung.strike - mkt.ourLine) > 1.5 * sd) return;
+      if (!(rung.spread <= MAX_SPREAD)) return;
+      if (Math.max(rung.askSize || 0, rung.bidSize || 0) < MIN_LEG_SIZE) return;
+      const line = rung.strike;
+      ["Over", "Under"].forEach(side => {
+        const leg = simLeg(man, sm, side, line);
+        // The raw simulated tail is not the number to bet. Same two steps a
+        // single takes: the slate calibration fitted on every quoted rung, then
+        // a blend with that rung's own mid weighted by how tightly it is
+        // quoted.
+        leg.pRaw = leg.p;
+        let p = probCal ? applyProbCal(probCal, leg.p) : leg.p;
+        leg.pModel = p;
+        const mp = side === "Under" ? 1 - rung.mid : rung.mid;
+        // Beyond a certain distance a disagreement stops being an edge and
+        // starts being a broken input.
+        if (Math.abs(p - mp) > MAX_DISAGREE) return;
+        const w = propWeight(rung.spread);
+        p = clamp(w * p + (1 - w) * mp, 1e-4, 1 - 1e-4);
+        leg.p = p;
+        leg.pMkt = mp;
+        // The simulation's hit mask still carries the raw view, so the joint is
+        // rescaled by how far the calibrated leg moved — otherwise the pair
+        // reads off one set of numbers and the legs another.
+        leg.shift = leg.pRaw > 1e-6 ? p / leg.pRaw : 1;
+        if (!(leg.p >= LEG_LO && leg.p <= LEG_HI)) return;
+        leg.teamId = pl.teamId;
+        leg.player = pl.player.name;
+        leg.pos = pl.player.pos;
+        leg.status = pl.status || null;
+        leg.avail = pl.avail == null ? 1 : pl.avail;
+        leg.market = mkt.label;
+        leg.key = mkt.key;
+        leg.range = sm.range;
+        leg.rung = rung;
+        leg.matchup = pl.matchup;
+        leg.oppAbbr = pl.teamId === entry.game.home.id ? entry.game.away.abbr : entry.game.home.abbr;
+        out.push(leg);
+      });
+    });
+  });
+  return out;
+}
+
+// The best pair in one game. Every combination is enumerated rather than
+// assuming the two likeliest legs make the best double — once correlation is
+// priced in, a quarterback and his own receiver often beat two higher singles
+// from opposite sides.
+function bestDouble(pool, opts) {
+  opts = opts || {};
+  let legs = pool || [];
+  if (opts.onlyPosted) legs = legs.filter(l => !l.status);
+  if (legs.length < 2) return null;
+  const top = legs.slice().sort((a, c) => c.p - a.p).slice(0, 24);
+  let best = null;
+  for (let i = 0; i < top.length; i++) for (let j = i + 1; j < top.length; j++) {
+    const a = top[i], c = top[j];
+    const samePlayer = a.player === c.player;
+    if (samePlayer && !opts.allowSame) continue;
+    const sameTeam = a.teamId === c.teamId;
+    if (opts.onlyTeam && !sameTeam) continue;
+    const rawJoint = parlayProb([a, c]);
+    const prob = clamp(rawJoint * (a.shift || 1) * (c.shift || 1), 1e-4, 1 - 1e-4);
+    const naive = a.p * c.p;
+    const dec = doublePrice(a, c, opts.price) || 1;
+    // Split the edge into the part that is defensible and the part that is not.
+    // Correlation is measured; our disagreement with the market on the legs is
+    // a claim to know a number better than a live money market does, which is
+    // the claim this board has historically been wrong about.
+    const mpA = legMarketP(a), mpC = legMarketP(c);
+    const mktProd = (mpA == null || mpC == null) ? null : mpA * mpC;
+    const liftRatio = naive > 1e-9 ? prob / naive : 1;
+    const cand = {
+      a, c, prob, naive, lift: prob - naive, price: probToAm(1 / dec), dec,
+      mktProd,
+      edgeCorr: mktProd == null ? null : mktProd * liftRatio - mktProd,
+      edgeView: mktProd == null ? null : prob - mktProd * liftRatio,
+      vig: mktProd == null ? null : mktProd - 1 / dec,
+      rho: naive > 0 && naive < 1 ? (prob - naive) / Math.sqrt(Math.max(1e-9, a.p*(1-a.p)*c.p*(1-c.p))) : 0,
+      ev: prob * dec - 1, breakeven: 1 / dec, edge: prob - 1 / dec,
+      samePlayer, sameTeam
+    };
+    if (!best || cand.edge > best.edge) best = cand;
+  }
+  return best;
+}
+
+// THE number: the part of the edge that is measured rather than argued. It is
+// what goes on the card, what the stake comes from, and what the bar tests.
+const defensibleEdge = d => (d && d.edgeCorr != null) ? d.edgeCorr : 0;
+// Most of the edge is us arguing with the market rather than the measured
+// correlation.
+const isOpinion = d => d && d.edgeView != null && d.edgeCorr != null &&
+  d.edgeView > Math.max(0.02, d.edgeCorr * 2);
+// Is this a bet? One rule, so the dashboard and the grader cannot disagree
+// about what counted.
+function doubleQualifies(d, opts) {
+  opts = opts || {};
+  const bar = opts.bar != null ? opts.bar : 0.02;
+  if (!d || !(d.edge > 0)) return false;
+  if (defensibleEdge(d) < bar) return false;
+  if (!opts.showOpinion && isOpinion(d)) return false;
+  return true;
+}
+
 // ── the slate ───────────────────────────────────────────────────────────────
 async function loadSlate(L, opts) {
   opts = opts || {};
@@ -1942,7 +2110,12 @@ async function loadLeagueBoard(leagueKey, opts, onStatus) {
 
   say("Reading the slate…", 0.02);
   const slate = await loadSlate(L, opts);
-  const live = slate.games.filter(g => !g.final);
+  // Finished games are dropped, because a board is for betting. A GRADER
+  // wants exactly the opposite — every game of a week that is over — so it can
+  // ask for them. The ratings still come from weeks before this one either
+  // way, so grading a past week cannot leak that week's results into the picks
+  // being graded.
+  const live = opts.includeFinal ? slate.games : slate.games.filter(g => !g.final);
 
   say("Loading season results…", 0.06);
   const history = await loadHistory(L, slate.season, Math.max(0, slate.week - 1), p => say("Loading season results…", 0.06 + 0.44 * p));
@@ -3164,6 +3337,8 @@ return {
   loadDepthChart, unitsOut, unitFactors, UNIT_OF, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
   simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
+  propLegs, bestDouble, doublePrice, legMarketP, defensibleEdge, isOpinion, doubleQualifies,
+  LEG_LO, LEG_HI, MAX_DISAGREE, MAX_SPREAD, MIN_LEG_SIZE,
   sideSpot, leagueTeamStats, SPOT_REF,
   backtest, summarise,
   loadResults, loadClosingLine, loadPlayerStats, gradeBet, gradeLeg, betReturn, betCLV, betSummary, betRecord,
