@@ -156,7 +156,7 @@ b,strong{font-weight:600}
 .ld-pick .num{font-size:13px;margin-top:9px;display:flex;gap:14px;flex-wrap:wrap;font-variant-numeric:tabular-nums;font-weight:500}
 .ld-wait{display:flex;flex-direction:column;justify-content:center;background:rgba(191,90,242,.12)}
 .ld-wait .l{font-size:12px;font-weight:600;color:var(--purple)}
-.ld-wait .v{font-size:30px;font-weight:700;color:var(--purple);margin:3px 0 7px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ld-wait .v{font-size:38px;font-weight:700;color:var(--purple);margin:3px 0 7px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .ld-wait .s{font-size:12px;color:var(--muted);line-height:1.5}
 .ld-disc{border-top-color:rgba(191,90,242,.3);margin-top:8px}
 .ld-disc>summary{color:var(--purple);padding:9px 0}
@@ -656,20 +656,23 @@ let ladderHist=null;
 // time one posts. Showing a provisional name that quietly swaps itself is
 // worse than showing none, and for anyone paying to see this board it is the
 // difference between a pick and a moving target.
-// Confirmed lineups are the lock, not a clock. The alerter commits the rung
-// the moment both lineups are posted for the earliest game that has not
-// started — that is the game which constrains the choice, so once it is
-// confirmed there is nothing to gain by waiting and a start time to lose by
-// it. Later games may still be projected; the model prices that.
+// The ladder locks an hour before the day's first pitch, and keeps the clock
+// on purpose. It makes ONE choice across the whole slate, so when it chooses
+// decides how much of that slate is confirmed: fire when the first game's
+// lineups post and it would be comparing one real lineup against fourteen
+// projections. An hour out, most lineups are in.
+//
+// The doubles are the opposite case and do use lineups — each is judged on one
+// game alone, so that game's own lineups are all it will ever need. The posted
+// count is still shown here because it says how real the field was at lock.
 const lineupIn=g=>!!(g&&g.home&&g.home.order&&g.away&&g.away.order);
 function lockInfo(){
   if(!board||!Array.isArray(board.games)||!board.games.length)return null;
-  const now=Date.now();
-  const up=board.games.map(g=>({g,t:Date.parse(g.startTime)}))
-    .filter(x=>!isNaN(x.t)&&now<x.t).sort((a,b)=>a.t-b.t);
-  if(!up.length)return null;
-  return {first:up[0].t, open:lineupIn(up[0].g),
-          postedCount:board.games.filter(lineupIn).length, total:board.games.length};
+  const ts=board.games.map(g=>Date.parse(g.startTime)).filter(t=>!isNaN(t));
+  if(!ts.length)return null;
+  const first=Math.min.apply(null,ts);
+  return {lockAt:first-3600000,first,open:Date.now()>=first-3600000,
+          postedCount:board.games.filter(lineupIn).length,total:board.games.length};
 }
 const etTime=ms=>new Date(ms).toLocaleTimeString("en-US",{timeZone:"America/New_York",hour:"numeric",minute:"2-digit"});
 
@@ -682,7 +685,7 @@ function tickLadderClock(){
   if(!el||ldLockAt==null)return;
   const ms=ldLockAt-Date.now();
   if(ms<=0){
-    el.textContent="starting";
+    el.textContent="LOCKING NOW";
     if(!ldFired){ldFired=true;renderLadder();}   // once, to swap in the pick
     return;
   }
@@ -752,7 +755,7 @@ function renderLadder(){
   // checking the record.
   const locked=pub&&pub.pick?pub:null;
   const lk=lockInfo();
-  ldLockAt=lk&&!locked?lk.first:null;
+  ldLockAt=lk&&!locked?lk.lockAt:null;
   if(ldLockAt==null)ldFired=false;
   const waiting=!locked&&lk&&!lk.open;
   const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
@@ -854,13 +857,14 @@ function renderLadder(){
 
   const waitHtml=waiting?`
     <div class="ld-pick ld-wait">
-      <div class="l">Waiting on lineups</div>
-      <div class="v">${lk.postedCount} <span style="font-size:19px;color:var(--dim)">of ${lk.total} posted</span></div>
-      <div class="s">Locks the moment both lineups are in for the first game — ${etTime(lk.first)} ET, <span id="ldClock">—:—:—</span> away.</div>
+      <div class="l">Pick locks in</div>
+      <div class="v" id="ldClock">—:—:—</div>
+      <div class="s">One hour before first pitch (${etTime(lk.first)} ET), from every game on the slate.
+      ${lk.postedCount} of ${lk.total} lineups posted so far.</div>
       <details class="disc ld-disc"><summary>Why it's blank</summary><div class="disc-b">
         The pick is chosen from every game — projected lineups included, with each bat's chance of actually starting already priced into his number.
         It stays blank until the lock on purpose: the board re-ranks every time a lineup posts and scratch risk resolves, and a pick that quietly swaps itself is not a pick. The lock is the commitment.
-        The trigger is the first game's lineups rather than a fixed hour, because that is the game which forces the choice — once it is confirmed, waiting gains nothing and risks it starting.
+        The ladder keeps the clock rather than using the doubles' lineup trigger: it makes one choice across the whole slate, so locking when the first lineups post would mean comparing one real lineup against a dozen projections. An hour out, most lineups are in and the field is real.
       </div></details>
     </div>`:"";
 

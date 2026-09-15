@@ -177,6 +177,10 @@ async function computeDoubles(day, games, cal) {
 // appearances per game. Locking early does not give a slightly worse pick, it
 // gives different players — so a game with no lineup is simply not eligible.
 
+// One hour, in milliseconds. The ladder's lock still uses it; the per-game
+// doubles no longer do.
+const HOUR = 3600000;
+
 // Both lineups posted, nine deep — the same test buildBoard applies.
 const posted = g => {
   const lu = g.lineups || {};
@@ -257,20 +261,19 @@ async function ladderPlace(day, games) {
     return;
   }
   const now = Date.now();
-  // The ladder must choose before the earliest game starts, because that game
-  // is eligible. So the moment to choose is when that game's lineups are both
-  // posted: from then on we have confirmed information about the one game that
-  // constrains us, and waiting only risks it starting. Games later in the
-  // evening may still be projected, which the model already prices.
-  const upcoming = games.filter(g => { const t = Date.parse(g.gameDate); return !isNaN(t) && now < t; })
-                        .sort((a, b) => Date.parse(a.gameDate) - Date.parse(b.gameDate));
-  const firstGame = upcoming[0];
-  if (!firstGame) { console.log("ladder: every game has started — nothing to lock."); return; }
-  if (!posted(firstGame)) {
-    const et = new Date(firstGame.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
-    console.log(`ladder: waiting on lineups for the first game (${et} ET) — not locking yet.`);
-    return;
-  }
+  // The ladder keeps the clock, and deliberately does not use the doubles'
+  // lineup trigger. It makes ONE choice across the whole slate, so the moment
+  // it chooses decides how much of that slate is confirmed. Locking when the
+  // first game's lineups post would fire three or four hours out, when almost
+  // every other game is still a projection, and the cross-slate comparison it
+  // is supposed to make would be mostly guesswork. An hour before the first
+  // pitch, most lineups are in and the field is real.
+  //
+  // A double is the opposite case: it is judged on one game alone, so that
+  // game's own lineups are all the information it will ever need and there is
+  // nothing to wait for once they land.
+  const locking = games.some(g => { const t = Date.parse(g.gameDate); return !isNaN(t) && now >= t - HOUR && now < t; });
+  if (!locking) return;
   // EVERY game that has not started, not just the ones with a lineup up. The
   // model already prices an unposted bat off his projected slot and multiplies
   // by his real chance of starting (starts per team game, capped at 0.95;
@@ -344,7 +347,7 @@ async function ladderPlace(day, games) {
     `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${LEG_PRICE}\n` +
     `${c.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.slot}, ${pct(c.startProb)} to start (already priced in)`}\n` +
     `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n` +
-    `Locked on confirmed lineups (${live.filter(posted).length} of ${live.length} games posted)\n\n` +
+    `${live.filter(posted).length} of ${live.length} games had confirmed lineups at lock\n\n` +
     `<i>Your money at risk: ${money(st.base)} (the seed). Riding on top of it: ${money(st.stake - st.base)} of theirs.\n` +
     (risk ? `Five straight at this rate completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${money(risk.cycleProfit)}. Account ${money(st.account)}.` : "") +
     `</i>`
