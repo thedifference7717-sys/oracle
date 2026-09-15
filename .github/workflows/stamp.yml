@@ -44,8 +44,11 @@ jobs:
           # stamped, and a previous stamp on one that has. Both become the
           # current commit, so this is idempotent and cannot drift.
           grep -rl '__BUILD_SHA__' --include='*.html' . | xargs -r sed -i "s/__BUILD_SHA__/$SHA/g"
-          grep -rl 'const BUILD = "' --include='*.html' . \
-            | xargs -r sed -i -E "s/const BUILD = \"[^\"]*\"/const BUILD = \"$SHA\"/"
+          # The `const BUILD = "..."` rewrite that used to live here is gone:
+          # it required spaces around the `=` and so silently never matched
+          # index.html's `const BUILD="..."`, freezing that constant at one
+          # build while the span below kept moving. The pages now read the
+          # sha from the span itself, so there is only one thing to stamp.
           grep -rl 'id="buildsha"' --include='*.html' . \
             | xargs -r sed -i -E "s#(<span id=\"buildsha\">)[^<]*(</span>)#\1$SHA\2#"
           printf '{"sha":"%s","built":"%s"}\n' "$SHA" "$(date -u +%FT%TZ)" > build.json

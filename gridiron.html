@@ -339,7 +339,15 @@ const M = window.GridModel;
 // meta tags for the document itself, so a phone that already has this page can
 // sit on a stale build indefinitely. The deploy stamps the commit here and
 // publishes the same value in build.json; we check and pull ourselves forward.
-const BUILD = "1b8f7a0";
+// Read from the element the page already displays, rather than from a second
+// copy of the same string. Two stamped copies can drift, and they did: a
+// workflow regex that wanted `const BUILD = "` never matched this file's
+// `const BUILD = "`, so this constant froze at one build while the visible span
+// kept updating. checkBuild() then compared a frozen sha against a live
+// build.json and declared the page stale on every single load, forever, which
+// no amount of reloading could clear. One source of truth cannot disagree
+// with itself.
+const BUILD = (document.getElementById("buildsha")||{textContent:"__BUILD_SHA__"}).textContent.trim();
 let liveSha = null;
 const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
              set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} } };
