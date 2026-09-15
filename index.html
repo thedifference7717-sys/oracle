@@ -247,7 +247,22 @@ const BUILD="b9fef9e";
 let liveSha=null;
 const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
           set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}};
-function hardReload(){location.replace(location.pathname+"?b="+(liveSha||Date.now()));}
+// The cache-busting token has to be different on EVERY attempt, not just per
+// build. Keying it on the sha alone meant the automatic attempt cached the
+// document under ?b=<sha> — and if that attempt raced the deploy it cached the
+// STALE page under the new sha's URL. Every later press of UPDATE NOW then
+// navigated to that same URL, hit the poisoned entry, and did visibly nothing.
+// A timestamp plus random suffix makes each attempt a URL the cache has never
+// seen, so it must go
+// to the origin. Also strips any ?b= already on the address so the query does
+// not grow with every press.
+function hardReload(){
+  const btn=document.querySelector("#update-bar button");
+  if(btn){btn.textContent="UPDATING…";btn.disabled=true;}
+  const base=location.pathname.replace(/[?#].*$/,"");
+  location.replace(base + "?b=" + (liveSha || "new") + "."
+    + Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
+}
 async function checkBuild(){
   if(BUILD.charAt(0)==="_")return;            // unstamped: local checkout or branch preview
   try{
@@ -260,7 +275,12 @@ async function checkBuild(){
     // Try that once; if we come back still stale, stop looping and just ask.
     const key="dd.upd."+j.sha;
     if(!ss.get(key)){ss.set(key,"1");hardReload();return;}
+    // The automatic attempt has already been spent on this build and we are
+    // still stale, so show the bar and let the press do it — with a fresh
+    // token, which is the part that was broken.
     document.getElementById("update-bar").style.display="flex";
+    const b=document.querySelector("#update-bar button");
+    if(b){b.disabled=false;b.textContent="UPDATE NOW";}
   }catch(e){/* offline or no build.json — nothing to do */}
 }
 async function getJSON(url){
