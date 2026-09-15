@@ -97,6 +97,8 @@ const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `${MONTHS[mo-1]} ${da}`; };
 const pct = v => Math.round(v * 100) + "%";
 const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
+const money = v => (v < 0 ? "-$" : "$") + Math.abs(v).toFixed(2);
+const stakeFor = d => Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT;
 const av = v => v == null ? "—" : v.toFixed(3).replace(/^0/, "");
 
 async function j(url, opts) { const r = await fetch(url, opts); if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`); return r.json(); }
@@ -184,8 +186,12 @@ async function alertGame(day, g, d) {
     `⚾ <b>TWO BAIGGER</b> · ${d.teams}\n` +
     `First pitch ${first} ET · ${d.venue || ""}\n` +
     `➖➖➖➖➖➖➖➖\n` +
-    `✅ <b>EDGE ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · EV ${(d.evPct >= 0 ? "+" : "") + d.evPct.toFixed(1)}% · stake ${(d.kelly * 100).toFixed(1)}% bank</b>\n` +
-    `${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} vs your ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
+    // The double is offered anywhere from +100 to -175 depending on the legs,
+    // and this job cannot see the board's price. So it states the threshold
+    // instead of asserting an edge against a number it had to guess.
+    `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(d.prob - MIN_EDGE)}</b>\n` +
+    `${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} · needs ${(MIN_EDGE * 100).toFixed(1)}pts of margin\n` +
+    `<i>Checked against ${PRICE > 0 ? "+" : ""}${PRICE}: edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · stake ${money(stakeFor(d))}</i>\n` +
     `${d.sameTeam ? "SAME TEAM" : "OPPOSING"} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n\n` +
     `${legLine(d.a)}\n${legLine(d.b)}\n\n` +
     `<i>SPOT ${pts(d.spotDelta)}pts vs league (soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>`

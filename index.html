@@ -60,6 +60,11 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .bet-str .l{font-size:9px;color:var(--muted);letter-spacing:.06em}
 .bet-str .stake{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;color:var(--yellow);margin-top:6px;line-height:1}
 .bet-str .stake-l{font-size:8px;color:var(--dim);letter-spacing:.06em}
+.needs{margin:10px 0 0;padding:9px 11px;background:#1A1230;border:1px solid #A78BFA55;border-radius:9px;text-align:center;font-size:11px;color:var(--muted)}
+.needs b{font-family:'Orbitron',monospace;font-size:17px;color:var(--purple);display:block;margin-top:2px}
+.pricebox{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:8px}
+.pricebox input{width:78px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:6px 8px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;text-align:center}
+.pricebox span{font-size:10px;color:var(--dim)}
 .bet.neg .bet-str .stake{color:var(--dim)}
 .leg{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border)}
 .leg-slot{font-family:'Orbitron',monospace;font-size:11px;font-weight:900;color:var(--dim);width:26px;text-align:center;border:1px solid var(--border);border-radius:6px;padding:5px 0}
@@ -175,6 +180,17 @@ const M=window.DDModel||null;
 // existing fallback chain so a blocked direct fetch still resolves.
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
 let good=null,board=null,cal=null;
+// The double is offered anywhere from +100 to -175 depending on how strong the
+// legs are, so one global price is wrong for every game it is not. Prices typed
+// per game live here and survive the board's re-render; the keys are game ids,
+// so tomorrow's slate clears them on its own.
+const priceByGame={};
+function setGamePrice(gk,v){
+  const p=parseFloat(v);
+  if(!isFinite(p)||p===0)delete priceByGame[gk]; else priceByGame[gk]=p;
+  if(board)render();
+}
+const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
 
 // ── self-update ─────────────────────────────────────────────────────────────
 // GitHub Pages serves HTML with a 10-minute max-age, and the no-cache <meta>
@@ -288,7 +304,12 @@ function filtered(){
 // qualifying game, the same rule the Telegram alerter applies, so the two
 // cannot disagree about what counts as a bet.
 const betBar=()=>setting("minEdge")/100;
-function bets(){return filtered().filter(x=>x.ev&&x.ev.edge>=betBar());}
+// Re-price every pair against its own game's price before deciding what is a
+// bet, so a card and the bar can never disagree about the same game.
+function bets(){return filtered().filter(x=>{
+  const e=M.evaluate(x.prob,gamePrice(x.gk));
+  return e && e.edge>=betBar();
+});}
 const pts=v=>(v>=0?"+":"")+(v*100).toFixed(1);
 const spotColor=v=>v>=0.03?"var(--green)":v>=0?"var(--yellow)":"var(--dim)";
 
@@ -317,7 +338,9 @@ const edgePts=ev=>ev?+(ev.edge*100).toFixed(1):0;
 const betSize=ev=>{const p=edgePts(ev);return p>0?p*setting("perEdge"):0;};
 
 function card(pr,i){
-  const ev=pr.ev,bank=setting("bank");
+  const px=gamePrice(pr.gk);
+  const ev=M.evaluate(pr.prob,px);
+  const bank=setting("bank");
   const good=ev&&ev.edge>0;
   const stake=ev?bank*ev.quarterKelly:0;
   const size=betSize(ev);
@@ -334,10 +357,19 @@ function card(pr,i){
       </div>
     </div>
     ${leg(pr.a)}${leg(pr.b)}
+    <div class="needs">
+      BET ONLY IF YOUR BOOK PAYS BETTER THAN
+      <b>${M.amOdds(pr.prob - betBar())}</b>
+      <span style="font-size:10px;color:var(--dim)">model ${pct(pr.prob)} · fair ${M.amOdds(pr.prob)} · needs ${(betBar()*100).toFixed(1)}pts of margin</span>
+      <div class="pricebox">
+        <span>YOUR PRICE</span>
+        <input type="number" step="5" value="${px}" onchange="setGamePrice(${pr.gk},this.value)">
+      </div>
+    </div>
     <div class="bet-foot">
       <span>Both to record a hit</span><span style="text-align:right"><b style="color:var(--text)">${pct(pr.prob)}</b> true</span>
       <span>Fair price</span><span style="text-align:right" class="odds">${M.amOdds(pr.prob)}</span>
-      <span>Your price / breakeven</span><span style="text-align:right">${setting("price")>0?"+":""}${setting("price")} · ${ev?pct(ev.breakeven):"—"}</span>
+      <span>Your price / breakeven</span><span style="text-align:right">${px>0?"+":""}${px} · ${ev?pct(ev.breakeven):"—"}</span>
       <span>Expected value</span><span style="text-align:right"><b style="color:${good?"var(--green)":"var(--red)"}">${ev?(ev.evPct>=0?"+":"")+ev.evPct.toFixed(1)+"%":"—"}</b></span>
       <span>¼-Kelly stake</span><span style="text-align:right"><b style="color:${stake>0?"var(--green)":"var(--dim)"}">${money(stake)}</b></span>
       <span>${pr.sameTeam?'<span class="tag corr">SAME TEAM</span>':'<span class="tag">OPPOSING</span>'} correlation</span>
@@ -410,14 +442,15 @@ function render(){
   document.getElementById("cards").innerHTML=B.map(card).join("")||
     `<div class="empty">No game on the board clears +${barPts}pts right now — so there is no bet.<br><span style="color:var(--dim)">Every game is still listed below. Lower the bet bar to see what is closest.</span></div>`;
   document.getElementById("cardsNote").innerHTML=B.length
-    ? `${B.length} bet${B.length===1?"":"s"} of ${pairs.length} games · total stake <b style="color:var(--yellow)">${money(B.reduce((t,x)=>t+betSize(x.ev),0))}</b>`
+    ? `${B.length} bet${B.length===1?"":"s"} of ${pairs.length} games · total stake <b style="color:var(--yellow)">${money(B.reduce((t,x)=>t+betSize(M.evaluate(x.prob,gamePrice(x.gk))),0))}</b>`
     : `0 bets of ${pairs.length} games`;
   document.getElementById("pairsNote").textContent=`${pairs.length} shown of ${board.pairs.length}`;
 
   document.getElementById("thead").innerHTML=["#","GAME","HITTER 1","HITTER 2","P1","P2","BOTH","FAIR","EDGE","BET"]
     .map((h,i)=>`<th class="${i>=4?'num':''}">${h}</th>`).join("");
   document.getElementById("tbody").innerHTML=pairs.map((pr,i)=>{
-    const e=pr.ev?pr.ev.edge*100:0;
+    const _ev=M.evaluate(pr.prob,gamePrice(pr.gk));
+    const e=_ev?_ev.edge*100:0;
     return `<tr>
       <td class="num" style="color:var(--dim)">${i+1}</td>
       <td style="font-size:12px">${pr.teams}${pr.sameTeam?' <span class="tag corr">ST</span>':''}</td>
@@ -428,7 +461,7 @@ function render(){
       <td class="num"><b>${pct(pr.prob)}</b></td>
       <td class="num" style="color:var(--yellow)">${M.amOdds(pr.prob)}</td>
       <td class="num"><b style="color:${e>0?'var(--green)':'var(--red)'}">${e>=0?"+":""}${e.toFixed(1)}</b></td>
-      <td class="num"><b style="color:${betSize(pr.ev)>0?'var(--yellow)':'var(--dim)'}">${betSize(pr.ev)>0?money(betSize(pr.ev)):"—"}</b></td>
+      <td class="num"><b style="color:${betSize(_ev)>0?'var(--yellow)':'var(--dim)'}">${betSize(_ev)>0?money(betSize(_ev)):"—"}</b></td>
     </tr>`;}).join("")||`<tr><td colspan="10"><div class="empty">Nothing clears the filters.</div></td></tr>`;
 
   renderRR();
