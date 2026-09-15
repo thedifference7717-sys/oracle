@@ -135,6 +135,15 @@ b,strong{font-weight:600}
 .bet-str .stake{font-size:17px;font-weight:600;color:var(--yellow);margin-top:5px;line-height:1.2;font-variant-numeric:tabular-nums}
 .bet-str .stake-l{font-size:10px;color:var(--dim)}
 .bet.neg .bet-str .stake{color:var(--dim)}
+/* No price typed yet, so there is no number to put in the corner. Greyed
+   rather than left green: a coloured figure beside an em dash reads as a live
+   bet whose value failed to load, which is the opposite of what it means. */
+.bet.unpriced{box-shadow:inset 0 0 0 .5px var(--border)}
+.bet.unpriced .bet-rank{background:var(--bg3);color:var(--dim)}
+.bet.unpriced .bet-str .v{color:var(--dim);font-size:22px}
+.bet.unpriced .bet-str .l{color:var(--yellow)}
+.bet.unpriced .bet-str .stake{color:var(--dim);font-size:15px}
+.bet.unpriced button:disabled{background:var(--bg3);color:var(--muted);opacity:1}
 .leg{display:flex;align-items:center;gap:11px;padding:11px 0;border-top:.5px solid var(--hair)}
 .leg-slot{font-size:12px;font-weight:600;color:var(--dim);width:28px;text-align:center;
   background:var(--bg3);border-radius:7px;padding:5px 0;flex:none;font-variant-numeric:tabular-nums}
@@ -433,7 +442,7 @@ textarea{width:100%;background:var(--bg3);border:none;border-radius:11px;color:v
   <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="50" value="1000" oninput="render()"></div>
   <div class="fld"><label>$ per edge point</label><input id="perEdge" type="number" step="0.25" min="0" value="0.50" oninput="render()"></div>
   <div class="fld"><label>Bet bar (measured pts)</label><input id="minEdge" type="number" step="0.5" value="2" oninput="render()"
-    title="A game is only posted if the MEASURED part of its edge — the correlation two seasons of real games say is there — clears this. Our disagreement with the market does not count toward it."></div>
+    title="A game is only posted if the MEASURED part of its edge — the correlation two seasons of real games say is there — clears this. Our disagreement with the market does not count toward it, and neither does the price: this decides which pairs are picks, the price you type on the card decides how much to stake."></div>
   <div class="fld"><label>Parlay price (0 = auto)</label><input id="price" type="number" step="5" value="0" oninput="render()"
     title="Left at 0 the price is built from the two legs' own market prices with a book's margin on each, which is how a parlay is actually priced. Type what your book is really offering to reprice the whole board against it."></div>
   <div class="fld"><label>Min spot (pts)</label><input id="minSpot" type="number" step="1" value="0" oninput="render()"></div>
@@ -698,10 +707,12 @@ function renderPairTable(all){
   const bar = betBar();
   body.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
     "<th>Game</th><th>The double</th><th class=\"num\">True</th><th class=\"num\">If independent</th>" +
-    "<th class=\"num\">Lift</th><th class=\"num\">Fair</th><th class=\"num\">Edge pts</th><th class=\"num\">Spot</th><th class=\"num\">Bet</th>" +
+    "<th class=\"num\">Lift</th><th class=\"num\">Fair</th><th class=\"num\">Measured</th><th class=\"num\">Spot</th><th class=\"num\">Bet</th>" +
     "</tr></thead><tbody>" +
     all.map(d => {
-      const g = d.entry.game, on = d.edge >= bar;
+      // The same rule the cards use, so the table and the board cannot
+      // disagree about which pairs are picks.
+      const g = d.entry.game, on = M.doubleQualifies(d, { bar, showOpinion: setting("showOpinion") });
       return "<tr" + (on ? ' style="background:#14F1950A"' : "") + "><td>" + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
         '<br><span class="mini">' + (d.samePlayer ? "same man" : d.sameTeam ? "same team" : "opposing") + "</span></td>" +
         "<td>" + esc(d.a.player) + " " + esc(d.a.market.toLowerCase()) + " " + esc(d.a.side.toLowerCase()) + " " + d.a.line +
@@ -711,11 +722,13 @@ function renderPairTable(all){
         '<td class="num" style="color:' + (d.lift >= 0 ? "var(--green)" : "var(--red)") + '">' +
           (d.lift >= 0 ? "+" : "") + (d.lift * 100).toFixed(1) + "</td>" +
         '<td class="num">' + M.fmtAm(M.probToAm(d.prob)) + "</td>" +
-        '<td class="num"><b style="color:' + (d.edge > 0 ? "var(--green)" : "var(--red)") + '">' +
-          (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + "</b></td>" +
+        '<td class="num"><b style="color:' + (defensibleEdge(d) > 0 ? "var(--green)" : "var(--red)") + '">' +
+          (defensibleEdge(d) >= 0 ? "+" : "") + (defensibleEdge(d) * 100).toFixed(1) + "</b></td>" +
         '<td class="num" style="color:' + (d.spot ? spotColour(d.spot.spot) : "var(--dim)") + '">' +
           (d.spot ? pts(d.spot.spot) : "—") + "</td>" +
-        '<td class="num">' + (on ? money(betSize(d)) : '<span class="mini">—</span>') + "</td></tr>";
+        '<td class="num">' + (!on ? '<span class="mini">—</span>'
+          : !isPriced(d) ? '<span class="mini">needs odds</span>'
+          : betSize(d) > 0 ? money(betSize(d)) : '<span class="mini">no bet</span>') + "</td></tr>";
     }).join("") + "</tbody></table></div>";
 }
 // Every offence on the slate, ranked by how soft its spot is. This is the
@@ -750,7 +763,19 @@ function renderSpots(){
 // count it as two.
 function logDouble(i){
   const d = SHOWN[i]; if (!d) return;
-  const size = betSize(d) || setting("bank") * M.kelly(d.prob, 0, d.price, setting("kf"));
+  // The last gate. A bet recorded at a price the board invented settles at a
+  // profit the board invented, and nothing downstream can tell afterwards.
+  if (!isPriced(d)){
+    status("Type the odds your book is offering into this card before logging it \u2014 "
+      + "the price is what the profit and loss is made of.", "var(--yellow)");
+    return;
+  }
+  const size = betSize(d);
+  if (!(size > 0)){
+    status("This double is not a bet at " + M.fmtAm(d.price) + " \u2014 the price takes more than the measured edge is worth.",
+      "var(--yellow)");
+    return;
+  }
   // The price recorded is whatever the card is showing — the one typed into its
   // odds box, or the one built from the legs if nothing was typed. The prompt
   // says which, because a bet logged at a made-up price settles at a made-up
@@ -852,22 +877,26 @@ function pairCard(d, i){
   const kelly = M.kelly(d.prob, 0, d.price, setting("kf"));
   const g = d.entry.game, S = d.spot;
   const opinion = isOpinion(d);
-  const typed = gamePrice(g.id), pxId = "px-" + g.id;
+  const typed = gamePrice(g.id), pxId = "px-" + g.id, priced = isPriced(d);
   const stake = Math.max(0, size > 0 ? size : bank * kelly);
   const payout = stake * M.amToDec(d.price);
   const row = (label, value, title) => '<span' + (title ? ' title="' + esc(title) + '"' : "") + ">" + label + "</span>" +
     '<span style="text-align:right">' + value + "</span>";
-  return '<div class="bet ' + (good ? "r" + Math.min(i + 1, 3) : "neg") + '">' +
+  return '<div class="bet ' + (priced ? (good ? "r" + Math.min(i + 1, 3) : "neg") : "unpriced") + '">' +
     '<div class="bet-top">' +
       '<div class="bet-rank">#' + (i + 1) + (good ? "" : " \u2717 NO EDGE") + "</div>" +
       '<div class="bet-game">' + esc(g.away.abbr) + " @ " + esc(g.home.abbr) +
         (opinion ? ' <span class="tag warn" title="Most of this card\u2019s edge is our number disagreeing with a live market rather than the measured correlation. Treat it as an opinion.">OPINION</span>' : "") +
         '<br><span style="color:var(--dim)">' + esc(kickoff(g.date)) + (g.venue ? " \u00b7 " + esc(g.venue) : "") + "</span></div>" +
       '<div class="bet-str">' +
-        '<div class="v">' + (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1) + "</div>" +
-        '<div class="l">MEASURED EDGE</div>' +
+        // Until the price is real there is no honest number to put here. The
+        // measured correlation is still on the card, in the foot, where it
+        // says what the pair is worth rather than what you would be paid.
+        '<div class="v">' + (!priced ? "\u2014" : (edgePts(d) >= 0 ? "+" : "") + edgePts(d).toFixed(1)) + "</div>" +
+        '<div class="l">' + (priced ? "EDGE AT " + M.fmtAm(d.price) : "NEEDS ODDS") + "</div>" +
         '<div class="stake">' + (size > 0 ? money(size) : "\u2014") + "</div>" +
-        '<div class="stake-l">' + (size > 0 ? "BET \u00b7 $" + setting("perEdge").toFixed(2) + "/PT" : "NO BET") + "</div>" +
+        '<div class="stake-l">' + (!priced ? "ENTER YOUR PRICE"
+          : size > 0 ? "BET \u00b7 $" + setting("perEdge").toFixed(2) + "/PT" : "NO BET") + "</div>" +
       "</div>" +
     "</div>" +
     pairLeg(d.a) + pairLeg(d.c) +
@@ -886,6 +915,9 @@ function pairCard(d, i){
     "</div>" +
     '<div class="bet-foot">' +
       row("Both to clear", '<b>' + pc(d.prob) + "</b> true") +
+      row("Measured edge in the pair", '<b style="color:var(--purple)">' +
+        (defensibleEdge(d) >= 0 ? "+" : "") + (defensibleEdge(d) * 100).toFixed(1) + "pts</b>",
+        "What two seasons of real games say the correlation is worth. This is what the bet bar tests, and it does not move when you type a price \u2014 the price decides how much of it you keep.") +
       row("Total edge over the price", '<b>' + (d.edge >= 0 ? "+" : "") + (d.edge * 100).toFixed(1) + "pts</b>",
         "The whole gap between our probability and what the price needs. The card stakes on the measured part of it, not this.") +
       row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
@@ -919,7 +951,12 @@ function pairCard(d, i){
           row("\u21b3 the book's margin", '<span style="color:var(--red)">' + (d.vig * 100).toFixed(1) + "pts</span>")) +
       "</div>" +
     "</details>" +
-    '<button class="run-btn" style="margin-top:11px;width:100%;padding:9px" onclick=\'logDouble(' + i + ')\'>LOG THIS DOUBLE \u2014 ' + money(size > 0 ? size : bank * kelly) + "</button>" +
+    '<button class="run-btn" style="margin-top:11px;width:100%;padding:9px"' +
+      (priced && size > 0 ? "" : " disabled") +
+      ' onclick=\'logDouble(' + i + ')\'>' +
+      (!priced ? "ENTER THE ODDS FIRST"
+        : size > 0 ? "LOG THIS DOUBLE \u2014 " + money(size)
+        : "NO BET AT " + M.fmtAm(d.price)) + "</button>" +
   "</div>";
 }
 
@@ -1155,8 +1192,12 @@ function renderLegend(shown, total){
       "<b>" + shown + "</b> of " + total + " games have a double clearing your bet bar.<br>" +
       "<b>The bet is the two legs together.</b> Both have to clear. A parlay pays the product of its legs' prices, " +
       "which assumes they are independent — and two men in one football game never are. That gap is the bet.<br>" +
-      "<b>Edge points</b> is our probability minus what the price needs. The stake is that number times your dollars-per-point, " +
-      "so the sum on the card checks out by hand.<br>" +
+      "<b>Two numbers, and they answer different questions.</b> <b>Measured edge</b> is what the correlation between the two " +
+      "legs is worth \u2014 it decides whether the pair is a pick at all, it is what the bet bar tests, and no price you type " +
+      "can move it. <b>Edge at your price</b> is that same measured edge after the price has taken its cut, and it decides how " +
+      "much: the stake is that number times your dollars-per-point, so the sum on the card checks out by hand.<br>" +
+      "<b>A card will not size itself until you type what your book is offering.</b> Before that the price is the board's guess, " +
+      "and a stake against a guessed price is a made-up number \u2014 as is any profit and loss built on it later.<br>" +
       "<b>Open &ldquo;why this one&rdquo;</b> on any card and the edge splits three ways. <b>From correlation</b> is arithmetic — " +
       "two seasons of real games say those legs move together and the payout assumes they don't. <b>From our number</b> is a claim " +
       "we price a leg better than a live money market, which is the claim this board has been wrong about before. " +
@@ -2118,10 +2159,25 @@ const betBar = () => setting("minEdge") / 100;
 // the number the stake comes from, and the number the bar tests — one
 // quantity, all the way through, instead of three that disagree.
 const defensibleEdge = M.defensibleEdge;
-const edgePts = d => +(defensibleEdge(d) * 100).toFixed(1);
+// WHETHER to bet and HOW MUCH are two questions, and they were answered by one
+// number. `defensibleEdge` — the measured correlation — decides whether a pair
+// is a pick, and it must not move when you type a price, or a generous number
+// could talk the board into posting a game it would otherwise leave off.
+//
+// But the stake was keyed on it too, so the dollar figure did not move either:
+// you could type +260 on a card the board had assumed was +150 and it went on
+// recommending the same $2.90. `netEdge` is that same measured edge charged
+// the price you are actually being offered, so the money answers the price and
+// the pick does not.
+const netEdge = M.netEdge;
+const edgePts = d => +(netEdge(d) * 100).toFixed(1);
+// A price nobody has typed is an assumption, and an assumption is not
+// something to stake money against. Until the box on the card has a number in
+// it the board will show you the pair and refuse to size it.
+const isPriced = d => !!(d && d.priceTyped);
 // Stake from the DISPLAYED edge, so the arithmetic on screen checks out by
 // hand: 5.5 x $2.50 is $13.75, not $13.83 from an unrounded 5.53.
-const betSize = d => { const p = edgePts(d); return p > 0 ? p * setting("perEdge") : 0; };
+const betSize = d => { if (!isPriced(d)) return 0; const p = edgePts(d); return p > 0 ? p * setting("perEdge") : 0; };
 
 // ── the simulation, the ranges and the parlays ──────────────────────────────
 // One simulated game serves everything: the range printed beside each prop,
