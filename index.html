@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#050510">
+<meta name="theme-color" content="#000000">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <title>SportsAI · Two BAIgger</title>
@@ -13,140 +13,250 @@
 <link rel="icon" type="image/svg+xml" href="sportsai.svg">
 <link rel="apple-touch-icon" href="sportsai-180.png">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
+/* ── SportsAI, restyled ────────────────────────────────────────────────────
+   Every class name the render code emits is preserved; only the presentation
+   changed. Display faces (Orbitron / Share Tech Mono) are gone in favour of
+   the system stack, which on this phone is SF Pro — so the board matches the
+   OS instead of fighting it, and the two webfonts no longer block first
+   paint. Figures use tabular-nums, which keeps columns aligned without
+   needing a monospace face at all.
+   Colour is now information rather than decoration: the palette is Apple's
+   dark system set, and a value is only tinted when the tint MEANS something
+   (won, lost, money, at risk). Glows and gradients are gone.               */
+:root{
+  --bg:#000;--bg2:#1C1C1E;--bg3:#2C2C2E;--elev:#1C1C1E;
+  --border:rgba(84,84,88,.6);--hair:rgba(84,84,88,.35);
+  --text:#FFF;--muted:rgba(235,235,245,.6);--dim:rgba(235,235,245,.35);
+  --green:#30D158;--red:#FF453A;--yellow:#FFD60A;--blue:#0A84FF;
+  --orange:#FF9F0A;--purple:#BF5AF2;
+  --sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,Roboto,sans-serif;
+  --num:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --pad:20px;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
-#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A1A16,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.brand{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:.28em;color:var(--purple);opacity:.85;margin-bottom:2px}
-.logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.04em;color:#D6FFE9;text-shadow:0 0 14px #14F19566}
-.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
-#buildsha{color:var(--green);font-weight:700}
-.controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
-.navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
-.run-btn{padding:11px 18px;background:linear-gradient(90deg,#14F195,#60A5FA);border:none;border-radius:8px;color:#04120b;font-size:13px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer}
-.run-btn:disabled{opacity:.5;cursor:wait}
-#progress-wrap{height:3px;background:var(--bg2);display:none}#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#14F195,var(--blue));transition:width .2s}
-#update-bar{display:none;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;background:#3A2A00;border-bottom:1px solid var(--yellow);color:var(--yellow);font-size:12px}
-#update-bar button{margin-left:auto;padding:8px 14px;background:var(--yellow);border:none;border-radius:7px;color:#231A00;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;cursor:pointer}
-#status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
-/* ── bet slip bar ── */
-#slip{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;padding:12px 18px;background:var(--bg3);border-bottom:1px solid var(--border)}
-.fld{display:flex;flex-direction:column;gap:5px}
-.fld label{font-size:10px;color:var(--dim);letter-spacing:.08em}
-.fld input,.fld select{background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:9px 10px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;width:110px}
-.fld.chk{flex-direction:row;align-items:center;gap:7px;padding-bottom:9px}
-.fld.chk input{width:auto}
-.fld.chk label{font-size:11px;color:var(--muted);letter-spacing:0}
-.section-h{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:.05em;color:var(--green);padding:16px 18px 8px}
-.section-h small{display:block;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px;margin-top:4px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;padding:0 18px}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sys);
+  -webkit-font-smoothing:antialiased;min-height:100%;font-size:15px;line-height:1.5}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 56px)}
+b,strong{font-weight:600}
+.n{font-variant-numeric:tabular-nums}
+
+/* ── chrome ── */
+#topbar{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.72);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:.5px solid var(--border);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) var(--pad) 12px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--purple);margin-bottom:1px}
+.logo{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.logo-sub{font-size:11px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums}
+#buildsha{color:var(--dim);font-family:var(--num);font-size:10px}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.navlink{padding:8px 13px;background:var(--bg3);border:none;border-radius:980px;color:var(--text);
+  font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
+.navlink:active{opacity:.6}
+.run-btn{padding:8px 17px;background:var(--blue);border:none;border-radius:980px;color:#fff;
+  font-size:13px;font-weight:600;font-family:var(--sys);cursor:pointer}
+.run-btn:active{opacity:.7}
+.run-btn:disabled{opacity:.4;cursor:wait}
+#progress-wrap{height:2px;background:transparent;display:none}
+#progress-bar{height:100%;width:0%;background:var(--blue);transition:width .25s ease}
+#update-bar{display:none;align-items:center;gap:12px;flex-wrap:wrap;padding:12px var(--pad);
+  background:rgba(255,214,10,.14);border-bottom:.5px solid rgba(255,214,10,.4);color:var(--yellow);font-size:13px}
+#update-bar button{margin-left:auto;padding:7px 15px;background:var(--yellow);border:none;
+  border-radius:980px;color:#000;font-family:var(--sys);font-size:12px;font-weight:600;cursor:pointer}
+#status{font-size:12px;color:var(--muted);padding:10px var(--pad);min-height:16px;
+  border-bottom:.5px solid var(--hair);font-variant-numeric:tabular-nums}
+
+/* ── disclosure: the whole point of this pass ──
+   Native <details> so it works without script, keeps its state, and is
+   reachable by VoiceOver. The chevron is drawn in CSS and rotates. */
+.disc{border-top:.5px solid var(--hair)}
+.disc>summary{list-style:none;cursor:pointer;padding:11px 24px 11px 0;position:relative;display:block;
+  font-size:13px;color:var(--blue);font-weight:500}
+.disc>summary::-webkit-details-marker{display:none}
+.disc>summary::after{content:"";position:absolute;right:3px;top:50%;width:6px;height:6px;
+  border-right:1.6px solid var(--dim);border-bottom:1.6px solid var(--dim);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+.disc[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+.disc>summary:active{opacity:.6}
+.disc-b{font-size:13px;color:var(--muted);line-height:1.62;padding:2px 0 14px}
+.disc-b p+p{margin-top:11px}
+.disc-b b{color:var(--text)}
+
+/* ── section headings ── */
+.section-h{padding:26px var(--pad) 10px}
+.sh-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh-row h2{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.sh-note{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.sh-note b{color:var(--muted);font-weight:600}
+.section-h .disc{margin-top:8px}
+
+/* ── bet cards ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:12px;padding:0 var(--pad)}
 @media(max-width:900px){.cards{grid-template-columns:1fr}}
-.bet{background:linear-gradient(160deg,#0C1A14,var(--bg2));border:1px solid #14F19555;border-radius:16px;padding:16px;box-shadow:0 4px 24px #14F19514}
-.bet.r1{border-color:#14F195AA;box-shadow:0 4px 28px #14F19533}
-.bet.r2{border-color:#60A5FA88}.bet.r3{border-color:#A78BFA88}
-.bet.neg{border-color:#FF4D6D55;background:linear-gradient(160deg,#1A0C10,var(--bg2));box-shadow:none}
+.bet{background:var(--elev);border:none;border-radius:16px;padding:16px 17px}
+.bet.r1,.bet.r2,.bet.r3{box-shadow:inset 0 0 0 .5px var(--border)}
+.bet.neg{opacity:.62}
 .bet-top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
-.bet-rank{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;padding:5px 10px;border-radius:8px;background:#14F19522;color:var(--green);white-space:nowrap}
-.bet.r2 .bet-rank{background:#60A5FA22;color:var(--blue)}
-.bet.r3 .bet-rank{background:#A78BFA22;color:var(--purple)}
-.bet.neg .bet-rank{background:#FF4D6D22;color:var(--red)}
-.bet-game{flex:1;min-width:0;font-size:12px;color:var(--muted)}
+.bet-rank{font-size:12px;font-weight:600;padding:4px 9px;border-radius:7px;
+  background:rgba(48,209,88,.16);color:var(--green);white-space:nowrap;font-variant-numeric:tabular-nums}
+.bet.r2 .bet-rank{background:rgba(10,132,255,.16);color:var(--blue)}
+.bet.r3 .bet-rank{background:rgba(191,90,242,.16);color:var(--purple)}
+.bet.neg .bet-rank{background:rgba(255,69,58,.16);color:var(--red)}
+.bet-game{flex:1;min-width:0;font-size:13px;color:var(--muted)}
 .bet-str{text-align:right}
-.bet-str .v{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--green);line-height:1}
+.bet-str .v{font-size:28px;font-weight:700;color:var(--green);line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .bet.neg .bet-str .v{color:var(--red)}
-.bet-str .l{font-size:9px;color:var(--muted);letter-spacing:.06em}
-.bet-str .stake{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;color:var(--yellow);margin-top:6px;line-height:1}
-.bet-str .stake-l{font-size:8px;color:var(--dim);letter-spacing:.06em}
-.needs{margin:10px 0 0;padding:9px 11px;background:#1A1230;border:1px solid #A78BFA55;border-radius:9px;text-align:center;font-size:11px;color:var(--muted)}
-.needs b{font-family:'Orbitron',monospace;font-size:17px;color:var(--purple);display:block;margin-top:2px}
-.pricebox{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:8px}
-.pricebox input{width:78px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:6px 8px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;text-align:center}
-.pricebox span{font-size:10px;color:var(--dim)}
+.bet-str .l{font-size:11px;color:var(--dim)}
+.bet-str .stake{font-size:17px;font-weight:600;color:var(--yellow);margin-top:5px;line-height:1.2;font-variant-numeric:tabular-nums}
+.bet-str .stake-l{font-size:10px;color:var(--dim)}
 .bet.neg .bet-str .stake{color:var(--dim)}
-.leg{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border)}
-.leg-slot{font-family:'Orbitron',monospace;font-size:11px;font-weight:900;color:var(--dim);width:26px;text-align:center;border:1px solid var(--border);border-radius:6px;padding:5px 0}
+.needs{margin:12px 0 0;padding:11px;background:rgba(191,90,242,.12);border:none;
+  border-radius:11px;text-align:center;font-size:12px;color:var(--muted)}
+.needs b{font-size:19px;font-weight:700;color:var(--purple);display:block;margin-top:3px;font-variant-numeric:tabular-nums}
+.pricebox{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:9px}
+.pricebox input{width:84px;background:var(--bg3);border:none;border-radius:9px;color:var(--text);
+  padding:8px;font-family:var(--num);font-size:14px;font-weight:600;text-align:center}
+.pricebox span{font-size:11px;color:var(--dim)}
+.leg{display:flex;align-items:center;gap:11px;padding:11px 0;border-top:.5px solid var(--hair)}
+.leg-slot{font-size:12px;font-weight:600;color:var(--dim);width:28px;text-align:center;
+  background:var(--bg3);border-radius:7px;padding:5px 0;flex:none;font-variant-numeric:tabular-nums}
 .leg-info{flex:1;min-width:0}
-.leg-name{font-size:16px;font-weight:700;line-height:1.15}
-.leg-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
+.leg-name{font-size:16px;font-weight:600;line-height:1.2;letter-spacing:-.01em}
+.leg-meta{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.45}
 .trend-up{color:var(--green)}.trend-dn{color:var(--red)}.trend-fl{color:var(--dim)}
-.leg-prob{text-align:right;font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--blue)}
-.leg-prob small{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);font-weight:400}
-.bet-foot{margin-top:11px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
-.bet-foot b{font-family:'Orbitron',monospace}
-.odds{font-family:'Orbitron',monospace;color:var(--yellow);font-weight:700}
-.tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:5px;border:1px solid var(--border);color:var(--dim);margin-left:5px;vertical-align:middle}
-.tag.ok{color:var(--green);border-color:#14F19555}
-.tag.warn{color:var(--yellow);border-color:#FBBF2455}
-.tag.corr{color:var(--purple);border-color:#A78BFA55}
-.ld{background:linear-gradient(160deg,#140C1E,var(--bg2));border:1px solid #A78BFA88;border-radius:16px;padding:16px;margin:0 0 18px}
-.ld-top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;justify-content:space-between}
-.ld-stake{font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--yellow);line-height:1}
-.ld-stake small{display:block;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:400;color:var(--dim);letter-spacing:.08em;margin-top:5px}
-.ld-pick{flex:1;min-width:210px;background:#0A0A1C;border:1px solid var(--border);border-radius:11px;padding:11px 13px}
-.ld-pick .nm{font-size:17px;font-weight:800}
-.ld-pick .sub{font-size:11px;color:var(--dim);margin-top:3px}
-.ld-pick .num{font-family:'Orbitron',monospace;font-size:12px;margin-top:7px;display:flex;gap:12px;flex-wrap:wrap}
-.ld-wait{display:flex;flex-direction:column;justify-content:center;border-color:#A78BFA66;background:#140C1E}
-.ld-wait .l{font-size:9px;letter-spacing:.11em;color:var(--purple)}
-.ld-wait .v{font-family:'Orbitron',monospace;font-size:34px;font-weight:900;color:var(--purple);margin:4px 0 6px;letter-spacing:.02em}
-.ld-wait .s{font-size:10.5px;color:var(--dim);line-height:1.55}
-.ld-odds{margin-top:13px;max-width:250px}
-.ld-odds label{display:block;font-size:8.5px;color:var(--muted);letter-spacing:.09em;margin-bottom:4px}
-.ld-odds input{width:100%;background:#0A0A1C;border:1px solid var(--yellow);color:var(--yellow);border-radius:8px;padding:9px 11px;font-family:'Orbitron',monospace;font-size:19px;font-weight:700;text-align:center}
-.ld-odds .hint{font-size:10.5px;color:var(--dim);margin-top:5px;line-height:1.45}
-.ld-odds .hint b{color:var(--text);font-family:'Orbitron',monospace}
-.ld-next{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
-.ld-nb{flex:1;min-width:170px;border-radius:11px;padding:11px 13px;border:1px solid var(--border);background:#0A0A1C}
-.ld-nb.win{border-color:#34D39966;background:#06200F}
-.ld-nb.lose{border-color:#F8717155;background:#1F0C0C}
-.ld-nb .l{font-size:8.5px;letter-spacing:.08em;color:var(--muted)}
-.ld-nb .v{font-family:'Orbitron',monospace;font-size:27px;font-weight:900;margin-top:3px}
+.leg-prob{text-align:right;font-size:17px;font-weight:600;color:var(--blue);font-variant-numeric:tabular-nums}
+.leg-prob small{display:block;font-size:10px;color:var(--dim);font-weight:400}
+.bet-foot{margin-top:12px;padding-top:11px;border-top:.5px solid var(--hair);font-size:12px;
+  color:var(--muted);display:grid;grid-template-columns:1fr auto;gap:7px 12px;font-variant-numeric:tabular-nums}
+.bet-foot b{font-weight:600}
+.odds{color:var(--yellow);font-weight:600;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;
+  background:var(--bg3);color:var(--dim);margin-left:5px;vertical-align:middle}
+.tag.ok{color:var(--green);background:rgba(48,209,88,.16)}
+.tag.warn{color:var(--yellow);background:rgba(255,214,10,.16)}
+.tag.corr{color:var(--purple);background:rgba(191,90,242,.16)}
+
+/* ── the ladder ── */
+.ld{background:var(--elev);border:none;border-radius:18px;padding:18px;margin:0 var(--pad) 4px}
+.ld-top{display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;justify-content:space-between}
+.ld-stake{font-size:44px;font-weight:700;color:var(--yellow);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ld-stake small{display:block;font-size:12px;font-weight:400;color:var(--dim);margin-top:6px}
+.ld-pick{flex:1;min-width:230px;background:var(--bg3);border:none;border-radius:13px;padding:13px 14px}
+.ld-pick .nm{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.ld-pick .sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+.ld-pick .num{font-size:13px;margin-top:9px;display:flex;gap:14px;flex-wrap:wrap;font-variant-numeric:tabular-nums;font-weight:500}
+.ld-wait{display:flex;flex-direction:column;justify-content:center;background:rgba(191,90,242,.12)}
+.ld-wait .l{font-size:12px;font-weight:600;color:var(--purple)}
+.ld-wait .v{font-size:38px;font-weight:700;color:var(--purple);margin:3px 0 7px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ld-wait .s{font-size:12px;color:var(--muted);line-height:1.5}
+.ld-disc{border-top-color:rgba(191,90,242,.3);margin-top:8px}
+.ld-disc>summary{color:var(--purple);padding:9px 0}
+.ld-disc>summary::after{border-color:var(--purple)}
+.ld-disc .disc-b{font-size:12px;padding-bottom:4px}
+.ld-odds{margin-top:16px;max-width:260px}
+.ld-odds label{display:block;font-size:11px;color:var(--dim);margin-bottom:6px}
+.ld-odds input{width:100%;background:var(--bg3);border:none;color:var(--yellow);border-radius:11px;
+  padding:11px;font-family:var(--num);font-size:21px;font-weight:600;text-align:center}
+.ld-odds .hint{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.45}
+.ld-odds .hint b{color:var(--text)}
+.ld-next{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.ld-nb{flex:1;min-width:175px;border-radius:13px;padding:13px 14px;border:none;background:var(--bg3)}
+.ld-nb.win{background:rgba(48,209,88,.14)}
+.ld-nb.lose{background:rgba(255,69,58,.12)}
+.ld-nb .l{font-size:11px;color:var(--muted);font-weight:500}
+.ld-nb .v{font-size:29px;font-weight:700;margin-top:3px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .ld-nb.win .v{color:var(--green)}
-.ld-nb.lose .v{color:#FCA5A5}
-.ld-nb .s{font-size:10px;color:var(--dim);margin-top:4px;line-height:1.45}
-.ld-in{width:78px;background:#0A0A1C;border:1px solid var(--border);border-radius:6px;padding:4px 5px;font-family:'Orbitron',monospace;font-size:11px;text-align:right}
-.ld-foot{font-size:10px;color:var(--dim);margin-top:8px;line-height:1.5}
-.ld-steps{display:flex;gap:7px;margin:14px 0 0;flex-wrap:wrap}
-.ld-step{flex:1;min-width:78px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 4px;text-align:center}
-.ld-step.done{border-color:var(--green);background:#06200F}
-.ld-step.now{border-color:var(--yellow);background:#241C04;box-shadow:0 0 0 1px #FACC1533}
-.ld-step .d{font-size:8px;color:var(--dim);letter-spacing:.06em}
-.ld-step .v{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;margin-top:2px}
-.ld-step .o{font-size:7.5px;color:var(--dim);margin-top:3px;letter-spacing:.03em}
-.ld-step.next{border-color:var(--blue);background:#06162A}
-.ld-strip{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--border)}
-.ld-box{flex:1;min-width:92px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 10px;text-align:center}
-.ld-box .v{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--text)}
-.ld-box .l{font-size:8px;color:var(--dim);letter-spacing:.06em;margin-top:2px}
-.ld-warn{margin-top:12px;padding:10px 12px;background:#2A0E0E;border:1px solid #F8717166;border-radius:9px;font-size:11.5px;color:#FCA5A5;line-height:1.55}
-.ld-warn b{color:#FCA5A5;font-family:'Orbitron',monospace}
-.ld-hist{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:12px}
-.ld-hist th{text-align:right;padding:5px 7px;font-size:9px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border)}
+.ld-nb.lose .v{color:var(--red)}
+.ld-nb .s{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+.ld-in{width:84px;background:var(--bg3);border:none;border-radius:8px;color:var(--text);
+  padding:6px 7px;font-family:var(--num);font-size:12px;text-align:right}
+.ld-foot{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
+.ld-steps{display:flex;gap:8px;margin:16px 0 0;flex-wrap:wrap}
+.ld-step{flex:1;min-width:82px;background:var(--bg3);border:none;border-radius:11px;padding:10px 5px;text-align:center}
+.ld-step.done{background:rgba(48,209,88,.14)}
+.ld-step.now{background:rgba(255,214,10,.16)}
+.ld-step.next{background:rgba(10,132,255,.14)}
+.ld-step .d{font-size:10px;color:var(--dim);font-weight:500}
+.ld-step .v{font-size:15px;font-weight:600;margin-top:3px;font-variant-numeric:tabular-nums}
+.ld-step .o{font-size:9.5px;color:var(--dim);margin-top:3px;line-height:1.3}
+.ld-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:15px;border-top:.5px solid var(--hair)}
+.ld-box{flex:1;min-width:98px;background:var(--bg3);border:none;border-radius:11px;padding:10px 11px;text-align:center}
+.ld-box .v{font-size:17px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.ld-box .l{font-size:10px;color:var(--dim);margin-top:3px}
+.ld-warn{margin-top:14px;padding:0 14px;background:rgba(255,69,58,.12);border:none;
+  border-radius:12px;font-size:12.5px;color:rgba(255,155,150,.95);line-height:1.6}
+.ld-warn>summary{list-style:none;cursor:pointer;padding:13px 26px 13px 0;position:relative;
+  display:block;font-size:12.5px;color:#FF8A82;font-weight:500;line-height:1.5}
+.ld-warn>summary::-webkit-details-marker{display:none}
+.ld-warn>summary::after{content:"";position:absolute;right:4px;top:50%;width:6px;height:6px;
+  border-right:1.6px solid #FF8A82;border-bottom:1.6px solid #FF8A82;
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+.ld-warn[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+.ld-warn>summary:active{opacity:.6}
+.ld-warn-b{padding:0 0 14px}
+.ld-warn b{color:#FF8A82;font-weight:600}
+.ld-warn i{color:rgba(255,155,150,.75)}
+.ld-hist{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:14px;font-variant-numeric:tabular-nums}
+.ld-hist th{text-align:right;padding:7px 8px;font-size:11px;color:var(--dim);font-weight:500;border-bottom:.5px solid var(--hair);white-space:nowrap}
 .ld-hist th:first-child,.ld-hist td:first-child{text-align:left}
-.ld-hist td{text-align:right;padding:6px 7px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace}
-.ld-hist td:nth-child(2){text-align:left;font-family:'Share Tech Mono',monospace;color:var(--muted)}
-.wrap{padding:14px 18px}
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
-.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.05em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.panel-head span{font-family:'Share Tech Mono',monospace;color:var(--dim);font-size:11px;letter-spacing:0}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
-thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:11px 12px;font-size:11px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);white-space:nowrap}
+.ld-hist td{text-align:right;padding:9px 8px;border-bottom:.5px solid var(--hair);white-space:nowrap}
+.ld-hist td:nth-child(2){text-align:left;color:var(--text);font-weight:500}
+
+/* ── slate panels ── */
+.wrap{padding:0 var(--pad)}
+.panel{background:var(--elev);border:none;border-radius:16px;overflow:hidden;margin-bottom:12px}
+.panel-head{padding:15px 30px 15px 17px;font-size:16px;color:var(--text);font-weight:600;
+  letter-spacing:-.01em;cursor:pointer;list-style:none;position:relative}
+.panel-head::-webkit-details-marker{display:none}
+.panel-head:active{opacity:.6}
+.panel-head span{display:block;color:var(--dim);font-size:12px;font-weight:400;margin-top:3px;
+  font-variant-numeric:tabular-nums}
+.panel-head::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;
+  border-right:1.8px solid var(--dim);border-bottom:1.8px solid var(--dim);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+.panel[open] .panel-head::after{transform:translateY(-30%) rotate(-135deg)}
+.panel[open] .panel-head{border-bottom:.5px solid var(--hair)}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px;font-variant-numeric:tabular-nums}
+thead th{position:sticky;top:0;background:var(--elev);text-align:left;padding:10px 14px;font-size:11px;
+  color:var(--dim);font-weight:500;border-bottom:.5px solid var(--hair);white-space:nowrap}
 thead th.num{text-align:right}
-tbody td{padding:11px 12px;white-space:nowrap;border-bottom:1px solid var(--border)}
-td.num{text-align:right;font-family:'Orbitron',monospace}
-.legend{font-size:12px;color:var(--muted);line-height:1.8;padding:12px 18px 0}
-.legend b{color:var(--text)}
+tbody td{padding:12px 14px;white-space:nowrap;border-bottom:.5px solid var(--hair)}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right}
+
+/* ── settings, folded away ── */
+#slip-wrap{margin:0 var(--pad) 4px;background:var(--elev);border-radius:16px;overflow:hidden}
+#slip-wrap>summary{padding:15px 30px 15px 17px;font-size:16px;font-weight:600;color:var(--text);
+  cursor:pointer;list-style:none;position:relative}
+#slip-wrap>summary::-webkit-details-marker{display:none}
+#slip-wrap>summary::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;
+  border-right:1.8px solid var(--dim);border-bottom:1.8px solid var(--dim);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+#slip-wrap[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+#slip-wrap[open]>summary{border-bottom:.5px solid var(--hair)}
+#slip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;padding:16px 17px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:11px;color:var(--dim)}
+.fld input,.fld select{background:var(--bg3);border:none;border-radius:10px;color:var(--text);
+  padding:10px 11px;font-family:var(--num);font-size:15px;font-weight:500;width:100%}
+.fld select{font-family:var(--sys)}
+.fld.chk{grid-column:1/-1;flex-direction:row;align-items:center;gap:10px}
+.fld.chk input{width:auto;accent-color:var(--green);transform:scale(1.15)}
+.fld.chk label{font-size:13px;color:var(--muted)}
+
+/* ── misc ── */
+.legend{font-size:13px;color:var(--muted);line-height:1.68;padding:0 var(--pad)}
+.legend b{color:var(--text);font-weight:600}
 .spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.empty{padding:40px 18px;text-align:center;color:var(--dim);font-size:12px}
+.empty{padding:40px var(--pad);text-align:center;color:var(--dim);font-size:13px}
 </style>
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 7 ·
+  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">Hit parlays + the ladder · Build 8 ·
     <span id="buildsha">8ccf531</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
@@ -159,44 +269,58 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
 
+<details id="slip-wrap"><summary>⚙️ Bet slip &amp; filters</summary>
 <div id="slip">
-  <div class="fld"><label>DOUBLE PRICE (AMERICAN)</label><input id="price" type="number" step="5" value="-175"></div>
-  <div class="fld"><label>BANKROLL ($)</label><input id="bank" type="number" step="10" value="1000"></div>
-  <div class="fld"><label>$ PER EDGE PT</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50"></div>
-  <div class="fld"><label>LEG PRICE (HIT PROP)</label><input id="legPrice" type="number" step="5" value="-250"></div>
-  <div class="fld"><label>BET BAR (EDGE PTS)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
-  <div class="fld"><label>MIN SPOT (PTS)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
-  <div class="fld"><label>RANK BY</label><select id="sortBy">
+  <div class="fld"><label>Double price (American)</label><input id="price" type="number" step="5" value="-175"></div>
+  <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="10" value="1000"></div>
+  <div class="fld"><label>$ per edge point</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50"></div>
+  <div class="fld"><label>Leg price (hit prop)</label><input id="legPrice" type="number" step="5" value="-250"></div>
+  <div class="fld"><label>Bet bar (edge pts)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
+  <div class="fld"><label>Min spot (pts)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
+  <div class="fld"><label>Rank by</label><select id="sortBy">
     <option value="edge">Edge over price</option>
     <option value="spot">Softest spot</option>
     <option value="prob">Raw probability</option>
   </select></div>
   <div class="fld chk"><input id="onlyPosted" type="checkbox"><label for="onlyPosted">Confirmed lineups only</label></div>
   <div class="fld chk"><input id="onlyTeam" type="checkbox"><label for="onlyTeam">Same-team pairs only (correlation edge)</label></div>
-</div>
+</div></details>
 
-<div class="section-h" style="color:var(--purple)">🪜 THE LADDER — one bet, one hit, best play of the day <span id="ldNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
-  <small>A single "to record a hit" leg — the highest-edge hitter on the board — staked from a $100 account. Win and the whole return rides tomorrow; five straight closes the cycle and the money comes off the table. A miss ends the cycle and the next one starts 25&#37; bigger. Only the cycle's seed is ever your money, so a day-4 miss costs exactly what a day-1 miss costs. The pick stays blank until it locks one hour before the day's first pitch, then shows the rung that was actually published to the repo. Read the red panel before you run it.</small></div>
+<div class="section-h">
+  <div class="sh-row"><h2>🪜 The Ladder</h2><span class="sh-note" id="ldNote"></span></div>
+  <details class="disc"><summary>How the ladder works</summary><div class="disc-b">
+    <p>One bet a day: a single <b>“to record a hit”</b> leg — the highest-edge hitter on the whole slate — staked from a $100 account.</p>
+    <p>Win and the entire return rides the next day. Five straight closes the cycle and the money comes off the table, with the next cycle seeded at 10% of the grown account. Any miss ends the cycle there and the next one starts <b>25% bigger</b>.</p>
+    <p>Only the cycle's <b>seed</b> is ever your money — everything above it is the book's — so a miss on day four costs exactly what a miss on day one costs. That is the one thing separating this from a martingale.</p>
+    <p>The pick stays blank until it locks <b>one hour before the day's first pitch</b>, then shows the rung actually published to the repo, with its publish time beside first pitch. Read the red panel on the card before you run it.</p>
+  </div></details>
+</div>
 <div id="ladder"></div>
 
-<div class="section-h">🎲 BET CARDS — one per game clearing the bet bar <span id="cardsNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
-  <small>A card for every game whose double beats your price by more than the bar, and nothing else — the same rule the Telegram alerts use. The likeliest double is usually the most heavily bet and the worst priced; what pays is the gap between our number and the book's.</small></div>
+<div class="section-h">
+  <div class="sh-row"><h2>🎲 Bet Cards</h2><span class="sh-note" id="cardsNote"></span></div>
+  <details class="disc"><summary>Why these games and no others</summary><div class="disc-b">
+    <p>A card for every game whose double beats your price by more than the bet bar, and nothing else — the same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
+    <p>The likeliest double is usually the most heavily bet and the worst priced. What pays is the gap between our number and the book's, which is why these are ranked by <b>edge</b> rather than by probability.</p>
+  </div></details>
+</div>
 <div class="cards" id="cards"></div>
 
 
+<div class="section-h"><div class="sh-row"><h2>The full slate</h2><span class="sh-note">tap to open</span></div></div>
 <div class="wrap">
-  <div class="panel">
-    <div class="panel-head">🔥 SOFTEST SPOTS — every lineup on the slate, worst arm first <span id="spotsNote"></span></div>
+  <details class="panel">
+    <summary class="panel-head">🔥 Softest spots <span id="spotsNote"></span></summary>
     <div class="table-wrap"><table><thead><tr id="shead"></tr></thead><tbody id="sbody"></tbody></table></div>
-  </div>
-  <div class="panel">
-    <div class="panel-head">📋 BEST PAIR IN EVERY GAME TODAY <span id="pairsNote"></span></div>
+  </details>
+  <details class="panel">
+    <summary class="panel-head">📋 Best pair in every game <span id="pairsNote"></span></summary>
     <div class="table-wrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
-  </div>
-  <div class="panel">
-    <div class="panel-head">🎯 SINGLE HIT PROPS — one leg, one margin <span id="legsNote"></span></div>
+  </details>
+  <details class="panel">
+    <summary class="panel-head">🎯 Single hit props <span id="legsNote"></span></summary>
     <div class="table-wrap"><table><thead><tr id="lhead"></tr></thead><tbody id="lbody"></tbody></table></div>
-  </div>
+  </details>
 </div>
 <div class="legend" id="legend"></div>
 
@@ -403,7 +527,7 @@ function leg(c){
     <div class="leg-info">
       <div class="leg-name">${c.name}${lu}${plt}${rec}</div>
       <div class="leg-meta">${c.teamName} · ${c.pos||""} · ${av(c.avg)} AVG → <b style="color:var(--text)">${av(c.projAvg)}</b> proj ${form}<br>
-      ${sp}<br><span style="color:var(--dim)">${c.eAb.toFixed(2)} exp AB · SP goes ≈${Math.round(c.spBf)} batters</span></div>
+      ${sp}<br><span style="color:var(--dim)">${c.eAb.toFixed(2)} exp AB${isFinite(c.spBf)?` · SP goes ≈${Math.round(c.spBf)} batters`:""}</span></div>
     </div>
     <div class="leg-prob">${pct(c.p)}<small>hit</small></div>
   </div>`;
@@ -430,18 +554,18 @@ function card(pr,i){
       <div class="bet-game">${pr.teams}<br><span style="color:var(--dim)">${pr.venue||""} · PF ${pr.pf}</span></div>
       <div class="bet-str">
         <div class="v">${ev?(edgePts(ev)>=0?"+":"")+edgePts(ev).toFixed(1):"—"}</div>
-        <div class="l">EDGE PTS</div>
+        <div class="l">Edge pts</div>
         <div class="stake">${size>0?money(size):"—"}</div>
-        <div class="stake-l">${size>0?`BET · $${setting("perEdge").toFixed(2)}/PT`:"NO BET"}</div>
+        <div class="stake-l">${size>0?`Bet · $${setting("perEdge").toFixed(2)}/pt`:"No bet"}</div>
       </div>
     </div>
     ${leg(pr.a)}${leg(pr.b)}
     <div class="needs">
-      BET ONLY IF YOUR BOOK PAYS BETTER THAN
+      Bet only if your book pays better than
       <b>${M.amOdds(pr.prob - betBar())}</b>
       <span style="font-size:10px;color:var(--dim)">model ${pct(pr.prob)} · fair ${M.amOdds(pr.prob)} · needs ${(betBar()*100).toFixed(1)}pts of margin</span>
       <div class="pricebox">
-        <span>YOUR PRICE</span>
+        <span>Your price</span>
         <input type="number" step="5" value="${px}" onchange="setGamePrice(${pr.gk},this.value)">
       </div>
     </div>
@@ -579,10 +703,10 @@ function renderLadder(){
   const byRung={}; mine_.forEach(r=>{byRung[r.rung]=r;});
   const steps=Array.from({length:C.rungs},(_,i)=>{
     const d=i+1, done=byRung[d];
-    if(done)return `<div class="ld-step done"><div class="d">DAY ${d} ✓</div>
+    if(done)return `<div class="ld-step done"><div class="d">Day ${d} ✓</div>
       <div class="v" style="color:var(--green)">${money(done.stake)}</div>
       <div class="o">at ${done.price>0?"+":""}${done.price}</div></div>`;
-    if(d===st.rung)return `<div class="ld-step now"><div class="d">DAY ${d} · TODAY</div>
+    if(d===st.rung)return `<div class="ld-step now"><div class="d">Day ${d} · today</div>
       <div class="v" style="color:var(--yellow)">${money(stake)}</div>
       <div class="o">${waiting?"price set at lock":`at ${todayOdds>0?"+":""}${todayOdds}`}</div></div>`;
     // Before the lock there is no pick and therefore no price, so tomorrow is
@@ -590,19 +714,19 @@ function renderLadder(){
     // blank. Showing $14.00 here off the slip's assumed -250 would be exactly
     // the invented projection this card exists to avoid.
     if(d===st.rung+1)return waiting
-      ? `<div class="ld-step"><div class="d">DAY ${d}</div>
+      ? `<div class="ld-step"><div class="d">Day ${d}</div>
          <div class="v" style="color:var(--dim)">—</div>
          <div class="o">needs today's price</div></div>`
-      : `<div class="ld-step next"><div class="d">DAY ${d} · IF TODAY HITS</div>
+      : `<div class="ld-step next"><div class="d">Day ${d} · if today hits</div>
          <div class="v" style="color:var(--blue)">${money(ret)}</div>
          <div class="o">then price it again</div></div>`;
-    return `<div class="ld-step"><div class="d">DAY ${d}</div>
+    return `<div class="ld-step"><div class="d">Day ${d}</div>
       <div class="v" style="color:var(--dim)">—</div>
       <div class="o">priced on the day</div></div>`;
   }).join("");
 
   const oddsBox=`<div class="ld-odds">
-    <label for="ldOdds">ODDS YOU GOT ON THIS PICK</label>
+    <label for="ldOdds">Odds you got on this pick</label>
     <input id="ldOdds" type="number" step="5" value="${todayOdds}"
       onchange="setLadderOdds('${today}',this.value)">
     <div class="hint">${typed?`Your price. ${money(stake)} returns <b>${money(ret)}</b>.`
@@ -610,11 +734,11 @@ function renderLadder(){
   </div>`;
 
   const nextBox=`<div class="ld-next">
-    <div class="ld-nb win"><div class="l">IF IT HITS → ${closes?"CYCLE CLOSES, NEXT SEED":"TOMORROW'S BET"}</div>
+    <div class="ld-nb win"><div class="l">If it hits → ${closes?"cycle closes, next seed":"tomorrow's bet"}</div>
       <div class="v">${money(nextIfWin)}</div>
       ${closes?`<div class="s">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
               :`<div class="s">still only ${money(st.base)} of your money at risk</div>`}</div>
-    <div class="ld-nb lose"><div class="l">IF IT MISSES → NEXT SEED</div>
+    <div class="ld-nb lose"><div class="l">If it misses → next seed</div>
       <div class="v">${money(nextIfLose)}</div>
       <div class="s">cycle ends, costs ${money(st.base)} — the seed, whatever day it lands</div></div>
   </div>`;
@@ -636,10 +760,13 @@ function renderLadder(){
 
   const waitHtml=waiting?`
     <div class="ld-pick ld-wait">
-      <div class="l">PICK LOCKS IN</div>
+      <div class="l">Pick locks in</div>
       <div class="v" id="ldClock">—:—:—</div>
-      <div class="s">One hour before the first pitch of the day (${etTime(lk.first)} ET), chosen from every game on the slate — projected lineups included, with each bat's chance of actually starting already priced into his number.
-      It stays blank until then on purpose: the board re-ranks every time a lineup posts and scratch risk resolves, and a pick that quietly swaps itself is not a pick. The lock is the commitment.</div>
+      <div class="s">One hour before first pitch (${etTime(lk.first)} ET), from every game on the slate.</div>
+      <details class="disc ld-disc"><summary>Why it's blank</summary><div class="disc-b">
+        The pick is chosen from every game — projected lineups included, with each bat's chance of actually starting already priced into his number.
+        It stays blank until the lock on purpose: the board re-ranks every time a lineup posts and scratch risk resolves, and a pick that quietly swaps itself is not a pick. The lock is the commitment.
+      </div></details>
     </div>`:"";
 
   const pickHtml=pick?`
@@ -658,14 +785,18 @@ function renderLadder(){
       ${pick.c.posted?"":`<div class="sub" style="color:var(--yellow);margin-top:5px">⚠ Lineup not posted — projected #${pick.c.slot}, ${pct(pick.c.startProb)} to start. That chance is already multiplied into the ${pct(pick.c.p)} above, so this competes with confirmed bats on equal terms.</div>`}
     </div>`:'<div class="ld-pick"><div class="sub">No board loaded.</div></div>';
 
-  const warn=risk?`<div class="ld-warn">
-    <b>What this actually is.</b> Five legs at ${pct(p)}${waiting?" (a typical top leg — tonight's is not chosen yet)":""} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally a large win — <b>${money(risk.cycleProfit)}</b> <i>if</i> all five legs priced like today's, which is a what-if and not a forecast: only tomorrow's stake is a real number. Do not size it as though it wins often.
-  </div>`:"";
+  // The warning is not tucked away: the summary line states the completion
+  // rate and the ruin chance, which are the two numbers that should stop
+  // someone. Only the working is folded, because a wall of red text on every
+  // load is how a disclosure gets scrolled past instead of read.
+  const warn=risk?`<details class="ld-warn"><summary>Only <b>${(risk.cycleWin*100).toFixed(1)}%</b> of cycles complete, and there is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the account dry. Read this.</summary>
+    <div class="ld-warn-b"><b>What this actually is.</b> Five legs at ${pct(p)}${waiting?" (a typical top leg — tonight's is not chosen yet)":""} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally a large win — <b>${money(risk.cycleProfit)}</b> <i>if</i> all five legs priced like today's, which is a what-if and not a forecast: only tomorrow's stake is a real number. Do not size it as though it wins often.
+  </div></details>`:"";
 
   // Every settled rung's price is editable too — get a different number three
   // days ago and the whole chain above it is wrong until you say so.
   const histHtml=st.rows.length?`<div class="table-wrap"><table class="ld-hist">
-    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>RESULT</th><th>P&amp;L</th><th>ACCOUNT</th></tr></thead>
+    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>RESULT</th><th>P&amp;L</th><th>Account</th></tr></thead>
     <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
       return out.slice(-12).reverse().map(({r,acc})=>`<tr>
         <td style="color:var(--dim)">${r.date}</td>
@@ -683,18 +814,18 @@ function renderLadder(){
 
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
-      <div><div class="ld-stake">${money(stake)}<small>TODAY · CYCLE ${st.cycle} · DAY ${st.rung} OF ${C.rungs}</small></div>${waiting?"":oddsBox}</div>
+      <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${waiting?"":oddsBox}</div>
       ${locked?lockedHtml:waiting?waitHtml:pickHtml}
     </div>
     ${waiting?"":nextBox}
     <div class="ld-steps">${steps}</div>
     <div class="ld-strip">
-      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">ACCOUNT</div></div>
+      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account</div></div>
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${st.pl>=0?"+":""}${money(st.pl)}</div><div class="l">P&amp;L</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">YOUR MONEY AT RISK</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--purple)">${money(house)}</div><div class="l">HOUSE MONEY RIDING</div></div>
-      <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">CYCLES DONE–BUST</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--red)">${money(st.maxDD)}</div><div class="l">MAX DRAWDOWN</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">Your money at risk</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--purple)">${money(house)}</div><div class="l">House money riding</div></div>
+      <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">Cycles done–bust</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--red)">${money(st.maxDD)}</div><div class="l">Max drawdown</div></div>
     </div>
     ${st.canFund?"":`<div class="ld-warn"><b>The account cannot fund this rung.</b> ${money(stake)} is more than the ${money(st.account)} left. That is where the escalation ends — the ladder has no next move that is not a deposit.</div>`}
     ${warn}
@@ -778,20 +909,30 @@ function render(){
     </tr>`;}).join("");
 
   document.getElementById("legend").innerHTML=`
-  <b>How a leg is priced.</b> A hit needs two things: don't strike out, then find grass. Both are estimated separately — strikeout rate is reliable after ~70 at-bats, hit-on-contact needs ~550 — and each is combined with the pitcher's matching rate and the league's through the <b>odds ratio (log5)</b>. Every input is regressed toward league average by its own stabilisation point, so a hot fortnight nudges the number instead of hijacking it.<br>
-  <b>Then at-bats, which is where the real edge is.</b> Expected plate appearances come from an inning model — three outs an inning, and everyone who reaches buys the lineup another turn — split by <b>lineup slot</b>. Leadoff sees ~4.65 PA, the 9-hole ~3.78. That gap alone is worth ~8 points of hit probability for the identical hitter. Walks are then subtracted per hitter, so a patient bat correctly gets fewer swings at a hit.<br>
-  <b>The bullpen is modelled.</b> For each plate appearance we compute the chance the starter is still out there from his batters-faced-per-start, add the third-time-through bonus, and hand the rest to the opponent's actual relief corps. Facing an ace with a leaky pen is not the same bet as facing an ace with a lockdown pen.<br>
-  <b>Pairs are correlated, and that is the edge.</b> Two hitters in one game are not independent, so P1×P2 is the wrong number — it is too low. A Gaussian copula (ρ ${M.CFG.rhoTeammate} teammates, ${M.CFG.rhoOpponent} opponents) adds the <b style="color:var(--purple)">+pts</b> shown on each card. Any book grading the legs independently is pricing a same-team double too long.<br>
-  <b>Scratch risk is priced.</b> Confirmed in the lineup is <span class="tag ok">✓LU</span>; otherwise the leg is multiplied by his chance of actually starting, because a scratch is a guaranteed loss, not a coin flip.<br>
-  <b>Targeting the spot, not just the hitter.</b> Every lineup gets three readings, each in points of hit probability against a league-neutral leg. <b>SOFT ARM</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are. <b>GOOD BATS</b> does the reverse — this lineup against league-average opposition. <b>SPOT</b> is the two together: what a typical hitter in this lineup actually does tonight. Ace to batting-practice is worth about 11 points on a single leg, so the spot is usually a bigger lever than which hitter you pick out of it.<br>
-  <b>Watch the bullpen before you commit.</b> A bad starter gets chased, which means over half the plate appearances come against relief. The same weak starter is worth <b>+5.3pts</b> in front of a leaky pen and only <b>+3.6pts</b> in front of an elite one — the THEN PEN column is the share of the night the bullpen works and its on-base allowed. A soft start behind a lockdown pen is a trap.<br>
-  <b>BET</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $2.50), so a +5.5pt game stakes $13.75 and a +2.0pt game stakes $5.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.<br>
-  <b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and a $100 account funds only a handful of them. Both the completion rate and the chance of running the account dry are computed live on the card. The rungs are not a fixed $10/$14/$19.60 sequence — that was a -250 assumption. Type the price the book is actually showing into <b>ODDS YOU GOT</b> and every rung ahead, the next bet, and the whole risk panel recompute off it. Past rungs are editable in the same way, so a price you got three days ago corrects the chain above it. Rank it by the red panel, not by the payout.<br>
-  <b>Singles usually beat the double.</b> A two-leg parlay pays the book's margin twice; a single hit prop pays it once. Two legs at 78% and 76% make a 60.1% double — against a −158 parlay needing 61.24% that is a losing bet, while the same two legs at −250 each return +9.2% and +6.4%. The SINGLE HIT PROPS table below prices every hitter against your leg price and sorts by edge; it is often where the only real bet on the slate is.<br>
-  <b>A card per qualifying game.</b> Every game whose double clears the bet bar (default +2.0 edge points) gets its own card, however many that is — no top-N cap — and games below the bar get none. That is the same test the Telegram alerter applies, so the board and your phone cannot disagree about what counts as a bet. The table underneath still lists every game on the slate, bar or no bar.<br>
-  <b>Ranked by EDGE, not by probability</b> — true probability minus your price's breakeven. Stake is <b>quarter-Kelly</b>: full Kelly on a model this uncertain is how you go broke while being right.<br>
-  <span style="color:var(--dim)">Build 3 removed Build 2's hard gates (.270 AVG, 200+ AB, tough-SP exclusion). They were doing the ranking's job badly and pinning the board to the same ~60 names every day. The model sorts the pool now.</span><br>
-  ⚠ Model estimate — not betting advice. Bet only what you can afford to lose.`;
+  <details class="disc"><summary>How a hitter's number is built</summary><div class="disc-b">
+    <p><b>How a leg is priced.</b> A hit needs two things: don't strike out, then find grass. Both are estimated separately — strikeout rate is reliable after ~70 at-bats, hit-on-contact needs ~550 — and each is combined with the pitcher's matching rate and the league's through the <b>odds ratio (log5)</b>. Every input is regressed toward league average by its own stabilisation point, so a hot fortnight nudges the number instead of hijacking it.</p>
+    <p><b>Then at-bats, which is where the real edge is.</b> Expected plate appearances come from an inning model — three outs an inning, and everyone who reaches buys the lineup another turn — split by <b>lineup slot</b>. Leadoff sees ~4.65 PA, the 9-hole ~3.78. That gap alone is worth ~8 points of hit probability for the identical hitter. Walks are then subtracted per hitter, so a patient bat correctly gets fewer swings at a hit.</p>
+    <p><b>The bullpen is modelled.</b> For each plate appearance we compute the chance the starter is still out there from his batters-faced-per-start, add the third-time-through bonus, and hand the rest to the opponent's actual relief corps. Facing an ace with a leaky pen is not the same bet as facing an ace with a lockdown pen.</p>
+    <p><b>Scratch risk is priced.</b> Confirmed in the lineup is <span class="tag ok">✓LU</span>; otherwise the leg is multiplied by his chance of actually starting, because a scratch is a guaranteed loss, not a coin flip.</p>
+  </div></details>
+  <details class="disc"><summary>Where the edge comes from</summary><div class="disc-b">
+    <p><b>Pairs are correlated, and that is the edge.</b> Two hitters in one game are not independent, so P1×P2 is the wrong number — it is too low. A Gaussian copula (ρ ${M.CFG.rhoTeammate} teammates, ${M.CFG.rhoOpponent} opponents) adds the <b style="color:var(--purple)">+pts</b> shown on each card. Any book grading the legs independently is pricing a same-team double too long.</p>
+    <p><b>Singles usually beat the double.</b> A two-leg parlay pays the book's margin twice; a single hit prop pays it once. Two legs at 78% and 76% make a 60.1% double — against a −158 parlay needing 61.24% that is a losing bet, while the same two legs at −250 each return +9.2% and +6.4%. The SINGLE HIT PROPS table below prices every hitter against your leg price and sorts by edge; it is often where the only real bet on the slate is.</p>
+    <p><b>Ranked by EDGE, not by probability.</b> — true probability minus your price's breakeven. Stake is <b>quarter-Kelly</b>: full Kelly on a model this uncertain is how you go broke while being right.</p>
+  </div></details>
+  <details class="disc"><summary>Reading the spot</summary><div class="disc-b">
+    <p><b>Targeting the spot, not just the hitter.</b> Every lineup gets three readings, each in points of hit probability against a league-neutral leg. <b>SOFT ARM</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are. <b>GOOD BATS</b> does the reverse — this lineup against league-average opposition. <b>SPOT</b> is the two together: what a typical hitter in this lineup actually does tonight. Ace to batting-practice is worth about 11 points on a single leg, so the spot is usually a bigger lever than which hitter you pick out of it.</p>
+    <p><b>Watch the bullpen before you commit.</b> A bad starter gets chased, which means over half the plate appearances come against relief. The same weak starter is worth <b>+5.3pts</b> in front of a leaky pen and only <b>+3.6pts</b> in front of an elite one — the THEN PEN column is the share of the night the bullpen works and its on-base allowed. A soft start behind a lockdown pen is a trap.</p>
+  </div></details>
+  <details class="disc"><summary>Staking</summary><div class="disc-b">
+    <p><b>BET.</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $2.50), so a +5.5pt game stakes $13.75 and a +2.0pt game stakes $5.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.</p>
+    <p><b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and a $100 account funds only a handful of them. Both the completion rate and the chance of running the account dry are computed live on the card. The rungs are not a fixed $10/$14/$19.60 sequence — that was a -250 assumption. Type the price the book is actually showing into <b>ODDS YOU GOT</b> and every rung ahead, the next bet, and the whole risk panel recompute off it. Past rungs are editable in the same way, so a price you got three days ago corrects the chain above it. Rank it by the red panel, not by the payout.</p>
+  </div></details>
+  <details class="disc"><summary>What changed, and the caveat</summary><div class="disc-b">
+    <p><b>A card per qualifying game.</b> Every game whose double clears the bet bar (default +2.0 edge points) gets its own card, however many that is — no top-N cap — and games below the bar get none. That is the same test the Telegram alerter applies, so the board and your phone cannot disagree about what counts as a bet. The table underneath still lists every game on the slate, bar or no bar.</p>
+    <p><span style="color:var(--dim)">Build 3 removed Build 2's hard gates (.270 AVG, 200+ AB, tough-SP exclusion). They were doing the ranking's job badly and pinning the board to the same ~60 names every day. The model sorts the pool now.</span></p>
+  </div></details>
+  <p style="font-size:12px;color:var(--dim);padding:14px 0 0;line-height:1.5">⚠ Model estimate — not betting advice. Bet only what you can afford to lose.</p>`;
 }
 
 load();
