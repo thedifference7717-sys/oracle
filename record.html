@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#05050E">
+<meta name="theme-color" content="#000000">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>SportsAI · Verified Record</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,44 +12,93 @@
 <link rel="icon" type="image/svg+xml" href="sportsai.svg">
 <link rel="apple-touch-icon" href="sportsai-180.png">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--purple:#A78BFA}
+/* Same design system as the board — see index.html. System stack instead of
+   webfonts, tabular figures instead of a monospace face, Apple's dark palette,
+   hairline separators, and colour used only where it carries meaning. Every
+   class name the render code emits is unchanged. */
+:root{
+  --bg:#000;--bg2:#1C1C1E;--bg3:#2C2C2E;--elev:#1C1C1E;
+  --border:rgba(84,84,88,.6);--hair:rgba(84,84,88,.35);
+  --text:#FFF;--muted:rgba(235,235,245,.6);--dim:rgba(235,235,245,.35);
+  --green:#30D158;--red:#FF453A;--yellow:#FFD60A;--blue:#0A84FF;--purple:#BF5AF2;
+  --sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,Roboto,sans-serif;
+  --num:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --pad:20px;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 48px)}
-#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A1A16,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.brand{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:.28em;color:var(--purple);opacity:.85;margin-bottom:2px}
-.logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.04em;color:#D6FFE9;text-shadow:0 0 14px #14F19566}
-.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
-.controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
-.navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
-.wrap{padding:16px 18px}
-.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
-.stat{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
-.stat .v{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;line-height:1}
-.stat .l{font-size:9px;color:var(--dim);letter-spacing:.08em;margin-top:5px}
-.verdict{margin-top:14px;padding:14px 16px;border-radius:14px;border:1px solid var(--yellow);background:#2A2100;color:var(--yellow);font-size:13px;line-height:1.6}
-.verdict.good{border-color:var(--green);background:#052417;color:var(--green)}
-.verdict b{font-family:'Orbitron',monospace}
-.note{margin-top:14px;padding:13px 15px;border:1px solid var(--border);background:var(--bg2);border-radius:14px;font-size:12px;color:var(--muted);line-height:1.7}
-.note b{color:var(--text)}
-.note a{color:var(--blue)}
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:16px}
-.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.05em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.panel-head span{font-family:'Share Tech Mono',monospace;color:var(--dim);font-size:11px;letter-spacing:0}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
-thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:10px 11px;font-size:10px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);white-space:nowrap}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sys);
+  -webkit-font-smoothing:antialiased;min-height:100%;font-size:15px;line-height:1.5}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 56px)}
+b,strong{font-weight:600}
+
+#topbar{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.72);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:.5px solid var(--border);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) var(--pad) 12px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--purple);margin-bottom:1px}
+.logo{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.logo-sub{font-size:11px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums}
+#buildsha{color:var(--dim);font-family:var(--num);font-size:10px}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.navlink{padding:8px 13px;background:var(--bg3);border:none;border-radius:980px;color:var(--text);
+  font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
+.navlink:active{opacity:.6}
+
+.wrap{padding:18px var(--pad) 0}
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{background:var(--elev);border:none;border-radius:16px;padding:16px 14px;text-align:center}
+.stat .v{font-size:27px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat .l{font-size:11px;color:var(--dim);margin-top:6px;line-height:1.35}
+
+.verdict{margin-top:14px;padding:15px 16px;border-radius:14px;border:none;
+  background:rgba(255,214,10,.12);color:#FFE66B;font-size:13px;line-height:1.62}
+.verdict.good{background:rgba(48,209,88,.14);color:#7BE89A}
+.verdict b{font-weight:600;color:#fff}
+.verdict.good b{color:#fff}
+
+.note{margin-top:14px;padding:15px 16px;border:none;background:var(--elev);border-radius:16px;
+  font-size:13px;color:var(--muted);line-height:1.62}
+.note b{color:var(--text);font-weight:600}
+.note a{color:var(--blue);text-decoration:none}
+.note.era{background:rgba(48,209,88,.12);color:rgba(220,255,230,.85)}
+.note.era b{color:#fff}
+
+/* disclosure, matching the board */
+.disc{margin-top:14px;background:var(--elev);border-radius:16px;overflow:hidden}
+.disc>summary{list-style:none;cursor:pointer;padding:15px 30px 15px 16px;position:relative;display:block;
+  font-size:15px;color:var(--text);font-weight:600}
+.disc>summary::-webkit-details-marker{display:none}
+.disc>summary::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;
+  border-right:1.8px solid var(--dim);border-bottom:1.8px solid var(--dim);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+.disc[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+.disc[open]>summary{border-bottom:.5px solid var(--hair)}
+.disc>summary:active{opacity:.6}
+.disc-b{padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.62}
+.disc-b b{color:var(--text);font-weight:600}
+.disc-b a{color:var(--blue);text-decoration:none}
+.disc-b p+p{margin-top:11px}
+
+.panel{background:var(--elev);border:none;border-radius:16px;overflow:hidden;margin-top:14px}
+.panel-head{padding:15px 17px;border-bottom:.5px solid var(--hair);font-size:16px;color:var(--text);
+  font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.panel-head span{color:var(--dim);font-size:12px;font-weight:400;font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px;font-variant-numeric:tabular-nums}
+thead th{position:sticky;top:0;background:var(--elev);text-align:left;padding:10px 14px;font-size:11px;
+  color:var(--dim);font-weight:500;border-bottom:.5px solid var(--hair);white-space:nowrap}
 thead th.num{text-align:right}
-tbody td{padding:10px 11px;border-bottom:1px solid var(--border);white-space:nowrap}
-td.num{text-align:right;font-family:'Orbitron',monospace}
-.res{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
-.res.won{background:#14F19522;color:var(--green)}
-.res.lost{background:#FF4D6D22;color:var(--red)}
-.res.open{background:#60A5FA22;color:var(--blue)}
-.lead{font-size:10px;color:var(--dim)}
-.empty{padding:40px 18px;text-align:center;color:var(--dim);font-size:12px}
+tbody td{padding:12px 14px;border-bottom:.5px solid var(--hair);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right}
+.res{font-size:11px;font-weight:600;padding:3px 9px;border-radius:7px;letter-spacing:.02em}
+.res.won{background:rgba(48,209,88,.16);color:var(--green)}
+.res.lost{background:rgba(255,69,58,.16);color:var(--red)}
+.res.open{background:rgba(10,132,255,.16);color:var(--blue)}
+.lead{font-size:11px;color:var(--dim)}
+.empty{padding:48px var(--pad);text-align:center;color:var(--dim);font-size:13px}
 .spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
@@ -175,7 +224,7 @@ function render(L){
   const C=cash(bets);
   const era = new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
   $("body").innerHTML=`
-    <div class="note" style="border-color:#14F19555">
+    <div class="note era">
       <b>This record starts ${era} — the day the model was rebuilt.</b> ${ERA_NOTE}.
       Earlier results came from a materially different system and are not shown, not averaged in, and not counted here;
       this page reports the current model and nothing else. Every row below was committed to a public repository
@@ -185,18 +234,18 @@ function render(L){
     <div class="hero">
       <div class="stat" style="border-color:${C.pnl>=0?'#14F19566':'#FF4D6D66'}">
         <div class="v" style="font-size:30px;color:${C.pnl>=0?'var(--green)':'var(--red)'}">${money(C.pnl)}</div>
-        <div class="l">NET PROFIT · REAL STAKES</div></div>
-      <div class="stat"><div class="v" style="color:${C.roi>=0?'var(--green)':'var(--red)'}">${C.done.length?(C.roi>=0?"+":"")+(C.roi*100).toFixed(1)+"%":"—"}</div><div class="l">RETURN ON TURNOVER</div></div>
-      <div class="stat"><div class="v">${money(C.staked)}</div><div class="l">TOTAL STAKED</div></div>
-      <div class="stat"><div class="v">${S.w}-${S.l}</div><div class="l">RECORD</div></div>
-      <div class="stat"><div class="v" style="color:${S.pw>=0.5?'var(--green)':'var(--red)'}">${S.done.length?pct(S.pw):"—"}</div><div class="l">WIN RATE</div></div>
-      <div class="stat"><div class="v" style="color:var(--blue)">${S.open}</div><div class="l">OPEN</div></div>
+        <div class="l">Net profit · real stakes</div></div>
+      <div class="stat"><div class="v" style="color:${C.roi>=0?'var(--green)':'var(--red)'}">${C.done.length?(C.roi>=0?"+":"")+(C.roi*100).toFixed(1)+"%":"—"}</div><div class="l">Return on turnover</div></div>
+      <div class="stat"><div class="v">${money(C.staked)}</div><div class="l">Total staked</div></div>
+      <div class="stat"><div class="v">${S.w}-${S.l}</div><div class="l">Record</div></div>
+      <div class="stat"><div class="v" style="color:${S.pw>=0.5?'var(--green)':'var(--red)'}">${S.done.length?pct(S.pw):"—"}</div><div class="l">Win rate</div></div>
+      <div class="stat"><div class="v" style="color:var(--blue)">${S.open}</div><div class="l">Open</div></div>
     </div>
 
     <div class="panel">
-      <div class="panel-head">💵 THE MONEY <span>stakes scale with edge, so the win rate alone does not decide this</span></div>
+      <div class="panel-head">💵 The money <span>stakes scale with edge, so the win rate alone does not decide this</span></div>
       <div class="table-wrap"><table>
-        <thead><tr><th>MEASURE</th><th class="num">VALUE</th><th>WHAT IT MEANS</th></tr></thead>
+        <thead><tr><th>Measure</th><th class="num">Value</th><th>What it means</th></tr></thead>
         <tbody>
           <tr><td>Net profit</td><td class="num"><b style="color:${C.pnl>=0?'var(--green)':'var(--red)'}">${money(C.pnl)}</b></td>
               <td class="lead">Every settled bet at the stake and price it was published with.</td></tr>
@@ -229,20 +278,21 @@ function render(L){
            The win rate above carries the same caveat: ±${(S.seW*100).toFixed(1)} points at ${S.done.length} settled bets.`}
     </div>
 
-    <div class="note">
-      <b>Why this record is checkable.</b> Every pick is written to
+    <details class="disc"><summary>Why this record is checkable</summary><div class="disc-b">
+      <p>Every pick is written to
       <a href="https://github.com/thedifference7717-sys/oracle/blob/main/data/ledger.json">data/ledger.json</a>
-      and committed the moment it is sent — before the game starts. The commit is timestamped by GitHub, not by us, so the
-      <a href="https://github.com/thedifference7717-sys/oracle/commits/main/data/ledger.json">file's history</a>
-      independently proves each pick predated its first pitch. The PUBLISHED and FIRST PITCH columns below are in every row so you can check any of them.
-      Results are graded from the official MLB boxscore and written back into the same row; nothing is ever deleted or rewritten.<br>
-      <b>Money</b> is real: each bet's stake is recorded when it is published (edge points × ${money(DEFAULT_RATE)}) and never
-      recomputed afterwards, so changing the rate cannot rewrite history. Returns use the price published with the bet.
-      BALANCE is the running total in order of publication, so any row can be traced.
-    </div>
+      and committed the moment it is sent — before the game starts. The commit is timestamped by GitHub, not by
+      us, so the <a href="https://github.com/thedifference7717-sys/oracle/commits/main/data/ledger.json">file's history</a>
+      independently proves each pick predated its first pitch. The PUBLISHED and FIRST PITCH columns below are in
+      every row so you can check any of them. Results are graded from the official MLB boxscore and written back
+      into the same row; nothing is ever deleted or rewritten.</p>
+      <p><b>Money is real.</b> Each bet's stake is recorded when it is published (edge points × ${money(DEFAULT_RATE)})
+      and never recomputed afterwards, so changing the rate cannot rewrite history. Returns use the price published
+      with the bet. BALANCE is the running total in order of publication, so any row can be traced.</p>
+    </div></details>
 
     <div class="panel">
-      <div class="panel-head">EVERY PICK SINCE ${era}, NEWEST FIRST <span>${bets.length} total · ${S.done.length} settled · ${S.open} open</span></div>
+      <div class="panel-head">Every pick since ${era} <span>${bets.length} total · ${S.done.length} settled · ${S.open} open</span></div>
       <div class="table-wrap"><table>
         <thead><tr>
           <th>RESULT</th><th>GAME</th><th>THE DOUBLE</th>
