@@ -311,8 +311,9 @@ td.num{text-align:right}
 <div class="section-h">
   <div class="sh-row"><h2>🎲 Bet cards</h2><span class="sh-note" id="cardsNote"></span></div>
   <details class="disc"><summary>Why these games and no others</summary><div class="disc-b">
-    <p>A card for every game that clears <b>both</b> bars — the double beats your price by more than the bet bar, <b>and</b> the opposing arm is soft enough — and nothing else. The same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
-    <p><b>Soft arm</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are, in points of hit probability against a league-neutral leg. It rates the spot rather than the hitters. A soft spot at a bad price is still a bad bet, which is why it is a second gate and not a replacement for the edge bar.</p>
+    <p>A card for every game whose opposing arm is soft enough, and nothing else — the same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
+    <p><b>Soft arm</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are, in points of hit probability against a league-neutral leg. It rates the spot rather than the hitters, which is why it decides eligibility: an ace is a different bet from batting practice even when the price says otherwise.</p>
+    <p><b>The price no longer gates anything.</b> Each card still shows the fair price, your price and the edge between them, because whether a qualifying spot is worth taking at the number in front of you is a real question — it is just a different question from whether the spot qualifies. A soft spot at a bad price is a reason to shop for a better price, not a reason to hide the game.</p>
     <p>The likeliest double is usually the most heavily bet and the worst priced. What pays is the gap between our number and the book's, which is why these are ranked by <b>edge</b> rather than by probability.</p>
   </div></details>
 </div>
@@ -574,10 +575,12 @@ const betBar=()=>setting("minEdge")/100;
 // gate rather than a replacement for the edge bar. Same test the alerter runs,
 // so the board and your phone cannot disagree about what counts.
 const softBar=()=>setting("minSoft")/100;
-function bets(){return filtered().filter(x=>{
-  const e=M.evaluate(x.prob,gamePrice(x.gk));
-  return e && e.edge>=betBar() && x.soft>=softBar();
-});}
+// Softness is the whole test. There is no edge bar on the double: a game
+// qualifies on the spot, and whether the price on offer is worth taking is a
+// separate question the card answers rather than one that decides whether the
+// card appears. Hiding a soft spot because today's number is bad would hide
+// the reason to go looking for a better number.
+function bets(){return filtered().filter(x=>x.soft>=softBar());}
 const pts=v=>(v>=0?"+":"")+(v*100).toFixed(1);
 const spotColor=v=>v>=0.03?"var(--green)":v>=0?"var(--yellow)":"var(--dim)";
 
@@ -621,7 +624,8 @@ function card(pr,i){
         <div class="v">${ev?(edgePts(ev)>=0?"+":"")+edgePts(ev).toFixed(1):"—"}</div>
         <div class="l">Edge pts</div>
         <div class="stake">${size>0?money(size):"—"}</div>
-        <div class="stake-l">${size>0?`Bet · $${setting("perEdge").toFixed(2)}/pt`:"No bet"}</div>
+        <div class="stake-l">${size>0?`Bet · $${setting("perEdge").toFixed(2)}/pt`
+          :"No edge at this price"}</div>
       </div>
     </div>
     ${leg(pr.a)}${leg(pr.b)}
@@ -949,11 +953,10 @@ function render(){
   const B=bets();
   const barPts=(betBar()*100).toFixed(1);
   document.getElementById("cards").innerHTML=B.map(card).join("")||
-    `<div class="empty">No game clears both bars right now — so there is no bet.<br>
-       <span style="color:var(--dim)">Needs edge ≥ +${barPts}pts <b>and</b> soft arm ≥ +${(softBar()*100).toFixed(1)}pts.
-       ${(()=>{const p=filtered().filter(x=>{const e=M.evaluate(x.prob,gamePrice(x.gk));return e&&e.edge>=betBar();}).length,
-                 q=filtered().filter(x=>x.soft>=softBar()).length;
-          return `${p} clear the price, ${q} are soft enough, none are both.`;})()}
+    `<div class="empty">No arm on the board is soft enough — so there is no bet.<br>
+       <span style="color:var(--dim)">Needs soft arm ≥ +${(softBar()*100).toFixed(1)}pts.
+       Softest tonight: ${(()=>{const m=filtered().reduce((b,x)=>!b||x.soft>b.soft?x:b,null);
+          return m?`${pts(m.soft)}pts (${m.teams})`:"—";})()}.
        <br>Every game is still listed below.</span></div>`;
   document.getElementById("cardsNote").innerHTML=B.length
     ? `${B.length} bet${B.length===1?"":"s"} of ${pairs.length} games · total stake <b style="color:var(--yellow)">${money(B.reduce((t,x)=>t+betSize(M.evaluate(x.prob,gamePrice(x.gk))),0))}</b>`

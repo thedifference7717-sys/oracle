@@ -50,7 +50,8 @@ function ledgerOpen(key, day, g, d) {
     teams: d.teams, venue: d.venue || null,
     price: PRICE, prob: d.prob, edge: d.edge, evPct: d.evPct, kelly: d.kelly,
     stakeRate: PER_EDGE_PT,
-    stake: +(Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT).toFixed(2),
+    stake: +(Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT).toFixed(2),   // 0 when the assumed price gives no edge
+    qualifiedOn: "soft",
     sameTeam: !!d.sameTeam,
     legs: [d.a, d.b].map(c => ({ id: c.id, name: c.name, slot: c.slot, p: c.p, sp: c.sp || null })),
     status: "open"
@@ -83,6 +84,10 @@ const PRICE = +(process.env.DD_PRICE || -175);
 // is two points of probability over your price's breakeven. Marginal edges are
 // inside the model's own error bars, so a real bar filters more noise than it
 // costs in missed spots. Override with DD_MIN_EDGE.
+//
+// As of the soft-arm rule this no longer gates the DOUBLE at all — softness
+// does. It still gates the ladder, and still sets the margin the single-leg
+// alert asks for.
 // Parsed defensively: unset, empty or malformed falls back to the 2-point bar,
 // while an explicit DD_MIN_EDGE=0 really does mean "alert anything positive"
 // (a plain || would swallow it, since 0 is falsy).
@@ -430,9 +435,10 @@ async function alertGame(day, g, d) {
     // The double is offered anywhere from +100 to -175 depending on the legs,
     // and this job cannot see the board's price. So it states the threshold
     // instead of asserting an edge against a number it had to guess.
-    `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(d.prob - MIN_EDGE)}</b>\n` +
-    `${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} · needs ${(MIN_EDGE * 100).toFixed(1)}pts of margin\n` +
-    `<i>Checked against ${PRICE > 0 ? "+" : ""}${PRICE}: edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · stake ${money(stakeFor(d))}</i>\n` +
+    `🎯 <b>FAIR PRICE ${M.amOdds(d.prob)}</b> — anything better than that is value\n` +
+    `${pct(d.prob)} both hit\n` +
+    `<i>Checked against ${PRICE > 0 ? "+" : ""}${PRICE}: edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts` +
+      `${d.edge > 0 ? ` · stake ${money(stakeFor(d))}` : " · no edge at that price, shop for a better one"}</i>\n` +
     `Soft arm ${pts(d.soft)}pts (bar +${(MIN_SOFT * 100).toFixed(1)}) · ${d.sameTeam ? "SAME TEAM" : "OPPOSING"} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n\n` +
     `${legLine(d.a)}\n${legLine(d.b)}\n\n` +
     `<i>SPOT ${pts(d.spotDelta)}pts vs league (soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>`
@@ -519,11 +525,11 @@ async function main() {
     const snap = await computeDoubles(day, [g], D.cal);
     const d = snap && snap.doubles && snap.doubles[0];
     if (!d) { console.log(`game ${g.gamePk}: no pair could be built.`); D.seen[key] = "noedge"; changed = true; continue; }
-    if (d.edge < MIN_EDGE) {
-      D.seen[key] = "noedge"; changed = true;
-      console.log(`game ${g.gamePk} (${d.teams}): edge ${(d.edge * 100).toFixed(1)}pts — no bet.`);
-      continue;
-    }
+    // No edge bar on the double any more: a soft arm is the whole test. The
+    // price is still reported on every alert, because whether it is worth
+    // taking at the number your book shows is a separate question from
+    // whether the spot qualifies — and the alert answers both rather than
+    // pretending the second one decides eligibility.
     if (d.soft < MIN_SOFT) {
       D.seen[key] = "noedge"; changed = true;
       console.log(`game ${g.gamePk} (${d.teams}): soft arm ${pts(d.soft)}pts, under +${(MIN_SOFT * 100).toFixed(1)} — no bet.`);
