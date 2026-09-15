@@ -173,7 +173,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">🏈 PlAIybook</div><div class="logo-sub">NFL · 2-LEG SAME-GAME PROP PARLAY · BUILD 4 · <span id="buildsha">1b8f7a0</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">🏈 PlAIybook</div><div class="logo-sub">NFL · 2-LEG SAME-GAME PROP PARLAY · BUILD 4 · <span id="buildsha">f4223c4</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="index.html">⚾ Two BAIgger</a>
@@ -339,14 +339,14 @@ const M = window.GridModel;
 // meta tags for the document itself, so a phone that already has this page can
 // sit on a stale build indefinitely. The deploy stamps the commit here and
 // publishes the same value in build.json; we check and pull ourselves forward.
-// Read from the element the page already displays, rather than from a second
-// copy of the same string. Two stamped copies can drift, and they did: a
-// workflow regex that wanted `const BUILD = "` never matched this file's
-// `const BUILD = "`, so this constant froze at one build while the visible span
-// kept updating. checkBuild() then compared a frozen sha against a live
-// build.json and declared the page stale on every single load, forever, which
-// no amount of reloading could clear. One source of truth cannot disagree
-// with itself.
+// Read from the element the page already displays, rather than keeping a
+// second stamped copy of the same string. Two copies can drift, and on
+// index.html they did — a workflow regex wanting `const BUILD = "` never
+// matched that file's `const BUILD="`, freezing the constant at one build
+// while the visible span kept moving, so checkBuild() called the page stale
+// on every load forever. This file had the spaces and escaped it, but the
+// hazard was structural, not typographical: one source of truth cannot
+// disagree with itself.
 const BUILD = (document.getElementById("buildsha")||{textContent:"__BUILD_SHA__"}).textContent.trim();
 let liveSha = null;
 const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
