@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05050E">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>SportsAI · Verified Record</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SportsAI">
+<link rel="icon" type="image/svg+xml" href="sportsai.svg">
+<link rel="apple-touch-icon" href="sportsai-180.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--purple:#A78BFA}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 48px)}
+#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A1A16,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:.28em;color:var(--purple);opacity:.85;margin-bottom:2px}
+.logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.04em;color:#D6FFE9;text-shadow:0 0 14px #14F19566}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
+.controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
+.navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
+.wrap{padding:16px 18px}
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.stat .v{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;line-height:1}
+.stat .l{font-size:9px;color:var(--dim);letter-spacing:.08em;margin-top:5px}
+.verdict{margin-top:14px;padding:14px 16px;border-radius:14px;border:1px solid var(--yellow);background:#2A2100;color:var(--yellow);font-size:13px;line-height:1.6}
+.verdict.good{border-color:var(--green);background:#052417;color:var(--green)}
+.verdict b{font-family:'Orbitron',monospace}
+.note{margin-top:14px;padding:13px 15px;border:1px solid var(--border);background:var(--bg2);border-radius:14px;font-size:12px;color:var(--muted);line-height:1.7}
+.note b{color:var(--text)}
+.note a{color:var(--blue)}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:16px}
+.panel-head{padding:12px 15px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:12px;color:var(--blue);letter-spacing:.05em;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.panel-head span{font-family:'Share Tech Mono',monospace;color:var(--dim);font-size:11px;letter-spacing:0}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
+thead th{position:sticky;top:0;background:#0A0A1C;text-align:left;padding:10px 11px;font-size:10px;color:var(--muted);font-weight:400;border-bottom:1px solid var(--border);white-space:nowrap}
+thead th.num{text-align:right}
+tbody td{padding:10px 11px;border-bottom:1px solid var(--border);white-space:nowrap}
+td.num{text-align:right;font-family:'Orbitron',monospace}
+.res{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.res.won{background:#14F19522;color:var(--green)}
+.res.lost{background:#FF4D6D22;color:var(--red)}
+.res.open{background:#60A5FA22;color:var(--blue)}
+.lead{font-size:10px;color:var(--dim)}
+.empty{padding:40px 18px;text-align:center;color:var(--dim);font-size:12px}
+.spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div><div class="brand">SPORTSAI</div><div class="logo">📜 Verified Record</div><div class="logo-sub">EVERY PICK, PUBLISHED BEFORE FIRST PITCH · <span id="buildsha">__BUILD_SHA__</span></div></div>
+  <div class="controls">
+    <a class="navlink" href="./">⚾ Two BAIgger</a>
+    <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
+  </div>
+</div>
+<div class="wrap" id="body"><div class="empty"><span class="spin">⟳</span> Loading the ledger…</div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const pct=v=>(v*100).toFixed(1)+"%";
+const money=v=>(v<0?"-":"")+"$"+Math.abs(v).toFixed(2);
+const dec=a=>a>0?1+a/100:1+100/Math.abs(a);
+const fmtT=s=>{try{return new Date(s).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}catch(e){return s||"—";}};
+
+function stats(bets){
+  const done=bets.filter(b=>b.status==="won"||b.status==="lost");
+  const w=done.filter(b=>b.status==="won").length, l=done.length-w;
+  // Flat one unit per bet, paid at the price that was published with it.
+  let pnl=0; done.forEach(b=>{pnl += b.status==="won" ? dec(b.price)-1 : -1;});
+  const roi=done.length?pnl/done.length:0;
+  // Did the legs land as often as the model said they would?
+  const legs=done.flatMap(b=>b.legs.map((L,i)=>({p:L.p,hit:(b.hits&&b.hits[i]>=1)?1:0})));
+  const n=legs.length, predL=n?legs.reduce((a,x)=>a+x.p,0)/n:0, actL=n?legs.reduce((a,x)=>a+x.hit,0)/n:0;
+  const se=n?Math.sqrt(predL*(1-predL)/n):0, z=se?(actL-predL)/se:0;
+  // How far off could the observed win rate be by luck alone?
+  const pw=done.length?w/done.length:0;
+  const seW=done.length?Math.sqrt(pw*(1-pw)/done.length):0;
+  return {done,w,l,pnl,roi,n,predL,actL,se,z,seW,pw,open:bets.filter(b=>b.status==="open").length};
+}
+
+function render(L){
+  const bets=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
+  if(!bets.length){$("body").innerHTML='<div class="empty">No graded picks yet. The ledger fills itself as the alerter publishes and settles bets.</div>';return;}
+  const S=stats(bets);
+  const proven=Math.abs(S.z)>=1.96;
+  // A sample this small cannot demonstrate an edge, and saying so is the point:
+  // a record nobody can check is worth nothing, and one that overclaims is worse.
+  const needed=Math.abs(S.actL-S.predL)>1e-9
+    ? Math.ceil(S.predL*(1-S.predL)*Math.pow(1.96/(S.actL-S.predL),2)) : null;
+
+  $("body").innerHTML=`
+    <div class="hero">
+      <div class="stat"><div class="v">${S.w}-${S.l}</div><div class="l">RECORD</div></div>
+      <div class="stat"><div class="v" style="color:${S.pw>=0.5?'var(--green)':'var(--red)'}">${S.done.length?pct(S.pw):"—"}</div><div class="l">WIN RATE</div></div>
+      <div class="stat"><div class="v" style="color:${S.pnl>=0?'var(--green)':'var(--red)'}">${money(S.pnl)}</div><div class="l">P&amp;L · 1 UNIT FLAT</div></div>
+      <div class="stat"><div class="v" style="color:${S.roi>=0?'var(--green)':'var(--red)'}">${S.done.length?(S.roi>=0?"+":"")+(S.roi*100).toFixed(1)+"%":"—"}</div><div class="l">ROI</div></div>
+      <div class="stat"><div class="v">${S.n}</div><div class="l">GRADED LEGS</div></div>
+      <div class="stat"><div class="v" style="color:var(--blue)">${S.open}</div><div class="l">OPEN</div></div>
+    </div>
+
+    <div class="verdict ${proven?"good":""}">
+      ${proven
+        ? `<b>Edge is statistically demonstrable.</b> Legs landed ${pct(S.actL)} against ${pct(S.predL)} predicted across ${S.n} graded legs (z = ${S.z.toFixed(2)}).`
+        : `<b>No demonstrable edge yet — this sample is too small to claim one.</b>
+           Legs landed ${pct(S.actL)} against ${pct(S.predL)} predicted across ${S.n} graded legs. The standard error at this sample is ±${(S.se*100).toFixed(1)} points and z = ${S.z.toFixed(2)}, so the gap is inside the noise.
+           ${needed&&needed>S.n?`A gap that size needs roughly <b>${needed}</b> graded legs before it means anything.`:""}
+           The win rate above carries the same caveat: ±${(S.seW*100).toFixed(1)} points at ${S.done.length} settled bets.`}
+    </div>
+
+    <div class="note">
+      <b>Why this record is checkable.</b> Every pick is written to
+      <a href="https://github.com/thedifference7717-sys/oracle/blob/main/data/ledger.json">data/ledger.json</a>
+      and committed the moment it is sent — before the game starts. The commit is timestamped by GitHub, not by us, so the
+      <a href="https://github.com/thedifference7717-sys/oracle/commits/main/data/ledger.json">file's history</a>
+      independently proves each pick predated its first pitch. The PUBLISHED and FIRST PITCH columns below are in every row so you can check any of them.
+      Results are graded from the official MLB boxscore and written back into the same row; nothing is ever deleted or rewritten.<br>
+      <b>P&amp;L</b> is flat one unit per bet at the price published with it — no staking plan flattering the numbers.
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">EVERY PICK, NEWEST FIRST <span>${bets.length} total · ${S.done.length} settled · ${S.open} open</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>RESULT</th><th>GAME</th><th>THE DOUBLE</th>
+          <th>PUBLISHED (ET)</th><th>FIRST PITCH (ET)</th>
+          <th class="num">LEAD</th><th class="num">MODEL</th><th class="num">EDGE</th><th class="num">PRICE</th>
+        </tr></thead>
+        <tbody>${bets.map(b=>{
+          const lead=(b.published&&b.firstPitch)?(new Date(b.firstPitch)-new Date(b.published))/60000:null;
+          return `<tr>
+            <td><span class="res ${b.status}">${b.status.toUpperCase()}</span></td>
+            <td>${b.teams}<div class="lead">${b.date}${b.venue?" · "+b.venue:""}</div></td>
+            <td>${b.legs.map(L=>`${L.name} <span class="lead">#${L.slot} ${Math.round(L.p*100)}%</span>`).join("<br>")}</td>
+            <td style="font-size:12px;color:var(--muted)">${fmtT(b.published)}</td>
+            <td style="font-size:12px;color:var(--muted)">${fmtT(b.firstPitch)}</td>
+            <td class="num" style="color:${lead>0?'var(--green)':'var(--red)'}">${lead==null?"—":Math.round(lead)+"m"}</td>
+            <td class="num">${pct(b.prob)}</td>
+            <td class="num" style="color:${b.edge>0?'var(--green)':'var(--red)'}">${(b.edge*100>=0?"+":"")+(b.edge*100).toFixed(1)}</td>
+            <td class="num" style="color:var(--yellow)">${b.price>0?"+":""}${b.price}</td>
+          </tr>`;}).join("")}</tbody>
+      </table></div>
+    </div>
+
+    <div class="note" style="border-color:#FF4D6D55">
+      ⚠ Model estimates, not advice, and past results do not predict future ones. Sports betting carries real risk of loss — bet only what you can afford to lose. 21+ and void where prohibited.
+    </div>`;
+}
+
+(async()=>{
+  try{
+    const r=await fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    render(await r.json());
+  }catch(e){
+    $("body").innerHTML=`<div class="empty">Could not load the ledger (${e.message}).<br>It is written by the alerter once picks start publishing.</div>`;
+  }
+})();
+</script>
+</body>
+</html>

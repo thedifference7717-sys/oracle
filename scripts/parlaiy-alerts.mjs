@@ -19,6 +19,50 @@ import M from "../dd-model.js";
 
 const STATE_FILE = "state.json";
 const PUBLIC_LOG = "data/model-log.json";
+const LEDGER = "data/ledger.json";
+
+// ── the public bet ledger ───────────────────────────────────────────────────
+// Every alerted bet is written here the moment it is sent, with the time it
+// was published and the game's first pitch beside it, and updated in place
+// when it settles. The workflow commits this file immediately, so the repo's
+// own history timestamps the pick — anyone can check that the commit landed
+// before first pitch. That is the difference between a record that is
+// verifiable and one that is merely asserted, and it is the entire asset of a
+// picks business. It lives in the repo rather than the Actions cache because
+// the cache is disposable and a track record cannot be.
+function readLedger() {
+  try { const L = JSON.parse(readFileSync(LEDGER, "utf8")); if (Array.isArray(L.bets)) return L; } catch (e) {}
+  return { v: 1, sport: "MLB", bets: [] };
+}
+function writeLedger(L) {
+  L.updated = new Date().toISOString();
+  mkdirSync("data", { recursive: true });
+  writeFileSync(LEDGER, JSON.stringify(L, null, 1));
+}
+function ledgerOpen(key, day, g, d) {
+  const L = readLedger();
+  if (L.bets.some(b => b.id === key)) return;            // never publish a pick twice
+  L.bets.push({
+    id: key, date: day, sport: "MLB",
+    published: new Date().toISOString(),                  // when we sent it
+    firstPitch: g.gameDate,                               // what it must precede
+    teams: d.teams, venue: d.venue || null,
+    price: PRICE, prob: d.prob, edge: d.edge, evPct: d.evPct, kelly: d.kelly,
+    sameTeam: !!d.sameTeam,
+    legs: [d.a, d.b].map(c => ({ id: c.id, name: c.name, slot: c.slot, p: c.p, sp: c.sp || null })),
+    status: "open"
+  });
+  writeLedger(L);
+}
+function ledgerSettle(key, won, hits) {
+  const L = readLedger();
+  const b = L.bets.find(x => x.id === key);
+  if (!b || b.status !== "open") return;
+  b.status = won ? "won" : "lost";
+  b.settled = new Date().toISOString();
+  b.hits = hits;
+  writeLedger(L);
+}
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT = process.env.TELEGRAM_CHAT_ID;
@@ -221,6 +265,7 @@ async function main() {
     await alertGame(day, g, d);
     D.bets[key] = { date: day, teams: d.teams, gk: g.gamePk, double: d, results: {} };
     D.seen[key] = "bet"; changed = true;
+    ledgerOpen(key, day, g, d);
     console.log(`game ${g.gamePk} (${d.teams}): ALERTED at edge ${(d.edge * 100).toFixed(1)}pts.`);
   }
 
@@ -267,12 +312,14 @@ async function main() {
       gradeLeg(d.a, true); gradeLeg(d.b, true);
       await tg(`💣 <b>CASHED — ${b.teams}</b>\nBoth hit! ${d.a.name} + ${d.b.name}\n${tally()}`);
       st.cashed = true; changed = true; console.log(`${b.teams} cashed.`);
+      ledgerSettle(`${day}:${b.gk}`, true, [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0]);
     } else if (fin[b.gk]) {
       dead++; D.record.l++;
       gradeLeg(d.a, hA); gradeLeg(d.b, hB);
       const cold = [!hA ? d.a.name : null, !hB ? d.b.name : null].filter(Boolean).join(" & ");
       await tg(`💀 <b>DEAD — ${b.teams}</b>\nHitless: ${cold} (final)\n${tally()}`);
       st.dead = true; changed = true; console.log(`${b.teams} dead.`);
+      ledgerSettle(`${day}:${b.gk}`, false, [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0]);
     } else if (inCount === 1 && !st.half) {
       const got = hA ? d.a.name : d.b.name, need = hA ? d.b.name : d.a.name;
       await tg(`✅ <b>1/2 IN — ${b.teams}</b>\n${got} has a hit · need ${need}`);
