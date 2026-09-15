@@ -87,6 +87,7 @@ jobs:
           # Set DD_PRICE to whatever your book actually offers.
           DD_PRICE: ${{ vars.DD_PRICE || '100' }}
           DD_MIN_EDGE: ${{ vars.DD_MIN_EDGE || '0.02' }}
+          DD_PER_EDGE_PT: ${{ vars.DD_PER_EDGE_PT || '2.50' }}
 
       # The alerter grades every leg it published and folds the result into a
       # calibration log. Because the eligible pool is the same faces night

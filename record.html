@@ -75,7 +75,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 // They were only ever kept as a cumulative win/loss count, so they cannot be
 // shown row by row and nobody can check them. They are reported separately,
 // by subtraction, and labelled as what they are.
-const ERA_START = "2026-09-10";
+const ERA_START = "2026-09-11";
 const ERA_NOTE  = "per-game model · confirmed lineups · +2pt bar";
 
 const $=id=>document.getElementById(id);
@@ -83,6 +83,33 @@ const pct=v=>(v*100).toFixed(1)+"%";
 const money=v=>(v<0?"-":"")+"$"+Math.abs(v).toFixed(2);
 const dec=a=>a>0?1+a/100:1+100/Math.abs(a);
 const fmtT=s=>{try{return new Date(s).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}catch(e){return s||"—";}};
+
+// Dollars actually risked and returned. A flat unit per bet hides the thing
+// that decides whether this makes money: stakes scale with edge, so a +7pt bet
+// risks three and a half times what a +2pt bet does, and one of those losing
+// is not the same event as the other. Stake comes from the bet's own recorded
+// value wherever present, never recomputed from today's rate.
+const DEFAULT_RATE = 2.50;
+const stakeOf = b => b.stake != null ? +b.stake
+  : Math.max(0, +((b.edge||0)*100).toFixed(1)) * (b.stakeRate || DEFAULT_RATE);
+function cash(bets){
+  const done=bets.filter(b=>b.status==="won"||b.status==="lost")
+                 .sort((a,b)=>(a.published||"").localeCompare(b.published||""));
+  let pnl=0, staked=0, peak=0, maxDD=0, run=[];
+  let best=null, worst=null;
+  for(const b of done){
+    const st=stakeOf(b);
+    const ret=b.status==="won" ? st*(dec(b.price)-1) : -st;
+    pnl+=ret; staked+=st;
+    peak=Math.max(peak,pnl); maxDD=Math.max(maxDD,peak-pnl);
+    if(best==null||ret>best.ret) best={b,ret};
+    if(worst==null||ret<worst.ret) worst={b,ret};
+    run.push({id:b.id,bal:pnl});
+  }
+  const bal=Object.fromEntries(run.map(r=>[r.id,r.bal]));
+  return {done,pnl,staked,roi:staked?pnl/staked:0,avg:done.length?staked/done.length:0,
+          best,worst,maxDD,bal};
+}
 
 function stats(bets){
   const done=bets.filter(b=>b.status==="won"||b.status==="lost");
@@ -130,14 +157,40 @@ function render(L, agg){
   const needed=Math.abs(S.actL-S.predL)>1e-9
     ? Math.ceil(S.predL*(1-S.predL)*Math.pow(1.96/(S.actL-S.predL),2)) : null;
 
+  const C=cash(bets);
   $("body").innerHTML=`
     <div class="hero">
+      <div class="stat" style="border-color:${C.pnl>=0?'#14F19566':'#FF4D6D66'}">
+        <div class="v" style="font-size:30px;color:${C.pnl>=0?'var(--green)':'var(--red)'}">${money(C.pnl)}</div>
+        <div class="l">NET PROFIT · REAL STAKES</div></div>
+      <div class="stat"><div class="v" style="color:${C.roi>=0?'var(--green)':'var(--red)'}">${C.done.length?(C.roi>=0?"+":"")+(C.roi*100).toFixed(1)+"%":"—"}</div><div class="l">RETURN ON TURNOVER</div></div>
+      <div class="stat"><div class="v">${money(C.staked)}</div><div class="l">TOTAL STAKED</div></div>
       <div class="stat"><div class="v">${S.w}-${S.l}</div><div class="l">RECORD</div></div>
       <div class="stat"><div class="v" style="color:${S.pw>=0.5?'var(--green)':'var(--red)'}">${S.done.length?pct(S.pw):"—"}</div><div class="l">WIN RATE</div></div>
-      <div class="stat"><div class="v" style="color:${S.pnl>=0?'var(--green)':'var(--red)'}">${money(S.pnl)}</div><div class="l">P&amp;L · 1 UNIT FLAT</div></div>
-      <div class="stat"><div class="v" style="color:${S.roi>=0?'var(--green)':'var(--red)'}">${S.done.length?(S.roi>=0?"+":"")+(S.roi*100).toFixed(1)+"%":"—"}</div><div class="l">ROI</div></div>
-      <div class="stat"><div class="v">${S.n}</div><div class="l">GRADED LEGS</div></div>
       <div class="stat"><div class="v" style="color:var(--blue)">${S.open}</div><div class="l">OPEN</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">💵 THE MONEY <span>stakes scale with edge, so the win rate alone does not decide this</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>MEASURE</th><th class="num">VALUE</th><th>WHAT IT MEANS</th></tr></thead>
+        <tbody>
+          <tr><td>Net profit</td><td class="num"><b style="color:${C.pnl>=0?'var(--green)':'var(--red)'}">${money(C.pnl)}</b></td>
+              <td class="lead">Every settled bet at the stake and price it was published with.</td></tr>
+          <tr><td>Return on turnover</td><td class="num" style="color:${C.roi>=0?'var(--green)':'var(--red)'}">${C.done.length?(C.roi>=0?"+":"")+(C.roi*100).toFixed(1)+"%":"—"}</td>
+              <td class="lead">Profit per dollar risked. The number that actually decides whether this makes money.</td></tr>
+          <tr><td>Average stake</td><td class="num">${money(C.avg)}</td>
+              <td class="lead">At ${money(DEFAULT_RATE)} per edge point, a +2pt bet risks ${money(2*DEFAULT_RATE)} and a +7pt bet ${money(7*DEFAULT_RATE)}.</td></tr>
+          <tr><td>Biggest single win</td><td class="num" style="color:var(--green)">${C.best?money(C.best.ret):"—"}</td>
+              <td class="lead">${C.best?C.best.b.teams+" · "+C.best.b.date:"—"}</td></tr>
+          <tr><td>Biggest single loss</td><td class="num" style="color:var(--red)">${C.worst?money(C.worst.ret):"—"}</td>
+              <td class="lead">${C.worst?C.worst.b.teams+" · "+C.worst.b.date:"—"}</td></tr>
+          <tr><td>Worst drawdown</td><td class="num" style="color:var(--yellow)">${money(-C.maxDD)}</td>
+              <td class="lead">Largest peak-to-trough fall in the balance. What you would have had to sit through.</td></tr>
+          <tr><td>Flat 1u comparison</td><td class="num" style="color:var(--dim)">${S.pnl>=0?"+":""}${S.pnl.toFixed(2)}u</td>
+              <td class="lead">The same bets at one flat unit each, for comparing against services that quote units.</td></tr>
+        </tbody>
+      </table></div>
     </div>
 
     <div class="verdict ${proven?"good":""}">
@@ -158,7 +211,9 @@ function render(L, agg){
       <a href="https://github.com/thedifference7717-sys/oracle/commits/main/data/ledger.json">file's history</a>
       independently proves each pick predated its first pitch. The PUBLISHED and FIRST PITCH columns below are in every row so you can check any of them.
       Results are graded from the official MLB boxscore and written back into the same row; nothing is ever deleted or rewritten.<br>
-      <b>P&amp;L</b> is flat one unit per bet at the price published with it — no staking plan flattering the numbers.
+      <b>Money</b> is real: each bet's stake is recorded when it is published (edge points × ${money(DEFAULT_RATE)}) and never
+      recomputed afterwards, so changing the rate cannot rewrite history. Returns use the price published with the bet.
+      BALANCE is the running total in order of publication, so any row can be traced.
     </div>
 
     <div class="panel">
@@ -167,7 +222,7 @@ function render(L, agg){
         <thead><tr>
           <th>RESULT</th><th>GAME</th><th>THE DOUBLE</th>
           <th>PUBLISHED (ET)</th><th>FIRST PITCH (ET)</th>
-          <th class="num">LEAD</th><th class="num">MODEL</th><th class="num">EDGE</th><th class="num">PRICE</th>
+          <th class="num">LEAD</th><th class="num">EDGE</th><th class="num">PRICE</th><th class="num">STAKE</th><th class="num">RETURN</th><th class="num">BALANCE</th>
         </tr></thead>
         <tbody>${bets.map(b=>{
           const lead=(b.published&&b.firstPitch)?(new Date(b.firstPitch)-new Date(b.published))/60000:null;
@@ -178,9 +233,12 @@ function render(L, agg){
             <td style="font-size:12px;color:var(--muted)">${fmtT(b.published)}</td>
             <td style="font-size:12px;color:var(--muted)">${fmtT(b.firstPitch)}</td>
             <td class="num" style="color:${lead>0?'var(--green)':'var(--red)'}">${lead==null?"—":Math.round(lead)+"m"}</td>
-            <td class="num">${pct(b.prob)}</td>
             <td class="num" style="color:${b.edge>0?'var(--green)':'var(--red)'}">${(b.edge*100>=0?"+":"")+(b.edge*100).toFixed(1)}</td>
             <td class="num" style="color:var(--yellow)">${b.price>0?"+":""}${b.price}</td>
+            <td class="num">${money(stakeOf(b))}</td>
+            <td class="num" style="color:${b.status==="won"?'var(--green)':b.status==="lost"?'var(--red)':'var(--dim)'}">${
+              b.status==="won"?money(stakeOf(b)*(dec(b.price)-1)):b.status==="lost"?money(-stakeOf(b)):"—"}</td>
+            <td class="num"><b style="color:${(C.bal[b.id]||0)>=0?'var(--green)':'var(--red)'}">${C.bal[b.id]!=null?money(C.bal[b.id]):"—"}</b></td>
           </tr>`;}).join("")}</tbody>
       </table></div>
     </div>

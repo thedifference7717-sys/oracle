@@ -48,6 +48,8 @@ function ledgerOpen(key, day, g, d) {
     firstPitch: g.gameDate,                               // what it must precede
     teams: d.teams, venue: d.venue || null,
     price: PRICE, prob: d.prob, edge: d.edge, evPct: d.evPct, kelly: d.kelly,
+    stakeRate: PER_EDGE_PT,
+    stake: +(Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT).toFixed(2),
     sameTeam: !!d.sameTeam,
     legs: [d.a, d.b].map(c => ({ id: c.id, name: c.name, slot: c.slot, p: c.p, sp: c.sp || null })),
     status: "open"
@@ -82,6 +84,11 @@ const PRICE = +(process.env.DD_PRICE || 100);
 // (a plain || would swallow it, since 0 is falsy).
 const _minEdge = process.env.DD_MIN_EDGE;
 const MIN_EDGE = (_minEdge == null || _minEdge.trim() === "" || isNaN(+_minEdge)) ? 0.02 : +_minEdge;
+// Dollars staked per edge point, matching the dashboard's rule. Recorded on
+// every bet at publish time rather than applied to the ledger afterwards: if
+// the rate is ever changed, past bets must keep the stake they were actually
+// published with, or the record quietly rewrites itself.
+const PER_EDGE_PT = +(process.env.DD_PER_EDGE_PT || 2.50);
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `${MONTHS[mo-1]} ${da}`; };
