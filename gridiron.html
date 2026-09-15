@@ -162,6 +162,17 @@ b,strong{font-weight:600}
   color:var(--muted);display:grid;grid-template-columns:1fr auto;gap:7px 12px;font-variant-numeric:tabular-nums}
 .bet-foot b{font-weight:600;color:var(--text)}
 .odds{color:var(--yellow);font-weight:600;font-variant-numeric:tabular-nums}
+/* The price actually taken. Its own box rather than a row in the foot: it is
+   the one number on the card you are expected to change, and every figure
+   under it is arithmetic on it. */
+.pricebox{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:12px;
+  padding:11px 12px;background:var(--bg3);border-radius:12px}
+.pricebox label{font-size:11px;color:var(--dim);flex:none}
+.pricebox input{width:94px;background:var(--bg);border:none;border-radius:9px;color:var(--yellow);
+  padding:9px;font-family:var(--num);font-size:16px;font-weight:600;text-align:center;flex:none}
+.pricebox input::placeholder{color:var(--dim);font-weight:400}
+.pricebox span{flex:1;min-width:118px;font-size:11px;color:var(--muted);line-height:1.45;
+  font-variant-numeric:tabular-nums}
 .why{margin-top:10px;font-size:12px;color:var(--dim);line-height:1.6;
   border-top:.5px solid var(--hair);padding-top:10px}
 .tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;
@@ -528,6 +539,40 @@ const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
 const spotColour = v => v >= 0.08 ? "var(--green)" : (v >= 0 ? "var(--yellow)" : "var(--dim)");
 const isOpinion = d => M.isOpinion(d);
 
+// ── the price you actually got ──────────────────────────────────────────────
+// Left alone, a double is priced by multiplying the two legs' own market
+// midpoints with a book's margin on each. That is a good estimate of what a
+// book would offer and it is not what you were paid, and the difference is the
+// whole of the profit and loss. A double taken at +260 that the board priced
+// at +210 books a 24% bigger win, and every settled number downstream — the
+// EV on the card, the stake, the logged bet, the running record — is wrong by
+// that much until the real number is typed in.
+//
+// Kept per game and in localStorage, because the point of it is to survive the
+// page reloading between placing the bet and settling it. Entries older than
+// three weeks are dropped on the way in: last month's slate is not coming back
+// and a stale key would silently reprice a game id the league reissues.
+const PRICE_KEY = "gi.gamePrice";
+const PRICE_TTL = 21 * 864e5;
+let priceByGame = {};
+try{
+  const raw = JSON.parse(localStorage.getItem(PRICE_KEY) || "{}") || {};
+  const now = Date.now();
+  Object.keys(raw).forEach(k => { if (raw[k] && now - raw[k].t < PRICE_TTL) priceByGame[k] = raw[k]; });
+}catch(e){ priceByGame = {}; }
+const savePrices = () => { try{ localStorage.setItem(PRICE_KEY, JSON.stringify(priceByGame)); }catch(e){} };
+const gamePrice = id => priceByGame[id] ? priceByGame[id].p : null;
+// Commits on change rather than on every keystroke: this repaints the whole
+// board, which would rip the input out from under the cursor halfway through
+// typing "+260".
+function setGamePrice(id, v){
+  const p = parseFloat(v);
+  if (!isFinite(p) || Math.abs(p) < 100) delete priceByGame[id];
+  else priceByGame[id] = { p, t: Date.now() };
+  savePrices();
+  render();
+}
+
 const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null, sims: {}, legs: [], parlays: [],
   legPools: {}, spots: {}, propRows: {}, doubles: [], log: null, lgTs: null, rankError: null, pricedAt: null };
 
@@ -706,7 +751,13 @@ function renderSpots(){
 function logDouble(i){
   const d = SHOWN[i]; if (!d) return;
   const size = betSize(d) || setting("bank") * M.kelly(d.prob, 0, d.price, setting("kf"));
-  const entered = prompt("Stake in dollars for this double at " + M.fmtAm(d.price) + "?", Math.round(size * 100) / 100 || 10);
+  // The price recorded is whatever the card is showing — the one typed into its
+  // odds box, or the one built from the legs if nothing was typed. The prompt
+  // says which, because a bet logged at a made-up price settles at a made-up
+  // profit, and nothing downstream can tell the difference afterwards.
+  const src = d.priceTyped ? "the price you typed" : "the BUILT price \u2014 type what you got on the card first";
+  const entered = prompt("Stake in dollars for this double at " + M.fmtAm(d.price) + " (" + src + ")?",
+    Math.round(size * 100) / 100 || 10);
   if (entered == null) return;
   const amt = parseFloat(entered); if (!isFinite(amt) || amt <= 0) return;
   const g = d.entry.game;
@@ -801,6 +852,9 @@ function pairCard(d, i){
   const kelly = M.kelly(d.prob, 0, d.price, setting("kf"));
   const g = d.entry.game, S = d.spot;
   const opinion = isOpinion(d);
+  const typed = gamePrice(g.id), pxId = "px-" + g.id;
+  const stake = Math.max(0, size > 0 ? size : bank * kelly);
+  const payout = stake * M.amToDec(d.price);
   const row = (label, value, title) => '<span' + (title ? ' title="' + esc(title) + '"' : "") + ">" + label + "</span>" +
     '<span style="text-align:right">' + value + "</span>";
   return '<div class="bet ' + (good ? "r" + Math.min(i + 1, 3) : "neg") + '">' +
@@ -817,12 +871,25 @@ function pairCard(d, i){
       "</div>" +
     "</div>" +
     pairLeg(d.a) + pairLeg(d.c) +
+    // The price actually taken, typed in. Everything below it is arithmetic on
+    // this number, so until it is the real one the profit and loss is fiction.
+    '<div class="pricebox">' +
+      '<label for="' + pxId + '">Odds you got</label>' +
+      '<input id="' + pxId + '" type="number" step="5" inputmode="numeric" placeholder="' + M.fmtAm(d.price) + '"' +
+        (typed == null ? "" : ' value="' + typed + '"') +
+        ' onchange="setGamePrice(\'' + esc(String(g.id)) + '\',this.value)">' +
+      '<span>' + (typed == null
+        ? "built from the two legs \u00b7 " + M.fmtAm(d.price)
+        : stake > 0
+          ? '<b style="color:var(--text)">yours</b> \u00b7 pays ' + money(payout) + " on " + money(stake)
+          : '<b style="color:var(--text)">yours</b> \u00b7 no bet at this price') + "</span>" +
+    "</div>" +
     '<div class="bet-foot">' +
       row("Both to clear", '<b>' + pc(d.prob) + "</b> true") +
       row("Total edge over the price", '<b>' + (d.edge >= 0 ? "+" : "") + (d.edge * 100).toFixed(1) + "pts</b>",
         "The whole gap between our probability and what the price needs. The card stakes on the measured part of it, not this.") +
       row("Fair price", '<span class="odds">' + M.fmtAm(M.probToAm(d.prob)) + "</span>") +
-      row("Your price / breakeven", '<span class="odds">' + M.fmtAm(d.price) + "</span> \u00b7 " + pc(d.breakeven)) +
+      row((typed == null ? "Built price" : "Your price") + " / breakeven", '<span class="odds">' + M.fmtAm(d.price) + "</span> \u00b7 " + pc(d.breakeven)) +
       row("Expected value", '<b style="color:' + (good ? "var(--green)" : "var(--red)") + '">' +
         (d.ev >= 0 ? "+" : "") + (d.ev * 100).toFixed(1) + "%</b>") +
       row("\u00bc-Kelly stake", '<b style="color:' + (kelly > 0 ? "var(--green)" : "var(--dim)") + '">' + money(bank * kelly) + "</b>") +
@@ -2000,6 +2067,10 @@ function buildDoubles(){
     b.games.forEach(entry => {
       const best = M.bestDouble(state.legPools[entry.game.id] || [], o);
       if (!best) return;
+      // The pair is chosen on the built price and then repriced, rather than
+      // chosen on the typed one. Otherwise typing a number could swap which
+      // two legs the card is showing while you are still typing it.
+      M.repriceDouble(best, gamePrice(entry.game.id));
       best.entry = entry; best.board = b;
       best.spot = best.sameTeam ? sideSpotOf(entry, best.a.teamId)
         : avgSpot(sideSpotOf(entry, best.a.teamId), sideSpotOf(entry, best.c.teamId));

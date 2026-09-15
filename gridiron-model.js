@@ -2070,6 +2070,31 @@ function bestDouble(pool, opts) {
   return best;
 }
 
+// A price typed on the card replaces the one built from the legs' own market
+// midpoints. What a book will actually pay you is a fact; what we assembled
+// from two exchange mids is an estimate of it, and the estimate is only there
+// because nobody had typed the fact yet.
+//
+// Only the quantities that are functions of the price move. `prob`, `naive`,
+// `lift` and `rho` are properties of the two legs. So is `edgeCorr` — it is
+// what the market's own two midpoints say about the pair being correlated, and
+// it makes no reference to what anyone will pay for it. That is deliberate:
+// the headline on the card, the stake and the bet bar all key on edgeCorr, so
+// typing a price cannot talk the board into posting a game it would otherwise
+// have left off. It moves the money, not the pick.
+function repriceDouble(d, american) {
+  if (!d || !(american && Math.abs(american) >= 100)) return d;
+  const dec = amToDec(american);
+  d.dec = dec;
+  d.price = american;
+  d.ev = d.prob * dec - 1;
+  d.breakeven = 1 / dec;
+  d.edge = d.prob - 1 / dec;
+  if (d.mktProd != null) d.vig = d.mktProd - 1 / dec;
+  d.priceTyped = true;
+  return d;
+}
+
 // THE number: the part of the edge that is measured rather than argued. It is
 // what goes on the card, what the stake comes from, and what the bar tests.
 const defensibleEdge = d => (d && d.edgeCorr != null) ? d.edgeCorr : 0;
@@ -3337,7 +3362,7 @@ return {
   loadDepthChart, unitsOut, unitFactors, UNIT_OF, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
   simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
-  propLegs, bestDouble, doublePrice, legMarketP, defensibleEdge, isOpinion, doubleQualifies,
+  propLegs, bestDouble, doublePrice, repriceDouble, legMarketP, defensibleEdge, isOpinion, doubleQualifies,
   LEG_LO, LEG_HI, MAX_DISAGREE, MAX_SPREAD, MIN_LEG_SIZE,
   sideSpot, leagueTeamStats, SPOT_REF,
   backtest, summarise,
