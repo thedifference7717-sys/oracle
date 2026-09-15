@@ -124,7 +124,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 4 · <span id="buildsha">__BUILD_SHA__</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 4 · <span id="buildsha">b9fef9e</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
@@ -177,7 +177,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </div>
 <div class="legend" id="legend"></div>
 
-<script src="dd-model.js?v=__BUILD_SHA__"></script>
+<script src="dd-model.js?v=b9fef9e"></script>
 <script>
 // The engine lives in a separate file as of BUILD 3. If it fails to load,
 // say so in the status bar rather than throwing at parse time and leaving the
@@ -207,7 +207,7 @@ const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
 // "dashboard isn't updating" trap. The deploy workflow stamps the commit into
 // this file and publishes the same value in build.json; the fetch below is
 // query-busted so it always sees the truth, and pulls the page forward itself.
-const BUILD="__BUILD_SHA__";
+const BUILD="b9fef9e";
 let liveSha=null;
 const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
           set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}};
