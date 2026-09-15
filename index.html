@@ -89,6 +89,10 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .ld-pick .nm{font-size:17px;font-weight:800}
 .ld-pick .sub{font-size:11px;color:var(--dim);margin-top:3px}
 .ld-pick .num{font-family:'Orbitron',monospace;font-size:12px;margin-top:7px;display:flex;gap:12px;flex-wrap:wrap}
+.ld-wait{display:flex;flex-direction:column;justify-content:center;border-color:#A78BFA66;background:#140C1E}
+.ld-wait .l{font-size:9px;letter-spacing:.11em;color:var(--purple)}
+.ld-wait .v{font-family:'Orbitron',monospace;font-size:34px;font-weight:900;color:var(--purple);margin:4px 0 6px;letter-spacing:.02em}
+.ld-wait .s{font-size:10.5px;color:var(--dim);line-height:1.55}
 .ld-odds{margin-top:13px;max-width:250px}
 .ld-odds label{display:block;font-size:8.5px;color:var(--muted);letter-spacing:.09em;margin-bottom:4px}
 .ld-odds input{width:100%;background:#0A0A1C;border:1px solid var(--yellow);color:var(--yellow);border-radius:8px;padding:9px 11px;font-family:'Orbitron',monospace;font-size:19px;font-weight:700;text-align:center}
@@ -142,7 +146,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 5 · <span id="buildsha">f4223c4</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 6 · <span id="buildsha">f4223c4</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
@@ -171,7 +175,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </div>
 
 <div class="section-h" style="color:var(--purple)">🪜 THE LADDER — one bet, one hit, best play of the day <span id="ldNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
-  <small>A single "to record a hit" leg — the highest-edge hitter on the board — staked from a $100 account. Win and the whole return rides tomorrow; five straight closes the cycle and the money comes off the table. A miss ends the cycle and the next one starts 25&#37; bigger. Only the cycle's seed is ever your money, so a day-4 miss costs exactly what a day-1 miss costs. Read the red panel before you run it.</small></div>
+  <small>A single "to record a hit" leg — the highest-edge hitter on the board — staked from a $100 account. Win and the whole return rides tomorrow; five straight closes the cycle and the money comes off the table. A miss ends the cycle and the next one starts 25&#37; bigger. Only the cycle's seed is ever your money, so a day-4 miss costs exactly what a day-1 miss costs. The pick stays blank until it locks one hour before the day's first pitch, then shows the rung that was actually published to the repo. Read the red panel before you run it.</small></div>
 <div id="ladder"></div>
 
 <div class="section-h">🎲 BET CARDS — one per game clearing the bet bar <span id="cardsNote" style="float:right;font-family:'Share Tech Mono',monospace;font-weight:400;letter-spacing:0;color:var(--dim);font-size:11px"></span>
@@ -465,6 +469,40 @@ function card(pr,i){
 // can never disagree about which rung we are on.
 let ladderHist=null;
 
+// When the pick becomes real. The alerter places the rung at the first lock of
+// the day — one hour before the EARLIEST first pitch on the slate — choosing
+// from whatever lineups are posted at that instant. Before then the pick is
+// not knowable: lineups are not in, and the board's "best" bat changes every
+// time one posts. Showing a provisional name that quietly swaps itself is
+// worse than showing none, and for anyone paying to see this board it is the
+// difference between a pick and a moving target.
+function lockInfo(){
+  if(!board||!Array.isArray(board.games)||!board.games.length)return null;
+  const ts=board.games.map(g=>Date.parse(g.startTime)).filter(t=>!isNaN(t));
+  if(!ts.length)return null;
+  const first=Math.min.apply(null,ts);
+  return {lockAt:first-3600000,first,open:Date.now()>=first-3600000};
+}
+const etTime=ms=>new Date(ms).toLocaleTimeString("en-US",{timeZone:"America/New_York",hour:"numeric",minute:"2-digit"});
+
+// The countdown ticks by writing one text node. It must never call render():
+// replacing the card's innerHTML every second would rip the odds input out
+// from under the cursor and reset the page's scroll once a second.
+let ldLockAt=null,ldFired=false;
+function tickLadderClock(){
+  const el=document.getElementById("ldClock");
+  if(!el||ldLockAt==null)return;
+  const ms=ldLockAt-Date.now();
+  if(ms<=0){
+    el.textContent="LOCKING NOW";
+    if(!ldFired){ldFired=true;renderLadder();}   // once, to swap in the pick
+    return;
+  }
+  const t=Math.floor(ms/1000),p2=n=>String(n).padStart(2,"0");
+  el.textContent=`${Math.floor(t/3600)}:${p2(Math.floor(t/60)%60)}:${p2(t%60)}`;
+}
+setInterval(tickLadderClock,1000);
+
 // Best play of the day = highest edge against the leg price. Restricted to
 // confirmed lineups whenever any exist, because a scratch is a guaranteed loss
 // and this bet has no second leg to carry it.
@@ -491,11 +529,24 @@ function renderLadder(){
   // Today's price: what you typed, else what the alerter published for today,
   // else the slip's leg price as a starting guess.
   const pub=raw.find(b=>b.date===today);
+  // Once the alerter has committed a rung, THAT is the pick — not whatever the
+  // board would choose if it recomputed now. The committed row is what was
+  // published to the repo before first pitch, and a dashboard that quietly
+  // shows a different name than the one on record is worth nothing to anyone
+  // checking the record.
+  const locked=pub&&pub.pick?pub:null;
+  const lk=lockInfo();
+  ldLockAt=lk&&!locked?lk.lockAt:null;
+  if(ldLockAt==null)ldFired=false;
+  const waiting=!locked&&lk&&!lk.open;
   const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
-                 :(pub&&pub.price!=null?pub.price:setting("legPrice"));
+                 :(locked&&locked.price!=null?locked.price:setting("legPrice"));
   const dec=M.decFromAmerican(todayOdds)||1;
   const typed=oddsByDay[today]!=null;
-  const p=pick?pick.c.p:null;
+  // The locked row's probability is the one that was published; the live
+  // pick's is only a stand-in used before the lock, to keep the risk panel
+  // honest without naming anyone.
+  const p=locked?locked.p:(pick?pick.c.p:null);
   const risk=p?M.ladderRisk(p,todayOdds,st):null;
   const stake=st.stake, mine=st.atRisk, house=st.onTable;
   const bar=betBar();
@@ -527,10 +578,18 @@ function renderLadder(){
       <div class="o">at ${done.price>0?"+":""}${done.price}</div></div>`;
     if(d===st.rung)return `<div class="ld-step now"><div class="d">DAY ${d} · TODAY</div>
       <div class="v" style="color:var(--yellow)">${money(stake)}</div>
-      <div class="o">at ${todayOdds>0?"+":""}${todayOdds}</div></div>`;
-    if(d===st.rung+1)return `<div class="ld-step next"><div class="d">DAY ${d} · IF TODAY HITS</div>
-      <div class="v" style="color:var(--blue)">${money(ret)}</div>
-      <div class="o">then price it again</div></div>`;
+      <div class="o">${waiting?"price set at lock":`at ${todayOdds>0?"+":""}${todayOdds}`}</div></div>`;
+    // Before the lock there is no pick and therefore no price, so tomorrow is
+    // not computable either — the same reason the rungs past tomorrow stay
+    // blank. Showing $14.00 here off the slip's assumed -250 would be exactly
+    // the invented projection this card exists to avoid.
+    if(d===st.rung+1)return waiting
+      ? `<div class="ld-step"><div class="d">DAY ${d}</div>
+         <div class="v" style="color:var(--dim)">—</div>
+         <div class="o">needs today's price</div></div>`
+      : `<div class="ld-step next"><div class="d">DAY ${d} · IF TODAY HITS</div>
+         <div class="v" style="color:var(--blue)">${money(ret)}</div>
+         <div class="o">then price it again</div></div>`;
     return `<div class="ld-step"><div class="d">DAY ${d}</div>
       <div class="v" style="color:var(--dim)">—</div>
       <div class="o">priced on the day</div></div>`;
@@ -554,6 +613,28 @@ function renderLadder(){
       <div class="s">cycle ends, costs ${money(st.base)} — the seed, whatever day it lands</div></div>
   </div>`;
 
+  const lockedHtml=locked?`
+    <div class="ld-pick">
+      <div class="nm">${locked.pick} <span class="tag ok">LOCKED</span></div>
+      <div class="sub">#${locked.slot||"—"} · ${locked.teams||""} · ${locked.sp||"SP TBD"}</div>
+      <div class="num">
+        <span style="color:var(--blue)">${pct(locked.p)} to hit</span>
+        <span style="color:var(--yellow)">fair ${M.amOdds(locked.p)}</span>
+        <span style="color:${qualifies?"var(--green)":"var(--red)"}">${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${todayOdds>0?"+":""}${todayOdds}</span>
+      </div>
+      <div class="sub" style="margin-top:7px;color:var(--green)">
+        Published ${locked.published?etTime(Date.parse(locked.published)):"—"} ET${locked.firstPitch?` · first pitch ${etTime(Date.parse(locked.firstPitch))} ET`:""}
+      </div>
+    </div>`:"";
+
+  const waitHtml=waiting?`
+    <div class="ld-pick ld-wait">
+      <div class="l">PICK LOCKS IN</div>
+      <div class="v" id="ldClock">—:—:—</div>
+      <div class="s">One hour before the first pitch of the day (${etTime(lk.first)} ET), chosen from the lineups posted at that moment.
+      It stays blank until then on purpose: before lineups are in, the best bat on the board changes every time one posts, and a pick that quietly swaps itself is not a pick.</div>
+    </div>`:"";
+
   const pickHtml=pick?`
     <div class="ld-pick">
       <div class="nm">${pick.c.name}${pick.c.posted?' <span class="tag ok">✓LU</span>':` <span class="tag warn">${pct(pick.c.startProb)} to start</span>`}</div>
@@ -571,7 +652,7 @@ function renderLadder(){
     </div>`:'<div class="ld-pick"><div class="sub">No board loaded.</div></div>';
 
   const warn=risk?`<div class="ld-warn">
-    <b>What this actually is.</b> Five legs at ${pct(p)} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally a large win — <b>${money(risk.cycleProfit)}</b> <i>if</i> all five legs priced like today's, which is a what-if and not a forecast: only tomorrow's stake is a real number. Do not size it as though it wins often.
+    <b>What this actually is.</b> Five legs at ${pct(p)}${waiting?" (a typical top leg — tonight's is not chosen yet)":""} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally a large win — <b>${money(risk.cycleProfit)}</b> <i>if</i> all five legs priced like today's, which is a what-if and not a forecast: only tomorrow's stake is a real number. Do not size it as though it wins often.
   </div>`:"";
 
   // Every settled rung's price is editable too — get a different number three
@@ -595,10 +676,10 @@ function renderLadder(){
 
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
-      <div><div class="ld-stake">${money(stake)}<small>TODAY · CYCLE ${st.cycle} · DAY ${st.rung} OF ${C.rungs}</small></div>${oddsBox}</div>
-      ${pickHtml}
+      <div><div class="ld-stake">${money(stake)}<small>TODAY · CYCLE ${st.cycle} · DAY ${st.rung} OF ${C.rungs}</small></div>${waiting?"":oddsBox}</div>
+      ${locked?lockedHtml:waiting?waitHtml:pickHtml}
     </div>
-    ${nextBox}
+    ${waiting?"":nextBox}
     <div class="ld-steps">${steps}</div>
     <div class="ld-strip">
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">ACCOUNT</div></div>
@@ -612,6 +693,7 @@ function renderLadder(){
     ${warn}
     ${histHtml}
   </div>`;
+  tickLadderClock();
 }
 
 function render(){
