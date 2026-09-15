@@ -85,9 +85,16 @@ b,strong{font-weight:600}
 .disc-b b{color:var(--text)}
 
 /* ── section headings ── */
+.group-h{padding:34px var(--pad) 4px;border-top:.5px solid var(--hair);margin-top:26px}
+.group-h span{display:block;font-size:12px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--dim)}
+.group-h small{display:block;font-size:12px;color:var(--dim);margin-top:3px;opacity:.75}
+.group-h+.section-h{padding-top:12px}
 .section-h{padding:26px var(--pad) 10px}
 .sh-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.sh-row h2{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.sh-row h2{font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.section-h.lead{padding-top:18px}
+.section-h.lead .sh-row h2{font-size:26px}
 .sh-note{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
 .sh-note b{color:var(--muted);font-weight:600}
 .section-h .disc{margin-top:8px}
@@ -260,7 +267,7 @@ td.num{text-align:right}
     <div class="brand">SPORTSAI</div>
     <div class="logo">⚾ Two BAIgger</div>
     <div class="logo-sub">
-      Hit parlays + the ladder · Build 8 ·
+      The ladder + hit parlays · Build 9 ·
       <!-- stamped by the deploy; keep on its own line -->
       <span id="buildsha">799e08d</span>
     </div>
@@ -276,24 +283,7 @@ td.num{text-align:right}
 <div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
 
-<details id="slip-wrap"><summary>⚙️ Bet slip &amp; filters</summary>
-<div id="slip">
-  <div class="fld"><label>Double price (American)</label><input id="price" type="number" step="5" value="-175"></div>
-  <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="10" value="1000"></div>
-  <div class="fld"><label>$ per edge point</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50"></div>
-  <div class="fld"><label>Leg price (hit prop)</label><input id="legPrice" type="number" step="5" value="-250"></div>
-  <div class="fld"><label>Bet bar (edge pts)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
-  <div class="fld"><label>Min spot (pts)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
-  <div class="fld"><label>Rank by</label><select id="sortBy">
-    <option value="edge">Edge over price</option>
-    <option value="spot">Softest spot</option>
-    <option value="prob">Raw probability</option>
-  </select></div>
-  <div class="fld chk"><input id="onlyPosted" type="checkbox"><label for="onlyPosted">Confirmed lineups only</label></div>
-  <div class="fld chk"><input id="onlyTeam" type="checkbox"><label for="onlyTeam">Same-team pairs only (correlation edge)</label></div>
-</div></details>
-
-<div class="section-h">
+<div class="section-h lead">
   <div class="sh-row"><h2>🪜 The Ladder</h2><span class="sh-note" id="ldNote"></span></div>
   <details class="disc"><summary>How the ladder works</summary><div class="disc-b">
     <p>One bet a day: a single <b>“to record a hit”</b> leg — the highest-edge hitter on the whole slate — staked from a $100 account.</p>
@@ -304,8 +294,9 @@ td.num{text-align:right}
 </div>
 <div id="ladder"></div>
 
+<div class="group-h"><span>Daily Double</span><small>2-man same-game hit parlay · a different bet from the ladder</small></div>
 <div class="section-h">
-  <div class="sh-row"><h2>🎲 Bet Cards</h2><span class="sh-note" id="cardsNote"></span></div>
+  <div class="sh-row"><h2>🎲 Bet cards</h2><span class="sh-note" id="cardsNote"></span></div>
   <details class="disc"><summary>Why these games and no others</summary><div class="disc-b">
     <p>A card for every game whose double beats your price by more than the bet bar, and nothing else — the same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
     <p>The likeliest double is usually the most heavily bet and the worst priced. What pays is the gap between our number and the book's, which is why these are ranked by <b>edge</b> rather than by probability.</p>
@@ -329,6 +320,27 @@ td.num{text-align:right}
     <div class="table-wrap"><table><thead><tr id="lhead"></tr></thead><tbody id="lbody"></tbody></table></div>
   </details>
 </div>
+<div class="group-h"><span>Settings &amp; reference</span><small>prices, filters, and how every number is built</small></div>
+<details id="slip-wrap"><summary>⚙️ Bet slip &amp; filters</summary>
+<div id="slip">
+  <div class="fld"><label>Double price (American)</label><input id="price" type="number" step="5" value="-175"></div>
+  <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="10" value="1000"></div>
+  <div class="fld"><label>$ per edge point</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50"></div>
+  <div class="fld"><label>Leg price (hit prop)</label><input id="legPrice" type="number" step="5" value="-250"></div>
+  <div class="fld"><label>Bet bar (edge pts)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
+  <div class="fld"><label>Min spot (pts)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
+  <div class="fld"><label>Rank by</label><select id="sortBy">
+    <option value="edge">Edge over price</option>
+    <option value="spot">Softest spot</option>
+    <option value="prob">Raw probability</option>
+  </select></div>
+  <div class="fld chk"><input id="onlyPosted" type="checkbox"><label for="onlyPosted">Confirmed lineups only</label></div>
+  <div class="fld chk"><input id="onlyTeam" type="checkbox"><label for="onlyTeam">Same-team pairs only (correlation edge)</label></div>
+</div></details>
+
+
+
+
 <div class="legend" id="legend"></div>
 
 <script src="dd-model.js?v=b9fef9e"></script>
