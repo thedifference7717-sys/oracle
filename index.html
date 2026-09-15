@@ -311,7 +311,8 @@ td.num{text-align:right}
 <div class="section-h">
   <div class="sh-row"><h2>🎲 Bet cards</h2><span class="sh-note" id="cardsNote"></span></div>
   <details class="disc"><summary>Why these games and no others</summary><div class="disc-b">
-    <p>A card for every game whose double beats your price by more than the bet bar, and nothing else — the same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
+    <p>A card for every game that clears <b>both</b> bars — the double beats your price by more than the bet bar, <b>and</b> the opposing arm is soft enough — and nothing else. The same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
+    <p><b>Soft arm</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are, in points of hit probability against a league-neutral leg. It rates the spot rather than the hitters. A soft spot at a bad price is still a bad bet, which is why it is a second gate and not a replacement for the edge bar.</p>
     <p>The likeliest double is usually the most heavily bet and the worst priced. What pays is the gap between our number and the book's, which is why these are ranked by <b>edge</b> rather than by probability.</p>
   </div></details>
 </div>
@@ -342,6 +343,7 @@ td.num{text-align:right}
   <div class="fld"><label>Leg price (hit prop)</label><input id="legPrice" type="number" step="5" value="-250"></div>
   <div class="fld"><label>Bet bar (edge pts)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
   <div class="fld"><label>Min spot (pts)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
+  <div class="fld"><label>Min soft arm (pts)</label><input id="minSoft" type="number" step="0.1" value="4.9"></div>
   <div class="fld"><label>Rank by</label><select id="sortBy">
     <option value="edge">Edge over price</option>
     <option value="spot">Softest spot</option>
@@ -501,7 +503,7 @@ try{
 }catch(e){/* private mode: nothing stored, nothing to migrate */}
 
 // Bet-slip settings survive a reload — this page reruns every 3 minutes.
-const SETTINGS=["price","bank","perEdge","legPrice","minEdge","minSpot","sortBy","onlyPosted","onlyTeam"];
+const SETTINGS=["price","bank","perEdge","legPrice","minEdge","minSpot","minSoft","sortBy","onlyPosted","onlyTeam"];
 SETTINGS.forEach(id=>{
   const el=document.getElementById(id),saved=localStorage.getItem("dd."+id);
   if(saved!=null){if(el.type==="checkbox")el.checked=saved==="1";else el.value=saved;}
@@ -564,9 +566,17 @@ function filtered(){
 const betBar=()=>setting("minEdge")/100;
 // Re-price every pair against its own game's price before deciding what is a
 // bet, so a card and the bar can never disagree about the same game.
+// A game is a bet only if it clears BOTH bars: the price has to be beatable
+// and the spot has to be genuinely soft. SOFT holds the offence at league
+// average and measures only how bad the opposing starter, his bullpen, the
+// defence and the park are, so it rates the spot rather than the hitters — and
+// a soft spot at a bad price is still a bad bet, which is why this is a second
+// gate rather than a replacement for the edge bar. Same test the alerter runs,
+// so the board and your phone cannot disagree about what counts.
+const softBar=()=>setting("minSoft")/100;
 function bets(){return filtered().filter(x=>{
   const e=M.evaluate(x.prob,gamePrice(x.gk));
-  return e && e.edge>=betBar();
+  return e && e.edge>=betBar() && x.soft>=softBar();
 });}
 const pts=v=>(v>=0?"+":"")+(v*100).toFixed(1);
 const spotColor=v=>v>=0.03?"var(--green)":v>=0?"var(--yellow)":"var(--dim)";
@@ -939,7 +949,12 @@ function render(){
   const B=bets();
   const barPts=(betBar()*100).toFixed(1);
   document.getElementById("cards").innerHTML=B.map(card).join("")||
-    `<div class="empty">No game on the board clears +${barPts}pts right now — so there is no bet.<br><span style="color:var(--dim)">Every game is still listed below. Lower the bet bar to see what is closest.</span></div>`;
+    `<div class="empty">No game clears both bars right now — so there is no bet.<br>
+       <span style="color:var(--dim)">Needs edge ≥ +${barPts}pts <b>and</b> soft arm ≥ +${(softBar()*100).toFixed(1)}pts.
+       ${(()=>{const p=filtered().filter(x=>{const e=M.evaluate(x.prob,gamePrice(x.gk));return e&&e.edge>=betBar();}).length,
+                 q=filtered().filter(x=>x.soft>=softBar()).length;
+          return `${p} clear the price, ${q} are soft enough, none are both.`;})()}
+       <br>Every game is still listed below.</span></div>`;
   document.getElementById("cardsNote").innerHTML=B.length
     ? `${B.length} bet${B.length===1?"":"s"} of ${pairs.length} games · total stake <b style="color:var(--yellow)">${money(B.reduce((t,x)=>t+betSize(M.evaluate(x.prob,gamePrice(x.gk))),0))}</b>`
     : `0 bets of ${pairs.length} games`;

@@ -93,6 +93,18 @@ const MIN_EDGE = (_minEdge == null || _minEdge.trim() === "" || isNaN(+_minEdge)
 // the rate is ever changed, past bets must keep the stake they were actually
 // published with, or the record quietly rewrites itself.
 const PER_EDGE_PT = +(process.env.DD_PER_EDGE_PT || 2.50);
+// Softness of the opposing arm the double must face, in points of hit
+// probability against a league-neutral leg. SOFT holds the offence at league
+// average and asks only how bad the starter, his bullpen, the defence and the
+// park are — so it measures the spot rather than the hitters, and a double is
+// only taken where the spot is genuinely soft.
+//
+// This is a second gate, not a replacement for the edge bar: a soft spot at a
+// bad price is still a bad bet. Both have to pass. Override with DD_MIN_SOFT
+// (as a fraction, so 0.049 is +4.9pts); an explicit 0 really does mean no
+// softness requirement, which a plain || would have swallowed.
+const _minSoft = process.env.DD_MIN_SOFT;
+const MIN_SOFT = (_minSoft == null || _minSoft.trim() === "" || isNaN(+_minSoft)) ? 0.049 : +_minSoft;
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `${MONTHS[mo-1]} ${da}`; };
@@ -421,7 +433,7 @@ async function alertGame(day, g, d) {
     `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(d.prob - MIN_EDGE)}</b>\n` +
     `${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} · needs ${(MIN_EDGE * 100).toFixed(1)}pts of margin\n` +
     `<i>Checked against ${PRICE > 0 ? "+" : ""}${PRICE}: edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · stake ${money(stakeFor(d))}</i>\n` +
-    `${d.sameTeam ? "SAME TEAM" : "OPPOSING"} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n\n` +
+    `Soft arm ${pts(d.soft)}pts (bar +${(MIN_SOFT * 100).toFixed(1)}) · ${d.sameTeam ? "SAME TEAM" : "OPPOSING"} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n\n` +
     `${legLine(d.a)}\n${legLine(d.b)}\n\n` +
     `<i>SPOT ${pts(d.spotDelta)}pts vs league (soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>`
   );
@@ -510,6 +522,11 @@ async function main() {
     if (d.edge < MIN_EDGE) {
       D.seen[key] = "noedge"; changed = true;
       console.log(`game ${g.gamePk} (${d.teams}): edge ${(d.edge * 100).toFixed(1)}pts — no bet.`);
+      continue;
+    }
+    if (d.soft < MIN_SOFT) {
+      D.seen[key] = "noedge"; changed = true;
+      console.log(`game ${g.gamePk} (${d.teams}): soft arm ${pts(d.soft)}pts, under +${(MIN_SOFT * 100).toFixed(1)} — no bet.`);
       continue;
     }
     await alertGame(day, g, d);
