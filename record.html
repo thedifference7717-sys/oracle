@@ -64,6 +64,20 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 <div class="wrap" id="body"><div class="empty"><span class="spin">⟳</span> Loading the ledger…</div></div>
 
 <script>
+// ── the era boundary ────────────────────────────────────────────────────────
+// Per-game alerting — one pair per game, judged an hour before its own first
+// pitch on a confirmed lineup — merged 2026-09-09T23:41Z, so 9/10 is the first
+// slate fully under it. Everything before that was a materially different
+// system: slate-wide boards that locked games before lineups posted and
+// tracked negative-edge doubles. Averaging the two measures neither.
+//
+// The earlier bets are NOT restated here as though they were logged properly.
+// They were only ever kept as a cumulative win/loss count, so they cannot be
+// shown row by row and nobody can check them. They are reported separately,
+// by subtraction, and labelled as what they are.
+const ERA_START = "2026-09-10";
+const ERA_NOTE  = "per-game model · confirmed lineups · +2pt bar";
+
 const $=id=>document.getElementById(id);
 const pct=v=>(v*100).toFixed(1)+"%";
 const money=v=>(v<0?"-":"")+"$"+Math.abs(v).toFixed(2);
@@ -86,10 +100,30 @@ function stats(bets){
   return {done,w,l,pnl,roi,n,predL,actL,se,z,seW,pw,open:bets.filter(b=>b.status==="open").length};
 }
 
-function render(L){
-  const bets=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
-  if(!bets.length){$("body").innerHTML='<div class="empty">No graded picks yet. The ledger fills itself as the alerter publishes and settles bets.</div>';return;}
+function render(L, agg){
+  const all=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
+  const bets=all.filter(b=>(b.date||"")>=ERA_START);
   const S=stats(bets);
+  // Anything the model won or lost before the ledger existed, recovered by
+  // subtracting the verified era from the all-time counter the alerter keeps.
+  const prior = agg && agg.record
+    ? { w: Math.max(0, agg.record.w - S.w), l: Math.max(0, agg.record.l - S.l) } : null;
+  const priorN = prior ? prior.w + prior.l : 0;
+  const priorLine = priorN
+    ? `<div class="note" style="border-color:#8C95A455">
+         <b>Before the ledger existed: ${prior.w}-${prior.l}.</b> Those bets ran under earlier versions of the
+         system — slate-wide boards that locked games before lineups posted and tracked doubles the model itself
+         priced as negative. They were only ever kept as a running win/loss count, never row by row, so they cannot
+         be shown here and <b>you cannot verify them</b>. They are excluded from every number above and reported
+         only so the count is not quietly dropped.
+       </div>` : "";
+  if(!bets.length){
+    $("body").innerHTML=`<div class="note">
+        <b>The verified record starts ${ERA_START}.</b> ${ERA_NOTE}. No picks have been published to the ledger yet —
+        it fills itself the moment the alerter sends one, and each row is committed before its first pitch.
+      </div>${priorLine}`;
+    return;
+  }
   const proven=Math.abs(S.z)>=1.96;
   // A sample this small cannot demonstrate an edge, and saying so is the point:
   // a record nobody can check is worth nothing, and one that overclaims is worse.
@@ -115,6 +149,8 @@ function render(L){
            The win rate above carries the same caveat: ±${(S.seW*100).toFixed(1)} points at ${S.done.length} settled bets.`}
     </div>
 
+    ${priorLine}
+
     <div class="note">
       <b>Why this record is checkable.</b> Every pick is written to
       <a href="https://github.com/thedifference7717-sys/oracle/blob/main/data/ledger.json">data/ledger.json</a>
@@ -126,7 +162,7 @@ function render(L){
     </div>
 
     <div class="panel">
-      <div class="panel-head">EVERY PICK, NEWEST FIRST <span>${bets.length} total · ${S.done.length} settled · ${S.open} open</span></div>
+      <div class="panel-head">EVERY PICK SINCE ${ERA_START}, NEWEST FIRST <span>${bets.length} total · ${S.done.length} settled · ${S.open} open</span></div>
       <div class="table-wrap"><table>
         <thead><tr>
           <th>RESULT</th><th>GAME</th><th>THE DOUBLE</th>
@@ -156,9 +192,16 @@ function render(L){
 
 (async()=>{
   try{
-    const r=await fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    render(await r.json());
+    const [r,a]=await Promise.all([
+      fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"}),
+      fetch("data/model-log.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+    ]);
+    const agg = a && a.ok ? await a.json().catch(()=>null) : null;
+    if(!r.ok){
+      // No ledger yet is a normal state, not an error — still show the boundary.
+      render({bets:[]}, agg); return;
+    }
+    render(await r.json(), agg);
   }catch(e){
     $("body").innerHTML=`<div class="empty">Could not load the ledger (${e.message}).<br>It is written by the alerter once picks start publishing.</div>`;
   }
