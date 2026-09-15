@@ -89,6 +89,22 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 .ld-pick .nm{font-size:17px;font-weight:800}
 .ld-pick .sub{font-size:11px;color:var(--dim);margin-top:3px}
 .ld-pick .num{font-family:'Orbitron',monospace;font-size:12px;margin-top:7px;display:flex;gap:12px;flex-wrap:wrap}
+.ld-odds{margin-top:13px;max-width:250px}
+.ld-odds label{display:block;font-size:8.5px;color:var(--muted);letter-spacing:.09em;margin-bottom:4px}
+.ld-odds input{width:100%;background:#0A0A1C;border:1px solid var(--yellow);color:var(--yellow);border-radius:8px;padding:9px 11px;font-family:'Orbitron',monospace;font-size:19px;font-weight:700;text-align:center}
+.ld-odds .hint{font-size:10.5px;color:var(--dim);margin-top:5px;line-height:1.45}
+.ld-odds .hint b{color:var(--text);font-family:'Orbitron',monospace}
+.ld-next{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+.ld-nb{flex:1;min-width:170px;border-radius:11px;padding:11px 13px;border:1px solid var(--border);background:#0A0A1C}
+.ld-nb.win{border-color:#34D39966;background:#06200F}
+.ld-nb.lose{border-color:#F8717155;background:#1F0C0C}
+.ld-nb .l{font-size:8.5px;letter-spacing:.08em;color:var(--muted)}
+.ld-nb .v{font-family:'Orbitron',monospace;font-size:27px;font-weight:900;margin-top:3px}
+.ld-nb.win .v{color:var(--green)}
+.ld-nb.lose .v{color:#FCA5A5}
+.ld-nb .s{font-size:10px;color:var(--dim);margin-top:4px;line-height:1.45}
+.ld-in{width:78px;background:#0A0A1C;border:1px solid var(--border);border-radius:6px;padding:4px 5px;font-family:'Orbitron',monospace;font-size:11px;text-align:right}
+.ld-foot{font-size:10px;color:var(--dim);margin-top:8px;line-height:1.5}
 .ld-steps{display:flex;gap:7px;margin:14px 0 0;flex-wrap:wrap}
 .ld-step{flex:1;min-width:64px;background:#0A0A1C;border:1px solid var(--border);border-radius:9px;padding:8px 4px;text-align:center}
 .ld-step.done{border-color:var(--green);background:#06200F}
@@ -124,7 +140,7 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 4 · <span id="buildsha">b9fef9e</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">⚾ Two BAIgger</div><div class="logo-sub">HIT PARLAYS + THE LADDER · BUILD 5 · <span id="buildsha">b9fef9e</span></div></div>
   <div class="controls">
     <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
@@ -198,6 +214,24 @@ function setGamePrice(gk,v){
   if(board)render();
 }
 const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
+
+// The ladder compounds the ACTUAL return, so it can only be right if it knows
+// the price actually taken. A -250 assumption turns $10 into $14; the -180 you
+// really got turns it into $15.56, and five rungs of that error compounds into
+// a different bet entirely. So the price is typed in per day and kept here,
+// keyed by slate date, surviving reloads. It overrides whatever the alerter
+// published for that day, because the alerter had to guess and you did not.
+let oddsByDay={};
+try{oddsByDay=JSON.parse(localStorage.getItem("dd.ladderOdds")||"{}")||{};}catch(e){oddsByDay={};}
+// Commits on change (blur or Enter), never on every keystroke: this re-renders
+// the whole card, which would rip the input out from under the cursor halfway
+// through typing "-180".
+function setLadderOdds(day,v){
+  const p=parseFloat(v);
+  if(!isFinite(p)||p===0||Math.abs(p)<100)delete oddsByDay[day]; else oddsByDay[day]=p;
+  try{localStorage.setItem("dd.ladderOdds",JSON.stringify(oddsByDay));}catch(e){}
+  renderLadder();
+}
 
 // ── self-update ─────────────────────────────────────────────────────────────
 // GitHub Pages serves HTML with a 10-minute max-age, and the no-cache <meta>
@@ -415,26 +449,66 @@ function ladderPick(){
 
 function renderLadder(){
   const el=document.getElementById("ladder"),note=document.getElementById("ldNote");
-  const st=M.ladder(ladderHist&&Array.isArray(ladderHist.bets)?ladderHist.bets:[]);
-  const C=st.cfg, lp=setting("legPrice"), pick=board?ladderPick():null;
+  const raw=(ladderHist&&Array.isArray(ladderHist.bets))?ladderHist.bets:[];
+  // Replay against the prices actually taken, not the ones assumed.
+  const hist=raw.map(b=>oddsByDay[b.date]!=null?Object.assign({},b,{price:oddsByDay[b.date]}):b);
+  const st=M.ladder(hist);
+  const C=st.cfg, pick=board?ladderPick():null;
+  // Falls back rather than keying on undefined: a board without a date would
+  // silently store the typed price under a key nothing ever reads back, and
+  // the box would look like it did nothing.
+  const today=(board&&board.date)||M.slateYmd();
+  // Today's price: what you typed, else what the alerter published for today,
+  // else the slip's leg price as a starting guess.
+  const pub=raw.find(b=>b.date===today);
+  const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
+                 :(pub&&pub.price!=null?pub.price:setting("legPrice"));
+  const dec=M.decFromAmerican(todayOdds)||1;
+  const typed=oddsByDay[today]!=null;
   const p=pick?pick.c.p:null;
-  const risk=p?M.ladderRisk(p,lp,st):null;
+  const risk=p?M.ladderRisk(p,todayOdds,st):null;
   const stake=st.stake, mine=st.atRisk, house=st.onTable;
-  const bar=betBar(), qualifies=pick&&pick.edge>=bar;
+  const bar=betBar();
+  const lbeToday=1/dec, edgeToday=p!=null?p-lbeToday:null;
+  const qualifies=edgeToday!=null&&edgeToday>=bar;
   note.textContent=`cycle ${st.cycle} · day ${st.rung} of ${C.rungs} · account ${money(st.account)}`;
 
-  // The staircase. Rungs already climbed are ticked; today is the live stake;
-  // the rungs ahead are what the stake becomes if it keeps winning at this
-  // price, which is the whole point — day five risks the book's money, not
-  // fifty of yours.
-  const decLeg=M.decFromAmerican(lp)||1;
+  // What today actually turns into. This is the number the box exists for:
+  // win at the price you typed and that is tomorrow's stake, unless today
+  // closes the cycle, in which case the money comes off and the next seed is
+  // 10% of the grown account.
+  const ret=stake*dec;
+  const closes=st.rung>=C.rungs;
+  const nextIfWin=closes?Math.max(0,(st.account+(ret-st.base)))*C.basePct:ret;
+  const nextIfLose=st.base*(1+C.missGain);
+
+  // The rungs ahead compound at the price typed for today — it is the only
+  // real price on the board, so it is the least wrong assumption available.
   const steps=Array.from({length:C.rungs},(_,i)=>{
     const cls= i+1<st.rung?"done": i+1===st.rung?"now":"";
-    const ahead=stake*Math.pow(decLeg,i+1-st.rung);
+    const ahead=stake*Math.pow(dec,i+1-st.rung);
     const col= cls==="now"?"var(--yellow)":cls==="done"?"var(--green)":"var(--dim)";
     return `<div class="ld-step ${cls}"><div class="d">DAY ${i+1}</div>
       <div class="v" style="color:${col}">${cls==="done"?"✓":money(ahead)}</div></div>`;
   }).join("");
+
+  const oddsBox=`<div class="ld-odds">
+    <label for="ldOdds">ODDS YOU GOT ON THIS PICK</label>
+    <input id="ldOdds" type="number" step="5" value="${todayOdds}"
+      onchange="setLadderOdds('${today}',this.value)">
+    <div class="hint">${typed?`Your price. ${money(stake)} returns <b>${money(ret)}</b>.`
+      :`Assumed — type what the book is actually showing. ${money(stake)} would return <b>${money(ret)}</b>.`}</div>
+  </div>`;
+
+  const nextBox=`<div class="ld-next">
+    <div class="ld-nb win"><div class="l">IF IT HITS → ${closes?"CYCLE CLOSES, NEXT SEED":"TOMORROW'S BET"}</div>
+      <div class="v">${money(nextIfWin)}</div>
+      ${closes?`<div class="s">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
+              :`<div class="s">still only ${money(st.base)} of your money at risk</div>`}</div>
+    <div class="ld-nb lose"><div class="l">IF IT MISSES → NEXT SEED</div>
+      <div class="v">${money(nextIfLose)}</div>
+      <div class="s">cycle ends, costs ${money(st.base)} — the seed, whatever day it lands</div></div>
+  </div>`;
 
   const pickHtml=pick?`
     <div class="ld-pick">
@@ -443,38 +517,44 @@ function renderLadder(){
       <div class="num">
         <span style="color:var(--blue)">${pct(pick.c.p)} to hit</span>
         <span style="color:var(--yellow)">fair ${M.amOdds(pick.c.p)}</span>
-        <span style="color:${pick.edge>=bar?"var(--green)":"var(--red)"}">${pick.edge>=0?"+":""}${(pick.edge*100).toFixed(1)}pts vs ${lp>0?"+":""}${lp}</span>
+        <span style="color:${qualifies?"var(--green)":"var(--red)"}">${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${todayOdds>0?"+":""}${todayOdds}</span>
       </div>
       <div class="sub" style="margin-top:7px;color:${qualifies?"var(--green)":"var(--red)"}">
         ${qualifies?`BET ONLY BETTER THAN ${M.amOdds(pick.c.p-bar)}`
-                   :`Below the +${(bar*100).toFixed(1)}pt bar — no rung today. The ladder waits; it does not lower its price.`}
+                   :`${todayOdds>0?"+":""}${todayOdds} is below the +${(bar*100).toFixed(1)}pt bar — no rung today. The ladder waits; it does not lower its price.`}
       </div>
       ${pick.provisional?'<div class="sub" style="color:var(--yellow);margin-top:5px">⚠ No lineup posted yet — provisional. The alerter picks again once lineups are in.</div>':""}
     </div>`:'<div class="ld-pick"><div class="sub">No board loaded.</div></div>';
 
   const warn=risk?`<div class="ld-warn">
-    <b>What this actually is.</b> Five legs at ${pct(p)} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. The ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally <b>${money(risk.cycleProfit)}</b>. Do not size it as though it wins often.
+    <b>What this actually is.</b> Five legs at ${pct(p)} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally <b>${money(risk.cycleProfit)}</b>. Do not size it as though it wins often.
   </div>`:"";
 
-  const hist=(st.rows||[]).slice(-12).reverse();
-  const histHtml=hist.length?`<div class="table-wrap"><table class="ld-hist">
-    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>RESULT</th><th>P&amp;L</th><th>ACCOUNT</th></tr></thead>
+  // Every settled rung's price is editable too — get a different number three
+  // days ago and the whole chain above it is wrong until you say so.
+  const histHtml=st.rows.length?`<div class="table-wrap"><table class="ld-hist">
+    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>RESULT</th><th>P&amp;L</th><th>ACCOUNT</th></tr></thead>
     <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
       return out.slice(-12).reverse().map(({r,acc})=>`<tr>
         <td style="color:var(--dim)">${r.date}</td>
         <td>${r.pick||"—"}</td>
         <td style="color:var(--dim)">${r.cycle}·${r.rung}</td>
         <td>${money(r.stake)}</td>
+        <td><input class="ld-in" type="number" step="5" value="${r.price}"
+             onchange="setLadderOdds('${r.date}',this.value)"
+             style="color:${oddsByDay[r.date]!=null?'var(--green)':'var(--dim)'}"></td>
         <td style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
         <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
-        <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table></div>`
+        <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table>
+    <div class="ld-foot">Green odds are prices you typed; grey are what the alerter assumed. Edit any of them and every stake above it recompounds.</div></div>`
     :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;
 
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
-      <div><div class="ld-stake">${money(stake)}<small>TODAY · CYCLE ${st.cycle} · DAY ${st.rung} OF ${C.rungs}</small></div></div>
+      <div><div class="ld-stake">${money(stake)}<small>TODAY · CYCLE ${st.cycle} · DAY ${st.rung} OF ${C.rungs}</small></div>${oddsBox}</div>
       ${pickHtml}
     </div>
+    ${nextBox}
     <div class="ld-steps">${steps}</div>
     <div class="ld-strip">
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">ACCOUNT</div></div>
@@ -573,7 +653,7 @@ function render(){
   <b>Targeting the spot, not just the hitter.</b> Every lineup gets three readings, each in points of hit probability against a league-neutral leg. <b>SOFT ARM</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are. <b>GOOD BATS</b> does the reverse — this lineup against league-average opposition. <b>SPOT</b> is the two together: what a typical hitter in this lineup actually does tonight. Ace to batting-practice is worth about 11 points on a single leg, so the spot is usually a bigger lever than which hitter you pick out of it.<br>
   <b>Watch the bullpen before you commit.</b> A bad starter gets chased, which means over half the plate appearances come against relief. The same weak starter is worth <b>+5.3pts</b> in front of a leaky pen and only <b>+3.6pts</b> in front of an elite one — the THEN PEN column is the share of the night the bullpen works and its on-base allowed. A soft start behind a lockdown pen is a trap.<br>
   <b>BET</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $2.50), so a +5.5pt game stakes $13.75 and a +2.0pt game stakes $5.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.<br>
-  <b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and a $100 account funds only a handful of them. Both the completion rate and the chance of running the account dry are computed live on the card. Rank it by the red panel, not by the payout.<br>
+  <b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and a $100 account funds only a handful of them. Both the completion rate and the chance of running the account dry are computed live on the card. The rungs are not a fixed $10/$14/$19.60 sequence — that was a -250 assumption. Type the price the book is actually showing into <b>ODDS YOU GOT</b> and every rung ahead, the next bet, and the whole risk panel recompute off it. Past rungs are editable in the same way, so a price you got three days ago corrects the chain above it. Rank it by the red panel, not by the payout.<br>
   <b>Singles usually beat the double.</b> A two-leg parlay pays the book's margin twice; a single hit prop pays it once. Two legs at 78% and 76% make a 60.1% double — against a −158 parlay needing 61.24% that is a losing bet, while the same two legs at −250 each return +9.2% and +6.4%. The SINGLE HIT PROPS table below prices every hitter against your leg price and sorts by edge; it is often where the only real bet on the slate is.<br>
   <b>A card per qualifying game.</b> Every game whose double clears the bet bar (default +2.0 edge points) gets its own card, however many that is — no top-N cap — and games below the bar get none. That is the same test the Telegram alerter applies, so the board and your phone cannot disagree about what counts as a bet. The table underneath still lists every game on the slate, bar or no bar.<br>
   <b>Ranked by EDGE, not by probability</b> — true probability minus your price's breakeven. Stake is <b>quarter-Kelly</b>: full Kelly on a model this uncertain is how you go broke while being right.<br>
