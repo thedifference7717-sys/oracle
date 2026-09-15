@@ -47,6 +47,10 @@ b,strong{font-weight:600}
 .navlink:active{opacity:.6}
 
 .wrap{padding:18px var(--pad) 0}
+.group-h{padding:36px 0 12px;border-top:.5px solid var(--hair);margin-top:30px}
+.group-h span{display:block;font-size:12px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--dim)}
+.group-h small{display:block;font-size:12px;color:var(--dim);margin-top:4px;opacity:.75;line-height:1.5}
 .hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .stat{background:var(--elev);border:none;border-radius:16px;padding:16px 14px;text-align:center}
 .stat .v{font-size:27px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
@@ -133,6 +137,64 @@ td.num{text-align:right}
 // to trust it. Naming the date, and naming the rebuild that caused it, is the
 // stronger position: it is specific, it is checkable against the repo's own
 // history, and it is what an honest vendor does.
+// ── PlAIybook, kept separate on purpose ────────────────────────────────────
+// A different sport, a different bet and a different price range. Blending an
+// NFL two-leg prop parlay at +200 into an MLB hit double at -160 would produce
+// a single number that describes neither: the units are not comparable, the
+// hit rates are not comparable, and a good week in one would paper over a bad
+// one in the other. So it gets its own block, its own totals, and no combined
+// figure anywhere on this page.
+function renderGridiron(G){
+  if(!G || !G.record || !G.record.n) return "";
+  const R=G.record, weeks=Object.entries(G.weeks||{}).sort((a,b)=>b[0].localeCompare(a[0]));
+  const picks=weeks.flatMap(([k,w])=>(w.picks||[]).map(p=>({...p,wk:k})));
+  const settled=picks.filter(p=>p.result===0||p.result===1);
+  const roi=settled.length?R.units/settled.length:0;
+  // Expected wins comes from the model's own probabilities. Comparing it to
+  // actual wins is the only calibration check a sample this small supports.
+  const exp=weeks.reduce((t,[,w])=>t+(w.expectedWins||0),0);
+  const row=p=>{
+    const won=p.result===1;
+    const ret=won?p.stakeUnits?p.stakeUnits*decU(p.price):decU(p.price):0;
+    return `<tr>
+      <td><span class="res ${won?"won":"lost"}">${won?"WON":"LOST"}</span></td>
+      <td>${p.game}<div class="lead">${(p.date||"").slice(0,10)}</div></td>
+      <td>${(p.legs||[]).map(l=>`<div>${l.player} <span class="lead">${l.market} ${l.side} ${l.line}${l.got!=null?` · got ${l.got}`:""}</span></div>`).join("")}</td>
+      <td class="num odds">${p.price>0?"+":""}${p.price}</td>
+      <td class="num">${(p.prob*100).toFixed(1)}%</td>
+      <td class="num" style="color:${p.edge>0?"var(--green)":"var(--red)"}">${p.edge>=0?"+":""}${(p.edge*100).toFixed(1)}</td>
+      <td class="num" style="color:${won?"var(--green)":"var(--red)"}">${won?"+"+(decU(p.price)-1).toFixed(2):"-1.00"}u</td>
+    </tr>`;
+  };
+  return `
+    <div class="group-h"><span>PlAIybook · NFL</span><small>2-leg same-game prop parlay — a different bet, tracked separately and never combined with the baseball numbers</small></div>
+    <div class="hero">
+      <div class="stat"><div class="v" style="color:${R.units>=0?"var(--green)":"var(--red)"}">${R.units>=0?"+":""}${R.units.toFixed(2)}u</div><div class="l">Units won</div></div>
+      <div class="stat"><div class="v">${R.w}-${R.l}${R.push?"-"+R.push:""}</div><div class="l">Record</div></div>
+      <div class="stat"><div class="v" style="color:${roi>=0?"var(--green)":"var(--red)"}">${roi>=0?"+":""}${(roi*100).toFixed(1)}%</div><div class="l">Return per unit staked</div></div>
+      <div class="stat"><div class="v">${R.w} <span style="color:var(--dim);font-size:17px">vs ${exp.toFixed(1)}</span></div><div class="l">Wins vs model expected</div></div>
+    </div>
+    <div class="note">
+      <b>Read this one by the units, not the record.</b> ${R.w}-${R.l} looks like a losing week and the ledger is
+      ${R.units>=0?`up ${R.units.toFixed(2)} units`:`down ${Math.abs(R.units).toFixed(2)} units`} — both are true, because these are
+      plus-money parlays where one winner at a long price pays for several losers. Of the ${R.w} that landed,
+      the two longest were priced at +336 and +397, and they are where the profit came from. A version of this
+      week where those two miss and two short prices hit instead shows the same record and loses money.<br>
+      <b>The frequency check is the honest one.</b> The model expected ${exp.toFixed(2)} winners from these
+      ${settled.length} parlays and got ${R.w}. That is the number worth watching, and ${settled.length} picks
+      is nowhere near enough of them to conclude anything yet.
+    </div>
+    <div class="panel">
+      <div class="panel-head">Every NFL pick <span>${settled.length} settled · ${weeks.length} week${weeks.length===1?"":"s"}</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>RESULT</th><th>GAME</th><th>THE PARLAY</th>
+          <th class="num">PRICE</th><th class="num">MODEL</th><th class="num">EDGE</th><th class="num">UNITS</th></tr></thead>
+        <tbody>${picks.map(row).join("")}</tbody>
+      </table></div>
+    </div>`;
+}
+const decU=a=>a>0?1+a/100:1+100/Math.abs(a);
+
 // ── the era boundary ────────────────────────────────────────────────────────
 // Per-game alerting — one pair per game, judged an hour before its own first
 // pitch on a confirmed lineup — merged 2026-09-09T23:41Z, so 9/10 is the first
@@ -204,15 +266,15 @@ function stats(bets){
   return {done,w,l,pnl,roi,n,predL,actL,se,z,seW,pw,open:bets.filter(b=>b.status==="open").length};
 }
 
-function render(L){
+function render(L, G){
   const all=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
   const bets=all.filter(b=>(b.date||"")>=ERA_START);
   const S=stats(bets);
   if(!bets.length){
     $("body").innerHTML=`<div class="note">
-        <b>This record starts ${new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} — the day the model was rebuilt.</b> ${ERA_NOTE}. Earlier results came from a different system and are not counted here. No picks have been published to the ledger yet —
+        <b>This record starts ${new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} — the day the model was rebuilt.</b> ${ERA_NOTE}. Earlier results came from a different system and are not counted here. No baseball picks have been published to the ledger yet —
         it fills itself the moment the alerter sends one, and each row is committed before its first pitch.
-      </div>`;
+      </div>${renderGridiron(G)}`;
     return;
   }
   const proven=Math.abs(S.z)>=1.96;
@@ -320,17 +382,21 @@ function render(L){
 
     <div class="note" style="border-color:#FF4D6D55">
       ⚠ Model estimates, not advice, and past results do not predict future ones. Sports betting carries real risk of loss — bet only what you can afford to lose. 21+ and void where prohibited.
-    </div>`;
+    </div>
+    ${renderGridiron(G)}`;
 }
 
 (async()=>{
   try{
-    const r = await fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"});
-    if(!r.ok){
-      // No ledger yet is a normal state, not an error — still show the boundary.
-      render({bets:[]}); return;
-    }
-    render(await r.json());
+    const [r,g]=await Promise.all([
+      fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"}),
+      fetch("data/gridiron-log.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+    ]);
+    const G = g && g.ok ? await g.json().catch(()=>null) : null;
+    // Either sport missing is a normal state, not an error: the MLB ledger is
+    // empty until the first pick publishes, and the NFL log only exists in
+    // season. Whichever one has rows still renders.
+    render(r.ok ? await r.json() : {bets:[]}, G);
   }catch(e){
     $("body").innerHTML=`<div class="empty">Could not load the ledger (${e.message}).<br>It is written by the alerter once picks start publishing.</div>`;
   }
