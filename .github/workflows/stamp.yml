@@ -59,6 +59,14 @@ jobs:
             echo "already stamped at this commit — nothing to do"
             exit 0
           fi
-          git add -A ':(glob)**/*.html' build.json
+          # build.json is in .gitignore — it is generated state from the
+          # runner's point of view — but it is also the file checkBuild()
+          # fetches to notice a deploy, so it has to be committed. Without
+          # -f, `git add` refuses an ignored path and exits 1, and `bash -e`
+          # kills the step before it ever commits. That is why this workflow
+          # has failed on every push since build.json was ignored, and why
+          # the stamp never reached main.
+          git add -A ':(glob)**/*.html'
+          git add -f build.json
           git commit -m "Stamp build ${GITHUB_SHA:0:7}"
           git push origin main
