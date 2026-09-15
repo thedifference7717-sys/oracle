@@ -38,7 +38,15 @@ jobs:
       - name: Stamp the build
         run: |
           SHA="${GITHUB_SHA:0:7}"
-          grep -rl "__BUILD_SHA__" --include="*.html" . | xargs -r sed -i "s/__BUILD_SHA__/$SHA/g"
+          # Two forms, because main is not always unstamped: the original
+          # token on a page that has never been stamped, and a previous
+          # stamp on one that has. Missing the second form meant that once
+          # stamp.yml had written real shas into main, THIS step found no
+          # __BUILD_SHA__ to replace and shipped the previous build's sha in
+          # the artifact that is actually served.
+          grep -rl '__BUILD_SHA__' --include='*.html' . | xargs -r sed -i "s/__BUILD_SHA__/$SHA/g"
+          grep -rl 'id="buildsha"' --include='*.html' . \
+            | xargs -r sed -i -E "s#(<span id=\"buildsha\">)[^<]*(</span>)#\\1$SHA\\2#"
           printf '{"sha":"%s","built":"%s"}\n' "$SHA" "$(date -u +%FT%TZ)" > build.json
           echo "stamped build $SHA"
 

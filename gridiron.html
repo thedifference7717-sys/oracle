@@ -6,11 +6,13 @@
 <meta name="theme-color" content="#050510">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<title>GridAIron · NFL Edge Board</title>
+<title>SportsAI · PlAIybook</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="GridAIron">
-<link rel="icon" type="image/svg+xml" href="football.svg">
+<meta name="apple-mobile-web-app-title" content="SportsAI">
+<link rel="icon" type="image/svg+xml" href="sportsai.svg">
+<link rel="apple-touch-icon" href="sportsai-180.png">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
@@ -18,6 +20,7 @@
 html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
 body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 #topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#1A1206,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:.28em;color:var(--purple);opacity:.85;margin-bottom:2px}
 .logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.04em;color:#FFE7C2;text-shadow:0 0 14px #F7931A66}
 .logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
 .controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
@@ -170,11 +173,10 @@ td.num{text-align:right;font-family:'Orbitron',monospace}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">🏈 GridAIron</div><div class="logo-sub">NFL · 2-LEG SAME-GAME PROP PARLAY · BUILD 4 · <span id="buildsha">__BUILD_SHA__</span></div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">🏈 PlAIybook</div><div class="logo-sub">NFL · 2-LEG SAME-GAME PROP PARLAY · BUILD 4 · <span id="buildsha">fe59c50</span></div></div>
   <div class="controls">
-    <a class="navlink" href="index.html">🎲 Double</a>
-    <a class="navlink" href="hr.html">⚾ HR</a>
-    <a class="navlink" href="hits.html">🎯 AIchiro</a>
+    <a class="navlink" href="record.html">📜 Record</a>
+    <a class="navlink" href="index.html">⚾ Two BAIgger</a>
     <button class="run-btn" id="run" onclick="load(true)">⟳ REFRESH</button>
   </div>
 </div>
@@ -343,11 +345,28 @@ const M = window.GridModel;
 // meta tags for the document itself, so a phone that already has this page can
 // sit on a stale build indefinitely. The deploy stamps the commit here and
 // publishes the same value in build.json; we check and pull ourselves forward.
-const BUILD = "__BUILD_SHA__";
+// Read from the element the page already displays, rather than keeping a
+// second stamped copy of the same string. Two copies can drift, and on
+// index.html they did — a workflow regex wanting `const BUILD = "` never
+// matched that file's `const BUILD="`, freezing the constant at one build
+// while the visible span kept moving, so checkBuild() called the page stale
+// on every load forever. This file had the spaces and escaped it, but the
+// hazard was structural, not typographical: one source of truth cannot
+// disagree with itself.
+const BUILD = (document.getElementById("buildsha")||{textContent:"c598378"}).textContent.trim();
 let liveSha = null;
 const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
              set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} } };
-function hardReload(){ location.replace(location.pathname + "?b=" + (liveSha || Date.now())); }
+// Same fix as the MLB board: the token must differ on EVERY attempt. Keyed on
+// the sha alone, the button navigates to the URL a failed automatic attempt
+// already cached — a cache hit, so pressing it does visibly nothing.
+function hardReload(){
+  const btn = document.querySelector("#update-bar button");
+  if (btn) { btn.textContent = "UPDATING…"; btn.disabled = true; }
+  const base = location.pathname.replace(/[?#].*$/, "");
+  location.replace(base + "?b=" + (liveSha || "new") + "."
+    + Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
+}
 async function checkBuild(){
   // An unstamped page cannot tell whether it is stale, so it must not claim to
   // be current either. The stamp now happens on main, where Pages actually
@@ -361,6 +380,8 @@ async function checkBuild(){
     liveSha = j.sha;
     const key = "gi.upd." + j.sha;
     if (!ss.get(key)) { ss.set(key,"1"); hardReload(); return; }
+    const b = document.querySelector("#update-bar button");
+    if (b) { b.disabled = false; b.textContent = "UPDATE NOW"; }
     document.getElementById("update-bar").style.display = "flex";
   }catch(e){}
 }

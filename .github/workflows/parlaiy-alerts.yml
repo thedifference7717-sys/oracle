@@ -52,6 +52,22 @@ jobs:
         run: |
           END=$(( $(date +%s) + 350*60 ))
           echo "starting on $(git rev-parse --short HEAD)"
+          git config user.name  "sportsai-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          # Publish anything the alerter wrote to data/, right now rather than at
+          # day end. A pick is only verifiable if its commit predates first
+          # pitch, so the commit has to happen when the pick is sent.
+          publish() {
+            git add -A data 2>/dev/null || true
+            git diff --cached --quiet -- data && return 0
+            git commit -q -m "SportsAI: publish picks and results" || return 0
+            for k in 1 2 3; do
+              git pull --rebase --autostash -q origin main >/dev/null 2>&1 \
+                && git push -q origin HEAD:main >/dev/null 2>&1 && { echo "published data/"; return 0; }
+              sleep $((k*3))
+            done
+            echo "could not push data/ this pass — will retry next pass"
+          }
           while :; do
             if git fetch --depth=1 -q origin main 2>/dev/null; then
               git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js 2>/dev/null || true
@@ -59,6 +75,7 @@ jobs:
               if [ "$LIVE" != "${LAST:-}" ]; then echo "alerter now at $LIVE"; LAST=$LIVE; fi
             fi
             node scripts/parlaiy-alerts.mjs || true
+            publish
             [ "$(date +%s)" -ge "$END" ] && break
             sleep 60
           done
@@ -68,8 +85,18 @@ jobs:
           # American odds the doubles are priced against, and the minimum
           # modelled edge before one is alerted as a bet rather than tracked.
           # Set DD_PRICE to whatever your book actually offers.
-          DD_PRICE: ${{ vars.DD_PRICE || '100' }}
+          # -175 is the worst end of what the double is actually offered at
+          # (+100 to -175). Defaulting to the worst end keeps the board honest:
+          # a bet that clears at -175 clears at any better price, while the
+          # reverse is how you alert losers. The old '100' default here was
+          # silently overriding the script's own -175.
+          DD_PRICE: ${{ vars.DD_PRICE || '-175' }}
           DD_MIN_EDGE: ${{ vars.DD_MIN_EDGE || '0.02' }}
+          DD_PER_EDGE_PT: ${{ vars.DD_PER_EDGE_PT || '2.50' }}
+          # The single "to record a hit" prop price the ladder is staked and
+          # compounded against. This one is an assumption until confirmed, and
+          # it decides both whether the rung is a bet and how fast it climbs.
+          DD_LEG_PRICE: ${{ vars.DD_LEG_PRICE || '-250' }}
 
       # The alerter grades every leg it published and folds the result into a
       # calibration log. Because the eligible pool is the same faces night
@@ -83,9 +110,9 @@ jobs:
           [ -f data/model-log.json ] || { echo "nothing to publish"; exit 0; }
           git config user.name  "daily-double-bot"
           git config user.email "noreply@users.noreply.github.com"
-          git add data/model-log.json
+          git add -A data
           git diff --cached --quiet && { echo "calibration unchanged"; exit 0; }
-          git commit -m "DAIly Double: publish graded-leg calibration log"
+          git commit -m "SportsAI: publish picks and results (end of run)"
           for i in 1 2 3 4; do
             git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
             echo "push failed, retry $i"; sleep $((2**i))

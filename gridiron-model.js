@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// GridAIron — shared football pricing engine (NFL + FBS college)
+// PlAIybook — shared football pricing engine (NFL + FBS college)
 //
 // One file, two consumers: the dashboard loads it as a classic script
 // (window.GridModel), Node imports it as a CJS default. Same pipeline both

@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#050510">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Backtest Lab</title>
-<link rel="icon" type="image/svg+xml" href="baseball.svg">
+<title>SportsAI · Backtest Lab</title>
+<link rel="icon" type="image/svg+xml" href="sportsai.svg">
+<link rel="apple-touch-icon" href="sportsai-180.png">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
@@ -14,6 +16,7 @@
 html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
 body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 #topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:.28em;color:var(--purple);opacity:.85;margin-bottom:2px}
 .logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.05em;color:#EDEAFF;text-shadow:0 0 14px #A78BFA66}
 .logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
 .controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
@@ -50,12 +53,10 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 </head>
 <body>
 <div id="topbar">
-  <div><div class="logo">BACKTEST LAB</div><div class="logo-sub">CURRENT STRATEGY · ALL 3 BOARDS</div></div>
+  <div><div class="brand">SPORTSAI</div><div class="logo">BACKTEST LAB</div><div class="logo-sub">CURRENT STRATEGY · ALL 3 BOARDS</div></div>
   <div class="controls">
-    <a class="navlink" href="gridiron.html">🏈 GridAIron</a>
-    <a class="navlink" href="hr.html">⚾ HR</a>
-    <a class="navlink" href="hits.html">🎯 AIchiro</a>
-    <a class="navlink" href="./">🎲 DAIly Double</a>
+    <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
+    <a class="navlink" href="./">⚾ Two BAIgger</a>
     <div class="ctrl-group"><span class="ctrl-lbl">SEASON</span><input class="ctrl-input" id="season" type="number" value="2025" style="width:72px"></div>
     <div class="ctrl-group"><span class="ctrl-lbl">HR ×</span><input class="ctrl-input" id="hrOdds" type="number" step="0.05" value="4.5"></div>
     <div class="ctrl-group"><span class="ctrl-lbl">2B ×</span><input class="ctrl-input" id="dbOdds" type="number" step="0.05" value="3.6"></div>

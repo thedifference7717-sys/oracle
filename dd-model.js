@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// DAIly Double — shared hit-probability engine (BUILD 3)
+// Two BAIgger — shared hit-probability engine (BUILD 3)
 //
 // One file, two consumers: the browser dashboard loads it as a classic script
 // (window.DDModel) and scripts/parlaiy-alerts.mjs imports it as a CJS default.
@@ -326,6 +326,93 @@ function evaluate(p, american) {
   const ev = p * b - (1 - p);
   const kelly = b > 0 ? (p * dec - 1) / b : 0;
   return { dec, ev, evPct: ev * 100, kelly, quarterKelly: Math.max(0, kelly / 4), breakeven: 1 / dec, edge: p - 1 / dec };
+}
+
+// ── the compounding ladder ──────────────────────────────────────────────────
+// One bet a day. One leg — a hitter to record a hit, the single best play on
+// the slate. Win and the entire return rides the next day; five wins closes
+// the cycle and the money comes off the table. A miss ends the cycle there and
+// the next one starts 25% bigger.
+//
+// The arithmetic that matters, and the reason this is presented with its own
+// risk panel rather than as a "system": only the cycle's SEED is ever our
+// money. Everything after day 1 is the book's, so a miss on day 4 costs
+// exactly the same as a miss on day 1 — the seed. That is what makes the
+// ladder survivable at all. What it does NOT do is make it likely: five legs
+// at 78% is 0.78^5 = 28.9%, so roughly seven cycles in ten end in a bust, and
+// the +25% escalation after each one compounds. Both numbers are computed and
+// shown, because a ladder sold without them is a martingale in a good suit.
+const LADDER = {
+  account: 100,    // starting bankroll
+  seed: 10,        // day-1 stake of the first cycle
+  basePct: 0.10,   // after a completed cycle, the next seed is 10% of the account
+  rungs: 5,        // wins needed to close a cycle
+  missGain: 0.25   // a busted cycle restarts this much bigger
+};
+const round2 = v => Math.round(v * 100) / 100;
+
+// Replay the settled history and return where the ladder stands right now.
+// `history` is chronological: { date, price (American), stake, status:
+// "won"|"lost"|"open", pick }. Bets still open do not advance the state — the
+// rung they occupy is the rung the ladder is on.
+function ladder(history, cfg) {
+  const C = Object.assign({}, LADDER, cfg || {});
+  let account = C.account, base = C.seed, stake = C.seed, rung = 1, cycle = 1;
+  let peak = account, maxDD = 0, staked = 0, cycles = { done: 0, busted: 0 };
+  const rows = [];
+  for (const b of history || []) {
+    const dec = decFromAmerican(b.price) || 1;
+    const at = b.stake != null ? +b.stake : stake;          // what was actually risked
+    const row = { date: b.date, cycle, rung, stake: at, price: b.price, pick: b.pick || null,
+                  p: b.p != null ? b.p : null, status: b.status, pl: 0, closed: null };
+    if (b.status === "won") {
+      const ret = round2(at * dec);
+      row.ret = ret;
+      if (rung >= C.rungs) {                                 // cycle complete
+        row.pl = round2(ret - base); row.closed = "complete";
+        account = round2(account + row.pl); staked += base; cycles.done++;
+        cycle++; rung = 1; base = round2(Math.max(0, account) * C.basePct); stake = base;
+      } else {                                               // let it ride
+        rung++; stake = ret;
+      }
+    } else if (b.status === "lost") {
+      row.pl = -base; row.closed = "busted";
+      account = round2(account - base); staked += base; cycles.busted++;
+      cycle++; rung = 1; base = round2(base * (1 + C.missGain)); stake = base;
+    } else { rows.push(row); continue; }                     // open — state is frozen here
+    peak = Math.max(peak, account);
+    maxDD = Math.max(maxDD, peak - account);
+    rows.push(row);
+  }
+  const open = (history || []).some(b => b.status === "open");
+  return { cfg: C, rows, account, base, stake: round2(stake), rung, cycle, open,
+           atRisk: base, onTable: round2(stake - base),
+           staked: round2(staked), pl: round2(account - C.account), peak, maxDD: round2(maxDD),
+           cycles, canFund: stake <= account + 1e-9 };
+}
+
+// What the ladder is actually worth, and what it can actually cost, at a given
+// per-leg win probability and price. Stated in full because the shape of this
+// bet — rarely right, large when it is — is exactly the shape people misread.
+function ladderRisk(p, american, state) {
+  const C = (state && state.cfg) || LADDER;
+  const dec = decFromAmerican(american);
+  if (!dec || !(p > 0 && p < 1)) return null;
+  const base = (state && state.base) || C.seed;
+  const account = (state && state.account) || C.account;
+  const cycleWin = Math.pow(p, C.rungs);
+  const fullReturn = base * Math.pow(dec, C.rungs);
+  const cycleProfit = fullReturn - base;
+  // Only the seed is ever at risk, whichever rung the miss lands on.
+  const cycleEv = cycleWin * cycleProfit - (1 - cycleWin) * base;
+  const legEv = p * (dec - 1) - (1 - p);
+  // Consecutive busts the account survives: seeds escalate by missGain each
+  // time, so the running cost is a geometric series against the balance.
+  let bal = account, b = base, n = 0;
+  while (b <= bal && n < 40) { bal -= b; b = b * (1 + C.missGain); n++; }
+  return { dec, cycleWin, fullReturn, cycleProfit, cycleEv, legEv,
+           bustsSurvived: n, pBust: Math.pow(1 - cycleWin, n + 1),
+           rungStakes: Array.from({ length: C.rungs }, (_, i) => round2(base * Math.pow(dec, i))) };
 }
 
 // ── calibration: the payoff of it being the same faces every day ────────────
@@ -731,6 +818,6 @@ async function buildBoard(o) {
 
 return { VERSION, API, CFG, K, PARK, park, clamp, erf, normCdf, normPdf, normInv, logit, expit,
   log5, shrink, hitProbability, jointProb, rhoFor, amOdds, decFromAmerican, evaluate,
-  esp, hitCountDist, nCr, roundRobin,
+  esp, hitCountDist, nCr, roundRobin, LADDER, ladder, ladderRisk,
   calibrate, record, etNow, ymd, slateYmd, platoon, pool, buildBoard };
 });

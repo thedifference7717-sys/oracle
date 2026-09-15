@@ -1,4 +1,4 @@
-// DAIly Double — Telegram alerts (GitHub Actions cron, self-looping every ~60s).
+// Two BAIgger — Telegram alerts (GitHub Actions cron, self-looping every ~60s).
 //
 // 1. At lock (1h before the day's first pitch) sends the strongest two-man
 //    same-game hit parlays that actually clear the price on offer.
@@ -19,6 +19,52 @@ import M from "../dd-model.js";
 
 const STATE_FILE = "state.json";
 const PUBLIC_LOG = "data/model-log.json";
+const LEDGER = "data/ledger.json";
+
+// ── the public bet ledger ───────────────────────────────────────────────────
+// Every alerted bet is written here the moment it is sent, with the time it
+// was published and the game's first pitch beside it, and updated in place
+// when it settles. The workflow commits this file immediately, so the repo's
+// own history timestamps the pick — anyone can check that the commit landed
+// before first pitch. That is the difference between a record that is
+// verifiable and one that is merely asserted, and it is the entire asset of a
+// picks business. It lives in the repo rather than the Actions cache because
+// the cache is disposable and a track record cannot be.
+function readLedger() {
+  try { const L = JSON.parse(readFileSync(LEDGER, "utf8")); if (Array.isArray(L.bets)) return L; } catch (e) {}
+  return { v: 1, sport: "MLB", bets: [] };
+}
+function writeLedger(L) {
+  L.updated = new Date().toISOString();
+  mkdirSync("data", { recursive: true });
+  writeFileSync(LEDGER, JSON.stringify(L, null, 1));
+}
+function ledgerOpen(key, day, g, d) {
+  const L = readLedger();
+  if (L.bets.some(b => b.id === key)) return;            // never publish a pick twice
+  L.bets.push({
+    id: key, date: day, sport: "MLB",
+    published: new Date().toISOString(),                  // when we sent it
+    firstPitch: g.gameDate,                               // what it must precede
+    teams: d.teams, venue: d.venue || null,
+    price: PRICE, prob: d.prob, edge: d.edge, evPct: d.evPct, kelly: d.kelly,
+    stakeRate: PER_EDGE_PT,
+    stake: +(Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT).toFixed(2),
+    sameTeam: !!d.sameTeam,
+    legs: [d.a, d.b].map(c => ({ id: c.id, name: c.name, slot: c.slot, p: c.p, sp: c.sp || null })),
+    status: "open"
+  });
+  writeLedger(L);
+}
+function ledgerSettle(key, won, hits) {
+  const L = readLedger();
+  const b = L.bets.find(x => x.id === key);
+  if (!b || b.status !== "open") return;
+  b.status = won ? "won" : "lost";
+  b.settled = new Date().toISOString();
+  b.hits = hits;
+  writeLedger(L);
+}
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT = process.env.TELEGRAM_CHAT_ID;
@@ -28,7 +74,10 @@ const API = M.API;
 const SNAP_V = M.VERSION;                        // board schema = model version
 // Price the doubles are graded against. Override with DD_PRICE (American odds)
 // in the workflow to match whatever your book is actually offering.
-const PRICE = +(process.env.DD_PRICE || 100);
+// The double is genuinely offered around -150 to -175, not +100. Defaulting to
+// the worst end keeps the board conservative: a bet that clears at -175 clears
+// at any better price, while the reverse is how you alert losers.
+const PRICE = +(process.env.DD_PRICE || -175);
 // The edge a game's pair must clear to be worth alerting, as a fraction: 0.02
 // is two points of probability over your price's breakeven. Marginal edges are
 // inside the model's own error bars, so a real bar filters more noise than it
@@ -38,11 +87,18 @@ const PRICE = +(process.env.DD_PRICE || 100);
 // (a plain || would swallow it, since 0 is falsy).
 const _minEdge = process.env.DD_MIN_EDGE;
 const MIN_EDGE = (_minEdge == null || _minEdge.trim() === "" || isNaN(+_minEdge)) ? 0.02 : +_minEdge;
+// Dollars staked per edge point, matching the dashboard's rule. Recorded on
+// every bet at publish time rather than applied to the ledger afterwards: if
+// the rate is ever changed, past bets must keep the stake they were actually
+// published with, or the record quietly rewrites itself.
+const PER_EDGE_PT = +(process.env.DD_PER_EDGE_PT || 2.50);
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `${MONTHS[mo-1]} ${da}`; };
 const pct = v => Math.round(v * 100) + "%";
 const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
+const money = v => (v < 0 ? "-$" : "$") + Math.abs(v).toFixed(2);
+const stakeFor = d => Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT;
 const av = v => v == null ? "—" : v.toFixed(3).replace(/^0/, "");
 
 async function j(url, opts) { const r = await fetch(url, opts); if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`); return r.json(); }
@@ -122,16 +178,196 @@ const posted = g => {
       && Array.isArray(lu.awayPlayers) && lu.awayPlayers.length >= 9;
 };
 
+// ── THE LADDER ──────────────────────────────────────────────────────────────
+// One bet a day, one leg, the best play on the slate, staked off the
+// compounding ladder in dd-model.js. The whole point of it living here rather
+// than only on the dashboard is that the rung has to be PUBLISHED before first
+// pitch to mean anything — data/ladder.json is committed by the workflow the
+// moment the bet is opened, so the repo's own history timestamps it.
+//
+// Timing, stated plainly because it is the one real compromise: the rung is
+// placed at the FIRST lock of the day — the first game inside its hour with a
+// posted lineup — and chosen from every game whose lineup is already up at
+// that instant. Games that post later cannot be considered, because by then
+// the early game has started and skipping it was never an option we had. So
+// "best play of the day" means best play available at the moment we must
+// choose, which is the only version of it that can actually be bet.
+const LADDER_FILE = "data/ladder.json";
+// The price a single "to record a hit" prop is actually offered at. Overridden
+// with DD_LEG_PRICE. This is an assumption until the real number is confirmed,
+// and it decides both whether there is a bet and how fast the ladder climbs.
+const LEG_PRICE = +(process.env.DD_LEG_PRICE || -250);
+
+function readLadderFile() {
+  try { const L = JSON.parse(readFileSync(LADDER_FILE, "utf8")); if (Array.isArray(L.bets)) return L; } catch (e) {}
+  return { v: 1, sport: "MLB", cfg: M.LADDER, bets: [] };
+}
+function writeLadderFile(L) {
+  L.updated = new Date().toISOString();
+  L.cfg = M.LADDER;
+  L.state = (({ account, base, stake, rung, cycle, pl, cycles, canFund }) =>
+    ({ account, base, stake, rung, cycle, pl, cycles, canFund }))(M.ladder(L.bets));
+  mkdirSync("data", { recursive: true });
+  writeFileSync(LADDER_FILE, JSON.stringify(L, null, 1));
+}
+
+async function ladderPlace(day, games) {
+  const L = readLadderFile();
+  if (L.bets.some(b => b.date === day)) return;              // one rung a day
+  if (L.bets.some(b => b.status === "open")) {               // never stack rungs
+    console.log("ladder: previous rung still open — not placing another.");
+    return;
+  }
+  const now = Date.now();
+  // Is any game inside its hour? That is the moment we must choose.
+  const locking = games.some(g => { const t = Date.parse(g.gameDate); return !isNaN(t) && now >= t - HOUR && now < t; });
+  if (!locking) return;
+  // EVERY game that has not started, not just the ones with a lineup up. The
+  // model already prices an unposted bat off his projected slot and multiplies
+  // by his real chance of starting (starts per team game, capped at 0.95;
+  // posted is 0.985, and anyone under 0.55 is dropped as a part-timer). So a
+  // projected leg and a confirmed leg are directly comparable in expected
+  // value, and a confirmed regular outranks an unposted equivalent on its own
+  // without needing a rule to say so.
+  //
+  // Restricting this to posted lineups threw away most of the slate: at the
+  // first lock of the day only the earliest game or two has a lineup up, so
+  // the ladder was picking the best of two games and calling it the best play
+  // of the day. The doubles alerter still waits for a confirmed lineup per
+  // game — that is a different bet on a single game, and it can afford to
+  // wait because each game locks on its own clock. The ladder cannot: it
+  // chooses once, for the whole slate.
+  const live = games.filter(g => now < Date.parse(g.gameDate));
+  if (!live.length) { console.log("ladder: at lock, every game has already started — skipping today."); return; }
+
+  const st = M.ladder(L.bets);
+  if (!st.canFund) {
+    await tg(`🪜 <b>LADDER STOPPED</b>\nRung ${st.rung} of cycle ${st.cycle} needs ${money(st.stake)} and the account is down to ${money(st.account)}.\nThe escalation has no next move that is not a deposit. No bet.`);
+    L.bets.push({ date: day, status: "skipped", reason: "account cannot fund the rung",
+                  stake: st.stake, account: st.account, published: new Date().toISOString() });
+    writeLadderFile(L);
+    return;
+  }
+
+  const board = await M.buildBoard({
+    getJSON: j, day, cal: null, american: PRICE,
+    schedule: { dates: [{ games: live }] },
+    onStatus: m => console.log("  · ladder:", m)
+  });
+  const lbe = 1 / M.decFromAmerican(LEG_PRICE);
+  let best = null;
+  for (const c of board.candidates) {
+    const edge = c.p - lbe;                       // c.p already carries scratch risk
+    if (!best || edge > best.edge) best = { c, edge };
+  }
+  if (!best) { console.log("ladder: no candidate could be scored."); return; }
+  if (best.edge < MIN_EDGE) {
+    console.log(`ladder: best leg ${best.c.name} at ${(best.edge * 100).toFixed(1)}pts — under the bar, no rung today.`);
+    L.bets.push({ date: day, status: "noplay", reason: `best leg ${(best.edge * 100).toFixed(1)}pts, under the +${(MIN_EDGE * 100).toFixed(1)}pt bar`,
+                  published: new Date().toISOString() });
+    writeLadderFile(L);
+    return;
+  }
+
+  const c = best.c, g = live.find(x => x.gamePk === c.gk);
+  L.bets.push({
+    id: `${day}:ladder`, date: day, sport: "MLB",
+    published: new Date().toISOString(),
+    firstPitch: g ? g.gameDate : null,
+    cycle: st.cycle, rung: st.rung, seed: st.base,
+    stake: st.stake, price: LEG_PRICE, p: c.p, edge: best.edge,
+    pick: c.name, playerId: c.id, slot: c.slot, gk: c.gk,
+    posted: !!c.posted, startProb: c.startProb,
+    teams: `${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName}`, sp: c.spName || null,
+    fromGames: live.length, status: "open"
+  });
+  writeLadderFile(L);
+
+  const risk = M.ladderRisk(c.p, LEG_PRICE, st);
+  const first = g ? new Date(g.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "—";
+  await tg(
+    `🪜 <b>THE LADDER</b> · cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs}\n` +
+    `➖➖➖➖➖➖➖➖\n` +
+    `<b>${money(st.stake)}</b> on <b>${c.name}</b> to record a hit\n` +
+    `#${c.slot} · ${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName} · ${first} ET\n` +
+    `vs ${c.spName || "SP TBD"}\n\n` +
+    `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(c.p - MIN_EDGE)}</b>\n` +
+    `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${LEG_PRICE}\n` +
+    `${c.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.slot}, ${pct(c.startProb)} to start (already priced in)`}\n` +
+    `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n\n` +
+    `<i>Your money at risk: ${money(st.base)} (the seed). Riding on top of it: ${money(st.stake - st.base)} of theirs.\n` +
+    (risk ? `Five straight at this rate completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${money(risk.cycleProfit)}. Account ${money(st.account)}.` : "") +
+    `</i>`
+  );
+  console.log(`ladder: ${money(st.stake)} on ${c.name} (${(best.edge * 100).toFixed(1)}pts), cycle ${st.cycle} day ${st.rung}.`);
+}
+
+async function ladderSettle(hitsById, finalByGk) {
+  const L = readLadderFile();
+  const b = L.bets.find(x => x.status === "open");
+  if (!b || b.playerId == null) return;
+  const hits = hitsById[b.playerId];
+  const got = (hits || 0) >= 1;
+  if (!got && !finalByGk[b.gk]) return;                       // still live
+  b.status = got ? "won" : "lost";
+  b.hits = hits || 0;
+  b.settled = new Date().toISOString();
+  writeLadderFile(L);
+  const st = M.ladder(L.bets);
+  const C = M.LADDER;
+  if (got) {
+    const ret = +(b.stake * M.decFromAmerican(b.price)).toFixed(2);
+    const done = b.rung >= C.rungs;
+    await tg(
+      `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${b.rung} IN</b>`} — ${b.pick} had ${b.hits} hit${b.hits === 1 ? "" : "s"}\n` +
+      `${money(b.stake)} returns ${money(ret)}\n` +
+      (done
+        ? `All ${C.rungs} days. ${money(b.seed)} of yours became ${money(ret)} — ${money(ret - b.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
+        : `It all rides tomorrow: <b>${money(ret)}</b> on day ${b.rung + 1} of ${C.rungs}.\nStill only ${money(b.seed)} of your money in this cycle.`)
+    );
+  } else {
+    await tg(
+      `🪜 <b>CYCLE BUSTED</b> on day ${b.rung} of ${C.rungs} — ${b.pick} went hitless\n` +
+      `Cost: ${money(b.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
+      `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
+      (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`)
+    );
+  }
+  console.log(`ladder: ${b.pick} ${got ? "HIT" : "hitless"} — account ${money(st.account)}.`);
+}
+
+// On a night when no double cleared the bar the main grading pass never runs,
+// but an open rung still has to be graded — it is a different bet on a
+// different game. This fetches just that one boxscore.
+async function settleLadderOnly(games) {
+  const b = readLadderFile().bets.find(x => x.status === "open");
+  if (!b || b.gk == null) return;
+  const g = games.find(x => x.gamePk === b.gk);
+  if (!g || g.status?.abstractGameState === "Preview") return;
+  const bx = await j(`${API}/game/${b.gk}/boxscore`);
+  const hitsById = {};
+  ["home", "away"].forEach(side => {
+    const pl = bx?.teams?.[side]?.players || {};
+    Object.values(pl).forEach(pp => { const st = pp?.stats?.batting; if (st && pp.person?.id != null) hitsById[pp.person.id] = +st.hits || 0; });
+  });
+  const fin = { [b.gk]: g.status?.abstractGameState === "Final" && !/postpon|suspend|cancel/i.test(g.status?.detailedState || "") };
+  await ladderSettle(hitsById, fin);
+}
+
 const legLine = c => `• <b>${c.name}</b> #${c.slot} · ${av(c.avg)}→${av(c.proj)} proj · ${c.eAb.toFixed(1)} AB\n  vs ${c.sp || "SP TBD"}${c.spBaa != null ? " (" + av(c.spBaa) + " BAA" + (c.spHr9 != null ? ", " + c.spHr9.toFixed(1) + " HR/9" : "") + ")" : ""}${c.plt === "adv" ? " ▲plat" : c.plt === "dis" ? " ▽plat" : ""} · <b>${pct(c.p)}</b>`;
 
 async function alertGame(day, g, d) {
   const first = new Date(g.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
   await tgLong(
-    `🎲 <b>DAILY DOUBLE</b> · ${d.teams}\n` +
+    `⚾ <b>TWO BAIGGER</b> · ${d.teams}\n` +
     `First pitch ${first} ET · ${d.venue || ""}\n` +
     `➖➖➖➖➖➖➖➖\n` +
-    `✅ <b>EDGE ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · EV ${(d.evPct >= 0 ? "+" : "") + d.evPct.toFixed(1)}% · stake ${(d.kelly * 100).toFixed(1)}% bank</b>\n` +
-    `${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} vs your ${PRICE > 0 ? "+" : ""}${PRICE}\n` +
+    // The double is offered anywhere from +100 to -175 depending on the legs,
+    // and this job cannot see the board's price. So it states the threshold
+    // instead of asserting an edge against a number it had to guess.
+    `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(d.prob - MIN_EDGE)}</b>\n` +
+    `${pct(d.prob)} both hit · fair ${M.amOdds(d.prob)} · needs ${(MIN_EDGE * 100).toFixed(1)}pts of margin\n` +
+    `<i>Checked against ${PRICE > 0 ? "+" : ""}${PRICE}: edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts · stake ${money(stakeFor(d))}</i>\n` +
     `${d.sameTeam ? "SAME TEAM" : "OPPOSING"} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n\n` +
     `${legLine(d.a)}\n${legLine(d.b)}\n\n` +
     `<i>SPOT ${pts(d.spotDelta)}pts vs league (soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>`
@@ -221,17 +457,28 @@ async function main() {
     await alertGame(day, g, d);
     D.bets[key] = { date: day, teams: d.teams, gk: g.gamePk, double: d, results: {} };
     D.seen[key] = "bet"; changed = true;
+    ledgerOpen(key, day, g, d);
     console.log(`game ${g.gamePk} (${d.teams}): ALERTED at edge ${(d.edge * 100).toFixed(1)}pts.`);
   }
 
+  // ── The ladder's one rung for today ──
+  // Placed after the per-game pass so any game that just locked is already in
+  // the posted set. Failures here must never take the doubles tracker down
+  // with them — the ladder is one bet, the tracker is the record.
+  try { await ladderPlace(day, games); } catch (e) { console.log("ladder place failed:", e.message); }
+
   // ── Live tracking of everything alerted today ──
   const todays = Object.entries(D.bets).filter(([, b]) => b.date === day).map(([k, b]) => ({ k, b }));
+  // An open ladder rung still has to be graded even on a night when no double
+  // cleared the bar — those are different bets on different games.
   if (!todays.length) {
+    try { await settleLadderOnly(games); } catch (e) { console.log("ladder settle failed:", e.message); }
     try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); }
     console.log("Nothing alerted yet today."); return;
   }
 
-  const gks = [...new Set(todays.map(x => x.b.gk))];
+  const openLadder = (() => { try { return readLadderFile().bets.find(b => b.status === "open") || null; } catch (e) { return null; } })();
+  const gks = [...new Set([...todays.map(x => x.b.gk), ...(openLadder && openLadder.gk != null ? [openLadder.gk] : [])])];
   const fin = {};
   games.forEach(g => { if (gks.includes(g.gamePk)) fin[g.gamePk] = g.status?.abstractGameState === "Final" && !/postpon|suspend|cancel/i.test(g.status?.detailedState || ""); });
   const hitsById = {};
@@ -267,18 +514,22 @@ async function main() {
       gradeLeg(d.a, true); gradeLeg(d.b, true);
       await tg(`💣 <b>CASHED — ${b.teams}</b>\nBoth hit! ${d.a.name} + ${d.b.name}\n${tally()}`);
       st.cashed = true; changed = true; console.log(`${b.teams} cashed.`);
+      ledgerSettle(`${day}:${b.gk}`, true, [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0]);
     } else if (fin[b.gk]) {
       dead++; D.record.l++;
       gradeLeg(d.a, hA); gradeLeg(d.b, hB);
       const cold = [!hA ? d.a.name : null, !hB ? d.b.name : null].filter(Boolean).join(" & ");
       await tg(`💀 <b>DEAD — ${b.teams}</b>\nHitless: ${cold} (final)\n${tally()}`);
       st.dead = true; changed = true; console.log(`${b.teams} dead.`);
+      ledgerSettle(`${day}:${b.gk}`, false, [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0]);
     } else if (inCount === 1 && !st.half) {
       const got = hA ? d.a.name : d.b.name, need = hA ? d.b.name : d.a.name;
       await tg(`✅ <b>1/2 IN — ${b.teams}</b>\n${got} has a hit · need ${need}`);
       st.half = true; changed = true; console.log(`${b.teams} half.`);
     }
   }
+
+  try { await ladderSettle(hitsById, fin); } catch (e) { console.log("ladder settle failed:", e.message); }
 
   // ── Day-end summary (once every game has been decided and every bet settled) ──
   const everyGameDecided = games.every(g => D.seen[`${day}:${g.gamePk}`]);

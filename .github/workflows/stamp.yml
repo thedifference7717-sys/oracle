@@ -44,8 +44,11 @@ jobs:
           # stamped, and a previous stamp on one that has. Both become the
           # current commit, so this is idempotent and cannot drift.
           grep -rl '__BUILD_SHA__' --include='*.html' . | xargs -r sed -i "s/__BUILD_SHA__/$SHA/g"
-          grep -rl 'const BUILD = "' --include='*.html' . \
-            | xargs -r sed -i -E "s/const BUILD = \"[^\"]*\"/const BUILD = \"$SHA\"/"
+          # The `const BUILD = "..."` rewrite that used to live here is gone:
+          # it required spaces around the `=` and so silently never matched
+          # index.html's `const BUILD="..."`, freezing that constant at one
+          # build while the span below kept moving. The pages now read the
+          # sha from the span itself, so there is only one thing to stamp.
           grep -rl 'id="buildsha"' --include='*.html' . \
             | xargs -r sed -i -E "s#(<span id=\"buildsha\">)[^<]*(</span>)#\1$SHA\2#"
           printf '{"sha":"%s","built":"%s"}\n' "$SHA" "$(date -u +%FT%TZ)" > build.json
@@ -59,6 +62,14 @@ jobs:
             echo "already stamped at this commit — nothing to do"
             exit 0
           fi
-          git add -A ':(glob)**/*.html' build.json
+          # build.json is in .gitignore — it is generated state from the
+          # runner's point of view — but it is also the file checkBuild()
+          # fetches to notice a deploy, so it has to be committed. Without
+          # -f, `git add` refuses an ignored path and exits 1, and `bash -e`
+          # kills the step before it ever commits. That is why this workflow
+          # has failed on every push since build.json was ignored, and why
+          # the stamp never reached main.
+          git add -A ':(glob)**/*.html'
+          git add -f build.json
           git commit -m "Stamp build ${GITHUB_SHA:0:7}"
           git push origin main
