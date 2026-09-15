@@ -166,6 +166,7 @@ b,strong{font-weight:600}
 .ld-odds label{display:block;font-size:11px;color:var(--dim);margin-bottom:6px}
 .ld-odds input{width:100%;background:var(--bg3);border:none;color:var(--yellow);border-radius:11px;
   padding:11px;font-family:var(--num);font-size:21px;font-weight:600;text-align:center}
+.ld-odds input:disabled{color:var(--dim);opacity:.65}
 .ld-odds .hint{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.45}
 .ld-odds .hint b{color:var(--text)}
 .ld-next{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
@@ -744,12 +745,20 @@ function renderLadder(){
       <div class="o">priced on the day</div></div>`;
   }).join("");
 
-  const oddsBox=`<div class="ld-odds">
+  // Before the lock there is no pick, so there is no price to record — but
+  // hiding the field entirely just made it unfindable ("where do I enter my
+  // odds?"). It is shown disabled instead, saying when it opens, so the
+  // absence explains itself rather than looking like a missing feature.
+  const oddsBox=waiting?`<div class="ld-odds">
+    <label>Odds you got on this pick</label>
+    <input type="text" value="—" disabled>
+    <div class="hint">Opens when the pick locks at ${etTime(lk.lockAt)} ET. Until there is a hitter there is no price to enter.</div>
+  </div>`:`<div class="ld-odds">
     <label for="ldOdds">Odds you got on this pick</label>
-    <input id="ldOdds" type="number" step="5" value="${todayOdds}"
+    <input id="ldOdds" type="number" step="5" inputmode="numbers-and-punctuation" value="${todayOdds}"
       onchange="setLadderOdds('${today}',this.value)">
     <div class="hint">${typed?`Your price. ${money(stake)} returns <b>${money(ret)}</b>.`
-      :`Assumed — type what the book is actually showing. ${money(stake)} would return <b>${money(ret)}</b>.`}</div>
+      :`Assumed — type what your book is actually showing. ${money(stake)} would return <b>${money(ret)}</b>.`}</div>
   </div>`;
 
   const nextBox=`<div class="ld-next">
@@ -833,7 +842,7 @@ function renderLadder(){
 
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
-      <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${waiting?"":oddsBox}</div>
+      <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${oddsBox}</div>
       ${locked?lockedHtml:waiting?waitHtml:pickHtml}
     </div>
     ${waiting?"":nextBox}
