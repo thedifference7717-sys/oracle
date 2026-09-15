@@ -1,0 +1,35 @@
+{
+ "v": 1,
+ "sport": "MLB",
+ "eraStart": "2026-09-10",
+ "generated": "2026-09-15T18:07:08.646Z",
+ "method": "difference of two dated data/model-log.json commits; rerun with scripts/derive-era-record.mjs",
+ "from": {
+  "sha": "bd97238",
+  "committed": "2026-09-10T08:05:45+00:00",
+  "through": "2026-09-09",
+  "w": 12,
+  "l": 17,
+  "legs": 30,
+  "hits": 23,
+  "sump": 21.665643314271705
+ },
+ "to": {
+  "sha": "16d7453",
+  "committed": "2026-09-15T05:02:32+00:00",
+  "through": "2026-09-14",
+  "w": 34,
+  "l": 35,
+  "legs": 110,
+  "hits": 83,
+  "sump": 80.69108942066138
+ },
+ "derived": {
+  "w": 22,
+  "l": 18,
+  "legs": 80,
+  "hits": 60,
+  "predicted": 59.03,
+  "bets": 40
+ }
+}

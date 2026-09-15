@@ -51,6 +51,10 @@ b,strong{font-weight:600}
 .group-h span{display:block;font-size:12px;font-weight:600;letter-spacing:.07em;
   text-transform:uppercase;color:var(--dim)}
 .group-h small{display:block;font-size:12px;color:var(--dim);margin-top:4px;opacity:.75;line-height:1.5}
+.mini{width:100%;min-width:0;margin:10px 0 4px;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.mini td{padding:6px 8px;border-bottom:.5px solid var(--hair);white-space:nowrap}
+.mini tr:last-child td{border-bottom:none}
+.note code{font-family:var(--num);font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:5px}
 .hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .stat{background:var(--elev);border:none;border-radius:16px;padding:16px 14px;text-align:center}
 .stat .v{font-size:27px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
@@ -112,7 +116,7 @@ td.num{text-align:right}
     <div class="brand">SPORTSAI</div>
     <div class="logo">📜 Verified Record</div>
     <div class="logo-sub">
-      SINCE SEPT 11, 2026 · EVERY PICK PUBLISHED BEFORE FIRST PITCH ·
+      SINCE SEPT 10, 2026 · EVERY PICK PUBLISHED BEFORE FIRST PITCH ·
       <!-- stamped by the deploy; keep on its own line -->
       <span id="buildsha">cab9461</span>
     </div>
@@ -137,6 +141,66 @@ td.num{text-align:right}
 // to trust it. Naming the date, and naming the rebuild that caused it, is the
 // stronger position: it is specific, it is checkable against the repo's own
 // history, and it is what an honest vendor does.
+// ── the opening window, recovered from the repository's own history ────────
+// The per-bet ledger only started on 2026-09-15. For the slates between the
+// model going in and that date, no row-by-row record was ever written — but
+// the nightly calibration commits carry a cumulative counter and a date, so
+// the window's totals can be recovered by differencing two dated commits.
+// data/era-open.json holds that difference, produced by
+// scripts/derive-era-record.mjs, which refuses to emit unless doubles x 2
+// equals graded legs.
+//
+// It is published with both commit hashes and labelled for what it is:
+// aggregate only, no individual bets, weaker than the ledger that follows it.
+// Presenting it as though it were the same grade of evidence would be the
+// exact dishonesty this page exists to avoid.
+function renderOpening(O){
+  if(!O || !O.derived || !O.derived.bets) return "";
+  const d=O.derived, wr=d.w/d.bets, act=d.hits/d.legs, pred=d.predicted/d.legs;
+  const se=Math.sqrt(pred*(1-pred)/d.legs), z=(act-pred)/se;
+  // A win rate only means money against a price, so show the prices rather
+  // than pick one: at these numbers the bet is profitable at some and not at
+  // others, and which one you actually get is the whole question.
+  const at=a=>{const dc=a>0?1+a/100:1+100/Math.abs(a);return {a,be:1/dc,u:d.w*(dc-1)-d.l};};
+  const grid=[100,-120,-150,-175].map(at);
+  return `
+    <div class="group-h"><span>Opening window · ${O.eraStart} to ${O.to.through}</span>
+      <small>recovered from dated commits — totals only, no individual bets</small></div>
+    <div class="hero">
+      <div class="stat"><div class="v">${d.w}-${d.l}</div><div class="l">Record · ${d.bets} doubles</div></div>
+      <div class="stat"><div class="v" style="color:var(--blue)">${(wr*100).toFixed(1)}%</div><div class="l">Doubles won</div></div>
+      <div class="stat"><div class="v">${(act*100).toFixed(1)}%</div><div class="l">Legs hit · ${d.hits} of ${d.legs}</div></div>
+      <div class="stat"><div class="v" style="color:var(--dim)">${(pred*100).toFixed(1)}%</div><div class="l">Legs predicted</div></div>
+    </div>
+    <div class="note">
+      <b>A win rate is not a result until you name the price.</b> ${(wr*100).toFixed(1)}% is above breakeven at some
+      prices and below it at others, and which one your book actually offered is the entire question:
+      <table class="mini"><tbody>${grid.map(g=>`<tr>
+        <td>${g.a>0?"+":""}${g.a}</td>
+        <td class="num" style="color:var(--dim)">needs ${(g.be*100).toFixed(1)}%</td>
+        <td class="num" style="color:${g.u>0?"var(--green)":"var(--red)"}">${g.u>=0?"+":""}${g.u.toFixed(2)}u</td>
+      </tr>`).join("")}</tbody></table>
+      At the -150 to -175 the two-leg double is really offered at, this window <b>lost money</b>. It only profits
+      near even money. That is the finding, and it is the reason the board now prices single hit props alongside
+      the double.<br>
+      <b>The model itself was close to right.</b> Legs landed ${(act*100).toFixed(1)}% against ${(pred*100).toFixed(1)}%
+      predicted across ${d.legs} graded legs — z = ${z.toFixed(2)}, comfortably inside the noise, so this neither
+      proves nor refutes an edge. It says the probabilities are not obviously wrong, which is a different and much
+      smaller claim.
+    </div>
+    <div class="note">
+      <b>How to check this yourself.</b> It is the difference between two commits of
+      <a href="https://github.com/thedifference7717-sys/oracle/commits/main/data/model-log.json">data/model-log.json</a>:
+      <code>${O.from.sha}</code> (${O.from.committed.slice(0,10)}, counting through ${O.from.through}) subtracted from
+      <code>${O.to.sha}</code> (${O.to.committed.slice(0,10)}, through ${O.to.through}). Both are timestamped by GitHub.
+      <code>scripts/derive-era-record.mjs</code> reproduces it and refuses to publish unless ${d.bets} doubles × 2
+      equals the ${d.legs} legs graded — which it does exactly.<br>
+      <b>What it is not.</b> Individual bets for this window cannot be shown, because they were never recorded
+      row by row. This is weaker evidence than the ledger below and is kept separate from it for that reason.
+      Nothing here is combined into a single headline number.
+    </div>`;
+}
+
 // ── PlAIybook, kept separate on purpose ────────────────────────────────────
 // A different sport, a different bet and a different price range. Blending an
 // NFL two-leg prop parlay at +200 into an MLB hit double at -160 would produce
@@ -197,8 +261,8 @@ const decU=a=>a>0?1+a/100:1+100/Math.abs(a);
 
 // ── the era boundary ────────────────────────────────────────────────────────
 // Per-game alerting — one pair per game, judged an hour before its own first
-// pitch on a confirmed lineup — merged 2026-09-09T23:41Z, so 9/10 is the first
-// slate fully under it. Everything before that was a materially different
+// pitch on a confirmed lineup — merged 2026-09-09T23:41Z, so 2026-09-10 is the
+// first slate run entirely under it, and that is where this record starts. Everything before that was a materially different
 // system: slate-wide boards that locked games before lineups posted and
 // tracked negative-edge doubles. Averaging the two measures neither.
 //
@@ -206,7 +270,7 @@ const decU=a=>a>0?1+a/100:1+100/Math.abs(a);
 // They were only ever kept as a cumulative win/loss count, so they cannot be
 // shown row by row and nobody can check them. They are reported separately,
 // by subtraction, and labelled as what they are.
-const ERA_START = "2026-09-11";
+const ERA_START = "2026-09-10";
 const ERA_NOTE  = "per-game model · confirmed lineups · +2pt bar";
 
 const $=id=>document.getElementById(id);
@@ -266,15 +330,14 @@ function stats(bets){
   return {done,w,l,pnl,roi,n,predL,actL,se,z,seW,pw,open:bets.filter(b=>b.status==="open").length};
 }
 
-function render(L, G){
+function render(L, G, O){
   const all=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
   const bets=all.filter(b=>(b.date||"")>=ERA_START);
   const S=stats(bets);
   if(!bets.length){
     $("body").innerHTML=`<div class="note">
-        <b>This record starts ${new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} — the day the model was rebuilt.</b> ${ERA_NOTE}. Earlier results came from a different system and are not counted here. No baseball picks have been published to the ledger yet —
-        it fills itself the moment the alerter sends one, and each row is committed before its first pitch.
-      </div>${renderGridiron(G)}`;
+        <b>This record starts ${new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} — the day the model was rebuilt.</b> ${ERA_NOTE}. Earlier results came from a different system and are not counted here. The row-by-row ledger below starts 2026-09-15 and fills itself the moment the alerter sends a pick, each row committed before its first pitch. The window before that is shown underneath, recovered from dated commits.
+      </div>${renderOpening(O)}${renderGridiron(G)}`;
     return;
   }
   const proven=Math.abs(S.z)>=1.96;
@@ -383,20 +446,23 @@ function render(L, G){
     <div class="note" style="border-color:#FF4D6D55">
       ⚠ Model estimates, not advice, and past results do not predict future ones. Sports betting carries real risk of loss — bet only what you can afford to lose. 21+ and void where prohibited.
     </div>
+    ${renderOpening(O)}
     ${renderGridiron(G)}`;
 }
 
 (async()=>{
   try{
-    const [r,g]=await Promise.all([
+    const [r,g,o]=await Promise.all([
       fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"}),
-      fetch("data/gridiron-log.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+      fetch("data/gridiron-log.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
+      fetch("data/era-open.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
     ]);
     const G = g && g.ok ? await g.json().catch(()=>null) : null;
+    const O = o && o.ok ? await o.json().catch(()=>null) : null;
     // Either sport missing is a normal state, not an error: the MLB ledger is
     // empty until the first pick publishes, and the NFL log only exists in
     // season. Whichever one has rows still renders.
-    render(r.ok ? await r.json() : {bets:[]}, G);
+    render(r.ok ? await r.json() : {bets:[]}, G, O);
   }catch(e){
     $("body").innerHTML=`<div class="empty">Could not load the ledger (${e.message}).<br>It is written by the alerter once picks start publishing.</div>`;
   }
