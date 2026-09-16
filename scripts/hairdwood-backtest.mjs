@@ -37,8 +37,8 @@ const require = createRequire(import.meta.url);
 const M = require("../hairdwood-model.js");
 
 const SEASON = +(process.argv[2] || 2026);
-const SLATES = +(process.argv[3] || 16);
-const STRIDE = +(process.argv[4] || 9);
+const SLATES = +(process.argv[3] || 24);
+const STRIDE = +(process.argv[4] || 6);
 const BAR = +(process.env.HAIRDWOOD_BAR || 65);
 const HOLD = 0.03;                    // what a book shades off our fair number
 const OUT = "data/hairdwood-backtest.json";
@@ -121,17 +121,28 @@ for (const day of dates()) {
     }
   }
 
+  // Every pair the board would post, not just the best one in each game. One
+  // double per game per slate came to 52 over a season, and 52 is not a sample
+  // — the first run said 65.8% and saw 50.0%, which at that size is a shrug
+  // dressed as a finding. The board posts a card for every game clearing the
+  // bar and the runners-up are real bets too, so they are all graded.
   for (const s of board.slates) {
-    const d = s.double; if (!d) continue;
+    const pool = (s.doubles && s.doubles.length ? s.doubles : (s.double ? [s.double] : []))
+      .filter(d => d.score.score >= BAR).slice(0, 6);
+    if (!pool.length) continue;
     const box = await boxFor(s.game.id); if (!box) continue;
-    const a = M.settle({ playerId: String(d.a.pl.id), market: d.a.market, line: d.a.line }, box);
-    const b = M.settle({ playerId: String(d.b.pl.id), market: d.b.market, line: d.b.line }, box);
-    if (!a || !b) continue;
-    const status = (a.status === "void" || b.status === "void") ? "void"
-                 : (a.status === "won" && b.status === "won") ? "won" : "lost";
-    doubles.push({ day, game: `${s.game.away.abbr}@${s.game.home.abbr}`,
-                   joint: +d.prob.toFixed(4), naive: +d.naive.toFixed(4), rho: +d.rho.toFixed(3),
-                   score: d.score.score, grade: d.score.grade, status });
+    for (const d of pool) {
+      const a = M.settle({ playerId: String(d.a.pl.id), market: d.a.market, line: d.a.line }, box);
+      const b = M.settle({ playerId: String(d.b.pl.id), market: d.b.market, line: d.b.line }, box);
+      if (!a || !b) continue;
+      const status = (a.status === "void" || b.status === "void") ? "void"
+                   : (a.status === "won" && b.status === "won") ? "won" : "lost";
+      doubles.push({ day, game: `${s.game.away.abbr}@${s.game.home.abbr}`,
+                     joint: +d.prob.toFixed(4), naive: +d.naive.toFixed(4), rho: +d.rho.toFixed(3),
+                     sameTeam: !!d.sameTeam, markets: [d.a.market, d.b.market].sort().join("|"),
+                     score: d.score.score, grade: d.score.grade, status,
+                     legA: a.status, legB: b.status });
+    }
   }
   say(`${day}: ${settled} legs settled, ${(100 * hit / Math.max(1, settled)).toFixed(1)}% cashed`);
 }
@@ -181,6 +192,9 @@ const dbl = doubles.filter(d => d.status !== "void");
 const report = {
   at: new Date().toISOString(), season: SEASON, slates: dates().length, stride: STRIDE,
   leakage: "player lines rebuilt as-of from game logs; team splits full-season (clamped ±10-12%); injuries unavailable on finished games, so the backtest runs blind to them",
+  // How many legs each market produced, which is the number that exposed the
+  // rebounds bug: 231 against 950 was the symptom before the hit rate was.
+  legCounts: (() => { const c = {}; legs.forEach(l => { c[l.market] = (c[l.market] || 0) + 1; }); return c; })(),
   legs: { n: legs.length, graded: graded.length, void: legs.length - graded.length,
           predicted: round(mean(graded, r => r.p)), actual: round(rate(graded)),
           edge: round(rate(graded) - mean(graded, r => r.p)), brier: round(brier, 4) },
@@ -194,7 +208,19 @@ const report = {
             rows: ladderRows },
   doubles: { n: dbl.length, predicted: round(mean(dbl, d => d.joint)), actual: round(rate(dbl)),
              naive: round(mean(dbl, d => d.naive)),
-             edge: round(rate(dbl) - mean(dbl, d => d.joint)) },
+             edge: round(rate(dbl) - mean(dbl, d => d.joint)),
+             // Where a joint goes wrong matters more than that it did. Split by
+             // whether the two men share a side, and by which markets were
+             // paired: the correlation table has a different number for each.
+             byTeam: bucketBy(dbl.map(d => ({ p: d.joint, status: d.status, k: d.sameTeam ? "same team" : "opposing" })), r => r.k),
+             byMarkets: bucketBy(dbl.map(d => ({ p: d.joint, status: d.status, k: d.markets })), r => r.k)
+               .filter(x => x.n >= 10).sort((a, b) => b.n - a.n),
+             // Each leg on its own, out of the pairs: if the legs are fine and
+             // the pair is not, the fault is the correlation and not the legs.
+             legHit: round((() => {
+               const all = dbl.flatMap(d => [d.legA, d.legB]).filter(x => x !== "void");
+               return all.length ? all.filter(x => x === "won").length / all.length : null;
+             })()) },
   fetches: calls, retries
 };
 mkdirSync("data", { recursive: true });
@@ -213,7 +239,14 @@ say("\n── the ladder ──────────────────�
 say(`  ${report.ladder.played} rungs (${report.ladder.passed} days passed): ${report.ladder.won}W ${report.ladder.lost}L ${report.ladder.void}V`);
 say(`  account $${st.account.toFixed(2)} from $100 · ${st.cycles.done} complete, ${st.cycles.busted} bust · max drawdown $${st.maxDD.toFixed(2)}`);
 say("\n── same-game doubles ───────────────────────────────────");
-if (dbl.length) say(`  n=${dbl.length} · predicted ${(report.doubles.predicted * 100).toFixed(1)}% · actual ${(report.doubles.actual * 100).toFixed(1)}% · pricing them apart would have said ${(report.doubles.naive * 100).toFixed(1)}%`);
+if (dbl.length) {
+  say(`  n=${dbl.length} · predicted ${(report.doubles.predicted * 100).toFixed(1)}% · actual ${(report.doubles.actual * 100).toFixed(1)}% · pricing them apart would have said ${(report.doubles.naive * 100).toFixed(1)}%`);
+  say(`  the legs inside them cashed ${(report.doubles.legHit * 100).toFixed(1)}% on their own`);
+  report.doubles.byTeam.forEach(g => say(`    ${g.key.padEnd(10)} n=${String(g.n).padStart(4)}  said ${(g.predicted * 100).toFixed(1)}%  did ${(g.actual * 100).toFixed(1)}%`));
+  report.doubles.byMarkets.forEach(g => say(`    ${g.key.padEnd(10)} n=${String(g.n).padStart(4)}  said ${(g.predicted * 100).toFixed(1)}%  did ${(g.actual * 100).toFixed(1)}%`));
+}
+say("\n── legs per market ─────────────────────────────────────");
+say("  " + JSON.stringify(report.legCounts));
 say(`\n${calls} fetches${retries ? `, ${retries} retried` : ""} → ${OUT}`);
 
 // A backtest that graded nothing is not a passing backtest. The first run of
