@@ -356,6 +356,59 @@ try {
   const shortest = ps[ps.length - 1];
   check("nothing unbettable is published", shortest <= M.CFG.pCeil + 1e-9,
         `shortest leg ${(shortest * 100).toFixed(0)}% (fair ${M.amOdds(shortest)}), ceiling ${(M.CFG.pCeil * 100).toFixed(0)}%`);
+  // ── is the DISTRIBUTION the right shape? ─────────────────────────────────
+  // The backtest has rebounds cashing 73.2% against a predicted 69.5% while the
+  // projected mean is right, which means the fault is in the shape rather than
+  // the level. The game logs already downloaded above are the direct evidence:
+  // for each man, take his own per-game numbers, feed his own mean back into
+  // our distribution, and compare what the model says about a line to how often
+  // he actually cleared it. Any market whose model probability sits below its
+  // own empirical frequency has the wrong shape, and this says by how much and
+  // at which lines.
+  const shape = {};
+  Object.keys(logs).forEach(id => {
+    const L = logs[id];
+    if (!L || L.played.length < 15) return;
+    MARKET_KEYS.forEach(k => {
+      const v = L.played.map(r => r[k]).filter(x => x != null);
+      if (v.length < 15) return;
+      const mu = v.reduce((a, b) => a + b, 0) / v.length;
+      if (!(mu > 1)) return;
+      const varr = v.reduce((a, b) => a + (b - mu) * (b - mu), 0) / (v.length - 1);
+      const sh = shape[k] = shape[k] || { n: 0, cvSum: 0, byOffset: {} };
+      sh.n++;
+      // The dispersion his own log implies, in the same parameterisation the
+      // model uses: Var = mean + (cv*mean)^2.
+      sh.cvSum += Math.sqrt(Math.max(0, varr - mu)) / mu;
+      const sp = M.spread(k, mu, L, { tpa: mu / 0.36 });
+      // Lines at and below the mean, which is where the board writes them.
+      [-2.5, -1.5, -0.5].forEach(off => {
+        const line = Math.max(0.5, Math.round(mu + off) + 0.5);
+        const model = M.overProb(k, mu, sp, line, { tpa: mu / 0.36 });
+        const emp = v.filter(x => x > line).length / v.length;
+        const b = sh.byOffset[off] = sh.byOffset[off] || { n: 0, model: 0, emp: 0 };
+        b.n++; b.model += model; b.emp += emp;
+      });
+    });
+  });
+  report.distributionShape = {};
+  MARKET_KEYS.forEach(k => {
+    const sh = shape[k]; if (!sh || !sh.n) return;
+    const offs = {};
+    Object.keys(sh.byOffset).forEach(o => {
+      const b = sh.byOffset[o];
+      offs[o] = { n: b.n, model: +(b.model / b.n).toFixed(4), empirical: +(b.emp / b.n).toFixed(4),
+                  gap: +((b.emp - b.model) / b.n * b.n).toFixed(4) };
+      offs[o].gap = +(offs[o].empirical - offs[o].model).toFixed(4);
+    });
+    const impliedCv = +(sh.cvSum / sh.n).toFixed(3);
+    report.distributionShape[k] = { players: sh.n, impliedCv, modelCv: M.MKT[k].cv, byOffset: offs };
+    const worst = Object.values(offs).sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap))[0];
+    check(`${k.toUpperCase()} distribution matches the logs`, Math.abs(worst.gap) < 0.03 ? true : "warn",
+          `implied cv ${impliedCv} vs model ${M.MKT[k].cv} · ` +
+          Object.keys(offs).map(o => `${o}: model ${(offs[o].model * 100).toFixed(1)}% vs real ${(offs[o].empirical * 100).toFixed(1)}%`).join(" · "));
+  });
+
   // ── does the projection track what happens? ──────────────────────────────
   // The backtest found rebounds hitting 99.1% against a predicted 70.0%, on a
   // quarter as many legs as the other markets. A hit rate that far above its
