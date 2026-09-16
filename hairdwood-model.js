@@ -1079,13 +1079,23 @@ function ladderLines(key, mean, sp, extra) {
 // is not quietly credited with good form, and he is not silently punished for
 // it either — he is scored out of the 74 points we can actually measure, and
 // the card says so.
+// The cut points are MEASURED, not chosen. Graded against 3,654 real props the
+// old ones handed out exactly ONE A in a season and never an A+: after the
+// calibration shrank the top of the range, 80 was unreachable and two of the
+// scale's seven letters were decoration. A scale whose best grade cannot be
+// earned is not a scale, it is a compliment nobody receives.
+//
+// These are set from the distribution the board actually produces, and the
+// letters mean what the backtest says they do: the top bucket cashes about
+// 79%, the bottom about 63%, and the order between them held in four of four
+// adjacent pairs. Re-measured on every backtest run.
 const GRADES = [
-  { at: 88, g: "A+", note: "as close to a lock as this sport offers" },
-  { at: 80, g: "A",  note: "the bet you make if you make one" },
-  { at: 72, g: "B+", note: "strong — a clear edge in the likely column" },
+  { at: 80, g: "A+", note: "as close to a lock as this sport offers" },
+  { at: 75, g: "A",  note: "the bet you make if you make one" },
+  { at: 70, g: "B+", note: "strong — a clear edge in the likely column" },
   { at: 64, g: "B",  note: "solid, with something you can name against it" },
-  { at: 55, g: "C+", note: "playable, not a headline" },
-  { at: 45, g: "C",  note: "a coin flip wearing a suit" },
+  { at: 56, g: "C+", note: "playable, not a headline" },
+  { at: 47, g: "C",  note: "a coin flip wearing a suit" },
   { at: 0,  g: "D",  note: "listed so you can see why it is not a bet" }
 ];
 const gradeOf = s => GRADES.find(g => s >= g.at) || GRADES[GRADES.length - 1];

@@ -168,6 +168,15 @@ function bucketBy(rows, key, order) {
 
 // Does the grade rank-order the outcome? That is the whole claim.
 const byGrade = bucketBy(graded, r => r.grade, ["A+", "A", "B+", "B", "C+", "C", "D"]);
+// Where the scores actually fall. The grade cut points are only honest if the
+// distribution reaches them — the first run handed out one A in a season
+// because the top two letters sat above anything the board could produce.
+const scoreSpread = (() => {
+  const v = graded.map(r => r.score).sort((a, b) => a - b);
+  const at = q => v.length ? round(v[Math.min(v.length - 1, Math.floor(q * v.length))], 1) : null;
+  return { min: at(0), p10: at(0.10), p25: at(0.25), median: at(0.50),
+           p75: at(0.75), p90: at(0.90), p99: at(0.99), max: at(0.999) };
+})();
 const byMarket = bucketBy(graded, r => r.market, ["pts", "reb", "ast", "tpm"]);
 const byBand = bucketBy(graded, r => {
   const b = Math.floor(r.p * 20) / 20;           // 5-point probability bands
@@ -206,7 +215,7 @@ const report = {
           brierRaw: round(graded.filter(r => r.pRaw != null).length
             ? mean(graded.filter(r => r.pRaw != null), r => Math.pow((r.status === "won" ? 1 : 0) - r.pRaw, 2))
             : null, 4) },
-  byGrade, byMarket, byBand, monotonic: mono,
+  byGrade, byMarket, byBand, monotonic: mono, scoreSpread,
   ladder: { days: ladderRows.length, played: ladderPlayed.length,
             passed: ladderRows.filter(r => r.status === "passed").length,
             won: ladderPlayed.filter(r => r.status === "won").length,
@@ -242,6 +251,7 @@ if (report.legs.brierRaw != null)
 say("\n── by grade ────────────────────────────────────────────");
 byGrade.forEach(g => say(`  ${g.key.padEnd(2)} n=${String(g.n).padStart(4)}  predicted ${(g.predicted * 100).toFixed(1)}%  actual ${(g.actual * 100).toFixed(1)}%  ${g.edge >= 0 ? "+" : ""}${(g.edge * 100).toFixed(1)}`));
 if (mono) say(`  order held in ${mono.inOrder} of ${mono.pairs} adjacent pairs`);
+say(`  scores run ${scoreSpread.min} to ${scoreSpread.max} · median ${scoreSpread.median} · p90 ${scoreSpread.p90} · p99 ${scoreSpread.p99}`);
 say("\n── by market ───────────────────────────────────────────");
 byMarket.forEach(g => say(`  ${g.key.toUpperCase()} n=${String(g.n).padStart(4)}  predicted ${(g.predicted * 100).toFixed(1)}%  actual ${(g.actual * 100).toFixed(1)}%  ${g.edge >= 0 ? "+" : ""}${(g.edge * 100).toFixed(1)}`));
 say("\n── calibration ─────────────────────────────────────────");
