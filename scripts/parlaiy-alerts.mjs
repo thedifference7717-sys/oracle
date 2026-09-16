@@ -324,10 +324,22 @@ async function ladderPlace(day, games) {
     onStatus: m => console.log("  · ladder:", m)
   });
   const lbe = 1 / M.decFromAmerican(LEG_PRICE);
-  let best = null;
+  // Nobody rides the ladder more than two days running; after that he sits out
+  // one placement. Computed from the ledger rather than from anything held in
+  // this runner, so a fresh checkout applies the same bench.
+  const blocked = M.ladderBlocked(L.bets);
+  let best = null, benched = null;
   for (const c of board.candidates) {
     const edge = c.p - lbe;                       // c.p already carries scratch risk
+    if (blocked.has(M.pickKey({ playerId: c.id, pick: c.name }))) {
+      if (!benched || edge > benched.edge) benched = { c, edge };
+      continue;
+    }
     if (!best || edge > best.edge) best = { c, edge };
+  }
+  if (benched) {
+    console.log(`ladder: ${benched.c.name} benched — two days running, sitting this one out` +
+      `${best ? ` (he was ${benched.edge > best.edge ? "ahead of" : "behind"} ${best.c.name})` : ""}.`);
   }
   if (!best) { console.log("ladder: no candidate could be scored."); return; }
   if (best.edge < MIN_EDGE) {
@@ -364,7 +376,9 @@ async function ladderPlace(day, games) {
     `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${LEG_PRICE}\n` +
     `${c.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.slot}, ${pct(c.startProb)} to start (already priced in)`}\n` +
     `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n` +
-    `${live.filter(posted).length} of ${live.length} games had confirmed lineups at lock\n\n` +
+    `${live.filter(posted).length} of ${live.length} games had confirmed lineups at lock\n` +
+    `${benched && benched.edge > best.edge ? `⏸ ${benched.c.name} rated higher but has ridden two days running — benched\n` : ""}` +
+    `\n` +
     `<i>Your money at risk: ${money(st.base)} (the seed). Riding on top of it: ${money(st.stake - st.base)} of theirs.\n` +
     (risk ? `Five straight at this rate completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${money(risk.cycleProfit)}. Account ${money(st.account)}.` : "") +
     `</i>`

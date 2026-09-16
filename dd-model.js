@@ -352,10 +352,39 @@ const LADDER = {
   account: 100,    // default only; every viewer sets their own
   basePct: 0.10,   // a cycle seeds at this share of the account
   rungs: 5,        // wins needed to close a cycle
-  missGain: 0.25   // a busted cycle restarts this much bigger
+  missGain: 0.25,  // a busted cycle restarts this much bigger
+  maxStreak: 2     // a player cannot be the rung more than this many days running
 };
 const round2 = v => Math.round(v * 100) / 100;
 const seedFor = C => round2(Math.max(0, C.account) * C.basePct);
+
+// A player cannot be the rung more than `maxStreak` days running. After that
+// he sits out one placement and is eligible again.
+//
+// Keyed on the ledger's own rows rather than anything remembered in a runner,
+// because the ledger is the only thing that survives a fresh checkout — the
+// same reason the duplicate-alert fix reads it. Rows that placed no bet
+// (noplay, skipped) are not picks and do not count toward a streak, but they
+// also do not serve as the day off: sitting out means another player got the
+// rung, not that nobody did.
+//
+// Returns the set of blocked keys. Matching prefers playerId, which is stable,
+// and falls back to the lower-cased name for older rows written before ids
+// were recorded.
+const pickKey = b => b && (b.playerId != null ? String(b.playerId)
+                        : (b.pick ? String(b.pick).toLowerCase() : null));
+function ladderBlocked(history, maxStreak) {
+  const n = maxStreak == null ? LADDER.maxStreak : maxStreak;
+  if (!(n > 0)) return new Set();
+  const placed = (history || [])
+    .filter(b => pickKey(b) && (b.status === "won" || b.status === "lost" || b.status === "open"))
+    .slice()
+    .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+  const last = placed.slice(-n);
+  if (last.length < n) return new Set();
+  const k = pickKey(last[0]);
+  return last.every(b => pickKey(b) === k) ? new Set([k]) : new Set();
+}
 
 // Replay the settled history and return where the ladder stands right now.
 // `history` is chronological: { date, price (American), stake, status:
@@ -829,6 +858,6 @@ async function buildBoard(o) {
 
 return { VERSION, API, CFG, K, PARK, park, clamp, erf, normCdf, normPdf, normInv, logit, expit,
   log5, shrink, hitProbability, jointProb, rhoFor, amOdds, decFromAmerican, evaluate,
-  esp, hitCountDist, nCr, roundRobin, LADDER, ladder, ladderRisk,
+  esp, hitCountDist, nCr, roundRobin, LADDER, ladder, ladderRisk, ladderBlocked, pickKey,
   calibrate, record, etNow, ymd, slateYmd, platoon, pool, buildBoard };
 });
