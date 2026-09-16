@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T04:11:59.496Z",
+  "at": "2026-09-16T04:15:05.774Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -755,8 +755,8 @@
         "odds",
         "againstTheSpread",
         "news",
-        "plays",
         "header",
+        "plays",
         "article",
         "videos",
         "wallclockAvailable",
@@ -2090,7 +2090,7 @@
       {
         "game": "BOS@MIA",
         "grade": "B",
-        "score": 64.5,
+        "score": 66.8,
         "joint": 0.633,
         "rho": 0.019,
         "legs": [
@@ -2100,30 +2100,30 @@
       },
       {
         "game": "MIL@SA",
-        "grade": "C+",
-        "score": 63.5,
-        "joint": 0.617,
+        "grade": "B",
+        "score": 65.6,
+        "joint": 0.633,
         "rho": 0.08,
         "legs": [
-          "Devin Vassell AST o1.5",
+          "Julian Champagnie AST o0.5",
           "De'Aaron Fox 3PM o0.5"
         ]
       },
       {
         "game": "ATL@POR",
-        "grade": "C+",
-        "score": 63.5,
-        "joint": 0.611,
-        "rho": 0.019,
+        "grade": "B",
+        "score": 65.5,
+        "joint": 0.65,
+        "rho": 0.12,
         "legs": [
           "Onyeka Okongwu 3PM o0.5",
-          "Jalen Johnson 3PM o0.5"
+          "Aaron Wiggins AST o0.5"
         ]
       },
       {
         "game": "OKC@HOU",
-        "grade": "C+",
-        "score": 62.8,
+        "grade": "B",
+        "score": 64.3,
         "joint": 0.62,
         "rho": 0.021,
         "legs": [
@@ -2132,14 +2132,14 @@
         ]
       },
       {
-        "game": "PHX@DET",
-        "grade": "C+",
-        "score": 61.8,
-        "joint": 0.595,
-        "rho": 0.021,
+        "game": "CHA@LAL",
+        "grade": "B",
+        "score": 64.1,
+        "joint": 0.636,
+        "rho": 0.015,
         "legs": [
-          "Devin Booker PTS o21.5",
-          "Miles Bridges 3PM o0.5"
+          "Naz Reid 3PM o0.5",
+          "Jake LaRavia AST o0.5"
         ]
       }
     ],
