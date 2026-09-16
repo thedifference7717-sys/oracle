@@ -160,13 +160,6 @@ b,strong{font-weight:600}
 .ld-orphan .s{font-size:12px;color:var(--muted);line-height:1.55;margin-top:7px}
 .ld-orphan code{font-family:var(--num);font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:5px}
 .ld-mine{background:rgba(255,214,10,.10)}
-.ld-my{margin-top:12px;padding-top:11px;border-top:.5px solid var(--hair)}
-.ld-my label{display:block;font-size:11px;color:var(--dim);margin-bottom:6px}
-.ld-my .row{display:flex;gap:7px}
-.ld-my input{flex:1;min-width:0;background:var(--bg3);border:none;border-radius:9px;color:var(--text);padding:9px 10px;font-size:14px}
-.ld-my input[type=number]{flex:0 0 84px;font-family:var(--num);text-align:center}
-.ld-my button{flex:none;padding:9px 16px;background:var(--blue);border:none;border-radius:980px;color:#fff;font-family:var(--sys);font-size:13px;font-weight:600;cursor:pointer}
-.ld-my .hint{font-size:11px;color:var(--dim);margin-top:7px;line-height:1.45}
 .ld-mini{padding:6px 13px;border:none;border-radius:980px;background:var(--bg3);color:var(--text);font-family:var(--sys);font-size:12px;font-weight:600;cursor:pointer}
 .ld-mini.win{background:rgba(48,209,88,.18);color:var(--green)}
 .ld-mini.lose{background:rgba(255,69,58,.18);color:var(--red)}
@@ -409,32 +402,38 @@ const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
 // betting, and every customer would open the board to a stranger's bankroll
 // presented as though it were a setting. Until it is answered the ladder shows
 // its setup card instead of dollar figures.
-// What you actually bet, keyed by slate date, kept in this browser.
+// The pick, pinned by the board the first moment it can make one.
 //
-// The published ledger is the record, but it can lag: a runner can alert a
-// rung and then fail to push it, which is exactly how a pick that was already
-// bet ends up absent from the board. When that happens the ladder must still
-// compound off the bet that was really placed, so this override stands in for
-// the missing row — clearly marked as yours rather than published, and never
-// written into the ledger, which stays the tamper-evident one.
-let pickByDay={};
-try{pickByDay=JSON.parse(localStorage.getItem("dd.ladderPick")||"{}")||{};}catch(e){pickByDay={};}
-function saveMyPick(day,patch){
-  const cur=pickByDay[day]||{};
-  pickByDay[day]=Object.assign({},cur,patch);
-  if(!pickByDay[day].pick)delete pickByDay[day];
-  try{localStorage.setItem("dd.ladderPick",JSON.stringify(pickByDay));}catch(e){}
+// The ladder must NAME a player. An earlier version, when no row had published,
+// showed nothing and offered a box to type one in — which is exactly backwards:
+// choosing the player is the product, not the user's job. And the version
+// before that recomputed the live board every three minutes, so the name moved
+// after it had been bet.
+//
+// So: the instant the lock passes, the board computes the pick once and pins
+// it here, keyed by slate date. From then on that name is what it shows, every
+// refresh, whatever the live ranking does. A published row supersedes the pin
+// when it arrives, because the alerter's committed row is the record — and if
+// the two ever differ, the card says so rather than swapping silently.
+let pinnedPick={};
+try{pinnedPick=JSON.parse(localStorage.getItem("dd.ladderPinned")||"{}")||{};}catch(e){pinnedPick={};}
+function pinPick(day,c,edge){
+  if(!day||!c||pinnedPick[day])return pinnedPick[day]||null;
+  pinnedPick[day]={pick:c.name,playerId:c.id,p:c.p,slot:c.slot,posted:!!c.posted,
+    startProb:c.startProb,teams:`${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName}`,
+    sp:c.spName||null,edge,pinnedAt:new Date().toISOString()};
+  try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}
+  return pinnedPick[day];
+}
+// Result entry only — never player choice. The alerter grades from the
+// boxscore, but if its row never publishes the ladder still has to know
+// whether the rung won so tomorrow's stake is right.
+function setPinResult(day,status){
+  if(!pinnedPick[day])return;
+  pinnedPick[day].status=status;
+  try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}
   renderLadder();
 }
-function setMyPick(day){
-  const n=(document.getElementById("myPick")||{}).value;
-  const pr=parseFloat((document.getElementById("myPickOdds")||{}).value);
-  if(!n||!n.trim())return;
-  saveMyPick(day,{pick:n.trim(),price:isFinite(pr)&&Math.abs(pr)>=100?pr:null,status:"open"});
-}
-function clearMyPick(day){ delete pickByDay[day];
-  try{localStorage.setItem("dd.ladderPick",JSON.stringify(pickByDay));}catch(e){}
-  renderLadder(); }
 
 let ladderAccount=null;
 try{const v=parseFloat(localStorage.getItem("dd.ladderAccount")); if(isFinite(v)&&v>0)ladderAccount=v;}catch(e){}
@@ -802,9 +801,10 @@ function renderLadder(){
   // ladder compounds off the bet that was actually placed rather than skipping
   // it. A published row always wins over a local one for the same day.
   const haveDay=new Set(published.map(b=>b.date));
-  const localRows=Object.entries(pickByDay)
+  const localRows=Object.entries(pinnedPick)
     .filter(([d])=>!haveDay.has(d))
-    .map(([d,v])=>({date:d,pick:v.pick,price:v.price,status:v.status||"open",local:true}));
+    .map(([d,v])=>({date:d,pick:v.pick,playerId:v.playerId,price:oddsByDay[d]!=null?oddsByDay[d]:null,
+                    status:v.status||"open",local:true}));
   const raw=published.concat(localRows).sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
   // Replay against the prices actually taken, not the ones assumed.
   const hist=raw.map(b=>oddsByDay[b.date]!=null?Object.assign({},b,{price:oddsByDay[b.date]}):b);
@@ -844,7 +844,7 @@ function renderLadder(){
   // locked panel, which then printed NaN% and an empty publish time because a
   // hand-entered row carries none of that. Your own entry has its own panel.
   const pub=published.find(b=>b.date===today);
-  const myPick=pickByDay[today]||null;
+  let myPick=pinnedPick[today]||null;
   // Once the alerter has committed a rung, THAT is the pick — not whatever the
   // board would choose if it recomputed now. The committed row is what was
   // published to the repo before first pitch, and a dashboard that quietly
@@ -861,7 +861,16 @@ function renderLadder(){
   // the slate every three minutes and showing whoever led at that moment. A
   // name that moves after you have bet it is worse than no name, so this state
   // says plainly that a pick is locked and has not reached the record yet.
-  const orphaned=!locked&&!myPick&&lk&&lk.open;
+  // The moment the lock passes with nothing published, compute the pick once
+  // and pin it. This is what makes the card always able to name a player
+  // without ever renaming one: after this, `myPick` is read, never recomputed.
+  if(!locked&&!myPick&&lk&&lk.open&&board){
+    const p0=ladderPick();
+    if(p0)pinPick(today,p0.c,p0.edge);
+  }
+  const pinned=pinnedPick[today]||null;
+  // Only true before the board can produce any candidate at all.
+  const orphaned=!locked&&!pinned&&lk&&lk.open;
   const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
                  :(locked&&locked.price!=null?locked.price:setting("legPrice"));
   const dec=M.decFromAmerican(todayOdds)||1;
@@ -976,37 +985,34 @@ function renderLadder(){
   // Shown once the lock has passed but no row has reached the ledger. The
   // alerter has chosen and sent a pick by now; the board simply cannot prove
   // which, so it refuses to guess and offers to record what you took.
+  // Only reachable when the board has no scored candidate at all — no slate, or
+  // the feed is down. It never asks who to bet; there is simply nothing to name.
   const orphanHtml=orphaned?`
     <div class="ld-pick ld-orphan">
-      <div class="l">Locked — not yet on the record</div>
-      <div class="s">The alerter has picked and sent today's rung. It has not published to
-      <code>data/ladder.json</code> yet, so this card will not name one: after the lock it shows the
-      committed pick or nothing, never a fresh guess that could differ from the one you were sent.
-      <b>Check Telegram for the pick.</b></div>
-      <div class="ld-my">
-        <label for="myPick">Record what you took</label>
-        <div class="row">
-          <input id="myPick" type="text" placeholder="Player name"
-            onkeydown="if(event.key==='Enter')setMyPick('${today}')">
-          <input id="myPickOdds" type="number" step="5" inputmode="numbers-and-punctuation" placeholder="odds"
-            onkeydown="if(event.key==='Enter')setMyPick('${today}')">
-          <button onclick="setMyPick('${today}')">Save</button>
-        </div>
-        <div class="hint">Kept in this browser so the ladder compounds off the bet you actually placed.
-        It is never written to the published record.</div>
-      </div>
+      <div class="l">No pick yet</div>
+      <div class="s">The lock has passed but the board has not scored a single bat — usually the feed is
+      unreachable. Hit refresh; the pick appears and fixes itself the moment one candidate can be priced.</div>
     </div>`:"";
 
-  const myHtml=myPick?`
+  const myHtml=pinned?`
     <div class="ld-pick ld-mine">
-      <div class="nm">${myPick.pick} <span class="tag warn">YOUR ENTRY</span></div>
-      <div class="sub">Recorded by you, not published to the record${myPick.price?` · taken at ${myPick.price>0?"+":""}${myPick.price}`:""}.</div>
-      <div class="num" style="gap:8px">
-        <button class="ld-mini win" onclick="saveMyPick('${today}',{status:'won'})">Won</button>
-        <button class="ld-mini lose" onclick="saveMyPick('${today}',{status:'lost'})">Lost</button>
-        <button class="ld-mini" onclick="clearMyPick('${today}')">Clear</button>
+      <div class="nm">${pinned.pick} <span class="tag warn">TODAY'S PICK</span></div>
+      <div class="sub">#${pinned.slot||"—"} · ${pinned.teams||""} · ${pinned.sp||"SP TBD"}
+        ${pinned.posted?' · <span style="color:var(--green)">confirmed lineup</span>':pinned.startProb?`<span style="color:var(--yellow)"> · projected, ${pct(pinned.startProb)} to start</span>`:""}</div>
+      <div class="num">
+        <span style="color:var(--blue)">${pct(pinned.p)} to hit</span>
+        <span style="color:var(--yellow)">fair ${M.amOdds(pinned.p)}</span>
+        <span style="color:${edgeToday>=bar?"var(--green)":"var(--red)"}">${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${todayOdds>0?"+":""}${todayOdds}</span>
       </div>
-      <div class="sub" style="margin-top:6px">Status: <b style="color:${myPick.status==="won"?"var(--green)":myPick.status==="lost"?"var(--red)":"var(--muted)"}">${(myPick.status||"open").toUpperCase()}</b> — set it when the game finishes so tomorrow's rung is right.</div>
+      <div class="sub" style="margin-top:7px;color:var(--muted)">
+        Locked at ${etTime(Date.parse(pinned.pinnedAt))} ET and fixed from then on. This name does not change on a refresh.
+        ${locked?"":"<br>Waiting for the alerter's row to reach the record; if it names someone else, that row wins and this card will say so."}
+      </div>
+      <div class="num" style="gap:8px;margin-top:9px">
+        <button class="ld-mini win" onclick="setPinResult('${today}','won')">Won</button>
+        <button class="ld-mini lose" onclick="setPinResult('${today}','lost')">Lost</button>
+        <span style="align-self:center;font-size:11px;color:var(--dim)">result only — set it at the final so tomorrow's rung is right (now: <b>${(pinned.status||"open").toUpperCase()}</b>)</span>
+      </div>
     </div>`:"";
 
   const pickHtml=pick?`
@@ -1056,7 +1062,7 @@ function renderLadder(){
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
       <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${oddsBox}</div>
-      ${locked?lockedHtml:myPick?myHtml:waiting?waitHtml:orphaned?orphanHtml:pickHtml}
+      ${locked?lockedHtml:pinned?myHtml:waiting?waitHtml:orphaned?orphanHtml:pickHtml}
     </div>
     ${waiting?"":nextBox}
     <div class="ld-steps">${steps}</div>
