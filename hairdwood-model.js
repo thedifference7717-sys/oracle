@@ -255,30 +255,41 @@ function evaluate(p, american) {
 }
 
 // ── the four markets ────────────────────────────────────────────────────────
-// `cv` is the extra-Poisson spread: Var = vmr*mean + (cv*mean)^2, the negative
-// binomial written the way it is actually measurable.
+// Var = vmr*mean + (cv*mean)^2. Both terms are MEASURED, on forty real game
+// logs, and the measurement changed the FORM and not just the values.
 //
-// These four are MEASURED, on forty real game logs, and the measurement moved
-// them: points were carrying 0.225, which implies a variance of 26.6 for a
-// 15-point scorer where the logs say 47.4 — too narrow by 78%. Assists were
-// 10% narrow. Rebounds and threes were already about right. A too-narrow
-// family overstates the chance of clearing a line below the mean, and it does
-// it hardest to the players who have no game log to correct it, because for
-// them the family is the whole distribution.
+// The probe fitted excess spread against the mean on log-log axes. Points — the
+// only market whose means span a wide enough range for the fit to mean anything
+// — came back at an exponent of 0.481, which is excess variance proportional to
+// the mean: a constant Fano factor, not the constant cv this model was built
+// on. So cv is zero everywhere and vmr carries it. The factors reproduce every
+// standard deviation there is to check against: a 25-point scorer at 8.9 where
+// constant-cv gave him 11.2, a 15-point scorer at 6.9 against 6.9 measured, an
+// 8-rebound man at 3.2.
 //
-// The Fano factors these reproduce (1 + cv^2*mean at the measured mean) come
-// out at 3.4 / 1.2 / 1.2 / 1.2 against 3.2 / 1.3 / 1.3 / 1.2 measured, so
-// vmr stays 1 for all four: nothing in this sport is steadier than Poisson. `stab` is how many MINUTES of evidence it takes
-// before a man's own per-minute rate outweighs the positional prior; rebounds
-// stabilise fastest (a 7-footer rebounds), assists slowest (role changes).
+// `stab` is how many MINUTES of evidence it takes before a man's own per-minute
+// rate outweighs his positional prior, measured by split-half: predict the back
+// half of a season from the front half shrunk toward the prior, keep whatever
+// predicts best.
+//
+// The ordering that came back is the part worth understanding, because it is
+// not what was guessed. THE MORE A POSITION PREDICTS A RATE, THE HEAVIER ITS
+// PRIOR SHOULD BE. Position says a great deal about rebounds and assists —
+// centres rebound, guards pass — and those two were already about right, at 200
+// and 260 against the 180 and 300 in use. It says almost nothing about
+// three-point volume, where a non-shooter and a marksman play the same
+// position, and there the model leaned 260 minutes on that prior against a
+// measured 20. That is not a mistuned constant; it is discarding what the
+// player's own log already knew, and it cost threes about three points of
+// projection. Points sat between at 90 against 220.
+//
+// Threes get 30 rather than the measured 20: the error curve is flat from 20 to
+// 40, and a floor that low leaves a hot fortnight nothing to lean against.
 const MARKETS = [
-  { key: "pts", label: "Points",      short: "PTS", vmr: 3.19, cv: 0, stab: 220, max: 70 },
-  { key: "reb", label: "Rebounds",    short: "REB", vmr: 1.28, cv: 0, stab: 180, max: 30 },
-  { key: "ast", label: "Assists",     short: "AST", vmr: 1.29, cv: 0, stab: 300, max: 22 },
-  // cvAtt is the one that matters for threes: 3-point ATTEMPTS swing about
-  // 28% game to game, and the makes inherit that dispersion through the
-  // binomial. cv is only the fallback for a man whose attempts we do not have.
-  { key: "tpm", label: "Threes made", short: "3PM", vmr: 1.21, cv: 0, stab: 260, max: 14 }
+  { key: "pts", label: "Points",      short: "PTS", vmr: 3.19, cv: 0, stab: 90,  max: 70 },
+  { key: "reb", label: "Rebounds",    short: "REB", vmr: 1.28, cv: 0, stab: 200, max: 30 },
+  { key: "ast", label: "Assists",     short: "AST", vmr: 1.29, cv: 0, stab: 260, max: 22 },
+  { key: "tpm", label: "Threes made", short: "3PM", vmr: 1.21, cv: 0, stab: 30,  max: 14 }
 ];
 const MKT = {}; MARKETS.forEach(m => { MKT[m.key] = m; });
 
@@ -1051,24 +1062,19 @@ function projectPlayer(pl, log, side, env, lg, out) {
 // games we have actually watched him play. A parametric family cannot know that
 // one 16-point scorer goes 16, 15, 17 and another goes 4, 31, 12; the log can.
 function spread(key, mean, log, extra) {
+  // The family's own spread: Var = vmr*mean + (cv*mean)^2.
+  //
+  // The first term is the Fano factor, and it carries all of it now — the
+  // log-log fit put the exponent on the mean at 0.481, which is excess variance
+  // proportional to the mean, so cv is zero for all four markets and the second
+  // term is kept only because a future market might need it. The form this
+  // replaced, a constant cv with vmr pinned at 1, over-extrapolated badly at the
+  // top: it gave a 25-point scorer a standard deviation of 11.2 against a real
+  // 8.9, and the backtest duly showed points getting worse when its cv was set
+  // from the sample average.
   const cv = MKT[key].cv;
-  // The family's own spread. For threes the dispersion is derived from the
-  // ATTEMPTS: att*q(1-q) + q^2*Var(att) reduces EXACTLY to mean + (cvAtt*mean)^2,
-  // so at a fixed attempt dispersion two men averaging 2.2 makes have the same
-  // spread whether that came off eleven attempts or four. That is worth saying
-  // plainly rather than pretending otherwise — what separates those two shooters
-  // on this board is not the family, it is the blended term below: their own
-  // observed game-to-game spread, which is measured and does differ.
-  const c = cv;
-  // Var = vmr*mean + (cv*mean)^2. The first term is the Fano factor — the part
-  // that scales with the count itself — and it is not 1 for every market: a
-  // rebound is a bounded opportunity (one per missed shot) and comes out
-  // STEADIER than Poisson, which the old form, fixed at vmr = 1, could not
-  // express at any value of cv. The second term is the usage variation that
-  // grows with the mean, which is why a 25-point scorer swings by seven and a
-  // 5-point one does not swing by three.
   const vmr = MKT[key].vmr != null ? MKT[key].vmr : 1;
-  let sd = Math.sqrt(Math.max(1e-9, vmr * mean + (c * mean) * (c * mean)));
+  let sd = Math.sqrt(Math.max(1e-9, vmr * mean + (cv * mean) * (cv * mean)));
   const familySd = sd;
   let obs = null, ratio = 1;
   const rows = log && log.played.length >= 5 ? log.played.slice(0, 20) : null;
