@@ -52,6 +52,9 @@ b,strong{font-weight:600}
   text-transform:uppercase;color:var(--dim)}
 .group-h small{display:block;font-size:12px;color:var(--dim);margin-top:4px;opacity:.75;line-height:1.5}
 .mini{width:100%;min-width:0;margin:10px 0 4px;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.mini th,.mini td{padding:8px 6px;border-bottom:.5px solid var(--hair);white-space:nowrap}
+.mini th{font-size:11px;color:var(--dim);font-weight:500}
+.mini .num{text-align:right}
 .mini td{padding:6px 8px;border-bottom:.5px solid var(--hair);white-space:nowrap}
 .mini tr:last-child td{border-bottom:none}
 .note code{font-family:var(--num);font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:5px}
@@ -516,16 +519,16 @@ function renderHairdwood(H, B) {
     </div>
     <div class="panel">
       <div class="panel-head">Does the grade rank the outcome? <span>${mono ? `order held in ${mono.inOrder} of ${mono.pairs} adjacent pairs` : "not enough in each bucket to say"}</span></div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>GRADE</th><th class="num">PROPS</th><th class="num">MODEL SAID</th><th class="num">ACTUALLY HIT</th><th class="num">DIFFERENCE</th></tr></thead>
+      <table class="mini">
+        <thead><tr><th style="text-align:left">GRADE</th><th class="num">n</th><th class="num">SAID</th><th class="num">DID</th></tr></thead>
         <tbody>${g.map(x => `<tr>
           <td><b>${x.key}</b></td>
           <td class="num" style="color:var(--dim)">${x.n}</td>
-          <td class="num">${(x.predicted * 100).toFixed(1)}%</td>
-          <td class="num"><b>${(x.actual * 100).toFixed(1)}%</b></td>
-          <td class="num" style="color:${Math.abs(x.edge) <= 0.04 ? "var(--green)" : "var(--red)"}">${x.edge >= 0 ? "+" : ""}${(x.edge * 100).toFixed(1)}</td>
+          <td class="num" style="color:var(--muted)">${(x.predicted * 100).toFixed(1)}%</td>
+          <td class="num"><b>${(x.actual * 100).toFixed(1)}%</b>
+            <span style="color:${Math.abs(x.edge) <= 0.04 ? "var(--green)" : "var(--red)"};font-size:11px"> ${x.edge >= 0 ? "+" : ""}${(x.edge * 100).toFixed(1)}</span></td>
         </tr>`).join("")}</tbody>
-      </table></div>
+      </table>
     </div>
     <div class="note">
       <b>This is a backtest, not a record.</b> It walked ${B.slates} slates of the ${B.season - 1}-${String(B.season).slice(2)} season and
