@@ -177,14 +177,20 @@ function binAtLeast(N, q, n) {
 // A count matched on its mean AND its variance, using whichever family can
 // actually hold that pair.
 //
-// This is the fix to a real, measured failure. Everything here was negative
-// binomial, and a negative binomial's variance is ALWAYS at least its mean —
-// it cannot represent a count that is steadier than Poisson. Rebounds are
-// exactly that: every missed shot is one more chance at a board, so the count
-// is binomial-shaped and its variance sits BELOW its mean. Handed a variance it
-// could not express, the old code quietly floored at Poisson and stayed too
-// wide, which understates the chance of clearing a line below the mean — and
-// the backtest duly found rebounds cashing 73.2% against a predicted 69.5%.
+// A negative binomial's variance is ALWAYS at least its mean, so it cannot
+// represent a count steadier than Poisson, and the old code silently floored
+// such a count at Poisson — too wide, which understates the chance of clearing
+// a line below the mean.
+//
+// This was written expecting rebounds to be that case: every missed shot is one
+// more chance at a board, so the count ought to be binomial-shaped. THE
+// MEASUREMENT SAYS OTHERWISE. Forty real logs put the rebound Fano factor at
+// 1.28 — over-dispersed, not under — and points at 3.19. Nothing in this sport
+// is steadier than Poisson, and the rebound bias this was reaching for is not
+// explained here. The branch is kept because it is still the correct general
+// answer and it does fire: a player whose own log is unusually steady can blend
+// to a variance below his mean, and the old code priced him too wide. But it is
+// a correctness fix at the margin, not the rebound fix it was meant to be.
 //
 //   variance > mean  -> negative binomial   (usage varies: points, assists)
 //   variance < mean  -> binomial            (bounded opportunities: rebounds)
@@ -249,16 +255,26 @@ function evaluate(p, american) {
 }
 
 // ── the four markets ────────────────────────────────────────────────────────
-// `cv` is the extra-Poisson spread: Var = mean + (cv*mean)^2, which is the
-// negative binomial written the way it is actually measurable — a 25-point
-// scorer at cv 0.225 gets a standard deviation of 7.5 points a night, which is
-// what a 25-point scorer has. `stab` is how many MINUTES of evidence it takes
+// `cv` is the extra-Poisson spread: Var = vmr*mean + (cv*mean)^2, the negative
+// binomial written the way it is actually measurable.
+//
+// These four are MEASURED, on forty real game logs, and the measurement moved
+// them: points were carrying 0.225, which implies a variance of 26.6 for a
+// 15-point scorer where the logs say 47.4 — too narrow by 78%. Assists were
+// 10% narrow. Rebounds and threes were already about right. A too-narrow
+// family overstates the chance of clearing a line below the mean, and it does
+// it hardest to the players who have no game log to correct it, because for
+// them the family is the whole distribution.
+//
+// The Fano factors these reproduce (1 + cv^2*mean at the measured mean) come
+// out at 3.4 / 1.2 / 1.2 / 1.2 against 3.2 / 1.3 / 1.3 / 1.2 measured, so
+// vmr stays 1 for all four: nothing in this sport is steadier than Poisson. `stab` is how many MINUTES of evidence it takes
 // before a man's own per-minute rate outweighs the positional prior; rebounds
 // stabilise fastest (a 7-footer rebounds), assists slowest (role changes).
 const MARKETS = [
-  { key: "pts", label: "Points",      short: "PTS", cv: 0.225, stab: 220, max: 70 },
-  { key: "reb", label: "Rebounds",    short: "REB", cv: 0.215, stab: 180, max: 30 },
-  { key: "ast", label: "Assists",     short: "AST", cv: 0.235, stab: 300, max: 22 },
+  { key: "pts", label: "Points",      short: "PTS", cv: 0.400, stab: 220, max: 70 },
+  { key: "reb", label: "Rebounds",    short: "REB", cv: 0.205, stab: 180, max: 30 },
+  { key: "ast", label: "Assists",     short: "AST", cv: 0.270, stab: 300, max: 22 },
   // cvAtt is the one that matters for threes: 3-point ATTEMPTS swing about
   // 28% game to game, and the makes inherit that dispersion through the
   // binomial. cv is only the fallback for a man whose attempts we do not have.
