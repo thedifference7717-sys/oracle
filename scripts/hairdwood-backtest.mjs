@@ -108,6 +108,8 @@ for (const day of dates()) {
     legs.push({ day, player: l.pl.name, market: l.market, line: l.line,
                 p: +l.p.toFixed(4), pRaw: l.pRaw != null ? +l.pRaw.toFixed(4) : null,
                 sd: +l.sd.toFixed(3), projMin: +l.mins.minutes.toFixed(1), playedMin,
+                minBase: +l.mins.base.toFixed(1), minRecent: l.mins.recentMin == null ? null : +l.mins.recentMin.toFixed(1),
+                blowout: +l.mins.blowout.toFixed(4), bump: +l.mins.bump.toFixed(4), tag: +l.mins.tag.toFixed(3),
                 score: l.score.score, grade: l.score.grade,
                 proj: +l.mean.toFixed(2), min: +l.mins.minutes.toFixed(1),
                 hasLog: l.hasLog, status: res.status, actual: res.actual });
@@ -204,7 +206,16 @@ const projection = {};
     minutes: withMin.length >= 30 ? {
       projected: round(mean(withMin, r => r.projMin), 2),
       played: round(mean(withMin, r => r.playedMin), 2),
-      bias: round(mean(withMin, r => r.projMin) / Math.max(0.01, mean(withMin, r => r.playedMin)) - 1, 4)
+      bias: round(mean(withMin, r => r.projMin) / Math.max(0.01, mean(withMin, r => r.playedMin)) - 1, 4),
+      // Every adjustment the minute projection applies, so the 2.4% shortfall
+      // can be attributed rather than guessed at. `base` is the season average
+      // it starts from, `recent` the L10 it blends toward, and the rest are the
+      // multipliers: a blowout haircut, an absence bump, an injury tag.
+      seasonBase: round(mean(withMin, r => r.minBase), 2),
+      recentL10: round(mean(withMin.filter(r => r.minRecent != null), r => r.minRecent), 2),
+      meanBlowoutCut: round(mean(withMin, r => r.blowout), 4),
+      meanAbsenceBump: round(mean(withMin, r => r.bump), 4),
+      meanInjuryTag: round(mean(withMin, r => r.tag), 4)
     } : null,
     projected: round(mProj, 2), actual: round(mAct, 2),
     bias: round(mProj / Math.max(0.01, mAct) - 1, 4),
@@ -294,6 +305,8 @@ Object.keys(projection).forEach(k => {
       `(${q.bias >= 0 ? "+" : ""}${(q.bias * 100).toFixed(1)}%) · line ${q.meanLine} sits ${q.lineZ} sd below · ` +
       `said ${(q.said * 100).toFixed(1)}% hit ${(q.hit * 100).toFixed(1)}%` +
       (q.minutes ? ` · minutes ${q.minutes.projected} vs ${q.minutes.played} (${q.minutes.bias >= 0 ? "+" : ""}${(q.minutes.bias * 100).toFixed(1)}%)` : ""));
+  if (q.minutes) say(`        season base ${q.minutes.seasonBase} · L10 ${q.minutes.recentL10} · ` +
+    `blowout cut ${(q.minutes.meanBlowoutCut * 100).toFixed(2)}% · absence bump ${(q.minutes.meanAbsenceBump * 100).toFixed(2)}% · injury tag ${q.minutes.meanInjuryTag}`);
 });
 say("\n── by market ───────────────────────────────────────────");
 byMarket.forEach(g => say(`  ${g.key.toUpperCase()} n=${String(g.n).padStart(4)}  predicted ${(g.predicted * 100).toFixed(1)}%  actual ${(g.actual * 100).toFixed(1)}%  ${g.edge >= 0 ? "+" : ""}${(g.edge * 100).toFixed(1)}`));

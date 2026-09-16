@@ -456,6 +456,56 @@ try {
           Object.keys(offs).map(o => `${o}: model ${(offs[o].model * 100).toFixed(1)}% vs real ${(offs[o].empirical * 100).toFixed(1)}%`).join(" · "));
   });
 
+  // ── where does a player's own rate stop needing a prior? ─────────────────
+  // `stab` is the minutes of evidence at which a man's own per-minute rate
+  // outweighs his positional prior. The four in this model were chosen, not
+  // measured, and the backtest says every market projects low by an amount that
+  // tracks what those constants cost an above-average player — which is every
+  // player the board writes a prop on, because that is why he has one.
+  //
+  // So measure it the way a stabilisation point is defined: split each man's
+  // season in half, predict the second half from the first half shrunk toward
+  // the prior, and find the k that minimises the error. Too small a k overfits
+  // a hot fortnight; too large a k is the bias being hunted here. The answer is
+  // whichever number predicts best, and it is allowed to disagree with me.
+  const stab = {};
+  MARKET_KEYS.forEach(k => {
+    const grid = [20, 40, 60, 90, 120, 160, 200, 260, 320, 420, 560];
+    const err = grid.map(() => 0);
+    let used = 0;
+    Object.keys(shapeLogs).forEach(id => {
+      const L = shapeLogs[id];
+      if (!L || L.played.length < 24) return;
+      const pl = (players || []).find(x => x.id === id);
+      if (!pl) return;
+      const half = Math.floor(L.played.length / 2);
+      // The log is newest-first, so the OLDER half is the predictor.
+      const older = L.played.slice(half), newer = L.played.slice(0, half);
+      const minA = older.reduce((a, r) => a + r.min, 0), minB = newer.reduce((a, r) => a + r.min, 0);
+      if (!(minA > 120 && minB > 120)) return;
+      const totA = older.reduce((a, r) => a + (r[k] || 0), 0);
+      const rateB = newer.reduce((a, r) => a + (r[k] || 0), 0) / minB;
+      const role = M.ROLE[String(pl.pos || "").toUpperCase()] || {};
+      const prior = k === "tpm" ? (role.tpa || 0.148) * 0.36 : (role[k] != null ? role[k] : 0.15);
+      used++;
+      grid.forEach((g, i) => {
+        const pred = (totA + prior * g) / (minA + g);
+        err[i] += (pred - rateB) * (pred - rateB) * minB;   // weight by exposure
+      });
+    });
+    if (used < 10) return;
+    let best = 0;
+    err.forEach((e, i) => { if (e < err[best]) best = i; });
+    stab[k] = { players: used, bestStab: grid[best], modelStab: M.MKT[k].stab,
+                curve: grid.map((g, i) => [g, +(err[i] / used).toFixed(6)]) };
+  });
+  report.stabilisation = stab;
+  MARKET_KEYS.forEach(k => {
+    const q = stab[k]; if (!q) return;
+    check(`${k.toUpperCase()} stabilisation constant`, Math.abs(q.bestStab - q.modelStab) <= q.modelStab * 0.6 ? true : "warn",
+          `split-half says ${q.bestStab} minutes, model uses ${q.modelStab} (${q.players} players)`);
+  });
+
   // ── does the projection track what happens? ──────────────────────────────
   // The backtest found rebounds hitting 99.1% against a predicted 70.0%, on a
   // quarter as many legs as the other markets. A hit rate that far above its
