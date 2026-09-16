@@ -1,0 +1,80 @@
+# Grade the HAIrdwood grade.
+#
+# The board hands every bet a number out of a hundred and sorts the world by it.
+# Until that number is checked against what actually happened it is a
+# well-argued opinion. This walks a finished season, prices each slate the way
+# the dashboard would have priced it that morning — player lines rebuilt from
+# each man's own game log using only games already played — settles every leg
+# off the real box scores, and asks whether an A cashes more often than a B.
+#
+# Manual, and weekly while the model is being built. It is a few thousand
+# requests and half an hour of runner time, so it is not something to fire on
+# every push.
+name: Backtest HAIrdwood
+
+on:
+  workflow_dispatch:
+    inputs:
+      season:
+        description: "ESPN season year to walk (2026 = the 2025-26 season)"
+        required: false
+        default: "2026"
+      slates:
+        description: "How many slates to price"
+        required: false
+        default: "16"
+      stride:
+        description: "Days between slates"
+        required: false
+        default: "9"
+  schedule:
+    - cron: "0 6 * * 3"          # Wednesday, out of the way of everything else
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hairdwood-backtest
+  cancel-in-progress: true
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Walk the season
+        run: |
+          node scripts/hairdwood-backtest.mjs \
+            "${{ github.event.inputs.season || '2026' }}" \
+            "${{ github.event.inputs.slates || '16' }}" \
+            "${{ github.event.inputs.stride || '9' }}" 2>&1 | tee backtest.log
+
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo "## HAIrdwood backtest"
+            echo
+            echo '```'
+            sed -n '/── every published leg/,$p' backtest.log || tail -40 backtest.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish the result
+        if: always()
+        run: |
+          [ -f data/hairdwood-backtest.json ] || { echo "nothing to publish"; exit 0; }
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/hairdwood-backtest.json
+          git diff --cached --quiet && { echo "unchanged"; exit 0; }
+          git commit -m "Backtest HAIrdwood: $(node -e 'const r=require("./data/hairdwood-backtest.json");console.log(`${r.legs.graded} legs, said ${(r.legs.predicted*100).toFixed(1)}% did ${(r.legs.actual*100).toFixed(1)}%`)')"
+          git push origin "${{ github.ref_name }}"

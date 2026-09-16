@@ -691,14 +691,19 @@ function parseGamelog(d) {
     const st = ev && ev.stats;
     if (!Array.isArray(st)) return;
     const pick = i => i >= 0 ? num(st[i]) : null;
-    const tp = iTp >= 0 ? num(String(st[iTp] || "").split("-")[0]) : null;
+    // "3-7" is makes-attempts. Both halves are wanted: the makes are the market
+    // and the attempts are where its spread comes from.
+    const tpPair = iTp >= 0 ? String(st[iTp] || "").split("-") : null;
+    const tp = tpPair ? num(tpPair[0]) : null;
+    const tpa = tpPair ? num(tpPair[1]) : null;
     const when = ev.gameDate || (meta[ev.eventId] || {}).gameDate || null;
     const min = pick(iMin);
     // A DNP is a row of dashes. It is not a zero-point game and folding it in
     // as one would libel every bench player on the board.
     if (min == null || min <= 0) { rows.push({ dnp: true, date: when }); return; }
     rows.push({ dnp: false, date: when, min,
-                pts: pick(iPts) || 0, reb: pick(iReb) || 0, ast: pick(iAst) || 0, tpm: tp || 0 });
+                pts: pick(iPts) || 0, reb: pick(iReb) || 0, ast: pick(iAst) || 0,
+                tpm: tp || 0, tpa: tpa == null ? null : tpa });
   };
   (d.seasonTypes || []).forEach(s => (s.categories || []).forEach(c => (c.events || []).forEach(walk)));
   if (!rows.length && Array.isArray(d.events)) Object.values(d.events).forEach(walk);
@@ -710,6 +715,41 @@ function parseGamelog(d) {
 async function loadGamelog(get, id, season) {
   const d = await get(`${WEB}/athletes/${id}/gamelog?season=${season}`);
   return parseGamelog(d);
+}
+
+// ── as of a date ────────────────────────────────────────────────────────────
+// A backtest that prices a January game with a player's FULL-SEASON averages is
+// not a backtest, it is the model being shown the answer. The league-wide stat
+// feed has no as-of-date version, but the game log does: it carries every game
+// he played, with a date on each. So a player's line is rebuilt from his own
+// log, using only the games that had actually happened.
+//
+// What this does NOT fix is stated plainly rather than buried: the TEAM splits
+// are still full-season, so pace and the opponent's allowance know a little
+// about the future. Both are clamped to about a tenth either way, so the
+// residual leak is small — but it is not zero, and a backtest that claims
+// otherwise is selling something.
+function logBefore(log, day) {
+  if (!log) return null;
+  const rows = log.rows.filter(r => r.date && etDayOf(r.date) < day);
+  const played = rows.filter(r => !r.dnp);
+  if (!played.length) return null;
+  return { rows, played, dnp: rows.length - played.length };
+}
+// The season line he would have carried into that night's game.
+function lineFrom(log) {
+  const g = log && log.played ? log.played : [];
+  if (!g.length) return null;
+  const mean = f => g.reduce((a, r) => a + (f(r) || 0), 0) / g.length;
+  const tpaRows = g.filter(r => r.tpa != null);
+  const tpa = tpaRows.length ? tpaRows.reduce((a, r) => a + r.tpa, 0) / tpaRows.length : null;
+  const tpm = mean(r => r.tpm);
+  return {
+    gp: g.length, mpg: mean(r => r.min),
+    pts: mean(r => r.pts), reb: mean(r => r.reb), ast: mean(r => r.ast),
+    tpm, tpa: tpa == null ? tpm / 0.36 : tpa,
+    tpPct: tpa > 0 ? tpm / tpa : null
+  };
 }
 
 // ── settling a bet ──────────────────────────────────────────────────────────
@@ -1331,8 +1371,11 @@ async function buildBoard(o) {
   Object.keys(byTeam).forEach(t => byTeam[t].sort((a, b) => b.mpg - a.mpg));
 
   // Rosters, so a man traded in February is projected into the team he plays
-  // for tonight rather than the one his season line was earned with.
+  // for tonight rather than the one his season line was earned with. Skipped
+  // when pricing a past date: today's roster is not who was on it then, and a
+  // filter that is wrong is worse than no filter.
   const teamIds = [...new Set(live.flatMap(g => [g.home.id, g.away.id]))];
+  if (o.rosters !== false) {
   say("Rosters…"); prog(38);
   const rosterList = await pool(teamIds, async t => {
     try { return { t, r: await cached(`roster:${t}`, CACHE_TTL.roster, () => loadRoster(get, t)) }; } catch (e) { return null; }
@@ -1340,6 +1383,7 @@ async function buildBoard(o) {
   const roster = {};
   rosterList.forEach(x => { if (x && x.r && x.r.length) roster[x.t] = new Set(x.r.map(p => p.id)); });
   if (Object.keys(roster).length < teamIds.length) degraded.push("some rosters");
+  }
 
   say("Injury reports and the market's number…"); prog(48);
   const sumList = await pool(live, async g => ({ g, s: await loadSummary(get, g.id) }), 4);
@@ -1392,7 +1436,12 @@ async function buildBoard(o) {
       const inj = injByTeam[team.id] || {};
       const rs = roster[team.id];
       (byTeam[team.id] || [])
-        .filter(p => (p.mpg || 0) >= CFG.minMinutes && (p.gp || 0) >= CFG.minGames)
+        // Priced as of a past date, the season-long minutes are the wrong sieve
+        // — a man who started in November and lost his place by March would be
+        // filtered out of a November board by what happened afterwards. The bar
+        // is dropped here and applied again below against the as-of line, which
+        // is the number that was actually knowable.
+        .filter(p => (p.mpg || 0) >= (o.asOf ? 8 : CFG.minMinutes) && (p.gp || 0) >= CFG.minGames)
         .filter(p => !rs || rs.has(p.id))
         .filter(p => injuryWeight(inj[p.id]) > 0)
         .slice(0, perTeam)
@@ -1425,7 +1474,16 @@ async function buildBoard(o) {
   say("Pricing every prop…"); prog(88);
   const legs = [];
   cand.forEach(c => {
-    const log = logs[c.p.id] || null;
+    let log = logs[c.p.id] || null;
+    // Everything downstream — minutes, form, floor, the variance blend, the
+    // back-to-back — reads the log, so cutting it here is what makes the whole
+    // projection as-of rather than just the averages.
+    if (o.asOf) {
+      log = logBefore(log, o.asOf);
+      const line = lineFrom(log);
+      if (!line || line.gp < CFG.minGames || line.mpg < CFG.minMinutes) return;
+      c = Object.assign({}, c, { p: Object.assign({}, c.p, line) });
+    }
     const out = Object.assign({}, absence[c.team.id] || { minutes: 0, pts: 0, usage: 1, names: [] }, { status: c.status });
     const pr = projectPlayer(c.p, log, c.side, c.env, lg, out);
     if (!(pr.mins.minutes >= 10)) return;
@@ -1527,6 +1585,7 @@ return {
   amOdds, decFromAmerican, evaluate,
   // pipeline
   slateYmd, seasonOf, addDays, ymd, etNow, lockInfo,
+  logBefore, lineFrom,
   parseEvent, parseOdds, loadSlate, nextSlateDay, loadTeamStats, loadPlayers, loadRoster,
   loadSummary, loadInjuries,
   loadGamelog, parseGamelog, leagueFrom, injuryWeight, minutesTag,
