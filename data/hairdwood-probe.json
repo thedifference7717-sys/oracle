@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T04:18:09.029Z",
+  "at": "2026-09-16T19:01:06.251Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -303,8 +303,8 @@
         "startDate",
         "broadcast",
         "geoBroadcasts",
-        "headlines",
-        "highlights"
+        "highlights",
+        "headlines"
       ],
       "oddsKeys": [],
       "oddsSample": null,
@@ -755,10 +755,10 @@
         "odds",
         "againstTheSpread",
         "news",
-        "article",
-        "videos",
         "plays",
         "header",
+        "article",
+        "videos",
         "wallclockAvailable",
         "winprobability",
         "meta",
@@ -2209,7 +2209,7 @@
     }
   },
   "fetches": 161,
-  "bytes": 89581981,
+  "bytes": 89874141,
   "failed": 0,
   "verdict": "the engine reads the live feed correctly"
 }
