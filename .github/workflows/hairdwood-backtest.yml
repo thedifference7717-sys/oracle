@@ -96,6 +96,12 @@ jobs:
           git add data/hairdwood-backtest.json
           git diff --cached --quiet && { echo "unchanged"; exit 0; }
           git commit -m "Backtest HAIrdwood: $(node -e 'const r=require("./data/hairdwood-backtest.json");console.log(`${r.legs.graded} legs, said ${(r.legs.predicted*100).toFixed(1)}% did ${(r.legs.actual*100).toFixed(1)}%`)')"
+          # A publish step races anyone pushing to the same branch, and losing that
+          # race failed the whole job on a run whose actual work had succeeded —
+          # the numbers were computed, printed and then thrown away. Rebase onto
+          # whatever landed while this was running; the only file this touches is
+          # its own report, so there is nothing to conflict with.
+          git pull --rebase --autostash origin "${{ github.ref_name }}" || true
           git push origin "${{ github.ref_name }}"
 
       - name: Fail the job if the walk graded nothing

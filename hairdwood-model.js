@@ -1198,13 +1198,20 @@ function scorePair(a, b, joint, naive) {
     if (x == null && y == null) return null;
     return ((x == null ? y : x) + (y == null ? x : y)) / 2;
   };
-  add("like", "Both legs land", 40 * frac(joint - 0.33, 0.45), 40, `${Math.round(joint * 100)}% for the pair`);
+  // The band a double actually lives in, AFTER the measured corrections. This
+  // used to run 33% to 78%, which was calibrated against joints the model no
+  // longer publishes: shrinking the legs and shading the pair moved a typical
+  // double from the high sixties into the high fifties, and the old band scored
+  // every one of them so low that three doubles cleared the bar in a whole
+  // season where 236 had before. The scale has to measure the bets that exist,
+  // not the ones the model used to claim.
+  add("like", "Both legs land", 40 * frac(joint - 0.42, 0.26), 40, `${Math.round(joint * 100)}% for the pair`);
   const ro = avg("role"), mp = avg("price");
   add("legs", "Leg quality", 18 * clamp(0.6 * (ro == null ? 0.4 : ro) + 0.4 * (mp == null ? 0.4 : mp), 0, 1), 18,
       `${a.score.grade} + ${b.score.grade} on their own`);
   // Same rule as a single: a double of two near-certainties pays nothing, and
   // a double is the one bet people reach for precisely because it should pay.
-  add("price", "Price & payout", 10 * (1 - frac(joint - 0.62, 0.20)), 10, `fair ${amOdds(joint)} for the pair`);
+  add("price", "Price & payout", 10 * (1 - frac(joint - 0.55, 0.20)), 10, `fair ${amOdds(joint)} for the pair`);
   const lift = joint - naive;
   add("corr", "Correlation", 10 * frac(lift, 0.045), 10,
       lift >= 0 ? `+${(lift * 100).toFixed(1)}pts over pricing them apart` : `${(lift * 100).toFixed(1)}pts — these two fight each other`);

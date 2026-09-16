@@ -86,6 +86,12 @@ jobs:
           git add data/hairdwood-probe.json
           git diff --cached --quiet && { echo "report unchanged"; exit 0; }
           git commit -m "Probe the HAIrdwood feed: $(node -e 'const r=require("./data/hairdwood-probe.json");console.log(r.failed?r.failed+" check(s) failing":"all checks passing")')"
+          # A publish step races anyone pushing to the same branch, and losing that
+          # race failed the whole job on a run whose actual work had succeeded —
+          # the numbers were computed, printed and then thrown away. Rebase onto
+          # whatever landed while this was running; the only file this touches is
+          # its own report, so there is nothing to conflict with.
+          git pull --rebase --autostash origin "${{ github.ref_name }}" || true
           git push origin "${{ github.ref_name }}"
 
       - name: Fail the job if the engine cannot read the feed

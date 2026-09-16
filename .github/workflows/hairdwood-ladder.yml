@@ -66,4 +66,10 @@ jobs:
           # The message says what actually happened, so the commit log reads as
           # the record's own history.
           git commit -m "HAIrdwood ladder: $(grep -oE 'LOCKED .*|PASS — .*|-> (WON|LOST|VOID).*' ladder.log | head -1 | cut -c1-72)"
+          # A publish step races anyone pushing to the same branch, and losing that
+          # race failed the whole job on a run whose actual work had succeeded —
+          # the numbers were computed, printed and then thrown away. Rebase onto
+          # whatever landed while this was running; the only file this touches is
+          # its own report, so there is nothing to conflict with.
+          git pull --rebase --autostash origin main || true
           git push origin main
