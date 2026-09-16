@@ -1375,14 +1375,18 @@ async function buildBoard(o) {
   // when pricing a past date: today's roster is not who was on it then, and a
   // filter that is wrong is worse than no filter.
   const teamIds = [...new Set(live.flatMap(g => [g.home.id, g.away.id]))];
-  if (o.rosters !== false) {
-  say("Rosters…"); prog(38);
-  const rosterList = await pool(teamIds, async t => {
-    try { return { t, r: await cached(`roster:${t}`, CACHE_TTL.roster, () => loadRoster(get, t)) }; } catch (e) { return null; }
-  }, 6);
+  // Declared out here on purpose: the candidate filter below reads it, and
+  // tucking it inside the branch is exactly how this went out with `roster is
+  // not defined` and took the whole board down. An empty map means "no roster
+  // filter", which is what skipping it should mean.
   const roster = {};
-  rosterList.forEach(x => { if (x && x.r && x.r.length) roster[x.t] = new Set(x.r.map(p => p.id)); });
-  if (Object.keys(roster).length < teamIds.length) degraded.push("some rosters");
+  if (o.rosters !== false) {
+    say("Rosters…"); prog(38);
+    const rosterList = await pool(teamIds, async t => {
+      try { return { t, r: await cached(`roster:${t}`, CACHE_TTL.roster, () => loadRoster(get, t)) }; } catch (e) { return null; }
+    }, 6);
+    rosterList.forEach(x => { if (x && x.r && x.r.length) roster[x.t] = new Set(x.r.map(p => p.id)); });
+    if (Object.keys(roster).length < teamIds.length) degraded.push("some rosters");
   }
 
   say("Injury reports and the market's number…"); prog(48);
