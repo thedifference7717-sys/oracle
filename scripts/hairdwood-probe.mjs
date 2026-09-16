@@ -365,9 +365,20 @@ try {
   // he actually cleared it. Any market whose model probability sits below its
   // own empirical frequency has the wrong shape, and this says by how much and
   // at which lines.
+  // Its own sample, fetched here: `logs` inside buildBoard is the model's
+  // private working set and not something this script can reach into. Forty
+  // rotation players is enough to measure a distribution and cheap enough to
+  // pay for on every run.
+  const shapeLogs = {};
+  {
+    const pool = (players || []).filter(pl => (pl.mpg || 0) >= 20 && (pl.gp || 0) >= 20).slice(0, 40);
+    for (const pl of pool) {
+      try { const l = await M.loadGamelog(get, pl.id, season); if (l) shapeLogs[pl.id] = l; } catch (e) {}
+    }
+  }
   const shape = {};
-  Object.keys(logs).forEach(id => {
-    const L = logs[id];
+  Object.keys(shapeLogs).forEach(id => {
+    const L = shapeLogs[id];
     if (!L || L.played.length < 15) return;
     MARKET_KEYS.forEach(k => {
       const v = L.played.map(r => r[k]).filter(x => x != null);
@@ -380,6 +391,12 @@ try {
       // The dispersion his own log implies, in the same parameterisation the
       // model uses: Var = mean + (cv*mean)^2.
       sh.cvSum += Math.sqrt(Math.max(0, varr - mu)) / mu;
+      // The Fano factor: variance over mean. Below 1 means the count is
+      // steadier than Poisson, which no negative binomial can represent and
+      // which is the whole reason rebounds were mispriced.
+      sh.vmrSum = (sh.vmrSum || 0) + varr / mu;
+      sh.meanSum = (sh.meanSum || 0) + mu;
+      sh.varSum = (sh.varSum || 0) + varr;
       const sp = M.spread(k, mu, L, { tpa: mu / 0.36 });
       // Lines at and below the mean, which is where the board writes them.
       [-2.5, -1.5, -0.5].forEach(off => {
@@ -402,10 +419,14 @@ try {
       offs[o].gap = +(offs[o].empirical - offs[o].model).toFixed(4);
     });
     const impliedCv = +(sh.cvSum / sh.n).toFixed(3);
-    report.distributionShape[k] = { players: sh.n, impliedCv, modelCv: M.MKT[k].cv, byOffset: offs };
+    const impliedVmr = +(sh.vmrSum / sh.n).toFixed(3);
+    report.distributionShape[k] = { players: sh.n, impliedCv, modelCv: M.MKT[k].cv,
+      impliedVmr, modelVmr: M.MKT[k].vmr != null ? M.MKT[k].vmr : 1,
+      meanOfMeans: +(sh.meanSum / sh.n).toFixed(2), meanOfVars: +(sh.varSum / sh.n).toFixed(2),
+      byOffset: offs };
     const worst = Object.values(offs).sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap))[0];
     check(`${k.toUpperCase()} distribution matches the logs`, Math.abs(worst.gap) < 0.03 ? true : "warn",
-          `implied cv ${impliedCv} vs model ${M.MKT[k].cv} · ` +
+          `implied vmr ${impliedVmr} (model ${M.MKT[k].vmr != null ? M.MKT[k].vmr : 1}), implied cv ${impliedCv} (model ${M.MKT[k].cv}) · ` +
           Object.keys(offs).map(o => `${o}: model ${(offs[o].model * 100).toFixed(1)}% vs real ${(offs[o].empirical * 100).toFixed(1)}%`).join(" · "));
   });
 

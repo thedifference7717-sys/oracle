@@ -160,6 +160,48 @@ function compoundAtLeast(attMean, attDisp, q, n) {
   return clamp(1 - below, 0, 1);
 }
 
+function poissonAtLeast(lam, n) {
+  if (n <= 0) return 1;
+  if (!(lam > 0)) return 0;
+  let below = 0, term = Math.exp(-lam);
+  for (let i = 0; i < n; i++) { below += term; term *= lam / (i + 1); }
+  return clamp(1 - below, 0, 1);
+}
+function binAtLeast(N, q, n) {
+  if (n <= 0) return 1;
+  if (n > N) return 0;
+  let below = 0;
+  for (let i = 0; i < n && i <= N; i++) below += binPmf(N, q, i);
+  return clamp(1 - below, 0, 1);
+}
+// A count matched on its mean AND its variance, using whichever family can
+// actually hold that pair.
+//
+// This is the fix to a real, measured failure. Everything here was negative
+// binomial, and a negative binomial's variance is ALWAYS at least its mean —
+// it cannot represent a count that is steadier than Poisson. Rebounds are
+// exactly that: every missed shot is one more chance at a board, so the count
+// is binomial-shaped and its variance sits BELOW its mean. Handed a variance it
+// could not express, the old code quietly floored at Poisson and stayed too
+// wide, which understates the chance of clearing a line below the mean — and
+// the backtest duly found rebounds cashing 73.2% against a predicted 69.5%.
+//
+//   variance > mean  -> negative binomial   (usage varies: points, assists)
+//   variance < mean  -> binomial            (bounded opportunities: rebounds)
+//   variance = mean  -> Poisson
+function countAtLeast(mean, variance, n) {
+  if (n <= 0) return 1;
+  if (!(mean > 0)) return 0;
+  if (!(variance > 0)) return mean >= n ? 1 : 0;
+  if (variance > mean * 1.02) return nbAtLeast(mean, (mean * mean) / (variance - mean), n);
+  if (variance < mean * 0.98) {
+    // Moment-matched binomial: N trials at q, with Nq = mean and Nq(1-q) = var.
+    const N = Math.max(1, Math.round((mean * mean) / Math.max(1e-9, mean - variance)));
+    return binAtLeast(N, clamp(mean / N, 1e-9, 1 - 1e-9), n);
+  }
+  return poissonAtLeast(mean, n);
+}
+
 // Bivariate normal, by quadrature on the standard identity
 //   d/drho Phi2(h,k,rho) = phi2(h,k,rho),
 // integrated from 0 to rho by Simpson. The small-rho expansion the baseball
@@ -1002,7 +1044,15 @@ function spread(key, mean, log, extra) {
   // on this board is not the family, it is the blended term below: their own
   // observed game-to-game spread, which is measured and does differ.
   const c = (key === "tpm" && extra && extra.tpa > 0) ? MKT.tpm.cvAtt : cv;
-  let sd = Math.sqrt(Math.max(1e-9, mean + (c * mean) * (c * mean)));
+  // Var = vmr*mean + (cv*mean)^2. The first term is the Fano factor — the part
+  // that scales with the count itself — and it is not 1 for every market: a
+  // rebound is a bounded opportunity (one per missed shot) and comes out
+  // STEADIER than Poisson, which the old form, fixed at vmr = 1, could not
+  // express at any value of cv. The second term is the usage variation that
+  // grows with the mean, which is why a 25-point scorer swings by seven and a
+  // 5-point one does not swing by three.
+  const vmr = MKT[key].vmr != null ? MKT[key].vmr : 1;
+  let sd = Math.sqrt(Math.max(1e-9, vmr * mean + (c * mean) * (c * mean)));
   const familySd = sd;
   let obs = null, ratio = 1;
   const rows = log && log.played.length >= 5 ? log.played.slice(0, 20) : null;
@@ -1041,10 +1091,8 @@ function overProb(key, mean, sp, line, extra) {
     const k = 1 / Math.max(1e-4, cvA * cvA);
     return clamp(compoundAtLeast(att, k, q, need), 0, 1);
   }
-  // Negative binomial matched on (mean, blended variance).
-  const varr = sp.sd * sp.sd;
-  const k = varr > mean ? (mean * mean) / (varr - mean) : 1e6;   // variance at or below Poisson -> Poisson
-  return clamp(nbAtLeast(mean, k, need), 0, 1);
+  // Matched on (mean, blended variance), in whichever family can hold them.
+  return clamp(countAtLeast(mean, sp.sd * sp.sd, need), 0, 1);
 }
 
 // Every alternate line a book would hang on this market, with our probability
@@ -1646,7 +1694,8 @@ function lockInfo(games) {
 return {
   VERSION, SITE, WEB, CORE, CFG, MARKETS, MKT, LADDER, GRADES, ROLE, LG_FALLBACK,
   // math
-  clamp, num, normCdf, normPdf, normInv, nbPmf, nbAtLeast, compoundAtLeast, biNormCdf, jointProb, shrink,
+  clamp, num, normCdf, normPdf, normInv, nbPmf, nbAtLeast, compoundAtLeast, countAtLeast,
+  poissonAtLeast, binAtLeast, biNormCdf, jointProb, shrink,
   // odds
   amOdds, decFromAmerican, evaluate,
   // pipeline
