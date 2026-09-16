@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T03:57:49.919Z",
+  "at": "2026-09-16T03:59:26.117Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -169,8 +169,63 @@
     },
     {
       "name": "board builds",
-      "state": "FAIL",
-      "detail": "roster is not defined"
+      "state": "PASS",
+      "detail": "556 graded props from 9 games"
+    },
+    {
+      "name": "board is not degraded",
+      "state": "PASS",
+      "detail": "every feed answered"
+    },
+    {
+      "name": "projections are sane",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "minutes are sane",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "all four markets priced",
+      "state": "PASS",
+      "detail": "{\"tpm\":124,\"ast\":144,\"pts\":144,\"reb\":144}"
+    },
+    {
+      "name": "lines are not all minimums",
+      "state": "PASS",
+      "detail": "115/556 legs sit on the 0.5 line"
+    },
+    {
+      "name": "published prices are bettable",
+      "state": "PASS",
+      "detail": "median leg 70% (fair -230)"
+    },
+    {
+      "name": "nothing unbettable is published",
+      "state": "PASS",
+      "detail": "shortest leg 87% (fair -651), ceiling 92%"
+    },
+    {
+      "name": "game logs reached the legs",
+      "state": "PASS",
+      "detail": "351/556 legs carry a log"
+    },
+    {
+      "name": "the board ends up with posted totals",
+      "state": "PASS",
+      "detail": "9/9 games priced after the summary fill-in"
+    },
+    {
+      "name": "defences differ from each other",
+      "state": "PASS",
+      "detail": "if every defence reads 1.000 the opponent split is not being parsed"
+    },
+    {
+      "name": "projections move off the season average",
+      "state": "PASS",
+      "detail": "median move 6.4%"
     }
   ],
   "shapes": {
@@ -203,8 +258,8 @@
         "startDate",
         "broadcast",
         "geoBroadcasts",
-        "headlines",
-        "highlights"
+        "highlights",
+        "headlines"
       ],
       "oddsKeys": [],
       "oddsSample": null,
@@ -658,9 +713,9 @@
         "plays",
         "article",
         "videos",
+        "winprobability",
         "header",
         "wallclockAvailable",
-        "winprobability",
         "meta",
         "standings"
       ],
@@ -1762,18 +1817,264 @@
   },
   "notes": [],
   "board": {
-    "error": "roster is not defined",
-    "stack": [
-      "ReferenceError: roster is not defined",
-      "    at /home/runner/work/oracle/oracle/hairdwood-model.js:1437:18",
-      "    at Array.forEach (<anonymous>)",
-      "    at /home/runner/work/oracle/oracle/hairdwood-model.js:1435:58",
-      "    at Array.forEach (<anonymous>)",
-      "    at Object.buildBoard (/home/runner/work/oracle/oracle/hairdwood-model.js:1433:8)"
-    ]
+    "date": "2026-01-15",
+    "season": 2026,
+    "priorSeason": false,
+    "degraded": [],
+    "counts": {
+      "games": 9,
+      "players": 144,
+      "legs": 556,
+      "logs": 90
+    },
+    "top": [
+      {
+        "grade": "B+",
+        "score": 79.3,
+        "player": "Nickeil Alexander-Walker",
+        "pos": "G",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 1.5,
+        "p": 0.799,
+        "proj": 3.2,
+        "min": 34.8,
+        "seasonAvg": 3.2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 77.3,
+        "player": "Marcus Smart",
+        "pos": "G",
+        "team": "HOU",
+        "opp": "OKC",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.829,
+        "proj": 1.9,
+        "min": 32.5,
+        "seasonAvg": 1.6,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 76.7,
+        "player": "Andrew Wiggins",
+        "pos": "F",
+        "team": "MIA",
+        "opp": "BOS",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.842,
+        "proj": 2,
+        "min": 31.3,
+        "seasonAvg": 2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 76.2,
+        "player": "Devin Vassell",
+        "pos": "G",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "ast",
+        "line": 1.5,
+        "p": 0.794,
+        "proj": 3,
+        "min": 32.8,
+        "seasonAvg": 2.5,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 75.2,
+        "player": "Julian Champagnie",
+        "pos": "F",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "ast",
+        "line": 0.5,
+        "p": 0.819,
+        "proj": 1.7,
+        "min": 29.4,
+        "seasonAvg": 1.5,
+        "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74.4,
+        "player": "Jalen Duren",
+        "pos": "C",
+        "team": "DET",
+        "opp": "PHX",
+        "market": "ast",
+        "line": 0.5,
+        "p": 0.867,
+        "proj": 2,
+        "min": 29,
+        "seasonAvg": 2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74.4,
+        "player": "Onyeka Okongwu",
+        "pos": "F",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.84,
+        "proj": 2,
+        "min": 31.9,
+        "seasonAvg": 1.9,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74.3,
+        "player": "Ryan Rollins",
+        "pos": "G",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "ast",
+        "line": 3.5,
+        "p": 0.767,
+        "proj": 5.5,
+        "min": 32.4,
+        "seasonAvg": 5.6,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74,
+        "player": "De'Aaron Fox",
+        "pos": "G",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "ast",
+        "line": 4.5,
+        "p": 0.747,
+        "proj": 6.3,
+        "min": 32.4,
+        "seasonAvg": 6.2,
+        "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.9,
+        "player": "Jalen Johnson",
+        "pos": "F",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.798,
+        "proj": 1.7,
+        "min": 35.2,
+        "seasonAvg": 1.7,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 72.9,
+        "player": "Devin Booker",
+        "pos": "G",
+        "team": "PHX",
+        "opp": "DET",
+        "market": "pts",
+        "line": 21.5,
+        "p": 0.777,
+        "proj": 27.5,
+        "min": 37.5,
+        "seasonAvg": 26.1,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 72.8,
+        "player": "Myles Turner",
+        "pos": "C",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.814,
+        "proj": 1.8,
+        "min": 26,
+        "seasonAvg": 2.1,
+        "form": "10/10"
+      }
+    ],
+    "doubles": [
+      {
+        "game": "ATL@POR",
+        "grade": "B",
+        "score": 71.1,
+        "joint": 0.664,
+        "rho": 0.24,
+        "legs": [
+          "Nickeil Alexander-Walker 3PM o1.5",
+          "Jock Landale AST o0.5"
+        ]
+      },
+      {
+        "game": "MIL@SA",
+        "grade": "B",
+        "score": 69,
+        "joint": 0.613,
+        "rho": 0.161,
+        "legs": [
+          "Devin Vassell AST o1.5",
+          "Tobias Harris 3PM o0.5"
+        ]
+      },
+      {
+        "game": "BOS@MIA",
+        "grade": "B",
+        "score": 68.4,
+        "joint": 0.696,
+        "rho": 0.18,
+        "legs": [
+          "Andrew Wiggins 3PM o0.5",
+          "Bobby Portis AST o0.5"
+        ]
+      },
+      {
+        "game": "UTAH@DAL",
+        "grade": "B",
+        "score": 67.8,
+        "joint": 0.745,
+        "rho": 0.272,
+        "legs": [
+          "Ace Bailey 3PM o0.5",
+          "Brice Sensabaugh AST o0.5"
+        ]
+      },
+      {
+        "game": "OKC@HOU",
+        "grade": "B",
+        "score": 67.6,
+        "joint": 0.672,
+        "rho": 0.158,
+        "legs": [
+          "Marcus Smart 3PM o0.5",
+          "Tari Eason AST o0.5"
+        ]
+      }
+    ],
+    "byMarket": {
+      "tpm": 124,
+      "ast": 144,
+      "pts": 144,
+      "reb": 144
+    }
   },
-  "fetches": 62,
-  "bytes": 22155078,
-  "failed": 1,
-  "verdict": "1 check(s) failed — the model needs correcting"
+  "fetches": 152,
+  "bytes": 86058625,
+  "failed": 0,
+  "verdict": "the engine reads the live feed correctly"
 }
