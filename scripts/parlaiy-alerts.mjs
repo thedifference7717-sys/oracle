@@ -256,15 +256,27 @@ function readLadderOrigin() {
     return Array.isArray(L.bets) ? L : null;
   } catch (e) { return null; }   // not fetched, not committed yet, or no git
 }
+// Rows this runner has placed, held in gitignored state so a git operation
+// cannot lose them. data/ladder.json is tracked and publish() rebases; a row
+// written but not yet pushed gets reverted with the file. Keeping a copy here
+// means the next pass restores it into the ledger and tries the push again,
+// instead of the pick simply disappearing from the record.
+let stateRows = [];
 function readLadderFile() {
   const local = readLadderLocal(), origin = readLadderOrigin();
   const base = local || origin || { v: 1, sport: "MLB", cfg: M.LADDER, bets: [] };
-  if (!local || !origin) return base;
+  if (!local || !origin) {
+    if (!stateRows.length) return base;
+    const seen = new Set(base.bets.map(b => b.date));
+    return { ...base, bets: base.bets.concat(stateRows.filter(b => !seen.has(b.date))) };
+  }
   const byDate = new Map();
   // Origin first, so a row that reached the repo wins over a local draft of
-  // the same day; then anything local that origin has not seen.
+  // the same day; then anything local, then anything this runner placed that
+  // neither has — the last of which is the row a failed push reverted away.
   for (const b of origin.bets) byDate.set(b.date, b);
   for (const b of local.bets) if (!byDate.has(b.date)) byDate.set(b.date, b);
+  for (const b of stateRows) if (!byDate.has(b.date)) byDate.set(b.date, b);
   const merged = [...byDate.values()].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
   if (merged.length !== local.bets.length) {
     console.log(`ladder: merged ledger — ${local.bets.length} local + ${origin.bets.length} published = ${merged.length} rows.`);
@@ -280,9 +292,26 @@ function writeLadderFile(L) {
   writeFileSync(LADDER_FILE, JSON.stringify(L, null, 1));
 }
 
-async function ladderPlace(day, games) {
+async function ladderPlace(day, games, D, saveState) {
+  // THE dedupe, and it lives in state.json rather than in the ledger.
+  //
+  // data/ladder.json is a TRACKED file, and publish() runs
+  // `git pull --rebase --autostash`. When a push fails, that rebase reverts
+  // tracked files to origin's copy — so a rung written but not yet pushed is
+  // wiped from the working tree, the next pass sees no row for today, and it
+  // places and alerts a SECOND player for the same day. That is exactly how
+  // Garcia became Diaz, and Arraez became Tatis before it.
+  //
+  // state.json is gitignored, so no git operation can touch it. It is the same
+  // store the per-game doubles have always deduped through, and those have
+  // never double-alerted. Checked first and written the instant the rung is
+  // placed, before the alert is even sent.
+  if (D && D.ladderDay === day) return;
   const L = readLadderFile();
-  if (L.bets.some(b => b.date === day)) return;              // one rung a day
+  if (L.bets.some(b => b.date === day)) {                    // belt: the ledger agrees
+    if (D) { D.ladderDay = day; if (saveState) saveState(); }
+    return;
+  }
   if (L.bets.some(b => b.status === "open")) {               // never stack rungs
     console.log("ladder: previous rung still open — not placing another.");
     return;
@@ -322,6 +351,7 @@ async function ladderPlace(day, games) {
   const st = M.ladder(L.bets);
   if (!st.canFund) {
     await tg(`🪜 <b>LADDER STOPPED</b>\nRung ${st.rung} of cycle ${st.cycle} needs ${money(st.stake)} and the account is down to ${money(st.account)}.\nThe escalation has no next move that is not a deposit. No bet.`);
+    if (D) { D.ladderDay = day; if (saveState) saveState(); }
     L.bets.push({ date: day, status: "skipped", reason: "account cannot fund the rung",
                   stake: st.stake, account: st.account, published: new Date().toISOString() });
     writeLadderFile(L);
@@ -354,6 +384,7 @@ async function ladderPlace(day, games) {
   if (!best) { console.log("ladder: no candidate could be scored."); return; }
   if (best.edge < MIN_EDGE) {
     console.log(`ladder: best leg ${best.c.name} at ${(best.edge * 100).toFixed(1)}pts — under the bar, no rung today.`);
+    if (D) { D.ladderDay = day; if (saveState) saveState(); }
     L.bets.push({ date: day, status: "noplay", reason: `best leg ${(best.edge * 100).toFixed(1)}pts, under the +${(MIN_EDGE * 100).toFixed(1)}pt bar`,
                   published: new Date().toISOString() });
     writeLadderFile(L);
@@ -361,7 +392,7 @@ async function ladderPlace(day, games) {
   }
 
   const c = best.c, g = live.find(x => x.gamePk === c.gk);
-  L.bets.push({
+  const row = {
     id: `${day}:ladder`, date: day, sport: "MLB",
     published: new Date().toISOString(),
     firstPitch: g ? g.gameDate : null,
@@ -371,7 +402,18 @@ async function ladderPlace(day, games) {
     posted: !!c.posted, startProb: c.startProb,
     teams: `${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName}`, sp: c.spName || null,
     fromGames: live.length, status: "open"
-  });
+  };
+  L.bets.push(row);
+  // Claim the day in gitignored state BEFORE writing the ledger or sending the
+  // alert. If anything below fails, the worst case is a rung that was claimed
+  // and not announced — recoverable. The reverse, announced and not claimed,
+  // is what sends a second player to a phone.
+  if (D) {
+    D.ladderDay = day; D.ladderPick = { pick: c.name, playerId: c.id, gk: c.gk };
+    D.ladderRows = (D.ladderRows || []).filter(b => b.date !== day).concat([row]);
+    stateRows = D.ladderRows;
+    if (saveState) saveState();
+  }
   writeLadderFile(L);
 
   const risk = M.ladderRisk(c.p, LEG_PRICE, st);
@@ -571,7 +613,18 @@ async function main() {
   // Placed after the per-game pass so any game that just locked is already in
   // the posted set. Failures here must never take the doubles tracker down
   // with them — the ladder is one bet, the tracker is the record.
-  try { await ladderPlace(day, games); } catch (e) { console.log("ladder place failed:", e.message); }
+  // Restore any row a failed push reverted out of the tracked ledger, so it is
+  // re-written and re-pushed rather than lost.
+  stateRows = Array.isArray(D.ladderRows) ? D.ladderRows : [];
+  if (stateRows.length) {
+    const L0 = readLadderFile();
+    if (L0.bets.length !== (readLadderLocal()?.bets?.length ?? -1)) {
+      writeLadderFile(L0);
+      console.log(`ladder: restored ${stateRows.length} row(s) from state into the ledger.`);
+    }
+  }
+  const saveState = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
+  try { await ladderPlace(day, games, D, saveState); } catch (e) { console.log("ladder place failed:", e.message); }
 
   // ── Live tracking of everything alerted today ──
   const todays = Object.entries(D.bets).filter(([, b]) => b.date === day).map(([k, b]) => ({ k, b }));
