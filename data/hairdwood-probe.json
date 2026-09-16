@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T16:25:40.463Z",
+  "at": "2026-09-16T16:28:41.585Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -246,6 +246,26 @@
       "name": "TPM distribution matches the logs",
       "state": "PASS",
       "detail": "implied vmr 1.212 (model 1.21), implied cv 0.279 (model 0) · -2.5: model 80.9% vs real 81.6% · -1.5: model 70.8% vs real 71.1% · -0.5: model 43.1% vs real 42.9%"
+    },
+    {
+      "name": "PTS stabilisation constant",
+      "state": "PASS",
+      "detail": "split-half says 90 minutes, model uses 220 (40 players)"
+    },
+    {
+      "name": "REB stabilisation constant",
+      "state": "PASS",
+      "detail": "split-half says 200 minutes, model uses 180 (40 players)"
+    },
+    {
+      "name": "AST stabilisation constant",
+      "state": "PASS",
+      "detail": "split-half says 260 minutes, model uses 300 (40 players)"
+    },
+    {
+      "name": "TPM stabilisation constant",
+      "state": "WARN",
+      "detail": "split-half says 20 minutes, model uses 260 (40 players)"
     },
     {
       "name": "REB projections track the box score",
@@ -774,13 +794,13 @@
         "pickcenter",
         "odds",
         "againstTheSpread",
-        "plays",
         "news",
+        "winprobability",
+        "plays",
         "header",
         "article",
         "videos",
         "wallclockAvailable",
-        "winprobability",
         "meta",
         "standings"
       ],
@@ -2374,6 +2394,212 @@
           "gap": -0.0021
         }
       }
+    }
+  },
+  "stabilisation": {
+    "pts": {
+      "players": 40,
+      "bestStab": 90,
+      "modelStab": 220,
+      "curve": [
+        [
+          20,
+          3.734644
+        ],
+        [
+          40,
+          3.629664
+        ],
+        [
+          60,
+          3.563006
+        ],
+        [
+          90,
+          3.521805
+        ],
+        [
+          120,
+          3.537186
+        ],
+        [
+          160,
+          3.625162
+        ],
+        [
+          200,
+          3.771186
+        ],
+        [
+          260,
+          4.066679
+        ],
+        [
+          320,
+          4.423356
+        ],
+        [
+          420,
+          5.093915
+        ],
+        [
+          560,
+          6.095269
+        ]
+      ]
+    },
+    "reb": {
+      "players": 40,
+      "bestStab": 200,
+      "modelStab": 180,
+      "curve": [
+        [
+          20,
+          0.669678
+        ],
+        [
+          40,
+          0.637833
+        ],
+        [
+          60,
+          0.613059
+        ],
+        [
+          90,
+          0.586363
+        ],
+        [
+          120,
+          0.569396
+        ],
+        [
+          160,
+          0.557968
+        ],
+        [
+          200,
+          0.555898
+        ],
+        [
+          260,
+          0.564851
+        ],
+        [
+          320,
+          0.583397
+        ],
+        [
+          420,
+          0.626643
+        ],
+        [
+          560,
+          0.699315
+        ]
+      ]
+    },
+    "ast": {
+      "players": 40,
+      "bestStab": 260,
+      "modelStab": 300,
+      "curve": [
+        [
+          20,
+          0.503986
+        ],
+        [
+          40,
+          0.484162
+        ],
+        [
+          60,
+          0.467666
+        ],
+        [
+          90,
+          0.448219
+        ],
+        [
+          120,
+          0.434091
+        ],
+        [
+          160,
+          0.421952
+        ],
+        [
+          200,
+          0.415947
+        ],
+        [
+          260,
+          0.41573
+        ],
+        [
+          320,
+          0.423357
+        ],
+        [
+          420,
+          0.447813
+        ],
+        [
+          560,
+          0.496556
+        ]
+      ]
+    },
+    "tpm": {
+      "players": 40,
+      "bestStab": 20,
+      "modelStab": 260,
+      "curve": [
+        [
+          20,
+          0.153717
+        ],
+        [
+          40,
+          0.154041
+        ],
+        [
+          60,
+          0.155063
+        ],
+        [
+          90,
+          0.157681
+        ],
+        [
+          120,
+          0.161347
+        ],
+        [
+          160,
+          0.167486
+        ],
+        [
+          200,
+          0.174688
+        ],
+        [
+          260,
+          0.186846
+        ],
+        [
+          320,
+          0.200011
+        ],
+        [
+          420,
+          0.222964
+        ],
+        [
+          560,
+          0.255236
+        ]
+      ]
     }
   },
   "perMarket": {
