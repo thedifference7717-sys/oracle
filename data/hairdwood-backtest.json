@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T04:16:19.175Z",
+  "at": "2026-09-16T04:19:32.426Z",
   "season": 2026,
   "slates": 16,
   "stride": 9,
@@ -23,46 +23,53 @@
   },
   "byGrade": [
     {
-      "key": "A",
+      "key": "A+",
       "n": 1,
       "predicted": 0.788,
       "actual": 1,
       "edge": 0.212
     },
     {
+      "key": "A",
+      "n": 59,
+      "predicted": 0.782,
+      "actual": 0.78,
+      "edge": -0.002
+    },
+    {
       "key": "B+",
-      "n": 199,
-      "predicted": 0.774,
-      "actual": 0.789,
-      "edge": 0.015
+      "n": 335,
+      "predicted": 0.764,
+      "actual": 0.8,
+      "edge": 0.036
     },
     {
       "key": "B",
-      "n": 850,
-      "predicted": 0.743,
-      "actual": 0.759,
-      "edge": 0.016
+      "n": 655,
+      "predicted": 0.737,
+      "actual": 0.745,
+      "edge": 0.008
     },
     {
       "key": "C+",
-      "n": 1339,
-      "predicted": 0.701,
-      "actual": 0.706,
-      "edge": 0.006
-    },
-    {
-      "key": "C",
-      "n": 1069,
-      "predicted": 0.661,
-      "actual": 0.664,
+      "n": 1180,
+      "predicted": 0.703,
+      "actual": 0.708,
       "edge": 0.004
     },
     {
+      "key": "C",
+      "n": 1097,
+      "predicted": 0.665,
+      "actual": 0.676,
+      "edge": 0.011
+    },
+    {
       "key": "D",
-      "n": 196,
-      "predicted": 0.641,
-      "actual": 0.633,
-      "edge": -0.009
+      "n": 327,
+      "predicted": 0.643,
+      "actual": 0.621,
+      "edge": -0.023
     }
   ],
   "byMarket": [
@@ -133,8 +140,18 @@
     }
   ],
   "monotonic": {
-    "pairs": 4,
+    "pairs": 5,
     "inOrder": 4
+  },
+  "scoreSpread": {
+    "min": 30.4,
+    "p10": 47.5,
+    "p25": 52.5,
+    "median": 58.6,
+    "p75": 65.1,
+    "p90": 70.2,
+    "p99": 75.9,
+    "max": 78.1
   },
   "ladder": {
     "days": 12,
@@ -158,7 +175,7 @@
         "line": 1.5,
         "p": 0.7713,
         "score": 76.1,
-        "grade": "B+",
+        "grade": "A",
         "price": -403,
         "status": "won",
         "actual": 4
@@ -170,7 +187,7 @@
         "line": 0.5,
         "p": 0.8076,
         "score": 77.2,
-        "grade": "B+",
+        "grade": "A",
         "price": -516,
         "status": "void",
         "actual": null
@@ -182,7 +199,7 @@
         "line": 0.5,
         "p": 0.771,
         "score": 78.6,
-        "grade": "B+",
+        "grade": "A",
         "price": -402,
         "status": "void",
         "actual": null
@@ -194,7 +211,7 @@
         "line": 0.5,
         "p": 0.7741,
         "score": 78.5,
-        "grade": "B+",
+        "grade": "A",
         "price": -410,
         "status": "won",
         "actual": 1
@@ -206,7 +223,7 @@
         "line": 1.5,
         "p": 0.7731,
         "score": 77.8,
-        "grade": "B+",
+        "grade": "A",
         "price": -408,
         "status": "won",
         "actual": 4
@@ -218,7 +235,7 @@
         "line": 1.5,
         "p": 0.7825,
         "score": 76.8,
-        "grade": "B+",
+        "grade": "A",
         "price": -433,
         "status": "void",
         "actual": null
@@ -230,7 +247,7 @@
         "line": 0.5,
         "p": 0.8077,
         "score": 78.9,
-        "grade": "B+",
+        "grade": "A",
         "price": -516,
         "status": "won",
         "actual": 3
@@ -242,7 +259,7 @@
         "line": 2.5,
         "p": 0.7388,
         "score": 77.3,
-        "grade": "B+",
+        "grade": "A",
         "price": -333,
         "status": "won",
         "actual": 4
@@ -254,7 +271,7 @@
         "line": 0.5,
         "p": 0.8116,
         "score": 77.8,
-        "grade": "B+",
+        "grade": "A",
         "price": -531,
         "status": "won",
         "actual": 4
@@ -266,7 +283,7 @@
         "line": 1.5,
         "p": 0.7615,
         "score": 77.2,
-        "grade": "B+",
+        "grade": "A",
         "price": -380,
         "status": "void",
         "actual": null
@@ -278,7 +295,7 @@
         "line": 1.5,
         "p": 0.7592,
         "score": 77.1,
-        "grade": "B+",
+        "grade": "A",
         "price": -374,
         "status": "won",
         "actual": 4
@@ -290,7 +307,7 @@
         "line": 0.5,
         "p": 0.7884,
         "score": 81,
-        "grade": "A",
+        "grade": "A+",
         "price": -451,
         "status": "won",
         "actual": 1
