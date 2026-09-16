@@ -160,9 +160,11 @@ b,strong{font-weight:600}
 .ld-orphan .s{font-size:12px;color:var(--muted);line-height:1.55;margin-top:7px}
 .ld-orphan code{font-family:var(--num);font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:5px}
 .ld-mine{background:rgba(255,214,10,.10)}
-.ld-mini{padding:6px 13px;border:none;border-radius:980px;background:var(--bg3);color:var(--text);font-family:var(--sys);font-size:12px;font-weight:600;cursor:pointer}
-.ld-mini.win{background:rgba(48,209,88,.18);color:var(--green)}
-.ld-mini.lose{background:rgba(255,69,58,.18);color:var(--red)}
+.ld-why{margin-top:11px;padding-top:10px;border-top:.5px solid var(--hair);display:grid;
+  grid-template-columns:1fr auto;gap:5px 12px;font-size:12px;font-variant-numeric:tabular-nums}
+.ld-why div{display:contents}
+.ld-why span{color:var(--muted)}
+.ld-why b{text-align:right;font-weight:600}
 .ld-wait .l{font-size:12px;font-weight:600;color:var(--purple)}
 .ld-wait .v{font-size:38px;font-weight:700;color:var(--purple);margin:3px 0 7px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .ld-wait .s{font-size:12px;color:var(--muted);line-height:1.5}
@@ -419,20 +421,47 @@ let pinnedPick={};
 try{pinnedPick=JSON.parse(localStorage.getItem("dd.ladderPinned")||"{}")||{};}catch(e){pinnedPick={};}
 function pinPick(day,c,edge){
   if(!day||!c||pinnedPick[day])return pinnedPick[day]||null;
-  pinnedPick[day]={pick:c.name,playerId:c.id,p:c.p,slot:c.slot,posted:!!c.posted,
+  pinnedPick[day]={pick:c.name,playerId:c.id,gk:c.gk,p:c.p,slot:c.slot,posted:!!c.posted,
     startProb:c.startProb,teams:`${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName}`,
-    sp:c.spName||null,edge,pinnedAt:new Date().toISOString()};
+    sp:c.spName||null,edge,pinnedAt:new Date().toISOString(),
+    // why he was chosen, kept with the name so the reasoning cannot drift from it
+    soft:c.soft,offIdx:c.offIdx,spotDelta:c.spotDelta,eAb:c.eAb,venue:c.venue,pf:c.pf,pfHr:c.pfHr,
+    fromN:(board&&board.candidates&&board.candidates.length)||null,
+    fromGames:(board&&board.games&&board.games.length)||null};
   try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}
   return pinnedPick[day];
 }
-// Result entry only — never player choice. The alerter grades from the
-// boxscore, but if its row never publishes the ladder still has to know
-// whether the rung won so tomorrow's stake is right.
-function setPinResult(day,status){
-  if(!pinnedPick[day])return;
-  pinnedPick[day].status=status;
-  try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}
-  renderLadder();
+// Grading is the board's job, not the reader's. The alerter settles from the
+// official boxscore, but its row does not always reach the repo — and a rung
+// whose result nobody records silently freezes the ladder, because tomorrow's
+// stake is yesterday's return. So the board settles its own pinned rungs the
+// same way: one hit is a win, and a hitless FINAL is a loss. A game still in
+// progress stays open; nothing is graded from a game that has not ended.
+async function settlePins(){
+  const open=Object.entries(pinnedPick).filter(([,v])=>!v.status&&v.gk!=null&&v.playerId!=null);
+  if(!open.length)return false;
+  let changed=false;
+  for(const [day,v] of open){
+    try{
+      const sched=await getJSON(`${M.API}/schedule?sportId=1&date=${day}`);
+      const g=(sched?.dates?.[0]?.games||[]).find(x=>x.gamePk===v.gk);
+      const state=g&&g.status&&g.status.abstractGameState;
+      if(state==="Preview")continue;                       // not started
+      const bx=await getJSON(`${M.API}/game/${v.gk}/boxscore`);
+      let hits=null;
+      for(const side of ["home","away"]){
+        const pl=bx?.teams?.[side]?.players||{};
+        for(const pp of Object.values(pl)){
+          if(pp?.person?.id===v.playerId&&pp?.stats?.batting){hits=+pp.stats.batting.hits||0;}
+        }
+      }
+      const final=state==="Final"&&!/postpon|suspend|cancel/i.test((g.status.detailedState||""));
+      if(hits>=1){v.status="won";v.hits=hits;v.settled=new Date().toISOString();changed=true;}
+      else if(final){v.status="lost";v.hits=hits||0;v.settled=new Date().toISOString();changed=true;}
+    }catch(e){/* feed unreachable this pass — try again on the next load */}
+  }
+  if(changed){try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}}
+  return changed;
 }
 
 let ladderAccount=null;
@@ -587,6 +616,8 @@ async function load(){
     setProg(100);setTimeout(()=>setProg(0),300);
     if(!board.pairs.length){status(`No qualifying pairs for ${board.date}.`,"var(--yellow)");renderEmpty();return;}
     render();
+    // Settle any pinned rung whose game has finished, then repaint if it moved.
+    try{ if(await settlePins()) renderLadder(); }catch(e){}
     const posted=board.candidates.filter(c=>c.posted).length;
     const calN=cal&&cal.global?cal.global.n:0;
     const deg=(board.degraded||[]).length
@@ -1004,14 +1035,23 @@ function renderLadder(){
         <span style="color:var(--yellow)">fair ${M.amOdds(pinned.p)}</span>
         <span style="color:${edgeToday>=bar?"var(--green)":"var(--red)"}">${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${todayOdds>0?"+":""}${todayOdds}</span>
       </div>
+      <div class="ld-why">
+        <div><span>Soft arm / park</span><b style="color:${spotColor(pinned.soft)}">${pts(pinned.soft)}pts</b></div>
+        <div><span>Good bats</span><b style="color:${spotColor(pinned.offIdx)}">${pts(pinned.offIdx)}pts</b></div>
+        <div><span>Spot vs league</span><b style="color:${spotColor(pinned.spotDelta)}">${pts(pinned.spotDelta)}pts</b></div>
+        <div><span>Expected at-bats</span><b>${pinned.eAb!=null?pinned.eAb.toFixed(2):"—"}</b></div>
+        ${pinned.venue?`<div><span>Park</span><b>${pinned.venue}${pinned.pf!=null?` · PF ${pinned.pf}`:""}</b></div>`:""}
+        <div><span>Chosen from</span><b>${pinned.fromN||"—"} bats${pinned.fromGames?` · ${pinned.fromGames} games`:""}</b></div>
+      </div>
       <div class="sub" style="margin-top:7px;color:var(--muted)">
+        Best combination of hitter, matchup, bullpen, defence, park and expected at-bats on the whole slate — one number, every factor in it.
         Locked at ${etTime(Date.parse(pinned.pinnedAt))} ET and fixed from then on. This name does not change on a refresh.
         ${locked?"":"<br>Waiting for the alerter's row to reach the record; if it names someone else, that row wins and this card will say so."}
       </div>
-      <div class="num" style="gap:8px;margin-top:9px">
-        <button class="ld-mini win" onclick="setPinResult('${today}','won')">Won</button>
-        <button class="ld-mini lose" onclick="setPinResult('${today}','lost')">Lost</button>
-        <span style="align-self:center;font-size:11px;color:var(--dim)">result only — set it at the final so tomorrow's rung is right (now: <b>${(pinned.status||"open").toUpperCase()}</b>)</span>
+      <div class="sub" style="margin-top:8px">
+        ${pinned.status==="won"?`<b style="color:var(--green)">✓ WON</b> — ${pinned.hits} hit${pinned.hits===1?"":"s"}, graded from the official boxscore.`
+          :pinned.status==="lost"?`<b style="color:var(--red)">✗ LOST</b> — hitless at the final, graded from the official boxscore.`
+          :`<b style="color:var(--muted)">OPEN</b> — settles itself from the boxscore once the game ends.`}
       </div>
     </div>`:"";
 
