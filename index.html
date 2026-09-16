@@ -404,6 +404,37 @@ const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
 // betting, and every customer would open the board to a stranger's bankroll
 // presented as though it were a setting. Until it is answered the ladder shows
 // its setup card instead of dollar figures.
+// Applying a trade adjustment from a link.
+//
+// On an exchange a rung can be exited before settlement and re-entered at a
+// different size, which the ladder cannot see and the reader should not have
+// to type. So an adjustment arrives as a one-tap link — ?adj=date,pick,stake,
+// exitedFor,price — is written into this browser once, and is then stripped
+// from the address so a reload cannot apply it twice.
+//
+// It only ever changes what THIS browser shows. data/ladder.json keeps the
+// pick the system actually made; a personal exit is not part of that record.
+function applyAdjustmentFromUrl(){
+  let q; try{ q=new URLSearchParams(location.search).get("adj"); }catch(e){ return false; }
+  if(!q)return false;
+  const [day,pick,stakeActual,exitedFor,price]=q.split(",").map(x=>(x||"").trim());
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(day||"")||!pick)return false;
+  const prev=pinnedPick[day]||{};
+  const st=parseFloat(stakeActual), ex=parseFloat(exitedFor), pr=parseFloat(price);
+  pinnedPick[day]=Object.assign({},prev,{
+    pick, adjusted:true, adjustedFrom:prev.pick||null,
+    stakeActual:isFinite(st)?st:null,
+    exitedFor:isFinite(ex)?ex:null,
+    // New money is what was re-staked less what came back out of the old rung.
+    topUp:(isFinite(st)&&isFinite(ex))?+(st-ex).toFixed(2):null,
+    realisedBefore:(isFinite(ex)&&prev.stakeActual==null&&isFinite(ex))?null:null,
+    price:isFinite(pr)?pr:null, status:null, playerId:null, gk:prev.gk||null
+  });
+  try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}
+  try{history.replaceState(null,"",location.pathname);}catch(e){}
+  return true;
+}
+
 // The pick, pinned by the board the first moment it can make one.
 //
 // The ladder must NAME a player. An earlier version, when no row had published,
@@ -419,6 +450,10 @@ const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
 // the two ever differ, the card says so rather than swapping silently.
 let pinnedPick={};
 try{pinnedPick=JSON.parse(localStorage.getItem("dd.ladderPinned")||"{}")||{};}catch(e){pinnedPick={};}
+// After the store exists, never before: `pinnedPick` is a `let`, so calling
+// this above its declaration threw on the temporal dead zone and took the
+// whole page script down.
+applyAdjustmentFromUrl();
 function pinPick(day,c,edge){
   if(!day||!c||pinnedPick[day])return pinnedPick[day]||null;
   pinnedPick[day]={pick:c.name,playerId:c.id,gk:c.gk,p:c.p,slot:c.slot,posted:!!c.posted,
@@ -834,7 +869,9 @@ function renderLadder(){
   const haveDay=new Set(published.map(b=>b.date));
   const localRows=Object.entries(pinnedPick)
     .filter(([d])=>!haveDay.has(d))
-    .map(([d,v])=>({date:d,pick:v.pick,playerId:v.playerId,price:oddsByDay[d]!=null?oddsByDay[d]:null,
+    .map(([d,v])=>({date:d,pick:v.pick,playerId:v.playerId,
+                    price:oddsByDay[d]!=null?oddsByDay[d]:(v.price!=null?v.price:null),
+                    stakeActual:v.stakeActual,topUp:v.topUp,realisedBefore:v.realisedBefore,
                     status:v.status||"open",local:true}));
   const raw=published.concat(localRows).sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
   // Replay against the prices actually taken, not the ones assumed.
@@ -903,7 +940,8 @@ function renderLadder(){
   // Only true before the board can produce any candidate at all.
   const orphaned=!locked&&!pinned&&lk&&lk.open;
   const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
-                 :(locked&&locked.price!=null?locked.price:setting("legPrice"));
+                 :(pinnedPick[today]&&pinnedPick[today].price!=null?pinnedPick[today].price
+                 :(locked&&locked.price!=null?locked.price:setting("legPrice")));
   const dec=M.decFromAmerican(todayOdds)||1;
   const typed=oddsByDay[today]!=null;
   // The locked row's probability is the one that was published; the live
@@ -911,7 +949,12 @@ function renderLadder(){
   // honest without naming anyone.
   const p=locked?locked.p:(pick?pick.c.p:null);
   const risk=p?M.ladderRisk(p,todayOdds,st):null;
-  const stake=st.stake, mine=st.atRisk, house=st.onTable;
+  // The live rung shows what is REALLY on it. A day traded differently on an
+  // exchange carries its own size, and quoting the derived number there would
+  // be showing a stake that is not the one at risk.
+  const pinnedToday=pinnedPick[today]||null;
+  const stake=(pinnedToday&&pinnedToday.stakeActual!=null)?pinnedToday.stakeActual:st.stake;
+  const mine=st.atRisk, house=st.onTable;
   const bar=betBar();
   const lbeToday=1/dec, edgeToday=p!=null?p-lbeToday:null;
   const qualifies=edgeToday!=null&&edgeToday>=bar;
@@ -978,10 +1021,10 @@ function renderLadder(){
     <div class="ld-nb win"><div class="l">If it hits → ${closes?"cycle closes, next seed":"tomorrow's bet"}</div>
       <div class="v">${money(nextIfWin)}</div>
       ${closes?`<div class="s">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
-              :`<div class="s">still only ${money(st.base)} of your money at risk</div>`}</div>
+              :`<div class="s">${st.toppedUp>0?`${money(st.cashIn)} of your money in this cycle (${money(st.base)} seed + ${money(st.toppedUp)} added)`:`still only ${money(st.base)} of your money at risk`}</div>`}</div>
     <div class="ld-nb lose"><div class="l">If it misses → next seed</div>
       <div class="v">${money(nextIfLose)}</div>
-      <div class="s">cycle ends, costs ${money(st.base)} — the seed, whatever day it lands</div></div>
+      <div class="s">cycle ends, costs ${money(st.cashIn)}${st.toppedUp>0?" — the seed plus what you added on top":" — the seed, whatever day it lands"}</div></div>
   </div>`;
 
   const lockedHtml=locked?`
@@ -1027,24 +1070,30 @@ function renderLadder(){
 
   const myHtml=pinned?`
     <div class="ld-pick ld-mine">
-      <div class="nm">${pinned.pick} <span class="tag warn">TODAY'S PICK</span></div>
-      <div class="sub">#${pinned.slot||"—"} · ${pinned.teams||""} · ${pinned.sp||"SP TBD"}
-        ${pinned.posted?' · <span style="color:var(--green)">confirmed lineup</span>':pinned.startProb?`<span style="color:var(--yellow)"> · projected, ${pct(pinned.startProb)} to start</span>`:""}</div>
-      <div class="num">
+      <div class="nm">${pinned.pick} <span class="tag warn">${pinned.adjusted?"YOUR TRADE":"TODAY'S PICK"}</span></div>
+      ${pinned.adjusted?`<div class="sub" style="color:var(--yellow);margin-top:4px">
+        Adjusted${pinned.adjustedFrom?` — the system's pick was ${pinned.adjustedFrom}`:""}.
+        ${pinned.exitedFor!=null?`Exited that rung for ${money(pinned.exitedFor)}` :""}${pinned.stakeActual!=null?`, re-staked ${money(pinned.stakeActual)}`:""}${pinned.topUp?` (${money(pinned.topUp)} of new money)`:""}.
+        The published record still shows the system's pick; this only changes your ladder.</div>`:""}
+      ${pinned.adjusted?"":`<div class="sub">#${pinned.slot||"—"} · ${pinned.teams||""} · ${pinned.sp||"SP TBD"}
+        ${pinned.posted?' · <span style="color:var(--green)">confirmed lineup</span>':pinned.startProb?`<span style="color:var(--yellow)"> · projected, ${pct(pinned.startProb)} to start</span>`:""}</div>`}
+      ${pinned.adjusted?`<div class="num"><span style="color:var(--muted)">Taken at ${todayOdds>0?"+":""}${todayOdds} · not modelled</span></div>`
+        :`<div class="num">
         <span style="color:var(--blue)">${pct(pinned.p)} to hit</span>
         <span style="color:var(--yellow)">fair ${M.amOdds(pinned.p)}</span>
         <span style="color:${edgeToday>=bar?"var(--green)":"var(--red)"}">${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${todayOdds>0?"+":""}${todayOdds}</span>
-      </div>
-      <div class="ld-why">
+      </div>`}
+      ${pinned.adjusted?"":`<div class="ld-why">
         <div><span>Soft arm / park</span><b style="color:${spotColor(pinned.soft)}">${pts(pinned.soft)}pts</b></div>
         <div><span>Good bats</span><b style="color:${spotColor(pinned.offIdx)}">${pts(pinned.offIdx)}pts</b></div>
         <div><span>Spot vs league</span><b style="color:${spotColor(pinned.spotDelta)}">${pts(pinned.spotDelta)}pts</b></div>
         <div><span>Expected at-bats</span><b>${pinned.eAb!=null?pinned.eAb.toFixed(2):"—"}</b></div>
         ${pinned.venue?`<div><span>Park</span><b>${pinned.venue}${pinned.pf!=null?` · PF ${pinned.pf}`:""}</b></div>`:""}
         <div><span>Chosen from</span><b>${pinned.fromN||"—"} bats${pinned.fromGames?` · ${pinned.fromGames} games`:""}</b></div>
-      </div>
+      </div>`}
       <div class="sub" style="margin-top:7px;color:var(--muted)">
-        Best combination of hitter, matchup, bullpen, defence, park and expected at-bats on the whole slate — one number, every factor in it.
+        ${pinned.adjusted?"This is your own substitution, so the model's matchup readings are not shown — they described the pick it made, not this one."
+          :"Best combination of hitter, matchup, bullpen, defence, park and expected at-bats on the whole slate — one number, every factor in it."}
         Locked at ${etTime(Date.parse(pinned.pinnedAt))} ET and fixed from then on. This name does not change on a refresh.
         ${locked?"":"<br>Waiting for the alerter's row to reach the record; if it names someone else, that row wins and this card will say so."}
       </div>
@@ -1109,7 +1158,7 @@ function renderLadder(){
     <div class="ld-strip">
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account</div></div>
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${st.pl>=0?"+":""}${money(st.pl)}</div><div class="l">P&amp;L</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">Your money at risk</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">${st.toppedUp>0?`Cash in · ${money(st.base)} seed + ${money(st.toppedUp)} added`:"Your money at risk"}</div></div>
       <div class="ld-box"><div class="v" style="color:var(--purple)">${money(house)}</div><div class="l">House money riding</div></div>
       <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">Cycles done–bust</div></div>
       <div class="ld-box ld-acct" onclick="clearLadderAccount()" title="Change your bankroll"><div class="v" style="color:var(--blue)">${money(ladderAccount)}</div><div class="l">Bankroll · tap to change</div></div>
