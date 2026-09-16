@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T04:03:30.176Z",
+  "at": "2026-09-16T04:05:46.692Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -163,6 +163,26 @@
       "detail": ""
     },
     {
+      "name": "game log carries rebounds",
+      "state": "PASS",
+      "detail": "86/89 games with a rebound — a rotation player who never rebounds is a parse failure, not a player"
+    },
+    {
+      "name": "game log carries assists",
+      "state": "PASS",
+      "detail": "88/89 games with an assist"
+    },
+    {
+      "name": "game log carries three-point attempts",
+      "state": "PASS",
+      "detail": "the 3PM spread is derived from attempts, so a missing column silently changes the distribution"
+    },
+    {
+      "name": "a line rebuilt from the log matches the season feed",
+      "state": "PASS",
+      "detail": "mpg 36.52 vs 38, pts 26.53 vs 28.3, reb 3.94 vs 4.1, ast 6.18 vs 6.6, tpm 2.91 vs 3.1 — worst off by 6%"
+    },
+    {
       "name": "game log carries dates",
       "state": "PASS",
       "detail": "newest 2026-05-10T19:30:00.000+00:00 -> ET day 2026-05-10"
@@ -190,12 +210,12 @@
     {
       "name": "all four markets priced",
       "state": "PASS",
-      "detail": "{\"tpm\":124,\"ast\":144,\"pts\":144,\"reb\":144}"
+      "detail": "{\"tpm\":124,\"reb\":144,\"ast\":144,\"pts\":144}"
     },
     {
       "name": "lines are not all minimums",
       "state": "PASS",
-      "detail": "115/556 legs sit on the 0.5 line"
+      "detail": "116/556 legs sit on the 0.5 line"
     },
     {
       "name": "published prices are bettable",
@@ -213,14 +233,14 @@
       "detail": "projected 1.98 vs actual 1.83 (+8%), lines average 0.92, said 73% hit 66% on 71"
     },
     {
+      "name": "REB projections track the box score",
+      "state": "PASS",
+      "detail": "projected 5.3 vs actual 5.17 (+3%), lines average 3.84, said 70% hit 62% on 82"
+    },
+    {
       "name": "AST projections track the box score",
       "state": "PASS",
       "detail": "projected 3.67 vs actual 3.33 (+10%), lines average 2.38, said 72% hit 61% on 82"
-    },
-    {
-      "name": "REB projections track the box score",
-      "state": "PASS",
-      "detail": "projected 5.3 vs actual 5.17 (+3%), lines average 3.88, said 69% hit 62% on 82"
     },
     {
       "name": "PTS projections track the box score",
@@ -230,7 +250,7 @@
     {
       "name": "no market is starved of legs",
       "state": "PASS",
-      "detail": "{\"tpm\":124,\"ast\":144,\"pts\":144,\"reb\":144}"
+      "detail": "{\"tpm\":124,\"reb\":144,\"ast\":144,\"pts\":144}"
     },
     {
       "name": "game logs reached the legs",
@@ -735,12 +755,12 @@
         "odds",
         "againstTheSpread",
         "news",
+        "plays",
         "article",
         "videos",
-        "plays",
-        "winprobability",
         "header",
         "wallclockAvailable",
+        "winprobability",
         "meta",
         "standings"
       ],
@@ -1838,7 +1858,39 @@
           "17"
         ]
       }
-    }
+    },
+    "asOfRebuild": [
+      {
+        "k": "mpg",
+        "rebuilt": 36.52,
+        "feed": 38,
+        "off": 0.03903015966883505
+      },
+      {
+        "k": "pts",
+        "rebuilt": 26.53,
+        "feed": 28.3,
+        "off": 0.06261166474768742
+      },
+      {
+        "k": "reb",
+        "rebuilt": 3.94,
+        "feed": 4.1,
+        "off": 0.038092628117292304
+      },
+      {
+        "k": "ast",
+        "rebuilt": 6.18,
+        "feed": 6.6,
+        "off": 0.06367041198501866
+      },
+      {
+        "k": "tpm",
+        "rebuilt": 2.91,
+        "feed": 3.1,
+        "off": 0.061254077564334986
+      }
+    ]
   },
   "notes": [],
   "board": {
@@ -1900,6 +1952,21 @@
       },
       {
         "grade": "B+",
+        "score": 76.6,
+        "player": "Payton Pritchard",
+        "pos": "G",
+        "team": "BOS",
+        "opp": "MIA",
+        "market": "reb",
+        "line": 2.5,
+        "p": 0.78,
+        "proj": 4.2,
+        "min": 33.2,
+        "seasonAvg": 3.9,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
         "score": 76.2,
         "player": "Devin Vassell",
         "pos": "G",
@@ -1927,6 +1994,21 @@
         "min": 29.4,
         "seasonAvg": 1.5,
         "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 75,
+        "player": "Devin Booker",
+        "pos": "G",
+        "team": "PHX",
+        "opp": "DET",
+        "market": "reb",
+        "line": 2.5,
+        "p": 0.778,
+        "proj": 4.2,
+        "min": 37.5,
+        "seasonAvg": 3.9,
+        "form": "8/10"
       },
       {
         "grade": "B+",
@@ -2002,36 +2084,6 @@
         "min": 35.2,
         "seasonAvg": 1.7,
         "form": "8/10"
-      },
-      {
-        "grade": "B+",
-        "score": 72.9,
-        "player": "Devin Booker",
-        "pos": "G",
-        "team": "PHX",
-        "opp": "DET",
-        "market": "pts",
-        "line": 21.5,
-        "p": 0.777,
-        "proj": 27.5,
-        "min": 37.5,
-        "seasonAvg": 26.1,
-        "form": "8/10"
-      },
-      {
-        "grade": "B+",
-        "score": 72.8,
-        "player": "Myles Turner",
-        "pos": "C",
-        "team": "MIL",
-        "opp": "SA",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.814,
-        "proj": 1.8,
-        "min": 26,
-        "seasonAvg": 2.1,
-        "form": "10/10"
       }
     ],
     "doubles": [
@@ -2093,9 +2145,9 @@
     ],
     "byMarket": {
       "tpm": 124,
+      "reb": 144,
       "ast": 144,
-      "pts": 144,
-      "reb": 144
+      "pts": 144
     }
   },
   "perMarket": {
@@ -2113,6 +2165,20 @@
         "Jalen Johnson 3PM o0.5: projected 1.7, got 0"
       ]
     },
+    "reb": {
+      "n": 82,
+      "meanProjected": 5.3,
+      "meanActual": 5.17,
+      "meanLine": 3.84,
+      "predicted": 0.7,
+      "hit": 0.622,
+      "samples": [
+        "Payton Pritchard REB o2.5: projected 4.2, got 3",
+        "AJ Green REB o1.5: projected 3.0, got 0",
+        "Jalen Johnson REB o7.5: projected 10.0, got 11",
+        "Jabari Smith Jr. REB o5.5: projected 7.7, got 10"
+      ]
+    },
     "ast": {
       "n": 82,
       "meanProjected": 3.67,
@@ -2125,20 +2191,6 @@
         "Jalen Duren AST o0.5: projected 2.0, got 2",
         "Ryan Rollins AST o3.5: projected 5.5, got 7",
         "De'Aaron Fox AST o4.5: projected 6.3, got 4"
-      ]
-    },
-    "reb": {
-      "n": 82,
-      "meanProjected": 5.3,
-      "meanActual": 5.17,
-      "meanLine": 3.88,
-      "predicted": 0.694,
-      "hit": 0.622,
-      "samples": [
-        "Landry Shamet REB o0.5: projected 2.0, got 0",
-        "Harrison Barnes REB o1.5: projected 2.9, got 0",
-        "Sam Hauser REB o2.5: projected 4.1, got 3",
-        "Isaiah Collier REB o1.5: projected 2.7, got 5"
       ]
     },
     "pts": {
