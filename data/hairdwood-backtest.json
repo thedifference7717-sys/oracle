@@ -1,17 +1,23 @@
 {
-  "at": "2026-09-16T04:00:53.316Z",
+  "at": "2026-09-16T04:07:46.837Z",
   "season": 2026,
   "slates": 16,
   "stride": 9,
   "leakage": "player lines rebuilt as-of from game logs; team splits full-season (clamped ±10-12%); injuries unavailable on finished games, so the backtest runs blind to them",
+  "legCounts": {
+    "ast": 1004,
+    "tpm": 842,
+    "reb": 1006,
+    "pts": 1006
+  },
   "legs": {
-    "n": 3099,
-    "graded": 2923,
-    "void": 176,
-    "predicted": 0.707,
-    "actual": 0.726,
-    "edge": 0.019,
-    "brier": 0.1985
+    "n": 3858,
+    "graded": 3640,
+    "void": 218,
+    "predicted": 0.705,
+    "actual": 0.711,
+    "edge": 0.007,
+    "brier": 0.2041
   },
   "byGrade": [
     {
@@ -23,38 +29,38 @@
     },
     {
       "key": "B+",
-      "n": 224,
-      "predicted": 0.799,
-      "actual": 0.795,
-      "edge": -0.004
+      "n": 266,
+      "predicted": 0.793,
+      "actual": 0.786,
+      "edge": -0.007
     },
     {
       "key": "B",
-      "n": 574,
-      "predicted": 0.757,
-      "actual": 0.746,
-      "edge": -0.011
+      "n": 811,
+      "predicted": 0.751,
+      "actual": 0.751,
+      "edge": 0
     },
     {
       "key": "C+",
-      "n": 1004,
-      "predicted": 0.708,
-      "actual": 0.71,
-      "edge": 0.003
+      "n": 1289,
+      "predicted": 0.704,
+      "actual": 0.706,
+      "edge": 0.002
     },
     {
       "key": "C",
-      "n": 900,
-      "predicted": 0.666,
-      "actual": 0.704,
-      "edge": 0.038
+      "n": 1069,
+      "predicted": 0.66,
+      "actual": 0.68,
+      "edge": 0.02
     },
     {
       "key": "D",
-      "n": 218,
-      "predicted": 0.641,
-      "actual": 0.757,
-      "edge": 0.116
+      "n": 202,
+      "predicted": 0.639,
+      "actual": 0.649,
+      "edge": 0.01
     }
   ],
   "byMarket": [
@@ -67,10 +73,10 @@
     },
     {
       "key": "reb",
-      "n": 231,
-      "predicted": 0.7,
-      "actual": 0.991,
-      "edge": 0.292
+      "n": 948,
+      "predicted": 0.697,
+      "actual": 0.735,
+      "edge": 0.038
     },
     {
       "key": "ast",
@@ -90,50 +96,50 @@
   "byBand": [
     {
       "key": "60-65%",
-      "n": 696,
+      "n": 852,
       "predicted": 0.626,
-      "actual": 0.672,
-      "edge": 0.046
+      "actual": 0.657,
+      "edge": 0.031
     },
     {
       "key": "65-70%",
-      "n": 775,
-      "predicted": 0.675,
-      "actual": 0.721,
-      "edge": 0.046
+      "n": 995,
+      "predicted": 0.676,
+      "actual": 0.698,
+      "edge": 0.023
     },
     {
       "key": "70-75%",
-      "n": 691,
+      "n": 924,
       "predicted": 0.723,
-      "actual": 0.728,
-      "edge": 0.005
+      "actual": 0.721,
+      "edge": -0.003
     },
     {
       "key": "75-80%",
-      "n": 432,
-      "predicted": 0.774,
-      "actual": 0.738,
-      "edge": -0.036
+      "n": 535,
+      "predicted": 0.773,
+      "actual": 0.746,
+      "edge": -0.027
     },
     {
       "key": "80-85%",
-      "n": 283,
-      "predicted": 0.824,
-      "actual": 0.823,
-      "edge": -0.001
+      "n": 288,
+      "predicted": 0.823,
+      "actual": 0.802,
+      "edge": -0.021
     },
     {
       "key": "85-90%",
       "n": 46,
-      "predicted": 0.857,
-      "actual": 0.848,
-      "edge": -0.009
+      "predicted": 0.858,
+      "actual": 0.826,
+      "edge": -0.031
     }
   ],
   "monotonic": {
     "pairs": 4,
-    "inOrder": 3
+    "inOrder": 4
   },
   "ladder": {
     "days": 14,
@@ -321,11 +327,44 @@
     ]
   },
   "doubles": {
-    "n": 52,
-    "predicted": 0.658,
-    "actual": 0.5,
-    "naive": 0.643,
-    "edge": -0.158
+    "n": 236,
+    "predicted": 0.646,
+    "actual": 0.572,
+    "naive": 0.632,
+    "edge": -0.074,
+    "byTeam": [
+      {
+        "key": "opposing",
+        "n": 35,
+        "predicted": 0.655,
+        "actual": 0.486,
+        "edge": -0.169
+      },
+      {
+        "key": "same team",
+        "n": 201,
+        "predicted": 0.644,
+        "actual": 0.587,
+        "edge": -0.057
+      }
+    ],
+    "byMarkets": [
+      {
+        "key": "ast|tpm",
+        "n": 192,
+        "predicted": 0.643,
+        "actual": 0.573,
+        "edge": -0.071
+      },
+      {
+        "key": "tpm|tpm",
+        "n": 27,
+        "predicted": 0.663,
+        "actual": 0.556,
+        "edge": -0.108
+      }
+    ],
+    "legHit": 0.756
   },
   "fetches": 502,
   "retries": 3
