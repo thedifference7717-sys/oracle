@@ -397,6 +397,12 @@ try {
       sh.vmrSum = (sh.vmrSum || 0) + varr / mu;
       sh.meanSum = (sh.meanSum || 0) + mu;
       sh.varSum = (sh.varSum || 0) + varr;
+      // The pairs themselves, for the fit below. A single cv assumes the excess
+      // spread grows in PROPORTION to the mean, and that is an assumption, not
+      // a measurement: fit it at a 15-point scorer and extrapolate to a 25-point
+      // one and you hand him a standard deviation of 11 where the real one is
+      // nearer 9. So the exponent gets measured too.
+      (sh.pairs = sh.pairs || []).push([mu, varr]);
       const sp = M.spread(k, mu, L, { tpa: mu / 0.36 });
       // Lines at and below the mean, which is where the board writes them.
       [-2.5, -1.5, -0.5].forEach(off => {
@@ -418,12 +424,32 @@ try {
                   gap: +((b.emp - b.model) / b.n * b.n).toFixed(4) };
       offs[o].gap = +(offs[o].empirical - offs[o].model).toFixed(4);
     });
+    // Excess spread against the mean, on log-log axes: sd_excess = K * mean^P.
+    // P = 1 is the constant-cv assumption the model ships with; anything below
+    // it means the spread grows more slowly than the mean, which is what
+    // scoring actually does.
+    const fit = (() => {
+      const pts = (sh.pairs || []).map(([mu, v]) => [Math.log(mu), Math.log(Math.sqrt(Math.max(1e-6, v - mu)))])
+                                  .filter(([x, y]) => isFinite(x) && isFinite(y));
+      if (pts.length < 12) return null;
+      const n = pts.length;
+      const mx = pts.reduce((a, q) => a + q[0], 0) / n, my = pts.reduce((a, q) => a + q[1], 0) / n;
+      let num = 0, den = 0;
+      pts.forEach(([x, y]) => { num += (x - mx) * (y - my); den += (x - mx) * (x - mx); });
+      if (!(den > 0)) return null;
+      const P = num / den, K = Math.exp(my - P * mx);
+      // What that fit says the spread is at three real sizes, against what the
+      // model's constant-cv form says.
+      const at = m => ({ mean: m, fitted: +Math.sqrt(m + Math.pow(K * Math.pow(m, P), 2)).toFixed(2),
+                         model: +M.spread(k, m, null, { tpa: m / 0.36 }).sd.toFixed(2) });
+      return { n, K: +K.toFixed(4), P: +P.toFixed(3), at: [at(5), at(15), at(25)] };
+    })();
     const impliedCv = +(sh.cvSum / sh.n).toFixed(3);
     const impliedVmr = +(sh.vmrSum / sh.n).toFixed(3);
     report.distributionShape[k] = { players: sh.n, impliedCv, modelCv: M.MKT[k].cv,
       impliedVmr, modelVmr: M.MKT[k].vmr != null ? M.MKT[k].vmr : 1,
       meanOfMeans: +(sh.meanSum / sh.n).toFixed(2), meanOfVars: +(sh.varSum / sh.n).toFixed(2),
-      byOffset: offs };
+      spreadFit: fit, byOffset: offs };
     const worst = Object.values(offs).sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap))[0];
     check(`${k.toUpperCase()} distribution matches the logs`, Math.abs(worst.gap) < 0.03 ? true : "warn",
           `implied vmr ${impliedVmr} (model ${M.MKT[k].vmr != null ? M.MKT[k].vmr : 1}), implied cv ${impliedCv} (model ${M.MKT[k].cv}) · ` +
