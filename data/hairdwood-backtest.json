@@ -1,45 +1,332 @@
 {
-  "at": "2026-09-16T03:58:33.530Z",
+  "at": "2026-09-16T04:00:53.316Z",
   "season": 2026,
   "slates": 16,
   "stride": 9,
   "leakage": "player lines rebuilt as-of from game logs; team splits full-season (clamped ±10-12%); injuries unavailable on finished games, so the backtest runs blind to them",
   "legs": {
-    "n": 0,
-    "graded": 0,
-    "void": 0,
-    "predicted": null,
-    "actual": null,
-    "edge": 0,
-    "brier": null
+    "n": 3099,
+    "graded": 2923,
+    "void": 176,
+    "predicted": 0.707,
+    "actual": 0.726,
+    "edge": 0.019,
+    "brier": 0.1985
   },
-  "byGrade": [],
-  "byMarket": [],
-  "byBand": [],
-  "monotonic": null,
+  "byGrade": [
+    {
+      "key": "A",
+      "n": 3,
+      "predicted": 0.801,
+      "actual": 1,
+      "edge": 0.199
+    },
+    {
+      "key": "B+",
+      "n": 224,
+      "predicted": 0.799,
+      "actual": 0.795,
+      "edge": -0.004
+    },
+    {
+      "key": "B",
+      "n": 574,
+      "predicted": 0.757,
+      "actual": 0.746,
+      "edge": -0.011
+    },
+    {
+      "key": "C+",
+      "n": 1004,
+      "predicted": 0.708,
+      "actual": 0.71,
+      "edge": 0.003
+    },
+    {
+      "key": "C",
+      "n": 900,
+      "predicted": 0.666,
+      "actual": 0.704,
+      "edge": 0.038
+    },
+    {
+      "key": "D",
+      "n": 218,
+      "predicted": 0.641,
+      "actual": 0.757,
+      "edge": 0.116
+    }
+  ],
+  "byMarket": [
+    {
+      "key": "pts",
+      "n": 948,
+      "predicted": 0.678,
+      "actual": 0.675,
+      "edge": -0.002
+    },
+    {
+      "key": "reb",
+      "n": 231,
+      "predicted": 0.7,
+      "actual": 0.991,
+      "edge": 0.292
+    },
+    {
+      "key": "ast",
+      "n": 947,
+      "predicted": 0.717,
+      "actual": 0.702,
+      "edge": -0.015
+    },
+    {
+      "key": "tpm",
+      "n": 797,
+      "predicted": 0.731,
+      "actual": 0.737,
+      "edge": 0.006
+    }
+  ],
+  "byBand": [
+    {
+      "key": "60-65%",
+      "n": 696,
+      "predicted": 0.626,
+      "actual": 0.672,
+      "edge": 0.046
+    },
+    {
+      "key": "65-70%",
+      "n": 775,
+      "predicted": 0.675,
+      "actual": 0.721,
+      "edge": 0.046
+    },
+    {
+      "key": "70-75%",
+      "n": 691,
+      "predicted": 0.723,
+      "actual": 0.728,
+      "edge": 0.005
+    },
+    {
+      "key": "75-80%",
+      "n": 432,
+      "predicted": 0.774,
+      "actual": 0.738,
+      "edge": -0.036
+    },
+    {
+      "key": "80-85%",
+      "n": 283,
+      "predicted": 0.824,
+      "actual": 0.823,
+      "edge": -0.001
+    },
+    {
+      "key": "85-90%",
+      "n": 46,
+      "predicted": 0.857,
+      "actual": 0.848,
+      "edge": -0.009
+    }
+  ],
+  "monotonic": {
+    "pairs": 4,
+    "inOrder": 3
+  },
   "ladder": {
-    "days": 0,
-    "played": 0,
+    "days": 14,
+    "played": 14,
     "passed": 0,
-    "won": 0,
+    "won": 12,
     "lost": 0,
-    "void": 0,
-    "account": 100,
-    "pl": 0,
+    "void": 2,
+    "account": 133.19,
+    "pl": 33.19,
     "cycles": {
-      "done": 0,
+      "done": 2,
       "busted": 0
     },
     "maxDD": 0,
-    "rows": []
+    "rows": [
+      {
+        "date": "2025-11-15",
+        "pick": "Donovan Mitchell",
+        "market": "ast",
+        "line": 3.5,
+        "p": 0.7593,
+        "score": 78.9,
+        "grade": "B+",
+        "price": -375,
+        "status": "won",
+        "actual": 5
+      },
+      {
+        "date": "2025-11-24",
+        "pick": "Andrew Wiggins",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.8266,
+        "score": 77.5,
+        "grade": "B+",
+        "price": -597,
+        "status": "void",
+        "actual": null
+      },
+      {
+        "date": "2025-12-03",
+        "pick": "Andrew Wiggins",
+        "market": "ast",
+        "line": 1.5,
+        "p": 0.8064,
+        "score": 80.3,
+        "grade": "A",
+        "price": -511,
+        "status": "won",
+        "actual": 5
+      },
+      {
+        "date": "2025-12-12",
+        "pick": "Jalen Johnson",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.7872,
+        "score": 78.8,
+        "grade": "B+",
+        "price": -447,
+        "status": "won",
+        "actual": 1
+      },
+      {
+        "date": "2025-12-21",
+        "pick": "Anthony Edwards",
+        "market": "tpm",
+        "line": 1.5,
+        "p": 0.7949,
+        "score": 79.1,
+        "grade": "B+",
+        "price": -471,
+        "status": "won",
+        "actual": 2
+      },
+      {
+        "date": "2025-12-30",
+        "pick": "VJ Edgecombe",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.8589,
+        "score": 79.3,
+        "grade": "B+",
+        "price": -800,
+        "status": "won",
+        "actual": 5
+      },
+      {
+        "date": "2026-01-08",
+        "pick": "Donovan Mitchell",
+        "market": "ast",
+        "line": 3.5,
+        "p": 0.7462,
+        "score": 77.4,
+        "grade": "B+",
+        "price": -347,
+        "status": "won",
+        "actual": 8
+      },
+      {
+        "date": "2026-01-17",
+        "pick": "Onyeka Okongwu",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.8267,
+        "score": 79.2,
+        "grade": "B+",
+        "price": -598,
+        "status": "won",
+        "actual": 3
+      },
+      {
+        "date": "2026-01-26",
+        "pick": "Pascal Siakam",
+        "market": "ast",
+        "line": 2.5,
+        "p": 0.7457,
+        "score": 78,
+        "grade": "B+",
+        "price": -346,
+        "status": "won",
+        "actual": 4
+      },
+      {
+        "date": "2026-02-04",
+        "pick": "Saddiq Bey",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.8313,
+        "score": 78.2,
+        "grade": "B+",
+        "price": -621,
+        "status": "won",
+        "actual": 4
+      },
+      {
+        "date": "2026-03-03",
+        "pick": "Saddiq Bey",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.8515,
+        "score": 78.5,
+        "grade": "B+",
+        "price": -744,
+        "status": "won",
+        "actual": 2
+      },
+      {
+        "date": "2026-03-12",
+        "pick": "Derrick White",
+        "market": "tpm",
+        "line": 1.5,
+        "p": 0.7723,
+        "score": 77.4,
+        "grade": "B+",
+        "price": -406,
+        "status": "void",
+        "actual": null
+      },
+      {
+        "date": "2026-03-21",
+        "pick": "Trey Murphy III",
+        "market": "tpm",
+        "line": 1.5,
+        "p": 0.7928,
+        "score": 80.4,
+        "grade": "A",
+        "price": -464,
+        "status": "won",
+        "actual": 2
+      },
+      {
+        "date": "2026-03-30",
+        "pick": "Jalen Johnson",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.804,
+        "score": 81.2,
+        "grade": "A",
+        "price": -502,
+        "status": "won",
+        "actual": 1
+      }
+    ]
   },
   "doubles": {
-    "n": 0,
-    "predicted": null,
-    "actual": null,
-    "naive": null,
-    "edge": 0
+    "n": 52,
+    "predicted": 0.658,
+    "actual": 0.5,
+    "naive": 0.643,
+    "edge": -0.158
   },
-  "fetches": 146,
+  "fetches": 502,
   "retries": 3
 }
