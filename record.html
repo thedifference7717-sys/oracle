@@ -338,7 +338,7 @@ function render(L, G, O, H, B){
   if(!bets.length){
     $("body").innerHTML=`<div class="note">
         <b>This record starts ${new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} — the day the model was rebuilt.</b> ${ERA_NOTE}. Earlier results came from a different system and are not counted here. The row-by-row ledger below starts 2026-09-15 and fills itself the moment the alerter sends a pick, each row committed before its first pitch. The window before that is shown underneath, recovered from dated commits.
-      </div>${renderOpening(O)}${renderGridiron(G)}`;
+      </div>${renderOpening(O)}${renderGridiron(G)}${renderHairdwood(H, B)}`;
     return;
   }
   const proven=Math.abs(S.z)>=1.96;

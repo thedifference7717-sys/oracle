@@ -101,7 +101,8 @@ for (const day of dates()) {
     settled++;
     if (res.status === "won") hit++;
     legs.push({ day, player: l.pl.name, market: l.market, line: l.line,
-                p: +l.p.toFixed(4), score: l.score.score, grade: l.score.grade,
+                p: +l.p.toFixed(4), pRaw: l.pRaw != null ? +l.pRaw.toFixed(4) : null,
+                score: l.score.score, grade: l.score.grade,
                 proj: +l.mean.toFixed(2), min: +l.mins.minutes.toFixed(1),
                 hasLog: l.hasLog, status: res.status, actual: res.actual });
   }
@@ -197,7 +198,14 @@ const report = {
   legCounts: (() => { const c = {}; legs.forEach(l => { c[l.market] = (c[l.market] || 0) + 1; }); return c; })(),
   legs: { n: legs.length, graded: graded.length, void: legs.length - graded.length,
           predicted: round(mean(graded, r => r.p)), actual: round(rate(graded)),
-          edge: round(rate(graded) - mean(graded, r => r.p)), brier: round(brier, 4) },
+          edge: round(rate(graded) - mean(graded, r => r.p)), brier: round(brier, 4),
+          // What the model said BEFORE its measured correction, and what that
+          // correction bought. If the raw number is closer to the outcome than
+          // the corrected one, the correction is doing harm and should go.
+          predictedRaw: round(mean(graded.filter(r => r.pRaw != null), r => r.pRaw)),
+          brierRaw: round(graded.filter(r => r.pRaw != null).length
+            ? mean(graded.filter(r => r.pRaw != null), r => Math.pow((r.status === "won" ? 1 : 0) - r.pRaw, 2))
+            : null, 4) },
   byGrade, byMarket, byBand, monotonic: mono,
   ladder: { days: ladderRows.length, played: ladderPlayed.length,
             passed: ladderRows.filter(r => r.status === "passed").length,
@@ -228,6 +236,9 @@ writeFileSync(OUT, JSON.stringify(report, null, 2) + "\n");
 
 say("\n── every published leg ─────────────────────────────────");
 say(`${report.legs.graded} graded (${report.legs.void} void) · predicted ${(report.legs.predicted * 100).toFixed(1)}% · actual ${(report.legs.actual * 100).toFixed(1)}% · Brier ${report.legs.brier}`);
+if (report.legs.brierRaw != null)
+  say(`  before the measured correction: said ${(report.legs.predictedRaw * 100).toFixed(1)}% · Brier ${report.legs.brierRaw} ` +
+      `(the correction ${report.legs.brier < report.legs.brierRaw ? "helps" : "HURTS — take it out"})`);
 say("\n── by grade ────────────────────────────────────────────");
 byGrade.forEach(g => say(`  ${g.key.padEnd(2)} n=${String(g.n).padStart(4)}  predicted ${(g.predicted * 100).toFixed(1)}%  actual ${(g.actual * 100).toFixed(1)}%  ${g.edge >= 0 ? "+" : ""}${(g.edge * 100).toFixed(1)}`));
 if (mono) say(`  order held in ${mono.inOrder} of ${mono.pairs} adjacent pairs`);

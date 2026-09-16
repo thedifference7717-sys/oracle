@@ -294,6 +294,29 @@ const CFG = {
   // does. Bounded to half and double the base, the same rule the baseball
   // engine uses — it may shade a number, never invent one.
   rhoEnvGain: 0.35,
+  // MEASURED, and the measurement is humbling. Across 236 graded doubles in the
+  // 2026 backtest the realised joint was 57.2%, while the legs inside those
+  // doubles cashed 75.6% apiece — and 0.756^2 is 57.2%. The correlation this
+  // table asserts did not show up at all. It is not refuted either: the standard
+  // error on 236 pairs is about three points and the lift being claimed was 1.4,
+  // so the honest statement is that the effect is smaller than this board can
+  // yet see. The table is halved rather than deleted, and re-measured on every
+  // backtest run.
+  rhoScale: 0.5,
+  // Over-dispersion, measured on 3,640 graded legs: the probabilities are too
+  // SPREAD OUT. The model said 62.6% where 65.7% happened and said 82.3% where
+  // 80.2% did — under-confident in the middle, over-confident at both ends.
+  // Shrinking 15% toward the middle cuts the error in every band, most of all
+  // at the top, which is exactly where this board does its betting.
+  calib: { centre: 0.70, k: 0.85 },
+  // And a haircut on a PAIR specifically. Choosing the best-scoring two legs in
+  // a game selects for legs whose numbers are flattered — the maximum of many
+  // estimates carries the optimism of all of them — and the backtest sees it:
+  // after the calibration above there are still about four points between what
+  // a double is priced at and what one does. The haircut is deliberately
+  // smaller than the gap, because one season is one season and a correction
+  // fitted tightly to it would be the same mistake wearing a lab coat.
+  pairShrink: 0.95,
   // Grading. These are the published weights; they are what the card shows,
   // and they sum to a hundred so the number on the card is the number.
   // Six, not seven. There was a "cushion" component here scoring how far the
@@ -1069,6 +1092,14 @@ const gradeOf = s => GRADES.find(g => s >= g.at) || GRADES[GRADES.length - 1];
 
 const frac = (v, full) => clamp(v / full, 0, 1);
 
+// The measured correction, applied to every probability this model publishes.
+// Kept as one function so the board, the alerter and the backtest cannot end up
+// running three different versions of the same apology.
+function calibrate(p) {
+  const C = CFG.calib;
+  return clamp(C.centre + C.k * (p - C.centre), 0.02, 0.98);
+}
+
 function scoreLeg(leg) {
   const W = CFG.weights, parts = [];
   let earned = 0, available = 0;
@@ -1210,7 +1241,8 @@ function rhoFor(a, b, env) {
   // never invent one.
   const env_ = env ? (env.paceVsLg - 1) : 0;
   const g = 1 + CFG.rhoEnvGain * (env_ / 0.05);
-  return base >= 0 ? clamp(base * g, base * 0.5, base * 2) : clamp(base * g, base * 2, base * 0.5);
+  const scaled = base * CFG.rhoScale;
+  return scaled >= 0 ? clamp(scaled * g, scaled * 0.5, scaled * 2) : clamp(scaled * g, scaled * 2, scaled * 0.5);
 }
 
 // The best pair in one game. Every combination is enumerated rather than
@@ -1229,7 +1261,7 @@ function bestDouble(legs, env, opts) {
     if (opts.onlyTeam && a.teamId !== b.teamId) continue;
     const rho = rhoFor(a, b, env);
     const naive = a.p * b.p;
-    const prob = jointProb(a.p, b.p, rho);
+    const prob = clamp(jointProb(a.p, b.p, rho) * CFG.pairShrink, 1e-4, 1 - 1e-4);
     const sc = scorePair(a, b, prob, naive);
     out.push({ a, b, rho, prob, naive, lift: prob - naive, score: sc, samePlayer, sameTeam: a.teamId === b.teamId });
   }
@@ -1505,6 +1537,9 @@ async function buildBoard(o) {
       if (!(mean > 0.8)) return;                          // not a market anyone hangs a line on
       const sp = spread(mk.key, mean, log, { tpa: pr.tpa });
       const lad = ladderLines(mk.key, mean, sp, { tpa: pr.tpa });
+      // Every rung carries the measured correction from here on, so the grade,
+      // the line choice, the fair price and the ladder all read the same number.
+      lad.rungs.forEach(r => { r.raw = r.p; r.p = calibrate(r.p); });
       // Every rung this man could be bet at, graded, best one kept. `target` is
       // a FLOOR now rather than the thing being solved for — publish nothing
       // less likely than you asked for — and pCeil drops the tails no book
@@ -1537,6 +1572,7 @@ async function buildBoard(o) {
           b2b: playedOn(log, yest), hasLog: !!log, form: formAt(r.line),
           spreadHome: c.g.spreadHome, total: c.g.total, env: c.env
         };
+        leg.pRaw = r.raw != null ? r.raw : r.p;   // before the measured correction
         leg.score = scoreLeg(leg);
         return leg;
       };
@@ -1603,7 +1639,7 @@ return {
   loadSummary, loadInjuries,
   loadGamelog, parseGamelog, leagueFrom, injuryWeight, minutesTag,
   gameEnv, defFactor, projectMinutes, projectPlayer, spread, overProb, ladderLines, etDayOf,
-  scoreLeg, scorePair, gradeOf, rhoFor, bestDouble,
+  scoreLeg, scorePair, gradeOf, rhoFor, bestDouble, calibrate,
   parseBoxScore, loadBoxScore, settle,
   ladder, ladderRisk, buildBoard, clearCache
 };
