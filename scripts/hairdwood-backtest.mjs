@@ -100,9 +100,14 @@ for (const day of dates()) {
     if (!res) continue;
     settled++;
     if (res.status === "won") hit++;
+    // Minutes actually played, beside minutes projected. Every projection in
+    // this model is a rate times a minute count, so four markets coming in low
+    // together is a question about the count before it is a question about any
+    // of the rates.
+    const playedMin = res.min == null ? null : res.min;
     legs.push({ day, player: l.pl.name, market: l.market, line: l.line,
                 p: +l.p.toFixed(4), pRaw: l.pRaw != null ? +l.pRaw.toFixed(4) : null,
-                sd: +l.sd.toFixed(3),
+                sd: +l.sd.toFixed(3), projMin: +l.mins.minutes.toFixed(1), playedMin,
                 score: l.score.score, grade: l.score.grade,
                 proj: +l.mean.toFixed(2), min: +l.mins.minutes.toFixed(1),
                 hasLog: l.hasLog, status: res.status, actual: res.actual });
@@ -193,8 +198,14 @@ const projection = {};
   // Where the line sits relative to the projection, in that market's own noise:
   // the bias a wrong mean produces depends on how far down the line is.
   const z = mean(rows, r => (r.proj - r.line) / Math.max(0.01, r.sd || 1));
+  const withMin = rows.filter(r => r.playedMin > 0);
   projection[k] = {
     n: rows.length,
+    minutes: withMin.length >= 30 ? {
+      projected: round(mean(withMin, r => r.projMin), 2),
+      played: round(mean(withMin, r => r.playedMin), 2),
+      bias: round(mean(withMin, r => r.projMin) / Math.max(0.01, mean(withMin, r => r.playedMin)) - 1, 4)
+    } : null,
     projected: round(mProj, 2), actual: round(mAct, 2),
     bias: round(mProj / Math.max(0.01, mAct) - 1, 4),
     meanLine: round(mean(rows, r => r.line), 2),
@@ -281,7 +292,8 @@ Object.keys(projection).forEach(k => {
   const q = projection[k];
   say(`  ${k.toUpperCase()} n=${String(q.n).padStart(4)}  projected ${String(q.projected).padStart(5)} · actual ${String(q.actual).padStart(5)} ` +
       `(${q.bias >= 0 ? "+" : ""}${(q.bias * 100).toFixed(1)}%) · line ${q.meanLine} sits ${q.lineZ} sd below · ` +
-      `said ${(q.said * 100).toFixed(1)}% hit ${(q.hit * 100).toFixed(1)}%`);
+      `said ${(q.said * 100).toFixed(1)}% hit ${(q.hit * 100).toFixed(1)}%` +
+      (q.minutes ? ` · minutes ${q.minutes.projected} vs ${q.minutes.played} (${q.minutes.bias >= 0 ? "+" : ""}${(q.minutes.bias * 100).toFixed(1)}%)` : ""));
 });
 say("\n── by market ───────────────────────────────────────────");
 byMarket.forEach(g => say(`  ${g.key.toUpperCase()} n=${String(g.n).padStart(4)}  predicted ${(g.predicted * 100).toFixed(1)}%  actual ${(g.actual * 100).toFixed(1)}%  ${g.edge >= 0 ? "+" : ""}${(g.edge * 100).toFixed(1)}`));

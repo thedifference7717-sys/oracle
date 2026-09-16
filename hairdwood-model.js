@@ -272,13 +272,13 @@ function evaluate(p, american) {
 // before a man's own per-minute rate outweighs the positional prior; rebounds
 // stabilise fastest (a 7-footer rebounds), assists slowest (role changes).
 const MARKETS = [
-  { key: "pts", label: "Points",      short: "PTS", cv: 0.400, stab: 220, max: 70 },
-  { key: "reb", label: "Rebounds",    short: "REB", cv: 0.205, stab: 180, max: 30 },
-  { key: "ast", label: "Assists",     short: "AST", cv: 0.270, stab: 300, max: 22 },
+  { key: "pts", label: "Points",      short: "PTS", vmr: 3.19, cv: 0, stab: 220, max: 70 },
+  { key: "reb", label: "Rebounds",    short: "REB", vmr: 1.28, cv: 0, stab: 180, max: 30 },
+  { key: "ast", label: "Assists",     short: "AST", vmr: 1.29, cv: 0, stab: 300, max: 22 },
   // cvAtt is the one that matters for threes: 3-point ATTEMPTS swing about
   // 28% game to game, and the makes inherit that dispersion through the
   // binomial. cv is only the fallback for a man whose attempts we do not have.
-  { key: "tpm", label: "Threes made", short: "3PM", cv: 0.30,  stab: 260, max: 14, cvAtt: 0.28 }
+  { key: "tpm", label: "Threes made", short: "3PM", vmr: 1.21, cv: 0, stab: 260, max: 14 }
 ];
 const MKT = {}; MARKETS.forEach(m => { MKT[m.key] = m; });
 
@@ -1059,7 +1059,7 @@ function spread(key, mean, log, extra) {
   // plainly rather than pretending otherwise — what separates those two shooters
   // on this board is not the family, it is the blended term below: their own
   // observed game-to-game spread, which is measured and does differ.
-  const c = (key === "tpm" && extra && extra.tpa > 0) ? MKT.tpm.cvAtt : cv;
+  const c = cv;
   // Var = vmr*mean + (cv*mean)^2. The first term is the Fano factor — the part
   // that scales with the count itself — and it is not 1 for every market: a
   // rebound is a bounded opportunity (one per missed shot) and comes out
@@ -1096,17 +1096,11 @@ function spread(key, mean, log, extra) {
 function overProb(key, mean, sp, line, extra) {
   if (!(mean > 0)) return 0;
   const need = Math.floor(line) + 1;
-  if (key === "tpm") {
-    // Summed over the attempt distribution rather than assumed: the arithmetic
-    // comes out at a negative binomial either way, but this is where the
-    // dispersion is actually derived from, and it stays right if the attempt
-    // model is ever given a shape of its own.
-    const att = Math.max(0.2, (extra && extra.tpa) || mean / 0.36);
-    const q = clamp(mean / att, 0.05, 0.75);
-    const cvA = MKT.tpm.cvAtt * (sp && sp.ratio ? sp.ratio : 1);
-    const k = 1 / Math.max(1e-4, cvA * cvA);
-    return clamp(compoundAtLeast(att, k, q, need), 0, 1);
-  }
+  // All four markets go the same way now. Threes used to take a compound
+  // binomial-on-attempts path, which was always algebraically identical to the
+  // negative binomial it was contrasted with, and which only ever existed to
+  // derive a dispersion that is now measured directly.
+  //
   // Matched on (mean, blended variance), in whichever family can hold them.
   return clamp(countAtLeast(mean, sp.sd * sp.sd, need), 0, 1);
 }
