@@ -506,6 +506,51 @@ try {
           `split-half says ${q.bestStab} minutes, model uses ${q.modelStab} (${q.players} players)`);
   });
 
+  // ── how much should the recent window count for MINUTES? ────────────────
+  // The backtest has minutes short by 2.4% and cleared every adjustment of
+  // blame: the blowout haircut is worth half a percent and the injury tag six
+  // tenths. The shortfall is in the source — season-to-date says 27.6 minutes,
+  // the last ten say 28.5, and these men played 29.2. Minutes trend upward
+  // through a season and the blend does not lean far enough forward to catch
+  // it.
+  //
+  // `minRecentW` is how far it leans, and it was chosen rather than measured.
+  // Same split-half as the rate constants: predict the back half of a season's
+  // minutes from the front half, blending the front half's overall average with
+  // its own last ten, and keep whichever weight predicts best. Zero is pure
+  // season average, one is pure recent form.
+  {
+    const grid = [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0];
+    const err = grid.map(() => 0);
+    let used = 0;
+    Object.keys(shapeLogs).forEach(id => {
+      const L = shapeLogs[id];
+      if (!L || L.played.length < 24) return;
+      const half = Math.floor(L.played.length / 2);
+      const older = L.played.slice(half), newer = L.played.slice(0, half);
+      if (older.length < 12 || newer.length < 12) return;
+      const seasonAvg = older.reduce((a, r) => a + r.min, 0) / older.length;
+      const last10 = older.slice(0, 10).reduce((a, r) => a + r.min, 0) / Math.min(10, older.length);
+      const actual = newer.reduce((a, r) => a + r.min, 0) / newer.length;
+      used++;
+      grid.forEach((w, i) => {
+        const pred = (1 - w) * seasonAvg + w * last10;
+        err[i] += (pred - actual) * (pred - actual);
+      });
+    });
+    if (used >= 10) {
+      let best = 0;
+      err.forEach((e, i) => { if (e < err[best]) best = i; });
+      // The bias each weight leaves behind matters as much as the error: a
+      // weight can predict well on average and still sit low every time.
+      report.minutesWeight = { players: used, bestW: grid[best], modelW: M.CFG.minRecentW,
+                               curve: grid.map((w, i) => [w, +(Math.sqrt(err[i] / used)).toFixed(3)]) };
+      check("minutes recency weight", Math.abs(grid[best] - M.CFG.minRecentW) <= 0.2 ? true : "warn",
+            `split-half says ${grid[best]}, model uses ${M.CFG.minRecentW} (${used} players, rmse ` +
+            report.minutesWeight.curve.map(([w, e]) => `${w}:${e}`).join(" ") + ")");
+    }
+  }
+
   // ── does the projection track what happens? ──────────────────────────────
   // The backtest found rebounds hitting 99.1% against a predicted 70.0%, on a
   // quarter as many legs as the other markets. A hit rate that far above its
