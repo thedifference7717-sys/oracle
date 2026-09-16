@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T04:15:05.774Z",
+  "at": "2026-09-16T04:18:09.029Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -303,8 +303,8 @@
         "startDate",
         "broadcast",
         "geoBroadcasts",
-        "highlights",
-        "headlines"
+        "headlines",
+        "highlights"
       ],
       "oddsKeys": [],
       "oddsSample": null,
@@ -755,10 +755,10 @@
         "odds",
         "againstTheSpread",
         "news",
-        "header",
-        "plays",
         "article",
         "videos",
+        "plays",
+        "header",
         "wallclockAvailable",
         "winprobability",
         "meta",
@@ -1906,7 +1906,7 @@
     },
     "top": [
       {
-        "grade": "B+",
+        "grade": "A",
         "score": 77,
         "player": "Marcus Smart",
         "pos": "G",
@@ -1921,7 +1921,7 @@
         "form": "8/10"
       },
       {
-        "grade": "B+",
+        "grade": "A",
         "score": 76.4,
         "player": "Andrew Wiggins",
         "pos": "F",
@@ -1936,7 +1936,7 @@
         "form": "9/10"
       },
       {
-        "grade": "B+",
+        "grade": "A",
         "score": 76.4,
         "player": "Payton Pritchard",
         "pos": "G",
@@ -1951,7 +1951,7 @@
         "form": "9/10"
       },
       {
-        "grade": "B+",
+        "grade": "A",
         "score": 76,
         "player": "Devin Vassell",
         "pos": "G",
