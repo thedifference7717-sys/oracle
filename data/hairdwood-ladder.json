@@ -1,0 +1,19 @@
+{
+  "v": 1,
+  "note": "HAIrdwood's ladder record. One row per rung, chronological, written the day the rung is placed — before tip-off — so the record is timestamped in the repo rather than asserted after the fact. Empty means the ladder has not started; the board then shows rung one off the seed.",
+  "fields": {
+    "date": "slate date, YYYY-MM-DD (the basketball day rolls at 6am ET)",
+    "pick": "player name as published",
+    "market": "pts | reb | ast | tpm",
+    "line": "the half-point line the bet was written at",
+    "p": "our probability that the line was cleared, at publish time",
+    "score": "the HAIrdwood grade the pick carried",
+    "price": "American odds actually taken",
+    "stake": "what was risked, if it differed from the replayed stake",
+    "status": "open | won | lost | void  (void = did not play: stake returned, same rung re-runs)",
+    "teams": "matchup, for display",
+    "published": "ISO timestamp the rung was committed",
+    "firstTip": "ISO timestamp of the slate's first tip"
+  },
+  "bets": []
+}

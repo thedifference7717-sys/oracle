@@ -1,0 +1,2215 @@
+{
+  "at": "2026-09-16T04:18:09.029Z",
+  "day": "2026-01-15",
+  "checks": [
+    {
+      "name": "scoreboard returns a slate",
+      "state": "PASS",
+      "detail": "9 events"
+    },
+    {
+      "name": "loadSlate resolves the season",
+      "state": "PASS",
+      "detail": "loadSlate says 2026, seasonOf() says 2026, top-level=undefined, leagues[0]=2026"
+    },
+    {
+      "name": "parseEvent reads every event",
+      "state": "PASS",
+      "detail": "9 of 9"
+    },
+    {
+      "name": "teams carry abbreviations",
+      "state": "PASS",
+      "detail": "MEM @ ORL"
+    },
+    {
+      "name": "games carry a posted total",
+      "state": "WARN",
+      "detail": "0/9 have a total, 0 have a spread"
+    },
+    {
+      "name": "byteam returns the league",
+      "state": "PASS",
+      "detail": "30 teams"
+    },
+    {
+      "name": "team scoring parsed",
+      "state": "PASS",
+      "detail": "30 teams over 90 ppg · sample ATL 118.5"
+    },
+    {
+      "name": "possessions parsed",
+      "state": "PASS",
+      "detail": "sample pace 103.9"
+    },
+    {
+      "name": "opponent splits present",
+      "state": "PASS",
+      "detail": "30 teams carry an opponent split"
+    },
+    {
+      "name": "league baselines measured",
+      "state": "PASS",
+      "detail": "pace 101.8 · 115.6 ppg · 13.3 3pm · 3P% 36.0"
+    },
+    {
+      "name": "every sort key is accepted",
+      "state": "PASS",
+      "detail": "all five"
+    },
+    {
+      "name": "byathlete returns a player pool",
+      "state": "PASS",
+      "detail": "401 players"
+    },
+    {
+      "name": "minutes parsed",
+      "state": "PASS",
+      "detail": "401/401 over 5 mpg · top Tyrese Maxey 38"
+    },
+    {
+      "name": "points parsed",
+      "state": "PASS",
+      "detail": "211 over 10 ppg"
+    },
+    {
+      "name": "rebounds parsed",
+      "state": "PASS",
+      "detail": "126 over 5 rpg"
+    },
+    {
+      "name": "assists parsed",
+      "state": "PASS",
+      "detail": "71 over 4 apg"
+    },
+    {
+      "name": "threes parsed",
+      "state": "PASS",
+      "detail": "145 over 1.5 3pm"
+    },
+    {
+      "name": "3P% parsed",
+      "state": "PASS",
+      "detail": "sample 0.317"
+    },
+    {
+      "name": "attempts parsed (threes need them)",
+      "state": "PASS",
+      "detail": "313 over 2 3pa"
+    },
+    {
+      "name": "positions parsed",
+      "state": "PASS",
+      "detail": "F, C, G, PG, PF"
+    },
+    {
+      "name": "team ids parsed",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "roster parsed",
+      "state": "PASS",
+      "detail": "19 players on ORL"
+    },
+    {
+      "name": "injury report parsed",
+      "state": "PASS",
+      "detail": "8 entries"
+    },
+    {
+      "name": "summary carries the market's number",
+      "state": "PASS",
+      "detail": "total 227.5, spreadHome -5.5 (DraftKings: ORL -5.5)"
+    },
+    {
+      "name": "box score parsed",
+      "state": "PASS",
+      "detail": "20 played, 6 DNP"
+    },
+    {
+      "name": "box score carries all four markets",
+      "state": "PASS",
+      "detail": "Kentavious Caldwell-Pope: 14 min, 0 pts, 2 reb, 2 ast, 0 3pm"
+    },
+    {
+      "name": "settlement grades a real line",
+      "state": "PASS",
+      "detail": "Jaren Jackson Jr. scored 30: o28.5 -> won, o31.5 -> lost"
+    },
+    {
+      "name": "a DNP voids rather than loses",
+      "state": "PASS",
+      "detail": "Brandon Clarke -> void"
+    },
+    {
+      "name": "game log parsed",
+      "state": "PASS",
+      "detail": "89 games played, 0 DNP — Tyrese Maxey"
+    },
+    {
+      "name": "game log carries minutes",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "game log carries points",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "game log carries threes",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "game log carries rebounds",
+      "state": "PASS",
+      "detail": "86/89 games with a rebound — a rotation player who never rebounds is a parse failure, not a player"
+    },
+    {
+      "name": "game log carries assists",
+      "state": "PASS",
+      "detail": "88/89 games with an assist"
+    },
+    {
+      "name": "game log carries three-point attempts",
+      "state": "PASS",
+      "detail": "the 3PM spread is derived from attempts, so a missing column silently changes the distribution"
+    },
+    {
+      "name": "a line rebuilt from the log matches the season feed",
+      "state": "PASS",
+      "detail": "mpg 36.52 vs 38, pts 26.53 vs 28.3, reb 3.94 vs 4.1, ast 6.18 vs 6.6, tpm 2.91 vs 3.1 — worst off by 6%"
+    },
+    {
+      "name": "game log carries dates",
+      "state": "PASS",
+      "detail": "newest 2026-05-10T19:30:00.000+00:00 -> ET day 2026-05-10"
+    },
+    {
+      "name": "board builds",
+      "state": "PASS",
+      "detail": "557 graded props from 9 games"
+    },
+    {
+      "name": "board is not degraded",
+      "state": "PASS",
+      "detail": "every feed answered"
+    },
+    {
+      "name": "projections are sane",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "minutes are sane",
+      "state": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "all four markets priced",
+      "state": "PASS",
+      "detail": "{\"tpm\":125,\"reb\":144,\"ast\":144,\"pts\":144}"
+    },
+    {
+      "name": "lines are not all minimums",
+      "state": "PASS",
+      "detail": "110/557 legs sit on the 0.5 line"
+    },
+    {
+      "name": "published prices are bettable",
+      "state": "PASS",
+      "detail": "median leg 70% (fair -230)"
+    },
+    {
+      "name": "nothing unbettable is published",
+      "state": "PASS",
+      "detail": "shortest leg 83% (fair -484), ceiling 92%"
+    },
+    {
+      "name": "TPM projections track the box score",
+      "state": "PASS",
+      "detail": "projected 1.98 vs actual 1.83 (+8%), lines average 0.95, said 72% hit 63% on 71"
+    },
+    {
+      "name": "REB projections track the box score",
+      "state": "PASS",
+      "detail": "projected 5.3 vs actual 5.17 (+3%), lines average 3.85, said 70% hit 62% on 82"
+    },
+    {
+      "name": "AST projections track the box score",
+      "state": "PASS",
+      "detail": "projected 3.67 vs actual 3.33 (+10%), lines average 2.44, said 71% hit 59% on 82"
+    },
+    {
+      "name": "PTS projections track the box score",
+      "state": "PASS",
+      "detail": "projected 15.33 vs actual 13.07 (+17%), lines average 12.2, said 68% hit 50% on 82"
+    },
+    {
+      "name": "no market is starved of legs",
+      "state": "PASS",
+      "detail": "{\"tpm\":125,\"reb\":144,\"ast\":144,\"pts\":144}"
+    },
+    {
+      "name": "game logs reached the legs",
+      "state": "PASS",
+      "detail": "352/557 legs carry a log"
+    },
+    {
+      "name": "the board ends up with posted totals",
+      "state": "PASS",
+      "detail": "9/9 games priced after the summary fill-in"
+    },
+    {
+      "name": "defences differ from each other",
+      "state": "PASS",
+      "detail": "if every defence reads 1.000 the opponent split is not being parsed"
+    },
+    {
+      "name": "projections move off the season average",
+      "state": "PASS",
+      "detail": "median move 6.4%"
+    }
+  ],
+  "shapes": {
+    "scoreboard": {
+      "topKeys": [
+        "leagues",
+        "events",
+        "provider"
+      ],
+      "events": 9,
+      "seasonYearTopLevel": null,
+      "seasonYearUnderLeagues": 2026,
+      "competitionKeys": [
+        "id",
+        "uid",
+        "date",
+        "attendance",
+        "type",
+        "timeValid",
+        "neutralSite",
+        "conferenceCompetition",
+        "playByPlayAvailable",
+        "recent",
+        "venue",
+        "competitors",
+        "notes",
+        "status",
+        "broadcasts",
+        "format",
+        "startDate",
+        "broadcast",
+        "geoBroadcasts",
+        "headlines",
+        "highlights"
+      ],
+      "oddsKeys": [],
+      "oddsSample": null,
+      "competitorKeys": [
+        "id",
+        "uid",
+        "type",
+        "order",
+        "homeAway",
+        "winner",
+        "team",
+        "score",
+        "linescores",
+        "statistics",
+        "leaders",
+        "records"
+      ],
+      "statusType": {
+        "id": "3",
+        "name": "STATUS_FINAL",
+        "state": "post",
+        "completed": true,
+        "description": "Final",
+        "detail": "Final",
+        "shortDetail": "Final"
+      }
+    },
+    "byteam": {
+      "topKeys": [
+        "pagination",
+        "currentSeason",
+        "requestedSeason",
+        "league",
+        "teams",
+        "glossary",
+        "categories"
+      ],
+      "categories": [
+        {
+          "name": "general",
+          "names": [
+            "totalRebounds",
+            "avgRebounds",
+            "avgRebounds",
+            "teamAssistTurnoverRatio",
+            "technicalFouls",
+            "rebounds",
+            "assistTurnoverRatio",
+            "gamesPlayed",
+            "avgFouls",
+            "fouls"
+          ]
+        },
+        {
+          "name": "general"
+        },
+        {
+          "name": "defensive",
+          "names": [
+            "defensiveRebounds",
+            "avgDefensiveRebounds",
+            "avgSteals",
+            "avgBlocks",
+            "blocks",
+            "steals"
+          ]
+        },
+        {
+          "name": "defensive"
+        },
+        {
+          "name": "offensive",
+          "names": [
+            "avgPoints",
+            "fieldGoalPct",
+            "threePointFieldGoalPct",
+            "freeThrowPct",
+            "avgTurnovers",
+            "turnovers",
+            "avgFieldGoalsMade",
+            "avgFieldGoalsAttempted",
+            "avgThreePointFieldGoalsMade",
+            "avgThreePointFieldGoalsAttempted",
+            "avgFreeThrowsMade",
+            "avgFreeThrowsAttempted",
+            "avgOffensiveRebounds",
+            "avgAssists",
+            "points",
+            "fieldGoalsMade",
+            "fieldGoalsAttempted",
+            "threePointFieldGoalsMade",
+            "threePointFieldGoalsAttempted",
+            "freeThrowsMade",
+            "freeThrowsAttempted",
+            "offensiveRebounds",
+            "assists",
+            "offensiveReboundPct",
+            "scoringEfficiency",
+            "shootingEfficiency",
+            "threePointPct"
+          ]
+        },
+        {
+          "name": "offensive"
+        },
+        {
+          "name": "differential",
+          "names": [
+            "avgPointsDifferential",
+            "avgFieldGoalsMadeDifferential",
+            "avgFieldGoalsAttemptedDifferential",
+            "avgThreePointFieldGoalsMadeDifferential",
+            "avgThreePointFieldGoalsAttemptedDifferential",
+            "avgFreeThrowsMadeDifferential",
+            "avgFreeThrowsAttemptedDifferential",
+            "avgTurnoversDifferential",
+            "avgReboundsDifferential",
+            "pointsDifferential",
+            "fieldGoalsMadeDifferential",
+            "fieldGoalsAttemptedDifferential",
+            "threePointFieldGoalsMadeDifferential",
+            "threePointFieldGoalsAttemptedDifferential",
+            "freeThrowsMadeDifferential",
+            "freeThrowsAttemptedDifferential",
+            "turnoversDifferential",
+            "reboundsDifferential",
+            "freeThrowPctDifferential",
+            "scoringEfficiencyDifferential",
+            "shootingEfficiencyDifferential",
+            "fieldGoalPctDifferential",
+            "threePointFieldGoalPctDifferential",
+            "avgOffensiveReboundsDifferential",
+            "avgDefensiveReboundsDifferential",
+            "avgAssistsDifferential",
+            "avgStealsDifferential",
+            "avgBlocksDifferential",
+            "avgFoulsDifferential"
+          ]
+        }
+      ],
+      "teamCount": 30,
+      "teamCategorySample": [
+        {
+          "name": "general",
+          "splitId": "0",
+          "totals": [
+            "3606",
+            "44.0",
+            "44.0",
+            "40.3",
+            "92",
+            "3606"
+          ]
+        },
+        {
+          "name": "general",
+          "splitId": "900",
+          "totals": [
+            "3512",
+            "42.8",
+            "42.8",
+            "49.0",
+            "96",
+            "3512"
+          ]
+        },
+        {
+          "name": "defensive",
+          "splitId": "0",
+          "totals": [
+            "2805",
+            "34.2",
+            "6.8",
+            "4.0",
+            "325",
+            "560"
+          ]
+        },
+        {
+          "name": "defensive",
+          "splitId": "900",
+          "totals": [
+            "2590",
+            "31.6",
+            "7.8",
+            "4.6",
+            "380",
+            "642"
+          ]
+        },
+        {
+          "name": "offensive",
+          "splitId": "0",
+          "totals": [
+            "122.1",
+            "49.6",
+            "39.6",
+            "80.8",
+            "12.2",
+            "998"
+          ]
+        },
+        {
+          "name": "offensive",
+          "splitId": "900",
+          "totals": [
+            "116.9",
+            "46.8",
+            "34.9",
+            "77.1",
+            "11.2",
+            "920"
+          ]
+        },
+        {
+          "name": "differential",
+          "totals": [
+            "+5.1",
+            "+0.8",
+            "-3.4",
+            "+0.5",
+            "-3.3",
+            "+3.0"
+          ]
+        }
+      ]
+    },
+    "league": {
+      "measured": true,
+      "n": 30,
+      "pace": 101.83226666666668,
+      "pts": 115.60666666666665,
+      "reb": 43.76333333333333,
+      "ast": 26.733333333333334,
+      "tpm": 13.3,
+      "tpa": 36.97666666666667,
+      "tpPct": 0.35968628865050034,
+      "total": 231.2133333333333
+    },
+    "byathlete": {
+      "topKeys": [
+        "pagination",
+        "league",
+        "athletes",
+        "currentSeason",
+        "requestedSeason",
+        "glossary",
+        "categories"
+      ],
+      "categories": [
+        {
+          "name": "general",
+          "names": [
+            "gamesPlayed",
+            "avgMinutes",
+            "avgFouls",
+            "flagrantFouls",
+            "technicalFouls",
+            "ejections",
+            "doubleDouble",
+            "tripleDouble",
+            "minutes",
+            "rebounds",
+            "fouls",
+            "avgRebounds"
+          ]
+        },
+        {
+          "name": "offensive",
+          "names": [
+            "avgPoints",
+            "avgFieldGoalsMade",
+            "avgFieldGoalsAttempted",
+            "fieldGoalPct",
+            "avgThreePointFieldGoalsMade",
+            "avgThreePointFieldGoalsAttempted",
+            "threePointFieldGoalPct",
+            "avgFreeThrowsMade",
+            "avgFreeThrowsAttempted",
+            "freeThrowPct",
+            "avgAssists",
+            "avgTurnovers",
+            "points",
+            "fieldGoalsMade",
+            "fieldGoalsAttempted",
+            "threePointFieldGoalsMade",
+            "threePointFieldGoalsAttempted",
+            "freeThrowsMade",
+            "freeThrowsAttempted",
+            "assists",
+            "turnovers"
+          ]
+        },
+        {
+          "name": "defensive",
+          "names": [
+            "avgSteals",
+            "avgBlocks",
+            "steals",
+            "blocks"
+          ]
+        }
+      ],
+      "athleteCount": 100,
+      "athleteKeys": [
+        "athlete",
+        "categories"
+      ],
+      "athleteSample": {
+        "athlete": [
+          "id",
+          "uid",
+          "guid",
+          "type",
+          "firstName",
+          "lastName",
+          "displayName",
+          "shortName",
+          "debutYear",
+          "links",
+          "headshot",
+          "position",
+          "status",
+          "age",
+          "teamName",
+          "teamShortName",
+          "teams",
+          "slug",
+          "teamId",
+          "teamUId",
+          "teamLogos"
+        ],
+        "categories": [
+          {
+            "name": "general",
+            "totals": [
+              "64",
+              "35.8",
+              "2.4",
+              "0",
+              "17",
+              "0",
+              "34",
+              "8"
+            ]
+          },
+          {
+            "name": "offensive",
+            "totals": [
+              "33.5",
+              "10.8",
+              "22.8",
+              "47.6",
+              "4.0",
+              "10.8",
+              "36.6",
+              "7.9"
+            ]
+          },
+          {
+            "name": "defensive",
+            "totals": [
+              "1.6",
+              "0.5",
+              "105",
+              "34"
+            ]
+          }
+        ]
+      }
+    },
+    "sortKeys": {
+      "offensive.avgPoints": {
+        "ok": true,
+        "n": 5,
+        "top": "Luka Doncic"
+      },
+      "general.avgMinutes": {
+        "ok": true,
+        "n": 5,
+        "top": "Tyrese Maxey"
+      },
+      "general.avgRebounds": {
+        "ok": true,
+        "n": 5,
+        "top": "Nikola Jokic"
+      },
+      "offensive.avgAssists": {
+        "ok": true,
+        "n": 5,
+        "top": "Nikola Jokic"
+      },
+      "offensive.avgThreePointFieldGoalsMade": {
+        "ok": true,
+        "n": 5,
+        "top": "Stephen Curry"
+      }
+    },
+    "roster": {
+      "topKeys": [
+        "timestamp",
+        "status",
+        "season",
+        "athletes",
+        "coach",
+        "team"
+      ],
+      "groupKeys": [
+        "id",
+        "uid",
+        "guid",
+        "alternateIds",
+        "firstName",
+        "lastName",
+        "fullName",
+        "displayName",
+        "shortName",
+        "weight",
+        "displayWeight",
+        "height",
+        "displayHeight",
+        "age",
+        "dateOfBirth",
+        "links",
+        "birthPlace",
+        "college",
+        "slug",
+        "headshot",
+        "jersey",
+        "position",
+        "injuries",
+        "contracts",
+        "experience",
+        "contract",
+        "status"
+      ]
+    },
+    "summary": {
+      "topKeys": [
+        "boxscore",
+        "format",
+        "gameInfo",
+        "leaders",
+        "seasonseries",
+        "injuries",
+        "broadcasts",
+        "pickcenter",
+        "odds",
+        "againstTheSpread",
+        "news",
+        "article",
+        "videos",
+        "plays",
+        "header",
+        "wallclockAvailable",
+        "winprobability",
+        "meta",
+        "standings"
+      ],
+      "hasInjuries": true,
+      "injurySample": {
+        "teamKeys": [
+          "id",
+          "uid",
+          "displayName",
+          "abbreviation",
+          "links",
+          "logo",
+          "logos"
+        ],
+        "entry": {
+          "status": "Day-To-Day",
+          "date": "2026-09-02T16:17Z",
+          "athlete": {
+            "id": "4566434",
+            "uid": "s:40~l:46~a:4566434",
+            "guid": "a585c182-99b5-3f9f-97ec-4382128e8e9f",
+            "lastName": "Wagner",
+            "fullName": "Franz Wagner",
+            "displayName": "Franz Wagner",
+            "shortName": "F. Wagner",
+            "links": [
+              {
+                "rel": [
+                  "playercard",
+                  "desktop",
+                  "athlete"
+                ],
+                "href": "https://www.espn.com/nba/player/_/id/4566434/franz-wagner",
+                "text": "Player Card"
+              }
+            ],
+            "headshot": {
+              "href": "https://a.espncdn.com/i/headshots/nba/players/full/4566434.png",
+              "alt": "Franz Wagner"
+            },
+            "jersey": "22",
+            "position": {
+              "name": "Forward",
+              "displayName": "Forward",
+              "abbreviation": "F"
+            },
+            "collegeAthlete": {
+              "$ref": "http://sports.core.api.espn.pvt/v2/sports/basketball/leagues/mens-college-basketball/athletes/4566434?lang=en&region=us"
+            },
+            "status": {
+              "id": "1",
+              "name": "Active",
+              "type": "active",
+              "abbreviation": "Active"
+            }
+          },
+          "type": {
+            "id": "6",
+            "name": "INJURY_STATUS_DAYTODAY",
+            "description": "day-to-day",
+            "abbreviation": "DD"
+          },
+          "details": {
+            "fantasyStatus": {
+              "description": "GTD",
+              "abbreviation": "GTD",
+              "displayDescription": "GTD"
+            },
+            "type": "Calf",
+            "location": "Leg",
+            "detail": "Strain",
+            "side": "Right",
+            "returnDate": "2026-10-01"
+          }
+        }
+      },
+      "pickcenterKeys": [
+        "provider",
+        "details",
+        "overUnder",
+        "spread",
+        "overOdds",
+        "underOdds",
+        "awayTeamOdds",
+        "homeTeamOdds",
+        "links",
+        "moneyline",
+        "pointSpread",
+        "total",
+        "link",
+        "header",
+        "footer"
+      ],
+      "pickcenterSample": {
+        "provider": {
+          "id": "100",
+          "name": "DraftKings",
+          "priority": 1,
+          "logos": [
+            {
+              "href": "https://a.espncdn.com/i/betting/Draftkings_Light.svg",
+              "rel": [
+                "light"
+              ]
+            },
+            {
+              "href": "https://a.espncdn.com/i/betting/Draftkings_Dark.svg",
+              "rel": [
+                "dark"
+              ]
+            }
+          ]
+        },
+        "details": "ORL -5.5",
+        "overUnder": 227.5,
+        "spread": -5.5,
+        "overOdds": -108,
+        "underOdds": -112,
+        "awayTeamOdds": {
+          "favorite": false,
+          "underdog": true,
+          "moneyLine": 190,
+          "spreadOdds": -112,
+          "team": {
+            "$ref": "http://sports.core.api.espn.pvt/v2/sports/basketball/leagues/nba/seasons/2026/teams/29?lang=en&region=us"
+          },
+          "teamId": "29",
+          "favoriteAtOpen": false
+        },
+        "homeTeamOdds": {
+          "favorite": true,
+          "underdog": false,
+          "moneyLine": -230,
+          "spreadOdds": -108,
+          "team": {
+            "$ref": "http://sports.core.api.espn.pvt/v2/sports/basketball/leagues/nba/seasons/2026/teams/19?lang=en&region=us"
+          },
+          "teamId": "19",
+          "favoriteAtOpen": true
+        },
+        "links": [
+          {
+            "language": "en-US",
+            "rel": [
+              "home",
+              "desktop",
+              "bets",
+              "draftkings"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_1",
+            "text": "Home Bet",
+            "shortText": "Home Bet",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "away",
+              "desktop",
+              "bets",
+              "draftkings"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_3",
+            "text": "Away Bet",
+            "shortText": "Away Bet",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "homeSpread",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0HC82963966N550_1",
+            "text": "Home Point Spread",
+            "shortText": "Home Point Spread",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "awaySpread",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0HC82963966P550_3",
+            "text": "Away Point Spread",
+            "shortText": "Away Point Spread",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "over",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0OU82963966O22750_1",
+            "text": "Over Odds",
+            "shortText": "Over Odds",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "under",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0OU82963966U22750_3",
+            "text": "Under Odds",
+            "shortText": "Under Odds",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "game",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703",
+            "text": "Game",
+            "shortText": "Game",
+            "isExternal": true,
+            "isPremium": false
+          }
+        ],
+        "moneyline": {
+          "displayName": "Moneyline",
+          "shortDisplayName": "ML",
+          "home": {
+            "close": {
+              "odds": "-230"
+            },
+            "open": {
+              "odds": "-180"
+            }
+          },
+          "away": {
+            "close": {
+              "odds": "+190"
+            },
+            "open": {
+              "odds": "+150"
+            }
+          }
+        },
+        "pointSpread": {
+          "displayName": "Spread",
+          "shortDisplayName": "Spread",
+          "home": {
+            "close": {
+              "line": "-5.5",
+              "odds": "-108"
+            },
+            "open": {
+              "line": "-4.5",
+              "odds": "-112"
+            }
+          },
+          "away": {
+            "close": {
+              "line": "+5.5",
+              "odds": "-112"
+            },
+            "open": {
+              "line": "+4.5",
+              "odds": "-108"
+            }
+          }
+        },
+        "total": {
+          "displayName": "Total",
+          "shortDisplayName": "Total",
+          "over": {
+            "close": {
+              "line": "o227.5",
+              "odds": "-108"
+            },
+            "open": {
+              "line": "o230.5",
+              "odds": "-110"
+            }
+          },
+          "under": {
+            "close": {
+              "line": "u227.5",
+              "odds": "-112"
+            },
+            "open": {
+              "line": "u230.5",
+              "odds": "-110"
+            }
+          }
+        },
+        "link": {
+          "text": "See More Odds",
+          "language": "en-US",
+          "rel": [
+            "main",
+            "desktop",
+            "bets"
+          ],
+          "href": "https://sportsbook.draftkings.com",
+          "isExternal": true,
+          "isPremium": false
+        },
+        "header": {
+          "logo": {
+            "dark": "https://a.espncdn.com/i/espnbet/dark/espn-bet-square-off.svg",
+            "light": "https://a.espncdn.com/i/espnbet/espn-bet-square-off.svg",
+            "exclusivesLogoDark": "https://a.espncdn.com/i/espnbet/espn-bet-square-mint.svg",
+            "exclusivesLogoLight": "https://a.espncdn.com/i/espnbet/espn-bet-square-mint.svg"
+          },
+          "text": "Game Odds"
+        },
+        "footer": {
+          "disclaimer": "GAMBLING PROBLEM? CALL 1-800-GAMBLER or 1-800-MY-RESET, (800) 327-5050 or visit gamblinghelplinema.org (MA). Call 877-8-HOPENY/text HOPENY (467369) (NY). Call 888-789-7777/visit ccpg.org (CT), or visit www.mdgamblinghelp.org (MD), 1-800-981-0023 (PR). 21+ and present in most states. (18+ DC/KY/NH/PR/WY). Void in ONT. Eligibility restrictions apply. Terms: draftkings.com/sportsbook. On behalf of Boot Hill Casino (KS). Pass-thru of per wager tax may apply in IL."
+        }
+      },
+      "boxscoreKeys": [
+        "teams",
+        "players"
+      ],
+      "boxTeamKeys": [
+        "team",
+        "statistics",
+        "displayOrder"
+      ],
+      "boxStatNames": {
+        "names": [
+          "MIN",
+          "PTS",
+          "FG",
+          "3PT",
+          "FT",
+          "REB",
+          "AST",
+          "TO",
+          "STL",
+          "BLK",
+          "OREB",
+          "DREB",
+          "PF",
+          "+/-"
+        ],
+        "keys": [
+          "minutes",
+          "points",
+          "fieldGoalsMade-fieldGoalsAttempted",
+          "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
+          "freeThrowsMade-freeThrowsAttempted",
+          "rebounds",
+          "assists",
+          "turnovers",
+          "steals",
+          "blocks",
+          "offensiveRebounds",
+          "defensiveRebounds",
+          "fouls",
+          "plusMinus"
+        ],
+        "athleteSample": {
+          "active": true,
+          "athlete": {
+            "id": "4277961",
+            "uid": "s:40~l:46~a:4277961",
+            "guid": "dbe0e9e5-0046-c414-000b-f4e629b08f5d",
+            "displayName": "Jaren Jackson Jr.",
+            "shortName": "J. Jackson Jr.",
+            "links": [
+              {
+                "rel": [
+                  "playercard",
+                  "desktop",
+                  "athlete"
+                ],
+                "href": "https://www.espn.com/nba/player/_/id/4277961/jaren-jackson-jr",
+                "text": "Player Card"
+              }
+            ],
+            "headshot": {
+              "href": "https://a.espncdn.com/i/headshots/nba/players/full/4277961.png",
+              "alt": "Jaren Jackson Jr."
+            },
+            "jersey": "8",
+            "position": {
+              "name": "Forward",
+              "displayName": "Forward",
+              "abbreviation": "F"
+            }
+          },
+          "starter": true,
+          "didNotPlay": false,
+          "reason": "COACH'S DECISION",
+          "ejected": false,
+          "stats": [
+            "33",
+            "30",
+            "12-22",
+            "3-5",
+            "3-3",
+            "3",
+            "1",
+            "4",
+            "2",
+            "2",
+            "0",
+            "3",
+            "3",
+            "-21"
+          ]
+        }
+      }
+    },
+    "boxParsed": {
+      "players": 26,
+      "played": 20,
+      "dnp": 6,
+      "sample": {
+        "dnp": false,
+        "name": "Kentavious Caldwell-Pope",
+        "min": 14,
+        "pts": 0,
+        "reb": 2,
+        "ast": 2,
+        "tpm": 0
+      }
+    },
+    "gamelog": {
+      "topKeys": [
+        "filters",
+        "labels",
+        "names",
+        "displayNames",
+        "events",
+        "seasonTypes",
+        "glossary"
+      ],
+      "names": [
+        "minutes",
+        "fieldGoalsMade-fieldGoalsAttempted",
+        "fieldGoalPct",
+        "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
+        "threePointPct",
+        "freeThrowsMade-freeThrowsAttempted",
+        "freeThrowPct",
+        "totalRebounds",
+        "assists",
+        "blocks",
+        "steals",
+        "fouls",
+        "turnovers",
+        "points"
+      ],
+      "labels": [
+        "MIN",
+        "FG",
+        "FG%",
+        "3PT",
+        "3P%",
+        "FT",
+        "FT%",
+        "REB",
+        "AST",
+        "BLK",
+        "STL",
+        "PF",
+        "TO",
+        "PTS"
+      ],
+      "seasonTypeKeys": [
+        "displayName",
+        "displayTeam",
+        "categories",
+        "summary"
+      ],
+      "eventsIsMap": true,
+      "eventSample": {
+        "id": "401809503",
+        "links": [
+          {
+            "language": "en",
+            "rel": [
+              "summary",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/game/_/gameId/401809503/celtics-76ers",
+            "text": "Gamecast",
+            "shortText": "Summary",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "summary",
+              "sportscenter",
+              "app",
+              "event"
+            ],
+            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=nba&gameId=401809503",
+            "text": "Gamecast",
+            "shortText": "Summary",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "now",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/game/_/gameId/401809503",
+            "text": "Now",
+            "shortText": "Now",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "teamstats",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/matchup?gameId=401809503",
+            "text": "Team Stats",
+            "shortText": "Team Stats",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "boxscore",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/boxscore/_/gameId/401809503",
+            "text": "Box Score",
+            "shortText": "Box Score",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "boxscore",
+              "sportscenter",
+              "app",
+              "event"
+            ],
+            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=nba&gameId=401809503",
+            "text": "Box Score",
+            "shortText": "Box Score",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "gamecast",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/game/_/gameId/401809503",
+            "text": "Gamecast",
+            "shortText": "Gamecast",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "gamecast",
+              "mobile",
+              "event"
+            ],
+            "href": "http://m.espn.com/nba/gamecast?gameId=401809503&action=summary",
+            "text": "Gamecast",
+            "shortText": "Gamecast",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "gamecast",
+              "sportscenter",
+              "app",
+              "event"
+            ],
+            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=nba&gameId=401809503",
+            "text": "Gamecast",
+            "shortText": "Gamecast",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "recap",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/recap?gameId=401809503",
+            "text": "Recap",
+            "shortText": "Recap",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "pbp",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/playbyplay/_/gameId/401809503",
+            "text": "Play-by-Play",
+            "shortText": "Play-by-Play",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "videos",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/video?gameId=401809503",
+            "text": "Videos",
+            "shortText": "Videos",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "odds",
+              "desktop",
+              "event"
+            ],
+            "href": "https://www.espn.com/nba/odds/_/gameId/401809503",
+            "text": "Odds",
+            "shortText": "Odds",
+            "isExternal": false,
+            "isPremium": false
+          },
+          {
+            "language": "en",
+            "rel": [
+              "odds",
+              "mobile",
+              "event"
+            ],
+            "href": "https://m.espn.com/nba/odds/_/gameId/401809503",
+            "text": "Odds",
+            "shortText": "Odds",
+            "isExternal": false,
+            "isPremium": false
+          }
+        ],
+        "atVs": "vs",
+        "gameDate": "2025-10-31T23:00:00.000+00:00",
+        "score": "109-108",
+        "homeTeamId": "20",
+        "awayTeamId": "2",
+        "homeTeamScore": "108",
+        "awayTeamScore": "109",
+        "gameResult": "L",
+        "opponent": {
+          "id": "2",
+          "uid": "s:40~l:46~t:2",
+          "displayName": "Boston Celtics",
+          "abbreviation": "BOS",
+          "links": [
+            {
+              "language": "en",
+              "rel": [
+                "clubhouse",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/_/name/bos/boston-celtics",
+              "text": "Clubhouse",
+              "shortText": "Clubhouse",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "roster",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics",
+              "text": "Roster",
+              "shortText": "Roster",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "roster",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:2&section=roster",
+              "text": "Roster",
+              "shortText": "Roster",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "stats",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/stats/_/name/bos/boston-celtics",
+              "text": "Statistics",
+              "shortText": "Statistics",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "stats",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:2&section=stats",
+              "text": "Statistics",
+              "shortText": "Statistics",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "schedule",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/schedule/_/name/bos",
+              "text": "Schedule",
+              "shortText": "Schedule",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "schedule",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:2&section=scores",
+              "text": "Schedule",
+              "shortText": "Schedule",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "photos",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/photos/_/name/bos",
+              "text": "photos",
+              "shortText": "photos",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "tickets",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.vividseats.com/boston-celtics-tickets--sports-nba-basketball/performer/105?wsUser=717",
+              "text": "Tickets",
+              "shortText": "Tickets",
+              "isExternal": true,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "draftpicks",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/draft/teams/_/name/bos/boston-celtics",
+              "text": "Draft Picks",
+              "shortText": "Draft Picks",
+              "isExternal": false,
+              "isPremium": true
+            },
+            {
+              "language": "en",
+              "rel": [
+                "transactions",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/transactions/_/name/bos",
+              "text": "Transactions",
+              "shortText": "Transactions",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "injuries",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/injuries/_/name/bos",
+              "text": "Injuries",
+              "shortText": "Injuries",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "depthchart",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/depth/_/name/bos",
+              "text": "Depth Chart",
+              "shortText": "Depth Chart",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "depthchart",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:2&section=depthchart",
+              "text": "Depth Chart",
+              "shortText": "Depth Chart",
+              "isExternal": false,
+              "isPremium": false
+            }
+          ],
+          "logo": "https://a.espncdn.com/i/teamlogos/nba/500/bos.png"
+        },
+        "leagueName": "National Basketball Association",
+        "leagueAbbreviation": "NBA",
+        "leagueShortName": "NBA",
+        "eventNote": "NBA Cup - Group Play",
+        "team": {
+          "id": "20",
+          "uid": "s:40~l:46~t:20",
+          "abbreviation": "PHI",
+          "links": [
+            {
+              "language": "en",
+              "rel": [
+                "clubhouse",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/_/name/phi/philadelphia-76ers",
+              "text": "Clubhouse",
+              "shortText": "Clubhouse",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "roster",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/roster/_/name/phi/philadelphia-76ers",
+              "text": "Roster",
+              "shortText": "Roster",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "roster",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:20&section=roster",
+              "text": "Roster",
+              "shortText": "Roster",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "stats",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/stats/_/name/phi/philadelphia-76ers",
+              "text": "Statistics",
+              "shortText": "Statistics",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "stats",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:20&section=stats",
+              "text": "Statistics",
+              "shortText": "Statistics",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "schedule",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/schedule/_/name/phi",
+              "text": "Schedule",
+              "shortText": "Schedule",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "schedule",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:20&section=scores",
+              "text": "Schedule",
+              "shortText": "Schedule",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "photos",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/photos/_/name/phi",
+              "text": "photos",
+              "shortText": "photos",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "tickets",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.vividseats.com/philadelphia-76ers-tickets--sports-nba-basketball/performer/668?wsUser=717",
+              "text": "Tickets",
+              "shortText": "Tickets",
+              "isExternal": true,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "draftpicks",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/draft/teams/_/name/phi/philadelphia-76ers",
+              "text": "Draft Picks",
+              "shortText": "Draft Picks",
+              "isExternal": false,
+              "isPremium": true
+            },
+            {
+              "language": "en",
+              "rel": [
+                "transactions",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/transactions/_/name/phi",
+              "text": "Transactions",
+              "shortText": "Transactions",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "injuries",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/injuries/_/name/phi",
+              "text": "Injuries",
+              "shortText": "Injuries",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "depthchart",
+                "desktop",
+                "team"
+              ],
+              "href": "https://www.espn.com/nba/team/depth/_/name/phi",
+              "text": "Depth Chart",
+              "shortText": "Depth Chart",
+              "isExternal": false,
+              "isPremium": false
+            },
+            {
+              "language": "en",
+              "rel": [
+                "depthchart",
+                "sportscenter",
+                "app",
+                "team"
+              ],
+              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~t:20&section=depthchart",
+              "text": "Depth Chart",
+              "shortText": "Depth Chart",
+              "isExternal": false,
+              "isPremium": false
+            }
+          ],
+          "logo": "https://a.espncdn.com/i/teamlogos/nba/500/phi.png",
+          "isAllStar": false
+        }
+      },
+      "statRowSample": {
+        "eventId": "401871162",
+        "stats": [
+          "33",
+          "6-16",
+          "37.5",
+          "1-7",
+          "14.3",
+          "4-6",
+          "66.7",
+          "2",
+          "4",
+          "0",
+          "0",
+          "2",
+          "2",
+          "17"
+        ]
+      }
+    },
+    "asOfRebuild": [
+      {
+        "k": "mpg",
+        "rebuilt": 36.52,
+        "feed": 38,
+        "off": 0.03903015966883505
+      },
+      {
+        "k": "pts",
+        "rebuilt": 26.53,
+        "feed": 28.3,
+        "off": 0.06261166474768742
+      },
+      {
+        "k": "reb",
+        "rebuilt": 3.94,
+        "feed": 4.1,
+        "off": 0.038092628117292304
+      },
+      {
+        "k": "ast",
+        "rebuilt": 6.18,
+        "feed": 6.6,
+        "off": 0.06367041198501866
+      },
+      {
+        "k": "tpm",
+        "rebuilt": 2.91,
+        "feed": 3.1,
+        "off": 0.061254077564334986
+      }
+    ]
+  },
+  "notes": [],
+  "board": {
+    "date": "2026-01-15",
+    "season": 2026,
+    "priorSeason": false,
+    "degraded": [],
+    "counts": {
+      "games": 9,
+      "players": 144,
+      "legs": 557,
+      "logs": 90
+    },
+    "top": [
+      {
+        "grade": "A",
+        "score": 77,
+        "player": "Marcus Smart",
+        "pos": "G",
+        "team": "HOU",
+        "opp": "OKC",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.81,
+        "proj": 1.9,
+        "min": 32.5,
+        "seasonAvg": 1.6,
+        "form": "8/10"
+      },
+      {
+        "grade": "A",
+        "score": 76.4,
+        "player": "Andrew Wiggins",
+        "pos": "F",
+        "team": "MIA",
+        "opp": "BOS",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.82,
+        "proj": 2,
+        "min": 31.3,
+        "seasonAvg": 2,
+        "form": "9/10"
+      },
+      {
+        "grade": "A",
+        "score": 76.4,
+        "player": "Payton Pritchard",
+        "pos": "G",
+        "team": "BOS",
+        "opp": "MIA",
+        "market": "reb",
+        "line": 2.5,
+        "p": 0.768,
+        "proj": 4.2,
+        "min": 33.2,
+        "seasonAvg": 3.9,
+        "form": "9/10"
+      },
+      {
+        "grade": "A",
+        "score": 76,
+        "player": "Devin Vassell",
+        "pos": "G",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "ast",
+        "line": 1.5,
+        "p": 0.78,
+        "proj": 3,
+        "min": 32.8,
+        "seasonAvg": 2.5,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74.9,
+        "player": "Julian Champagnie",
+        "pos": "F",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "ast",
+        "line": 0.5,
+        "p": 0.801,
+        "proj": 1.7,
+        "min": 29.4,
+        "seasonAvg": 1.5,
+        "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74,
+        "player": "Onyeka Okongwu",
+        "pos": "F",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.819,
+        "proj": 2,
+        "min": 31.9,
+        "seasonAvg": 1.9,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74,
+        "player": "Paolo Banchero",
+        "pos": "F",
+        "team": "ORL",
+        "opp": "MEM",
+        "market": "pts",
+        "line": 17.5,
+        "p": 0.75,
+        "proj": 24.1,
+        "min": 37,
+        "seasonAvg": 22.2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.9,
+        "player": "Ryan Rollins",
+        "pos": "G",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "ast",
+        "line": 3.5,
+        "p": 0.757,
+        "proj": 5.5,
+        "min": 32.4,
+        "seasonAvg": 5.6,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.6,
+        "player": "Jalen Johnson",
+        "pos": "F",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.783,
+        "proj": 1.7,
+        "min": 35.2,
+        "seasonAvg": 1.7,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.3,
+        "player": "De'Aaron Fox",
+        "pos": "G",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "ast",
+        "line": 4.5,
+        "p": 0.74,
+        "proj": 6.3,
+        "min": 32.4,
+        "seasonAvg": 6.2,
+        "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.2,
+        "player": "AJ Green",
+        "pos": "G",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "reb",
+        "line": 1.5,
+        "p": 0.753,
+        "proj": 3,
+        "min": 31.7,
+        "seasonAvg": 2.7,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 72.7,
+        "player": "Devin Booker",
+        "pos": "G",
+        "team": "PHX",
+        "opp": "DET",
+        "market": "pts",
+        "line": 21.5,
+        "p": 0.766,
+        "proj": 27.5,
+        "min": 37.5,
+        "seasonAvg": 26.1,
+        "form": "8/10"
+      }
+    ],
+    "doubles": [
+      {
+        "game": "BOS@MIA",
+        "grade": "B",
+        "score": 66.8,
+        "joint": 0.633,
+        "rho": 0.019,
+        "legs": [
+          "Andrew Wiggins 3PM o0.5",
+          "Neemias Queta AST o0.5"
+        ]
+      },
+      {
+        "game": "MIL@SA",
+        "grade": "B",
+        "score": 65.6,
+        "joint": 0.633,
+        "rho": 0.08,
+        "legs": [
+          "Julian Champagnie AST o0.5",
+          "De'Aaron Fox 3PM o0.5"
+        ]
+      },
+      {
+        "game": "ATL@POR",
+        "grade": "B",
+        "score": 65.5,
+        "joint": 0.65,
+        "rho": 0.12,
+        "legs": [
+          "Onyeka Okongwu 3PM o0.5",
+          "Aaron Wiggins AST o0.5"
+        ]
+      },
+      {
+        "game": "OKC@HOU",
+        "grade": "B",
+        "score": 64.3,
+        "joint": 0.62,
+        "rho": 0.021,
+        "legs": [
+          "Marcus Smart 3PM o0.5",
+          "Shai Gilgeous-Alexander 3PM o0.5"
+        ]
+      },
+      {
+        "game": "CHA@LAL",
+        "grade": "B",
+        "score": 64.1,
+        "joint": 0.636,
+        "rho": 0.015,
+        "legs": [
+          "Naz Reid 3PM o0.5",
+          "Jake LaRavia AST o0.5"
+        ]
+      }
+    ],
+    "byMarket": {
+      "tpm": 125,
+      "reb": 144,
+      "ast": 144,
+      "pts": 144
+    }
+  },
+  "perMarket": {
+    "tpm": {
+      "n": 71,
+      "meanProjected": 1.98,
+      "meanActual": 1.83,
+      "meanLine": 0.95,
+      "predicted": 0.722,
+      "hit": 0.634,
+      "samples": [
+        "Andrew Wiggins 3PM o0.5: projected 2.0, got 3",
+        "Onyeka Okongwu 3PM o0.5: projected 2.0, got 5",
+        "Jalen Johnson 3PM o0.5: projected 1.7, got 0",
+        "Myles Turner 3PM o0.5: projected 1.8, got 1"
+      ]
+    },
+    "reb": {
+      "n": 82,
+      "meanProjected": 5.3,
+      "meanActual": 5.17,
+      "meanLine": 3.85,
+      "predicted": 0.697,
+      "hit": 0.622,
+      "samples": [
+        "Payton Pritchard REB o2.5: projected 4.2, got 3",
+        "AJ Green REB o1.5: projected 3.0, got 0",
+        "Jabari Smith Jr. REB o5.5: projected 7.7, got 10",
+        "Jalen Johnson REB o7.5: projected 10.0, got 11"
+      ]
+    },
+    "ast": {
+      "n": 82,
+      "meanProjected": 3.67,
+      "meanActual": 3.33,
+      "meanLine": 2.44,
+      "predicted": 0.705,
+      "hit": 0.585,
+      "samples": [
+        "Julian Champagnie AST o0.5: projected 1.7, got 1",
+        "Ryan Rollins AST o3.5: projected 5.5, got 7",
+        "De'Aaron Fox AST o4.5: projected 6.3, got 4",
+        "Harrison Barnes AST o0.5: projected 1.9, got 3"
+      ]
+    },
+    "pts": {
+      "n": 82,
+      "meanProjected": 15.33,
+      "meanActual": 13.07,
+      "meanLine": 12.2,
+      "predicted": 0.682,
+      "hit": 0.5,
+      "samples": [
+        "Paolo Banchero PTS o17.5: projected 24.1, got 26",
+        "Brandin Podziemski PTS o13.5: projected 17.5, got 19",
+        "OG Anunoby PTS o12.5: projected 17.0, got 25",
+        "Jalen Johnson PTS o17.5: projected 21.9, got 12"
+      ]
+    }
+  },
+  "fetches": 161,
+  "bytes": 89581981,
+  "failed": 0,
+  "verdict": "the engine reads the live feed correctly"
+}
