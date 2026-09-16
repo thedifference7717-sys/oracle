@@ -2070,9 +2070,48 @@ function bestDouble(pool, opts) {
   return best;
 }
 
-// THE number: the part of the edge that is measured rather than argued. It is
-// what goes on the card, what the stake comes from, and what the bar tests.
+// A price typed on the card replaces the one built from the legs' own market
+// midpoints. What a book will actually pay you is a fact; what we assembled
+// from two exchange mids is an estimate of it, and the estimate is only there
+// because nobody had typed the fact yet.
+//
+// Only the quantities that are functions of the price move. `prob`, `naive`,
+// `lift` and `rho` are properties of the two legs. So is `edgeCorr` — it is
+// what the market's own two midpoints say about the pair being correlated, and
+// it makes no reference to what anyone will pay for it. That is deliberate:
+// the headline on the card, the stake and the bet bar all key on edgeCorr, so
+// typing a price cannot talk the board into posting a game it would otherwise
+// have left off. It moves the money, not the pick.
+function repriceDouble(d, american) {
+  if (!d || !(american && Math.abs(american) >= 100)) return d;
+  const dec = amToDec(american);
+  d.dec = dec;
+  d.price = american;
+  d.ev = d.prob * dec - 1;
+  d.breakeven = 1 / dec;
+  d.edge = d.prob - 1 / dec;
+  if (d.mktProd != null) d.vig = d.mktProd - 1 / dec;
+  d.priceTyped = true;
+  return d;
+}
+
+// THE number that decides whether a pair is a PICK: the part of the edge that
+// is measured rather than argued. It is what the bet bar tests, and typing a
+// price cannot move it.
 const defensibleEdge = d => (d && d.edgeCorr != null) ? d.edgeCorr : 0;
+// THE number that decides HOW MUCH: the same measured edge, at the price in
+// front of you. `edgeCorr` is what the correlation is worth; `vig` is what the
+// price charges you for it. A correlation worth 5.8 points against a book
+// keeping 4.5 leaves 1.3, and 1.3 is what you are actually being paid for.
+//
+//   edgeCorr + vig  =  (mktProd·liftRatio − mktProd) + (mktProd − 1/dec)
+//                   =   mktProd·liftRatio − 1/dec
+//
+// — the market's own two midpoints, corrected for the correlation it is not
+// pricing, against what your price needs. Nothing in it is our opinion of a
+// player, and it is the only quantity on the card that both is defensible and
+// moves when you type what you were offered.
+const netEdge = d => (d && d.edgeCorr != null && d.vig != null) ? d.edgeCorr + d.vig : 0;
 // Most of the edge is us arguing with the market rather than the measured
 // correlation.
 const isOpinion = d => d && d.edgeView != null && d.edgeCorr != null &&
@@ -3337,7 +3376,7 @@ return {
   loadDepthChart, unitsOut, unitFactors, UNIT_OF, setPropShape, propShape, propMarkets, priceProp, loadGameProps,
   rng, normInv, poisDraw, binomDraw, gammaDraw, logNormOf, SIM_ROLE, SIM_TEAM, setSimShape, simShape, simRole,
   simulateGame, quantiles, simRange, simMarkets, simLeg, parlayProb, naiveProb, buildParlays, propSpot,
-  propLegs, bestDouble, doublePrice, legMarketP, defensibleEdge, isOpinion, doubleQualifies,
+  propLegs, bestDouble, doublePrice, repriceDouble, legMarketP, defensibleEdge, netEdge, isOpinion, doubleQualifies,
   LEG_LO, LEG_HI, MAX_DISAGREE, MAX_SPREAD, MIN_LEG_SIZE,
   sideSpot, leagueTeamStats, SPOT_REF,
   backtest, summarise,

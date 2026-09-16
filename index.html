@@ -122,10 +122,18 @@ b,strong{font-weight:600}
 .needs{margin:12px 0 0;padding:11px;background:rgba(191,90,242,.12);border:none;
   border-radius:11px;text-align:center;font-size:12px;color:var(--muted)}
 .needs b{font-size:19px;font-weight:700;color:var(--purple);display:block;margin-top:3px;font-variant-numeric:tabular-nums}
-.pricebox{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:9px}
-.pricebox input{width:84px;background:var(--bg3);border:none;border-radius:9px;color:var(--text);
-  padding:8px;font-family:var(--num);font-size:14px;font-weight:600;text-align:center}
-.pricebox span{font-size:11px;color:var(--dim)}
+/* The price actually taken. Its own labelled box rather than a line inside the
+   panel above: it is the one number on the card you are expected to change,
+   and every figure under it is arithmetic on it. Same box on all three
+   boards. */
+.pricebox{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:12px;
+  padding:11px 12px;background:var(--bg3);border-radius:12px}
+.pricebox label{font-size:11px;color:var(--dim);flex:none}
+.pricebox input{width:94px;background:var(--bg);border:none;border-radius:9px;color:var(--yellow);
+  padding:9px;font-family:var(--num);font-size:16px;font-weight:600;text-align:center;flex:none}
+.pricebox input::placeholder{color:var(--dim);font-weight:400}
+.pricebox span{flex:1;min-width:118px;font-size:11px;color:var(--muted);line-height:1.45;
+  font-variant-numeric:tabular-nums}
 .leg{display:flex;align-items:center;gap:11px;padding:11px 0;border-top:.5px solid var(--hair)}
 .leg-slot{font-size:12px;font-weight:600;color:var(--dim);width:28px;text-align:center;
   background:var(--bg3);border-radius:7px;padding:5px 0;flex:none;font-variant-numeric:tabular-nums}
@@ -374,13 +382,32 @@ let good=null,board=null,cal=null;
 // legs are, so one global price is wrong for every game it is not. Prices typed
 // per game live here and survive the board's re-render; the keys are game ids,
 // so tomorrow's slate clears them on its own.
-const priceByGame={};
+// The price typed on a card is the one you were actually paid, and every
+// settled figure under it — expected value, the Kelly stake, the profit on the
+// bet — is arithmetic on that number. A double taken at +150 that the slip
+// assumed was -175 pays two and a half times what the card says it will.
+//
+// Kept in localStorage, because these pages reload themselves and the whole
+// point of the number is to still be there at settlement. Entries older than
+// the TTL go on the way in: the keys are game ids and an old slate is not
+// coming back.
+const PRICE_KEY="dd.gamePrice",PRICE_TTL=3*864e5;
+let priceByGame={};
+try{
+  const raw=JSON.parse(localStorage.getItem(PRICE_KEY)||"{}")||{},now=Date.now();
+  Object.keys(raw).forEach(k=>{if(raw[k]&&now-raw[k].t<PRICE_TTL)priceByGame[k]=raw[k];});
+}catch(e){priceByGame={};}
+const savePrices=()=>{try{localStorage.setItem(PRICE_KEY,JSON.stringify(priceByGame));}catch(e){}};
+// Commits on change, never on every keystroke: this repaints the board, which
+// would rip the input out from under the cursor halfway through typing "-180".
 function setGamePrice(gk,v){
   const p=parseFloat(v);
-  if(!isFinite(p)||p===0)delete priceByGame[gk]; else priceByGame[gk]=p;
+  if(!isFinite(p)||Math.abs(p)<100)delete priceByGame[gk]; else priceByGame[gk]={p,t:Date.now()};
+  savePrices();
   if(board)render();
 }
-const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
+const typedPrice=gk=>priceByGame[gk]?priceByGame[gk].p:null;
+const gamePrice=gk=>{const p=typedPrice(gk);return p!=null?p:setting("price");};
 
 // The ladder compounds the ACTUAL return, so it can only be right if it knows
 // the price actually taken. A -250 assumption turns $10 into $14; the -180 you
@@ -632,6 +659,11 @@ function card(pr,i){
   const stake=ev?bank*ev.quarterKelly:0;
   const size=betSize(pr);
   const rank=["#1","#2","#3","#4","#5","#6"][i]||("#"+(i+1));
+  // The price actually taken, and what it turns the stake into. Until this is
+  // the real number every figure below it is a guess with a decimal point.
+  const typed=typedPrice(pr.gk);
+  const atRisk=Math.max(0,size>0?size:stake);
+  const payout=ev?atRisk*ev.dec:0;
   return `<div class="bet ${good?"r"+Math.min(i+1,3):"neg"}">
     <div class="bet-top">
       <div class="bet-rank">${rank}${good?"":" ✗ NO EDGE"}</div>
@@ -649,15 +681,20 @@ function card(pr,i){
       Bet only if your book pays better than
       <b>${M.amOdds(pr.prob - betBar())}</b>
       <span style="font-size:10px;color:var(--dim)">model ${pct(pr.prob)} · fair ${M.amOdds(pr.prob)} · needs ${(betBar()*100).toFixed(1)}pts of margin</span>
-      <div class="pricebox">
-        <span>Your price</span>
-        <input type="number" step="5" value="${px}" onchange="setGamePrice(${pr.gk},this.value)">
-      </div>
+    </div>
+    <div class="pricebox">
+      <label for="px-${pr.gk}">Odds you got</label>
+      <input id="px-${pr.gk}" type="number" step="5" inputmode="numeric" placeholder="${px>0?"+":""}${px}"${typed==null?"":` value="${typed}"`} onchange="setGamePrice(${pr.gk},this.value)">
+      <span>${typed==null
+        ?`slip default · ${M.amOdds(pr.prob)} is fair`
+        :atRisk>0
+          ?`<b style="color:var(--text)">yours</b> · pays ${money(payout)} on ${money(atRisk)}`
+          :`<b style="color:var(--text)">yours</b> · no bet at this price`}</span>
     </div>
     <div class="bet-foot">
       <span>Both to record a hit</span><span style="text-align:right"><b style="color:var(--text)">${pct(pr.prob)}</b> true</span>
       <span>Fair price</span><span style="text-align:right" class="odds">${M.amOdds(pr.prob)}</span>
-      <span>Your price / breakeven</span><span style="text-align:right">${px>0?"+":""}${px} · ${ev?pct(ev.breakeven):"—"}</span>
+      <span>${typed==null?"Slip price":"Your price"} / breakeven</span><span style="text-align:right">${px>0?"+":""}${px} · ${ev?pct(ev.breakeven):"—"}</span>
       <span>Expected value</span><span style="text-align:right"><b style="color:${good?"var(--green)":"var(--red)"}">${ev?(ev.evPct>=0?"+":"")+ev.evPct.toFixed(1)+"%":"—"}</b></span>
       <span>¼-Kelly stake</span><span style="text-align:right"><b style="color:${stake>0?"var(--green)":"var(--dim)"}">${money(stake)}</b></span>
       <span>${pr.sameTeam?'<span class="tag corr">SAME TEAM</span>':'<span class="tag">OPPOSING</span>'} correlation</span>

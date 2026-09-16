@@ -151,10 +151,18 @@ b,strong{font-weight:600}
 .needs{margin:12px 0 0;padding:11px;background:rgba(191,90,242,.12);border:none;
   border-radius:11px;text-align:center;font-size:12px;color:var(--muted)}
 .needs b{font-size:19px;font-weight:700;color:var(--purple);display:block;margin-top:3px;font-variant-numeric:tabular-nums}
-.pricebox{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:9px;flex-wrap:wrap}
-.pricebox input{width:88px;background:var(--bg3);border:none;border-radius:9px;color:var(--text);
-  padding:8px;font-family:var(--num);font-size:14px;font-weight:600;text-align:center}
-.pricebox span{font-size:11px;color:var(--dim)}
+/* The price actually taken. Its own labelled box rather than a line inside the
+   panel above: it is the one number on the card you are expected to change,
+   and every figure under it is arithmetic on it. Same box on all three
+   boards. */
+.pricebox{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:12px;
+  padding:11px 12px;background:var(--bg3);border-radius:12px}
+.pricebox label{font-size:11px;color:var(--dim);flex:none}
+.pricebox input{width:94px;background:var(--bg);border:none;border-radius:9px;color:var(--yellow);
+  padding:9px;font-family:var(--num);font-size:16px;font-weight:600;text-align:center;flex:none}
+.pricebox input::placeholder{color:var(--dim);font-weight:400}
+.pricebox span{flex:1;min-width:118px;font-size:11px;color:var(--muted);line-height:1.45;
+  font-variant-numeric:tabular-nums}
 .tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;
   background:var(--bg3);color:var(--dim);margin-left:5px;vertical-align:middle}
 .tag.ok{color:var(--green);background:rgba(48,209,88,.16)}
@@ -464,13 +472,32 @@ const stakeOf=score=>Math.max(0,score-bar())*setting("perPt");
 
 // Prices typed per game survive the re-render; the keys are game ids, so
 // tomorrow's slate clears them on its own.
-const priceByGame={};
+// The price typed on a card is the one you were actually paid, and every
+// settled figure under it — expected value, the Kelly stake, the profit on the
+// bet — is arithmetic on that number. A double taken at +150 that the slip
+// assumed was -175 pays two and a half times what the card says it will.
+//
+// Kept in localStorage, because these pages reload themselves and the whole
+// point of the number is to still be there at settlement. Entries older than
+// the TTL go on the way in: the keys are game ids and an old slate is not
+// coming back.
+const PRICE_KEY="hw.gamePrice",PRICE_TTL=2*864e5;
+let priceByGame={};
+try{
+  const raw=JSON.parse(localStorage.getItem(PRICE_KEY)||"{}")||{},now=Date.now();
+  Object.keys(raw).forEach(k=>{if(raw[k]&&now-raw[k].t<PRICE_TTL)priceByGame[k]=raw[k];});
+}catch(e){priceByGame={};}
+const savePrices=()=>{try{localStorage.setItem(PRICE_KEY,JSON.stringify(priceByGame));}catch(e){}};
+// Commits on change, never on every keystroke: this repaints the board, which
+// would rip the input out from under the cursor halfway through typing "-180".
 function setGamePrice(gk,v){
   const p=parseFloat(v);
-  if(!isFinite(p)||p===0)delete priceByGame[gk]; else priceByGame[gk]=p;
+  if(!isFinite(p)||Math.abs(p)<100)delete priceByGame[gk]; else priceByGame[gk]={p,t:Date.now()};
+  savePrices();
   if(board)render();
 }
-const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
+const typedPrice=gk=>priceByGame[gk]?priceByGame[gk].p:null;
+const gamePrice=gk=>{const p=typedPrice(gk);return p!=null?p:setting("price");};
 
 // The ladder compounds the ACTUAL return, so it can only be right if it knows
 // the price actually taken. Typed per day, kept here, surviving reloads.
@@ -610,6 +637,11 @@ function card(s,i){
   const stake=stakeOf(d.score.score);
   const kelly=ev?setting("bank")*ev.quarterKelly:0;
   const g=s.game;
+  // The price actually taken, and what it turns the stake into. Until this is
+  // the real number every figure below it is a guess with a decimal point.
+  const typed=typedPrice(s.game.id);
+  const atRisk=Math.max(0,stake>0?stake:kelly);
+  const payout=ev?atRisk*ev.dec:0;
   return `<div class="bet${d.score.score>=bar()?"":" dim"}">
     <div class="bet-top">
       <div class="bet-rank">#${i+1}</div>
@@ -625,13 +657,19 @@ function card(s,i){
     <div class="needs">
       Both legs land <b>${pct1(d.prob)}</b>
       <span style="font-size:10px;color:var(--dim)">fair ${M.amOdds(d.prob)} · pricing them apart says ${pct1(d.naive)}, which is the ${d.lift>=0?"understatement":"overstatement"} worth ${d.lift>=0?"+":""}${(d.lift*100).toFixed(1)}pts</span>
-      <div class="pricebox">
-        <span>Your price</span>
-        <input type="number" step="5" value="${px}" onchange="setGamePrice('${esc(s.game.id)}',this.value)">
-      </div>
+
       ${ev?`<div style="font-size:11px;color:var(--dim);margin-top:7px">
         EV <b style="color:${ev.ev>=0?"var(--green)":"var(--red)"}">${ev.evPct>=0?"+":""}${ev.evPct.toFixed(1)}%</b>
         · breakeven ${pct1(ev.breakeven)} · ¼-Kelly <b style="color:${kelly>0?"var(--green)":"var(--dim)"}">${money(kelly)}</b> of ${money(setting("bank"))}</div>`:""}
+    </div>
+    <div class="pricebox">
+      <label for="px-${esc(s.game.id)}">Odds you got</label>
+      <input id="px-${esc(s.game.id)}" type="number" step="5" inputmode="numeric" placeholder="${px>0?"+":""}${px}"${typed==null?"":` value="${typed}"`} onchange="setGamePrice('${esc(s.game.id)}',this.value)">
+      <span>${typed==null
+        ?`slip default · ${M.amOdds(d.prob)} is fair`
+        :atRisk>0
+          ?`<b style="color:var(--text)">yours</b> · pays ${money(payout)} on ${money(atRisk)}`
+          :`<b style="color:var(--text)">yours</b> · no bet at this price`}</span>
     </div>
     <div class="bet-foot">
       <span>${d.sameTeam?'<span class="tag corr">SAME TEAM</span>':'<span class="tag">OPPOSING</span>'}${d.samePlayer?'<span class="tag corr">SAME MAN</span>':""} correlation</span>
