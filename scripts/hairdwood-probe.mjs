@@ -520,34 +520,54 @@ try {
   // its own last ten, and keep whichever weight predicts best. Zero is pure
   // season average, one is pure recent form.
   {
-    const grid = [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0];
-    const err = grid.map(() => 0);
-    let used = 0;
+    // Several predictors, each scored on BOTH error and bias. The blend was
+    // only ever scored on error, and the error minimum turned out to be beside
+    // the point: every weight of it, including pure recent form, predicts BELOW
+    // what gets played, because the thing being missed is a trend and no
+    // weighted average of the past can extrapolate one. So the candidates now
+    // include predictors that can: the last five, the last three, and a least-
+    // squares line through the last ten carried forward.
+    const preds = {};
+    const add = (name, f) => { preds[name] = { f, err: 0, bias: 0, n: 0 }; };
+    [0, 0.3, 0.45, 0.6, 0.8, 1.0].forEach(w =>
+      add(`blend ${w}`, (season, l10) => (1 - w) * season + w * l10));
+    add("last 5", (s, l10, l5) => l5);
+    add("last 3", (s, l10, l5, l3) => l3);
+    add("trend of last 10", (s, l10, l5, l3, slope) => l10 + slope * 5);
     Object.keys(shapeLogs).forEach(id => {
       const L = shapeLogs[id];
       if (!L || L.played.length < 24) return;
       const half = Math.floor(L.played.length / 2);
       const older = L.played.slice(half), newer = L.played.slice(0, half);
       if (older.length < 12 || newer.length < 12) return;
-      const seasonAvg = older.reduce((a, r) => a + r.min, 0) / older.length;
-      const last10 = older.slice(0, 10).reduce((a, r) => a + r.min, 0) / Math.min(10, older.length);
-      const actual = newer.reduce((a, r) => a + r.min, 0) / newer.length;
-      used++;
-      grid.forEach((w, i) => {
-        const pred = (1 - w) * seasonAvg + w * last10;
-        err[i] += (pred - actual) * (pred - actual);
+      const mins = older.map(r => r.min);                     // newest first
+      const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+      const seasonAvg = avg(mins), l10 = avg(mins.slice(0, 10)),
+            l5 = avg(mins.slice(0, 5)), l3 = avg(mins.slice(0, 3));
+      // Slope per game, oldest-to-newest, over the last ten.
+      const win = mins.slice(0, 10).slice().reverse();
+      const n = win.length, mx = (n - 1) / 2, my = avg(win);
+      let num = 0, den = 0;
+      win.forEach((y, i) => { num += (i - mx) * (y - my); den += (i - mx) * (i - mx); });
+      const slope = den > 0 ? num / den : 0;
+      const actual = avg(newer.map(r => r.min));
+      Object.values(preds).forEach(P => {
+        const v = P.f(seasonAvg, l10, l5, l3, slope);
+        P.err += (v - actual) * (v - actual); P.bias += v - actual; P.n++;
       });
     });
-    if (used >= 10) {
-      let best = 0;
-      err.forEach((e, i) => { if (e < err[best]) best = i; });
-      // The bias each weight leaves behind matters as much as the error: a
-      // weight can predict well on average and still sit low every time.
-      report.minutesWeight = { players: used, bestW: grid[best], modelW: M.CFG.minRecentW,
-                               curve: grid.map((w, i) => [w, +(Math.sqrt(err[i] / used)).toFixed(3)]) };
-      check("minutes recency weight", Math.abs(grid[best] - M.CFG.minRecentW) <= 0.2 ? true : "warn",
-            `split-half says ${grid[best]}, model uses ${M.CFG.minRecentW} (${used} players, rmse ` +
-            report.minutesWeight.curve.map(([w, e]) => `${w}:${e}`).join(" ") + ")");
+    const rows = Object.keys(preds).filter(k => preds[k].n >= 10).map(k => ({
+      predictor: k, n: preds[k].n,
+      rmse: +Math.sqrt(preds[k].err / preds[k].n).toFixed(3),
+      bias: +(preds[k].bias / preds[k].n).toFixed(3)
+    }));
+    if (rows.length) {
+      report.minutesWeight = { modelW: M.CFG.minRecentW, rows };
+      const flat = rows.slice().sort((a, b) => Math.abs(a.bias) - Math.abs(b.bias))[0];
+      const tight = rows.slice().sort((a, b) => a.rmse - b.rmse)[0];
+      check("minutes predictor is unbiased", Math.abs(tight.bias) < 0.35 ? true : "warn",
+            `lowest error "${tight.predictor}" (rmse ${tight.rmse}) still runs ${tight.bias} min ` +
+            `${tight.bias < 0 ? "SHORT" : "long"}; least biased is "${flat.predictor}" at ${flat.bias} (rmse ${flat.rmse})`);
     }
   }
 
