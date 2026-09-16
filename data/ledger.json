@@ -34,8 +34,13 @@
      "sp": "Kyle Freeland"
     }
    ],
-   "status": "open"
+   "status": "lost",
+   "settled": "2026-09-16T03:13:21.968Z",
+   "hits": [
+    1,
+    0
+   ]
   }
  ],
- "updated": "2026-09-15T23:13:15.618Z"
+ "updated": "2026-09-16T03:13:21.968Z"
 }
