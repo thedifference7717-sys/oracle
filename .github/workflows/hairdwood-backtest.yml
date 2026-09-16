@@ -61,12 +61,20 @@ jobs:
         with:
           node-version: "20"
 
+      # `| tee` hands the step ITS exit code, not the script's, so a failing
+      # backtest would go green through the pipe. PIPESTATUS carries the real
+      # one past the publish step, which still has to run — the report is most
+      # worth having on the runs that fail.
       - name: Walk the season
+        id: walk
+        continue-on-error: true
         run: |
+          set +e
           node scripts/hairdwood-backtest.mjs \
             "${{ github.event.inputs.season || '2026' }}" \
             "${{ github.event.inputs.slates || '16' }}" \
             "${{ github.event.inputs.stride || '9' }}" 2>&1 | tee backtest.log
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Summarise
         if: always()
@@ -89,3 +97,9 @@ jobs:
           git diff --cached --quiet && { echo "unchanged"; exit 0; }
           git commit -m "Backtest HAIrdwood: $(node -e 'const r=require("./data/hairdwood-backtest.json");console.log(`${r.legs.graded} legs, said ${(r.legs.predicted*100).toFixed(1)}% did ${(r.legs.actual*100).toFixed(1)}%`)')"
           git push origin "${{ github.ref_name }}"
+
+      - name: Fail the job if the walk graded nothing
+        if: always() && steps.walk.outputs.code != '0'
+        run: |
+          echo "the backtest did not grade enough legs to mean anything — see the summary"
+          exit 1

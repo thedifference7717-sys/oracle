@@ -214,4 +214,16 @@ say(`  ${report.ladder.played} rungs (${report.ladder.passed} days passed): ${re
 say(`  account $${st.account.toFixed(2)} from $100 · ${st.cycles.done} complete, ${st.cycles.busted} bust · max drawdown $${st.maxDD.toFixed(2)}`);
 say("\n── same-game doubles ───────────────────────────────────");
 if (dbl.length) say(`  n=${dbl.length} · predicted ${(report.doubles.predicted * 100).toFixed(1)}% · actual ${(report.doubles.actual * 100).toFixed(1)}% · pricing them apart would have said ${(report.doubles.naive * 100).toFixed(1)}%`);
-say(`\n${calls} fetches → ${OUT}`);
+say(`\n${calls} fetches${retries ? `, ${retries} retried` : ""} → ${OUT}`);
+
+// A backtest that graded nothing is not a passing backtest. The first run of
+// this walked the whole season against a board that was throwing on every
+// slate, settled zero legs, printed "said 0.0% did 0.0%" and exited green —
+// which is the worst possible outcome for a check: a broken model with a tick
+// beside it. Silence is not success here either.
+const MIN = +(process.env.HAIRDWOOD_MIN_LEGS || 150);
+if (graded.length < MIN) {
+  say(`\nFAILED: only ${graded.length} legs graded, expected at least ${MIN}. ` +
+      `Either the board is not building or the box scores are not settling — the numbers above mean nothing.`);
+  process.exit(1);
+}
