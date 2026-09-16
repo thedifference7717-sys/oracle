@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T16:20:37.206Z",
+  "at": "2026-09-16T16:23:28.742Z",
   "season": 2026,
   "slates": 16,
   "stride": 9,
@@ -152,6 +152,48 @@
     "p90": 70.3,
     "p99": 75.9,
     "max": 78.3
+  },
+  "projection": {
+    "pts": {
+      "n": 948,
+      "projected": 14.93,
+      "actual": 15.31,
+      "bias": -0.0249,
+      "meanLine": 11.2,
+      "lineZ": 0.559,
+      "said": 0.684,
+      "hit": 0.708
+    },
+    "reb": {
+      "n": 948,
+      "projected": 5.11,
+      "actual": 5.41,
+      "bias": -0.0551,
+      "meanLine": 3.68,
+      "lineZ": 0.58,
+      "said": 0.695,
+      "hit": 0.726
+    },
+    "ast": {
+      "n": 948,
+      "projected": 3.55,
+      "actual": 3.65,
+      "bias": -0.0279,
+      "meanLine": 2.33,
+      "lineZ": 0.625,
+      "said": 0.706,
+      "hit": 0.695
+    },
+    "tpm": {
+      "n": 810,
+      "projected": 1.87,
+      "actual": 1.99,
+      "bias": -0.061,
+      "meanLine": 0.9,
+      "lineZ": 0.691,
+      "said": 0.716,
+      "hit": 0.721
+    }
   },
   "ladder": {
     "days": 12,
