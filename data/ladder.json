@@ -3,7 +3,6 @@
  "sport": "MLB",
  "cfg": {
   "account": 100,
-  "seed": 10,
   "basePct": 0.1,
   "rungs": 5,
   "missGain": 0.25
@@ -31,15 +30,17 @@
    "teams": "SD @ COL",
    "sp": "Kyle Freeland",
    "fromGames": 15,
-   "status": "open"
+   "status": "won",
+   "hits": 1,
+   "settled": "2026-09-16T00:40:46.145Z"
   }
  ],
- "updated": "2026-09-15T22:35:31.259Z",
+ "updated": "2026-09-16T00:40:46.145Z",
  "state": {
   "account": 100,
   "base": 10,
-  "stake": 10,
-  "rung": 1,
+  "stake": 14,
+  "rung": 2,
   "cycle": 1,
   "pl": 0,
   "cycles": {
