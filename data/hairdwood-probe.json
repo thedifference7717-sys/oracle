@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T00:20:01.777Z",
+  "at": "2026-09-16T03:53:54.976Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -170,7 +170,7 @@
     {
       "name": "board builds",
       "state": "PASS",
-      "detail": "559 graded props from 9 games"
+      "detail": "556 graded props from 9 games"
     },
     {
       "name": "board is not degraded",
@@ -190,12 +190,27 @@
     {
       "name": "all four markets priced",
       "state": "PASS",
-      "detail": "{\"tpm\":127,\"ast\":144,\"pts\":144,\"reb\":144}"
+      "detail": "{\"tpm\":124,\"ast\":144,\"pts\":144,\"reb\":144}"
+    },
+    {
+      "name": "lines are not all minimums",
+      "state": "PASS",
+      "detail": "115/556 legs sit on the 0.5 line"
+    },
+    {
+      "name": "published prices are bettable",
+      "state": "PASS",
+      "detail": "median leg 70% (fair -230)"
+    },
+    {
+      "name": "nothing unbettable is published",
+      "state": "PASS",
+      "detail": "shortest leg 87% (fair -651), ceiling 92%"
     },
     {
       "name": "game logs reached the legs",
       "state": "PASS",
-      "detail": "353/559 legs carry a log"
+      "detail": "351/556 legs carry a log"
     },
     {
       "name": "the board ends up with posted totals",
@@ -243,8 +258,8 @@
         "startDate",
         "broadcast",
         "geoBroadcasts",
-        "highlights",
-        "headlines"
+        "headlines",
+        "highlights"
       ],
       "oddsKeys": [],
       "oddsSample": null,
@@ -696,11 +711,11 @@
         "againstTheSpread",
         "news",
         "plays",
-        "header",
         "article",
         "videos",
-        "wallclockAvailable",
         "winprobability",
+        "header",
+        "wallclockAvailable",
         "meta",
         "standings"
       ],
@@ -1809,257 +1824,257 @@
     "counts": {
       "games": 9,
       "players": 144,
-      "legs": 559,
+      "legs": 556,
       "logs": 90
     },
     "top": [
       {
-        "grade": "A",
-        "score": 82.2,
-        "player": "Victor Wembanyama",
-        "pos": "F",
-        "team": "SA",
-        "opp": "MIL",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.873,
-        "proj": 2.2,
-        "min": 33,
-        "seasonAvg": 1.9,
-        "form": "9/10"
-      },
-      {
-        "grade": "A",
-        "score": 82.1,
-        "player": "Julian Champagnie",
-        "pos": "F",
-        "team": "SA",
-        "opp": "MIL",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.895,
-        "proj": 2.4,
-        "min": 29.4,
-        "seasonAvg": 2.4,
-        "form": "9/10"
-      },
-      {
-        "grade": "A",
-        "score": 80.7,
-        "player": "Deni Avdija",
-        "pos": "F",
-        "team": "POR",
-        "opp": "ATL",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.88,
-        "proj": 2.3,
-        "min": 37.5,
-        "seasonAvg": 1.9,
-        "form": "10/10"
-      },
-      {
-        "grade": "A",
-        "score": 80.2,
-        "player": "Jalen Suggs",
+        "grade": "B+",
+        "score": 79.3,
+        "player": "Nickeil Alexander-Walker",
         "pos": "G",
-        "team": "ORL",
-        "opp": "MEM",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 1.5,
+        "p": 0.799,
+        "proj": 3.2,
+        "min": 34.8,
+        "seasonAvg": 3.2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 77.3,
+        "player": "Marcus Smart",
+        "pos": "G",
+        "team": "HOU",
+        "opp": "OKC",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.901,
-        "proj": 2.5,
+        "p": 0.829,
+        "proj": 1.9,
+        "min": 32.5,
+        "seasonAvg": 1.6,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 76.7,
+        "player": "Andrew Wiggins",
+        "pos": "F",
+        "team": "MIA",
+        "opp": "BOS",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.842,
+        "proj": 2,
         "min": 31.3,
-        "seasonAvg": 2.1,
+        "seasonAvg": 2,
         "form": "9/10"
       },
       {
-        "grade": "A",
-        "score": 80.1,
-        "player": "Lauri Markkanen",
-        "pos": "F",
-        "team": "UTAH",
-        "opp": "DAL",
+        "grade": "B+",
+        "score": 76.2,
+        "player": "Devin Vassell",
+        "pos": "G",
+        "team": "SA",
+        "opp": "MIL",
         "market": "ast",
-        "line": 0.5,
-        "p": 0.892,
-        "proj": 2.2,
-        "min": 32.7,
-        "seasonAvg": 2.1,
-        "form": "10/10"
-      },
-      {
-        "grade": "B+",
-        "score": 79.8,
-        "player": "Max Christie",
-        "pos": "G",
-        "team": "DAL",
-        "opp": "UTAH",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.891,
-        "proj": 2.4,
-        "min": 28.7,
-        "seasonAvg": 2.3,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 79.8,
-        "player": "Ryan Rollins",
-        "pos": "G",
-        "team": "MIL",
-        "opp": "SA",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.891,
-        "proj": 2.4,
-        "min": 32.4,
+        "line": 1.5,
+        "p": 0.794,
+        "proj": 3,
+        "min": 32.8,
         "seasonAvg": 2.5,
         "form": "9/10"
       },
       {
         "grade": "B+",
-        "score": 79.7,
-        "player": "Cade Cunningham",
-        "pos": "G",
-        "team": "DET",
-        "opp": "PHX",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.862,
-        "proj": 2.1,
-        "min": 37.3,
-        "seasonAvg": 2,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 79.4,
-        "player": "Dillon Brooks",
+        "score": 75.2,
+        "player": "Julian Champagnie",
         "pos": "F",
-        "team": "PHX",
-        "opp": "DET",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.896,
-        "proj": 2.4,
-        "min": 33.6,
-        "seasonAvg": 2.3,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 79.2,
-        "player": "Max Christie",
-        "pos": "G",
-        "team": "DAL",
-        "opp": "UTAH",
+        "team": "SA",
+        "opp": "MIL",
         "market": "ast",
         "line": 0.5,
-        "p": 0.899,
-        "proj": 2.4,
-        "min": 28.7,
-        "seasonAvg": 2,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 79.2,
-        "player": "Brandin Podziemski",
-        "pos": "G",
-        "team": "GS",
-        "opp": "NY",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.868,
-        "proj": 2.2,
-        "min": 33.4,
-        "seasonAvg": 1.9,
+        "p": 0.819,
+        "proj": 1.7,
+        "min": 29.4,
+        "seasonAvg": 1.5,
         "form": "10/10"
       },
       {
         "grade": "B+",
-        "score": 78.1,
-        "player": "Jabari Smith Jr.",
-        "pos": "F",
-        "team": "HOU",
-        "opp": "OKC",
+        "score": 74.4,
+        "player": "Jalen Duren",
+        "pos": "C",
+        "team": "DET",
+        "opp": "PHX",
         "market": "ast",
         "line": 0.5,
-        "p": 0.881,
-        "proj": 2.2,
-        "min": 38.7,
+        "p": 0.867,
+        "proj": 2,
+        "min": 29,
+        "seasonAvg": 2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74.4,
+        "player": "Onyeka Okongwu",
+        "pos": "F",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.84,
+        "proj": 2,
+        "min": 31.9,
         "seasonAvg": 1.9,
         "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74.3,
+        "player": "Ryan Rollins",
+        "pos": "G",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "ast",
+        "line": 3.5,
+        "p": 0.767,
+        "proj": 5.5,
+        "min": 32.4,
+        "seasonAvg": 5.6,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74,
+        "player": "De'Aaron Fox",
+        "pos": "G",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "ast",
+        "line": 4.5,
+        "p": 0.747,
+        "proj": 6.3,
+        "min": 32.4,
+        "seasonAvg": 6.2,
+        "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.9,
+        "player": "Jalen Johnson",
+        "pos": "F",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.798,
+        "proj": 1.7,
+        "min": 35.2,
+        "seasonAvg": 1.7,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 72.9,
+        "player": "Devin Booker",
+        "pos": "G",
+        "team": "PHX",
+        "opp": "DET",
+        "market": "pts",
+        "line": 21.5,
+        "p": 0.777,
+        "proj": 27.5,
+        "min": 37.5,
+        "seasonAvg": 26.1,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 72.8,
+        "player": "Myles Turner",
+        "pos": "C",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.814,
+        "proj": 1.8,
+        "min": 26,
+        "seasonAvg": 2.1,
+        "form": "10/10"
       }
     ],
     "doubles": [
       {
-        "game": "MIL@SA",
-        "grade": "B+",
-        "score": 76,
-        "joint": 0.782,
-        "rho": 0.025,
+        "game": "ATL@POR",
+        "grade": "B",
+        "score": 71.1,
+        "joint": 0.664,
+        "rho": 0.24,
         "legs": [
-          "Victor Wembanyama 3PM o0.5",
-          "Julian Champagnie 3PM o0.5"
+          "Nickeil Alexander-Walker 3PM o1.5",
+          "Jock Landale AST o0.5"
+        ]
+      },
+      {
+        "game": "MIL@SA",
+        "grade": "B",
+        "score": 69,
+        "joint": 0.613,
+        "rho": 0.161,
+        "legs": [
+          "Devin Vassell AST o1.5",
+          "Tobias Harris 3PM o0.5"
+        ]
+      },
+      {
+        "game": "BOS@MIA",
+        "grade": "B",
+        "score": 68.4,
+        "joint": 0.696,
+        "rho": 0.18,
+        "legs": [
+          "Andrew Wiggins 3PM o0.5",
+          "Bobby Portis AST o0.5"
         ]
       },
       {
         "game": "UTAH@DAL",
-        "grade": "B+",
-        "score": 75,
-        "joint": 0.77,
+        "grade": "B",
+        "score": 67.8,
+        "joint": 0.745,
         "rho": 0.272,
         "legs": [
-          "Max Christie 3PM o0.5",
-          "Naji Marshall AST o1.5"
+          "Ace Bailey 3PM o0.5",
+          "Brice Sensabaugh AST o0.5"
         ]
       },
       {
-        "game": "MEM@ORL",
-        "grade": "B+",
-        "score": 74.8,
-        "joint": 0.793,
-        "rho": 0.236,
+        "game": "OKC@HOU",
+        "grade": "B",
+        "score": 67.6,
+        "joint": 0.672,
+        "rho": 0.158,
         "legs": [
-          "Jalen Suggs 3PM o0.5",
-          "Wendell Carter Jr. AST o0.5"
-        ]
-      },
-      {
-        "game": "ATL@POR",
-        "grade": "B+",
-        "score": 74.4,
-        "joint": 0.771,
-        "rho": 0.24,
-        "legs": [
-          "Deni Avdija 3PM o0.5",
-          "Donovan Clingan AST o0.5"
-        ]
-      },
-      {
-        "game": "PHX@DET",
-        "grade": "B+",
-        "score": 73.7,
-        "joint": 0.77,
-        "rho": 0.163,
-        "legs": [
-          "Cade Cunningham 3PM o0.5",
-          "Duncan Robinson AST o0.5"
+          "Marcus Smart 3PM o0.5",
+          "Tari Eason AST o0.5"
         ]
       }
     ],
     "byMarket": {
-      "tpm": 127,
+      "tpm": 124,
       "ast": 144,
       "pts": 144,
       "reb": 144
     }
   },
   "fetches": 152,
-  "bytes": 86060180,
+  "bytes": 86057494,
   "failed": 0,
   "verdict": "the engine reads the live feed correctly"
 }
