@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>SportsAI · HAIrdwood</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SportsAI">
+<link rel="icon" type="image/svg+xml" href="sportsai.svg">
+<link rel="apple-touch-icon" href="sportsai-180.png">
+<link rel="manifest" href="manifest.json">
+<style>
+/* ── HAIrdwood ───────────────────────────────────────────────────────────────
+   Same design system as the baseball board and the record page: Apple's dark
+   system palette, the system font stack, tabular figures, and colour used only
+   where it MEANS something (graded, won, lost, money, at risk). The one thing
+   this page adds is the grade — a letter and a hundred-point score with its
+   own components — so the only new colour is the grade ramp.                 */
+:root{
+  --bg:#000;--bg2:#1C1C1E;--bg3:#2C2C2E;--elev:#1C1C1E;
+  --border:rgba(84,84,88,.6);--hair:rgba(84,84,88,.35);
+  --text:#FFF;--muted:rgba(235,235,245,.6);--dim:rgba(235,235,245,.35);
+  --green:#30D158;--red:#FF453A;--yellow:#FFD60A;--blue:#0A84FF;
+  --orange:#FF9F0A;--purple:#BF5AF2;--teal:#40C8E0;
+  --sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,Roboto,sans-serif;
+  --num:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --pad:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sys);
+  -webkit-font-smoothing:antialiased;min-height:100%;font-size:15px;line-height:1.5}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 56px)}
+b,strong{font-weight:600}
+.n{font-variant-numeric:tabular-nums}
+
+/* ── chrome ── */
+#topbar{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.72);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:.5px solid var(--border);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) var(--pad) 12px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--purple);margin-bottom:1px}
+.logo{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.logo-sub{font-size:11px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums}
+#buildsha{color:var(--dim);font-family:var(--num);font-size:10px}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.navlink{padding:8px 13px;background:var(--bg3);border:none;border-radius:980px;color:var(--text);
+  font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
+.navlink:active{opacity:.6}
+.run-btn{padding:8px 17px;background:var(--blue);border:none;border-radius:980px;color:#fff;
+  font-size:13px;font-weight:600;font-family:var(--sys);cursor:pointer}
+.run-btn:active{opacity:.7}
+.run-btn:disabled{opacity:.4;cursor:wait}
+#progress-wrap{height:2px;background:transparent;display:none}
+#progress-bar{height:100%;width:0%;background:var(--blue);transition:width .25s ease}
+#update-bar{display:none;align-items:center;gap:12px;flex-wrap:wrap;padding:12px var(--pad);
+  background:rgba(255,214,10,.14);border-bottom:.5px solid rgba(255,214,10,.4);color:var(--yellow);font-size:13px}
+#update-bar button{margin-left:auto;padding:7px 15px;background:var(--yellow);border:none;
+  border-radius:980px;color:#000;font-family:var(--sys);font-size:12px;font-weight:600;cursor:pointer}
+#status{font-size:12px;color:var(--muted);padding:10px var(--pad);min-height:16px;
+  border-bottom:.5px solid var(--hair);font-variant-numeric:tabular-nums}
+
+/* ── disclosure ── */
+.disc{border-top:.5px solid var(--hair)}
+.disc>summary{list-style:none;cursor:pointer;padding:11px 24px 11px 0;position:relative;display:block;
+  font-size:13px;color:var(--blue);font-weight:500}
+.disc>summary::-webkit-details-marker{display:none}
+.disc>summary::after{content:"";position:absolute;right:3px;top:50%;width:6px;height:6px;
+  border-right:1.6px solid var(--dim);border-bottom:1.6px solid var(--dim);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+.disc[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+.disc>summary:active{opacity:.6}
+.disc-b{font-size:13px;color:var(--muted);line-height:1.62;padding:2px 0 14px}
+.disc-b p+p{margin-top:11px}
+.disc-b b{color:var(--text)}
+
+/* ── headings ── */
+.group-h{padding:34px var(--pad) 4px;border-top:.5px solid var(--hair);margin-top:26px}
+.group-h span{display:block;font-size:12px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--dim)}
+.group-h small{display:block;font-size:12px;color:var(--dim);margin-top:3px;opacity:.75}
+.group-h+.section-h{padding-top:12px}
+.section-h{padding:26px var(--pad) 10px}
+.sh-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh-row h2{font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.section-h.lead{padding-top:18px}
+.section-h.lead .sh-row h2{font-size:26px}
+.sh-note{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.sh-note b{color:var(--muted);font-weight:600}
+.section-h .disc{margin-top:8px}
+
+/* ── the grade ──
+   One ramp, used everywhere a score appears, so an A on the ladder card and an
+   A in the table are the same claim. */
+.gr{display:inline-flex;align-items:baseline;gap:6px;padding:4px 10px;border-radius:9px;
+  font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.gr .s{font-size:12px;font-weight:600;opacity:.75}
+.gr.g-a{background:rgba(48,209,88,.16);color:var(--green)}
+.gr.g-b{background:rgba(10,132,255,.16);color:var(--blue)}
+.gr.g-c{background:rgba(255,214,10,.16);color:var(--yellow)}
+.gr.g-d{background:rgba(255,69,58,.16);color:var(--red)}
+.gr-lg{font-size:26px;padding:7px 14px;border-radius:12px;letter-spacing:-.02em}
+.mk{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 7px;
+  border-radius:6px;background:var(--bg3);color:var(--muted);vertical-align:middle}
+.mk.pts{color:var(--orange);background:rgba(255,159,10,.16)}
+.mk.reb{color:var(--teal);background:rgba(64,200,224,.16)}
+.mk.ast{color:var(--purple);background:rgba(191,90,242,.16)}
+.mk.tpm{color:var(--green);background:rgba(48,209,88,.16)}
+
+/* the component bars: the point system, shown rather than asserted */
+.sc{margin-top:12px;border-top:.5px solid var(--hair);padding-top:11px}
+.sc-row{display:grid;grid-template-columns:minmax(78px,108px) 1fr auto;gap:9px;align-items:center;padding:3px 0;font-size:12px}
+.sc-row .lb{color:var(--muted)}
+.sc-row .bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden}
+.sc-row .bar i{display:block;height:100%;background:var(--blue);border-radius:3px}
+.sc-row .vv{text-align:right;color:var(--text);font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.sc-row.pen .bar i{background:var(--red)}
+.sc-row.pen .vv{color:var(--red)}
+.sc-row.off .lb,.sc-row.off .vv{color:var(--dim)}
+.sc-note{font-size:11px;color:var(--dim);grid-column:1/-1;margin:-2px 0 4px;line-height:1.45}
+
+/* ── bet cards ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px;padding:0 var(--pad)}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+.bet{background:var(--elev);border:none;border-radius:16px;padding:16px 17px;box-shadow:inset 0 0 0 .5px var(--border)}
+.bet.dim{opacity:.6}
+.bet-top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.bet-rank{font-size:12px;font-weight:600;padding:4px 9px;border-radius:7px;
+  background:var(--bg3);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.bet-game{flex:1;min-width:0;font-size:13px;color:var(--muted)}
+.bet-str{text-align:right}
+.bet-str .v{font-size:26px;font-weight:700;color:var(--text);line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.bet-str .l{font-size:11px;color:var(--dim)}
+.bet-str .stake{font-size:17px;font-weight:600;color:var(--yellow);margin-top:5px;line-height:1.2;font-variant-numeric:tabular-nums}
+.bet-str .stake-l{font-size:10px;color:var(--dim)}
+.leg{display:flex;align-items:center;gap:11px;padding:11px 0;border-top:.5px solid var(--hair)}
+.leg-slot{font-size:11px;font-weight:700;color:var(--dim);width:34px;text-align:center;
+  background:var(--bg3);border-radius:7px;padding:5px 0;flex:none}
+.leg-info{flex:1;min-width:0}
+.leg-name{font-size:16px;font-weight:600;line-height:1.2;letter-spacing:-.01em}
+.leg-meta{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.45}
+.leg-prob{text-align:right;font-size:17px;font-weight:600;color:var(--blue);font-variant-numeric:tabular-nums}
+.leg-prob small{display:block;font-size:10px;color:var(--dim);font-weight:400}
+.bet-foot{margin-top:12px;padding-top:11px;border-top:.5px solid var(--hair);font-size:12px;
+  color:var(--muted);display:grid;grid-template-columns:1fr auto;gap:7px 12px;font-variant-numeric:tabular-nums}
+.bet-foot b{font-weight:600}
+.needs{margin:12px 0 0;padding:11px;background:rgba(191,90,242,.12);border:none;
+  border-radius:11px;text-align:center;font-size:12px;color:var(--muted)}
+.needs b{font-size:19px;font-weight:700;color:var(--purple);display:block;margin-top:3px;font-variant-numeric:tabular-nums}
+.pricebox{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:9px;flex-wrap:wrap}
+.pricebox input{width:88px;background:var(--bg3);border:none;border-radius:9px;color:var(--text);
+  padding:8px;font-family:var(--num);font-size:14px;font-weight:600;text-align:center}
+.pricebox span{font-size:11px;color:var(--dim)}
+.tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;
+  background:var(--bg3);color:var(--dim);margin-left:5px;vertical-align:middle}
+.tag.ok{color:var(--green);background:rgba(48,209,88,.16)}
+.tag.warn{color:var(--yellow);background:rgba(255,214,10,.16)}
+.tag.bad{color:var(--red);background:rgba(255,69,58,.16)}
+.tag.corr{color:var(--purple);background:rgba(191,90,242,.16)}
+
+/* ── the ladder ── */
+.ld{background:var(--elev);border:none;border-radius:18px;padding:18px;margin:0 var(--pad) 4px}
+.ld-top{display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;justify-content:space-between}
+.ld-stake{font-size:44px;font-weight:700;color:var(--yellow);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ld-stake small{display:block;font-size:12px;font-weight:400;color:var(--dim);margin-top:6px}
+.ld-pick{flex:1;min-width:240px;background:var(--bg3);border:none;border-radius:13px;padding:13px 14px}
+.ld-pick .nm{font-size:19px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.ld-pick .sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
+.ld-pick .num{font-size:13px;margin-top:9px;display:flex;gap:14px;flex-wrap:wrap;font-variant-numeric:tabular-nums;font-weight:500}
+.ld-wait{display:flex;flex-direction:column;justify-content:center;background:rgba(255,159,10,.12)}
+.ld-wait .l{font-size:12px;font-weight:600;color:var(--orange)}
+.ld-wait .v{font-size:38px;font-weight:700;color:var(--orange);margin:3px 0 7px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ld-wait .s{font-size:12px;color:var(--muted);line-height:1.5}
+.ld-disc{border-top-color:rgba(255,159,10,.3);margin-top:8px}
+.ld-disc>summary{color:var(--orange);padding:9px 0}
+.ld-disc>summary::after{border-color:var(--orange)}
+.ld-odds{margin-top:16px;max-width:260px}
+.ld-odds label{display:block;font-size:11px;color:var(--dim);margin-bottom:6px}
+.ld-odds input{width:100%;background:var(--bg3);border:none;color:var(--yellow);border-radius:11px;
+  padding:11px;font-family:var(--num);font-size:21px;font-weight:600;text-align:center}
+.ld-odds input:disabled{color:var(--dim);opacity:.65}
+.ld-odds .hint{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.45}
+.ld-odds .hint b{color:var(--text)}
+.ld-next{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.ld-nb{flex:1;min-width:175px;border-radius:13px;padding:13px 14px;border:none;background:var(--bg3)}
+.ld-nb.win{background:rgba(48,209,88,.14)}
+.ld-nb.lose{background:rgba(255,69,58,.12)}
+.ld-nb .l{font-size:11px;color:var(--muted);font-weight:500}
+.ld-nb .v{font-size:29px;font-weight:700;margin-top:3px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ld-nb.win .v{color:var(--green)}
+.ld-nb.lose .v{color:var(--red)}
+.ld-nb .s{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+.ld-in{width:84px;background:var(--bg3);border:none;border-radius:8px;color:var(--text);
+  padding:6px 7px;font-family:var(--num);font-size:12px;text-align:right}
+.ld-foot{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
+.ld-steps{display:flex;gap:8px;margin:16px 0 0;flex-wrap:wrap}
+.ld-step{flex:1;min-width:82px;background:var(--bg3);border:none;border-radius:11px;padding:10px 5px;text-align:center}
+.ld-step.done{background:rgba(48,209,88,.14)}
+.ld-step.now{background:rgba(255,214,10,.16)}
+.ld-step.next{background:rgba(10,132,255,.14)}
+.ld-step .d{font-size:10px;color:var(--dim);font-weight:500}
+.ld-step .v{font-size:15px;font-weight:600;margin-top:3px;font-variant-numeric:tabular-nums}
+.ld-step .o{font-size:9.5px;color:var(--dim);margin-top:3px;line-height:1.3}
+.ld-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:15px;border-top:.5px solid var(--hair)}
+.ld-box{flex:1;min-width:98px;background:var(--bg3);border:none;border-radius:11px;padding:10px 11px;text-align:center}
+.ld-box .v{font-size:17px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.ld-box .l{font-size:10px;color:var(--dim);margin-top:3px}
+.ld-warn{margin-top:14px;padding:0 14px;background:rgba(255,69,58,.12);border:none;
+  border-radius:12px;font-size:12.5px;color:rgba(255,155,150,.95);line-height:1.6}
+.ld-warn>summary{list-style:none;cursor:pointer;padding:13px 26px 13px 0;position:relative;
+  display:block;font-size:12.5px;color:#FF8A82;font-weight:500;line-height:1.5}
+.ld-warn>summary::-webkit-details-marker{display:none}
+.ld-warn>summary::after{content:"";position:absolute;right:4px;top:50%;width:6px;height:6px;
+  border-right:1.6px solid #FF8A82;border-bottom:1.6px solid #FF8A82;
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+.ld-warn[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+.ld-warn-b{padding:0 0 14px}
+.ld-warn b{color:#FF8A82;font-weight:600}
+.ld-warn i{color:rgba(255,155,150,.75)}
+.ld-hist{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:14px;font-variant-numeric:tabular-nums}
+.ld-hist th{text-align:right;padding:7px 8px;font-size:11px;color:var(--dim);font-weight:500;border-bottom:.5px solid var(--hair);white-space:nowrap}
+.ld-hist th:first-child,.ld-hist td:first-child{text-align:left}
+.ld-hist td{text-align:right;padding:9px 8px;border-bottom:.5px solid var(--hair);white-space:nowrap}
+.ld-hist td:nth-child(2){text-align:left;color:var(--text);font-weight:500}
+/* the alternate-line ladder, on the pick */
+.rungs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.rung{background:var(--bg3);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--muted);
+  font-variant-numeric:tabular-nums}
+.rung b{display:block;color:var(--text);font-size:13px}
+.rung.on{background:rgba(255,214,10,.18)}
+.rung.on b{color:var(--yellow)}
+
+/* ── panels & tables ── */
+.wrap{padding:0 var(--pad)}
+.panel{background:var(--elev);border:none;border-radius:16px;overflow:hidden;margin-bottom:12px}
+.panel-head{padding:15px 30px 15px 17px;font-size:16px;color:var(--text);font-weight:600;
+  letter-spacing:-.01em;cursor:pointer;list-style:none;position:relative}
+.panel-head::-webkit-details-marker{display:none}
+.panel-head:active{opacity:.6}
+.panel-head span{display:block;color:var(--dim);font-size:12px;font-weight:400;margin-top:3px;
+  font-variant-numeric:tabular-nums}
+.panel-head::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;
+  border-right:1.8px solid var(--dim);border-bottom:1.8px solid var(--dim);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+.panel[open] .panel-head::after{transform:translateY(-30%) rotate(-135deg)}
+.panel[open] .panel-head{border-bottom:.5px solid var(--hair)}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px;font-variant-numeric:tabular-nums}
+thead th{position:sticky;top:0;background:var(--elev);text-align:left;padding:10px 14px;font-size:11px;
+  color:var(--dim);font-weight:500;border-bottom:.5px solid var(--hair);white-space:nowrap}
+thead th.num{text-align:right}
+tbody td{padding:12px 14px;white-space:nowrap;border-bottom:.5px solid var(--hair)}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right}
+
+/* ── settings ── */
+#slip-wrap{margin:0 var(--pad) 4px;background:var(--elev);border-radius:16px;overflow:hidden}
+#slip-wrap>summary{padding:15px 30px 15px 17px;font-size:16px;font-weight:600;color:var(--text);
+  cursor:pointer;list-style:none;position:relative}
+#slip-wrap>summary::-webkit-details-marker{display:none}
+#slip-wrap>summary::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;
+  border-right:1.8px solid var(--dim);border-bottom:1.8px solid var(--dim);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
+#slip-wrap[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+#slip-wrap[open]>summary{border-bottom:.5px solid var(--hair)}
+#slip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;padding:16px 17px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:11px;color:var(--dim)}
+.fld input,.fld select{background:var(--bg3);border:none;border-radius:10px;color:var(--text);
+  padding:10px 11px;font-family:var(--num);font-size:15px;font-weight:500;width:100%}
+.fld select{font-family:var(--sys)}
+.fld.chk{grid-column:1/-1;flex-direction:row;align-items:center;gap:10px}
+.fld.chk input{width:auto;accent-color:var(--green);transform:scale(1.15)}
+.fld.chk label{font-size:13px;color:var(--muted)}
+.mkts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.mkts label{display:flex;align-items:center;gap:7px;background:var(--bg3);border-radius:980px;
+  padding:8px 13px;font-size:13px;color:var(--muted);cursor:pointer}
+.mkts input{accent-color:var(--orange)}
+
+/* ── misc ── */
+.legend{font-size:13px;color:var(--muted);line-height:1.68;padding:0 var(--pad)}
+.legend b{color:var(--text);font-weight:600}
+.wtab{width:100%;min-width:0;margin:10px 0 4px;font-size:12.5px}
+.wtab td{padding:6px 8px;border-bottom:.5px solid var(--hair);white-space:normal}
+.wtab td:last-child{text-align:right;color:var(--text);font-weight:600;white-space:nowrap}
+.spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:40px var(--pad);text-align:center;color:var(--dim);font-size:13px}
+.offseason{margin:0 var(--pad);background:var(--elev);border-radius:16px;padding:22px 20px}
+.offseason .h{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.offseason .b{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.6}
+.offseason .d{font-size:34px;font-weight:700;color:var(--orange);margin-top:14px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div>
+    <div class="brand">SPORTSAI</div>
+    <div class="logo">🏀 HAIrdwood</div>
+    <div class="logo-sub">
+      NBA props · the ladder + same-game doubles · Build 1 ·
+      <!-- stamped by the deploy; keep on its own line -->
+      <span id="buildsha">e153bd8</span>
+    </div>
+  </div>
+  <div class="controls">
+    <a class="navlink" href="record.html">📜 Record</a>
+    <a class="navlink" href="./">⚾ Two BAIgger</a>
+    <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
+    <button class="run-btn" id="run" onclick="load(true)">⟳ REFRESH</button>
+  </div>
+</div>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
+<div id="status"></div>
+
+<div class="section-h lead">
+  <div class="sh-row"><h2>🪜 The Ladder</h2><span class="sh-note" id="ldNote"></span></div>
+  <details class="disc"><summary>How the ladder works</summary><div class="disc-b">
+    <p>One bet a day: a single player prop — <b>points, rebounds, assists or threes made</b>, whichever of the four grades highest on the whole slate — staked from a $100 account.</p>
+    <p>Win and the entire return rides the next day. Five straight closes the cycle and the money comes off the table, with the next cycle seeded at 10% of the grown account. Any miss ends the cycle there and the next one starts <b>25% bigger</b>.</p>
+    <p>Only the cycle's <b>seed</b> is ever your money — everything above it is the book's — so a miss on day four costs exactly what a miss on day one costs. That is the one thing separating this from a martingale.</p>
+    <p>A prop is <b>voided</b>, not lost, if the man does not play: the stake comes back and the same rung runs again tomorrow. That is why a questionable tag costs grade points here instead of being multiplied into the probability.</p>
+    <p>The pick stays blank until it locks <b>one hour before the first tip</b>, then shows the rung actually published to the repo. Read the red panel on the card before you run it.</p>
+  </div></details>
+</div>
+<div id="ladder"></div>
+
+<div class="group-h"><span>The Double</span><small>best 2-leg parlay inside one game · a different bet from the ladder</small></div>
+<div class="section-h">
+  <div class="sh-row"><h2>🎲 Same-game doubles</h2><span class="sh-note" id="cardsNote"></span></div>
+  <details class="disc"><summary>Why two legs from one game — and why the singles usually beat them</summary><div class="disc-b">
+    <p>Every pair inside each game is enumerated and graded, not just the two likeliest: two props in one game share a pace, a game script and sometimes a basketball, and the direction differs for every pair of markets — two teammates chasing the same rebound take them off each other, while an assist and a teammate's three can be the <i>same event</i>.</p>
+    <p><b>That is the theory. The test did not find it.</b> Graded against a season of real results, doubles landed almost exactly what you get by multiplying their two legs together — so the correlation that justifies a same-game parlay is, on the evidence so far, too small for this board to see. Every ρ is halved because of it, the published pair carries a further haircut for the flattery in picking the best two legs of a game, and the card still shows ρ and what it is worth so you can watch the claim rather than take it.</p>
+    <p><b>So read these as what they are.</b> A parlay pays the book's margin twice and this one has no measured correlation edge to pay for that. The singles above are usually the better bet; these are here because a same-game double is what you asked the board for, priced as honestly as it can be rather than sold. Cards are ordered by the <b>pair's grade</b>, on the same hundred-point scale as everything else.</p>
+  </div></details>
+</div>
+<div class="cards" id="cards"></div>
+
+<div class="section-h"><div class="sh-row"><h2>The full slate</h2><span class="sh-note">tap to open</span></div></div>
+<div class="wrap">
+  <details class="panel" open>
+    <summary class="panel-head">🏀 Every prop, graded <span id="legsNote"></span></summary>
+    <div class="table-wrap"><table><thead><tr id="lhead"></tr></thead><tbody id="lbody"></tbody></table></div>
+  </details>
+  <details class="panel">
+    <summary class="panel-head">📋 Best pair in every game <span id="pairsNote"></span></summary>
+    <div class="table-wrap"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+  </details>
+  <details class="panel">
+    <summary class="panel-head">🌡 Tonight's environments <span id="envNote"></span></summary>
+    <div class="table-wrap"><table><thead><tr id="ehead"></tr></thead><tbody id="ebody"></tbody></table></div>
+  </details>
+</div>
+
+<div class="group-h"><span>Settings &amp; reference</span><small>the bar, the prices, and how every number is built</small></div>
+<details id="slip-wrap"><summary>⚙️ Bet slip &amp; filters</summary>
+<div id="slip">
+  <div class="fld"><label>Minimum hit rate (floor, not target)</label><input id="target" type="number" step="1" min="45" max="90" value="60"></div>
+  <div class="fld"><label>Grade bar (score)</label><input id="minScore" type="number" step="1" value="65"></div>
+  <div class="fld"><label>$ per grade point over the bar</label><input id="perPt" type="number" step="0.25" min="0" value="0.75"></div>
+  <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="10" value="1000"></div>
+  <div class="fld"><label>Leg price (single prop)</label><input id="legPrice" type="number" step="5" value="-250"></div>
+  <div class="fld"><label>Double price (American)</label><input id="price" type="number" step="5" value="-120"></div>
+  <div class="fld"><label>Rank by</label><select id="sortBy">
+    <option value="score">Grade — most likely</option>
+    <option value="value">Grade × payout</option>
+    <option value="prob">Raw probability</option>
+    <option value="line">Biggest line</option>
+  </select></div>
+  <div class="mkts" id="mkts"></div>
+  <div class="fld chk"><input id="allowSame" type="checkbox"><label for="allowSame">Let a double use the same player twice (points + rebounds, and so on)</label></div>
+  <div class="fld chk"><input id="onlyTeam" type="checkbox"><label for="onlyTeam">Same-team doubles only</label></div>
+  <div class="fld chk"><input id="noQ" type="checkbox"><label for="noQ">Hide anyone on the injury report</label></div>
+</div></details>
+
+<div class="legend" id="legend"></div>
+
+<script src="hairdwood-model.js?v=1"></script>
+<script>
+// The engine lives in its own file so the page and any alerter price the same
+// board. If it fails to load, say so in the status bar rather than throwing at
+// parse time and leaving the user staring at an empty page.
+const M=window.HairdwoodModel||null;
+// GitHub Pages is same-origin with ESPN only through a proxy; keep the same
+// fallback chain the other boards use so a blocked direct fetch still resolves.
+const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
+let good=null,board=null,ladderHist=null;
+
+async function getJSON(url){
+  const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);
+  let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw new Error("HTTP "+r.status);const j=await r.json();good=i;return j;}catch(x){e=x;}}
+  throw e||new Error("unreachable");
+}
+function status(m,c="var(--blue)"){const el=document.getElementById("status");el.style.color=c;el.innerHTML=m;}
+function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
+const pct=v=>Math.round(v*100)+"%";
+const pct1=v=>(v*100).toFixed(1)+"%";
+const money=v=>(v<0?"-$":"$")+Math.abs(v).toFixed(2);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// ── self-update ─────────────────────────────────────────────────────────────
+// Same mechanism as the other boards: Pages serves HTML on a ten-minute cache
+// and the no-cache <meta> tags are not honoured for the document itself, so the
+// page has to notice a deploy and pull itself forward. One source of truth —
+// the sha in the visible span — because two stamped copies drift, and did.
+const BUILD=(document.getElementById("buildsha")||{textContent:"_dev"}).textContent.trim();
+let liveSha=null;
+const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
+          set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}};
+function hardReload(){
+  const btn=document.querySelector("#update-bar button");
+  if(btn){btn.textContent="UPDATING…";btn.disabled=true;}
+  const base=location.pathname.replace(/[?#].*$/,"");
+  location.replace(base+"?b="+(liveSha||"new")+"."+Date.now().toString(36)+Math.random().toString(36).slice(2,7));
+}
+async function checkBuild(){
+  if(BUILD.charAt(0)==="_")return;            // unstamped: local checkout or branch preview
+  try{
+    const r=await fetch("build.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok)return;
+    const j=await r.json();
+    if(!j||!j.sha||j.sha===BUILD)return;
+    liveSha=j.sha;
+    const key="hw.upd."+j.sha;
+    if(!ss.get(key)){ss.set(key,"1");hardReload();return;}
+    document.getElementById("update-bar").style.display="flex";
+    const b=document.querySelector("#update-bar button");
+    if(b){b.disabled=false;b.textContent="UPDATE NOW";}
+  }catch(e){/* offline or no build.json — nothing to do */}
+}
+
+// ── settings ────────────────────────────────────────────────────────────────
+// The market filter is built from the model's own list, so adding a fifth
+// market upstream cannot leave a checkbox behind.
+const MKTS=(M?M.MARKETS:[]).map(m=>m.key);
+document.getElementById("mkts").innerHTML=(M?M.MARKETS:[]).map(m=>
+  `<label><input type="checkbox" id="mk_${m.key}" checked> ${m.label}</label>`).join("");
+const SETTINGS=["target","minScore","perPt","bank","legPrice","price","sortBy","allowSame","onlyTeam","noQ"].concat(MKTS.map(k=>"mk_"+k));
+SETTINGS.forEach(id=>{
+  const el=document.getElementById(id);if(!el)return;
+  const saved=localStorage.getItem("hw."+id);
+  if(saved!=null){if(el.type==="checkbox")el.checked=saved==="1";else el.value=saved;}
+  el.addEventListener("change",()=>{
+    localStorage.setItem("hw."+id,el.type==="checkbox"?(el.checked?"1":"0"):el.value);
+    // The target hit rate decides which LINE every prop is written at, which is
+    // a projection-level change — it cannot be re-filtered on the client.
+    if(id==="target")load(); else if(board)render();
+  });
+});
+const setting=id=>{const el=document.getElementById(id);if(!el)return null;
+  if(el.type==="checkbox")return el.checked;
+  if(el.tagName==="SELECT")return el.value;
+  return +el.value;};
+const bar=()=>setting("minScore");
+// Stake off the grade. There is no live prop market to measure an edge against,
+// so the board stakes what it actually claims to know: how good the bet is.
+// A bet at the bar stakes nothing and a bet ten points above it stakes ten
+// times the rate, which keeps the arithmetic checkable by hand.
+const stakeOf=score=>Math.max(0,score-bar())*setting("perPt");
+
+// Prices typed per game survive the re-render; the keys are game ids, so
+// tomorrow's slate clears them on its own.
+const priceByGame={};
+function setGamePrice(gk,v){
+  const p=parseFloat(v);
+  if(!isFinite(p)||p===0)delete priceByGame[gk]; else priceByGame[gk]=p;
+  if(board)render();
+}
+const gamePrice=gk=>priceByGame[gk]!=null?priceByGame[gk]:setting("price");
+
+// The ladder compounds the ACTUAL return, so it can only be right if it knows
+// the price actually taken. Typed per day, kept here, surviving reloads.
+let oddsByDay={};
+try{oddsByDay=JSON.parse(localStorage.getItem("hw.ladderOdds")||"{}")||{};}catch(e){oddsByDay={};}
+function setLadderOdds(day,v){
+  const p=parseFloat(v);
+  if(!isFinite(p)||p===0||Math.abs(p)<100)delete oddsByDay[day]; else oddsByDay[day]=p;
+  try{localStorage.setItem("hw.ladderOdds",JSON.stringify(oddsByDay));}catch(e){}
+  renderLadder();
+}
+
+// ── grade furniture ─────────────────────────────────────────────────────────
+const gClass=g=>g[0]==="A"?"g-a":g[0]==="B"?"g-b":g[0]==="C"?"g-c":"g-d";
+const gradeChip=(sc,big)=>`<span class="gr ${gClass(sc.grade)}${big?" gr-lg":""}">${sc.grade}<span class="s">${sc.score.toFixed(0)}</span></span>`;
+// The point system, drawn. Every component with its own bar, the ones we could
+// not measure greyed out and worth nothing either way, and the penalties in
+// red underneath — so the number at the top of the card can be checked.
+function scoreBars(sc){
+  const rows=sc.parts.map(p=>p.pts==null
+    ? `<div class="sc-row off"><div class="lb">${esc(p.label)}</div><div class="bar"></div><div class="vv">—</div>
+       <div class="sc-note">not scored — ${esc(p.note||"")}</div></div>`
+    : `<div class="sc-row"><div class="lb">${esc(p.label)}</div>
+       <div class="bar"><i style="width:${Math.max(0,Math.min(100,100*p.pts/p.max))}%"></i></div>
+       <div class="vv">${p.pts.toFixed(1)}<span style="color:var(--dim);font-weight:400">/${p.max}</span></div>
+       <div class="sc-note">${esc(p.note||"")}</div></div>`).join("");
+  const pen=(sc.penalties||[]).map(p=>
+    `<div class="sc-row pen"><div class="lb">${esc(p.label)}</div>
+     <div class="bar"><i style="width:${Math.min(100,p.pts*6)}%"></i></div>
+     <div class="vv">−${p.pts.toFixed(1)}</div>
+     <div class="sc-note">${esc(p.note||"")}</div></div>`).join("");
+  return `<div class="sc">${rows}${pen}
+    <div class="sc-row" style="margin-top:6px;border-top:.5px solid var(--hair);padding-top:8px">
+      <div class="lb" style="color:var(--text);font-weight:600">HAIrdwood score</div><div class="bar"><i style="width:${sc.score}%;background:var(--green)"></i></div>
+      <div class="vv" style="font-size:14px">${sc.score.toFixed(1)}</div>
+      <div class="sc-note">${sc.earned!=null?`${sc.earned} earned out of the ${sc.available} points this bet could be measured on`:`out of ${sc.available} measurable points`} — ${esc(sc.note)}</div>
+    </div></div>`;
+}
+const legTitle=l=>`${esc(l.pl.name)} <span class="mk ${l.market}">${l.marketShort} o${l.line}</span>`;
+const injTag=l=>l.status?`<span class="tag ${/out/i.test(l.status)?"bad":"warn"}">${esc(l.status)}</span>`:"";
+</script>
+<script>
+// ── loading ─────────────────────────────────────────────────────────────────
+// `force` is the REFRESH button: it drops the model's cache of season rates,
+// rosters and game logs so the whole board is rebuilt from the feed. The timer
+// below does not, because the two things that actually move in the hour before
+// tip — the slate and the injury reports — are never cached in the first place.
+async function load(force){
+  checkBuild();
+  if(force&&M)M.clearCache();
+  if(!M){status("✗ hairdwood-model.js did not load — hard-refresh the page.","var(--red)");return;}
+  const btn=document.getElementById("run");btn.disabled=true;
+  try{
+    // The ladder's settled history, written by whatever settles it. Absent
+    // means the ladder has not started, and the card then shows rung one off
+    // the seed rather than hiding itself.
+    try{const r=await fetch("data/hairdwood-ladder.json?t="+Date.now());if(r.ok)ladderHist=await r.json();}catch(e){/* not started */}
+    board=await M.buildBoard({getJSON,target:setting("target")/100,
+      onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
+    setProg(100);setTimeout(()=>setProg(0),300);
+    if(board.empty){renderOffseason();return;}
+    if(!board.legs.length){status(`No prop cleared the model's floor for ${board.date}.`,"var(--yellow)");renderEmpty();return;}
+    render();
+    const c=board.counts,deg=(board.degraded||[]).length
+      ? ` · <b style="color:var(--yellow)">⚠ ${board.degraded.join(" + ")} unavailable — those components are dropped from the grade, not guessed</b>`:"";
+    const prior=board.priorSeason?' · <b style="color:var(--yellow)">rates are LAST season\'s — nothing has been played yet this one</b>':"";
+    status(`✓ ${c.games} games · ${c.players} rotation players · ${c.legs} graded props · ${c.logs} game logs · league pace ${board.lg.pace.toFixed(1)}${board.lg.measured?"":" (assumed)"} · ${board.date} ${new Date().toLocaleTimeString()}${prior}${deg}`,
+      (board.degraded||[]).length||board.priorSeason?"var(--yellow)":"var(--green)");
+  }catch(e){status(`✗ ${e.message}. The ESPN feed may be blocked — try again.`,"var(--red)");setProg(0);}
+  finally{btn.disabled=false;}
+}
+
+// Out of season the useful answer is when, not nothing — so the page says when.
+function renderOffseason(){
+  const next=board.nextDay;
+  const days=next?Math.round((Date.parse(next+"T12:00:00Z")-Date.parse(board.date+"T12:00:00Z"))/86400000):null;
+  document.getElementById("ladder").innerHTML=`<div class="offseason">
+    <div class="h">🏀 No NBA games today</div>
+    <div class="b">${next
+      ? `The next slate on ESPN's schedule is <b style="color:var(--text)">${next}</b>. HAIrdwood grades a slate on the day it is played — minutes, absences and the posted total are all same-day facts — so there is nothing to publish until then. The board fills itself in on the morning of that game.`
+      : `ESPN has no scheduled games in the next six weeks either, which in September means the schedule for the coming season is not out yet. This page will fill itself in the moment it is.`}</div>
+    ${next?`<div class="d">${days} day${days===1?"":"s"}</div>`:""}
+  </div>`;
+  document.getElementById("cards").innerHTML=`<div class="empty">Nothing to pair — there is no game.</div>`;
+  ["lbody","tbody","ebody"].forEach(id=>{document.getElementById(id).innerHTML="";});
+  ["ldNote","cardsNote","legsNote","pairsNote","envNote"].forEach(id=>{document.getElementById(id).textContent="";});
+  document.getElementById("legend").innerHTML=legendHtml();
+  status(`No games on ${board.date}.${next?` Next slate ${next}.`:""}`,"var(--yellow)");
+}
+function renderEmpty(){
+  document.getElementById("cards").innerHTML="";
+  document.getElementById("lbody").innerHTML=`<tr><td colspan="11"><div class="empty">Nothing priced.</div></td></tr>`;
+  renderLadder();
+}
+
+// ── filtering ───────────────────────────────────────────────────────────────
+// Everything below this line works off the built board — no network — so the
+// bar, the sort and the market filter are instant.
+function legs(){
+  let L=board.legs.filter(l=>setting("mk_"+l.market)!==false);
+  if(setting("noQ"))L=L.filter(l=>!l.status);
+  const by=setting("sortBy");
+  if(by==="value")L=L.slice().sort((a,b)=>b.value-a.value);
+  else if(by==="prob")L=L.slice().sort((a,b)=>b.p-a.p);
+  else if(by==="line")L=L.slice().sort((a,b)=>b.line-a.line||b.score.score-a.score.score);
+  else L=L.slice().sort((a,b)=>b.score.score-a.score.score||b.p-a.p);
+  return L;
+}
+// The doubles are rebuilt on the client so the market filter and the same-player
+// toggle apply without another trip to the feed.
+function doubles(){
+  const pool=legs();
+  return board.slates.map(s=>{
+    const mine=pool.filter(l=>l.gameId===s.game.id);
+    const d=M.bestDouble(mine,s.env,{allowSame:setting("allowSame"),onlyTeam:setting("onlyTeam"),depth:22});
+    return {game:s.game,env:s.env,legs:mine,double:d?d.best:null};
+  }).filter(s=>s.double).sort((a,b)=>b.double.score.score-a.double.score.score);
+}
+
+// ── the double cards ────────────────────────────────────────────────────────
+function legRow(l,slot){
+  const f=l.form;
+  const mins=l.mins;
+  return `<div class="leg">
+    <div class="leg-slot">${slot}</div>
+    <div class="leg-info">
+      <div class="leg-name">${legTitle(l)}${injTag(l)}${l.b2b?'<span class="tag warn">B2B</span>':""}</div>
+      <div class="leg-meta">${esc(l.teamAbbr)} ${l.isHome?"vs":"@"} ${esc(l.oppAbbr)} · ${esc(l.pl.pos||"")} · projected <b style="color:var(--text)">${l.mean.toFixed(1)}</b> on ${mins.minutes.toFixed(1)} min
+      ${f&&f.n>=5?`<br>${f.hits}/${f.n} over ${l.line} in his last ${f.n} · season ${(l.seasonAvg||0).toFixed(1)}`:`<br>season ${(l.seasonAvg||0).toFixed(1)} · no game log`}</div>
+    </div>
+    <div class="leg-prob">${pct(l.p)}<small>${gradeChip(l.score)}</small></div>
+  </div>`;
+}
+function card(s,i){
+  const d=s.double,px=gamePrice(s.game.id);
+  const ev=M.evaluate(d.prob,px);
+  const stake=stakeOf(d.score.score);
+  const kelly=ev?setting("bank")*ev.quarterKelly:0;
+  const g=s.game;
+  return `<div class="bet${d.score.score>=bar()?"":" dim"}">
+    <div class="bet-top">
+      <div class="bet-rank">#${i+1}</div>
+      <div class="bet-game">${esc(g.away.abbr)} @ ${esc(g.home.abbr)}<br><span style="color:var(--dim)">${esc(g.statusTxt||"")}${g.total?` · total ${g.total}`:""}${g.spreadHome!=null?` · ${esc(g.oddsTxt||"")}`:""}</span></div>
+      <div class="bet-str">
+        ${gradeChip(d.score,true)}
+        <div class="l" style="margin-top:4px">Pair grade</div>
+        <div class="stake">${stake>0?money(stake):"—"}</div>
+        <div class="stake-l">${stake>0?`${(d.score.score-bar()).toFixed(1)}pts × $${setting("perPt").toFixed(2)}`:"below the bar"}</div>
+      </div>
+    </div>
+    ${legRow(d.a,"1")}${legRow(d.b,"2")}
+    <div class="needs">
+      Both legs land <b>${pct1(d.prob)}</b>
+      <span style="font-size:10px;color:var(--dim)">fair ${M.amOdds(d.prob)} · pricing them apart says ${pct1(d.naive)}, which is the ${d.lift>=0?"understatement":"overstatement"} worth ${d.lift>=0?"+":""}${(d.lift*100).toFixed(1)}pts</span>
+      <div class="pricebox">
+        <span>Your price</span>
+        <input type="number" step="5" value="${px}" onchange="setGamePrice('${esc(s.game.id)}',this.value)">
+      </div>
+      ${ev?`<div style="font-size:11px;color:var(--dim);margin-top:7px">
+        EV <b style="color:${ev.ev>=0?"var(--green)":"var(--red)"}">${ev.evPct>=0?"+":""}${ev.evPct.toFixed(1)}%</b>
+        · breakeven ${pct1(ev.breakeven)} · ¼-Kelly <b style="color:${kelly>0?"var(--green)":"var(--dim)"}">${money(kelly)}</b> of ${money(setting("bank"))}</div>`:""}
+    </div>
+    <div class="bet-foot">
+      <span>${d.sameTeam?'<span class="tag corr">SAME TEAM</span>':'<span class="tag">OPPOSING</span>'}${d.samePlayer?'<span class="tag corr">SAME MAN</span>':""} correlation</span>
+      <span style="text-align:right" title="What the two legs sharing one game is worth against multiplying them as independent">ρ ${d.rho.toFixed(3)} · <b style="color:var(--purple)">${d.lift>=0?"+":""}${(d.lift*100).toFixed(1)}pts</b></span>
+      <span>Projected pace</span><span style="text-align:right">${s.env.poss.toFixed(1)} poss · ${s.env.src==="model"?"our number":"off the posted total"}</span>
+      <span>Projected score</span><span style="text-align:right">${esc(g.away.abbr)} ${s.env.awayPts.toFixed(1)} — ${s.env.homePts.toFixed(1)} ${esc(g.home.abbr)}</span>
+    </div>
+    <details class="disc"><summary>How this pair earned ${d.score.score.toFixed(1)}</summary>${scoreBars(d.score)}</details>
+  </div>`;
+}
+</script>
+<script>
+// ── THE LADDER ──────────────────────────────────────────────────────────────
+// The day's single best-graded prop, staked off the compounding ladder. History
+// comes from data/hairdwood-ladder.json; the state is replayed from it by the
+// shared engine, so this card and any alerter can never disagree about which
+// rung we are on.
+const etTime=ms=>new Date(ms).toLocaleTimeString("en-US",{timeZone:"America/New_York",hour:"numeric",minute:"2-digit"});
+let ldLockAt=null,ldFired=false;
+function tickLadderClock(){
+  const el=document.getElementById("ldClock");
+  if(!el||ldLockAt==null)return;
+  const ms=ldLockAt-Date.now();
+  if(ms<=0){el.textContent="LOCKING NOW";if(!ldFired){ldFired=true;renderLadder();}return;}
+  const t=Math.floor(ms/1000),p2=n=>String(n).padStart(2,"0");
+  // A slate more than a day out is normally impossible, but the board will
+  // happily be pointed at one — and "2927:36:30" is not a countdown, it is a
+  // typo with a colon in it.
+  el.textContent=t>=86400
+    ? `${Math.floor(t/86400)}d ${Math.floor(t/3600)%24}h`
+    : `${Math.floor(t/3600)}:${p2(Math.floor(t/60)%60)}:${p2(t%60)}`;
+}
+setInterval(tickLadderClock,1000);
+
+// Best play of the day = the highest grade on the board, whichever of the four
+// markets it lands in. The market filter applies — if you have switched threes
+// off, the ladder will not pick one — but the grade bar does NOT: the ladder
+// always names its best bet and then tells you whether it clears.
+function ladderPick(){
+  const L=legs();
+  return L.length?L.slice().sort((a,b)=>b.score.score-a.score.score||b.p-a.p)[0]:null;
+}
+function renderLadder(){
+  const el=document.getElementById("ladder"),note=document.getElementById("ldNote");
+  const raw=(ladderHist&&Array.isArray(ladderHist.bets))?ladderHist.bets:[];
+  const hist=raw.map(b=>oddsByDay[b.date]!=null?Object.assign({},b,{price:oddsByDay[b.date]}):b);
+  const st=M.ladder(hist);
+  const C=st.cfg,pick=board?ladderPick():null;
+  const today=(board&&board.date)||M.slateYmd();
+  const pub=raw.find(b=>b.date===today);
+  // Once a rung has been committed, THAT is the pick — not whatever the board
+  // would choose if it recomputed now. A dashboard showing a different name
+  // from the one on record is worth nothing to anyone checking the record.
+  const locked=pub&&pub.pick?pub:null;
+  const lk=board?M.lockInfo(board.games):null;
+  ldLockAt=lk&&!locked?lk.lockAt:null;
+  if(ldLockAt==null)ldFired=false;
+  const waiting=!locked&&lk&&!lk.open;
+  const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
+                 :(locked&&locked.price!=null?locked.price:setting("legPrice"));
+  const dec=M.decFromAmerican(todayOdds)||1;
+  const typed=oddsByDay[today]!=null;
+  const p=locked?locked.p:(pick?pick.p:null);
+  const sc=locked?(locked.score!=null?locked.score:null):(pick?pick.score.score:null);
+  const risk=p?M.ladderRisk(p,todayOdds,st):null;
+  const stake=st.stake,mine=st.atRisk,house=st.onTable;
+  note.textContent=`cycle ${st.cycle} · day ${st.rung} of ${C.rungs} · account ${money(st.account)}`;
+
+  const ret=stake*dec;
+  const closes=st.rung>=C.rungs;
+  const nextIfWin=closes?Math.max(0,(st.account+(ret-st.base)))*C.basePct:ret;
+  const nextIfLose=st.base*(1+C.missGain);
+
+  // Only two rungs on this staircase are real numbers: the ones already bet at
+  // the prices they were actually taken at, and today's. Tomorrow is computable
+  // ONLY because today's price is now known. Day four cannot be priced from day
+  // two — that leg has no odds yet, and inventing them is how a projection
+  // becomes a promise.
+  const won=st.rows.filter(r=>r.cycle===st.cycle&&r.status==="won");
+  const byRung={};won.forEach(r=>{byRung[r.rung]=r;});
+  const steps=Array.from({length:C.rungs},(_,i)=>{
+    const d=i+1,done=byRung[d];
+    if(done)return `<div class="ld-step done"><div class="d">Day ${d} ✓</div>
+      <div class="v" style="color:var(--green)">${money(done.stake)}</div>
+      <div class="o">at ${done.price>0?"+":""}${done.price}</div></div>`;
+    if(d===st.rung)return `<div class="ld-step now"><div class="d">Day ${d} · today</div>
+      <div class="v" style="color:var(--yellow)">${money(stake)}</div>
+      <div class="o">${waiting?"price set at lock":`at ${todayOdds>0?"+":""}${todayOdds}`}</div></div>`;
+    if(d===st.rung+1)return waiting
+      ? `<div class="ld-step"><div class="d">Day ${d}</div><div class="v" style="color:var(--dim)">—</div>
+         <div class="o">needs today's price</div></div>`
+      : `<div class="ld-step next"><div class="d">Day ${d} · if today hits</div>
+         <div class="v" style="color:var(--blue)">${money(ret)}</div><div class="o">then price it again</div></div>`;
+    return `<div class="ld-step"><div class="d">Day ${d}</div><div class="v" style="color:var(--dim)">—</div>
+      <div class="o">priced on the day</div></div>`;
+  }).join("");
+
+  const oddsBox=waiting?`<div class="ld-odds">
+    <label>Odds you got on this pick</label>
+    <input type="text" value="—" disabled>
+    <div class="hint">Opens when the pick locks at ${etTime(lk.lockAt)} ET. Until there is a player there is no price to enter.</div>
+  </div>`:`<div class="ld-odds">
+    <label for="ldOdds">Odds you got on this pick</label>
+    <input id="ldOdds" type="number" step="5" inputmode="numbers-and-punctuation" value="${todayOdds}"
+      onchange="setLadderOdds('${today}',this.value)">
+    <div class="hint">${typed?`Your price. ${money(stake)} returns <b>${money(ret)}</b>.`
+      :`Assumed — type what your book is actually showing. ${money(stake)} would return <b>${money(ret)}</b>.`}</div>
+  </div>`;
+
+  const nextBox=`<div class="ld-next">
+    <div class="ld-nb win"><div class="l">If it hits → ${closes?"cycle closes, next seed":"tomorrow's bet"}</div>
+      <div class="v">${money(nextIfWin)}</div>
+      ${closes?`<div class="s">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
+              :`<div class="s">still only ${money(st.base)} of your money at risk</div>`}</div>
+    <div class="ld-nb lose"><div class="l">If it misses → next seed</div>
+      <div class="v">${money(nextIfLose)}</div>
+      <div class="s">cycle ends, costs ${money(st.base)} — the seed, whatever day it lands</div></div>
+  </div>`;
+
+  const lockedHtml=locked?`
+    <div class="ld-pick">
+      <div class="nm">${esc(locked.pick)} <span class="mk ${esc(locked.market||"")}">${esc((locked.market||"").toUpperCase())} o${locked.line}</span> <span class="tag ok">LOCKED</span></div>
+      <div class="sub">${esc(locked.teams||"")}${locked.status?` · <span style="color:var(--yellow)">${esc(locked.status)}</span>`:""}</div>
+      <div class="num">
+        <span style="color:var(--blue)">${pct(locked.p)} to clear</span>
+        <span style="color:var(--yellow)">fair ${M.amOdds(locked.p)}</span>
+        ${sc!=null?`<span>grade ${sc.toFixed?sc.toFixed(1):sc}</span>`:""}
+      </div>
+      <div class="sub" style="margin-top:7px;color:var(--green)">
+        Published ${locked.published?etTime(Date.parse(locked.published)):"—"} ET${locked.firstTip?` · first tip ${etTime(Date.parse(locked.firstTip))} ET`:""}
+      </div>
+    </div>`:"";
+
+  const waitHtml=waiting?`
+    <div class="ld-pick ld-wait">
+      <div class="l">Pick locks in</div>
+      <div class="v" id="ldClock">—:—:—</div>
+      <div class="s">One hour before the first tip (${etTime(lk.first)} ET), from every game on the slate.</div>
+      <details class="disc ld-disc"><summary>Why it's blank</summary><div class="disc-b">
+        An NBA board re-ranks itself every time an inactive list drops, and in this sport those land an hour before tip-off, not at noon. A pick published before them would quietly swap itself, and a pick that swaps itself is not a pick. The lock is the commitment.
+      </div></details>
+    </div>`:"";
+
+  // The alternate-line ladder is a HAIrdwood-specific thing worth showing: the
+  // pick is not "this man, this number", it is "this man, as far up his own
+  // ladder as the target hit rate will carry him", and the rungs either side
+  // are what you would be taking if your book prices them better.
+  const rungs=pick&&pick.rungs?pick.rungs.filter(r=>r.p>=0.45&&r.p<=0.97).slice(-6).map(r=>
+    `<div class="rung${r.line===pick.line?" on":""}"><b>o${r.line}</b>${pct(r.p)} · ${M.amOdds(r.p)}</div>`).join(""):"";
+
+  const pickHtml=pick?`
+    <div class="ld-pick">
+      <div class="nm">${esc(pick.pl.name)} <span class="mk ${pick.market}">${pick.marketShort} o${pick.line}</span> ${gradeChip(pick.score)}</div>
+      <div class="sub">${esc(pick.teamAbbr)} ${pick.isHome?"vs":"@"} ${esc(pick.oppAbbr)} · projected <b style="color:var(--text)">${pick.mean.toFixed(1)}</b> on ${pick.mins.minutes.toFixed(1)} minutes${injTag(pick)}</div>
+      <div class="num">
+        <span style="color:var(--blue)">${pct(pick.p)} to clear</span>
+        <span style="color:var(--yellow)">fair ${pick.fair}</span>
+        <span style="color:${pick.score.score>=bar()?"var(--green)":"var(--red)"}">grade ${pick.score.score.toFixed(1)} vs a ${bar()} bar</span>
+      </div>
+      <div class="rungs">${rungs}</div>
+      <div class="sub" style="margin-top:8px;color:${pick.score.score>=bar()?"var(--green)":"var(--red)"}">
+        ${pick.score.score>=bar()
+          ? `BET ONLY BETTER THAN ${pick.fair}. That is the price at which this bet is exactly break-even, so anything shorter is a losing bet however good the grade is.`
+          : `Nothing on tonight's board clears the ${bar()} bar. The ladder waits; it does not lower its standard.`}
+      </div>
+      <details class="disc ld-disc"><summary>How this pick earned ${pick.score.score.toFixed(1)}</summary>${scoreBars(pick.score)}</details>
+    </div>`:'<div class="ld-pick"><div class="sub">No board loaded.</div></div>';
+
+  const warn=risk?`<details class="ld-warn"><summary>Only <b>${(risk.cycleWin*100).toFixed(1)}%</b> of cycles complete, and there is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the account dry. Read this.</summary>
+    <div class="ld-warn-b"><b>What this actually is.</b> Five legs at ${pct(p)}${waiting?" (a typical top prop — tonight's is not chosen yet)":""} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally a large win — <b>${money(risk.cycleProfit)}</b> <i>if</i> all five legs priced like today's, which is a what-if and not a forecast. Do not size it as though it wins often.
+    <br><br><b>And the basketball-specific one:</b> a man who does not play voids the ticket rather than losing it, so a rung can simply not happen. That is the cheapest way this ladder stalls, and it is why the grade docks an injury tag${pick&&pick.status?` — as it has done to tonight's pick, who is listed <b>${esc(pick.status)}</b>`:""}.
+  </div></details>`:"";
+
+  const histHtml=st.rows.length?`<div class="table-wrap"><table class="ld-hist">
+    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>RESULT</th><th>P&amp;L</th><th>Account</th></tr></thead>
+    <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
+      return out.slice(-12).reverse().map(({r,acc})=>`<tr>
+        <td style="color:var(--dim)">${esc(r.date)}</td>
+        <td>${esc(r.pick||"—")}${r.market?` <span class="mk ${esc(r.market)}">${esc(String(r.market).toUpperCase())} o${r.line}</span>`:""}</td>
+        <td style="color:var(--dim)">${r.cycle}·${r.rung}</td>
+        <td>${money(r.stake)}</td>
+        <td><input class="ld-in" type="number" step="5" value="${r.price}"
+             onchange="setLadderOdds('${esc(r.date)}',this.value)"
+             style="color:${oddsByDay[r.date]!=null?'var(--green)':'var(--dim)'}"></td>
+        <td style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":r.closed==="void"?"∅ void":"open"}</td>
+        <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
+        <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table>
+    <div class="ld-foot">Green odds are prices you typed; grey are what was assumed. Edit any of them and every stake above it recompounds. A void returns the stake and re-runs the same rung.</div></div>`
+    :`<div class="ld-warn" style="background:rgba(255,159,10,.10);color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/hairdwood-ladder.json</code> the day it is placed, so every stake and result is timestamped in the repo before tip-off — the same tamper-evident rule the record page runs on.</div>`;
+
+  el.innerHTML=`<div class="ld">
+    <div class="ld-top">
+      <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${oddsBox}</div>
+      ${locked?lockedHtml:waiting?waitHtml:pickHtml}
+    </div>
+    ${waiting?"":nextBox}
+    <div class="ld-steps">${steps}</div>
+    <div class="ld-strip">
+      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account</div></div>
+      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${st.pl>=0?"+":""}${money(st.pl)}</div><div class="l">P&amp;L</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">Your money at risk</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--purple)">${money(house)}</div><div class="l">House money riding</div></div>
+      <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">Cycles done–bust</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--red)">${money(st.maxDD)}</div><div class="l">Max drawdown</div></div>
+    </div>
+    ${st.canFund?"":`<div class="ld-warn"><b>The account cannot fund this rung.</b> ${money(stake)} is more than the ${money(st.account)} left. That is where the escalation ends — the ladder has no next move that is not a deposit.</div>`}
+    ${warn}
+    ${histHtml}
+  </div>`;
+  tickLadderClock();
+}
+</script>
+<script>
+// ── the whole board ─────────────────────────────────────────────────────────
+function render(){
+  const L=legs(),D=doubles();
+  const B=D.filter(s=>s.double.score.score>=bar());
+  document.getElementById("cards").innerHTML=B.map(card).join("")||
+    `<div class="empty">No game's best pair clears a grade of ${bar()} right now — so there is no double.<br>
+     <span style="color:var(--dim)">Every game is still listed below. Lower the bar to see what is closest.</span></div>`;
+  document.getElementById("cardsNote").innerHTML=B.length
+    ? `${B.length} double${B.length===1?"":"s"} of ${D.length} games · total stake <b style="color:var(--yellow)">${money(B.reduce((t,s)=>t+stakeOf(s.double.score.score),0))}</b>`
+    : `0 of ${D.length} games clear the ${bar()} bar`;
+
+  // Every prop, graded.
+  const over=L.filter(l=>l.score.score>=bar()).length;
+  document.getElementById("legsNote").innerHTML=`${L.length} props · <b style="color:${over?"var(--green)":"var(--dim)"}">${over} clear the ${bar()} bar</b>`;
+  document.getElementById("lhead").innerHTML=["GRADE","PLAYER","GAME","BET","P","FAIR","PROJ","MIN","L10","STAKE"]
+    .map((h,i)=>`<th class="${i>=4?'num':''}">${h}</th>`).join("");
+  document.getElementById("lbody").innerHTML=L.slice(0,120).map(l=>{
+    const s=stakeOf(l.score.score),f=l.form;
+    return `<tr>
+      <td>${gradeChip(l.score)}</td>
+      <td><div style="font-weight:700">${esc(l.pl.name)}${injTag(l)}${l.b2b?'<span class="tag warn">B2B</span>':""}</div>
+          <div style="color:var(--dim);font-size:10px">${esc(l.pl.pos||"")} · ${l.mins.starter?"starter":"bench"}${l.mins.bump>0.005?` · +${Math.round(l.mins.bump*100)}% from absences`:""}</div></td>
+      <td style="font-size:12px;color:var(--muted)">${esc(l.teamAbbr)} ${l.isHome?"vs":"@"} ${esc(l.oppAbbr)}</td>
+      <td><span class="mk ${l.market}">${l.marketShort}</span> <b>o${l.line}</b></td>
+      <td class="num" style="color:var(--blue)"><b>${pct(l.p)}</b></td>
+      <td class="num" style="color:var(--yellow)">${l.fair}</td>
+      <td class="num">${l.mean.toFixed(1)}</td>
+      <td class="num" style="color:var(--dim)">${l.mins.minutes.toFixed(1)}</td>
+      <td class="num" style="color:${f&&f.n>=5?(f.rate>=0.7?"var(--green)":f.rate>=0.5?"var(--muted)":"var(--red)"):"var(--dim)"}">${f&&f.n>=5?`${f.hits}/${f.n}`:"—"}</td>
+      <td class="num"><b style="color:${s>0?"var(--yellow)":"var(--dim)"}">${s>0?money(s):"—"}</b></td>
+    </tr>`;}).join("")||`<tr><td colspan="10"><div class="empty">Nothing clears the filters.</div></td></tr>`;
+
+  // Best pair in every game.
+  document.getElementById("pairsNote").textContent=`${D.length} games`;
+  document.getElementById("thead").innerHTML=["GRADE","GAME","LEG 1","LEG 2","P1","P2","BOTH","FAIR","ρ","LIFT"]
+    .map((h,i)=>`<th class="${i>=4?'num':''}">${h}</th>`).join("");
+  document.getElementById("tbody").innerHTML=D.map(s=>{const d=s.double;return `<tr>
+      <td>${gradeChip(d.score)}</td>
+      <td style="font-size:12px">${esc(s.game.away.abbr)} @ ${esc(s.game.home.abbr)}${d.sameTeam?' <span class="tag corr">ST</span>':""}</td>
+      <td><div style="font-weight:700">${esc(d.a.pl.name)}</div><div style="color:var(--dim);font-size:10px">${d.a.marketShort} o${d.a.line}</div></td>
+      <td><div style="font-weight:700">${esc(d.b.pl.name)}</div><div style="color:var(--dim);font-size:10px">${d.b.marketShort} o${d.b.line}</div></td>
+      <td class="num" style="color:var(--blue)">${pct(d.a.p)}</td>
+      <td class="num" style="color:var(--blue)">${pct(d.b.p)}</td>
+      <td class="num"><b>${pct1(d.prob)}</b></td>
+      <td class="num" style="color:var(--yellow)">${M.amOdds(d.prob)}</td>
+      <td class="num" style="color:var(--dim)">${d.rho.toFixed(3)}</td>
+      <td class="num"><b style="color:${d.lift>=0?"var(--purple)":"var(--red)"}">${d.lift>=0?"+":""}${(d.lift*100).toFixed(1)}</b></td>
+    </tr>`;}).join("")||`<tr><td colspan="10"><div class="empty">No game has two legs to pair.</div></td></tr>`;
+
+  // Tonight's environments — the half of every prop that is about the game
+  // rather than the player.
+  const envs=board.slates.slice().sort((a,b)=>b.env.poss-a.env.poss);
+  document.getElementById("envNote").textContent=`${envs.length} games · league pace ${board.lg.pace.toFixed(1)}`;
+  document.getElementById("ehead").innerHTML=["GAME","TIP","TOTAL","SPREAD","POSS","PROJ SCORE","VS LEAGUE","PROPS","SOURCE"]
+    .map((h,i)=>`<th class="${i>=2?'num':''}">${h}</th>`).join("");
+  document.getElementById("ebody").innerHTML=envs.map(s=>{
+    const e=s.env,g=s.game,d=(e.paceVsLg-1)*100;
+    return `<tr>
+      <td style="font-size:12px"><b>${esc(g.away.abbr)} @ ${esc(g.home.abbr)}</b><div style="color:var(--dim);font-size:10px">${esc(g.venue||"")}</div></td>
+      <td style="font-size:12px;color:var(--muted)">${esc(g.statusTxt||"")}</td>
+      <td class="num">${g.total||"—"}</td>
+      <td class="num" style="color:var(--dim)">${esc(g.oddsTxt||"—")}</td>
+      <td class="num">${e.poss.toFixed(1)}</td>
+      <td class="num">${e.awayPts.toFixed(1)} — ${e.homePts.toFixed(1)}</td>
+      <td class="num"><b style="color:${d>=1.5?"var(--green)":d<=-1.5?"var(--red)":"var(--muted)"}">${d>=0?"+":""}${d.toFixed(1)}%</b></td>
+      <td class="num" style="color:var(--dim)">${s.legs.length}</td>
+      <td class="num" style="color:var(--dim)">${e.src==="model"?"our pace":"posted total"}</td>
+    </tr>`;}).join("")||`<tr><td colspan="9"><div class="empty">No games.</div></td></tr>`;
+
+  renderLadder();
+  document.getElementById("legend").innerHTML=legendHtml();
+}
+
+// ── the legend ──────────────────────────────────────────────────────────────
+// The point system is printed from the model's own weights, so the page cannot
+// describe a scoring system the engine is not running.
+function legendHtml(){
+  const W=M.CFG.weights;
+  const rows=[
+    ["Likelihood",W.like,"The model's own probability that the line is cleared, stretched across the band a prop actually lives in: a 50% leg earns none of it, a 90% leg earns all of it. The projection and its margin over the line in standard deviations are shown beside it — that margin is the same fact as the probability, so it is printed rather than scored twice."],
+    ["Role &amp; minutes",W.role,"Projected minutes and how steady they have been. Thirty-four reliable minutes is most of a prop; twenty-two that swing by eight is a trap."],
+    ["Matchup &amp; pace",W.matchup,"What this defence allows in this market per possession, and how many possessions the game is projected to have."],
+    ["Price &amp; payout",W.price,"What the bet is worth. The likeliest bet on any board is the cheapest line on it, and a ladder of 92% legs at -1150 compounds at less than a percent a day."],
+    ["Recent form",W.form,"How often he has actually cleared this exact line in his last ten. The most persuasive number on the card and the easiest to over-read, which is why it is worth eight points and not thirty."],
+    ["Floor",W.floor,"What happens on a bad night — the bottom-quartile game against the line."]
+  ];
+  const pen=[["On the injury report","9 questionable, 16 doubtful"],["Blowout risk","up to 8"],
+             ["Back-to-back",4],["Thin sample","up to 6"],["Own swing wider than the model's","up to 4"]];
+  const G=M.GRADES.map(g=>`<b>${g.g}</b> ${g.at}+ · ${g.note}`).join(" &nbsp;·&nbsp; ");
+  return `
+  <details class="disc" open><summary>The point system, in full</summary><div class="disc-b">
+    <p>Every bet on this page — single or double — is graded out of <b>100</b>. Six things earn points:</p>
+    <table class="wtab"><tbody>${rows.map(r=>`<tr><td><b>${r[0]}</b><div style="color:var(--dim);font-size:11.5px;line-height:1.5">${r[2]}</div></td><td>${r[1]}</td></tr>`).join("")}</tbody></table>
+    <p>and five things take points away: ${pen.map(p=>`<b>${p[0]}</b> −${p[1]}`).join(", ")}.</p>
+    <p><b>The rule that keeps it honest:</b> when an input is missing, its component is dropped <i>and its weight comes out of the denominator</i>. A player with no game log is scored out of the ${100-W.form-W.floor} points we can actually measure on him rather than being quietly credited — or quietly punished — for what we could not see. Every card shows which components were scored, which were not, and why.</p>
+    <p>${G}</p>
+  </div></details>
+  <details class="disc"><summary>How a projection is built</summary><div class="disc-b">
+    <p><b>Minutes are the whole bet.</b> A basketball prop is a rate times a minute count, and the minute count is the part that moves. Season minutes are the prior, the last ten games are the evidence, minutes freed by whoever is out are added, and a big spread takes some back off a starter — past 9 points, half a percent per point, capped at 9%.</p>
+    <p><b>Nothing is a season average.</b> Per-minute rates are shrunk to a positional prior by minutes played, then put through tonight's game: the projected pace, the opponent's allowance per possession in that market, and the scoring environment. A season average is only ever the starting point here.</p>
+    <p><b>The posted total is a feed, not an opinion.</b> Projected team points lean 65% on (total ± spread)/2 where a total is posted, because that number already carries every rest day and late scratch the public knows about. Where it does, only half the defensive adjustment is applied on top — the book did not arrive at its total by ignoring who is defending, and counting that twice is how a model talks itself into a bet.</p>
+    <p><b>Every probability on this page is corrected, and the correction is measured.</b> Graded against 3,640 real props, the raw model came out over-dispersed: it said 62.6% where 65.7% happened, and said 82.3% where 80.2% did — under-confident in the middle, over-confident at both ends, which is the ordinary failure mode of a model built from independent parts. Every published number is shrunk 15% toward the middle to correct it, which reduces the error in every band and most of all at the top, where this board does its betting.</p>
+    <p><b>Counts are counts, and threes are not.</b> Points, rebounds and assists are negative binomial — over-dispersed relative to Poisson, because usage itself varies. Threes are a binomial draw on a random number of attempts, which is a different shape, and using one family for all four is how a board ends up pricing 3PM overs as free money. Where the game log is long enough, the player's own game-to-game spread is blended into the model's, shrunk by sample size: a metronome and a 40-or-8 guy at the same average are not the same bet.</p>
+    <p><b>The line is chosen, not given.</b> Books hang a ladder of alternate lines on every one of these markets, so the question is never "is 24.5 a good bet" — it is which rung of a man's own ladder is the bet. Every rung above your floor (${board&&board.target?Math.round(board.target*100):60}%) is built and graded, and the one published is the one with the best <b>grade × payout</b>: the likeliest rung on anybody's ladder is always his cheapest, and a board of nine "over 0.5 threes" at −900 is not a board. The grade you then see is the grade of the rung that was chosen. The ladder card shows the rungs either side with their fair prices.</p>
+  </div></details>
+  <details class="disc"><summary>Overs only, and why</summary><div class="disc-b">
+    <p>HAIrdwood publishes <b>overs</b>. An under is mostly a bet on a player getting hurt, rested or blown out — the three things this model knows least about — and the outcome that would make it a lock, a DNP, <i>voids</i> the ticket instead of cashing it. That asymmetry is real money, and rather than model it badly the board does not offer the side.</p>
+    <p>The same asymmetry is why a questionable tag here costs grade points instead of being multiplied into the probability the way a baseball scratch is: if he sits, you get your stake back and the ladder re-runs the rung.</p>
+  </div></details>
+  <details class="disc"><summary>Why a same-game double is not two singles — and what the test said</summary><div class="disc-b">
+    <p>Two props in one game share a pace, a game script and sometimes a basketball, so multiplying the two probabilities is the wrong number in principle — and wrong in a <i>different direction</i> for each pair of markets. Two teammates chasing the same rebound take boards off each other. Two men running the same offence take assists off each other. A passer and his own shooter are frequently the same event twice. Opponents share only the clock. The joint comes from a bivariate normal integrated by quadrature rather than a small-correlation expansion, because the pairs worth betting are exactly where that expansion breaks.</p>
+    <p><b>Then it was measured, and the measurement was humbling.</b> Across <b>236 graded doubles</b> in the backtest the pairs landed <b>57.2%</b> of the time — while the legs inside them cashed <b>75.6%</b> each on their own. And 0.756 × 0.756 is 57.2%. The correlation this model asserts did not show up at all. It is not refuted either: the standard error on 236 pairs is about three points and the lift being claimed was under two, so the honest statement is that the effect is <i>smaller than this board can yet see</i>. Every ρ in the table is therefore <b>halved</b> rather than deleted, and re-measured on every backtest run.</p>
+    <p><b>A double also carries a haircut a single does not.</b> Picking the best-scoring two legs out of a game selects for legs whose numbers are flattered — the maximum of many estimates carries the optimism of all of them — and the test sees about four points of it. The published joint is shaded for that, by less than the measured gap, because one season is one season.</p>
+  </div></details>
+  <details class="disc"><summary>Staking</summary><div class="disc-b">
+    <p><b>The stake comes off the grade.</b> There is no live prop market to measure an edge against, so this board stakes what it actually claims to know: how good the bet is. Grade points above your bar × your rate — a bet at the bar stakes nothing, a bet ten points above it stakes ten times the rate, and the multiplication checks out by hand. Type a real price into a double's card and the <b>¼-Kelly</b> figure beside it is the bankroll-proportional alternative, shown for comparison; they are two staking rules, not the same number twice.</p>
+    <p><b>The ladder, stated honestly.</b> One prop a day, staked so each win's full return rides the next. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature separating this from a martingale. What it shares with one is the escalation: a busted cycle restarts 25% bigger, and a $100 account funds only a handful of those. Both the completion rate and the chance of running the account dry are computed live on the card. Rank it by the red panel, not by the payout.</p>
+  </div></details>
+  <p style="font-size:12px;color:var(--dim);padding:14px 0 0;line-height:1.5">⚠ Model estimate — not betting advice. Bet only what you can afford to lose.</p>`;
+}
+
+load();
+setInterval(load,300000); // injury reports and the posted total, every 5 minutes
+setInterval(checkBuild,30000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkBuild();});
+window.addEventListener("pageshow",e=>{if(e.persisted)checkBuild();});
+</script>
+</body>
+</html>
