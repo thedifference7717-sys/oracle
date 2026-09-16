@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T16:32:33.542Z",
+  "at": "2026-09-16T16:33:40.929Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -268,6 +268,11 @@
       "detail": "split-half says 20 minutes, model uses 30 (40 players)"
     },
     {
+      "name": "minutes recency weight",
+      "state": "PASS",
+      "detail": "split-half says 0.6, model uses 0.45 (40 players, rmse 0:3.813 0.15:3.719 0.3:3.652 0.45:3.611 0.6:3.598 0.75:3.613 0.9:3.655 1:3.699)"
+    },
+    {
       "name": "REB projections track the box score",
       "state": "PASS",
       "detail": "projected 5.3 vs actual 5.17 (+3%), lines average 3.82, said 70% hit 63% on 82"
@@ -343,8 +348,8 @@
         "startDate",
         "broadcast",
         "geoBroadcasts",
-        "highlights",
-        "headlines"
+        "headlines",
+        "highlights"
       ],
       "oddsKeys": [],
       "oddsSample": null,
@@ -800,8 +805,8 @@
         "article",
         "videos",
         "wallclockAvailable",
-        "meta",
         "winprobability",
+        "meta",
         "standings"
       ],
       "hasInjuries": true,
@@ -2601,6 +2606,45 @@
         ]
       ]
     }
+  },
+  "minutesWeight": {
+    "players": 40,
+    "bestW": 0.6,
+    "modelW": 0.45,
+    "curve": [
+      [
+        0,
+        3.813
+      ],
+      [
+        0.15,
+        3.719
+      ],
+      [
+        0.3,
+        3.652
+      ],
+      [
+        0.45,
+        3.611
+      ],
+      [
+        0.6,
+        3.598
+      ],
+      [
+        0.75,
+        3.613
+      ],
+      [
+        0.9,
+        3.655
+      ],
+      [
+        1,
+        3.699
+      ]
+    ]
   },
   "perMarket": {
     "reb": {
