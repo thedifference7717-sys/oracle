@@ -262,7 +262,10 @@ const CFG = {
   // believe, against the family's. 12 logged games gets him half way.
   varStab: 12, varClamp: [0.62, 1.55],
   // A leg has to be a real bet: no 0.5-point lines, no 2% tails.
-  lineMin: 0.5, pFloor: 0.35, pCeil: 0.97,
+  // A leg has to be a real bet. pCeil is the publication ceiling: past about
+  // 92% the fair price is -1150, the book's version of it is worse, and no
+  // amount of being right about it compounds into anything.
+  lineMin: 0.5, pFloor: 0.35, pCeil: 0.92,
   minMinutes: 14, minGames: 3,
   // Correlation between two legs in the same game, before the environment
   // gain. Read `sameTeam` as "these two share a basketball" and `opp` as
@@ -293,7 +296,14 @@ const CFG = {
   rhoEnvGain: 0.35,
   // Grading. These are the published weights; they are what the card shows,
   // and they sum to a hundred so the number on the card is the number.
-  weights: { like: 40, cushion: 12, role: 12, matchup: 10, price: 13, form: 8, floor: 5 },
+  // Six, not seven. There was a "cushion" component here scoring how far the
+  // projection sat above the line in standard deviations — which is the same
+  // number as the probability, arrived at the long way round: at a fixed
+  // distribution, z and p are the same fact. Scoring both counted it twice and
+  // tilted every grade toward the cheapest line on the board. The z is still
+  // printed on the card, because it is worth seeing; it is no longer paid for
+  // twice.
+  weights: { like: 40, role: 14, matchup: 12, price: 14, form: 12, floor: 8 },
   // Where a prop is actually worth writing. Full marks anywhere up to a -350
   // fair price; from there the payout falls off a cliff while the risk does
   // not, and by -1200 the bet is a savings account with a bust attached.
@@ -965,11 +975,18 @@ function overProb(key, mean, sp, line, extra) {
   return clamp(nbAtLeast(mean, k, need), 0, 1);
 }
 
-// The line this bet should actually be written at: the HIGHEST half-point line
-// that still clears the target hit rate. Books hang a ladder of alternate lines
-// on every one of these markets, so the question is never "is 24.5 a good bet"
-// — it is "how far up the ladder can I go and still be this likely".
-function ladderLines(key, mean, sp, extra, target) {
+// Every alternate line a book would hang on this market, with our probability
+// on each. Books quote a ladder on all four of these, so the question is never
+// "is 24.5 a good bet" — it is which rung of his own ladder is the bet.
+//
+// WHICH rung is not decided here, and deliberately not by "the highest one that
+// clears the target", which is what this used to do. That rule is degenerate on
+// a low-mean count: a man projected for 2.2 threes clears 70% at 0.5 and not at
+// 1.5, so the whole board collapses onto o0.5 legs at a fair price of -900 —
+// the likeliest bets available and among the worst, and nine of them in a row
+// at the top of a board is not a board. The caller scores every rung and keeps
+// the best, which is the same question the grade already answers.
+function ladderLines(key, mean, sp, extra) {
   const out = [];
   const top = Math.max(1, Math.ceil(mean * 2 + 6));
   for (let L = 0.5; L <= Math.min(MKT[key].max, top); L += 1) {
@@ -977,8 +994,7 @@ function ladderLines(key, mean, sp, extra, target) {
     out.push({ line: L, p });
     if (p < 0.12) break;
   }
-  const pick = out.filter(r => r.p >= target).pop() || out[0] || null;
-  return { rungs: out, pick };
+  return { rungs: out };
 }
 
 // ── the HAIrdwood score ──────────────────────────────────────────────────────
@@ -1016,17 +1032,11 @@ function scoreLeg(leg) {
   // 1. LIKELIHOOD. The model's own probability, stretched across the band a
   //    prop bet actually lives in: a 50% leg earns nothing here and a 90% one
   //    earns all of it.
-  add("like", "Likelihood", W.like * frac(leg.p - 0.50, 0.40), W.like,
-      `${Math.round(leg.p * 100)}% to clear ${leg.line}`);
-
-  // 2. CUSHION. How far the projection sits above the line, measured in
-  //    tonight's noise rather than in raw points. Same probability off a
-  //    tighter distribution is a better bet, and this is where that shows up.
   const z = leg.sd > 0 ? (leg.mean - leg.line) / leg.sd : 0;
-  add("cushion", "Cushion", W.cushion * frac(z, 1.25), W.cushion,
-      `projected ${leg.mean.toFixed(1)} · ${z >= 0 ? "+" : ""}${z.toFixed(2)} sd over the line`);
+  add("like", "Likelihood", W.like * frac(leg.p - 0.50, 0.40), W.like,
+      `${Math.round(leg.p * 100)}% to clear ${leg.line} — projected ${leg.mean.toFixed(1)}, ${z >= 0 ? "+" : ""}${z.toFixed(2)} sd over it`);
 
-  // 3. ROLE. Minutes, and how reliable they have been. Thirty-four steady
+  // 2. ROLE. Minutes, and how reliable they have been. Thirty-four steady
   //    minutes is most of a prop; twenty-two that swing by eight is a trap.
   const m = leg.mins;
   let roleF = 0.55 * frac(m.minutes - 16, 18);
@@ -1035,7 +1045,7 @@ function scoreLeg(leg) {
   add("role", "Role & minutes", W.role * clamp(roleF, 0, 1), W.role,
       `${m.minutes.toFixed(1)} projected min${m.sd != null ? ` · L10 swing ±${m.sd.toFixed(1)}` : ""}${m.bump > 0.005 ? ` · +${Math.round(m.bump * 100)}% from absences` : ""}`);
 
-  // 4. MATCHUP. The opponent's allowance in this market and the pace of the
+  // 3. MATCHUP. The opponent's allowance in this market and the pace of the
   //    game, both of which are already inside the projection — this is the
   //    part of the grade that says WHY the projection is where it is.
   if (leg.factors && leg.factors.def) {
@@ -1045,7 +1055,7 @@ function scoreLeg(leg) {
         `${d >= 1 ? "+" : ""}${((d - 1) * 100).toFixed(1)}% vs this defence · ${pace >= 1 ? "+" : ""}${((pace - 1) * 100).toFixed(1)}% pace`);
   } else skip("matchup", "Matchup & pace", "no team splits in the feed");
 
-  // 5. PRICE. The likeliest bet on any board is the cheapest line on it, and
+  // 4. PRICE. The likeliest bet on any board is the cheapest line on it, and
   //    it is usually not the best bet on it: a ladder of 92% legs at -1150
   //    turns $10 into $10.87 a day and still busts one cycle in four. So the
   //    grade carries what the bet is worth as well as how likely it is, and a
@@ -1053,7 +1063,7 @@ function scoreLeg(leg) {
   add("price", "Price & payout", W.price * (1 - frac(leg.p - CFG.priceFull, CFG.priceZero - CFG.priceFull)), W.price,
       `fair ${amOdds(leg.p)}${leg.p > CFG.priceFull ? " — short, and it compounds slowly" : ""}`);
 
-  // 6. FORM. How often he has actually cleared this exact line lately. The
+  // 5. FORM. How often he has actually cleared this exact line lately. The
   //    most persuasive number on the card and the easiest to over-read, so it
   //    is only worth nine points and only counts with five games behind it.
   if (leg.form && leg.form.n >= 5) {
@@ -1061,7 +1071,7 @@ function scoreLeg(leg) {
         `${leg.form.hits}/${leg.form.n} over ${leg.line} in his last ${leg.form.n}`);
   } else skip("form", "Recent form", leg.form ? `only ${leg.form.n} games logged` : "no game log");
 
-  // 7. FLOOR. What happens on his worst night. A bet whose bad games still
+  // 6. FLOOR. What happens on his worst night. A bet whose bad games still
   //    clear the line is a different animal from one that needs a good one.
   if (leg.form && leg.form.n >= 5) {
     const f = leg.form.p25;
@@ -1109,8 +1119,8 @@ function scorePair(a, b, joint, naive) {
     return ((x == null ? y : x) + (y == null ? x : y)) / 2;
   };
   add("like", "Both legs land", 40 * frac(joint - 0.33, 0.45), 40, `${Math.round(joint * 100)}% for the pair`);
-  const cu = avg("cushion"), ro = avg("role");
-  add("legs", "Leg quality", 18 * clamp(0.5 * (cu == null ? 0.4 : cu) + 0.5 * (ro == null ? 0.4 : ro), 0, 1), 18,
+  const ro = avg("role"), mp = avg("price");
+  add("legs", "Leg quality", 18 * clamp(0.6 * (ro == null ? 0.4 : ro) + 0.4 * (mp == null ? 0.4 : mp), 0, 1), 18,
       `${a.score.grade} + ${b.score.grade} on their own`);
   // Same rule as a single: a double of two near-certainties pays nothing, and
   // a double is the one bet people reach for precisely because it should pay.
@@ -1273,7 +1283,12 @@ async function buildBoard(o) {
   const get = o.getJSON || defaultGetJSON;
   const say = o.onStatus || function () {};
   const prog = o.onProgress || function () {};
-  const target = o.target != null ? o.target : 0.70;
+  // A FLOOR, not a target: publish nothing less likely than this. It used to be
+  // the thing being solved for (0.70, "climb to it"), which on a low-mean count
+  // filtered out every rung except the cheapest and left the value selection
+  // below with one candidate and nothing to choose. The grade picks the rung
+  // now; this only says how far down the board is willing to look.
+  const target = o.target != null ? o.target : 0.60;
   const day = o.day || slateYmd();
   const degraded = [];
   const soft = (label, p) => p.catch(() => { degraded.push(label); return null; });
@@ -1418,32 +1433,51 @@ async function buildBoard(o) {
       const mean = pr.proj[mk.key];
       if (!(mean > 0.8)) return;                          // not a market anyone hangs a line on
       const sp = spread(mk.key, mean, log, { tpa: pr.tpa });
-      const lad = ladderLines(mk.key, mean, sp, { tpa: pr.tpa }, target);
-      if (!lad.pick || lad.pick.line < CFG.lineMin) return;
-      const line = lad.pick.line, p = lad.pick.p;
-      if (!(p >= CFG.pFloor)) return;
+      const lad = ladderLines(mk.key, mean, sp, { tpa: pr.tpa });
+      // Every rung this man could be bet at, graded, best one kept. `target` is
+      // a FLOOR now rather than the thing being solved for — publish nothing
+      // less likely than you asked for — and pCeil drops the tails no book
+      // would take anyway. The grade decides the rest, which is the point of
+      // having a grade: it already knows that a 70% line at a real number beats
+      // an 88% line at a price that cannot compound.
+      const cands = lad.rungs.filter(r => r.line >= CFG.lineMin && r.p >= Math.max(CFG.pFloor, target) && r.p <= CFG.pCeil);
+      if (!cands.length) return;
       // How often he has actually done it, and what the bad nights look like.
-      let form = null;
-      if (log && log.played.length) {
-        const last = log.played.slice(0, 10);
-        const vals = last.map(r => r[mk.key] || 0);
-        const hits = vals.filter(v => v > line).length;
-        const sorted = vals.slice().sort((x, y) => x - y);
-        form = { n: vals.length, hits, rate: vals.length ? hits / vals.length : 0,
-                 p25: sorted[Math.floor(Math.max(0, sorted.length - 1) * 0.25)] || 0,
-                 avg: vals.reduce((a, b) => a + b, 0) / Math.max(1, vals.length), vals };
-      }
-      const leg = {
-        pl: c.p, gameId: c.g.id, game: c.g, teamId: c.team.id, teamAbbr: c.team.abbr,
-        oppAbbr: c.opp.abbr, side: c.side, isHome: c.side === "home",
-        market: mk.key, marketLabel: mk.label, marketShort: mk.short,
-        line, p, mean, sd: sp.sd, spreadRatio: sp.ratio, sdObs: sp.obs,
-        rungs: lad.rungs, mins: pr.mins, factors: pr.factors, rates: pr.rates,
-        status: c.status, gp: c.p.gp, gs: c.p.gs, seasonAvg: c.p[mk.key],
-        b2b: playedOn(log, yest), hasLog: !!log, form,
-        spreadHome: c.g.spreadHome, total: c.g.total, env: c.env
+      // Recomputed per rung, because "9 of his last 10" is a claim about ONE
+      // line and means nothing carried across to another.
+      const last = log && log.played.length ? log.played.slice(0, 10) : null;
+      const vals = last ? last.map(r => r[mk.key] || 0) : null;
+      const sorted = vals ? vals.slice().sort((x, y) => x - y) : null;
+      const formAt = line => vals ? {
+        n: vals.length, hits: vals.filter(v => v > line).length,
+        rate: vals.filter(v => v > line).length / vals.length,
+        p25: sorted[Math.floor(Math.max(0, sorted.length - 1) * 0.25)] || 0,
+        avg: vals.reduce((a, b) => a + b, 0) / vals.length, vals
+      } : null;
+
+      const build = r => {
+        const leg = {
+          pl: c.p, gameId: c.g.id, game: c.g, teamId: c.team.id, teamAbbr: c.team.abbr,
+          oppAbbr: c.opp.abbr, side: c.side, isHome: c.side === "home",
+          market: mk.key, marketLabel: mk.label, marketShort: mk.short,
+          line: r.line, p: r.p, mean, sd: sp.sd, spreadRatio: sp.ratio, sdObs: sp.obs,
+          rungs: lad.rungs, mins: pr.mins, factors: pr.factors, rates: pr.rates,
+          status: c.status, gp: c.p.gp, gs: c.p.gs, seasonAvg: c.p[mk.key],
+          b2b: playedOn(log, yest), hasLog: !!log, form: formAt(r.line),
+          spreadHome: c.g.spreadHome, total: c.g.total, env: c.env
+        };
+        leg.score = scoreLeg(leg);
+        return leg;
       };
-      leg.score = scoreLeg(leg);
+      // Two different questions, each answered by the right number. WHICH rung
+      // to publish is a value question — the grade weighted by what the bet
+      // actually returns — because the likeliest rung on a man's ladder is
+      // always his cheapest one, and a board of nine o0.5 threes at -900 is
+      // not a board. HOW GOOD the published rung is stays the grade, which is
+      // what the ranking asked for.
+      const val = l => l.score.score * Math.sqrt(Math.max(1e-9, 1 / l.p - 1));
+      const leg = cands.map(build).sort((a, b) => val(b) - val(a) || b.score.score - a.score.score)[0];
+      const p = leg.p;
       leg.fair = amOdds(p);
       // Profit per unit at the fair price. The board's default order is the
       // grade — the question asked was which bet is likeliest — but "likeliest"

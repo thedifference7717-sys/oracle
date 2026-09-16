@@ -359,7 +359,7 @@ td.num{text-align:right}
 <div class="group-h"><span>Settings &amp; reference</span><small>the bar, the prices, and how every number is built</small></div>
 <details id="slip-wrap"><summary>⚙️ Bet slip &amp; filters</summary>
 <div id="slip">
-  <div class="fld"><label>Target hit rate (line climbs to it)</label><input id="target" type="number" step="1" min="50" max="92" value="70"></div>
+  <div class="fld"><label>Minimum hit rate (floor, not target)</label><input id="target" type="number" step="1" min="45" max="90" value="60"></div>
   <div class="fld"><label>Grade bar (score)</label><input id="minScore" type="number" step="1" value="65"></div>
   <div class="fld"><label>$ per grade point over the bar</label><input id="perPt" type="number" step="0.25" min="0" value="0.75"></div>
   <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="10" value="1000"></div>
@@ -924,8 +924,7 @@ function render(){
 function legendHtml(){
   const W=M.CFG.weights;
   const rows=[
-    ["Likelihood",W.like,"The model's own probability that the line is cleared, stretched across the band a prop actually lives in: a 50% leg earns none of it, a 90% leg earns all of it."],
-    ["Cushion",W.cushion,"How far the projection sits above the line, measured in tonight's noise rather than in raw points. The same probability off a tighter distribution is a better bet."],
+    ["Likelihood",W.like,"The model's own probability that the line is cleared, stretched across the band a prop actually lives in: a 50% leg earns none of it, a 90% leg earns all of it. The projection and its margin over the line in standard deviations are shown beside it — that margin is the same fact as the probability, so it is printed rather than scored twice."],
     ["Role &amp; minutes",W.role,"Projected minutes and how steady they have been. Thirty-four reliable minutes is most of a prop; twenty-two that swing by eight is a trap."],
     ["Matchup &amp; pace",W.matchup,"What this defence allows in this market per possession, and how many possessions the game is projected to have."],
     ["Price &amp; payout",W.price,"What the bet is worth. The likeliest bet on any board is the cheapest line on it, and a ladder of 92% legs at -1150 compounds at less than a percent a day."],
@@ -937,7 +936,7 @@ function legendHtml(){
   const G=M.GRADES.map(g=>`<b>${g.g}</b> ${g.at}+ · ${g.note}`).join(" &nbsp;·&nbsp; ");
   return `
   <details class="disc" open><summary>The point system, in full</summary><div class="disc-b">
-    <p>Every bet on this page — single or double — is graded out of <b>100</b>. Seven things earn points:</p>
+    <p>Every bet on this page — single or double — is graded out of <b>100</b>. Six things earn points:</p>
     <table class="wtab"><tbody>${rows.map(r=>`<tr><td><b>${r[0]}</b><div style="color:var(--dim);font-size:11.5px;line-height:1.5">${r[2]}</div></td><td>${r[1]}</td></tr>`).join("")}</tbody></table>
     <p>and five things take points away: ${pen.map(p=>`<b>${p[0]}</b> −${p[1]}`).join(", ")}.</p>
     <p><b>The rule that keeps it honest:</b> when an input is missing, its component is dropped <i>and its weight comes out of the denominator</i>. A player with no game log is scored out of the ${100-W.form-W.floor} points we can actually measure on him rather than being quietly credited — or quietly punished — for what we could not see. Every card shows which components were scored, which were not, and why.</p>
@@ -948,7 +947,7 @@ function legendHtml(){
     <p><b>Nothing is a season average.</b> Per-minute rates are shrunk to a positional prior by minutes played, then put through tonight's game: the projected pace, the opponent's allowance per possession in that market, and the scoring environment. A season average is only ever the starting point here.</p>
     <p><b>The posted total is a feed, not an opinion.</b> Projected team points lean 65% on (total ± spread)/2 where a total is posted, because that number already carries every rest day and late scratch the public knows about. Where it does, only half the defensive adjustment is applied on top — the book did not arrive at its total by ignoring who is defending, and counting that twice is how a model talks itself into a bet.</p>
     <p><b>Counts are counts, and threes are not.</b> Points, rebounds and assists are negative binomial — over-dispersed relative to Poisson, because usage itself varies. Threes are a binomial draw on a random number of attempts, which is a different shape, and using one family for all four is how a board ends up pricing 3PM overs as free money. Where the game log is long enough, the player's own game-to-game spread is blended into the model's, shrunk by sample size: a metronome and a 40-or-8 guy at the same average are not the same bet.</p>
-    <p><b>The line is chosen, not given.</b> Books hang a ladder of alternate lines on every one of these markets, so the question is never "is 24.5 a good bet" — it is how far up that ladder you can go and still be as likely as you asked for. Every prop is written at the <b>highest half-point line that still clears your target hit rate</b> (${board&&board.target?Math.round(board.target*100):70}%), and the ladder card shows the rungs either side with their fair prices.</p>
+    <p><b>The line is chosen, not given.</b> Books hang a ladder of alternate lines on every one of these markets, so the question is never "is 24.5 a good bet" — it is which rung of a man's own ladder is the bet. Every rung above your floor (${board&&board.target?Math.round(board.target*100):60}%) is built and graded, and the one published is the one with the best <b>grade × payout</b>: the likeliest rung on anybody's ladder is always his cheapest, and a board of nine "over 0.5 threes" at −900 is not a board. The grade you then see is the grade of the rung that was chosen. The ladder card shows the rungs either side with their fair prices.</p>
   </div></details>
   <details class="disc"><summary>Overs only, and why</summary><div class="disc-b">
     <p>HAIrdwood publishes <b>overs</b>. An under is mostly a bet on a player getting hurt, rested or blown out — the three things this model knows least about — and the outcome that would make it a lock, a DNP, <i>voids</i> the ticket instead of cashing it. That asymmetry is real money, and rather than model it badly the board does not offer the side.</p>

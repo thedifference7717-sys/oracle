@@ -316,6 +316,21 @@ try {
   board.legs.forEach(l => { byMkt[l.market] = (byMkt[l.market] || 0) + 1; });
   report.board.byMarket = byMkt;
   check("all four markets priced", keys(byMkt).length === 4, JSON.stringify(byMkt));
+  // The regression this board already had once: the line picker took the
+  // highest rung clearing a hit-rate target, which on a low-mean count is
+  // always the cheapest rung, and the whole top of the board came out as
+  // "over 0.5 threes" at a fair price of -900. Bettable lines are not a
+  // nice-to-have here, they are the product.
+  const atFloor = some(board.legs, l => l.line === 0.5);
+  check("lines are not all minimums", atFloor < board.legs.length * 0.5,
+        `${atFloor}/${board.legs.length} legs sit on the 0.5 line`);
+  const ps = board.legs.map(l => l.p).sort((a, b) => a - b);
+  const medP = ps[Math.floor(ps.length / 2)] || 1;
+  check("published prices are bettable", medP < 0.85,
+        `median leg ${(medP * 100).toFixed(0)}% (fair ${M.amOdds(medP)})`);
+  const shortest = ps[ps.length - 1];
+  check("nothing unbettable is published", shortest <= M.CFG.pCeil + 1e-9,
+        `shortest leg ${(shortest * 100).toFixed(0)}% (fair ${M.amOdds(shortest)}), ceiling ${(M.CFG.pCeil * 100).toFixed(0)}%`);
   check("game logs reached the legs", some(board.legs, l => l.hasLog) > board.legs.length * 0.5,
         `${some(board.legs, l => l.hasLog)}/${board.legs.length} legs carry a log`);
   const withTotal2 = some(board.games, g => g.total > 0);
