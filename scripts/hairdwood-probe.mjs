@@ -278,10 +278,34 @@ if (players && players.length) {
       check("game log carries minutes", some(log.played, r => r.min > 5) >= log.played.length * 0.8, "");
       check("game log carries points", some(log.played, r => r.pts > 0) >= log.played.length * 0.7, "");
       check("game log carries threes", some(log.played, r => r.tpm >= 0) === log.played.length, "");
+      // Every column, tested for being PRESENT rather than merely parseable.
+      // `rebounds` shipped as a column name that does not exist in this feed;
+      // it returned zero for every game of every player and nothing complained
+      // until a backtest four layers downstream came back absurd.
+      check("game log carries rebounds", some(log.played, r => r.reb > 0) >= log.played.length * 0.5,
+            `${some(log.played, r => r.reb > 0)}/${log.played.length} games with a rebound — a rotation player who never rebounds is a parse failure, not a player`);
+      check("game log carries assists", some(log.played, r => r.ast > 0) >= log.played.length * 0.5,
+            `${some(log.played, r => r.ast > 0)}/${log.played.length} games with an assist`);
+      check("game log carries three-point attempts", some(log.played, r => r.tpa != null) >= log.played.length * 0.8,
+            "the 3PM spread is derived from attempts, so a missing column silently changes the distribution");
+      // The decisive one for the backtest: the line rebuilt from a full game
+      // log has to agree with the season line the league feed publishes. If
+      // those two ever disagree, the as-of path is measuring something else.
+      const rebuilt = M.lineFrom(log);
+      const gaps = ["mpg", "pts", "reb", "ast", "tpm"].map(k => {
+        const a = rebuilt[k], b = star[k];
+        return { k, rebuilt: +a.toFixed(2), feed: +(b || 0).toFixed(2),
+                 off: b > 0.5 ? Math.abs(a / b - 1) : (a < 0.5 ? 0 : 1) };
+      });
+      report.shapes.asOfRebuild = gaps;
+      const worst = gaps.slice().sort((x, y) => y.off - x.off)[0];
+      check("a line rebuilt from the log matches the season feed",
+            gaps.every(g => g.off < 0.15),
+            gaps.map(g => `${g.k} ${g.rebuilt} vs ${g.feed}`).join(", ") + ` — worst off by ${(worst.off * 100).toFixed(0)}%`);
+    }
       // The back-to-back penalty and the recency window both need these.
       check("game log carries dates", some(log.played, r => r.date) >= log.played.length * 0.9,
             log.played[0] ? `newest ${log.played[0].date} -> ET day ${M.etDayOf(log.played[0].date)}` : "");
-    }
   } catch (e) { check("gamelog reachable and parsed", false, e.message); }
 }
 

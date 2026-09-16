@@ -683,8 +683,17 @@ function parseGamelog(d) {
     const k = Object.keys(idx).find(k => re.test(k));
     return k ? idx[k] : -1;
   };
+  // MEASURED, not assumed. The NBA game log calls this column `totalRebounds`;
+  // the box score calls it `REB`; nothing calls it `rebounds`, which is what
+  // this looked for. There was no error — the index came back -1, every row was
+  // written with 0 rebounds, and the damage surfaced two layers away as
+  // rebound props hitting 99% against a predicted 70%: with the log reading
+  // zero, only players light enough on minutes to be carried by the positional
+  // prior produced a rebound line at all, and theirs came out at 0.5 against
+  // men who actually grab five. A silent -1 is the most expensive value in this
+  // file.
   const iMin = findIdx(/^minutes$/i), iPts = findIdx(/^points$/i),
-        iReb = findIdx(/^rebounds$/i), iAst = findIdx(/^assists$/i),
+        iReb = findIdx(/^(total)?rebounds$/i), iAst = findIdx(/^assists$/i),
         iTp  = findIdx(/^threePointFieldGoals(Made-threePointFieldGoalsAttempted)?$/i);
   const rows = [];
   const walk = ev => {
