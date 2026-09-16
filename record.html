@@ -331,7 +331,7 @@ function stats(bets){
   return {done,w,l,pnl,roi,n,predL,actL,se,z,seW,pw,open:bets.filter(b=>b.status==="open").length};
 }
 
-function render(L, G, O){
+function render(L, G, O, H, B){
   const all=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
   const bets=all.filter(b=>(b.date||"")>=ERA_START);
   const S=stats(bets);
@@ -448,22 +448,140 @@ function render(L, G, O){
       ⚠ Model estimates, not advice, and past results do not predict future ones. Sports betting carries real risk of loss — bet only what you can afford to lose. 21+ and void where prohibited.
     </div>
     ${renderOpening(O)}
-    ${renderGridiron(G)}`;
+    ${renderGridiron(G)}
+    ${renderHairdwood(H, B)}`;
+}
+
+// Player names and matchups arrive from a JSON file this page did not write,
+// and they go into innerHTML. Escaping them is not paranoia, it is the price of
+// interpolating anything you did not author.
+const esc = v => String(v == null ? "" : v).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// ── HAIrdwood · NBA ─────────────────────────────────────────────────────────
+// Two things live here and they are NOT the same thing, so they do not share a
+// heading: what the ladder has actually done since it started, and what the
+// model did on a season whose results already existed when it was tested. The
+// second one is evidence. It is not a record, and a page called Verified Record
+// has no business blurring that line.
+function renderHairdwood(H, B) {
+  if (!H && !B) return "";
+  const rows = (H && Array.isArray(H.bets)) ? H.bets : [];
+  const passed = (H && Array.isArray(H.skipped)) ? H.skipped.length : 0;
+  const settled = rows.filter(r => r.status === "won" || r.status === "lost");
+  const voids = rows.filter(r => r.status === "void").length;
+  const st = settled.length ? M_ladder(rows) : null;
+
+  const live = settled.length ? `
+    <div class="hero">
+      <div class="stat"><div class="v" style="color:${st.pl >= 0 ? "var(--green)" : "var(--red)"}">${st.pl >= 0 ? "+" : ""}$${st.pl.toFixed(2)}</div><div class="l">Profit on a $100 account</div></div>
+      <div class="stat"><div class="v">${settled.filter(r => r.status === "won").length}-${settled.filter(r => r.status === "lost").length}${voids ? "-" + voids : ""}</div><div class="l">Rungs won–lost${voids ? "–void" : ""}</div></div>
+      <div class="stat"><div class="v">${st.cycles.done}-${st.cycles.busted}</div><div class="l">Cycles complete–bust</div></div>
+      <div class="stat"><div class="v" style="color:var(--red)">$${st.maxDD.toFixed(2)}</div><div class="l">Max drawdown</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">Every rung <span>${rows.length} published${passed ? ` · ${passed} day${passed === 1 ? "" : "s"} passed` : ""}</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>RESULT</th><th>DATE</th><th>THE BET</th><th class="num">GRADE</th><th class="num">MODEL</th><th class="num">PRICE</th><th class="num">ACTUAL</th></tr></thead>
+        <tbody>${rows.slice().reverse().map(r => `<tr>
+          <td style="color:${r.status === "won" ? "var(--green)" : r.status === "lost" ? "var(--red)" : "var(--dim)"}">${r.status === "won" ? "✓ WON" : r.status === "lost" ? "✗ LOST" : r.status === "void" ? "∅ VOID" : "open"}</td>
+          <td style="color:var(--dim)">${esc(r.date)}</td>
+          <td>${esc(r.pick || "—")} <span style="color:var(--dim)">${esc(String(r.market || "").toUpperCase())} o${r.line}</span><div style="color:var(--dim);font-size:11px">${esc(r.teams || "")}</div></td>
+          <td class="num">${r.grade || "—"} ${r.score != null ? `<span style="color:var(--dim)">${(+r.score).toFixed(0)}</span>` : ""}</td>
+          <td class="num">${r.p != null ? Math.round(r.p * 100) + "%" : "—"}</td>
+          <td class="num">${r.price != null ? (r.price > 0 ? "+" : "") + r.price : "—"}${r.priceAssumed ? '<span style="color:var(--dim)"> assumed</span>' : ""}</td>
+          <td class="num">${r.actual != null ? r.actual : "—"}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+    </div>`
+    : `<div class="note"><b>The ladder has not settled a rung yet.</b> It publishes one bet a day to
+       <a href="https://github.com/thedifference7717-sys/oracle/commits/main/data/hairdwood-ladder.json">data/hairdwood-ladder.json</a>
+       an hour before the first tip, and settles it off the box score the next morning. Until the season
+       starts there is nothing here, and nothing here is the honest state of it.${passed ? ` ${passed} day${passed === 1 ? " has" : "s have"} been recorded as a pass — no bet cleared the bar.` : ""}</div>`;
+
+  if (!B || !B.legs || !B.byGrade) return `
+    <div class="group-h"><span>HAIrdwood · NBA</span><small>one prop a day on a compounding ladder — tracked separately and never combined with the other two</small></div>
+    ${live}`;
+
+  const g = B.byGrade.filter(x => x.n >= 20);
+  const mono = B.monotonic;
+  return `
+    <div class="group-h"><span>HAIrdwood · NBA</span><small>one prop a day on a compounding ladder — tracked separately and never combined with the other two</small></div>
+    ${live}
+    <div class="group-h" style="margin-top:22px"><span>Tested before it shipped</span><small>a backtest, which is evidence and not a record — read the caveat</small></div>
+    <div class="hero">
+      <div class="stat"><div class="v">${B.legs.graded.toLocaleString()}</div><div class="l">Props graded</div></div>
+      <div class="stat"><div class="v">${(B.legs.predicted * 100).toFixed(1)}%</div><div class="l">The model said</div></div>
+      <div class="stat"><div class="v" style="color:${Math.abs(B.legs.edge) <= 0.03 ? "var(--green)" : "var(--yellow)"}">${(B.legs.actual * 100).toFixed(1)}%</div><div class="l">They actually hit</div></div>
+      <div class="stat"><div class="v">${B.legs.brier}</div><div class="l">Brier score</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">Does the grade rank the outcome? <span>${mono ? `order held in ${mono.inOrder} of ${mono.pairs} adjacent pairs` : "not enough in each bucket to say"}</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>GRADE</th><th class="num">PROPS</th><th class="num">MODEL SAID</th><th class="num">ACTUALLY HIT</th><th class="num">DIFFERENCE</th></tr></thead>
+        <tbody>${g.map(x => `<tr>
+          <td><b>${x.key}</b></td>
+          <td class="num" style="color:var(--dim)">${x.n}</td>
+          <td class="num">${(x.predicted * 100).toFixed(1)}%</td>
+          <td class="num"><b>${(x.actual * 100).toFixed(1)}%</b></td>
+          <td class="num" style="color:${Math.abs(x.edge) <= 0.04 ? "var(--green)" : "var(--red)"}">${x.edge >= 0 ? "+" : ""}${(x.edge * 100).toFixed(1)}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+    </div>
+    <div class="note">
+      <b>This is a backtest, not a record.</b> It walked ${B.slates} slates of the ${B.season - 1}-${String(B.season).slice(2)} season and
+      settled every prop the board would have published, off the real box scores. Each player's line was rebuilt
+      from his own game log using only games that had already been played, so the projection could not see the
+      future — but the TEAM splits are full-season, so pace and the opponent's allowance know a little that they
+      should not. Both are clamped to about a tenth either way, which bounds it without hiding it. Injury reports
+      come back empty on finished games, so the test ran blind to who was out; the live board knows more than this
+      one did.<br>
+      <b>What to look at.</b> Not the profit — the two right-hand columns. A grade is worth having only if the
+      higher buckets cash more often than the lower ones, and if what the model said matches what happened.
+      ${B.ladder && B.ladder.played ? `The ladder itself went ${B.ladder.won}-${B.ladder.lost}${B.ladder.void ? "-" + B.ladder.void : ""} over ${B.ladder.played} rungs on that season, passing ${B.ladder.passed} days.` : ""}
+    </div>`;
+}
+// The ladder replay, kept to what this page needs: the record engine is in
+// hairdwood-model.js and this page does not load it, so rather than a second
+// copy of the maths drifting from the first, only the parts a record shows are
+// computed here — and any disagreement with the board is visible, because both
+// read the same file.
+function M_ladder(bets) {
+  const C = { account: 100, seed: 10, basePct: 0.10, rungs: 5, missGain: 0.25 };
+  let account = C.account, base = C.seed, stake = C.seed, rung = 1;
+  let peak = account, maxDD = 0, cycles = { done: 0, busted: 0 };
+  for (const b of bets) {
+    const dec = b.price > 0 ? 1 + b.price / 100 : 1 + 100 / Math.abs(b.price || 100);
+    if (b.status === "won") {
+      const ret = Math.round(stake * dec * 100) / 100;
+      if (rung >= C.rungs) { account = Math.round((account + (ret - base)) * 100) / 100; cycles.done++; rung = 1; base = Math.round(Math.max(0, account) * C.basePct * 100) / 100; stake = base; }
+      else { rung++; stake = ret; }
+    } else if (b.status === "lost") {
+      account = Math.round((account - base) * 100) / 100; cycles.busted++;
+      rung = 1; base = Math.round(base * (1 + C.missGain) * 100) / 100; stake = base;
+    } else continue;
+    peak = Math.max(peak, account);
+    maxDD = Math.max(maxDD, peak - account);
+  }
+  return { account, pl: Math.round((account - C.account) * 100) / 100, cycles, maxDD };
 }
 
 (async()=>{
   try{
-    const [r,g,o]=await Promise.all([
+    const [r,g,o,h,b]=await Promise.all([
       fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"}),
       fetch("data/gridiron-log.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
-      fetch("data/era-open.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+      fetch("data/era-open.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
+      fetch("data/hairdwood-ladder.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
+      fetch("data/hairdwood-backtest.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
     ]);
     const G = g && g.ok ? await g.json().catch(()=>null) : null;
     const O = o && o.ok ? await o.json().catch(()=>null) : null;
+    const H = h && h.ok ? await h.json().catch(()=>null) : null;
+    const B = b && b.ok ? await b.json().catch(()=>null) : null;
     // Either sport missing is a normal state, not an error: the MLB ledger is
     // empty until the first pick publishes, and the NFL log only exists in
     // season. Whichever one has rows still renders.
-    render(r.ok ? await r.json() : {bets:[]}, G, O);
+    render(r.ok ? await r.json() : {bets:[]}, G, O, H, B);
   }catch(e){
     $("body").innerHTML=`<div class="empty">Could not load the ledger (${e.message}).<br>It is written by the alerter once picks start publishing.</div>`;
   }

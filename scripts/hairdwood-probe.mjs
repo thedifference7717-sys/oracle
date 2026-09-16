@@ -53,6 +53,7 @@ async function get(url) {
   return JSON.parse(t);
 }
 
+const MARKET_KEYS = M.MARKETS.map(m => m.key);
 const report = { at: new Date().toISOString(), day: DAY, checks: [], shapes: {}, notes: [] };
 let failed = 0;
 function check(name, ok, detail) {
@@ -331,6 +332,54 @@ try {
   const shortest = ps[ps.length - 1];
   check("nothing unbettable is published", shortest <= M.CFG.pCeil + 1e-9,
         `shortest leg ${(shortest * 100).toFixed(0)}% (fair ${M.amOdds(shortest)}), ceiling ${(M.CFG.pCeil * 100).toFixed(0)}%`);
+  // ── does the projection track what happens? ──────────────────────────────
+  // The backtest found rebounds hitting 99.1% against a predicted 70.0%, on a
+  // quarter as many legs as the other markets. A hit rate that far above its
+  // own prediction is not a model being careful, it is a model measuring
+  // something other than what it settles against. So the projection is
+  // compared to the box score, market by market, on this slate: if the
+  // projection is low the bias shows here, and if the settlement is reading
+  // the wrong column that shows here too.
+  const boxes = {};
+  for (const g of board.games) {
+    try { boxes[g.id] = await M.loadBoxScore(get, g.id); } catch (e) { boxes[g.id] = null; }
+  }
+  const perMkt = {};
+  board.legs.forEach(l => {
+    const bx = boxes[l.gameId]; if (!bx) return;
+    const line = bx[String(l.pl.id)];
+    if (!line || line.dnp) return;
+    const got = line[l.market];
+    if (got == null) return;
+    const m = perMkt[l.market] = perMkt[l.market] || { n: 0, proj: 0, actual: 0, line: 0, won: 0, p: 0, samples: [] };
+    m.n++; m.proj += l.mean; m.actual += got; m.line += l.line; m.p += l.p;
+    if (got > l.line) m.won++;
+    if (m.samples.length < 4) m.samples.push(`${l.pl.name} ${l.marketShort} o${l.line}: projected ${l.mean.toFixed(1)}, got ${got}`);
+  });
+  report.perMarket = {};
+  Object.keys(perMkt).forEach(k => {
+    const m = perMkt[k];
+    report.perMarket[k] = { n: m.n, meanProjected: +(m.proj / m.n).toFixed(2), meanActual: +(m.actual / m.n).toFixed(2),
+                            meanLine: +(m.line / m.n).toFixed(2), predicted: +(m.p / m.n).toFixed(3),
+                            hit: +(m.won / m.n).toFixed(3), samples: m.samples };
+  });
+  Object.keys(perMkt).forEach(k => {
+    const r = report.perMarket[k];
+    const bias = r.meanProjected / Math.max(0.01, r.meanActual) - 1;
+    // A projection more than a fifth away from the mean outcome is not noise on
+    // a hundred-plus legs; it is the wrong number.
+    check(`${k.toUpperCase()} projections track the box score`, Math.abs(bias) < 0.20 ? true : "warn",
+          `projected ${r.meanProjected} vs actual ${r.meanActual} (${bias >= 0 ? "+" : ""}${(bias * 100).toFixed(0)}%), lines average ${r.meanLine}, said ${(r.predicted * 100).toFixed(0)}% hit ${(r.hit * 100).toFixed(0)}% on ${r.n}`);
+  });
+  // The other half of the same question: how many legs each market even gets.
+  // Rebounds produced a quarter of what points did in the backtest, which is
+  // itself evidence that something upstream is starving them.
+  const counts = {}; board.legs.forEach(l => { counts[l.market] = (counts[l.market] || 0) + 1; });
+  const least = Math.min.apply(null, MARKET_KEYS.map(k => counts[k] || 0));
+  const most = Math.max.apply(null, MARKET_KEYS.map(k => counts[k] || 0));
+  check("no market is starved of legs", least >= most * 0.4 ? true : "warn",
+        JSON.stringify(counts));
+
   check("game logs reached the legs", some(board.legs, l => l.hasLog) > board.legs.length * 0.5,
         `${some(board.legs, l => l.hasLog)}/${board.legs.length} legs carry a log`);
   const withTotal2 = some(board.games, g => g.total > 0);
