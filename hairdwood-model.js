@@ -160,6 +160,54 @@ function compoundAtLeast(attMean, attDisp, q, n) {
   return clamp(1 - below, 0, 1);
 }
 
+function poissonAtLeast(lam, n) {
+  if (n <= 0) return 1;
+  if (!(lam > 0)) return 0;
+  let below = 0, term = Math.exp(-lam);
+  for (let i = 0; i < n; i++) { below += term; term *= lam / (i + 1); }
+  return clamp(1 - below, 0, 1);
+}
+function binAtLeast(N, q, n) {
+  if (n <= 0) return 1;
+  if (n > N) return 0;
+  let below = 0;
+  for (let i = 0; i < n && i <= N; i++) below += binPmf(N, q, i);
+  return clamp(1 - below, 0, 1);
+}
+// A count matched on its mean AND its variance, using whichever family can
+// actually hold that pair.
+//
+// A negative binomial's variance is ALWAYS at least its mean, so it cannot
+// represent a count steadier than Poisson, and the old code silently floored
+// such a count at Poisson — too wide, which understates the chance of clearing
+// a line below the mean.
+//
+// This was written expecting rebounds to be that case: every missed shot is one
+// more chance at a board, so the count ought to be binomial-shaped. THE
+// MEASUREMENT SAYS OTHERWISE. Forty real logs put the rebound Fano factor at
+// 1.28 — over-dispersed, not under — and points at 3.19. Nothing in this sport
+// is steadier than Poisson, and the rebound bias this was reaching for is not
+// explained here. The branch is kept because it is still the correct general
+// answer and it does fire: a player whose own log is unusually steady can blend
+// to a variance below his mean, and the old code priced him too wide. But it is
+// a correctness fix at the margin, not the rebound fix it was meant to be.
+//
+//   variance > mean  -> negative binomial   (usage varies: points, assists)
+//   variance < mean  -> binomial            (bounded opportunities: rebounds)
+//   variance = mean  -> Poisson
+function countAtLeast(mean, variance, n) {
+  if (n <= 0) return 1;
+  if (!(mean > 0)) return 0;
+  if (!(variance > 0)) return mean >= n ? 1 : 0;
+  if (variance > mean * 1.02) return nbAtLeast(mean, (mean * mean) / (variance - mean), n);
+  if (variance < mean * 0.98) {
+    // Moment-matched binomial: N trials at q, with Nq = mean and Nq(1-q) = var.
+    const N = Math.max(1, Math.round((mean * mean) / Math.max(1e-9, mean - variance)));
+    return binAtLeast(N, clamp(mean / N, 1e-9, 1 - 1e-9), n);
+  }
+  return poissonAtLeast(mean, n);
+}
+
 // Bivariate normal, by quadrature on the standard identity
 //   d/drho Phi2(h,k,rho) = phi2(h,k,rho),
 // integrated from 0 to rho by Simpson. The small-rho expansion the baseball
@@ -207,20 +255,41 @@ function evaluate(p, american) {
 }
 
 // ── the four markets ────────────────────────────────────────────────────────
-// `cv` is the extra-Poisson spread: Var = mean + (cv*mean)^2, which is the
-// negative binomial written the way it is actually measurable — a 25-point
-// scorer at cv 0.225 gets a standard deviation of 7.5 points a night, which is
-// what a 25-point scorer has. `stab` is how many MINUTES of evidence it takes
-// before a man's own per-minute rate outweighs the positional prior; rebounds
-// stabilise fastest (a 7-footer rebounds), assists slowest (role changes).
+// Var = vmr*mean + (cv*mean)^2. Both terms are MEASURED, on forty real game
+// logs, and the measurement changed the FORM and not just the values.
+//
+// The probe fitted excess spread against the mean on log-log axes. Points — the
+// only market whose means span a wide enough range for the fit to mean anything
+// — came back at an exponent of 0.481, which is excess variance proportional to
+// the mean: a constant Fano factor, not the constant cv this model was built
+// on. So cv is zero everywhere and vmr carries it. The factors reproduce every
+// standard deviation there is to check against: a 25-point scorer at 8.9 where
+// constant-cv gave him 11.2, a 15-point scorer at 6.9 against 6.9 measured, an
+// 8-rebound man at 3.2.
+//
+// `stab` is how many MINUTES of evidence it takes before a man's own per-minute
+// rate outweighs his positional prior, measured by split-half: predict the back
+// half of a season from the front half shrunk toward the prior, keep whatever
+// predicts best.
+//
+// The ordering that came back is the part worth understanding, because it is
+// not what was guessed. THE MORE A POSITION PREDICTS A RATE, THE HEAVIER ITS
+// PRIOR SHOULD BE. Position says a great deal about rebounds and assists —
+// centres rebound, guards pass — and those two were already about right, at 200
+// and 260 against the 180 and 300 in use. It says almost nothing about
+// three-point volume, where a non-shooter and a marksman play the same
+// position, and there the model leaned 260 minutes on that prior against a
+// measured 20. That is not a mistuned constant; it is discarding what the
+// player's own log already knew, and it cost threes about three points of
+// projection. Points sat between at 90 against 220.
+//
+// Threes get 30 rather than the measured 20: the error curve is flat from 20 to
+// 40, and a floor that low leaves a hot fortnight nothing to lean against.
 const MARKETS = [
-  { key: "pts", label: "Points",      short: "PTS", cv: 0.225, stab: 220, max: 70 },
-  { key: "reb", label: "Rebounds",    short: "REB", cv: 0.215, stab: 180, max: 30 },
-  { key: "ast", label: "Assists",     short: "AST", cv: 0.235, stab: 300, max: 22 },
-  // cvAtt is the one that matters for threes: 3-point ATTEMPTS swing about
-  // 28% game to game, and the makes inherit that dispersion through the
-  // binomial. cv is only the fallback for a man whose attempts we do not have.
-  { key: "tpm", label: "Threes made", short: "3PM", cv: 0.30,  stab: 260, max: 14, cvAtt: 0.28 }
+  { key: "pts", label: "Points",      short: "PTS", vmr: 3.19, cv: 0, stab: 90,  max: 70 },
+  { key: "reb", label: "Rebounds",    short: "REB", vmr: 1.28, cv: 0, stab: 200, max: 30 },
+  { key: "ast", label: "Assists",     short: "AST", vmr: 1.29, cv: 0, stab: 260, max: 22 },
+  { key: "tpm", label: "Threes made", short: "3PM", vmr: 1.21, cv: 0, stab: 30,  max: 14 }
 ];
 const MKT = {}; MARKETS.forEach(m => { MKT[m.key] = m; });
 
@@ -233,6 +302,22 @@ const CFG = {
   // when a role has changed, which in the NBA it constantly has.
   minRecentW: 0.45,          // weight on the L10 minute average, at full sample
   minRecentN: 5,             // logged games before that weight is paid in full
+  // MEASURED, and it is a conditioning correction rather than a fudge.
+  //
+  // Split-half on real logs says the blend above predicts a man's later minutes
+  // with no bias at all (+0.012 of a minute across forty players, and every
+  // rival predictor within six tenths). Yet the backtest has projected minutes
+  // 2.4% BELOW what the graded legs actually played, consistently, in every run
+  // and every market. Both are true because they are answering different
+  // questions. The blend predicts minutes UNCONDITIONALLY, over every game
+  // including the ones a man leaves early or misses. The board's legs are
+  // graded only when he PLAYED — a prop voids on a DNP — so the population that
+  // settles is conditional on him taking the floor, and that population plays
+  // more minutes than the average of his season.
+  //
+  // Conditional is the right conditioning for this bet, precisely because the
+  // ticket voids when the condition fails. So the projection is lifted onto it.
+  minPlayedLift: 1.024,
   // A blowout costs a starter the fourth quarter. Measured crudely and capped
   // hard: past a 9-point spread each further point is worth about half a
   // percent of a starter's minutes, to a ceiling of 9%.
@@ -933,6 +1018,9 @@ function projectMinutes(pl, log, side, env, out) {
   // Playing hurt is a haircut, not a coin flip.
   const tag = minutesTag(out.status);
   m *= tag;
+  // And onto the conditional: this projection is for a night he plays, because
+  // a night he does not is a void rather than a loss.
+  m *= CFG.minPlayedLift;
   return {
     minutes: clamp(m, 0, 42), base, recentMin, recentW: w, bump, blowout: blow, tag,
     // How steady those minutes have been. A rotation man swinging between 12
@@ -993,16 +1081,19 @@ function projectPlayer(pl, log, side, env, lg, out) {
 // games we have actually watched him play. A parametric family cannot know that
 // one 16-point scorer goes 16, 15, 17 and another goes 4, 31, 12; the log can.
 function spread(key, mean, log, extra) {
+  // The family's own spread: Var = vmr*mean + (cv*mean)^2.
+  //
+  // The first term is the Fano factor, and it carries all of it now — the
+  // log-log fit put the exponent on the mean at 0.481, which is excess variance
+  // proportional to the mean, so cv is zero for all four markets and the second
+  // term is kept only because a future market might need it. The form this
+  // replaced, a constant cv with vmr pinned at 1, over-extrapolated badly at the
+  // top: it gave a 25-point scorer a standard deviation of 11.2 against a real
+  // 8.9, and the backtest duly showed points getting worse when its cv was set
+  // from the sample average.
   const cv = MKT[key].cv;
-  // The family's own spread. For threes the dispersion is derived from the
-  // ATTEMPTS: att*q(1-q) + q^2*Var(att) reduces EXACTLY to mean + (cvAtt*mean)^2,
-  // so at a fixed attempt dispersion two men averaging 2.2 makes have the same
-  // spread whether that came off eleven attempts or four. That is worth saying
-  // plainly rather than pretending otherwise — what separates those two shooters
-  // on this board is not the family, it is the blended term below: their own
-  // observed game-to-game spread, which is measured and does differ.
-  const c = (key === "tpm" && extra && extra.tpa > 0) ? MKT.tpm.cvAtt : cv;
-  let sd = Math.sqrt(Math.max(1e-9, mean + (c * mean) * (c * mean)));
+  const vmr = MKT[key].vmr != null ? MKT[key].vmr : 1;
+  let sd = Math.sqrt(Math.max(1e-9, vmr * mean + (cv * mean) * (cv * mean)));
   const familySd = sd;
   let obs = null, ratio = 1;
   const rows = log && log.played.length >= 5 ? log.played.slice(0, 20) : null;
@@ -1030,21 +1121,13 @@ function spread(key, mean, log, extra) {
 function overProb(key, mean, sp, line, extra) {
   if (!(mean > 0)) return 0;
   const need = Math.floor(line) + 1;
-  if (key === "tpm") {
-    // Summed over the attempt distribution rather than assumed: the arithmetic
-    // comes out at a negative binomial either way, but this is where the
-    // dispersion is actually derived from, and it stays right if the attempt
-    // model is ever given a shape of its own.
-    const att = Math.max(0.2, (extra && extra.tpa) || mean / 0.36);
-    const q = clamp(mean / att, 0.05, 0.75);
-    const cvA = MKT.tpm.cvAtt * (sp && sp.ratio ? sp.ratio : 1);
-    const k = 1 / Math.max(1e-4, cvA * cvA);
-    return clamp(compoundAtLeast(att, k, q, need), 0, 1);
-  }
-  // Negative binomial matched on (mean, blended variance).
-  const varr = sp.sd * sp.sd;
-  const k = varr > mean ? (mean * mean) / (varr - mean) : 1e6;   // variance at or below Poisson -> Poisson
-  return clamp(nbAtLeast(mean, k, need), 0, 1);
+  // All four markets go the same way now. Threes used to take a compound
+  // binomial-on-attempts path, which was always algebraically identical to the
+  // negative binomial it was contrasted with, and which only ever existed to
+  // derive a dispersion that is now measured directly.
+  //
+  // Matched on (mean, blended variance), in whichever family can hold them.
+  return clamp(countAtLeast(mean, sp.sd * sp.sd, need), 0, 1);
 }
 
 // Every alternate line a book would hang on this market, with our probability
@@ -1646,7 +1729,8 @@ function lockInfo(games) {
 return {
   VERSION, SITE, WEB, CORE, CFG, MARKETS, MKT, LADDER, GRADES, ROLE, LG_FALLBACK,
   // math
-  clamp, num, normCdf, normPdf, normInv, nbPmf, nbAtLeast, compoundAtLeast, biNormCdf, jointProb, shrink,
+  clamp, num, normCdf, normPdf, normInv, nbPmf, nbAtLeast, compoundAtLeast, countAtLeast,
+  poissonAtLeast, binAtLeast, biNormCdf, jointProb, shrink,
   // odds
   amOdds, decFromAmerican, evaluate,
   // pipeline

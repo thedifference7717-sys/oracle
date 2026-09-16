@@ -100,8 +100,16 @@ for (const day of dates()) {
     if (!res) continue;
     settled++;
     if (res.status === "won") hit++;
+    // Minutes actually played, beside minutes projected. Every projection in
+    // this model is a rate times a minute count, so four markets coming in low
+    // together is a question about the count before it is a question about any
+    // of the rates.
+    const playedMin = res.min == null ? null : res.min;
     legs.push({ day, player: l.pl.name, market: l.market, line: l.line,
                 p: +l.p.toFixed(4), pRaw: l.pRaw != null ? +l.pRaw.toFixed(4) : null,
+                sd: +l.sd.toFixed(3), projMin: +l.mins.minutes.toFixed(1), playedMin,
+                minBase: +l.mins.base.toFixed(1), minRecent: l.mins.recentMin == null ? null : +l.mins.recentMin.toFixed(1),
+                blowout: +l.mins.blowout.toFixed(4), bump: +l.mins.bump.toFixed(4), tag: +l.mins.tag.toFixed(3),
                 score: l.score.score, grade: l.score.grade,
                 proj: +l.mean.toFixed(2), min: +l.mins.minutes.toFixed(1),
                 hasLog: l.hasLog, status: res.status, actual: res.actual });
@@ -178,6 +186,44 @@ const scoreSpread = (() => {
            p75: at(0.75), p90: at(0.90), p99: at(0.99), max: at(0.999) };
 })();
 const byMarket = bucketBy(graded, r => r.market, ["pts", "reb", "ast", "tpm"]);
+// A market can miss its number two ways and they want different repairs: the
+// PROJECTION can be off, or the SHAPE around it can be. This separates them
+// across every graded leg, where the probe can only do one slate. If projected
+// and actual agree and the hit rate still does not, the mean is fine and the
+// distribution is wrong; if the projection itself is low, nothing about the
+// distribution will fix it.
+const projection = {};
+["pts", "reb", "ast", "tpm"].forEach(k => {
+  const rows = graded.filter(r => r.market === k && r.actual != null && r.proj > 0);
+  if (rows.length < 30) return;
+  const mProj = mean(rows, r => r.proj), mAct = mean(rows, r => r.actual);
+  // Where the line sits relative to the projection, in that market's own noise:
+  // the bias a wrong mean produces depends on how far down the line is.
+  const z = mean(rows, r => (r.proj - r.line) / Math.max(0.01, r.sd || 1));
+  const withMin = rows.filter(r => r.playedMin > 0);
+  projection[k] = {
+    n: rows.length,
+    minutes: withMin.length >= 30 ? {
+      projected: round(mean(withMin, r => r.projMin), 2),
+      played: round(mean(withMin, r => r.playedMin), 2),
+      bias: round(mean(withMin, r => r.projMin) / Math.max(0.01, mean(withMin, r => r.playedMin)) - 1, 4),
+      // Every adjustment the minute projection applies, so the 2.4% shortfall
+      // can be attributed rather than guessed at. `base` is the season average
+      // it starts from, `recent` the L10 it blends toward, and the rest are the
+      // multipliers: a blowout haircut, an absence bump, an injury tag.
+      seasonBase: round(mean(withMin, r => r.minBase), 2),
+      recentL10: round(mean(withMin.filter(r => r.minRecent != null), r => r.minRecent), 2),
+      meanBlowoutCut: round(mean(withMin, r => r.blowout), 4),
+      meanAbsenceBump: round(mean(withMin, r => r.bump), 4),
+      meanInjuryTag: round(mean(withMin, r => r.tag), 4)
+    } : null,
+    projected: round(mProj, 2), actual: round(mAct, 2),
+    bias: round(mProj / Math.max(0.01, mAct) - 1, 4),
+    meanLine: round(mean(rows, r => r.line), 2),
+    lineZ: round(z, 3),
+    said: round(mean(rows, r => r.p)), hit: round(rate(rows))
+  };
+});
 const byBand = bucketBy(graded, r => {
   const b = Math.floor(r.p * 20) / 20;           // 5-point probability bands
   return `${(b * 100).toFixed(0)}-${((b + 0.05) * 100).toFixed(0)}%`;
@@ -215,7 +261,7 @@ const report = {
           brierRaw: round(graded.filter(r => r.pRaw != null).length
             ? mean(graded.filter(r => r.pRaw != null), r => Math.pow((r.status === "won" ? 1 : 0) - r.pRaw, 2))
             : null, 4) },
-  byGrade, byMarket, byBand, monotonic: mono, scoreSpread,
+  byGrade, byMarket, byBand, monotonic: mono, scoreSpread, projection,
   ladder: { days: ladderRows.length, played: ladderPlayed.length,
             passed: ladderRows.filter(r => r.status === "passed").length,
             won: ladderPlayed.filter(r => r.status === "won").length,
@@ -252,6 +298,16 @@ say("\n── by grade ───────────────────
 byGrade.forEach(g => say(`  ${g.key.padEnd(2)} n=${String(g.n).padStart(4)}  predicted ${(g.predicted * 100).toFixed(1)}%  actual ${(g.actual * 100).toFixed(1)}%  ${g.edge >= 0 ? "+" : ""}${(g.edge * 100).toFixed(1)}`));
 if (mono) say(`  order held in ${mono.inOrder} of ${mono.pairs} adjacent pairs`);
 say(`  scores run ${scoreSpread.min} to ${scoreSpread.max} · median ${scoreSpread.median} · p90 ${scoreSpread.p90} · p99 ${scoreSpread.p99}`);
+say("\n── projection vs outcome, per market ───────────────────");
+Object.keys(projection).forEach(k => {
+  const q = projection[k];
+  say(`  ${k.toUpperCase()} n=${String(q.n).padStart(4)}  projected ${String(q.projected).padStart(5)} · actual ${String(q.actual).padStart(5)} ` +
+      `(${q.bias >= 0 ? "+" : ""}${(q.bias * 100).toFixed(1)}%) · line ${q.meanLine} sits ${q.lineZ} sd below · ` +
+      `said ${(q.said * 100).toFixed(1)}% hit ${(q.hit * 100).toFixed(1)}%` +
+      (q.minutes ? ` · minutes ${q.minutes.projected} vs ${q.minutes.played} (${q.minutes.bias >= 0 ? "+" : ""}${(q.minutes.bias * 100).toFixed(1)}%)` : ""));
+  if (q.minutes) say(`        season base ${q.minutes.seasonBase} · L10 ${q.minutes.recentL10} · ` +
+    `blowout cut ${(q.minutes.meanBlowoutCut * 100).toFixed(2)}% · absence bump ${(q.minutes.meanAbsenceBump * 100).toFixed(2)}% · injury tag ${q.minutes.meanInjuryTag}`);
+});
 say("\n── by market ───────────────────────────────────────────");
 byMarket.forEach(g => say(`  ${g.key.toUpperCase()} n=${String(g.n).padStart(4)}  predicted ${(g.predicted * 100).toFixed(1)}%  actual ${(g.actual * 100).toFixed(1)}%  ${g.edge >= 0 ? "+" : ""}${(g.edge * 100).toFixed(1)}`));
 say("\n── calibration ─────────────────────────────────────────");

@@ -356,6 +356,221 @@ try {
   const shortest = ps[ps.length - 1];
   check("nothing unbettable is published", shortest <= M.CFG.pCeil + 1e-9,
         `shortest leg ${(shortest * 100).toFixed(0)}% (fair ${M.amOdds(shortest)}), ceiling ${(M.CFG.pCeil * 100).toFixed(0)}%`);
+  // ── is the DISTRIBUTION the right shape? ─────────────────────────────────
+  // The backtest has rebounds cashing 73.2% against a predicted 69.5% while the
+  // projected mean is right, which means the fault is in the shape rather than
+  // the level. The game logs already downloaded above are the direct evidence:
+  // for each man, take his own per-game numbers, feed his own mean back into
+  // our distribution, and compare what the model says about a line to how often
+  // he actually cleared it. Any market whose model probability sits below its
+  // own empirical frequency has the wrong shape, and this says by how much and
+  // at which lines.
+  // Its own sample, fetched here: `logs` inside buildBoard is the model's
+  // private working set and not something this script can reach into. Forty
+  // rotation players is enough to measure a distribution and cheap enough to
+  // pay for on every run.
+  const shapeLogs = {};
+  {
+    const pool = (players || []).filter(pl => (pl.mpg || 0) >= 20 && (pl.gp || 0) >= 20).slice(0, 40);
+    for (const pl of pool) {
+      try { const l = await M.loadGamelog(get, pl.id, season); if (l) shapeLogs[pl.id] = l; } catch (e) {}
+    }
+  }
+  const shape = {};
+  Object.keys(shapeLogs).forEach(id => {
+    const L = shapeLogs[id];
+    if (!L || L.played.length < 15) return;
+    MARKET_KEYS.forEach(k => {
+      const v = L.played.map(r => r[k]).filter(x => x != null);
+      if (v.length < 15) return;
+      const mu = v.reduce((a, b) => a + b, 0) / v.length;
+      if (!(mu > 1)) return;
+      const varr = v.reduce((a, b) => a + (b - mu) * (b - mu), 0) / (v.length - 1);
+      const sh = shape[k] = shape[k] || { n: 0, cvSum: 0, byOffset: {} };
+      sh.n++;
+      // The dispersion his own log implies, in the same parameterisation the
+      // model uses: Var = mean + (cv*mean)^2.
+      sh.cvSum += Math.sqrt(Math.max(0, varr - mu)) / mu;
+      // The Fano factor: variance over mean. Below 1 means the count is
+      // steadier than Poisson, which no negative binomial can represent and
+      // which is the whole reason rebounds were mispriced.
+      sh.vmrSum = (sh.vmrSum || 0) + varr / mu;
+      sh.meanSum = (sh.meanSum || 0) + mu;
+      sh.varSum = (sh.varSum || 0) + varr;
+      // The pairs themselves, for the fit below. A single cv assumes the excess
+      // spread grows in PROPORTION to the mean, and that is an assumption, not
+      // a measurement: fit it at a 15-point scorer and extrapolate to a 25-point
+      // one and you hand him a standard deviation of 11 where the real one is
+      // nearer 9. So the exponent gets measured too.
+      (sh.pairs = sh.pairs || []).push([mu, varr]);
+      const sp = M.spread(k, mu, L, { tpa: mu / 0.36 });
+      // Lines at and below the mean, which is where the board writes them.
+      [-2.5, -1.5, -0.5].forEach(off => {
+        const line = Math.max(0.5, Math.round(mu + off) + 0.5);
+        const model = M.overProb(k, mu, sp, line, { tpa: mu / 0.36 });
+        const emp = v.filter(x => x > line).length / v.length;
+        const b = sh.byOffset[off] = sh.byOffset[off] || { n: 0, model: 0, emp: 0 };
+        b.n++; b.model += model; b.emp += emp;
+      });
+    });
+  });
+  report.distributionShape = {};
+  MARKET_KEYS.forEach(k => {
+    const sh = shape[k]; if (!sh || !sh.n) return;
+    const offs = {};
+    Object.keys(sh.byOffset).forEach(o => {
+      const b = sh.byOffset[o];
+      offs[o] = { n: b.n, model: +(b.model / b.n).toFixed(4), empirical: +(b.emp / b.n).toFixed(4),
+                  gap: +((b.emp - b.model) / b.n * b.n).toFixed(4) };
+      offs[o].gap = +(offs[o].empirical - offs[o].model).toFixed(4);
+    });
+    // Excess spread against the mean, on log-log axes: sd_excess = K * mean^P.
+    // P = 1 is the constant-cv assumption the model ships with; anything below
+    // it means the spread grows more slowly than the mean, which is what
+    // scoring actually does.
+    const fit = (() => {
+      const pts = (sh.pairs || []).map(([mu, v]) => [Math.log(mu), Math.log(Math.sqrt(Math.max(1e-6, v - mu)))])
+                                  .filter(([x, y]) => isFinite(x) && isFinite(y));
+      if (pts.length < 12) return null;
+      const n = pts.length;
+      const mx = pts.reduce((a, q) => a + q[0], 0) / n, my = pts.reduce((a, q) => a + q[1], 0) / n;
+      let num = 0, den = 0;
+      pts.forEach(([x, y]) => { num += (x - mx) * (y - my); den += (x - mx) * (x - mx); });
+      if (!(den > 0)) return null;
+      const P = num / den, K = Math.exp(my - P * mx);
+      // What that fit says the spread is at three real sizes, against what the
+      // model's constant-cv form says.
+      const at = m => ({ mean: m, fitted: +Math.sqrt(m + Math.pow(K * Math.pow(m, P), 2)).toFixed(2),
+                         model: +M.spread(k, m, null, { tpa: m / 0.36 }).sd.toFixed(2) });
+      return { n, K: +K.toFixed(4), P: +P.toFixed(3), at: [at(5), at(15), at(25)] };
+    })();
+    const impliedCv = +(sh.cvSum / sh.n).toFixed(3);
+    const impliedVmr = +(sh.vmrSum / sh.n).toFixed(3);
+    report.distributionShape[k] = { players: sh.n, impliedCv, modelCv: M.MKT[k].cv,
+      impliedVmr, modelVmr: M.MKT[k].vmr != null ? M.MKT[k].vmr : 1,
+      meanOfMeans: +(sh.meanSum / sh.n).toFixed(2), meanOfVars: +(sh.varSum / sh.n).toFixed(2),
+      spreadFit: fit, byOffset: offs };
+    const worst = Object.values(offs).sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap))[0];
+    check(`${k.toUpperCase()} distribution matches the logs`, Math.abs(worst.gap) < 0.03 ? true : "warn",
+          `implied vmr ${impliedVmr} (model ${M.MKT[k].vmr != null ? M.MKT[k].vmr : 1}), implied cv ${impliedCv} (model ${M.MKT[k].cv}) · ` +
+          Object.keys(offs).map(o => `${o}: model ${(offs[o].model * 100).toFixed(1)}% vs real ${(offs[o].empirical * 100).toFixed(1)}%`).join(" · "));
+  });
+
+  // ── where does a player's own rate stop needing a prior? ─────────────────
+  // `stab` is the minutes of evidence at which a man's own per-minute rate
+  // outweighs his positional prior. The four in this model were chosen, not
+  // measured, and the backtest says every market projects low by an amount that
+  // tracks what those constants cost an above-average player — which is every
+  // player the board writes a prop on, because that is why he has one.
+  //
+  // So measure it the way a stabilisation point is defined: split each man's
+  // season in half, predict the second half from the first half shrunk toward
+  // the prior, and find the k that minimises the error. Too small a k overfits
+  // a hot fortnight; too large a k is the bias being hunted here. The answer is
+  // whichever number predicts best, and it is allowed to disagree with me.
+  const stab = {};
+  MARKET_KEYS.forEach(k => {
+    const grid = [20, 40, 60, 90, 120, 160, 200, 260, 320, 420, 560];
+    const err = grid.map(() => 0);
+    let used = 0;
+    Object.keys(shapeLogs).forEach(id => {
+      const L = shapeLogs[id];
+      if (!L || L.played.length < 24) return;
+      const pl = (players || []).find(x => x.id === id);
+      if (!pl) return;
+      const half = Math.floor(L.played.length / 2);
+      // The log is newest-first, so the OLDER half is the predictor.
+      const older = L.played.slice(half), newer = L.played.slice(0, half);
+      const minA = older.reduce((a, r) => a + r.min, 0), minB = newer.reduce((a, r) => a + r.min, 0);
+      if (!(minA > 120 && minB > 120)) return;
+      const totA = older.reduce((a, r) => a + (r[k] || 0), 0);
+      const rateB = newer.reduce((a, r) => a + (r[k] || 0), 0) / minB;
+      const role = M.ROLE[String(pl.pos || "").toUpperCase()] || {};
+      const prior = k === "tpm" ? (role.tpa || 0.148) * 0.36 : (role[k] != null ? role[k] : 0.15);
+      used++;
+      grid.forEach((g, i) => {
+        const pred = (totA + prior * g) / (minA + g);
+        err[i] += (pred - rateB) * (pred - rateB) * minB;   // weight by exposure
+      });
+    });
+    if (used < 10) return;
+    let best = 0;
+    err.forEach((e, i) => { if (e < err[best]) best = i; });
+    stab[k] = { players: used, bestStab: grid[best], modelStab: M.MKT[k].stab,
+                curve: grid.map((g, i) => [g, +(err[i] / used).toFixed(6)]) };
+  });
+  report.stabilisation = stab;
+  MARKET_KEYS.forEach(k => {
+    const q = stab[k]; if (!q) return;
+    check(`${k.toUpperCase()} stabilisation constant`, Math.abs(q.bestStab - q.modelStab) <= q.modelStab * 0.6 ? true : "warn",
+          `split-half says ${q.bestStab} minutes, model uses ${q.modelStab} (${q.players} players)`);
+  });
+
+  // ── how much should the recent window count for MINUTES? ────────────────
+  // The backtest has minutes short by 2.4% and cleared every adjustment of
+  // blame: the blowout haircut is worth half a percent and the injury tag six
+  // tenths. The shortfall is in the source — season-to-date says 27.6 minutes,
+  // the last ten say 28.5, and these men played 29.2. Minutes trend upward
+  // through a season and the blend does not lean far enough forward to catch
+  // it.
+  //
+  // `minRecentW` is how far it leans, and it was chosen rather than measured.
+  // Same split-half as the rate constants: predict the back half of a season's
+  // minutes from the front half, blending the front half's overall average with
+  // its own last ten, and keep whichever weight predicts best. Zero is pure
+  // season average, one is pure recent form.
+  {
+    // Several predictors, each scored on BOTH error and bias. The blend was
+    // only ever scored on error, and the error minimum turned out to be beside
+    // the point: every weight of it, including pure recent form, predicts BELOW
+    // what gets played, because the thing being missed is a trend and no
+    // weighted average of the past can extrapolate one. So the candidates now
+    // include predictors that can: the last five, the last three, and a least-
+    // squares line through the last ten carried forward.
+    const preds = {};
+    const add = (name, f) => { preds[name] = { f, err: 0, bias: 0, n: 0 }; };
+    [0, 0.3, 0.45, 0.6, 0.8, 1.0].forEach(w =>
+      add(`blend ${w}`, (season, l10) => (1 - w) * season + w * l10));
+    add("last 5", (s, l10, l5) => l5);
+    add("last 3", (s, l10, l5, l3) => l3);
+    add("trend of last 10", (s, l10, l5, l3, slope) => l10 + slope * 5);
+    Object.keys(shapeLogs).forEach(id => {
+      const L = shapeLogs[id];
+      if (!L || L.played.length < 24) return;
+      const half = Math.floor(L.played.length / 2);
+      const older = L.played.slice(half), newer = L.played.slice(0, half);
+      if (older.length < 12 || newer.length < 12) return;
+      const mins = older.map(r => r.min);                     // newest first
+      const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+      const seasonAvg = avg(mins), l10 = avg(mins.slice(0, 10)),
+            l5 = avg(mins.slice(0, 5)), l3 = avg(mins.slice(0, 3));
+      // Slope per game, oldest-to-newest, over the last ten.
+      const win = mins.slice(0, 10).slice().reverse();
+      const n = win.length, mx = (n - 1) / 2, my = avg(win);
+      let num = 0, den = 0;
+      win.forEach((y, i) => { num += (i - mx) * (y - my); den += (i - mx) * (i - mx); });
+      const slope = den > 0 ? num / den : 0;
+      const actual = avg(newer.map(r => r.min));
+      Object.values(preds).forEach(P => {
+        const v = P.f(seasonAvg, l10, l5, l3, slope);
+        P.err += (v - actual) * (v - actual); P.bias += v - actual; P.n++;
+      });
+    });
+    const rows = Object.keys(preds).filter(k => preds[k].n >= 10).map(k => ({
+      predictor: k, n: preds[k].n,
+      rmse: +Math.sqrt(preds[k].err / preds[k].n).toFixed(3),
+      bias: +(preds[k].bias / preds[k].n).toFixed(3)
+    }));
+    if (rows.length) {
+      report.minutesWeight = { modelW: M.CFG.minRecentW, rows };
+      const flat = rows.slice().sort((a, b) => Math.abs(a.bias) - Math.abs(b.bias))[0];
+      const tight = rows.slice().sort((a, b) => a.rmse - b.rmse)[0];
+      check("minutes predictor is unbiased", Math.abs(tight.bias) < 0.35 ? true : "warn",
+            `lowest error "${tight.predictor}" (rmse ${tight.rmse}) still runs ${tight.bias} min ` +
+            `${tight.bias < 0 ? "SHORT" : "long"}; least biased is "${flat.predictor}" at ${flat.bias} (rmse ${flat.rmse})`);
+    }
+  }
+
   // ── does the projection track what happens? ──────────────────────────────
   // The backtest found rebounds hitting 99.1% against a predicted 70.0%, on a
   // quarter as many legs as the other markets. A hit rate that far above its
