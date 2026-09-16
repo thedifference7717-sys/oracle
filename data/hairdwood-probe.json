@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T00:15:00.371Z",
+  "at": "2026-09-16T00:20:01.777Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -8,9 +8,9 @@
       "detail": "9 events"
     },
     {
-      "name": "scoreboard season year matches seasonOf()",
-      "state": "FAIL",
-      "detail": "feed says undefined, we computed 2026"
+      "name": "loadSlate resolves the season",
+      "state": "PASS",
+      "detail": "loadSlate says 2026, seasonOf() says 2026, top-level=undefined, leagues[0]=2026"
     },
     {
       "name": "parseEvent reads every event",
@@ -44,8 +44,8 @@
     },
     {
       "name": "opponent splits present",
-      "state": "FAIL",
-      "detail": "0 teams carry an opponent split"
+      "state": "PASS",
+      "detail": "30 teams carry an opponent split"
     },
     {
       "name": "league baselines measured",
@@ -118,6 +118,31 @@
       "detail": "8 entries"
     },
     {
+      "name": "summary carries the market's number",
+      "state": "PASS",
+      "detail": "total 227.5, spreadHome -5.5 (DraftKings: ORL -5.5)"
+    },
+    {
+      "name": "box score parsed",
+      "state": "PASS",
+      "detail": "20 played, 6 DNP"
+    },
+    {
+      "name": "box score carries all four markets",
+      "state": "PASS",
+      "detail": "Kentavious Caldwell-Pope: 14 min, 0 pts, 2 reb, 2 ast, 0 3pm"
+    },
+    {
+      "name": "settlement grades a real line",
+      "state": "PASS",
+      "detail": "Jaren Jackson Jr. scored 30: o28.5 -> won, o31.5 -> lost"
+    },
+    {
+      "name": "a DNP voids rather than loses",
+      "state": "PASS",
+      "detail": "Brandon Clarke -> void"
+    },
+    {
       "name": "game log parsed",
       "state": "PASS",
       "detail": "89 games played, 0 DNP — Tyrese Maxey"
@@ -165,17 +190,27 @@
     {
       "name": "all four markets priced",
       "state": "PASS",
-      "detail": "{\"tpm\":127,\"ast\":144,\"reb\":144,\"pts\":144}"
+      "detail": "{\"tpm\":127,\"ast\":144,\"pts\":144,\"reb\":144}"
     },
     {
       "name": "game logs reached the legs",
-      "state": "FAIL",
-      "detail": "156/559 legs carry a log"
+      "state": "PASS",
+      "detail": "353/559 legs carry a log"
+    },
+    {
+      "name": "the board ends up with posted totals",
+      "state": "PASS",
+      "detail": "9/9 games priced after the summary fill-in"
+    },
+    {
+      "name": "defences differ from each other",
+      "state": "PASS",
+      "detail": "if every defence reads 1.000 the opponent split is not being parsed"
     },
     {
       "name": "projections move off the season average",
       "state": "PASS",
-      "detail": "median move 5.7%"
+      "detail": "median move 6.4%"
     }
   ],
   "shapes": {
@@ -186,6 +221,8 @@
         "provider"
       ],
       "events": 9,
+      "seasonYearTopLevel": null,
+      "seasonYearUnderLeagues": 2026,
       "competitionKeys": [
         "id",
         "uid",
@@ -739,6 +776,366 @@
             "returnDate": "2026-10-01"
           }
         }
+      },
+      "pickcenterKeys": [
+        "provider",
+        "details",
+        "overUnder",
+        "spread",
+        "overOdds",
+        "underOdds",
+        "awayTeamOdds",
+        "homeTeamOdds",
+        "links",
+        "moneyline",
+        "pointSpread",
+        "total",
+        "link",
+        "header",
+        "footer"
+      ],
+      "pickcenterSample": {
+        "provider": {
+          "id": "100",
+          "name": "DraftKings",
+          "priority": 1,
+          "logos": [
+            {
+              "href": "https://a.espncdn.com/i/betting/Draftkings_Light.svg",
+              "rel": [
+                "light"
+              ]
+            },
+            {
+              "href": "https://a.espncdn.com/i/betting/Draftkings_Dark.svg",
+              "rel": [
+                "dark"
+              ]
+            }
+          ]
+        },
+        "details": "ORL -5.5",
+        "overUnder": 227.5,
+        "spread": -5.5,
+        "overOdds": -108,
+        "underOdds": -112,
+        "awayTeamOdds": {
+          "favorite": false,
+          "underdog": true,
+          "moneyLine": 190,
+          "spreadOdds": -112,
+          "team": {
+            "$ref": "http://sports.core.api.espn.pvt/v2/sports/basketball/leagues/nba/seasons/2026/teams/29?lang=en&region=us"
+          },
+          "teamId": "29",
+          "favoriteAtOpen": false
+        },
+        "homeTeamOdds": {
+          "favorite": true,
+          "underdog": false,
+          "moneyLine": -230,
+          "spreadOdds": -108,
+          "team": {
+            "$ref": "http://sports.core.api.espn.pvt/v2/sports/basketball/leagues/nba/seasons/2026/teams/19?lang=en&region=us"
+          },
+          "teamId": "19",
+          "favoriteAtOpen": true
+        },
+        "links": [
+          {
+            "language": "en-US",
+            "rel": [
+              "home",
+              "desktop",
+              "bets",
+              "draftkings"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_1",
+            "text": "Home Bet",
+            "shortText": "Home Bet",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "away",
+              "desktop",
+              "bets",
+              "draftkings"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_3",
+            "text": "Away Bet",
+            "shortText": "Away Bet",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "homeSpread",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0HC82963966N550_1",
+            "text": "Home Point Spread",
+            "shortText": "Home Point Spread",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "awaySpread",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0HC82963966P550_3",
+            "text": "Away Point Spread",
+            "shortText": "Away Point Spread",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "over",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0OU82963966O22750_1",
+            "text": "Over Odds",
+            "shortText": "Over Odds",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "under",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0OU82963966U22750_3",
+            "text": "Under Odds",
+            "shortText": "Under Odds",
+            "isExternal": true,
+            "isPremium": false
+          },
+          {
+            "language": "en-US",
+            "rel": [
+              "game",
+              "desktop",
+              "bets"
+            ],
+            "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703",
+            "text": "Game",
+            "shortText": "Game",
+            "isExternal": true,
+            "isPremium": false
+          }
+        ],
+        "moneyline": {
+          "displayName": "Moneyline",
+          "shortDisplayName": "ML",
+          "home": {
+            "close": {
+              "odds": "-230"
+            },
+            "open": {
+              "odds": "-180"
+            }
+          },
+          "away": {
+            "close": {
+              "odds": "+190"
+            },
+            "open": {
+              "odds": "+150"
+            }
+          }
+        },
+        "pointSpread": {
+          "displayName": "Spread",
+          "shortDisplayName": "Spread",
+          "home": {
+            "close": {
+              "line": "-5.5",
+              "odds": "-108"
+            },
+            "open": {
+              "line": "-4.5",
+              "odds": "-112"
+            }
+          },
+          "away": {
+            "close": {
+              "line": "+5.5",
+              "odds": "-112"
+            },
+            "open": {
+              "line": "+4.5",
+              "odds": "-108"
+            }
+          }
+        },
+        "total": {
+          "displayName": "Total",
+          "shortDisplayName": "Total",
+          "over": {
+            "close": {
+              "line": "o227.5",
+              "odds": "-108"
+            },
+            "open": {
+              "line": "o230.5",
+              "odds": "-110"
+            }
+          },
+          "under": {
+            "close": {
+              "line": "u227.5",
+              "odds": "-112"
+            },
+            "open": {
+              "line": "u230.5",
+              "odds": "-110"
+            }
+          }
+        },
+        "link": {
+          "text": "See More Odds",
+          "language": "en-US",
+          "rel": [
+            "main",
+            "desktop",
+            "bets"
+          ],
+          "href": "https://sportsbook.draftkings.com",
+          "isExternal": true,
+          "isPremium": false
+        },
+        "header": {
+          "logo": {
+            "dark": "https://a.espncdn.com/i/espnbet/dark/espn-bet-square-off.svg",
+            "light": "https://a.espncdn.com/i/espnbet/espn-bet-square-off.svg",
+            "exclusivesLogoDark": "https://a.espncdn.com/i/espnbet/espn-bet-square-mint.svg",
+            "exclusivesLogoLight": "https://a.espncdn.com/i/espnbet/espn-bet-square-mint.svg"
+          },
+          "text": "Game Odds"
+        },
+        "footer": {
+          "disclaimer": "GAMBLING PROBLEM? CALL 1-800-GAMBLER or 1-800-MY-RESET, (800) 327-5050 or visit gamblinghelplinema.org (MA). Call 877-8-HOPENY/text HOPENY (467369) (NY). Call 888-789-7777/visit ccpg.org (CT), or visit www.mdgamblinghelp.org (MD), 1-800-981-0023 (PR). 21+ and present in most states. (18+ DC/KY/NH/PR/WY). Void in ONT. Eligibility restrictions apply. Terms: draftkings.com/sportsbook. On behalf of Boot Hill Casino (KS). Pass-thru of per wager tax may apply in IL."
+        }
+      },
+      "boxscoreKeys": [
+        "teams",
+        "players"
+      ],
+      "boxTeamKeys": [
+        "team",
+        "statistics",
+        "displayOrder"
+      ],
+      "boxStatNames": {
+        "names": [
+          "MIN",
+          "PTS",
+          "FG",
+          "3PT",
+          "FT",
+          "REB",
+          "AST",
+          "TO",
+          "STL",
+          "BLK",
+          "OREB",
+          "DREB",
+          "PF",
+          "+/-"
+        ],
+        "keys": [
+          "minutes",
+          "points",
+          "fieldGoalsMade-fieldGoalsAttempted",
+          "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
+          "freeThrowsMade-freeThrowsAttempted",
+          "rebounds",
+          "assists",
+          "turnovers",
+          "steals",
+          "blocks",
+          "offensiveRebounds",
+          "defensiveRebounds",
+          "fouls",
+          "plusMinus"
+        ],
+        "athleteSample": {
+          "active": true,
+          "athlete": {
+            "id": "4277961",
+            "uid": "s:40~l:46~a:4277961",
+            "guid": "dbe0e9e5-0046-c414-000b-f4e629b08f5d",
+            "displayName": "Jaren Jackson Jr.",
+            "shortName": "J. Jackson Jr.",
+            "links": [
+              {
+                "rel": [
+                  "playercard",
+                  "desktop",
+                  "athlete"
+                ],
+                "href": "https://www.espn.com/nba/player/_/id/4277961/jaren-jackson-jr",
+                "text": "Player Card"
+              }
+            ],
+            "headshot": {
+              "href": "https://a.espncdn.com/i/headshots/nba/players/full/4277961.png",
+              "alt": "Jaren Jackson Jr."
+            },
+            "jersey": "8",
+            "position": {
+              "name": "Forward",
+              "displayName": "Forward",
+              "abbreviation": "F"
+            }
+          },
+          "starter": true,
+          "didNotPlay": false,
+          "reason": "COACH'S DECISION",
+          "ejected": false,
+          "stats": [
+            "33",
+            "30",
+            "12-22",
+            "3-5",
+            "3-3",
+            "3",
+            "1",
+            "4",
+            "2",
+            "2",
+            "0",
+            "3",
+            "3",
+            "-21"
+          ]
+        }
+      }
+    },
+    "boxParsed": {
+      "players": 26,
+      "played": 20,
+      "dnp": 6,
+      "sample": {
+        "dnp": false,
+        "name": "Kentavious Caldwell-Pope",
+        "min": 14,
+        "pts": 0,
+        "reb": 2,
+        "ast": 2,
+        "tpm": 0
       }
     },
     "gamelog": {
@@ -1413,49 +1810,49 @@
       "games": 9,
       "players": 144,
       "legs": 559,
-      "logs": 40
+      "logs": 90
     },
     "top": [
       {
         "grade": "A",
-        "score": 82.9,
-        "player": "Jabari Smith Jr.",
-        "pos": "F",
-        "team": "HOU",
-        "opp": "OKC",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.904,
-        "proj": 2.5,
-        "min": 38.7,
-        "seasonAvg": 2.3,
-        "form": "10/10"
-      },
-      {
-        "grade": "A",
         "score": 82.2,
-        "player": "Devin Vassell",
-        "pos": "G",
+        "player": "Victor Wembanyama",
+        "pos": "F",
         "team": "SA",
         "opp": "MIL",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.902,
-        "proj": 2.5,
-        "min": 32.8,
-        "seasonAvg": 2.5,
-        "form": "10/10"
+        "p": 0.873,
+        "proj": 2.2,
+        "min": 33,
+        "seasonAvg": 1.9,
+        "form": "9/10"
       },
       {
         "grade": "A",
-        "score": 81.4,
+        "score": 82.1,
+        "player": "Julian Champagnie",
+        "pos": "F",
+        "team": "SA",
+        "opp": "MIL",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.895,
+        "proj": 2.4,
+        "min": 29.4,
+        "seasonAvg": 2.4,
+        "form": "9/10"
+      },
+      {
+        "grade": "A",
+        "score": 80.7,
         "player": "Deni Avdija",
         "pos": "F",
         "team": "POR",
         "opp": "ATL",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.883,
+        "p": 0.88,
         "proj": 2.3,
         "min": 37.5,
         "seasonAvg": 1.9,
@@ -1463,37 +1860,22 @@
       },
       {
         "grade": "A",
-        "score": 80.6,
-        "player": "Cade Cunningham",
+        "score": 80.2,
+        "player": "Jalen Suggs",
         "pos": "G",
-        "team": "DET",
-        "opp": "PHX",
+        "team": "ORL",
+        "opp": "MEM",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.866,
-        "proj": 2.2,
-        "min": 37.3,
-        "seasonAvg": 2,
+        "p": 0.901,
+        "proj": 2.5,
+        "min": 31.3,
+        "seasonAvg": 2.1,
         "form": "9/10"
       },
       {
         "grade": "A",
         "score": 80.1,
-        "player": "Ryan Rollins",
-        "pos": "G",
-        "team": "MIL",
-        "opp": "SA",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.892,
-        "proj": 2.4,
-        "min": 32.4,
-        "seasonAvg": 2.5,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 79.7,
         "player": "Lauri Markkanen",
         "pos": "F",
         "team": "UTAH",
@@ -1508,161 +1890,176 @@
       },
       {
         "grade": "B+",
-        "score": 79.5,
+        "score": 79.8,
+        "player": "Max Christie",
+        "pos": "G",
+        "team": "DAL",
+        "opp": "UTAH",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.891,
+        "proj": 2.4,
+        "min": 28.7,
+        "seasonAvg": 2.3,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 79.8,
+        "player": "Ryan Rollins",
+        "pos": "G",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.891,
+        "proj": 2.4,
+        "min": 32.4,
+        "seasonAvg": 2.5,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 79.7,
+        "player": "Cade Cunningham",
+        "pos": "G",
+        "team": "DET",
+        "opp": "PHX",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.862,
+        "proj": 2.1,
+        "min": 37.3,
+        "seasonAvg": 2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 79.4,
+        "player": "Dillon Brooks",
+        "pos": "F",
+        "team": "PHX",
+        "opp": "DET",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.896,
+        "proj": 2.4,
+        "min": 33.6,
+        "seasonAvg": 2.3,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 79.2,
+        "player": "Max Christie",
+        "pos": "G",
+        "team": "DAL",
+        "opp": "UTAH",
+        "market": "ast",
+        "line": 0.5,
+        "p": 0.899,
+        "proj": 2.4,
+        "min": 28.7,
+        "seasonAvg": 2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 79.2,
+        "player": "Brandin Podziemski",
+        "pos": "G",
+        "team": "GS",
+        "opp": "NY",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.868,
+        "proj": 2.2,
+        "min": 33.4,
+        "seasonAvg": 1.9,
+        "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 78.1,
         "player": "Jabari Smith Jr.",
         "pos": "F",
         "team": "HOU",
         "opp": "OKC",
         "market": "ast",
         "line": 0.5,
-        "p": 0.893,
-        "proj": 2.3,
+        "p": 0.881,
+        "proj": 2.2,
         "min": 38.7,
         "seasonAvg": 1.9,
         "form": "8/10"
-      },
-      {
-        "grade": "B+",
-        "score": 79.2,
-        "player": "Walker Kessler",
-        "pos": "C",
-        "team": "LAL",
-        "opp": "CHA",
-        "market": "ast",
-        "line": 0.5,
-        "p": 0.9,
-        "proj": 2.6,
-        "min": 30.5,
-        "seasonAvg": 3,
-        "form": "6/6"
-      },
-      {
-        "grade": "B+",
-        "score": 78.6,
-        "player": "Nickeil Alexander-Walker",
-        "pos": "G",
-        "team": "ATL",
-        "opp": "POR",
-        "market": "tpm",
-        "line": 1.5,
-        "p": 0.806,
-        "proj": 3.3,
-        "min": 34.8,
-        "seasonAvg": 3.2,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 78.4,
-        "player": "Tyler Herro",
-        "pos": "G",
-        "team": "MIL",
-        "opp": "SA",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.896,
-        "proj": 2.5,
-        "min": 32.3,
-        "seasonAvg": 2.5,
-        "form": "10/10"
-      },
-      {
-        "grade": "B+",
-        "score": 77.2,
-        "player": "Desmond Bane",
-        "pos": "G",
-        "team": "ORL",
-        "opp": "MEM",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.862,
-        "proj": 2.1,
-        "min": 34.8,
-        "seasonAvg": 2,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 77.1,
-        "player": "Devin Booker",
-        "pos": "G",
-        "team": "PHX",
-        "opp": "DET",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.877,
-        "proj": 2.2,
-        "min": 37.5,
-        "seasonAvg": 1.9,
-        "form": "7/10"
       }
     ],
     "doubles": [
       {
-        "game": "OKC@HOU",
+        "game": "MIL@SA",
         "grade": "B+",
-        "score": 75,
-        "joint": 0.783,
-        "rho": 0.158,
+        "score": 76,
+        "joint": 0.782,
+        "rho": 0.025,
         "legs": [
-          "Jabari Smith Jr. 3PM o0.5",
-          "Reed Sheppard AST o1.5"
+          "Victor Wembanyama 3PM o0.5",
+          "Julian Champagnie 3PM o0.5"
         ]
       },
       {
         "game": "UTAH@DAL",
         "grade": "B+",
-        "score": 74,
-        "joint": 0.767,
+        "score": 75,
+        "joint": 0.77,
         "rho": 0.272,
         "legs": [
-          "Lauri Markkanen AST o0.5",
-          "Ace Bailey 3PM o0.5"
+          "Max Christie 3PM o0.5",
+          "Naji Marshall AST o1.5"
+        ]
+      },
+      {
+        "game": "MEM@ORL",
+        "grade": "B+",
+        "score": 74.8,
+        "joint": 0.793,
+        "rho": 0.236,
+        "legs": [
+          "Jalen Suggs 3PM o0.5",
+          "Wendell Carter Jr. AST o0.5"
         ]
       },
       {
         "game": "ATL@POR",
         "grade": "B+",
-        "score": 74,
-        "joint": 0.775,
+        "score": 74.4,
+        "joint": 0.771,
         "rho": 0.24,
         "legs": [
           "Deni Avdija 3PM o0.5",
-          "Vit Krejci AST o0.5"
+          "Donovan Clingan AST o0.5"
         ]
       },
       {
         "game": "PHX@DET",
         "grade": "B+",
         "score": 73.7,
-        "joint": 0.768,
-        "rho": 0.043,
+        "joint": 0.77,
+        "rho": 0.163,
         "legs": [
           "Cade Cunningham 3PM o0.5",
-          "Dillon Brooks 3PM o0.5"
-        ]
-      },
-      {
-        "game": "MIL@SA",
-        "grade": "B+",
-        "score": 73.6,
-        "joint": 0.764,
-        "rho": 0.161,
-        "legs": [
-          "Devin Vassell 3PM o0.5",
-          "Harrison Barnes AST o0.5"
+          "Duncan Robinson AST o0.5"
         ]
       }
     ],
     "byMarket": {
       "tpm": 127,
       "ast": 144,
-      "reb": 144,
-      "pts": 144
+      "pts": 144,
+      "reb": 144
     }
   },
-  "fetches": 101,
-  "bytes": 50049993,
-  "failed": 3,
-  "verdict": "3 check(s) failed — the model needs correcting"
+  "fetches": 152,
+  "bytes": 86060180,
+  "failed": 0,
+  "verdict": "the engine reads the live feed correctly"
 }
