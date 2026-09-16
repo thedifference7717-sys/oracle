@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T16:33:40.929Z",
+  "at": "2026-09-16T16:35:26.572Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -120,7 +120,7 @@
     {
       "name": "summary carries the market's number",
       "state": "PASS",
-      "detail": "total 227.5, spreadHome -5.5 (DraftKings: ORL -5.5)"
+      "detail": "total 227.5, spreadHome -5.5 (Draft Kings: ORL -5.5)"
     },
     {
       "name": "box score parsed",
@@ -268,9 +268,9 @@
       "detail": "split-half says 20 minutes, model uses 30 (40 players)"
     },
     {
-      "name": "minutes recency weight",
+      "name": "minutes predictor is unbiased",
       "state": "PASS",
-      "detail": "split-half says 0.6, model uses 0.45 (40 players, rmse 0:3.813 0.15:3.719 0.3:3.652 0.45:3.611 0.6:3.598 0.75:3.613 0.9:3.655 1:3.699)"
+      "detail": "lowest error \"blend 0.6\" (rmse 3.598) still runs 0.087 min long; least biased is \"blend 0.45\" at 0.012 (rmse 3.611)"
     },
     {
       "name": "REB projections track the box score",
@@ -800,12 +800,12 @@
         "odds",
         "againstTheSpread",
         "news",
-        "plays",
-        "header",
         "article",
         "videos",
-        "wallclockAvailable",
         "winprobability",
+        "header",
+        "plays",
+        "wallclockAvailable",
         "meta",
         "standings"
       ],
@@ -902,7 +902,7 @@
       "pickcenterSample": {
         "provider": {
           "id": "100",
-          "name": "DraftKings",
+          "name": "Draft Kings",
           "priority": 1,
           "logos": [
             {
@@ -953,7 +953,7 @@
               "home",
               "desktop",
               "bets",
-              "draftkings"
+              "draft-kings"
             ],
             "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_1",
             "text": "Home Bet",
@@ -967,7 +967,7 @@
               "away",
               "desktop",
               "bets",
-              "draftkings"
+              "draft-kings"
             ],
             "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_3",
             "text": "Away Bet",
@@ -2608,42 +2608,62 @@
     }
   },
   "minutesWeight": {
-    "players": 40,
-    "bestW": 0.6,
     "modelW": 0.45,
-    "curve": [
-      [
-        0,
-        3.813
-      ],
-      [
-        0.15,
-        3.719
-      ],
-      [
-        0.3,
-        3.652
-      ],
-      [
-        0.45,
-        3.611
-      ],
-      [
-        0.6,
-        3.598
-      ],
-      [
-        0.75,
-        3.613
-      ],
-      [
-        0.9,
-        3.655
-      ],
-      [
-        1,
-        3.699
-      ]
+    "rows": [
+      {
+        "predictor": "blend 0",
+        "n": 40,
+        "rmse": 3.813,
+        "bias": -0.211
+      },
+      {
+        "predictor": "blend 0.3",
+        "n": 40,
+        "rmse": 3.652,
+        "bias": -0.062
+      },
+      {
+        "predictor": "blend 0.45",
+        "n": 40,
+        "rmse": 3.611,
+        "bias": 0.012
+      },
+      {
+        "predictor": "blend 0.6",
+        "n": 40,
+        "rmse": 3.598,
+        "bias": 0.087
+      },
+      {
+        "predictor": "blend 0.8",
+        "n": 40,
+        "rmse": 3.624,
+        "bias": 0.186
+      },
+      {
+        "predictor": "blend 1",
+        "n": 40,
+        "rmse": 3.699,
+        "bias": 0.286
+      },
+      {
+        "predictor": "last 5",
+        "n": 40,
+        "rmse": 4.485,
+        "bias": -0.159
+      },
+      {
+        "predictor": "last 3",
+        "n": 40,
+        "rmse": 4.846,
+        "bias": -0.418
+      },
+      {
+        "predictor": "trend of last 10",
+        "n": 40,
+        "rmse": 5.482,
+        "bias": -0.613
+      }
     ]
   },
   "perMarket": {
@@ -2705,7 +2725,7 @@
     }
   },
   "fetches": 201,
-  "bytes": 116016355,
+  "bytes": 116016145,
   "failed": 0,
   "verdict": "the engine reads the live feed correctly"
 }
