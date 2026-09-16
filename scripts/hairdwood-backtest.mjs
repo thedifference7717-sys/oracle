@@ -44,12 +44,23 @@ const HOLD = 0.03;                    // what a book shades off our fair number
 const OUT = "data/hairdwood-backtest.json";
 
 const say = m => process.stderr.write(m + "\n");
-let calls = 0;
+let calls = 0, retries = 0;
+const nap = ms => new Promise(r => setTimeout(r, ms));
+// A season walk is a few thousand requests at a stranger's server. One refused
+// connection two hours in should cost a retry, not the run.
 async function get(url) {
-  calls++;
-  const r = await fetch(url, { headers: { Accept: "application/json", "User-Agent": "hairdwood-backtest" } });
-  if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
-  return r.json();
+  let last;
+  for (let a = 0; a < 4; a++) {
+    if (a) { retries++; await nap(400 * Math.pow(3, a - 1)); }
+    try {
+      calls++;
+      const r = await fetch(url, { headers: { Accept: "application/json", "User-Agent": "hairdwood-backtest" } });
+      if (r.status === 404) throw Object.assign(new Error("HTTP 404"), { fatal: true });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return await r.json();
+    } catch (e) { last = e; if (e.fatal) break; }
+  }
+  throw last;
 }
 
 // Mid-November to early April: the season's shoulders are left out on purpose.
@@ -184,7 +195,7 @@ const report = {
   doubles: { n: dbl.length, predicted: round(mean(dbl, d => d.joint)), actual: round(rate(dbl)),
              naive: round(mean(dbl, d => d.naive)),
              edge: round(rate(dbl) - mean(dbl, d => d.joint)) },
-  fetches: calls
+  fetches: calls, retries
 };
 mkdirSync("data", { recursive: true });
 writeFileSync(OUT, JSON.stringify(report, null, 2) + "\n");

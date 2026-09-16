@@ -13,6 +13,17 @@
 name: Backtest HAIrdwood
 
 on:
+  # A branch cannot use workflow_dispatch until the workflow is on the default
+  # branch, and the backtest is the gate on whether this board ships at all —
+  # so it also runs on a push that touches the backtest itself. Narrow on
+  # purpose: this is half an hour of runner time and a few thousand requests at
+  # ESPN, and it has no business firing on an unrelated commit.
+  push:
+    branches:
+      - "claude/**"
+    paths:
+      - "scripts/hairdwood-backtest.mjs"
+      - ".github/workflows/hairdwood-backtest.yml"
   workflow_dispatch:
     inputs:
       season:
