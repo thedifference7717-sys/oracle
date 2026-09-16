@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T16:16:47.759Z",
+  "at": "2026-09-16T16:19:14.368Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -220,27 +220,27 @@
     {
       "name": "published prices are bettable",
       "state": "PASS",
-      "detail": "median leg 70% (fair -230)"
+      "detail": "median leg 70% (fair -229)"
     },
     {
       "name": "nothing unbettable is published",
       "state": "PASS",
-      "detail": "shortest leg 83% (fair -484), ceiling 92%"
+      "detail": "shortest leg 83% (fair -488), ceiling 92%"
     },
     {
       "name": "PTS distribution matches the logs",
       "state": "PASS",
-      "detail": "implied vmr 3.193 (model 1), implied cv 0.402 (model 0.225) · -2.5: model 60.0% vs real 60.4% · -1.5: model 52.5% vs real 53.4% · -0.5: model 45.3% vs real 47.0%"
+      "detail": "implied vmr 3.193 (model 1), implied cv 0.402 (model 0.4) · -2.5: model 57.7% vs real 60.4% · -1.5: model 51.0% vs real 53.4% · -0.5: model 44.5% vs real 47.0%"
     },
     {
       "name": "REB distribution matches the logs",
       "state": "PASS",
-      "detail": "implied vmr 1.283 (model 1), implied cv 0.203 (model 0.215) · -2.5: model 80.5% vs real 79.6% · -1.5: model 64.3% vs real 64.8% · -0.5: model 46.5% vs real 47.1%"
+      "detail": "implied vmr 1.283 (model 1), implied cv 0.203 (model 0.205) · -2.5: model 80.6% vs real 79.6% · -1.5: model 64.4% vs real 64.8% · -0.5: model 46.6% vs real 47.1%"
     },
     {
       "name": "AST distribution matches the logs",
       "state": "PASS",
-      "detail": "implied vmr 1.287 (model 1), implied cv 0.268 (model 0.235) · -2.5: model 80.7% vs real 79.9% · -1.5: model 67.6% vs real 67.2% · -0.5: model 45.1% vs real 45.7%"
+      "detail": "implied vmr 1.287 (model 1), implied cv 0.268 (model 0.27) · -2.5: model 80.4% vs real 79.9% · -1.5: model 67.3% vs real 67.2% · -0.5: model 45.0% vs real 45.7%"
     },
     {
       "name": "TPM distribution matches the logs",
@@ -260,12 +260,12 @@
     {
       "name": "AST projections track the box score",
       "state": "PASS",
-      "detail": "projected 3.67 vs actual 3.33 (+10%), lines average 2.44, said 71% hit 59% on 82"
+      "detail": "projected 3.67 vs actual 3.33 (+10%), lines average 2.41, said 71% hit 59% on 82"
     },
     {
       "name": "PTS projections track the box score",
       "state": "PASS",
-      "detail": "projected 15.33 vs actual 13.07 (+17%), lines average 12.2, said 68% hit 50% on 82"
+      "detail": "projected 15.33 vs actual 13.07 (+17%), lines average 11.37, said 69% hit 59% on 82"
     },
     {
       "name": "no market is starved of legs",
@@ -323,8 +323,8 @@
         "startDate",
         "broadcast",
         "geoBroadcasts",
-        "highlights",
-        "headlines"
+        "headlines",
+        "highlights"
       ],
       "oddsKeys": [],
       "oddsSample": null,
@@ -775,10 +775,10 @@
         "odds",
         "againstTheSpread",
         "news",
-        "plays",
-        "header",
         "article",
         "videos",
+        "header",
+        "plays",
         "wallclockAvailable",
         "winprobability",
         "meta",
@@ -1964,7 +1964,7 @@
         "opp": "MIA",
         "market": "reb",
         "line": 2.5,
-        "p": 0.768,
+        "p": 0.769,
         "proj": 4.2,
         "min": 33.2,
         "seasonAvg": 3.9,
@@ -1987,18 +1987,33 @@
       },
       {
         "grade": "A",
-        "score": 75.3,
+        "score": 75.1,
         "player": "De'Aaron Fox",
         "pos": "G",
         "team": "SA",
         "opp": "MIL",
         "market": "ast",
         "line": 4.5,
-        "p": 0.762,
+        "p": 0.758,
         "proj": 6.3,
         "min": 32.4,
         "seasonAvg": 6.2,
         "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 74.1,
+        "player": "Payton Pritchard",
+        "pos": "G",
+        "team": "BOS",
+        "opp": "MIA",
+        "market": "pts",
+        "line": 11.5,
+        "p": 0.778,
+        "proj": 18.2,
+        "min": 33.2,
+        "seasonAvg": 17,
+        "form": "9/10"
       },
       {
         "grade": "B+",
@@ -2017,36 +2032,6 @@
       },
       {
         "grade": "B+",
-        "score": 74,
-        "player": "Paolo Banchero",
-        "pos": "F",
-        "team": "ORL",
-        "opp": "MEM",
-        "market": "pts",
-        "line": 17.5,
-        "p": 0.75,
-        "proj": 24.1,
-        "min": 37,
-        "seasonAvg": 22.2,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 73.9,
-        "player": "Ryan Rollins",
-        "pos": "G",
-        "team": "MIL",
-        "opp": "SA",
-        "market": "ast",
-        "line": 3.5,
-        "p": 0.757,
-        "proj": 5.5,
-        "min": 32.4,
-        "seasonAvg": 5.6,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
         "score": 73.6,
         "player": "Jalen Johnson",
         "pos": "F",
@@ -2062,6 +2047,21 @@
       },
       {
         "grade": "B+",
+        "score": 73.6,
+        "player": "Ryan Rollins",
+        "pos": "G",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "ast",
+        "line": 3.5,
+        "p": 0.754,
+        "proj": 5.5,
+        "min": 32.4,
+        "seasonAvg": 5.6,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
         "score": 73.2,
         "player": "AJ Green",
         "pos": "G",
@@ -2069,25 +2069,10 @@
         "opp": "SA",
         "market": "reb",
         "line": 1.5,
-        "p": 0.753,
+        "p": 0.754,
         "proj": 3,
         "min": 31.7,
         "seasonAvg": 2.7,
-        "form": "8/10"
-      },
-      {
-        "grade": "B+",
-        "score": 72.7,
-        "player": "Devin Booker",
-        "pos": "G",
-        "team": "PHX",
-        "opp": "DET",
-        "market": "pts",
-        "line": 21.5,
-        "p": 0.766,
-        "proj": 27.5,
-        "min": 37.5,
-        "seasonAvg": 26.1,
         "form": "8/10"
       },
       {
@@ -2104,6 +2089,21 @@
         "min": 26,
         "seasonAvg": 2.1,
         "form": "10/10"
+      },
+      {
+        "grade": "B+",
+        "score": 72.3,
+        "player": "Naz Reid",
+        "pos": "C",
+        "team": "CHA",
+        "opp": "LAL",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.823,
+        "proj": 2,
+        "min": 27.6,
+        "seasonAvg": 2.1,
+        "form": "9/10"
       }
     ],
     "doubles": [
@@ -2121,8 +2121,8 @@
       {
         "game": "BOS@MIA",
         "grade": "B",
-        "score": 66.8,
-        "joint": 0.633,
+        "score": 66.6,
+        "joint": 0.63,
         "rho": 0.019,
         "legs": [
           "Andrew Wiggins 3PM o0.5",
@@ -2132,8 +2132,8 @@
       {
         "game": "ATL@POR",
         "grade": "B",
-        "score": 65.5,
-        "joint": 0.65,
+        "score": 65.3,
+        "joint": 0.647,
         "rho": 0.12,
         "legs": [
           "Onyeka Okongwu 3PM o0.5",
@@ -2153,9 +2153,9 @@
       },
       {
         "game": "CHA@LAL",
-        "grade": "B",
-        "score": 64.1,
-        "joint": 0.636,
+        "grade": "C+",
+        "score": 63.9,
+        "joint": 0.632,
         "rho": 0.015,
         "legs": [
           "Naz Reid 3PM o0.5",
@@ -2174,7 +2174,7 @@
     "pts": {
       "players": 40,
       "impliedCv": 0.402,
-      "modelCv": 0.225,
+      "modelCv": 0.4,
       "impliedVmr": 3.193,
       "modelVmr": 1,
       "meanOfMeans": 15.07,
@@ -2182,28 +2182,28 @@
       "byOffset": {
         "-2.5": {
           "n": 40,
-          "model": 0.5996,
+          "model": 0.5773,
           "empirical": 0.6042,
-          "gap": 0.0046
+          "gap": 0.0269
         },
         "-1.5": {
           "n": 40,
-          "model": 0.5253,
+          "model": 0.5099,
           "empirical": 0.5339,
-          "gap": 0.0086
+          "gap": 0.024
         },
         "-0.5": {
           "n": 40,
-          "model": 0.4532,
+          "model": 0.4454,
           "empirical": 0.47,
-          "gap": 0.0168
+          "gap": 0.0246
         }
       }
     },
     "reb": {
       "players": 40,
       "impliedCv": 0.203,
-      "modelCv": 0.215,
+      "modelCv": 0.205,
       "impliedVmr": 1.283,
       "modelVmr": 1,
       "meanOfMeans": 5.06,
@@ -2211,28 +2211,28 @@
       "byOffset": {
         "-2.5": {
           "n": 40,
-          "model": 0.8052,
+          "model": 0.8062,
           "empirical": 0.796,
-          "gap": -0.0092
+          "gap": -0.0102
         },
         "-1.5": {
           "n": 40,
-          "model": 0.6434,
+          "model": 0.6442,
           "empirical": 0.6483,
-          "gap": 0.0049
+          "gap": 0.0041
         },
         "-0.5": {
           "n": 40,
-          "model": 0.4651,
+          "model": 0.4655,
           "empirical": 0.4707,
-          "gap": 0.0056
+          "gap": 0.0052
         }
       }
     },
     "ast": {
       "players": 40,
       "impliedCv": 0.268,
-      "modelCv": 0.235,
+      "modelCv": 0.27,
       "impliedVmr": 1.287,
       "modelVmr": 1,
       "meanOfMeans": 3.39,
@@ -2240,21 +2240,21 @@
       "byOffset": {
         "-2.5": {
           "n": 40,
-          "model": 0.8073,
+          "model": 0.804,
           "empirical": 0.7986,
-          "gap": -0.0087
+          "gap": -0.0054
         },
         "-1.5": {
           "n": 40,
-          "model": 0.6758,
+          "model": 0.6727,
           "empirical": 0.6719,
-          "gap": -0.0039
+          "gap": -0.0008
         },
         "-0.5": {
           "n": 40,
-          "model": 0.4509,
+          "model": 0.4496,
           "empirical": 0.457,
-          "gap": 0.0061
+          "gap": 0.0074
         }
       }
     },
@@ -2308,7 +2308,7 @@
       "meanProjected": 5.3,
       "meanActual": 5.17,
       "meanLine": 3.85,
-      "predicted": 0.698,
+      "predicted": 0.7,
       "hit": 0.622,
       "samples": [
         "Payton Pritchard REB o2.5: projected 4.2, got 3",
@@ -2321,28 +2321,28 @@
       "n": 82,
       "meanProjected": 3.67,
       "meanActual": 3.33,
-      "meanLine": 2.44,
-      "predicted": 0.707,
+      "meanLine": 2.41,
+      "predicted": 0.706,
       "hit": 0.585,
       "samples": [
         "Julian Champagnie AST o0.5: projected 1.7, got 1",
         "De'Aaron Fox AST o4.5: projected 6.3, got 4",
         "Ryan Rollins AST o3.5: projected 5.5, got 7",
-        "Harrison Barnes AST o0.5: projected 1.9, got 3"
+        "Draymond Green AST o4.5: projected 6.3, got 3"
       ]
     },
     "pts": {
       "n": 82,
       "meanProjected": 15.33,
       "meanActual": 13.07,
-      "meanLine": 12.2,
-      "predicted": 0.682,
-      "hit": 0.5,
+      "meanLine": 11.37,
+      "predicted": 0.69,
+      "hit": 0.585,
       "samples": [
+        "Payton Pritchard PTS o11.5: projected 18.2, got 2",
+        "Ryan Rollins PTS o12.5: projected 17.1, got 6",
         "Paolo Banchero PTS o17.5: projected 24.1, got 26",
-        "Brandin Podziemski PTS o13.5: projected 17.5, got 19",
-        "OG Anunoby PTS o12.5: projected 17.0, got 25",
-        "Jalen Johnson PTS o17.5: projected 21.9, got 12"
+        "Stephon Castle PTS o12.5: projected 17.0, got 19"
       ]
     }
   },
