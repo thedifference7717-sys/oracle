@@ -390,6 +390,24 @@ async function defaultGetJSON(url) {
 }
 
 // ── the slate ───────────────────────────────────────────────────────────────
+// The spread is quoted on the favourite, and which side that is has to be READ
+// rather than assumed. Shared, because the same block arrives from two places:
+// the scoreboard for an upcoming game, and the summary's pickcenter for one the
+// scoreboard has already stripped.
+function parseOdds(list) {
+  const o = (list || []).find(x => x && (num(x.overUnder) != null || num(x.spread) != null));
+  if (!o) return null;
+  let spreadHome = null;
+  const sp = num(o.spread);
+  if (sp != null) {
+    if (o.homeTeamOdds && o.homeTeamOdds.favorite) spreadHome = -Math.abs(sp);
+    else if (o.awayTeamOdds && o.awayTeamOdds.favorite) spreadHome = Math.abs(sp);
+    else spreadHome = sp;                       // already home-relative
+  }
+  return { total: num(o.overUnder), spreadHome,
+           details: o.details || null, provider: (o.provider || {}).name || null };
+}
+
 function parseEvent(ev) {
   const c = (ev.competitions || [])[0]; if (!c) return null;
   const cs = c.competitors || []; if (cs.length !== 2) return null;
@@ -401,15 +419,7 @@ function parseEvent(ev) {
     name: t.team.displayName, logo: t.team.logo,
     rec: ((t.records || []).find(r => r.type === "total") || (t.records || [])[0] || {}).summary || null
   });
-  // The spread is quoted on the favourite, and which side that is has to be
-  // read rather than assumed: `details` is a string like "BOS -6.5".
-  const o = (c.odds || [])[0] || null;
-  let spreadHome = null;
-  if (o) {
-    if (o.homeTeamOdds && o.homeTeamOdds.favorite && num(o.spread) != null) spreadHome = -Math.abs(num(o.spread));
-    else if (o.awayTeamOdds && o.awayTeamOdds.favorite && num(o.spread) != null) spreadHome = Math.abs(num(o.spread));
-    else if (num(o.spread) != null) spreadHome = num(o.spread);
-  }
+  const od = parseOdds(c.odds);
   return {
     id: String(ev.id), date: ev.date,
     started: st.state === "in" || st.completed === true || st.state === "post",
@@ -417,16 +427,20 @@ function parseEvent(ev) {
     statusTxt: st.shortDetail || st.description || "",
     home: side(home), away: side(away),
     venue: (c.venue || {}).fullName || null,
-    total: o ? num(o.overUnder) : null,
-    spreadHome: spreadHome,
-    oddsTxt: o ? (o.details || null) : null
+    total: od ? od.total : null,
+    spreadHome: od ? od.spreadHome : null,
+    oddsTxt: od ? od.details : null
   };
 }
 
 async function loadSlate(get, day) {
   const d = await get(`${SITE}/scoreboard?limit=60&dates=${compact(day)}`);
   const games = (d.events || []).map(parseEvent).filter(Boolean);
-  return { day, season: ((d.season || {}).year) || seasonOf(day), games };
+  // The NBA scoreboard carries its season under leagues[0], not at the top
+  // level the way the football one does. Getting this wrong is a whole season
+  // of stale rates, so seasonOf() stays as the backstop.
+  const yr = ((((d.leagues || [])[0] || {}).season || {}).year) || ((d.season || {}).year);
+  return { day, season: yr || seasonOf(day), games };
 }
 
 // Out of season — which for a September page is most of the time — the useful
@@ -462,8 +476,17 @@ async function loadTeamStats(get, season) {
   (d.teams || []).forEach(t => {
     const own = {}, opp = {};
     (t.categories || []).forEach(c => {
+      // MEASURED, not assumed: the NBA feed splits a team's own numbers under
+      // splitId "0" and what it ALLOWED under "900" — not the "1" the football
+      // feed uses. Reading for "1" put every opponent row nowhere, which left
+      // all thirty defences at exactly league average and silently deleted the
+      // matchup component from every grade on the board. Anything that is not
+      // "0" is the opponent; a category with no split at all (the differential
+      // block) is neither and is dropped.
+      const sid = c.splitId == null ? null : String(c.splitId);
+      if (sid == null) return;
+      const tgt = sid === "0" ? own : opp;
       const m = statMap(lc, c);
-      const tgt = String(c.splitId) === "1" ? opp : own;
       Object.keys(m).forEach(k => { if (tgt[k] == null) tgt[k] = m[k]; });
     });
     const id = String((t.team || {}).id || "");
@@ -578,21 +601,36 @@ async function loadRoster(get, teamId) {
 }
 
 // The game summary carries both teams' injury reports — the single most
-// valuable pre-tip feed in basketball, because the minutes a man is not
-// playing are the minutes somebody else is.
-async function loadInjuries(get, eventId) {
+// valuable pre-tip feed in basketball, because the minutes a man is not playing
+// are the minutes somebody else is — AND, in pickcenter, the market's number.
+//
+// The second one matters more than it looks. The scoreboard drops its `odds`
+// block entirely once a game is over, and carries it inconsistently before, so
+// a board built on the scoreboard alone loses the posted total exactly when it
+// wants it. This call is already being made for the injuries, so the total and
+// the spread come back for free.
+async function loadSummary(get, eventId) {
   const d = await get(`${SITE}/summary?event=${eventId}`);
-  const out = {};
+  const injuries = {};
   (d.injuries || []).forEach(t => {
     const tid = String((t.team || {}).id || "");
     if (!tid) return;
-    const m = out[tid] || (out[tid] = {});
+    const m = injuries[tid] || (injuries[tid] = {});
     (t.injuries || []).forEach(x => {
       const aid = String(((x.athlete || {}).id) || "");
       if (aid) m[aid] = x.status || ((x.type || {}).description) || "";
     });
   });
-  return out;
+  // pickcenter is the consensus board; `odds` is the same block in a different
+  // wrapper on some games. Either will do, and neither being there is survivable
+  // — the projection falls back to our own pace arithmetic and says so.
+  const odds = parseOdds(d.pickcenter) || parseOdds(d.odds);
+  return { injuries, odds };
+}
+// Kept as its own name because it reads better at the call site and because an
+// alerter may well want the injuries without the rest of a summary payload.
+async function loadInjuries(get, eventId) {
+  return (await loadSummary(get, eventId)).injuries;
 }
 const INJ_PLAY = { out: 0, doubtful: 0.15, questionable: 0.70, probable: 0.94 };
 function injuryWeight(status) {
@@ -662,6 +700,61 @@ function parseGamelog(d) {
 async function loadGamelog(get, id, season) {
   const d = await get(`${WEB}/athletes/${id}/gamelog?season=${season}`);
   return parseGamelog(d);
+}
+
+// ── settling a bet ──────────────────────────────────────────────────────────
+// What each man actually did, from the finished game's box score. This is the
+// other half of a record: a board that recommends bets and never writes down
+// how they went is not keeping score, and a grade that grades itself is worth
+// nothing.
+//
+// Parsed by NAME rather than by position, the same way the game log is, because
+// a box score's column order is ESPN's business and not ours.
+function parseBoxScore(d) {
+  const out = {};
+  const teams = ((d || {}).boxscore || {}).players || [];
+  teams.forEach(t => {
+    (t.statistics || []).forEach(st => {
+      const names = st.names || st.keys || [];
+      const idx = {};
+      names.forEach((n, i) => { idx[String(n).toUpperCase()] = i; });
+      const at = k => idx[k] != null ? idx[k] : -1;
+      const iMin = at("MIN"), iPts = at("PTS"), iReb = at("REB"), iAst = at("AST"), iTp = at("3PT");
+      (st.athletes || []).forEach(a => {
+        const id = String(((a.athlete || {}).id) || "");
+        if (!id) return;
+        const v = a.stats || [];
+        const pick = i => { const n = num(i >= 0 ? v[i] : null); return n; };
+        // A DNP is the case that matters most here: the prop VOIDS, it does not
+        // lose, so "no line in the box score" and "a line of zeros" have to stay
+        // distinguishable all the way through.
+        const dnp = a.didNotPlay === true || !v.length || String(v[iMin] || "").trim() === "--";
+        if (dnp) { out[id] = { dnp: true, name: (a.athlete || {}).displayName || null }; return; }
+        out[id] = {
+          dnp: false, name: (a.athlete || {}).displayName || null,
+          min: pick(iMin), pts: pick(iPts) || 0, reb: pick(iReb) || 0, ast: pick(iAst) || 0,
+          tpm: iTp >= 0 ? (num(String(v[iTp] || "").split("-")[0]) || 0) : null
+        };
+      });
+    });
+  });
+  return out;
+}
+async function loadBoxScore(get, eventId) {
+  return parseBoxScore(await get(`${SITE}/summary?event=${eventId}`));
+}
+// One leg against the box score. Returns null while the answer is not knowable
+// yet — an unfinished game, a man missing from a box score that has not been
+// filled in — because guessing at settlement is how a record stops being one.
+function settle(bet, box) {
+  const line = box && box[String(bet.playerId)];
+  if (!line) return null;
+  if (line.dnp) return { status: "void", actual: null, note: "did not play — stake returned" };
+  const got = line[bet.market];
+  if (got == null || !isFinite(got)) return null;
+  return { status: got > bet.line ? "won" : "lost", actual: got,
+           note: `${got} ${MKT[bet.market] ? MKT[bet.market].short : bet.market} against a ${bet.line} line`,
+           min: line.min };
 }
 
 // ── projection ──────────────────────────────────────────────────────────────
@@ -1233,11 +1326,24 @@ async function buildBoard(o) {
   rosterList.forEach(x => { if (x && x.r && x.r.length) roster[x.t] = new Set(x.r.map(p => p.id)); });
   if (Object.keys(roster).length < teamIds.length) degraded.push("some rosters");
 
-  say("Injury reports…"); prog(48);
-  const injList = await pool(live, async g => ({ id: g.id, inj: await loadInjuries(get, g.id) }), 4);
+  say("Injury reports and the market's number…"); prog(48);
+  const sumList = await pool(live, async g => ({ g, s: await loadSummary(get, g.id) }), 4);
   const injByTeam = {};
-  injList.forEach(x => { if (x && x.inj) Object.keys(x.inj).forEach(t => { injByTeam[t] = Object.assign(injByTeam[t] || {}, x.inj[t]); }); });
+  let priced = 0;
+  sumList.forEach(x => {
+    if (!x || !x.s) return;
+    Object.keys(x.s.injuries).forEach(t => { injByTeam[t] = Object.assign(injByTeam[t] || {}, x.s.injuries[t]); });
+    // Whatever the scoreboard gave stands; this only fills the gap, which on a
+    // finished game — and on plenty of upcoming ones — is the whole thing.
+    const od = x.s.odds;
+    if (od) {
+      if (!(x.g.total > 0) && od.total > 0) { x.g.total = od.total; x.g.oddsTxt = x.g.oddsTxt || od.details; }
+      if (x.g.spreadHome == null && od.spreadHome != null) { x.g.spreadHome = od.spreadHome; x.g.oddsTxt = x.g.oddsTxt || od.details; }
+    }
+    if (x.g.total > 0) priced++;
+  });
   if (!Object.keys(injByTeam).length) degraded.push("injury report");
+  if (!priced) degraded.push("posted totals");
 
   // Who is missing, and what they were doing. This is the number that moves a
   // prop line in the last hour before tip, so it is computed per team once and
@@ -1387,10 +1493,12 @@ return {
   amOdds, decFromAmerican, evaluate,
   // pipeline
   slateYmd, seasonOf, addDays, ymd, etNow, lockInfo,
-  parseEvent, loadSlate, nextSlateDay, loadTeamStats, loadPlayers, loadRoster, loadInjuries,
+  parseEvent, parseOdds, loadSlate, nextSlateDay, loadTeamStats, loadPlayers, loadRoster,
+  loadSummary, loadInjuries,
   loadGamelog, parseGamelog, leagueFrom, injuryWeight, minutesTag,
   gameEnv, defFactor, projectMinutes, projectPlayer, spread, overProb, ladderLines, etDayOf,
   scoreLeg, scorePair, gradeOf, rhoFor, bestDouble,
+  parseBoxScore, loadBoxScore, settle,
   ladder, ladderRisk, buildBoard, clearCache
 };
 });

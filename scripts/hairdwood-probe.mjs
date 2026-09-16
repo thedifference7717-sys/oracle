@@ -76,7 +76,8 @@ try {
   const comp = ev && (ev.competitions || [])[0];
   report.shapes.scoreboard = {
     topKeys: keys(sb), events: (sb.events || []).length,
-    seasonYear: (sb.season || {}).year,
+    seasonYearTopLevel: (sb.season || {}).year || null,
+    seasonYearUnderLeagues: ((((sb.leagues || [])[0] || {}).season || {}).year) || null,
     competitionKeys: keys(comp),
     oddsKeys: keys((comp && (comp.odds || [])[0]) || {}),
     oddsSample: (comp && (comp.odds || [])[0]) || null,
@@ -84,8 +85,13 @@ try {
     statusType: comp && comp.status ? comp.status.type : null
   };
   check("scoreboard returns a slate", (sb.events || []).length > 0, `${(sb.events || []).length} events`);
-  check("scoreboard season year matches seasonOf()", (sb.season || {}).year === season,
-        `feed says ${(sb.season || {}).year}, we computed ${season}`);
+  // Read the way the model reads it, or the check is testing a different
+  // program. The NBA feed keeps its season under leagues[0]; looking for it at
+  // the top level is what this check caught the first time it ran.
+  const slate = await M.loadSlate(get, DAY);
+  check("loadSlate resolves the season", slate.season === season,
+        `loadSlate says ${slate.season}, seasonOf() says ${season}, ` +
+        `top-level=${(sb.season || {}).year}, leagues[0]=${((((sb.leagues || [])[0] || {}).season || {}).year)}`);
 } catch (e) { check("scoreboard reachable", false, e.message); }
 
 // parseEvent is the model's own reader: if it disagrees with the feed, the
@@ -198,13 +204,57 @@ if (games.length) {
   try {
     const raw = await get(`${SITE}/summary?event=${games[0].id}`);
     report.shapes.summary = { topKeys: keys(raw), hasInjuries: Array.isArray(raw.injuries),
-      injurySample: (raw.injuries || [])[0] ? { teamKeys: keys(raw.injuries[0].team), entry: (raw.injuries[0].injuries || [])[0] } : null };
-    const inj = await M.loadInjuries(get, games[0].id);
-    const n = Object.values(inj).reduce((a, m) => a + keys(m).length, 0);
+      injurySample: (raw.injuries || [])[0] ? { teamKeys: keys(raw.injuries[0].team), entry: (raw.injuries[0].injuries || [])[0] } : null,
+      pickcenterKeys: keys((raw.pickcenter || [])[0] || {}),
+      pickcenterSample: (raw.pickcenter || [])[0] || null,
+      boxscoreKeys: keys(raw.boxscore || {}),
+      boxTeamKeys: keys(((raw.boxscore || {}).players || [])[0] || {}),
+      boxStatNames: ((((raw.boxscore || {}).players || [])[0] || {}).statistics || [])[0]
+        ? { names: raw.boxscore.players[0].statistics[0].names, keys: raw.boxscore.players[0].statistics[0].keys,
+            athleteSample: (raw.boxscore.players[0].statistics[0].athletes || [])[0] } : null };
+    const sum = await M.loadSummary(get, games[0].id);
+    const n = Object.values(sum.injuries).reduce((a, m) => a + keys(m).length, 0);
     // A finished game's report is often emptied out, so absence here is not a
     // failure — it is only meaningful on a live slate.
     check("injury report parsed", n > 0 ? true : "warn",
           n > 0 ? `${n} entries` : "none on this (finished) game — re-run on a live slate to confirm");
+    // The scoreboard drops its odds block once a game is over, so this is where
+    // the posted total has to come from. 65% of every projected team score
+    // rides on it.
+    check("summary carries the market's number", !!(sum.odds && sum.odds.total > 0),
+          sum.odds ? `total ${sum.odds.total}, spreadHome ${sum.odds.spreadHome} (${sum.odds.provider || "?"}: ${sum.odds.details})` : "no pickcenter and no odds block");
+
+    // ── settlement, which is what makes the record a record ────────────────
+    const box = M.parseBoxScore(raw);
+    const lines = Object.values(box);
+    const played = lines.filter(l => !l.dnp);
+    report.shapes.boxParsed = { players: lines.length, played: played.length, dnp: lines.length - played.length,
+                                sample: played[0] || null };
+    check("box score parsed", played.length >= 14, `${played.length} played, ${lines.length - played.length} DNP`);
+    check("box score carries all four markets",
+          some(played, l => l.min > 0) >= 14 && some(played, l => l.pts >= 0) >= 14 &&
+          some(played, l => l.reb >= 0) >= 14 && some(played, l => l.ast >= 0) >= 14 &&
+          some(played, l => l.tpm != null) >= 14,
+          played[0] ? `${played[0].name}: ${played[0].min} min, ${played[0].pts} pts, ${played[0].reb} reb, ${played[0].ast} ast, ${played[0].tpm} 3pm` : "");
+    // Settle a bet either side of what actually happened: one has to win and
+    // the other has to lose, or the grader is not reading the same number the
+    // box score is printing. Guarded, because an empty box score is already
+    // reported above and should not take the rest of the probe down with it.
+    const who = played.slice().sort((a, b) => b.pts - a.pts)[0];
+    if (!who) { check("settlement grades a real line", false, "no box-score lines to settle against"); }
+    else {
+    const id = keys(box).find(k => box[k] === who);
+    const lo = M.settle({ playerId: id, market: "pts", line: who.pts - 1.5 }, box);
+    const hi = M.settle({ playerId: id, market: "pts", line: who.pts + 1.5 }, box);
+    check("settlement grades a real line", !!(lo && hi && lo.status === "won" && hi.status === "lost"),
+          `${who.name} scored ${who.pts}: o${who.pts - 1.5} -> ${lo && lo.status}, o${who.pts + 1.5} -> ${hi && hi.status}`);
+    }
+    const sat = lines.find(l => l.dnp);
+    if (sat) {
+      const sid = keys(box).find(k => box[k] === sat);
+      const v = M.settle({ playerId: sid, market: "pts", line: 9.5 }, box);
+      check("a DNP voids rather than loses", !!(v && v.status === "void"), `${sat.name} -> ${v && v.status}`);
+    } else report.notes.push("no DNP in this box score — the void path was not exercised");
   } catch (e) { check("summary reachable and parsed", false, e.message); }
 }
 
@@ -237,7 +287,9 @@ if (players && players.length) {
 // ── 2. substance: the whole board, on a real slate ──────────────────────────
 say("\nbuilding the board the dashboard would build…\n");
 try {
-  const board = await M.buildBoard({ getJSON: get, day: DAY, includeFinal: true, maxLogs: 40, onStatus: m => say("  · " + m) });
+  // No maxLogs override: probe what the page actually does, or the check on
+  // log coverage below is measuring the probe's own cap.
+  const board = await M.buildBoard({ getJSON: get, day: DAY, includeFinal: true, onStatus: m => say("  · " + m) });
   report.board = {
     date: board.date, season: board.season, priorSeason: board.priorSeason,
     degraded: board.degraded, counts: board.counts,
@@ -264,8 +316,15 @@ try {
   board.legs.forEach(l => { byMkt[l.market] = (byMkt[l.market] || 0) + 1; });
   report.board.byMarket = byMkt;
   check("all four markets priced", keys(byMkt).length === 4, JSON.stringify(byMkt));
-  check("game logs reached the legs", some(board.legs, l => l.hasLog) > board.legs.length * 0.3,
+  check("game logs reached the legs", some(board.legs, l => l.hasLog) > board.legs.length * 0.5,
         `${some(board.legs, l => l.hasLog)}/${board.legs.length} legs carry a log`);
+  const withTotal2 = some(board.games, g => g.total > 0);
+  check("the board ends up with posted totals", withTotal2 >= board.games.length * 0.8,
+        `${withTotal2}/${board.games.length} games priced after the summary fill-in`);
+  check("defences differ from each other", (() => {
+    const f = board.legs.map(l => l.factors.def.pts).filter(v => v != null);
+    return new Set(f.map(v => v.toFixed(3))).size > 3;
+  })(), "if every defence reads 1.000 the opponent split is not being parsed");
   // The projection has to beat the season average it was built from, or the
   // whole pipeline is an expensive way to reprint a season average.
   const moved = board.legs.filter(l => l.seasonAvg > 0).map(l => Math.abs(l.mean / l.seasonAvg - 1));
