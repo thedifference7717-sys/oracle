@@ -1,75 +1,75 @@
 {
-  "at": "2026-09-16T16:34:02.832Z",
+  "at": "2026-09-16T16:38:32.264Z",
   "season": 2026,
   "slates": 16,
   "stride": 9,
   "leakage": "player lines rebuilt as-of from game logs; team splits full-season (clamped ±10-12%); injuries unavailable on finished games, so the backtest runs blind to them",
   "legCounts": {
-    "tpm": 830,
-    "ast": 1004,
+    "tpm": 831,
+    "ast": 1005,
     "reb": 1006,
     "pts": 1006
   },
   "legs": {
-    "n": 3846,
-    "graded": 3629,
+    "n": 3848,
+    "graded": 3631,
     "void": 217,
     "predicted": 0.699,
-    "actual": 0.713,
-    "edge": 0.014,
-    "brier": 0.2032,
+    "actual": 0.698,
+    "edge": 0,
+    "brier": 0.2089,
     "predictedRaw": 0.699,
-    "brierRaw": 0.2036
+    "brierRaw": 0.2093
   },
   "byGrade": [
     {
       "key": "A+",
       "n": 1,
-      "predicted": 0.776,
+      "predicted": 0.782,
       "actual": 1,
-      "edge": 0.224
+      "edge": 0.218
     },
     {
       "key": "A",
-      "n": 61,
-      "predicted": 0.791,
-      "actual": 0.803,
-      "edge": 0.013
+      "n": 58,
+      "predicted": 0.788,
+      "actual": 0.741,
+      "edge": -0.047
     },
     {
       "key": "B+",
-      "n": 316,
-      "predicted": 0.762,
-      "actual": 0.782,
-      "edge": 0.02
+      "n": 329,
+      "predicted": 0.763,
+      "actual": 0.754,
+      "edge": -0.009
     },
     {
       "key": "B",
-      "n": 714,
+      "n": 662,
       "predicted": 0.738,
-      "actual": 0.735,
-      "edge": -0.003
+      "actual": 0.724,
+      "edge": -0.014
     },
     {
       "key": "C+",
-      "n": 1184,
-      "predicted": 0.702,
-      "actual": 0.717,
-      "edge": 0.015
+      "n": 1185,
+      "predicted": 0.704,
+      "actual": 0.707,
+      "edge": 0.003
     },
     {
       "key": "C",
-      "n": 1049,
-      "predicted": 0.663,
-      "actual": 0.684,
-      "edge": 0.022
+      "n": 1083,
+      "predicted": 0.661,
+      "actual": 0.675,
+      "edge": 0.014
     },
     {
       "key": "D",
-      "n": 304,
-      "predicted": 0.639,
-      "actual": 0.651,
-      "edge": 0.012
+      "n": 313,
+      "predicted": 0.642,
+      "actual": 0.626,
+      "edge": -0.015
     }
   ],
   "byMarket": [
@@ -77,169 +77,169 @@
       "key": "pts",
       "n": 948,
       "predicted": 0.684,
-      "actual": 0.71,
-      "edge": 0.026
+      "actual": 0.692,
+      "edge": 0.008
     },
     {
       "key": "reb",
       "n": 948,
-      "predicted": 0.695,
-      "actual": 0.731,
-      "edge": 0.036
+      "predicted": 0.692,
+      "actual": 0.708,
+      "edge": 0.016
     },
     {
       "key": "ast",
-      "n": 947,
+      "n": 948,
       "predicted": 0.708,
-      "actual": 0.698,
-      "edge": -0.01
+      "actual": 0.687,
+      "edge": -0.021
     },
     {
       "key": "tpm",
-      "n": 786,
-      "predicted": 0.712,
-      "actual": 0.712,
-      "edge": 0.001
+      "n": 787,
+      "predicted": 0.714,
+      "actual": 0.709,
+      "edge": -0.005
     }
   ],
   "byBand": [
     {
       "key": "60-65%",
-      "n": 828,
-      "predicted": 0.626,
-      "actual": 0.656,
-      "edge": 0.03
+      "n": 856,
+      "predicted": 0.627,
+      "actual": 0.63,
+      "edge": 0.003
     },
     {
       "key": "65-70%",
-      "n": 1028,
-      "predicted": 0.676,
-      "actual": 0.696,
-      "edge": 0.021
+      "n": 1025,
+      "predicted": 0.675,
+      "actual": 0.692,
+      "edge": 0.016
     },
     {
       "key": "70-75%",
-      "n": 1052,
-      "predicted": 0.723,
-      "actual": 0.738,
-      "edge": 0.014
+      "n": 1036,
+      "predicted": 0.725,
+      "actual": 0.721,
+      "edge": -0.003
     },
     {
       "key": "75-80%",
-      "n": 553,
+      "n": 552,
       "predicted": 0.771,
-      "actual": 0.758,
-      "edge": -0.013
+      "actual": 0.75,
+      "edge": -0.021
     },
     {
       "key": "80-85%",
-      "n": 164,
-      "predicted": 0.815,
-      "actual": 0.787,
-      "edge": -0.028
+      "n": 159,
+      "predicted": 0.816,
+      "actual": 0.786,
+      "edge": -0.03
     },
     {
       "key": "85-90%",
-      "n": 4,
-      "predicted": 0.854,
-      "actual": 1,
-      "edge": 0.146
+      "n": 3,
+      "predicted": 0.853,
+      "actual": 0.667,
+      "edge": -0.186
     }
   ],
   "monotonic": {
     "pairs": 5,
-    "inOrder": 5
+    "inOrder": 4
   },
   "scoreSpread": {
-    "min": 31.9,
+    "min": 30.3,
     "p10": 47.7,
-    "p25": 52.8,
-    "median": 59.1,
-    "p75": 65.4,
-    "p90": 70.1,
-    "p99": 75.9,
-    "max": 78.3
+    "p25": 52.6,
+    "median": 58.7,
+    "p75": 65.1,
+    "p90": 70.2,
+    "p99": 75.7,
+    "max": 78.7
   },
   "projection": {
     "pts": {
       "n": 948,
       "minutes": {
-        "projected": 28.51,
+        "projected": 29.2,
         "played": 29.2,
-        "bias": -0.0236,
+        "bias": -0.0001,
         "seasonBase": 27.59,
         "recentL10": 28.48,
         "meanBlowoutCut": 0.0048,
         "meanAbsenceBump": 0.0315,
         "meanInjuryTag": 0.9939
       },
-      "projected": 15.08,
+      "projected": 15.44,
       "actual": 15.31,
-      "bias": -0.0152,
-      "meanLine": 11.41,
-      "lineZ": 0.558,
+      "bias": 0.0084,
+      "meanLine": 11.73,
+      "lineZ": 0.557,
       "said": 0.684,
-      "hit": 0.71
+      "hit": 0.692
     },
     "reb": {
       "n": 948,
       "minutes": {
-        "projected": 28.51,
+        "projected": 29.2,
         "played": 29.2,
-        "bias": -0.0236,
+        "bias": -0.0001,
         "seasonBase": 27.59,
         "recentL10": 28.48,
         "meanBlowoutCut": 0.0048,
         "meanAbsenceBump": 0.0315,
         "meanInjuryTag": 0.9939
       },
-      "projected": 5.1,
+      "projected": 5.22,
       "actual": 5.41,
-      "bias": -0.0568,
-      "meanLine": 3.65,
-      "lineZ": 0.583,
-      "said": 0.695,
-      "hit": 0.731
+      "bias": -0.0342,
+      "meanLine": 3.79,
+      "lineZ": 0.572,
+      "said": 0.692,
+      "hit": 0.708
     },
     "ast": {
-      "n": 947,
+      "n": 948,
       "minutes": {
-        "projected": 28.53,
+        "projected": 29.2,
         "played": 29.2,
-        "bias": -0.023,
-        "seasonBase": 27.6,
-        "recentL10": 28.49,
+        "bias": -0.0001,
+        "seasonBase": 27.59,
+        "recentL10": 28.48,
         "meanBlowoutCut": 0.0048,
-        "meanAbsenceBump": 0.0314,
+        "meanAbsenceBump": 0.0315,
         "meanInjuryTag": 0.9939
       },
-      "projected": 3.55,
+      "projected": 3.64,
       "actual": 3.65,
-      "bias": -0.027,
-      "meanLine": 2.32,
-      "lineZ": 0.63,
+      "bias": -0.0042,
+      "meanLine": 2.38,
+      "lineZ": 0.629,
       "said": 0.708,
-      "hit": 0.698
+      "hit": 0.687
     },
     "tpm": {
-      "n": 786,
+      "n": 787,
       "minutes": {
-        "projected": 29.03,
-        "played": 29.75,
-        "bias": -0.0241,
-        "seasonBase": 28.08,
-        "recentL10": 28.99,
-        "meanBlowoutCut": 0.0052,
+        "projected": 29.71,
+        "played": 29.73,
+        "bias": -0.0007,
+        "seasonBase": 28.06,
+        "recentL10": 28.97,
+        "meanBlowoutCut": 0.0051,
         "meanAbsenceBump": 0.0325,
         "meanInjuryTag": 0.9938
       },
-      "projected": 1.94,
+      "projected": 1.99,
       "actual": 2.03,
-      "bias": -0.0436,
-      "meanLine": 0.97,
-      "lineZ": 0.666,
-      "said": 0.712,
-      "hit": 0.712
+      "bias": -0.0201,
+      "meanLine": 1,
+      "lineZ": 0.672,
+      "said": 0.714,
+      "hit": 0.709
     }
   },
   "ladder": {
@@ -249,8 +249,8 @@
     "won": 10,
     "lost": 1,
     "void": 2,
-    "account": 113.62,
-    "pl": 13.62,
+    "account": 111.82,
+    "pl": 11.82,
     "cycles": {
       "done": 1,
       "busted": 1
@@ -262,10 +262,10 @@
         "pick": "Evan Mobley",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.7991,
-        "score": 77.7,
+        "p": 0.8053,
+        "score": 78.2,
         "grade": "A",
-        "price": -485,
+        "price": -507,
         "status": "won",
         "actual": 3
       },
@@ -274,10 +274,10 @@
         "pick": "Andrew Wiggins",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.831,
-        "score": 77.6,
+        "p": 0.8363,
+        "score": 78,
         "grade": "A",
-        "price": -619,
+        "price": -648,
         "status": "void",
         "actual": null
       },
@@ -286,10 +286,10 @@
         "pick": "Jalen Johnson",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.7611,
-        "score": 78.3,
+        "p": 0.7679,
+        "score": 78.4,
         "grade": "A",
-        "price": -379,
+        "price": -395,
         "status": "won",
         "actual": 1
       },
@@ -298,10 +298,10 @@
         "pick": "Andrew Wiggins",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.8512,
-        "score": 78.1,
+        "p": 0.8488,
+        "score": 78.4,
         "grade": "A",
-        "price": -742,
+        "price": -725,
         "status": "won",
         "actual": 2
       },
@@ -310,10 +310,10 @@
         "pick": "Payton Pritchard",
         "market": "tpm",
         "line": 1.5,
-        "p": 0.7659,
-        "score": 78,
+        "p": 0.7751,
+        "score": 78.2,
         "grade": "A",
-        "price": -390,
+        "price": -413,
         "status": "lost",
         "actual": 1
       },
@@ -322,10 +322,10 @@
         "pick": "Andrew Nembhard",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.835,
-        "score": 76.1,
+        "p": 0.8412,
+        "score": 76.5,
         "grade": "A",
-        "price": -641,
+        "price": -676,
         "status": "void",
         "actual": null
       },
@@ -334,10 +334,10 @@
         "pick": "Onyeka Okongwu",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.7707,
-        "score": 78.3,
+        "p": 0.7774,
+        "score": 78.7,
         "grade": "A",
-        "price": -402,
+        "price": -419,
         "status": "won",
         "actual": 3
       },
@@ -346,10 +346,10 @@
         "pick": "Pascal Siakam",
         "market": "ast",
         "line": 2.5,
-        "p": 0.7508,
-        "score": 78.5,
+        "p": 0.7628,
+        "score": 79.7,
         "grade": "A",
-        "price": -356,
+        "price": -383,
         "status": "won",
         "actual": 4
       },
@@ -358,10 +358,10 @@
         "pick": "Saddiq Bey",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.7912,
-        "score": 77.5,
+        "p": 0.7975,
+        "score": 77.9,
         "grade": "A",
-        "price": -459,
+        "price": -480,
         "status": "won",
         "actual": 4
       },
@@ -370,10 +370,10 @@
         "pick": "James Harden",
         "market": "tpm",
         "line": 1.5,
-        "p": 0.7841,
-        "score": 77.5,
+        "p": 0.7937,
+        "score": 77.9,
         "grade": "A",
-        "price": -438,
+        "price": -467,
         "status": "won",
         "actual": 3
       },
@@ -382,78 +382,78 @@
         "pick": "Desmond Bane",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.7981,
-        "score": 77.5,
+        "p": 0.8043,
+        "score": 77.7,
         "grade": "A",
-        "price": -482,
+        "price": -504,
         "status": "won",
         "actual": 3
       },
       {
         "date": "2026-03-21",
-        "pick": "Devin Booker",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.8183,
+        "pick": "James Harden",
+        "market": "reb",
+        "line": 3.5,
+        "p": 0.7437,
         "score": 78.3,
         "grade": "A",
-        "price": -559,
+        "price": -342,
         "status": "won",
-        "actual": 2
+        "actual": 6
       },
       {
         "date": "2026-03-30",
         "pick": "Jalen Johnson",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.7758,
-        "score": 80.7,
+        "p": 0.7824,
+        "score": 80.9,
         "grade": "A+",
-        "price": -415,
+        "price": -433,
         "status": "won",
         "actual": 1
       }
     ]
   },
   "doubles": {
-    "n": 54,
-    "predicted": 0.626,
-    "actual": 0.704,
-    "naive": 0.656,
-    "edge": 0.078,
+    "n": 48,
+    "predicted": 0.63,
+    "actual": 0.563,
+    "naive": 0.66,
+    "edge": -0.068,
     "byTeam": [
       {
         "key": "opposing",
-        "n": 28,
-        "predicted": 0.628,
-        "actual": 0.75,
-        "edge": 0.122
+        "n": 25,
+        "predicted": 0.631,
+        "actual": 0.56,
+        "edge": -0.071
       },
       {
         "key": "same team",
-        "n": 26,
-        "predicted": 0.624,
-        "actual": 0.654,
-        "edge": 0.03
+        "n": 23,
+        "predicted": 0.63,
+        "actual": 0.565,
+        "edge": -0.064
       }
     ],
     "byMarkets": [
       {
         "key": "ast|tpm",
-        "n": 29,
-        "predicted": 0.627,
-        "actual": 0.655,
-        "edge": 0.028
+        "n": 27,
+        "predicted": 0.629,
+        "actual": 0.556,
+        "edge": -0.074
       },
       {
         "key": "tpm|tpm",
-        "n": 15,
-        "predicted": 0.626,
-        "actual": 0.867,
-        "edge": 0.241
+        "n": 11,
+        "predicted": 0.634,
+        "actual": 0.727,
+        "edge": 0.093
       }
     ],
-    "legHit": 0.824
+    "legHit": 0.719
   },
   "fetches": 502,
   "retries": 3
