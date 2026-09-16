@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-16T03:58:33.530Z",
+  "season": 2026,
+  "slates": 16,
+  "stride": 9,
+  "leakage": "player lines rebuilt as-of from game logs; team splits full-season (clamped ±10-12%); injuries unavailable on finished games, so the backtest runs blind to them",
+  "legs": {
+    "n": 0,
+    "graded": 0,
+    "void": 0,
+    "predicted": null,
+    "actual": null,
+    "edge": 0,
+    "brier": null
+  },
+  "byGrade": [],
+  "byMarket": [],
+  "byBand": [],
+  "monotonic": null,
+  "ladder": {
+    "days": 0,
+    "played": 0,
+    "passed": 0,
+    "won": 0,
+    "lost": 0,
+    "void": 0,
+    "account": 100,
+    "pl": 0,
+    "cycles": {
+      "done": 0,
+      "busted": 0
+    },
+    "maxDD": 0,
+    "rows": []
+  },
+  "doubles": {
+    "n": 0,
+    "predicted": null,
+    "actual": null,
+    "naive": null,
+    "edge": 0
+  },
+  "fetches": 146,
+  "retries": 3
+}
