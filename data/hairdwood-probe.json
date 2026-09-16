@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T04:05:46.692Z",
+  "at": "2026-09-16T04:11:59.496Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -120,7 +120,7 @@
     {
       "name": "summary carries the market's number",
       "state": "PASS",
-      "detail": "total 227.5, spreadHome -5.5 (Draft Kings: ORL -5.5)"
+      "detail": "total 227.5, spreadHome -5.5 (DraftKings: ORL -5.5)"
     },
     {
       "name": "box score parsed",
@@ -190,7 +190,7 @@
     {
       "name": "board builds",
       "state": "PASS",
-      "detail": "556 graded props from 9 games"
+      "detail": "557 graded props from 9 games"
     },
     {
       "name": "board is not degraded",
@@ -210,12 +210,12 @@
     {
       "name": "all four markets priced",
       "state": "PASS",
-      "detail": "{\"tpm\":124,\"reb\":144,\"ast\":144,\"pts\":144}"
+      "detail": "{\"tpm\":125,\"reb\":144,\"ast\":144,\"pts\":144}"
     },
     {
       "name": "lines are not all minimums",
       "state": "PASS",
-      "detail": "116/556 legs sit on the 0.5 line"
+      "detail": "110/557 legs sit on the 0.5 line"
     },
     {
       "name": "published prices are bettable",
@@ -225,37 +225,37 @@
     {
       "name": "nothing unbettable is published",
       "state": "PASS",
-      "detail": "shortest leg 87% (fair -651), ceiling 92%"
+      "detail": "shortest leg 83% (fair -484), ceiling 92%"
     },
     {
       "name": "TPM projections track the box score",
       "state": "PASS",
-      "detail": "projected 1.98 vs actual 1.83 (+8%), lines average 0.92, said 73% hit 66% on 71"
+      "detail": "projected 1.98 vs actual 1.83 (+8%), lines average 0.95, said 72% hit 63% on 71"
     },
     {
       "name": "REB projections track the box score",
       "state": "PASS",
-      "detail": "projected 5.3 vs actual 5.17 (+3%), lines average 3.84, said 70% hit 62% on 82"
+      "detail": "projected 5.3 vs actual 5.17 (+3%), lines average 3.85, said 70% hit 62% on 82"
     },
     {
       "name": "AST projections track the box score",
       "state": "PASS",
-      "detail": "projected 3.67 vs actual 3.33 (+10%), lines average 2.38, said 72% hit 61% on 82"
+      "detail": "projected 3.67 vs actual 3.33 (+10%), lines average 2.44, said 71% hit 59% on 82"
     },
     {
       "name": "PTS projections track the box score",
       "state": "PASS",
-      "detail": "projected 15.33 vs actual 13.07 (+17%), lines average 12.35, said 67% hit 48% on 82"
+      "detail": "projected 15.33 vs actual 13.07 (+17%), lines average 12.2, said 68% hit 50% on 82"
     },
     {
       "name": "no market is starved of legs",
       "state": "PASS",
-      "detail": "{\"tpm\":124,\"reb\":144,\"ast\":144,\"pts\":144}"
+      "detail": "{\"tpm\":125,\"reb\":144,\"ast\":144,\"pts\":144}"
     },
     {
       "name": "game logs reached the legs",
       "state": "PASS",
-      "detail": "351/556 legs carry a log"
+      "detail": "352/557 legs carry a log"
     },
     {
       "name": "the board ends up with posted totals",
@@ -756,9 +756,9 @@
         "againstTheSpread",
         "news",
         "plays",
+        "header",
         "article",
         "videos",
-        "header",
         "wallclockAvailable",
         "winprobability",
         "meta",
@@ -857,7 +857,7 @@
       "pickcenterSample": {
         "provider": {
           "id": "100",
-          "name": "Draft Kings",
+          "name": "DraftKings",
           "priority": 1,
           "logos": [
             {
@@ -908,7 +908,7 @@
               "home",
               "desktop",
               "bets",
-              "draft-kings"
+              "draftkings"
             ],
             "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_1",
             "text": "Home Bet",
@@ -922,7 +922,7 @@
               "away",
               "desktop",
               "bets",
-              "draft-kings"
+              "draftkings"
             ],
             "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_3",
             "text": "Away Bet",
@@ -1901,35 +1901,20 @@
     "counts": {
       "games": 9,
       "players": 144,
-      "legs": 556,
+      "legs": 557,
       "logs": 90
     },
     "top": [
       {
         "grade": "B+",
-        "score": 79.3,
-        "player": "Nickeil Alexander-Walker",
-        "pos": "G",
-        "team": "ATL",
-        "opp": "POR",
-        "market": "tpm",
-        "line": 1.5,
-        "p": 0.799,
-        "proj": 3.2,
-        "min": 34.8,
-        "seasonAvg": 3.2,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 77.3,
+        "score": 77,
         "player": "Marcus Smart",
         "pos": "G",
         "team": "HOU",
         "opp": "OKC",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.829,
+        "p": 0.81,
         "proj": 1.9,
         "min": 32.5,
         "seasonAvg": 1.6,
@@ -1937,14 +1922,14 @@
       },
       {
         "grade": "B+",
-        "score": 76.7,
+        "score": 76.4,
         "player": "Andrew Wiggins",
         "pos": "F",
         "team": "MIA",
         "opp": "BOS",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.842,
+        "p": 0.82,
         "proj": 2,
         "min": 31.3,
         "seasonAvg": 2,
@@ -1952,14 +1937,14 @@
       },
       {
         "grade": "B+",
-        "score": 76.6,
+        "score": 76.4,
         "player": "Payton Pritchard",
         "pos": "G",
         "team": "BOS",
         "opp": "MIA",
         "market": "reb",
         "line": 2.5,
-        "p": 0.78,
+        "p": 0.768,
         "proj": 4.2,
         "min": 33.2,
         "seasonAvg": 3.9,
@@ -1967,14 +1952,14 @@
       },
       {
         "grade": "B+",
-        "score": 76.2,
+        "score": 76,
         "player": "Devin Vassell",
         "pos": "G",
         "team": "SA",
         "opp": "MIL",
         "market": "ast",
         "line": 1.5,
-        "p": 0.794,
+        "p": 0.78,
         "proj": 3,
         "min": 32.8,
         "seasonAvg": 2.5,
@@ -1982,14 +1967,14 @@
       },
       {
         "grade": "B+",
-        "score": 75.2,
+        "score": 74.9,
         "player": "Julian Champagnie",
         "pos": "F",
         "team": "SA",
         "opp": "MIL",
         "market": "ast",
         "line": 0.5,
-        "p": 0.819,
+        "p": 0.801,
         "proj": 1.7,
         "min": 29.4,
         "seasonAvg": 1.5,
@@ -1997,44 +1982,14 @@
       },
       {
         "grade": "B+",
-        "score": 75,
-        "player": "Devin Booker",
-        "pos": "G",
-        "team": "PHX",
-        "opp": "DET",
-        "market": "reb",
-        "line": 2.5,
-        "p": 0.778,
-        "proj": 4.2,
-        "min": 37.5,
-        "seasonAvg": 3.9,
-        "form": "8/10"
-      },
-      {
-        "grade": "B+",
-        "score": 74.4,
-        "player": "Jalen Duren",
-        "pos": "C",
-        "team": "DET",
-        "opp": "PHX",
-        "market": "ast",
-        "line": 0.5,
-        "p": 0.867,
-        "proj": 2,
-        "min": 29,
-        "seasonAvg": 2,
-        "form": "9/10"
-      },
-      {
-        "grade": "B+",
-        "score": 74.4,
+        "score": 74,
         "player": "Onyeka Okongwu",
         "pos": "F",
         "team": "ATL",
         "opp": "POR",
         "market": "tpm",
         "line": 0.5,
-        "p": 0.84,
+        "p": 0.819,
         "proj": 2,
         "min": 31.9,
         "seasonAvg": 1.9,
@@ -2042,14 +1997,29 @@
       },
       {
         "grade": "B+",
-        "score": 74.3,
+        "score": 74,
+        "player": "Paolo Banchero",
+        "pos": "F",
+        "team": "ORL",
+        "opp": "MEM",
+        "market": "pts",
+        "line": 17.5,
+        "p": 0.75,
+        "proj": 24.1,
+        "min": 37,
+        "seasonAvg": 22.2,
+        "form": "9/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.9,
         "player": "Ryan Rollins",
         "pos": "G",
         "team": "MIL",
         "opp": "SA",
         "market": "ast",
         "line": 3.5,
-        "p": 0.767,
+        "p": 0.757,
         "proj": 5.5,
         "min": 32.4,
         "seasonAvg": 5.6,
@@ -2057,14 +2027,29 @@
       },
       {
         "grade": "B+",
-        "score": 74,
+        "score": 73.6,
+        "player": "Jalen Johnson",
+        "pos": "F",
+        "team": "ATL",
+        "opp": "POR",
+        "market": "tpm",
+        "line": 0.5,
+        "p": 0.783,
+        "proj": 1.7,
+        "min": 35.2,
+        "seasonAvg": 1.7,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 73.3,
         "player": "De'Aaron Fox",
         "pos": "G",
         "team": "SA",
         "opp": "MIL",
         "market": "ast",
         "line": 4.5,
-        "p": 0.747,
+        "p": 0.74,
         "proj": 6.3,
         "min": 32.4,
         "seasonAvg": 6.2,
@@ -2072,79 +2057,94 @@
       },
       {
         "grade": "B+",
-        "score": 73.9,
-        "player": "Jalen Johnson",
-        "pos": "F",
-        "team": "ATL",
-        "opp": "POR",
-        "market": "tpm",
-        "line": 0.5,
-        "p": 0.798,
-        "proj": 1.7,
-        "min": 35.2,
-        "seasonAvg": 1.7,
+        "score": 73.2,
+        "player": "AJ Green",
+        "pos": "G",
+        "team": "MIL",
+        "opp": "SA",
+        "market": "reb",
+        "line": 1.5,
+        "p": 0.753,
+        "proj": 3,
+        "min": 31.7,
+        "seasonAvg": 2.7,
+        "form": "8/10"
+      },
+      {
+        "grade": "B+",
+        "score": 72.7,
+        "player": "Devin Booker",
+        "pos": "G",
+        "team": "PHX",
+        "opp": "DET",
+        "market": "pts",
+        "line": 21.5,
+        "p": 0.766,
+        "proj": 27.5,
+        "min": 37.5,
+        "seasonAvg": 26.1,
         "form": "8/10"
       }
     ],
     "doubles": [
       {
-        "game": "ATL@POR",
+        "game": "BOS@MIA",
         "grade": "B",
-        "score": 71.1,
-        "joint": 0.664,
-        "rho": 0.24,
+        "score": 64.5,
+        "joint": 0.633,
+        "rho": 0.019,
         "legs": [
-          "Nickeil Alexander-Walker 3PM o1.5",
-          "Jock Landale AST o0.5"
+          "Andrew Wiggins 3PM o0.5",
+          "Neemias Queta AST o0.5"
         ]
       },
       {
         "game": "MIL@SA",
-        "grade": "B",
-        "score": 69,
-        "joint": 0.613,
-        "rho": 0.161,
+        "grade": "C+",
+        "score": 63.5,
+        "joint": 0.617,
+        "rho": 0.08,
         "legs": [
           "Devin Vassell AST o1.5",
-          "Tobias Harris 3PM o0.5"
+          "De'Aaron Fox 3PM o0.5"
         ]
       },
       {
-        "game": "BOS@MIA",
-        "grade": "B",
-        "score": 68.4,
-        "joint": 0.696,
-        "rho": 0.18,
+        "game": "ATL@POR",
+        "grade": "C+",
+        "score": 63.5,
+        "joint": 0.611,
+        "rho": 0.019,
         "legs": [
-          "Andrew Wiggins 3PM o0.5",
-          "Bobby Portis AST o0.5"
-        ]
-      },
-      {
-        "game": "UTAH@DAL",
-        "grade": "B",
-        "score": 67.8,
-        "joint": 0.745,
-        "rho": 0.272,
-        "legs": [
-          "Ace Bailey 3PM o0.5",
-          "Brice Sensabaugh AST o0.5"
+          "Onyeka Okongwu 3PM o0.5",
+          "Jalen Johnson 3PM o0.5"
         ]
       },
       {
         "game": "OKC@HOU",
-        "grade": "B",
-        "score": 67.6,
-        "joint": 0.672,
-        "rho": 0.158,
+        "grade": "C+",
+        "score": 62.8,
+        "joint": 0.62,
+        "rho": 0.021,
         "legs": [
           "Marcus Smart 3PM o0.5",
-          "Tari Eason AST o0.5"
+          "Shai Gilgeous-Alexander 3PM o0.5"
+        ]
+      },
+      {
+        "game": "PHX@DET",
+        "grade": "C+",
+        "score": 61.8,
+        "joint": 0.595,
+        "rho": 0.021,
+        "legs": [
+          "Devin Booker PTS o21.5",
+          "Miles Bridges 3PM o0.5"
         ]
       }
     ],
     "byMarket": {
-      "tpm": 124,
+      "tpm": 125,
       "reb": 144,
       "ast": 144,
       "pts": 144
@@ -2155,61 +2155,61 @@
       "n": 71,
       "meanProjected": 1.98,
       "meanActual": 1.83,
-      "meanLine": 0.92,
-      "predicted": 0.733,
-      "hit": 0.662,
+      "meanLine": 0.95,
+      "predicted": 0.722,
+      "hit": 0.634,
       "samples": [
-        "Nickeil Alexander-Walker 3PM o1.5: projected 3.2, got 2",
         "Andrew Wiggins 3PM o0.5: projected 2.0, got 3",
         "Onyeka Okongwu 3PM o0.5: projected 2.0, got 5",
-        "Jalen Johnson 3PM o0.5: projected 1.7, got 0"
+        "Jalen Johnson 3PM o0.5: projected 1.7, got 0",
+        "Myles Turner 3PM o0.5: projected 1.8, got 1"
       ]
     },
     "reb": {
       "n": 82,
       "meanProjected": 5.3,
       "meanActual": 5.17,
-      "meanLine": 3.84,
-      "predicted": 0.7,
+      "meanLine": 3.85,
+      "predicted": 0.697,
       "hit": 0.622,
       "samples": [
         "Payton Pritchard REB o2.5: projected 4.2, got 3",
         "AJ Green REB o1.5: projected 3.0, got 0",
-        "Jalen Johnson REB o7.5: projected 10.0, got 11",
-        "Jabari Smith Jr. REB o5.5: projected 7.7, got 10"
+        "Jabari Smith Jr. REB o5.5: projected 7.7, got 10",
+        "Jalen Johnson REB o7.5: projected 10.0, got 11"
       ]
     },
     "ast": {
       "n": 82,
       "meanProjected": 3.67,
       "meanActual": 3.33,
-      "meanLine": 2.38,
-      "predicted": 0.72,
-      "hit": 0.61,
+      "meanLine": 2.44,
+      "predicted": 0.705,
+      "hit": 0.585,
       "samples": [
         "Julian Champagnie AST o0.5: projected 1.7, got 1",
-        "Jalen Duren AST o0.5: projected 2.0, got 2",
         "Ryan Rollins AST o3.5: projected 5.5, got 7",
-        "De'Aaron Fox AST o4.5: projected 6.3, got 4"
+        "De'Aaron Fox AST o4.5: projected 6.3, got 4",
+        "Harrison Barnes AST o0.5: projected 1.9, got 3"
       ]
     },
     "pts": {
       "n": 82,
       "meanProjected": 15.33,
       "meanActual": 13.07,
-      "meanLine": 12.35,
-      "predicted": 0.672,
-      "hit": 0.476,
+      "meanLine": 12.2,
+      "predicted": 0.682,
+      "hit": 0.5,
       "samples": [
-        "Onyeka Okongwu PTS o11.5: projected 15.4, got 26",
-        "Jabari Smith Jr. PTS o14.5: projected 17.0, got 17",
-        "Duncan Robinson PTS o9.5: projected 12.4, got 19",
-        "Kevin Durant PTS o19.5: projected 23.8, got 19"
+        "Paolo Banchero PTS o17.5: projected 24.1, got 26",
+        "Brandin Podziemski PTS o13.5: projected 17.5, got 19",
+        "OG Anunoby PTS o12.5: projected 17.0, got 25",
+        "Jalen Johnson PTS o17.5: projected 21.9, got 12"
       ]
     }
   },
   "fetches": 161,
-  "bytes": 89581779,
+  "bytes": 89581981,
   "failed": 0,
   "verdict": "the engine reads the live feed correctly"
 }
