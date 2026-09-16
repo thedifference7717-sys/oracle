@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T03:59:26.117Z",
+  "at": "2026-09-16T04:03:30.176Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -120,7 +120,7 @@
     {
       "name": "summary carries the market's number",
       "state": "PASS",
-      "detail": "total 227.5, spreadHome -5.5 (DraftKings: ORL -5.5)"
+      "detail": "total 227.5, spreadHome -5.5 (Draft Kings: ORL -5.5)"
     },
     {
       "name": "box score parsed",
@@ -206,6 +206,31 @@
       "name": "nothing unbettable is published",
       "state": "PASS",
       "detail": "shortest leg 87% (fair -651), ceiling 92%"
+    },
+    {
+      "name": "TPM projections track the box score",
+      "state": "PASS",
+      "detail": "projected 1.98 vs actual 1.83 (+8%), lines average 0.92, said 73% hit 66% on 71"
+    },
+    {
+      "name": "AST projections track the box score",
+      "state": "PASS",
+      "detail": "projected 3.67 vs actual 3.33 (+10%), lines average 2.38, said 72% hit 61% on 82"
+    },
+    {
+      "name": "REB projections track the box score",
+      "state": "PASS",
+      "detail": "projected 5.3 vs actual 5.17 (+3%), lines average 3.88, said 69% hit 62% on 82"
+    },
+    {
+      "name": "PTS projections track the box score",
+      "state": "PASS",
+      "detail": "projected 15.33 vs actual 13.07 (+17%), lines average 12.35, said 67% hit 48% on 82"
+    },
+    {
+      "name": "no market is starved of legs",
+      "state": "PASS",
+      "detail": "{\"tpm\":124,\"ast\":144,\"pts\":144,\"reb\":144}"
     },
     {
       "name": "game logs reached the legs",
@@ -710,9 +735,9 @@
         "odds",
         "againstTheSpread",
         "news",
-        "plays",
         "article",
         "videos",
+        "plays",
         "winprobability",
         "header",
         "wallclockAvailable",
@@ -812,7 +837,7 @@
       "pickcenterSample": {
         "provider": {
           "id": "100",
-          "name": "DraftKings",
+          "name": "Draft Kings",
           "priority": 1,
           "logos": [
             {
@@ -863,7 +888,7 @@
               "home",
               "desktop",
               "bets",
-              "draftkings"
+              "draft-kings"
             ],
             "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_1",
             "text": "Home Bet",
@@ -877,7 +902,7 @@
               "away",
               "desktop",
               "bets",
-              "draftkings"
+              "draft-kings"
             ],
             "href": "https://sportsbook.draftkings.com/gateway?s=__s__&wpcid=__wpcid__&wpsrc=413&wpcn=ESPN&wpscn=Widget&wpcrn=BetSlipDeepLink&wpscid=__wpscid__&wpcrid=xx&preurl=https%3A%2F%2Fsportsbook.draftkings.com%2Fevent%2F33453703%3Foutcomes%3D0ML82963966_3",
             "text": "Away Bet",
@@ -2073,8 +2098,66 @@
       "reb": 144
     }
   },
-  "fetches": 152,
-  "bytes": 86058625,
+  "perMarket": {
+    "tpm": {
+      "n": 71,
+      "meanProjected": 1.98,
+      "meanActual": 1.83,
+      "meanLine": 0.92,
+      "predicted": 0.733,
+      "hit": 0.662,
+      "samples": [
+        "Nickeil Alexander-Walker 3PM o1.5: projected 3.2, got 2",
+        "Andrew Wiggins 3PM o0.5: projected 2.0, got 3",
+        "Onyeka Okongwu 3PM o0.5: projected 2.0, got 5",
+        "Jalen Johnson 3PM o0.5: projected 1.7, got 0"
+      ]
+    },
+    "ast": {
+      "n": 82,
+      "meanProjected": 3.67,
+      "meanActual": 3.33,
+      "meanLine": 2.38,
+      "predicted": 0.72,
+      "hit": 0.61,
+      "samples": [
+        "Julian Champagnie AST o0.5: projected 1.7, got 1",
+        "Jalen Duren AST o0.5: projected 2.0, got 2",
+        "Ryan Rollins AST o3.5: projected 5.5, got 7",
+        "De'Aaron Fox AST o4.5: projected 6.3, got 4"
+      ]
+    },
+    "reb": {
+      "n": 82,
+      "meanProjected": 5.3,
+      "meanActual": 5.17,
+      "meanLine": 3.88,
+      "predicted": 0.694,
+      "hit": 0.622,
+      "samples": [
+        "Landry Shamet REB o0.5: projected 2.0, got 0",
+        "Harrison Barnes REB o1.5: projected 2.9, got 0",
+        "Sam Hauser REB o2.5: projected 4.1, got 3",
+        "Isaiah Collier REB o1.5: projected 2.7, got 5"
+      ]
+    },
+    "pts": {
+      "n": 82,
+      "meanProjected": 15.33,
+      "meanActual": 13.07,
+      "meanLine": 12.35,
+      "predicted": 0.672,
+      "hit": 0.476,
+      "samples": [
+        "Onyeka Okongwu PTS o11.5: projected 15.4, got 26",
+        "Jabari Smith Jr. PTS o14.5: projected 17.0, got 17",
+        "Duncan Robinson PTS o9.5: projected 12.4, got 19",
+        "Kevin Durant PTS o19.5: projected 23.8, got 19"
+      ]
+    }
+  },
+  "fetches": 161,
+  "bytes": 89581779,
   "failed": 0,
   "verdict": "the engine reads the live feed correctly"
 }
