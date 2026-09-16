@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T16:26:37.983Z",
+  "at": "2026-09-16T16:29:50.746Z",
   "season": 2026,
   "slates": 16,
   "stride": 9,
@@ -166,7 +166,12 @@
       "minutes": {
         "projected": 28.51,
         "played": 29.2,
-        "bias": -0.0236
+        "bias": -0.0236,
+        "seasonBase": 27.59,
+        "recentL10": 28.48,
+        "meanBlowoutCut": 0.0048,
+        "meanAbsenceBump": 0.0315,
+        "meanInjuryTag": 0.9939
       },
       "projected": 14.93,
       "actual": 15.31,
@@ -181,7 +186,12 @@
       "minutes": {
         "projected": 28.51,
         "played": 29.2,
-        "bias": -0.0236
+        "bias": -0.0236,
+        "seasonBase": 27.59,
+        "recentL10": 28.48,
+        "meanBlowoutCut": 0.0048,
+        "meanAbsenceBump": 0.0315,
+        "meanInjuryTag": 0.9939
       },
       "projected": 5.11,
       "actual": 5.41,
@@ -196,7 +206,12 @@
       "minutes": {
         "projected": 28.53,
         "played": 29.2,
-        "bias": -0.023
+        "bias": -0.023,
+        "seasonBase": 27.6,
+        "recentL10": 28.49,
+        "meanBlowoutCut": 0.0048,
+        "meanAbsenceBump": 0.0314,
+        "meanInjuryTag": 0.9939
       },
       "projected": 3.55,
       "actual": 3.65,
@@ -211,7 +226,12 @@
       "minutes": {
         "projected": 29.01,
         "played": 29.79,
-        "bias": -0.0261
+        "bias": -0.0261,
+        "seasonBase": 28.06,
+        "recentL10": 28.98,
+        "meanBlowoutCut": 0.0052,
+        "meanAbsenceBump": 0.0323,
+        "meanInjuryTag": 0.9938
       },
       "projected": 1.89,
       "actual": 2.01,
