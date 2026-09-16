@@ -107,7 +107,9 @@ jobs:
           # silently overriding the script's own -175.
           DD_PRICE: ${{ vars.DD_PRICE || '-175' }}
           DD_MIN_EDGE: ${{ vars.DD_MIN_EDGE || '0.02' }}
-          DD_PER_EDGE_PT: ${{ vars.DD_PER_EDGE_PT || '2.50' }}
+          # Dollars per SPOT point — stake scales with how soft the matchup is,
+          # which is also what decides whether the double is a bet at all.
+          DD_PER_SPOT_PT: ${{ vars.DD_PER_SPOT_PT || vars.DD_PER_EDGE_PT || '2.50' }}
           # The single "to record a hit" prop price the ladder is staked and
           # compounded against. This one is an assumption until confirmed, and
           # it decides both whether the rung is a bet and how fast it climbs.

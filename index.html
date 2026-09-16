@@ -340,7 +340,7 @@ td.num{text-align:right}
 <div id="slip">
   <div class="fld"><label>Double price (American)</label><input id="price" type="number" step="5" value="-175"></div>
   <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="10" value="1000"></div>
-  <div class="fld"><label>$ per edge point</label><input id="perEdge" type="number" step="0.25" min="0" value="2.50"></div>
+  <div class="fld"><label>$ per spot point</label><input id="perSpot" type="number" step="0.25" min="0" value="2.50"></div>
   <div class="fld"><label>Leg price (hit prop)</label><input id="legPrice" type="number" step="5" value="-250"></div>
   <div class="fld"><label>Bet bar (edge pts)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
   <div class="fld"><label>Min spot (pts)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
@@ -503,8 +503,18 @@ try{
   }
 }catch(e){/* private mode: nothing stored, nothing to migrate */}
 
+// The rate moved from edge points to spot points and the input was renamed
+// with it. Carry a stored value across once, so a rate somebody chose is not
+// silently reset to the default by a rename. This runs AFTER the stale-$1.50
+// cleanup above on purpose: carrying first would have rescued the very value
+// that cleanup exists to drop.
+try{
+  const old=localStorage.getItem("dd.perEdge");
+  if(localStorage.getItem("dd.perSpot")==null&&old!=null)localStorage.setItem("dd.perSpot",old);
+}catch(e){}
+
 // Bet-slip settings survive a reload — this page reruns every 3 minutes.
-const SETTINGS=["price","bank","perEdge","legPrice","minEdge","minSpot","minSoft","sortBy","onlyPosted","onlyTeam"];
+const SETTINGS=["price","bank","perSpot","legPrice","minEdge","minSpot","minSoft","sortBy","onlyPosted","onlyTeam"];
 SETTINGS.forEach(id=>{
   const el=document.getElementById(id),saved=localStorage.getItem("dd."+id);
   if(saved!=null){if(el.type==="checkbox")el.checked=saved==="1";else el.value=saved;}
@@ -606,7 +616,12 @@ function leg(c){
 // means the arithmetic on screen checks out by hand: 5.5 x $2.50 is $13.75, not
 // $13.83 from an unrounded 5.53.
 const edgePts=ev=>ev?+(ev.edge*100).toFixed(1):0;
-const betSize=ev=>{const p=edgePts(ev);return p>0?p*setting("perEdge"):0;};
+// Stake scales with the SPOT, not the price. Softness decides whether a game
+// is a bet, so sizing off the edge measured a different thing from the one
+// being selected on — and with no edge bar it produced a stake of zero on
+// qualifying games, which is a contradiction rather than a size.
+const spotPts=x=>x?+((x.spotDelta||0)*100).toFixed(1):0;
+const betSize=x=>{const p=spotPts(x);return p>0?p*setting("perSpot"):0;};
 
 function card(pr,i){
   const px=gamePrice(pr.gk);
@@ -614,18 +629,18 @@ function card(pr,i){
   const bank=setting("bank");
   const good=ev&&ev.edge>0;
   const stake=ev?bank*ev.quarterKelly:0;
-  const size=betSize(ev);
+  const size=betSize(pr);
   const rank=["#1","#2","#3","#4","#5","#6"][i]||("#"+(i+1));
   return `<div class="bet ${good?"r"+Math.min(i+1,3):"neg"}">
     <div class="bet-top">
       <div class="bet-rank">${rank}${good?"":" ✗ NO EDGE"}</div>
       <div class="bet-game">${pr.teams}<br><span style="color:var(--dim)">${pr.venue||""} · PF ${pr.pf}</span></div>
       <div class="bet-str">
-        <div class="v">${ev?(edgePts(ev)>=0?"+":"")+edgePts(ev).toFixed(1):"—"}</div>
-        <div class="l">Edge pts</div>
+        <div class="v">${(spotPts(pr)>=0?"+":"")+spotPts(pr).toFixed(1)}</div>
+        <div class="l">Spot pts</div>
         <div class="stake">${size>0?money(size):"—"}</div>
-        <div class="stake-l">${size>0?`Bet · $${setting("perEdge").toFixed(2)}/pt`
-          :"No edge at this price"}</div>
+        <div class="stake-l">${size>0?`Bet · $${setting("perSpot").toFixed(2)}/spot pt`
+          :"Spot at or below league"}</div>
       </div>
     </div>
     ${leg(pr.a)}${leg(pr.b)}
@@ -973,7 +988,7 @@ function render(){
           return m?`${pts(m.soft)}pts (${m.teams})`:"—";})()}.
        <br>Every game is still listed below.</span></div>`;
   document.getElementById("cardsNote").innerHTML=B.length
-    ? `${B.length} bet${B.length===1?"":"s"} of ${pairs.length} games · total stake <b style="color:var(--yellow)">${money(B.reduce((t,x)=>t+betSize(M.evaluate(x.prob,gamePrice(x.gk))),0))}</b>`
+    ? `${B.length} bet${B.length===1?"":"s"} of ${pairs.length} games · total stake <b style="color:var(--yellow)">${money(B.reduce((t,x)=>t+betSize(x),0))}</b>`
     : `0 bets of ${pairs.length} games`;
   document.getElementById("pairsNote").textContent=`${pairs.length} shown of ${board.pairs.length}`;
 
@@ -992,7 +1007,7 @@ function render(){
       <td class="num"><b>${pct(pr.prob)}</b></td>
       <td class="num" style="color:var(--yellow)">${M.amOdds(pr.prob)}</td>
       <td class="num"><b style="color:${e>0?'var(--green)':'var(--red)'}">${e>=0?"+":""}${e.toFixed(1)}</b></td>
-      <td class="num"><b style="color:${betSize(_ev)>0?'var(--yellow)':'var(--dim)'}">${betSize(_ev)>0?money(betSize(_ev)):"—"}</b></td>
+      <td class="num"><b style="color:${betSize(pr)>0?'var(--yellow)':'var(--dim)'}">${betSize(pr)>0?money(betSize(pr)):"—"}</b></td>
     </tr>`;}).join("")||`<tr><td colspan="10"><div class="empty">Nothing clears the filters.</div></td></tr>`;
 
   renderLadder();
@@ -1027,7 +1042,7 @@ function render(){
   document.getElementById("lhead").innerHTML=["HITTER","TEAM","SLOT","OPPOSING SP","EXP AB","P(HIT)","FAIR","EDGE","BET"]
     .map((h,i)=>`<th class="${i>=4?'num':''}">${h}</th>`).join("");
   document.getElementById("lbody").innerHTML=legRows.map(({c,edge})=>{
-    const pts=+(edge*100).toFixed(1), stake=pts>=betBar()*100?pts*setting("perEdge"):0;
+    const pts=+(edge*100).toFixed(1), stake=betSize(c);
     return `<tr>
       <td><div style="font-weight:700">${c.name}${c.posted?' <span class="tag ok">✓LU</span>':''}${c.plt==="adv"?' <span class="tag ok">▲</span>':''}</div></td>
       <td style="font-size:12px;color:var(--muted)">${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName}</td>

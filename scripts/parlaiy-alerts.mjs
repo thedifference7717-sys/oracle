@@ -49,8 +49,8 @@ function ledgerOpen(key, day, g, d) {
     firstPitch: g.gameDate,                               // what it must precede
     teams: d.teams, venue: d.venue || null,
     price: PRICE, prob: d.prob, edge: d.edge, evPct: d.evPct, kelly: d.kelly,
-    stakeRate: PER_EDGE_PT,
-    stake: +(Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT).toFixed(2),   // 0 when the assumed price gives no edge
+    stakeRate: PER_SPOT_PT, stakeBasis: "spot",
+    stake: +stakeFor(d).toFixed(2),
     qualifiedOn: "soft",
     sameTeam: !!d.sameTeam,
     legs: [d.a, d.b].map(c => ({ id: c.id, name: c.name, slot: c.slot, p: c.p, sp: c.sp || null })),
@@ -97,7 +97,9 @@ const MIN_EDGE = (_minEdge == null || _minEdge.trim() === "" || isNaN(+_minEdge)
 // every bet at publish time rather than applied to the ledger afterwards: if
 // the rate is ever changed, past bets must keep the stake they were actually
 // published with, or the record quietly rewrites itself.
-const PER_EDGE_PT = +(process.env.DD_PER_EDGE_PT || 2.50);
+// Dollars per SPOT point. DD_PER_SPOT_PT is the name; DD_PER_EDGE_PT is still
+// read so an existing repo variable keeps working after the rename.
+const PER_SPOT_PT = +(process.env.DD_PER_SPOT_PT || process.env.DD_PER_EDGE_PT || 2.50);
 // Softness of the opposing arm the double must face, in points of hit
 // probability against a league-neutral leg. SOFT holds the offence at league
 // average and asks only how bad the starter, his bullpen, the defence and the
@@ -116,7 +118,15 @@ const prettyDate = d => { const [y, mo, da] = d.split("-").map(Number); return `
 const pct = v => Math.round(v * 100) + "%";
 const pts = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(1);
 const money = v => (v < 0 ? "-$" : "$") + Math.abs(v).toFixed(2);
-const stakeFor = d => Math.max(0, +(d.edge * 100).toFixed(1)) * PER_EDGE_PT;
+// Stake scales with the SPOT, not the edge. Softness is what now decides
+// whether a game is a bet at all, so sizing off the price was measuring a
+// different thing from the one being selected on — and with no edge bar it
+// broke outright: a qualifying game at a bad price produced a stake of zero,
+// which is not a bet size, it is a contradiction. SPOT is this lineup against
+// this arm in this park, in points of hit probability over league average, so
+// a stake that scales with it puts more money on softer spots. The price is
+// still shown; it just no longer sets the size.
+const stakeFor = d => Math.max(0, +((d.spotDelta || 0) * 100).toFixed(1)) * PER_SPOT_PT;
 const av = v => v == null ? "—" : v.toFixed(3).replace(/^0/, "");
 
 async function j(url, opts) { const r = await fetch(url, opts); if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`); return r.json(); }
@@ -451,8 +461,9 @@ async function alertGame(day, g, d) {
     // instead of asserting an edge against a number it had to guess.
     `🎯 <b>FAIR PRICE ${M.amOdds(d.prob)}</b> — anything better than that is value\n` +
     `${pct(d.prob)} both hit\n` +
-    `<i>Checked against ${PRICE > 0 ? "+" : ""}${PRICE}: edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts` +
-      `${d.edge > 0 ? ` · stake ${money(stakeFor(d))}` : " · no edge at that price, shop for a better one"}</i>\n` +
+    `<i>Stake ${money(stakeFor(d))} — ${pts(d.spotDelta)}pts of spot × ${money(PER_SPOT_PT)}\n` +
+    `Checked against ${PRICE > 0 ? "+" : ""}${PRICE}: edge ${(d.edge * 100 >= 0 ? "+" : "") + (d.edge * 100).toFixed(1)}pts` +
+      `${d.edge > 0 ? "" : " — no edge at that price, shop for a better one"}</i>\n` +
     `Soft arm ${pts(d.soft)}pts (bar +${(MIN_SOFT * 100).toFixed(1)}) · ${d.sameTeam ? "SAME TEAM" : "OPPOSING"} · correlation +${(d.lift * 100).toFixed(1)}pts over naive\n\n` +
     `${legLine(d.a)}\n${legLine(d.b)}\n\n` +
     `<i>SPOT ${pts(d.spotDelta)}pts vs league (soft arm ${pts(d.soft)} · bats ${pts(d.offIdx)})</i>`
