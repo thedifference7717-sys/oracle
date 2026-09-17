@@ -5,7 +5,8 @@
   "account": 100,
   "basePct": 0.1,
   "rungs": 5,
-  "missGain": 0.25
+  "missGain": 0.25,
+  "maxStreak": 2
  },
  "bets": [
   {
@@ -33,9 +34,33 @@
    "status": "won",
    "hits": 1,
    "settled": "2026-09-16T00:40:46.145Z"
+  },
+  {
+   "id": "2026-09-17:ladder",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T15:35:17.850Z",
+   "firstPitch": "2026-09-17T17:10:00Z",
+   "cycle": 1,
+   "rung": 2,
+   "seed": 10,
+   "stake": 14,
+   "price": -250,
+   "p": 0.7960248960134204,
+   "edge": 0.08173918172770611,
+   "pick": "Yandy Díaz",
+   "playerId": 650490,
+   "slot": 1,
+   "gk": 822924,
+   "posted": true,
+   "startProb": 0.985,
+   "teams": "TB vs ATH",
+   "sp": "Jeffrey Springs",
+   "fromGames": 9,
+   "status": "open"
   }
  ],
- "updated": "2026-09-16T00:40:46.145Z",
+ "updated": "2026-09-17T15:35:17.850Z",
  "state": {
   "account": 100,
   "base": 10,
