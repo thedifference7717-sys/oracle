@@ -40,7 +40,115 @@
     1,
     0
    ]
+  },
+  {
+   "id": "2026-09-17:824464",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T14:01:49.187Z",
+   "firstPitch": "2026-09-17T16:40:00Z",
+   "teams": "LAD vs CIN",
+   "venue": "Great American Ball Park",
+   "price": -175,
+   "prob": 0.5827395872821128,
+   "edge": -0.05362404908152352,
+   "evPct": -8.426636284239414,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 20.5,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 518692,
+     "name": "Freddie Freeman",
+     "slot": 2,
+     "p": 0.767057210359029,
+     "sp": "Brady Singer"
+    },
+    {
+     "id": 669242,
+     "name": "Tommy Edman",
+     "slot": 1,
+     "p": 0.7418238903107416,
+     "sp": "Brady Singer"
+    }
+   ],
+   "status": "open"
+  },
+  {
+   "id": "2026-09-17:822924",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T14:30:28.571Z",
+   "firstPitch": "2026-09-17T17:10:00Z",
+   "teams": "TB vs ATH",
+   "venue": "Tropicana Field",
+   "price": -175,
+   "prob": 0.6241013939197401,
+   "edge": -0.012262242443896287,
+   "evPct": -1.9269238126122745,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 650490,
+     "name": "Yandy Díaz",
+     "slot": 1,
+     "p": 0.7950576261717316,
+     "sp": "Jeffrey Springs"
+    },
+    {
+     "id": 802415,
+     "name": "Chandler Simpson",
+     "slot": 6,
+     "p": 0.7686439899090068,
+     "sp": "Jeffrey Springs"
+    }
+   ],
+   "status": "open"
+  },
+  {
+   "id": "2026-09-17:824305",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T16:11:11.476Z",
+   "firstPitch": "2026-09-17T19:10:00Z",
+   "teams": "SD vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6800489507203406,
+   "edge": 0.0436853143567042,
+   "evPct": 6.864835113196372,
+   "kelly": 0.03003365362023415,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 30.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 687957,
+     "name": "Dustin Harris",
+     "slot": 2,
+     "p": 0.8216139557634985,
+     "sp": "Tanner Gordon"
+    },
+    {
+     "id": 665487,
+     "name": "Fernando Tatis Jr.",
+     "slot": 1,
+     "p": 0.8136468780636334,
+     "sp": "Tanner Gordon"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-16T03:13:21.968Z"
+ "updated": "2026-09-17T16:11:11.476Z"
 }
