@@ -645,7 +645,23 @@ async function load(){
     try{const r=await fetch("data/model-log.json?t="+Date.now());if(r.ok)cal=await r.json();}catch(e){/* uncalibrated */}
     // The ladder's settled history. Absent means the ladder has not started;
     // the card then shows rung one off the seed rather than hiding itself.
-    try{const r=await fetch("data/ladder.json?t="+Date.now());if(r.ok)ladderHist=await r.json();}catch(e){/* not started */}
+    // The published ledger, remembered once seen.
+    //
+    // A single failed fetch used to drop ladderHist back to null, which made
+    // the card fall through to its own pinned guess — so a network blip could
+    // put a different name on the board than the one in the Telegram alert.
+    // The alerter's row is the pick; the board must not be able to forget it.
+    try{
+      const r=await fetch("data/ladder.json?t="+Date.now());
+      if(r.ok){
+        ladderHist=await r.json();
+        try{localStorage.setItem("dd.ledgerCache",JSON.stringify(ladderHist));}catch(e){}
+      }else if(!ladderHist){
+        try{ladderHist=JSON.parse(localStorage.getItem("dd.ledgerCache")||"null");}catch(e){}
+      }
+    }catch(e){
+      if(!ladderHist){try{ladderHist=JSON.parse(localStorage.getItem("dd.ledgerCache")||"null");}catch(e2){}}
+    }
     board=await M.buildBoard({getJSON,cal:cal||null,american:setting("price"),
       onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
@@ -1070,7 +1086,7 @@ function renderLadder(){
 
   const myHtml=pinned?`
     <div class="ld-pick ld-mine">
-      <div class="nm">${pinned.pick} <span class="tag warn">${pinned.adjusted?"YOUR TRADE":"TODAY'S PICK"}</span></div>
+      <div class="nm">${pinned.pick} <span class="tag warn">${pinned.adjusted?"YOUR TRADE":"PROVISIONAL"}</span></div>
       ${pinned.adjusted?`<div class="sub" style="color:var(--yellow);margin-top:4px">
         Adjusted${pinned.adjustedFrom?` — the system's pick was ${pinned.adjustedFrom}`:""}.
         ${pinned.exitedFor!=null?`Exited that rung for ${money(pinned.exitedFor)}` :""}${pinned.stakeActual!=null?`, re-staked ${money(pinned.stakeActual)}`:""}${pinned.topUp?` (${money(pinned.topUp)} of new money)`:""}.
@@ -1095,7 +1111,7 @@ function renderLadder(){
         ${pinned.adjusted?"This is your own substitution, so the model's matchup readings are not shown — they described the pick it made, not this one."
           :"Best combination of hitter, matchup, bullpen, defence, park and expected at-bats on the whole slate — one number, every factor in it."}
         Locked at ${etTime(Date.parse(pinned.pinnedAt))} ET and fixed from then on. This name does not change on a refresh.
-        ${locked?"":"<br>Waiting for the alerter's row to reach the record; if it names someone else, that row wins and this card will say so."}
+        ${locked?"":`<br><b style="color:var(--yellow)">This is the board's own read, not the alert.</b> The alerter's pick is the one that counts and has not reached the record yet — if your Telegram names someone else, go with Telegram. This card corrects itself the moment the row lands.`}
       </div>
       <div class="sub" style="margin-top:8px">
         ${pinned.status==="won"?`<b style="color:var(--green)">✓ WON</b> — ${pinned.hits} hit${pinned.hits===1?"":"s"}, graded from the official boxscore.`
