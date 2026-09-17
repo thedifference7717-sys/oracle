@@ -153,7 +153,43 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-17:824141",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T19:56:39.235Z",
+   "firstPitch": "2026-09-17T23:15:00Z",
+   "teams": "HOU vs KC",
+   "venue": "Daikin Park",
+   "price": -175,
+   "prob": 0.5630504881863561,
+   "edge": -0.0733131481772803,
+   "evPct": -11.520637570715481,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 14.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 670541,
+     "name": "Yordan Alvarez",
+     "slot": 2,
+     "p": 0.7455240006552637,
+     "sp": "Seth Lugo"
+    },
+    {
+     "id": 673237,
+     "name": "Yainer Diaz",
+     "slot": 5,
+     "p": 0.7379218333305387,
+     "sp": "Seth Lugo"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-17T19:23:49.113Z"
+ "updated": "2026-09-17T19:56:39.235Z"
 }
