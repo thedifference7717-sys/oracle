@@ -112,7 +112,43 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-17:824305",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T16:11:11.476Z",
+   "firstPitch": "2026-09-17T19:10:00Z",
+   "teams": "SD vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6800489507203406,
+   "edge": 0.0436853143567042,
+   "evPct": 6.864835113196372,
+   "kelly": 0.03003365362023415,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 30.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 687957,
+     "name": "Dustin Harris",
+     "slot": 2,
+     "p": 0.8216139557634985,
+     "sp": "Tanner Gordon"
+    },
+    {
+     "id": 665487,
+     "name": "Fernando Tatis Jr.",
+     "slot": 1,
+     "p": 0.8136468780636334,
+     "sp": "Tanner Gordon"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-17T14:30:28.571Z"
+ "updated": "2026-09-17T16:11:11.476Z"
 }
