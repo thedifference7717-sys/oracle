@@ -40,7 +40,43 @@
     1,
     0
    ]
+  },
+  {
+   "id": "2026-09-17:824464",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T14:01:49.187Z",
+   "firstPitch": "2026-09-17T16:40:00Z",
+   "teams": "LAD vs CIN",
+   "venue": "Great American Ball Park",
+   "price": -175,
+   "prob": 0.5827395872821128,
+   "edge": -0.05362404908152352,
+   "evPct": -8.426636284239414,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 20.5,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 518692,
+     "name": "Freddie Freeman",
+     "slot": 2,
+     "p": 0.767057210359029,
+     "sp": "Brady Singer"
+    },
+    {
+     "id": 669242,
+     "name": "Tommy Edman",
+     "slot": 1,
+     "p": 0.7418238903107416,
+     "sp": "Brady Singer"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-16T03:13:21.968Z"
+ "updated": "2026-09-17T14:01:49.187Z"
 }
