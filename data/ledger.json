@@ -76,7 +76,43 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-17:822924",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T14:30:28.571Z",
+   "firstPitch": "2026-09-17T17:10:00Z",
+   "teams": "TB vs ATH",
+   "venue": "Tropicana Field",
+   "price": -175,
+   "prob": 0.6241013939197401,
+   "edge": -0.012262242443896287,
+   "evPct": -1.9269238126122745,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 650490,
+     "name": "Yandy Díaz",
+     "slot": 1,
+     "p": 0.7950576261717316,
+     "sp": "Jeffrey Springs"
+    },
+    {
+     "id": 802415,
+     "name": "Chandler Simpson",
+     "slot": 6,
+     "p": 0.7686439899090068,
+     "sp": "Jeffrey Springs"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-17T14:01:49.187Z"
+ "updated": "2026-09-17T14:30:28.571Z"
 }
