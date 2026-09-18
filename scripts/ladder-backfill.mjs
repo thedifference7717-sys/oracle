@@ -30,7 +30,14 @@ for (const g of games) {
   for (const side of ["home", "away"]) {
     for (const pp of Object.values(bx?.teams?.[side]?.players || {})) {
       const nm = pp?.person?.fullName;
-      if (!nm || norm(nm) !== norm(wanted)) continue;
+      // Alerts carry the name the feed gave at the time, which may differ in
+      // accents or a suffix from the boxscore's ("Luis Garcia" vs
+      // "Luis García Jr."). Accept an exact normalised match, or one where the
+      // wanted name is a whole-word prefix of the full name. Anything looser
+      // would risk grading the wrong player, so ambiguity still aborts below.
+      if (!nm) continue;
+      const a = norm(nm), b = norm(wanted);
+      if (!(a === b || a.startsWith(b + " "))) continue;
       const bat = pp?.stats?.batting || {};
       found.push({
         gamePk: g.gamePk, id: pp.person.id, name: nm,
@@ -45,7 +52,7 @@ for (const g of games) {
 
 if (!found.length) { console.error(`No batter named "${wanted}" appears in any ${day} boxscore.`); process.exit(2); }
 if (found.length > 1) {
-  console.error(`"${wanted}" is ambiguous on ${day} — ${found.length} matches:`);
+  console.error(`"${wanted}" is ambiguous on ${day} — ${found.length} batters match:`);
   found.forEach(f => console.error(`  id ${f.id}  ${f.name}  ${f.teams}  ${f.hits}-for-${f.ab}`));
   process.exit(3);
 }
