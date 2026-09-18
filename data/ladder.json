@@ -57,20 +57,22 @@
    "teams": "TB vs ATH",
    "sp": "Jeffrey Springs",
    "fromGames": 9,
-   "status": "open"
+   "status": "lost",
+   "hits": 0,
+   "settled": "2026-09-17T19:58:44.338Z"
   }
  ],
- "updated": "2026-09-17T15:35:17.850Z",
+ "updated": "2026-09-17T19:58:44.338Z",
  "state": {
-  "account": 100,
-  "base": 10,
-  "stake": 14,
-  "rung": 2,
-  "cycle": 1,
-  "pl": 0,
+  "account": 90,
+  "base": 12.5,
+  "stake": 12.5,
+  "rung": 1,
+  "cycle": 2,
+  "pl": -10,
   "cycles": {
    "done": 0,
-   "busted": 0
+   "busted": 1
   },
   "canFund": true
  }
