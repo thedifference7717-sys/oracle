@@ -80,19 +80,43 @@
    "status": "lost",
    "hits": 0,
    "settled": "2026-09-17T19:58:44.338Z"
+  },
+  {
+   "id": "2026-09-18:ladder",
+   "date": "2026-09-18",
+   "sport": "MLB",
+   "published": "2026-09-18T21:40:43.268Z",
+   "firstPitch": "2026-09-19T00:10:00Z",
+   "cycle": 3,
+   "rung": 1,
+   "seed": 15.63,
+   "stake": 15.63,
+   "price": -250,
+   "p": 0.7928935452341973,
+   "edge": 0.078607830948483,
+   "pick": "Josh Naylor",
+   "playerId": 647304,
+   "slot": 6,
+   "gk": 824303,
+   "posted": true,
+   "startProb": 0.985,
+   "teams": "SEA @ COL",
+   "sp": "Gabriel Hughes",
+   "fromGames": 15,
+   "status": "open"
   }
  ],
- "updated": "2026-09-18T12:11:17.651Z",
+ "updated": "2026-09-18T21:40:43.269Z",
  "state": {
-  "account": 90,
-  "base": 12.5,
-  "stake": 12.5,
+  "account": 77.5,
+  "base": 15.63,
+  "stake": 15.63,
   "rung": 1,
-  "cycle": 2,
-  "pl": -10,
+  "cycle": 3,
+  "pl": -22.5,
   "cycles": {
    "done": 0,
-   "busted": 1
+   "busted": 2
   },
   "canFund": true
  }
