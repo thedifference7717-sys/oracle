@@ -1,0 +1,58 @@
+# Grade a ladder rung the live alerter missed.
+#
+# Run from the Actions tab (or the API) with the date and the player named in
+# the Telegram alert. The runner has the network access this repo's tooling
+# does not, so the grading happens where the boxscore is actually reachable,
+# and the result is committed to the ledger like any other settled rung.
+name: Ladder backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Slate date of the missed rung (YYYY-MM-DD)"
+        required: true
+      player:
+        description: "Player as named in the alert, e.g. Luis Garcia"
+        required: true
+      stake:
+        description: "Stake that was on it (optional)"
+        required: false
+      price:
+        description: "Price it was taken at (optional)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ladder-backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+
+      - name: Grade it
+        run: |
+          node scripts/ladder-backfill.mjs \
+            "${{ inputs.date }}" "${{ inputs.player }}" \
+            "${{ inputs.stake }}" "${{ inputs.price }}"
+
+      - name: Publish
+        run: |
+          git config user.name  "sportsai-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git add -A data
+          git diff --cached --quiet && { echo "nothing changed"; exit 0; }
+          git commit -q -m "Ladder: backfill ${{ inputs.date }} from the official boxscore"
+          for k in 1 2 3; do
+            git pull --rebase --autostash -q origin main && git push -q origin HEAD:main && exit 0
+            sleep $((k*3))
+          done
+          echo "could not push"; exit 1
