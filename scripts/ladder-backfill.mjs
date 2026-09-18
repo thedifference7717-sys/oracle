@@ -41,9 +41,13 @@ for (const g of games) {
       const bat = pp?.stats?.batting || {};
       found.push({
         gamePk: g.gamePk, id: pp.person.id, name: nm,
+        pos: pp?.position?.abbreviation || null,
+        posType: pp?.position?.type || null,
         hits: bat.hits == null ? null : +bat.hits,
         ab: bat.atBats == null ? null : +bat.atBats,
+        pa: bat.plateAppearances == null ? null : +bat.plateAppearances,
         state: g.status?.abstractGameState, detail: g.status?.detailedState,
+        team: (side === "home" ? g.teams.home : g.teams.away).team.name,
         teams: `${g.teams.away.team.abbreviation || g.teams.away.team.name} @ ${g.teams.home.team.abbreviation || g.teams.home.team.name}`
       });
     }
@@ -58,8 +62,22 @@ if (found.length > 1) {
 }
 
 const f = found[0];
+console.log(`match: ${f.name} (id ${f.id}) ${f.pos || "?"} · ${f.team} · ${f.teams} · ${f.hits}-for-${f.ab} in ${f.pa} PA · ${f.detail}`);
+
+// A pitcher's boxscore entry carries an empty batting line, and grading that
+// as "0 hits, lost" would put a false result on a record page. So would
+// grading a position player who never came to the plate: he did not lose the
+// bet, he did not take it. Refuse both rather than invent a loss.
+if (f.posType === "Pitcher") {
+  console.error(`${f.name} is a pitcher (${f.pos}). This is the wrong Luis-García-shaped person — refusing to grade.`);
+  process.exit(5);
+}
 const final = f.state === "Final" && !/postpon|suspend|cancel/i.test(f.detail || "");
 if (!final && !(f.hits >= 1)) { console.error(`${f.name}'s game is ${f.detail} and he has no hit — nothing to grade yet.`); process.exit(4); }
+if (!(f.hits >= 1) && !(f.pa > 0)) {
+  console.error(`${f.name} recorded no plate appearance — he did not bat, so there is no result to grade.`);
+  process.exit(6);
+}
 
 const status = f.hits >= 1 ? "won" : "lost";
 console.log(`${day}  ${f.name} (id ${f.id})  ${f.teams}  ${f.hits}-for-${f.ab}  ->  ${status.toUpperCase()}`);
@@ -71,6 +89,7 @@ if (L.bets.some(b => b.date === day)) { console.log(`A row for ${day} already ex
 L.bets.push({
   id: `${day}:ladder`, date: day, sport: "MLB",
   pick: f.name, playerId: f.id, gk: f.gamePk, teams: f.teams,
+  team: f.team, pos: f.pos, ab: f.ab, pa: f.pa,
   stake: stakeArg ? +stakeArg : null, price: priceArg ? +priceArg : null,
   hits: f.hits, status, settled: new Date().toISOString(),
   backfilled: true,
