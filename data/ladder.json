@@ -36,6 +36,22 @@
    "settled": "2026-09-16T00:40:46.145Z"
   },
   {
+   "id": "2026-09-16:ladder",
+   "date": "2026-09-16",
+   "sport": "MLB",
+   "pick": "Luis García Jr.",
+   "playerId": 671277,
+   "gk": 823655,
+   "teams": "New York Yankees @ Minnesota Twins",
+   "stake": 14,
+   "price": null,
+   "hits": 0,
+   "status": "lost",
+   "settled": "2026-09-18T12:08:58.977Z",
+   "backfilled": true,
+   "note": "Announced on Telegram but its row never reached the repo; graded afterwards from the official boxscore."
+  },
+  {
    "id": "2026-09-17:ladder",
    "date": "2026-09-17",
    "sport": "MLB",
