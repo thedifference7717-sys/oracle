@@ -409,7 +409,83 @@
    "recovered": true,
    "note": "Alerted on Telegram but its ledger row never reached the repo; rebuilt from the run's own saved state, so it carries no publication timestamp.",
    "settled": "2026-09-19T18:16:41.294Z"
+  },
+  {
+   "id": "2026-09-19:824461",
+   "date": "2026-09-19",
+   "sport": "MLB",
+   "published": "2026-09-19T19:45:21.692Z",
+   "firstPitch": "2026-09-19T22:40:00Z",
+   "teams": "CHC vs CIN",
+   "venue": "Great American Ball Park",
+   "price": -175,
+   "prob": 0.5990926338904712,
+   "edge": -0.03727100247316517,
+   "evPct": -5.8568718172116725,
+   "kelly": 0,
+   "soft": 0.06995718768120562,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 19.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 621438,
+     "name": "Tyrone Taylor",
+     "slot": 4,
+     "p": 0.7672828947505347,
+     "sp": "Nick Lodolo"
+    },
+    {
+     "id": 608324,
+     "name": "Alex Bregman",
+     "slot": 2,
+     "p": 0.7640951148302175,
+     "sp": "Nick Lodolo"
+    }
+   ],
+   "status": "open"
+  },
+  {
+   "id": "2026-09-19:824304",
+   "date": "2026-09-19",
+   "sport": "MLB",
+   "published": "2026-09-19T21:33:19.072Z",
+   "firstPitch": "2026-09-20T00:10:00Z",
+   "teams": "SEA vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6523142480544897,
+   "edge": 0.015950611690853322,
+   "evPct": 2.506524694276946,
+   "kelly": 0.010966045537461638,
+   "soft": 0.09427752716055543,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 23.5,
+   "qualifiedOn": "soft",
+   "sameTeam": false,
+   "legs": [
+    {
+     "id": 668227,
+     "name": "Randy Arozarena",
+     "slot": 2,
+     "p": 0.8068734815163415,
+     "sp": "Jose Quintana"
+    },
+    {
+     "id": 664983,
+     "name": "Jake McCarthy",
+     "slot": 1,
+     "p": 0.8039671259409384,
+     "sp": "Bryce Miller"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-19T18:16:41.294Z"
+ "updated": "2026-09-19T21:33:19.077Z"
 }
