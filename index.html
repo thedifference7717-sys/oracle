@@ -662,6 +662,16 @@ async function load(){
     }catch(e){
       if(!ladderHist){try{ladderHist=JSON.parse(localStorage.getItem("dd.ledgerCache")||"null");}catch(e2){}}
     }
+    // Paint the ladder NOW, before the slate is built.
+    //
+    // buildBoard() throws whenever the MLB feed is unreachable, and the catch
+    // at the bottom of this function only sets the status line — so the ladder
+    // card was left empty on a feed outage even though data/ladder.json had
+    // already loaded and the card needs nothing else to draw itself. The one
+    // bet that runs every day rendered as a blank box for a reason that has
+    // nothing to do with it. It is drawn again after the board resolves, which
+    // is what fills in today's pick.
+    renderLadder();
     board=await M.buildBoard({getJSON,cal:cal||null,american:setting("price"),
       onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
@@ -675,7 +685,11 @@ async function load(){
       ? ` · <b style="color:var(--yellow)">⚠ ${board.degraded.join(" + ")} feed unavailable — those inputs fell back to league average</b>`:"";
     status(`✓ ${board.pairs.length} games · ${board.candidates.length} hitters (${posted} in confirmed lineups) · lg avg ${av(board.lg.avg)} · ${calN?calN+" graded legs feeding calibration":"calibration: no history yet"} · ${board.date} ${new Date().toLocaleTimeString()}${deg}`,
       (board.degraded||[]).length?"var(--yellow)":"var(--green)");
-  }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
+  }catch(e){
+    status(`✗ ${e.message}. Feed may be blocked — try again. The ladder below is unaffected: it reads the published ledger, not the live feed.`,"var(--red)");
+    setProg(0);
+    try{renderLadder();}catch(e2){}
+  }
   finally{btn.disabled=false;}
 }
 

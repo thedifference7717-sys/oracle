@@ -233,6 +233,17 @@ function renderLadder(K, first){
   let live=null; try{ live=(window.DDModel||null)&&window.DDModel.ladder(K.bets,{account:(K.cfg&&K.cfg.account)||100}); }catch(e){}
   const cyc=live?live.cycle:st.cycle, base=live?live.base:st.base;
   const acct=live?live.account:st.account, pl=live?live.pl:st.pl;
+  // The alerter writes its own standing into the file; this page replays the
+  // same rows with the same engine. They are two computations of one number,
+  // so they can only disagree if a row changed after the alerter last wrote,
+  // or if something is corrupt. Either way the reader should be told rather
+  // than shown whichever one happens to win. No false positives are possible:
+  // identical inputs through identical code agree by construction.
+  const drift = (live && st && st.account != null && Math.abs(live.account - st.account) > 0.005)
+    ? `<div class="note" style="border-color:#FFD60A55"><b>These rows and the alerter's own stored total disagree.</b>
+        Replaying the rungs below gives ${money(live.account)}; the figure the alerter last wrote is ${money(st.account)}.
+        The replay is what is shown above, because it is derived from the rows you can see. The gap means a row was
+        corrected after the alerter last published, and it closes on the next run.</div>` : "";
   const res=b=>b.status==="won"?'<span class="res won">WON</span>'
             :b.status==="lost"?'<span class="res lost">LOST</span>'
             :b.status==="open"?'<span class="res open">OPEN</span>'
@@ -246,6 +257,7 @@ function renderLadder(K, first){
       <div class="stat"><div class="v">${w}-${l}</div><div class="l">Rungs won–lost${open?` · ${open} open`:""}</div></div>
       <div class="stat"><div class="v">${cyc||1}</div><div class="l">Cycle · seed ${money(base||0)}</div></div>
     </div>
+    ${drift}
     <div class="note">
       <b>Read this by the cycle, not the rung.</b> A rung losing is not the system losing money five times over —
       only a cycle's seed is at stake, so a miss on day four costs exactly what a miss on day one costs. What

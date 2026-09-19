@@ -411,12 +411,23 @@ function ladder(history, cfg) {
     // `realisedBefore` is money already banked on the same day (a partial exit)
     // that the settlement below must not double-count. Both are only ever set
     // by a hand-recorded adjustment; the ordinary path is untouched.
-    const at = b.stakeActual != null ? +b.stakeActual : stake;
     const banked = +b.realisedBefore || 0;
     // Money put in beyond the cycle's seed. Once this is non-zero the ladder's
     // "only the seed is ever yours" property no longer holds, and the card has
     // to say so rather than keep quoting the seed as the exposure.
-    const topUp = b.topUp != null ? +b.topUp : 0;
+    // `topUp` is an absolute dollar figure and therefore only true for the
+    // bankroll it was recorded against. `topUpPct` is the same thing as a
+    // share of the cycle's seed, so it scales: a rung mis-sized at 1.12x the
+    // seed was mis-sized by 12% for every follower, whatever their account.
+    // Prefer the proportional form; the absolute one stays for exchange
+    // adjustments, which really are one bettor's own cash.
+    const topUp = b.topUp != null ? +b.topUp
+                : b.topUpPct != null ? round2(base * +b.topUpPct) : 0;
+    // What actually rode. An exchange adjustment states it outright; otherwise
+    // it is the derived stake plus anything topped up, because a row that
+    // charges the cycle for $14 must not print $12.50 in the stake column.
+    const at = b.stakeActual != null ? +b.stakeActual
+             : topUp ? round2(stake + topUp) : stake;
     const row = { date: b.date, cycle, rung, stake: at, price: b.price, pick: b.pick || null,
                   p: b.p != null ? b.p : null, status: b.status, pl: 0, closed: null };
     // cashIn is the whole truth for the cycle: seed plus anything added later.

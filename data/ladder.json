@@ -79,7 +79,9 @@
    "fromGames": 9,
    "status": "lost",
    "hits": 0,
-   "settled": "2026-09-17T19:58:44.338Z"
+   "settled": "2026-09-17T19:58:44.338Z",
+   "topUpPct": 0.12,
+   "note": "Staked at 1.12x the cycle's seed. The 9/16 rung was missing from this file when 9/17 was sized, so the ladder still believed it was on cycle 1 rung 2 and rolled the earlier win forward instead of restarting the cycle. The extra 12% was real money at risk and is charged here rather than quietly dropped."
   },
   {
    "id": "2026-09-18:ladder",
@@ -132,14 +134,14 @@
    "status": "open"
   }
  ],
- "updated": "2026-09-19T17:10:55.608Z",
+ "updated": "2026-09-19T18:21:58.419Z",
  "state": {
-  "account": 77.5,
+  "account": 76,
   "base": 15.63,
   "stake": 21.88,
   "rung": 2,
   "cycle": 3,
-  "pl": -22.5,
+  "pl": -24,
   "cycles": {
    "done": 0,
    "busted": 2
