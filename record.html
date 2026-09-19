@@ -132,6 +132,12 @@ td.num{text-align:right}
 </div>
 <div class="wrap" id="body"><div class="empty"><span class="spin">⟳</span> Loading the ledger…</div></div>
 
+<!-- The ladder's cycle standing is replayed here with the same engine the board
+     and the alerter use, so a backfilled rung moves this page without anyone
+     having to remember to rewrite the stored state. If it fails to load the
+     section falls back to that stored state, which is correct but can lag. -->
+<script src="dd-model.js"></script>
+
 <script>
 // ── where this record starts, and why it says so ───────────────────────────
 // This page reports the current model only. Everything before 2026-09-11 ran
@@ -205,6 +211,66 @@ function renderOpening(O){
     </div>`;
 }
 
+// ── The Ladder ─────────────────────────────────────────────────────────────
+// The record page was built before the ladder existed and was never taught to
+// read data/ladder.json, so the one bet that actually runs every single day
+// has had no section here at all. The doubles ledger it does read only gains a
+// row when a game clears the soft-arm bar, which on most slates is nothing —
+// hence a record that looked frozen while the ladder was betting daily.
+//
+// Shown separately from the doubles for the same reason PlAIybook is: a
+// compounding single-leg rung and a two-man parlay share neither a stake nor a
+// price, and one combined figure would describe neither.
+function renderLadder(K, first){
+  if(!K||!Array.isArray(K.bets)||!K.bets.length)return "";
+  const rows=K.bets.slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+  const settled=rows.filter(b=>b.status==="won"||b.status==="lost");
+  const w=settled.filter(b=>b.status==="won").length, l=settled.length-w;
+  const open=rows.filter(b=>b.status==="open").length;
+  const st=K.state||{};
+  // Replay the published rows so the cycle standing here cannot drift from the
+  // board's — same engine, same input.
+  let live=null; try{ live=(window.DDModel||null)&&window.DDModel.ladder(K.bets,{account:(K.cfg&&K.cfg.account)||100}); }catch(e){}
+  const cyc=live?live.cycle:st.cycle, base=live?live.base:st.base;
+  const acct=live?live.account:st.account, pl=live?live.pl:st.pl;
+  const res=b=>b.status==="won"?'<span class="res won">WON</span>'
+            :b.status==="lost"?'<span class="res lost">LOST</span>'
+            :b.status==="open"?'<span class="res open">OPEN</span>'
+            :`<span class="res">${esc(String(b.status||"—").toUpperCase())}</span>`;
+  return `
+    <div class="group-h"${first?' style="border-top:0;margin-top:0;padding-top:8px"':""}><span>The Ladder · one bet a day</span>
+      <small>a single "to record a hit" leg, compounded — tracked apart from the doubles, which share neither its stake nor its price</small></div>
+    <div class="hero">
+      <div class="stat"><div class="v" style="color:${(pl||0)>=0?"var(--green)":"var(--red)"}">${money(acct||0)}</div><div class="l">Account</div></div>
+      <div class="stat"><div class="v" style="color:${(pl||0)>=0?"var(--green)":"var(--red)"}">${(pl||0)>=0?"+":""}${money(pl||0)}</div><div class="l">P&amp;L</div></div>
+      <div class="stat"><div class="v">${w}-${l}</div><div class="l">Rungs won–lost${open?` · ${open} open`:""}</div></div>
+      <div class="stat"><div class="v">${cyc||1}</div><div class="l">Cycle · seed ${money(base||0)}</div></div>
+    </div>
+    <div class="note">
+      <b>Read this by the cycle, not the rung.</b> A rung losing is not the system losing money five times over —
+      only a cycle's seed is at stake, so a miss on day four costs exactly what a miss on day one costs. What
+      compounds against you is the escalation: every busted cycle restarts 25&#37; bigger, which is why the seed
+      above is the number to watch rather than the win-loss line.
+      ${settled.length<20?`<br><b>${settled.length} settled rung${settled.length===1?"":"s"} is far too few to mean anything.</b> This is a log, not evidence.`:""}
+    </div>
+    <div class="panel">
+      <div class="panel-head">Every rung <span>${settled.length} settled${open?` · ${open} open`:""}</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>RESULT</th><th>DATE</th><th>PICK</th><th>GAME</th>
+          <th class="num">STAKE</th><th class="num">PRICE</th><th class="num">HITS</th></tr></thead>
+        <tbody>${rows.map(b=>`<tr>
+          <td>${res(b)}</td>
+          <td style="color:var(--dim)">${esc(b.date||"—")}</td>
+          <td>${esc(b.pick||"—")}${b.backfilled?' <span class="res" style="background:rgba(255,214,10,.16);color:var(--yellow)">BACKFILLED</span>':""}</td>
+          <td style="font-size:12px;color:var(--muted)">${esc(b.teams||"—")}${b.pos?` · ${esc(b.pos)}`:""}</td>
+          <td class="num">${b.stake!=null?money(b.stake):"—"}</td>
+          <td class="num odds">${b.price!=null?(b.price>0?"+":"")+b.price:"—"}</td>
+          <td class="num">${b.hits!=null?b.hits+(b.ab!=null?`/${b.ab}`:""):"—"}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+    </div>`;
+}
+
 // ── PlAIybook, kept separate on purpose ────────────────────────────────────
 // A different sport, a different bet and a different price range. Blending an
 // NFL two-leg prop parlay at +200 into an MLB hit double at -160 would produce
@@ -275,7 +341,12 @@ const decU=a=>a>0?1+a/100:1+100/Math.abs(a);
 // shown row by row and nobody can check them. They are reported separately,
 // by subtraction, and labelled as what they are.
 const ERA_START = "2026-09-10";
-const ERA_NOTE  = "per-game model · confirmed lineups · +2pt bar";
+// What the era note may and may not say: it describes the whole window, so it
+// can only name what held across all of it. The selection bar itself moved
+// inside the window — doubles were gated on a +2pt edge and are now gated on
+// the soft-arm score alone — so naming either bar here would misdescribe half
+// the rows. Name what did not change, and say the bar moved.
+const ERA_NOTE  = "per-game model · confirmed lineups · every pick committed before first pitch";
 
 const $=id=>document.getElementById(id);
 const pct=v=>(v*100).toFixed(1)+"%";
@@ -334,14 +405,14 @@ function stats(bets){
   return {done,w,l,pnl,roi,n,predL,actL,se,z,seW,pw,open:bets.filter(b=>b.status==="open").length};
 }
 
-function render(L, G, O, H, B){
+function render(L, G, O, H, B, K){
   const all=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
   const bets=all.filter(b=>(b.date||"")>=ERA_START);
   const S=stats(bets);
   if(!bets.length){
     $("body").innerHTML=`<div class="note">
         <b>This record starts ${new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} — the day the model was rebuilt.</b> ${ERA_NOTE}. Earlier results came from a different system and are not counted here. The row-by-row ledger below starts 2026-09-15 and fills itself the moment the alerter sends a pick, each row committed before its first pitch. The window before that is shown underneath, recovered from dated commits.
-      </div>${renderOpening(O)}${renderGridiron(G)}${renderHairdwood(H, B)}`;
+      </div>${renderLadder(K, true)}${renderOpening(O)}${renderGridiron(G)}${renderHairdwood(H, B)}`;
     return;
   }
   const proven=Math.abs(S.z)>=1.96;
@@ -351,6 +422,9 @@ function render(L, G, O, H, B){
     ? Math.ceil(S.predL*(1-S.predL)*Math.pow(1.96/(S.actL-S.predL),2)) : null;
 
   const C=cash(bets);
+  const lastDouble = bets.length ? bets[0].date : null;
+  const staleDays = lastDouble
+    ? Math.round((Date.now() - new Date(lastDouble+"T23:59:00Z").getTime()) / 86400000) : 0;
   const era = new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
   $("body").innerHTML=`
     <div class="note era">
@@ -360,6 +434,9 @@ function render(L, G, O, H, B){
       before its first pitch, so the start date and each pick can be checked against the repository's own history
       rather than taken on trust.
     </div>
+    ${renderLadder(K, true)}
+    <div class="group-h"><span>Two BAIgger · MLB</span><small>2-man same-game hit doubles — a separate product from the ladder above, with its own stakes and its own prices, and never combined with it.${
+      lastDouble ? ` Last published ${lastDouble}${staleDays>=2?` — ${staleDays} days ago. This does not publish daily: a double only goes out when a starter's soft-arm score clears the bar, and most slates have nothing that qualifies. The ladder above is the one that bets every day.`:"."}` : ""}</small></div>
     <div class="hero">
       <div class="stat" style="border-color:${C.pnl>=0?'#14F19566':'#FF4D6D66'}">
         <div class="v" style="font-size:30px;color:${C.pnl>=0?'var(--green)':'var(--red)'}">${money(C.pnl)}</div>
@@ -381,7 +458,7 @@ function render(L, G, O, H, B){
           <tr><td>Return on turnover</td><td class="num" style="color:${C.roi>=0?'var(--green)':'var(--red)'}">${C.done.length?(C.roi>=0?"+":"")+(C.roi*100).toFixed(1)+"%":"—"}</td>
               <td class="lead">Profit per dollar risked. The number that actually decides whether this makes money.</td></tr>
           <tr><td>Average stake</td><td class="num">${money(C.avg)}</td>
-              <td class="lead">At ${money(DEFAULT_RATE)} per edge point, a +2pt bet risks ${money(2*DEFAULT_RATE)} and a +7pt bet ${money(7*DEFAULT_RATE)}.</td></tr>
+              <td class="lead">${money(DEFAULT_RATE)} a point, recorded with the bet. These rows were sized on edge points; the rule has since moved to spot points, which does not rewrite them.</td></tr>
           <tr><td>Biggest single win</td><td class="num" style="color:var(--green)">${C.best?money(C.best.ret):"—"}</td>
               <td class="lead">${C.best?C.best.b.teams+" · "+C.best.b.date:"—"}</td></tr>
           <tr><td>Biggest single loss</td><td class="num" style="color:var(--red)">${C.worst?money(C.worst.ret):"—"}</td>
@@ -415,8 +492,10 @@ function render(L, G, O, H, B){
       independently proves each pick predated its first pitch. The PUBLISHED and FIRST PITCH columns below are in
       every row so you can check any of them. Results are graded from the official MLB boxscore and written back
       into the same row; nothing is ever deleted or rewritten.</p>
-      <p><b>Money is real.</b> Each bet's stake is recorded when it is published (edge points × ${money(DEFAULT_RATE)})
-      and never recomputed afterwards, so changing the rate cannot rewrite history. Returns use the price published
+      <p><b>Money is real.</b> Each bet's stake is recorded when it is published (points × ${money(DEFAULT_RATE)})
+      and never recomputed afterwards, so neither changing the rate nor changing which points are counted can
+      rewrite history — the rows above were sized on edge points, later ones on spot points, and each keeps the
+      number it was published with. Returns use the price published
       with the bet. BALANCE is the running total in order of publication, so any row can be traced.</p>
     </div></details>
 
@@ -570,21 +649,23 @@ function M_ladder(bets) {
 
 (async()=>{
   try{
-    const [r,g,o,h,b]=await Promise.all([
+    const [r,g,o,h,b,k]=await Promise.all([
       fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"}),
       fetch("data/gridiron-log.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
       fetch("data/era-open.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
       fetch("data/hairdwood-ladder.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
-      fetch("data/hairdwood-backtest.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+      fetch("data/hairdwood-backtest.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
+      fetch("data/ladder.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
     ]);
     const G = g && g.ok ? await g.json().catch(()=>null) : null;
     const O = o && o.ok ? await o.json().catch(()=>null) : null;
     const H = h && h.ok ? await h.json().catch(()=>null) : null;
     const B = b && b.ok ? await b.json().catch(()=>null) : null;
+    const K = k && k.ok ? await k.json().catch(()=>null) : null;
     // Either sport missing is a normal state, not an error: the MLB ledger is
     // empty until the first pick publishes, and the NFL log only exists in
     // season. Whichever one has rows still renders.
-    render(r.ok ? await r.json() : {bets:[]}, G, O, H, B);
+    render(r.ok ? await r.json() : {bets:[]}, G, O, H, B, K);
   }catch(e){
     $("body").innerHTML=`<div class="empty">Could not load the ledger (${e.message}).<br>It is written by the alerter once picks start publishing.</div>`;
   }
