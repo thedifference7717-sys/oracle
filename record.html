@@ -352,7 +352,12 @@ const $=id=>document.getElementById(id);
 const pct=v=>(v*100).toFixed(1)+"%";
 const money=v=>(v<0?"-":"")+"$"+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const dec=a=>a>0?1+a/100:1+100/Math.abs(a);
-const fmtT=s=>{try{return new Date(s).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}catch(e){return s||"—";}};
+// Sort key for a bet: its publication time where it has one, its slate date
+// otherwise. A recovered row has no publication time and still belongs on its
+// own day rather than at the end of the table.
+const ord=b=>String((b&&b.published)||(b&&b.date)||"");
+const fmtT=s=>{if(s==null||s==="")return "—";const d=new Date(s);if(isNaN(d))return "—";
+  try{return d.toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}catch(e){return String(s);}};
 
 // Dollars actually risked and returned. A flat unit per bet hides the thing
 // that decides whether this makes money: stakes scale with edge, so a +7pt bet
@@ -364,7 +369,7 @@ const stakeOf = b => b.stake != null ? +b.stake
   : Math.max(0, +((b.edge||0)*100).toFixed(1)) * (b.stakeRate || DEFAULT_RATE);
 function cash(bets){
   const done=bets.filter(b=>b.status==="won"||b.status==="lost")
-                 .sort((a,b)=>(a.published||"").localeCompare(b.published||""));
+                 .sort((a,b)=>ord(a).localeCompare(ord(b)));
   let pnl=0, staked=0, peak=0, maxDD=0, run=[];
   let best=null, worst=null;
   for(const b of done){
@@ -406,7 +411,7 @@ function stats(bets){
 }
 
 function render(L, G, O, H, B, K){
-  const all=(L.bets||[]).slice().sort((a,b)=>(b.published||"").localeCompare(a.published||""));
+  const all=(L.bets||[]).slice().sort((a,b)=>ord(b).localeCompare(ord(a)));
   const bets=all.filter(b=>(b.date||"")>=ERA_START);
   const S=stats(bets);
   if(!bets.length){
@@ -497,6 +502,15 @@ function render(L, G, O, H, B, K){
       rewrite history — the rows above were sized on edge points, later ones on spot points, and each keeps the
       number it was published with. Returns use the price published
       with the bet. BALANCE is the running total in order of publication, so any row can be traced.</p>
+      <p><b>RECOVERED means exactly one thing, and it is not good.</b> That bet was alerted and graded, but its
+      ledger row never reached the repository before the run that wrote it ended, so the row was rebuilt
+      afterwards from the alerter's own saved state. It has no publication timestamp and therefore no commit
+      predating first pitch — the one thing that makes the rest of this table checkable. Read those rows as
+      self-reported. They are shown because leaving a placed bet out of the record would be worse, and marked
+      because passing one off as verified would be worse still.</p>
+      <p><b>SOFT is the bar.</b> A double qualifies on the opposing starter's soft-arm score clearing
+      +4.9 points, and nothing else — the edge column is reported beside it, but it does not decide
+      eligibility. Rows published before that rule was adopted have no soft score recorded and show a dash.</p>
     </div></details>
 
     <div class="panel">
@@ -505,17 +519,18 @@ function render(L, G, O, H, B, K){
         <thead><tr>
           <th>RESULT</th><th>GAME</th><th>THE DOUBLE</th>
           <th>PUBLISHED (ET)</th><th>FIRST PITCH (ET)</th>
-          <th class="num">LEAD</th><th class="num">EDGE</th><th class="num">PRICE</th><th class="num">STAKE</th><th class="num">RETURN</th><th class="num">BALANCE</th>
+          <th class="num">LEAD</th><th class="num">SOFT</th><th class="num">EDGE</th><th class="num">PRICE</th><th class="num">STAKE</th><th class="num">RETURN</th><th class="num">BALANCE</th>
         </tr></thead>
         <tbody>${bets.map(b=>{
           const lead=(b.published&&b.firstPitch)?(new Date(b.firstPitch)-new Date(b.published))/60000:null;
           return `<tr>
-            <td><span class="res ${b.status}">${b.status.toUpperCase()}</span></td>
+            <td><span class="res ${b.status}">${b.status.toUpperCase()}</span>${b.recovered?'<div style="margin-top:4px"><span class="res" style="background:rgba(255,214,10,.16);color:var(--yellow)">RECOVERED</span></div>':""}</td>
             <td>${b.teams}<div class="lead">${b.date}${b.venue?" · "+b.venue:""}</div></td>
             <td>${b.legs.map(L=>`${L.name} <span class="lead">#${L.slot} ${Math.round(L.p*100)}%</span>`).join("<br>")}</td>
             <td style="font-size:12px;color:var(--muted)">${fmtT(b.published)}</td>
             <td style="font-size:12px;color:var(--muted)">${fmtT(b.firstPitch)}</td>
-            <td class="num" style="color:${lead>0?'var(--green)':'var(--red)'}">${lead==null?"—":Math.round(lead)+"m"}</td>
+            <td class="num" style="color:${lead==null?'var(--dim)':lead>0?'var(--green)':'var(--red)'}">${lead==null?"—":Math.round(lead)+"m"}</td>
+            <td class="num" style="color:${b.soft>=0.049?'var(--green)':'var(--dim)'}">${b.soft==null?"—":(b.soft*100>=0?"+":"")+(b.soft*100).toFixed(1)}</td>
             <td class="num" style="color:${b.edge>0?'var(--green)':'var(--red)'}">${(b.edge*100>=0?"+":"")+(b.edge*100).toFixed(1)}</td>
             <td class="num" style="color:var(--yellow)">${b.price>0?"+":""}${b.price}</td>
             <td class="num">${money(stakeOf(b))}</td>
