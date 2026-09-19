@@ -16,6 +16,7 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { execSync } from "child_process";
+import { pathToFileURL } from "url";
 import M from "../dd-model.js";
 
 const STATE_FILE = "state.json";
@@ -31,34 +32,100 @@ const LEDGER = "data/ledger.json";
 // verifiable and one that is merely asserted, and it is the entire asset of a
 // picks business. It lives in the repo rather than the Actions cache because
 // the cache is disposable and a track record cannot be.
-function readLedger() {
+//
+// THE RECORD CANNOT DEPEND ON ONE WRITE LANDING.
+//
+// data/ledger.json is a TRACKED file. The run loop commits and pushes it after
+// every pass, and a pass that cannot push leaves the row only in the working
+// tree — where the next `git pull --rebase --autostash` can revert it, and
+// where a cancelled runner loses it outright. Meanwhile `D.seen[key]` lives in
+// gitignored state.json, which no git operation touches and the Actions cache
+// carries forward. So the two disagree in exactly the way that hurts: state
+// says the game is decided, the ledger has no row, and the per-game loop skips
+// the game forever. The bet was alerted, was graded, and never appeared in the
+// record.
+//
+// That is what happened on 2026-09-18: two doubles went out on Telegram, both
+// cashed, and data/ledger.json has not changed since the 17th.
+//
+// The ladder already had this fixed. The doubles now get the same three
+// defences: read the ledger as the UNION of this checkout, what is actually
+// published on origin/main, and the rows this runner holds in state; keep a
+// copy of every row in that same gitignored state; and reconcile the two on
+// every pass so a row that went missing is rebuilt rather than skipped.
+let ledgerStateRows = [];
+function readLedgerLocal() {
   try { const L = JSON.parse(readFileSync(LEDGER, "utf8")); if (Array.isArray(L.bets)) return L; } catch (e) {}
-  return { v: 1, sport: "MLB", bets: [] };
+  return null;
+}
+function readLedgerOrigin() {
+  try {
+    const raw = execSync(`git show origin/main:${LEDGER} 2>/dev/null`, { encoding: "utf8" });
+    const L = JSON.parse(raw);
+    return Array.isArray(L.bets) ? L : null;
+  } catch (e) { return null; }   // not fetched, not committed yet, or no git
+}
+function readLedger() {
+  const local = readLedgerLocal(), origin = readLedgerOrigin();
+  const base = local || origin || { v: 1, sport: "MLB", bets: [] };
+  const byId = new Map();
+  // A settled row always beats an open one, whichever copy it came from: the
+  // only way these disagree is that one side graded the bet and the other has
+  // not seen it yet, and losing a grade is worse than losing a timestamp.
+  const put = b => {
+    if (!b || !b.id) return;
+    const prev = byId.get(b.id);
+    if (!prev || (prev.status === "open" && b.status !== "open")) byId.set(b.id, b);
+  };
+  (origin ? origin.bets : []).forEach(put);
+  (local ? local.bets : []).forEach(put);
+  ledgerStateRows.forEach(put);
+  const bets = [...byId.values()]
+    .sort((a, b) => String(a.published || a.date || "").localeCompare(String(b.published || b.date || "")));
+  if (local && bets.length !== local.bets.length) {
+    console.log(`ledger: merged — ${local.bets.length} local + ${origin ? origin.bets.length : 0} published = ${bets.length} rows.`);
+  }
+  return { ...base, bets };
 }
 function writeLedger(L) {
   L.updated = new Date().toISOString();
   mkdirSync("data", { recursive: true });
   writeFileSync(LEDGER, JSON.stringify(L, null, 1));
 }
-function ledgerOpen(key, day, g, d) {
-  const L = readLedger();
-  if (L.bets.some(b => b.id === key)) return;            // never publish a pick twice
-  L.bets.push({
-    id: key, date: day, sport: "MLB",
-    published: new Date().toISOString(),                  // when we sent it
-    firstPitch: g.gameDate,                               // what it must precede
-    teams: d.teams, venue: d.venue || null,
-    price: PRICE, prob: d.prob, edge: d.edge, evPct: d.evPct, kelly: d.kelly,
-    stakeRate: PER_SPOT_PT, stakeBasis: "spot",
-    stake: +stakeFor(d).toFixed(2),
+// Keep a copy of the row where git cannot reach it. This is what lets the next
+// pass tell "never bet" apart from "bet, and the row was lost".
+function _setLedgerStateRows(rows) { ledgerStateRows = Array.isArray(rows) ? rows : []; }
+function rememberLedgerRow(D, row) {
+  if (!row || !row.id) return;
+  ledgerStateRows = ledgerStateRows.filter(b => b.id !== row.id).concat([row]);
+  if (D) D.ledgerRows = ledgerStateRows;
+}
+function ledgerRowFor(key, b, d, g) {
+  return {
+    id: key, date: b.date, sport: "MLB",
+    published: b.published || null,                       // when we sent it
+    firstPitch: b.firstPitch || (g ? g.gameDate : null),  // what it must precede
+    teams: b.teams, venue: d.venue || null,
+    price: b.price != null ? b.price : PRICE,
+    prob: d.prob, edge: d.edge, evPct: d.evPct, kelly: d.kelly,
+    soft: d.soft != null ? d.soft : null, softBar: MIN_SOFT,
+    stakeRate: b.stakeRate != null ? b.stakeRate : PER_SPOT_PT, stakeBasis: "spot",
+    stake: b.stake != null ? b.stake : +stakeFor(d).toFixed(2),
     qualifiedOn: "soft",
     sameTeam: !!d.sameTeam,
     legs: [d.a, d.b].map(c => ({ id: c.id, name: c.name, slot: c.slot, p: c.p, sp: c.sp || null })),
     status: "open"
-  });
-  writeLedger(L);
+  };
 }
-function ledgerSettle(key, won, hits) {
+function ledgerOpen(key, day, g, d, D, meta) {
+  const L = readLedger();
+  if (L.bets.some(b => b.id === key)) return;            // never publish a pick twice
+  const row = ledgerRowFor(key, meta, d, g);
+  L.bets.push(row);
+  writeLedger(L);
+  rememberLedgerRow(D, row);
+}
+function ledgerSettle(key, won, hits, D) {
   const L = readLedger();
   const b = L.bets.find(x => x.id === key);
   if (!b || b.status !== "open") return;
@@ -66,6 +133,43 @@ function ledgerSettle(key, won, hits) {
   b.settled = new Date().toISOString();
   b.hits = hits;
   writeLedger(L);
+  rememberLedgerRow(D, b);
+}
+// Every pass: make the ledger agree with what state says was actually bet.
+// Runs over every day state still holds, not just today, so a row lost on a
+// previous day is recovered as soon as a run carrying this code starts.
+function reconcileLedger(D, games) {
+  const L = readLedger();
+  let added = 0, settled = 0;
+  for (const [key, b] of Object.entries(D.bets || {})) {
+    const d = b.double;
+    if (!d || !d.a || !d.b) continue;
+    let row = L.bets.find(x => x.id === key);
+    if (!row) {
+      row = ledgerRowFor(key, b, d, (games || []).find(x => x.gamePk === b.gk));
+      // A row rebuilt after the fact cannot claim the thing that makes this
+      // record worth anything — a commit that predates first pitch. Say so on
+      // the row rather than quietly stamping it with today's time.
+      if (!b.published) {
+        row.recovered = true;
+        row.note = "Alerted on Telegram but its ledger row never reached the repo; rebuilt from the run's own saved state, so it carries no publication timestamp.";
+      }
+      L.bets.push(row); added++;
+    }
+    const want = b.results && b.results.cashed ? "won" : b.results && b.results.dead ? "lost" : "open";
+    if (want !== "open" && row.status === "open") {
+      row.status = want;
+      row.settled = row.settled || new Date().toISOString();
+      if (row.hits == null && b.results.hits) row.hits = b.results.hits;
+      settled++;
+    }
+    rememberLedgerRow(D, row);
+  }
+  if (added || settled) {
+    L.bets.sort((a, b) => String(a.published || a.date || "").localeCompare(String(b.published || b.date || "")));
+    writeLedger(L);
+    console.log(`ledger: recovered ${added} missing row(s) and settled ${settled} from state.`);
+  }
 }
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -525,6 +629,9 @@ async function main() {
   D.bets = D.bets || {};              // `${day}:${gamePk}` -> { date, teams, gk, double, results }
   D.seen = D.seen || {};              // `${day}:${gamePk}` -> "bet" | "noedge" | "missed"
   D.cal = D.cal || { v: SNAP_V, legs: {}, global: { n: 0, hits: 0, sump: 0 } };
+  // Rows this runner has published, held where git cannot revert them. Loaded
+  // before anything reads the ledger, because readLedger() merges them in.
+  ledgerStateRows = Array.isArray(D.ledgerRows) ? D.ledgerRows : [];
   if (D.cal.v !== SNAP_V) { console.log("Model version changed — resetting calibration."); D.cal = { v: SNAP_V, legs: {}, global: { n: 0, hits: 0, sump: 0 } }; }
   let changed = false;
 
@@ -570,6 +677,21 @@ async function main() {
       if (/^\d{4}-\d{2}-\d{2}$/.test(d0) && d0 < keepFrom) { delete store[k]; changed = true; }
     }
   }
+  // The held ledger rows keep a longer window than D.bets: they are the only
+  // copy of a row whose push has not landed, and three days is not much rope
+  // if the repo is unreachable over a weekend. Two weeks bounds the file
+  // without making a lost row unrecoverable.
+  const rowsFrom = M.ymd(new Date(Date.now() - 14 * 86400000));
+  if (ledgerStateRows.length) {
+    const kept = ledgerStateRows.filter(b => !b.date || b.date >= rowsFrom);
+    if (kept.length !== ledgerStateRows.length) { ledgerStateRows = kept; D.ledgerRows = kept; changed = true; }
+  }
+
+  // Before deciding anything new, make the published record agree with what
+  // state says was actually bet — on every day state still holds, not just
+  // today. Placed above the per-game loop and above the "nothing alerted yet"
+  // return so a quiet day still repairs a noisy one.
+  try { reconcileLedger(D, games); } catch (e) { console.log("ledger reconcile failed:", e.message); }
 
   const now = Date.now();
   for (const g of games) {
@@ -603,9 +725,14 @@ async function main() {
       continue;
     }
     await alertGame(day, g, d);
-    D.bets[key] = { date: day, teams: d.teams, gk: g.gamePk, double: d, results: {} };
+    const meta = {
+      date: day, teams: d.teams, gk: g.gamePk, double: d, results: {},
+      published: new Date().toISOString(), firstPitch: g.gameDate,
+      price: PRICE, stakeRate: PER_SPOT_PT, stake: +stakeFor(d).toFixed(2)
+    };
+    D.bets[key] = meta;
     D.seen[key] = "bet"; changed = true;
-    ledgerOpen(key, day, g, d);
+    ledgerOpen(key, day, g, d, D, meta);
     console.log(`game ${g.gamePk} (${d.teams}): ALERTED at edge ${(d.edge * 100).toFixed(1)}pts.`);
   }
 
@@ -672,15 +799,17 @@ async function main() {
       cashed++; D.record.w++;
       gradeLeg(d.a, true); gradeLeg(d.b, true);
       await tg(`💣 <b>CASHED — ${b.teams}</b>\nBoth hit! ${d.a.name} + ${d.b.name}\n${tally()}`);
-      st.cashed = true; changed = true; console.log(`${b.teams} cashed.`);
-      ledgerSettle(`${day}:${b.gk}`, true, [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0]);
+      st.cashed = true; st.hits = [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0];
+      changed = true; console.log(`${b.teams} cashed.`);
+      ledgerSettle(`${day}:${b.gk}`, true, st.hits, D);
     } else if (fin[b.gk]) {
       dead++; D.record.l++;
       gradeLeg(d.a, hA); gradeLeg(d.b, hB);
       const cold = [!hA ? d.a.name : null, !hB ? d.b.name : null].filter(Boolean).join(" & ");
       await tg(`💀 <b>DEAD — ${b.teams}</b>\nHitless: ${cold} (final)\n${tally()}`);
-      st.dead = true; changed = true; console.log(`${b.teams} dead.`);
-      ledgerSettle(`${day}:${b.gk}`, false, [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0]);
+      st.dead = true; st.hits = [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0];
+      changed = true; console.log(`${b.teams} dead.`);
+      ledgerSettle(`${day}:${b.gk}`, false, st.hits, D);
     } else if (inCount === 1 && !st.half) {
       const got = hA ? d.a.name : d.b.name, need = hA ? d.b.name : d.a.name;
       await tg(`✅ <b>1/2 IN — ${b.teams}</b>\n${got} has a hit · need ${need}`);
@@ -722,4 +851,13 @@ async function main() {
   console.log(`Done — 💣 ${cashed} / 💀 ${dead} of ${todays.length} alerted.${changed ? " [state updated]" : ""}`);
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+// Run when invoked as a script; stay inert when imported, so the ledger
+// recovery logic can be exercised by a test instead of only in production.
+const _direct = (() => {
+  const entry = process.argv[1];
+  if (!entry) return false;                 // -e / REPL: not a script run
+  try { return import.meta.url === pathToFileURL(entry).href; } catch (e) { return true; }
+})();
+if (_direct) main().catch(e => { console.error(e); process.exit(1); });
+
+export { readLedger, writeLedger, ledgerOpen, ledgerSettle, reconcileLedger, rememberLedgerRow, _setLedgerStateRows };
