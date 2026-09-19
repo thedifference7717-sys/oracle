@@ -131,15 +131,17 @@
    "teams": "TB vs BOS",
    "sp": "Brayan Bello",
    "fromGames": 15,
-   "status": "open"
+   "status": "won",
+   "hits": 1,
+   "settled": "2026-09-19T21:59:54.879Z"
   }
  ],
- "updated": "2026-09-19T18:21:58.419Z",
+ "updated": "2026-09-19T21:59:54.880Z",
  "state": {
   "account": 76,
   "base": 15.63,
-  "stake": 21.88,
-  "rung": 2,
+  "stake": 30.63,
+  "rung": 3,
   "cycle": 3,
   "pl": -24,
   "cycles": {
