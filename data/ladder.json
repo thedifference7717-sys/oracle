@@ -103,15 +103,17 @@
    "teams": "SEA @ COL",
    "sp": "Gabriel Hughes",
    "fromGames": 15,
-   "status": "open"
+   "status": "won",
+   "hits": 1,
+   "settled": "2026-09-19T00:25:36.954Z"
   }
  ],
- "updated": "2026-09-18T21:40:43.269Z",
+ "updated": "2026-09-19T00:25:36.954Z",
  "state": {
   "account": 77.5,
   "base": 15.63,
-  "stake": 15.63,
-  "rung": 1,
+  "stake": 21.88,
+  "rung": 2,
   "cycle": 3,
   "pl": -22.5,
   "cycles": {
