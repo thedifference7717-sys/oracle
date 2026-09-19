@@ -367,7 +367,17 @@ const dec=a=>a>0?1+a/100:1+100/Math.abs(a);
 // Sort key for a bet: its publication time where it has one, its slate date
 // otherwise. A recovered row has no publication time and still belongs on its
 // own day rather than at the end of the table.
-const ord=b=>String((b&&b.published)||(b&&b.date)||"");
+//
+// The id tiebreak is not decoration. Recovered rows carry no publication time,
+// so every row from the same day shares a key. Array.sort is stable, which
+// means ties keep insertion order in BOTH directions — reversing the
+// comparator does not reverse tied rows. The table renders newest-first while
+// the running balance accumulates oldest-first, so those two orders stopped
+// being reverses of each other and the BALANCE column appeared to jump around:
+// 9/18 read -$86.36 above -$72.79, as if the balance rose going back in time.
+// Appending the id makes the key unique, so the two orders are exact reverses
+// and the column reads straight down.
+const ord=b=>String((b&&b.published)||(b&&b.date)||"")+"|"+String((b&&b.id)||"");
 const fmtT=s=>{if(s==null||s==="")return "—";const d=new Date(s);if(isNaN(d))return "—";
   try{return d.toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});}catch(e){return String(s);}};
 
