@@ -221,6 +221,26 @@ function renderOpening(O){
 // Shown separately from the doubles for the same reason PlAIybook is: a
 // compounding single-leg rung and a two-man parlay share neither a stake nor a
 // price, and one combined figure would describe neither.
+// Bets that settled but have no row here, and cannot be given one.
+//
+// A record that quietly omits what it cannot show is not a record. The count
+// comes from the calibration log, which is written by different code on a
+// different schedule, so these are not estimates — the bets are known to have
+// happened, and only their detail is lost. scripts/ledger-audit.mjs checks
+// this file against that log on every run.
+function renderGaps(GAPS){
+  const rows=(GAPS&&Array.isArray(GAPS.gaps))?GAPS.gaps:[];
+  if(!rows.length)return "";
+  const w=rows.reduce((t,g)=>t+(+g.w||0),0), l=rows.reduce((t,g)=>t+(+g.l||0),0);
+  return `<div class="note" style="border-color:#FFD60A55">
+    <b>${w+l} settled bet${w+l===1?"":"s"} (${w}W ${l}L) ${w+l===1?"is":"are"} missing from the table above, and not counted in any figure on this page.</b>
+    ${rows.map(g=>`<br>· <b>${esc(g.date)}</b> — ${g.w}W ${g.l}L. ${esc(g.reason)}`).join("")}
+    <br>These are counted in the all-time calibration record, which is why that number and this table do not
+    match. They are disclosed rather than absorbed: folding them into the headline would make the rows stop
+    adding up, and dropping them would flatter the record by hiding ${l>w?"more losses than wins":"real bets"}.
+  </div>`;
+}
+
 function renderLadder(K, first){
   if(!K||!Array.isArray(K.bets)||!K.bets.length)return "";
   const rows=K.bets.slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
@@ -432,14 +452,14 @@ function stats(bets){
   return {done,w,l,pnl,roi,n,predL,actL,se,z,seW,pw,open:bets.filter(b=>b.status==="open").length};
 }
 
-function render(L, G, O, H, B, K){
+function render(L, G, O, H, B, K, GAPS){
   const all=(L.bets||[]).slice().sort((a,b)=>ord(b).localeCompare(ord(a)));
   const bets=all.filter(b=>(b.date||"")>=ERA_START);
   const S=stats(bets);
   if(!bets.length){
     $("body").innerHTML=`<div class="note">
         <b>This record starts ${new Date(ERA_START+"T12:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})} — the day the model was rebuilt.</b> ${ERA_NOTE}. Earlier results came from a different system and are not counted here. The row-by-row ledger below starts 2026-09-15 and fills itself the moment the alerter sends a pick, each row committed before its first pitch. The window before that is shown underneath, recovered from dated commits.
-      </div>${renderLadder(K, true)}${renderOpening(O)}${renderGridiron(G)}${renderHairdwood(H, B)}`;
+      </div>${renderGaps(GAPS)}${renderLadder(K, true)}${renderOpening(O)}${renderGridiron(G)}${renderHairdwood(H, B)}`;
     return;
   }
   const proven=Math.abs(S.z)>=1.96;
@@ -562,6 +582,8 @@ function render(L, G, O, H, B, K){
           </tr>`;}).join("")}</tbody>
       </table></div>
     </div>
+
+    ${renderGaps(GAPS)}
 
     <div class="note" style="border-color:#FF4D6D55">
       ⚠ Model estimates, not advice, and past results do not predict future ones. Sports betting carries real risk of loss — bet only what you can afford to lose. 21+ and void where prohibited.
@@ -686,23 +708,25 @@ function M_ladder(bets) {
 
 (async()=>{
   try{
-    const [r,g,o,h,b,k]=await Promise.all([
+    const [r,g,o,h,b,k,gp]=await Promise.all([
       fetch("data/ledger.json?t="+Date.now(),{cache:"no-store"}),
       fetch("data/gridiron-log.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
       fetch("data/era-open.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
       fetch("data/hairdwood-ladder.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
       fetch("data/hairdwood-backtest.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
-      fetch("data/ladder.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+      fetch("data/ladder.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
+      fetch("data/ledger-gaps.json?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
     ]);
     const G = g && g.ok ? await g.json().catch(()=>null) : null;
     const O = o && o.ok ? await o.json().catch(()=>null) : null;
     const H = h && h.ok ? await h.json().catch(()=>null) : null;
     const B = b && b.ok ? await b.json().catch(()=>null) : null;
     const K = k && k.ok ? await k.json().catch(()=>null) : null;
+    const GAPS = gp && gp.ok ? await gp.json().catch(()=>null) : null;
     // Either sport missing is a normal state, not an error: the MLB ledger is
     // empty until the first pick publishes, and the NFL log only exists in
     // season. Whichever one has rows still renders.
-    render(r.ok ? await r.json() : {bets:[]}, G, O, H, B, K);
+    render(r.ok ? await r.json() : {bets:[]}, G, O, H, B, K, GAPS);
   }catch(e){
     $("body").innerHTML=`<div class="empty">Could not load the ledger (${e.message}).<br>It is written by the alerter once picks start publishing.</div>`;
   }
