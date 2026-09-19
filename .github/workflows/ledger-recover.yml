@@ -16,6 +16,15 @@
 name: Recover missing ledger rows
 
 on:
+  # Hourly, because the record has to keep itself right without anyone
+  # watching. Recovery used to live only inside the alerter's six-hour loop,
+  # which meant a run that was cancelled, that failed to push, or that simply
+  # was not running left the record short until a human noticed — which is
+  # exactly how three days of bets went missing. This job is small, idempotent
+  # and in its own concurrency group, so it cannot queue behind the alerter and
+  # cannot make anything worse by running when there is nothing to do.
+  schedule:
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -33,6 +42,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          # The audit diffs consecutive data/model-log.json commits, so it
+          # needs the history, not just the tip.
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -50,7 +62,17 @@ jobs:
       - name: Reconcile the ledger against it
         run: node scripts/ledger-recover.mjs
 
+      # Independent of everything above: does the published record contain
+      # every double that was actually bet? Compares the ledger against the
+      # calibration log, which is written by different code on a different
+      # schedule. Runs AFTER the recovery so it judges the repaired file, and
+      # fails the job when the record is short — a red run is the only thing
+      # that turns a silent gap into a visible one.
+      - name: Audit the record for completeness
+        run: node scripts/ledger-audit.mjs
+
       - name: Publish whatever it recovered
+        if: always()
         run: |
           git config user.name  "sportsai-bot"
           git config user.email "noreply@users.noreply.github.com"
