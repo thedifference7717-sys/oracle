@@ -495,7 +495,45 @@
     1,
     1
    ]
+  },
+  {
+   "id": "2026-09-20:824462",
+   "date": "2026-09-20",
+   "sport": "MLB",
+   "published": "2026-09-20T14:45:39.903Z",
+   "firstPitch": "2026-09-20T17:40:00Z",
+   "teams": "CHC vs CIN",
+   "venue": "Great American Ball Park",
+   "price": -175,
+   "prob": 0.5623071008352721,
+   "edge": -0.07405653552836422,
+   "evPct": -11.637455583028666,
+   "kelly": 0,
+   "soft": 0.0683599297997457,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 18.75,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 691718,
+     "name": "Pete Crow-Armstrong",
+     "slot": 1,
+     "p": 0.7588252023907218,
+     "sp": "Rhett Lowder"
+    },
+    {
+     "id": 663538,
+     "name": "Nico Hoerner",
+     "slot": 6,
+     "p": 0.7226078215992809,
+     "sp": "Rhett Lowder"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-20T01:16:16.754Z"
+ "updated": "2026-09-20T14:45:39.908Z"
 }
