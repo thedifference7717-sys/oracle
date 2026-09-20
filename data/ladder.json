@@ -157,15 +157,17 @@
    "teams": "COL vs SEA",
    "sp": "Kade Anderson",
    "fromGames": 15,
-   "status": "open"
+   "status": "won",
+   "hits": 1,
+   "settled": "2026-09-20T20:42:27.844Z"
   }
  ],
- "updated": "2026-09-20T16:10:24.763Z",
+ "updated": "2026-09-20T20:42:27.844Z",
  "state": {
   "account": 76,
   "base": 15.63,
-  "stake": 30.63,
-  "rung": 3,
+  "stake": 42.88,
+  "rung": 4,
   "cycle": 3,
   "pl": -24,
   "cycles": {
