@@ -533,7 +533,45 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-20:824300",
+   "date": "2026-09-20",
+   "sport": "MLB",
+   "published": "2026-09-20T16:12:30.033Z",
+   "firstPitch": "2026-09-20T19:10:00Z",
+   "teams": "SEA vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.645229052626203,
+   "edge": 0.00886541626256665,
+   "evPct": 1.3931368412604672,
+   "kelly": 0.006094973680514593,
+   "soft": 0.13012706970875243,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 28,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 686527,
+     "name": "Dominic Canzone",
+     "slot": 3,
+     "p": 0.7960543897562589,
+     "sp": "Tomoyuki Sugano"
+    },
+    {
+     "id": 647304,
+     "name": "Josh Naylor",
+     "slot": 6,
+     "p": 0.7944979700379431,
+     "sp": "Tomoyuki Sugano"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-20T14:45:39.908Z"
+ "updated": "2026-09-20T16:12:30.038Z"
 }
