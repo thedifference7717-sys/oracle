@@ -3,61 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#050510">
+<meta name="theme-color" content="#000000">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>SportsAI · Backtest Lab</title>
 <link rel="icon" type="image/svg+xml" href="sportsai.svg">
 <link rel="apple-touch-icon" href="sportsai-180.png">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050510;--bg2:#08081A;--bg3:#0D0D20;--border:#1A1A35;--text:#F0F0FF;--muted:#B4BCC8;--dim:#8C95A4;--green:#14F195;--red:#FF4D6D;--yellow:#FBBF24;--blue:#60A5FA;--orange:#F7931A;--purple:#A78BFA}
+/* The same sheet the three boards run, so the lab is not the one page on the
+   site in a different typeface. Every class the render code emits is kept. */
+:root{
+  --bg:#000;--bg2:#1C1C1E;--bg3:#2C2C2E;--elev:#1C1C1E;
+  --border:rgba(84,84,88,.6);--hair:rgba(84,84,88,.35);
+  --text:#FFF;--muted:rgba(235,235,245,.6);--dim:rgba(235,235,245,.35);
+  --green:#30D158;--red:#FF453A;--yellow:#FFD60A;--blue:#0A84FF;
+  --orange:#FF9F0A;--purple:#BF5AF2;
+  --sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,Roboto,sans-serif;
+  --num:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --pad:20px;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100%}
-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
-#topbar{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0A0A1E,#070714);border-bottom:1px solid var(--border);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.brand{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:.28em;color:var(--purple);opacity:.85;margin-bottom:2px}
-.logo{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:.05em;color:#EDEAFF;text-shadow:0 0 14px #A78BFA66}
-.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
-.controls{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin-left:auto}
-.ctrl-group{display:flex;flex-direction:column;gap:3px}
-.ctrl-lbl{font-size:9px;color:var(--muted);letter-spacing:.08em}
-.ctrl-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 8px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;outline:none;width:74px}
-.navlink{align-self:flex-end;padding:11px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:700;font-family:'Orbitron',monospace;text-decoration:none}
-.run-btn{padding:11px 20px;background:linear-gradient(90deg,#A78BFA,#627EEA);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;letter-spacing:.06em;font-family:'Orbitron',monospace;cursor:pointer}
-.run-btn:disabled{opacity:.5;cursor:wait}
-#progress-wrap{height:3px;background:var(--bg2);display:none}
-#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#A78BFA,var(--green));transition:width .2s}
-#status{font-size:13px;color:var(--blue);padding:11px 18px;min-height:18px;border-bottom:1px solid var(--border);background:var(--bg2)}
-.wrap{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sys);
+  -webkit-font-smoothing:antialiased;min-height:100%;font-size:15px;line-height:1.5}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 56px)}
+b,strong{font-weight:600}
+#topbar{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.72);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:.5px solid var(--border);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) var(--pad) 12px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--purple);margin-bottom:1px}
+.logo{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.logo-sub{font-size:11px;color:var(--dim);margin-top:2px;font-variant-numeric:tabular-nums}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.ctrl-group{display:flex;flex-direction:column;gap:5px}
+.ctrl-lbl{font-size:11px;color:var(--dim)}
+.ctrl-input{background:var(--bg3);border:none;border-radius:10px;padding:9px 10px;color:var(--text);
+  font-family:var(--num);font-size:14px;font-weight:500;outline:none;width:78px;text-align:center}
+.navlink{padding:8px 13px;background:var(--bg3);border:none;border-radius:980px;color:var(--text);
+  font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
+.navlink:active{opacity:.6}
+.run-btn{padding:8px 17px;background:var(--blue);border:none;border-radius:980px;color:#fff;
+  font-size:13px;font-weight:600;font-family:var(--sys);cursor:pointer}
+.run-btn:active{opacity:.7}
+.run-btn:disabled{opacity:.4;cursor:wait}
+#progress-wrap{height:2px;background:transparent;display:none}
+#progress-bar{height:100%;width:0%;background:var(--blue);transition:width .25s ease}
+#status{font-size:12px;color:var(--muted);padding:10px var(--pad);min-height:16px;
+  border-bottom:.5px solid var(--hair);font-variant-numeric:tabular-nums}
+.wrap{padding:16px var(--pad);display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 @media(max-width:980px){.wrap{grid-template-columns:1fr}}
-.panel{background:linear-gradient(160deg,#0D0D1E,var(--bg2));border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.panel.hr{border-color:#F7931A40}.panel.db{border-color:#60A5FA40}.panel.ht{border-color:#14F19540}
-.phead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}
-.ptitle{font-family:'Orbitron',monospace;font-size:15px;font-weight:900}
-.psub{font-size:10px;color:var(--muted);margin-top:2px}
-.pnl-hero{text-align:center;padding:18px 10px 6px}
-.pnl-val{font-family:'Orbitron',monospace;font-size:38px;font-weight:900;line-height:1}
-.pnl-cap{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-top:6px}
-.kgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 16px}
-.kbox{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 6px;text-align:center}
-.kv{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;line-height:1}
-.kl{font-size:9px;color:var(--muted);margin-top:4px;letter-spacing:.04em}
-.lead{padding:6px 16px 16px}
-.lead h4{font-size:11px;color:var(--purple);font-family:'Orbitron',monospace;letter-spacing:.06em;margin:10px 0 6px}
-.lrow{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
-.legend{font-size:12px;color:var(--muted);line-height:1.8;padding:6px 18px 0}
+.panel{background:var(--elev);border:none;border-radius:16px;overflow:hidden}
+.panel.hr,.panel.db,.panel.ht{box-shadow:inset 0 0 0 .5px var(--border)}
+.phead{display:flex;align-items:center;gap:11px;padding:15px 17px;border-bottom:.5px solid var(--hair)}
+.ptitle{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.psub{font-size:12px;color:var(--dim);margin-top:2px}
+.pnl-hero{text-align:center;padding:20px 12px 6px}
+.pnl-val{font-size:38px;font-weight:700;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.pnl-cap{font-size:11px;color:var(--dim);margin-top:7px}
+.kgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:13px 17px}
+.kbox{background:var(--bg3);border:none;border-radius:11px;padding:11px 6px;text-align:center}
+.kv{font-size:17px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.kl{font-size:10px;color:var(--dim);margin-top:4px}
+.lead{padding:6px 17px 16px}
+.lead h4{font-size:12px;color:var(--dim);font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;margin:12px 0 6px}
+.lrow{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:8px 0;
+  border-bottom:.5px solid var(--hair);font-variant-numeric:tabular-nums}
+.lrow:last-child{border-bottom:none}
+.legend{font-size:13px;color:var(--muted);line-height:1.68;padding:6px var(--pad) 0}
+.legend b{color:var(--text);font-weight:600}
 .spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.empty{padding:36px 16px;text-align:center;color:var(--dim);font-size:12px;line-height:1.7}
+.empty{padding:40px var(--pad);text-align:center;color:var(--dim);font-size:13px;line-height:1.7}
 </style>
 </head>
 <body>
 <div id="topbar">
-  <div><div class="brand">SPORTSAI</div><div class="logo">BACKTEST LAB</div><div class="logo-sub">CURRENT STRATEGY · ALL 3 BOARDS</div></div>
+  <div>
+    <div class="brand">SPORTSAI</div>
+    <div class="logo">📊 Backtest Lab</div>
+    <div class="logo-sub">current strategy, replayed over a full season</div>
+  </div>
   <div class="controls">
-    <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
+    <a class="navlink" href="record.html">📜 Record</a>
     <a class="navlink" href="./">⚾ Two BAIgger</a>
-    <div class="ctrl-group"><span class="ctrl-lbl">SEASON</span><input class="ctrl-input" id="season" type="number" value="2025" style="width:72px"></div>
+    <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
+    <a class="navlink" href="hairdwood.html">🏀 HAIrdwood</a>
+    <div class="ctrl-group"><span class="ctrl-lbl">Season</span><input class="ctrl-input" id="season" type="number" value="2025" style="width:72px"></div>
     <div class="ctrl-group"><span class="ctrl-lbl">HR ×</span><input class="ctrl-input" id="hrOdds" type="number" step="0.05" value="4.5"></div>
     <div class="ctrl-group"><span class="ctrl-lbl">2B ×</span><input class="ctrl-input" id="dbOdds" type="number" step="0.05" value="3.6"></div>
     <div class="ctrl-group"><span class="ctrl-lbl">HIT ×</span><input class="ctrl-input" id="htOdds" type="number" step="0.05" value="1.4"></div>
@@ -85,7 +117,7 @@ async function getJSON(url){
 async function pool(items,fn,size,onTick){const out=new Array(items.length);let i=0,done=0;const w=async()=>{while(i<items.length){const j=i++;try{out[j]=await fn(items[j]);}catch(e){out[j]=null;}done++;onTick&&onTick(done,items.length);}};await Promise.all(Array.from({length:Math.min(size,items.length||1)},w));return out;}
 const fmt=(n)=>(n<0?"-$":"$")+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 function setProg(p){const w=document.getElementById("progress-wrap"),b=document.getElementById("progress-bar");if(p>0&&p<100){w.style.display="block";b.style.width=p+"%";}else{w.style.display="none";b.style.width="0%";}}
-function status(m,c="var(--blue)"){const e=document.getElementById("status");e.style.color=c;e.innerHTML=m;}
+function status(m,c="var(--muted)"){const e=document.getElementById("status");e.style.color=c;e.innerHTML=m;}
 
 async function leaders(cat,season,n){
   const d=await getJSON(`${API}/stats/leaders?leaderCategories=${cat}&statGroup=hitting&season=${season}&sportId=1&limit=${n}&leaderGameTypes=R`);
