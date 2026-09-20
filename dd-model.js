@@ -394,31 +394,64 @@ function ladder(history, cfg) {
   const C = Object.assign({}, LADDER, cfg || {});
   const seed0 = C.seed != null ? C.seed : seedFor(C);
   let account = C.account, base = seed0, stake = seed0, rung = 1, cycle = 1;
+  // Cash actually committed to the live cycle. Equal to the seed until a
+  // hand-recorded top-up says otherwise.
+  let cashIn = seed0;
   let peak = account, maxDD = 0, staked = 0, cycles = { done: 0, busted: 0 };
   const rows = [];
   for (const b of history || []) {
     const dec = decFromAmerican(b.price) || 1;
-    // Derived, never read back from the row. The published ledger records the
-    // publisher's own stake; replaying that would show every viewer somebody
-    // else's bankroll. The rung, the cycle and the result are shared — the
-    // dollars are each viewer's own.
-    const at = stake;
+    // Derived, never read back from the row — the published ledger records the
+    // publisher's own stake, and replaying that would show every viewer
+    // somebody else's bankroll.
+    //
+    // The exception is a rung that was actually traded differently: on an
+    // exchange a position can be sold before settlement and re-entered at a
+    // size of the bettor's choosing. `stakeActual` is that real number, and
+    // `realisedBefore` is money already banked on the same day (a partial exit)
+    // that the settlement below must not double-count. Both are only ever set
+    // by a hand-recorded adjustment; the ordinary path is untouched.
+    const banked = +b.realisedBefore || 0;
+    // Money put in beyond the cycle's seed. Once this is non-zero the ladder's
+    // "only the seed is ever yours" property no longer holds, and the card has
+    // to say so rather than keep quoting the seed as the exposure.
+    // `topUp` is an absolute dollar figure and therefore only true for the
+    // bankroll it was recorded against. `topUpPct` is the same thing as a
+    // share of the cycle's seed, so it scales: a rung mis-sized at 1.12x the
+    // seed was mis-sized by 12% for every follower, whatever their account.
+    // Prefer the proportional form; the absolute one stays for exchange
+    // adjustments, which really are one bettor's own cash.
+    const topUp = b.topUp != null ? +b.topUp
+                : b.topUpPct != null ? round2(base * +b.topUpPct) : 0;
+    // What actually rode. An exchange adjustment states it outright; otherwise
+    // it is the derived stake plus anything topped up, because a row that
+    // charges the cycle for $14 must not print $12.50 in the stake column.
+    const at = b.stakeActual != null ? +b.stakeActual
+             : topUp ? round2(stake + topUp) : stake;
     const row = { date: b.date, cycle, rung, stake: at, price: b.price, pick: b.pick || null,
                   p: b.p != null ? b.p : null, status: b.status, pl: 0, closed: null };
+    // cashIn is the whole truth for the cycle: seed plus anything added later.
+    // A partial exit is already inside it — recovering $7 of a $14 rung and
+    // re-staking $18.50 means $11.50 of NEW money, so cashIn goes 10 -> 21.50
+    // and the $7 loss is accounted for by construction. Banking it separately
+    // as well would charge it twice.
+    if (topUp) { cashIn = round2(cashIn + topUp); row.topUp = topUp; }
+    if (banked) row.banked = banked;          // shown, not re-applied
     if (b.status === "won") {
       const ret = round2(at * dec);
       row.ret = ret;
       if (rung >= C.rungs) {                                 // cycle complete
-        row.pl = round2(ret - base); row.closed = "complete";
-        account = round2(account + row.pl); staked += base; cycles.done++;
-        cycle++; rung = 1; base = round2(Math.max(0, account) * C.basePct); stake = base;
+        row.pl = round2(ret - cashIn); row.closed = "complete";
+        account = round2(account + row.pl); staked += cashIn; cycles.done++;
+        cycle++; rung = 1; base = round2(Math.max(0, account) * C.basePct); stake = base; cashIn = base;
       } else {                                               // let it ride
         rung++; stake = ret;
       }
     } else if (b.status === "lost") {
-      row.pl = -base; row.closed = "busted";
-      account = round2(account - base); staked += base; cycles.busted++;
-      cycle++; rung = 1; base = round2(base * (1 + C.missGain)); stake = base;
+      // Everything put in this cycle is gone, not just the seed.
+      row.pl = round2(-cashIn); row.closed = "busted";
+      account = round2(account - cashIn); staked += cashIn; cycles.busted++;
+      cycle++; rung = 1; base = round2(base * (1 + C.missGain)); stake = base; cashIn = base;
     } else { rows.push(row); continue; }                     // open — state is frozen here
     peak = Math.max(peak, account);
     maxDD = Math.max(maxDD, peak - account);
@@ -426,7 +459,8 @@ function ladder(history, cfg) {
   }
   const open = (history || []).some(b => b.status === "open");
   return { cfg: C, rows, account, base, stake: round2(stake), rung, cycle, open,
-           atRisk: base, onTable: round2(stake - base),
+           cashIn: round2(cashIn), toppedUp: round2(cashIn - base),
+           atRisk: round2(cashIn), onTable: round2(Math.max(0, stake - cashIn)),
            staked: round2(staked), pl: round2(account - C.account), peak, maxDD: round2(maxDD),
            cycles, canFund: stake <= account + 1e-9 };
 }

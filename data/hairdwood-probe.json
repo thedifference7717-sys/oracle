@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T19:01:06.251Z",
+  "at": "2026-09-16T18:57:30.895Z",
   "day": "2026-01-15",
   "checks": [
     {
@@ -755,13 +755,13 @@
         "odds",
         "againstTheSpread",
         "news",
-        "plays",
         "header",
+        "plays",
         "article",
         "videos",
         "wallclockAvailable",
-        "winprobability",
         "meta",
+        "winprobability",
         "standings"
       ],
       "hasInjuries": true,

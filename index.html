@@ -163,6 +163,16 @@ b,strong{font-weight:600}
 .ld-pick .sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
 .ld-pick .num{font-size:13px;margin-top:9px;display:flex;gap:14px;flex-wrap:wrap;font-variant-numeric:tabular-nums;font-weight:500}
 .ld-wait{display:flex;flex-direction:column;justify-content:center;background:rgba(191,90,242,.12)}
+.ld-orphan{background:rgba(255,214,10,.12)}
+.ld-orphan .l{font-size:16px;font-weight:700;color:var(--yellow)}
+.ld-orphan .s{font-size:12px;color:var(--muted);line-height:1.55;margin-top:7px}
+.ld-orphan code{font-family:var(--num);font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:5px}
+.ld-mine{background:rgba(255,214,10,.10)}
+.ld-why{margin-top:11px;padding-top:10px;border-top:.5px solid var(--hair);display:grid;
+  grid-template-columns:1fr auto;gap:5px 12px;font-size:12px;font-variant-numeric:tabular-nums}
+.ld-why div{display:contents}
+.ld-why span{color:var(--muted)}
+.ld-why b{text-align:right;font-weight:600}
 .ld-wait .l{font-size:12px;font-weight:600;color:var(--purple)}
 .ld-wait .v{font-size:38px;font-weight:700;color:var(--purple);margin:3px 0 7px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .ld-wait .s{font-size:12px;color:var(--muted);line-height:1.5}
@@ -291,7 +301,7 @@ td.num{text-align:right}
     <div class="logo-sub">
       The ladder + hit parlays · Build 9 ·
       <!-- stamped by the deploy; keep on its own line -->
-      <span id="buildsha">e153bd8</span>
+      <span id="buildsha">9b88396</span>
     </div>
   </div>
   <div class="controls">
@@ -302,7 +312,7 @@ td.num{text-align:right}
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
-<div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
+<div id="update-bar"><span id="update-msg">⬆ A newer build is deployed — this page is stale.</span><button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
 
 <div class="section-h lead">
@@ -421,6 +431,101 @@ const gamePrice=gk=>{const p=typedPrice(gk);return p!=null?p:setting("price");};
 // betting, and every customer would open the board to a stranger's bankroll
 // presented as though it were a setting. Until it is answered the ladder shows
 // its setup card instead of dollar figures.
+// Applying a trade adjustment from a link.
+//
+// On an exchange a rung can be exited before settlement and re-entered at a
+// different size, which the ladder cannot see and the reader should not have
+// to type. So an adjustment arrives as a one-tap link — ?adj=date,pick,stake,
+// exitedFor,price — is written into this browser once, and is then stripped
+// from the address so a reload cannot apply it twice.
+//
+// It only ever changes what THIS browser shows. data/ladder.json keeps the
+// pick the system actually made; a personal exit is not part of that record.
+function applyAdjustmentFromUrl(){
+  let q; try{ q=new URLSearchParams(location.search).get("adj"); }catch(e){ return false; }
+  if(!q)return false;
+  const [day,pick,stakeActual,exitedFor,price]=q.split(",").map(x=>(x||"").trim());
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(day||"")||!pick)return false;
+  const prev=pinnedPick[day]||{};
+  const st=parseFloat(stakeActual), ex=parseFloat(exitedFor), pr=parseFloat(price);
+  pinnedPick[day]=Object.assign({},prev,{
+    pick, adjusted:true, adjustedFrom:prev.pick||null,
+    stakeActual:isFinite(st)?st:null,
+    exitedFor:isFinite(ex)?ex:null,
+    // New money is what was re-staked less what came back out of the old rung.
+    topUp:(isFinite(st)&&isFinite(ex))?+(st-ex).toFixed(2):null,
+    realisedBefore:(isFinite(ex)&&prev.stakeActual==null&&isFinite(ex))?null:null,
+    price:isFinite(pr)?pr:null, status:null, playerId:null, gk:prev.gk||null
+  });
+  try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}
+  try{history.replaceState(null,"",location.pathname);}catch(e){}
+  return true;
+}
+
+// The pick, pinned by the board the first moment it can make one.
+//
+// The ladder must NAME a player. An earlier version, when no row had published,
+// showed nothing and offered a box to type one in — which is exactly backwards:
+// choosing the player is the product, not the user's job. And the version
+// before that recomputed the live board every three minutes, so the name moved
+// after it had been bet.
+//
+// So: the instant the lock passes, the board computes the pick once and pins
+// it here, keyed by slate date. From then on that name is what it shows, every
+// refresh, whatever the live ranking does. A published row supersedes the pin
+// when it arrives, because the alerter's committed row is the record — and if
+// the two ever differ, the card says so rather than swapping silently.
+let pinnedPick={};
+try{pinnedPick=JSON.parse(localStorage.getItem("dd.ladderPinned")||"{}")||{};}catch(e){pinnedPick={};}
+// After the store exists, never before: `pinnedPick` is a `let`, so calling
+// this above its declaration threw on the temporal dead zone and took the
+// whole page script down.
+applyAdjustmentFromUrl();
+function pinPick(day,c,edge){
+  if(!day||!c||pinnedPick[day])return pinnedPick[day]||null;
+  pinnedPick[day]={pick:c.name,playerId:c.id,gk:c.gk,p:c.p,slot:c.slot,posted:!!c.posted,
+    startProb:c.startProb,teams:`${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName}`,
+    sp:c.spName||null,edge,pinnedAt:new Date().toISOString(),
+    // why he was chosen, kept with the name so the reasoning cannot drift from it
+    soft:c.soft,offIdx:c.offIdx,spotDelta:c.spotDelta,eAb:c.eAb,venue:c.venue,pf:c.pf,pfHr:c.pfHr,
+    fromN:(board&&board.candidates&&board.candidates.length)||null,
+    fromGames:(board&&board.games&&board.games.length)||null};
+  try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}
+  return pinnedPick[day];
+}
+// Grading is the board's job, not the reader's. The alerter settles from the
+// official boxscore, but its row does not always reach the repo — and a rung
+// whose result nobody records silently freezes the ladder, because tomorrow's
+// stake is yesterday's return. So the board settles its own pinned rungs the
+// same way: one hit is a win, and a hitless FINAL is a loss. A game still in
+// progress stays open; nothing is graded from a game that has not ended.
+async function settlePins(){
+  const open=Object.entries(pinnedPick).filter(([,v])=>!v.status&&v.gk!=null&&v.playerId!=null);
+  if(!open.length)return false;
+  let changed=false;
+  for(const [day,v] of open){
+    try{
+      const sched=await getJSON(`${M.API}/schedule?sportId=1&date=${day}`);
+      const g=(sched?.dates?.[0]?.games||[]).find(x=>x.gamePk===v.gk);
+      const state=g&&g.status&&g.status.abstractGameState;
+      if(state==="Preview")continue;                       // not started
+      const bx=await getJSON(`${M.API}/game/${v.gk}/boxscore`);
+      let hits=null;
+      for(const side of ["home","away"]){
+        const pl=bx?.teams?.[side]?.players||{};
+        for(const pp of Object.values(pl)){
+          if(pp?.person?.id===v.playerId&&pp?.stats?.batting){hits=+pp.stats.batting.hits||0;}
+        }
+      }
+      const final=state==="Final"&&!/postpon|suspend|cancel/i.test((g.status.detailedState||""));
+      if(hits>=1){v.status="won";v.hits=hits;v.settled=new Date().toISOString();changed=true;}
+      else if(final){v.status="lost";v.hits=hits||0;v.settled=new Date().toISOString();changed=true;}
+    }catch(e){/* feed unreachable this pass — try again on the next load */}
+  }
+  if(changed){try{localStorage.setItem("dd.ladderPinned",JSON.stringify(pinnedPick));}catch(e){}}
+  return changed;
+}
+
 let ladderAccount=null;
 try{const v=parseFloat(localStorage.getItem("dd.ladderAccount")); if(isFinite(v)&&v>0)ladderAccount=v;}catch(e){}
 function setLadderAccount(v){
@@ -466,6 +571,12 @@ function setLadderOdds(day,v){
 // with itself.
 const BUILD=(document.getElementById("buildsha")||{textContent:"c598378"}).textContent.trim();
 let liveSha=null;
+// Attempts are counted in localStorage, not sessionStorage: a page launched
+// from the iOS home screen starts a fresh session every time, which would
+// reset the count and put us back to retrying the same doomed reload forever.
+const LS={get(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+          set(k,v){try{localStorage.setItem(k,v);}catch(e){}},
+          del(k){try{localStorage.removeItem(k);}catch(e){}}};
 const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
           set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}};
 // The cache-busting token has to be different on EVERY attempt, not just per
@@ -477,31 +588,66 @@ const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
 // seen, so it must go
 // to the origin. Also strips any ?b= already on the address so the query does
 // not grow with every press.
-function hardReload(){
+async function hardReload(){
   const btn=document.querySelector("#update-bar button");
   if(btn){btn.textContent="UPDATING…";btn.disabled=true;}
   const base=location.pathname.replace(/[?#].*$/,"");
+  if(liveSha)LS.set("dd.upd.tried."+liveSha,String(Date.now()));
+  // THE step that was missing, and the reason pressing the button looked like
+  // it did nothing.
+  //
+  // The old version only navigated to base + "?b=<fresh token>" and trusted a
+  // new URL to mean a new document. It does not. GitHub Pages serves HTML with
+  // a ten-minute max-age through a CDN that keys on the PATH, and WebKit does
+  // the same for a page launched from the iOS home screen — so every one of
+  // those unique-looking URLs was answered with the identical cached copy. The
+  // page reloaded, came back byte-for-byte the same, re-ran checkBuild, found
+  // the same mismatch, and put the bar straight back up.
+  //
+  // `cache:"reload"` is the part that actually bites: it forces a revalidation
+  // against the origin and REWRITES the stored entry, so the navigation that
+  // follows is served the new document rather than the one already held.
+  try{ await fetch(base,{cache:"reload"}); }catch(e){}
   location.replace(base + "?b=" + (liveSha || "new") + "."
     + Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
 }
 async function checkBuild(){
   if(BUILD.charAt(0)==="_")return;            // unstamped: local checkout or branch preview
+  const bar=document.getElementById("update-bar");
   try{
     const r=await fetch("build.json?t="+Date.now(),{cache:"no-store"});
     if(!r.ok)return;
     const j=await r.json();
-    if(!j||!j.sha||j.sha===BUILD)return;
+    if(!j||!j.sha)return;
+    if(j.sha===BUILD){                        // caught up — clear the bar and the bookkeeping
+      if(bar)bar.style.display="none";
+      LS.del("dd.upd.tried."+BUILD);
+      return;
+    }
     liveSha=j.sha;
-    // Reloading onto a URL that carries the new sha defeats the cached entry.
-    // Try that once; if we come back still stale, stop looping and just ask.
-    const key="dd.upd."+j.sha;
-    if(!ss.get(key)){ss.set(key,"1");hardReload();return;}
-    // The automatic attempt has already been spent on this build and we are
-    // still stale, so show the bar and let the press do it — with a fresh
-    // token, which is the part that was broken.
-    document.getElementById("update-bar").style.display="flex";
+    const tried=+LS.get("dd.upd.tried."+j.sha)||0;
+    // One silent attempt per build. With a real cache bypass this now fixes
+    // the ordinary case, so most of the time nobody sees a banner at all.
+    if(!tried && !ss.get("dd.upd."+j.sha)){ss.set("dd.upd."+j.sha,"1");hardReload();return;}
+    // Still stale after an attempt. Say what is actually true instead of
+    // offering the same button again and letting it look broken: nothing on
+    // the page can force a CDN to drop an entry before its time, and — the
+    // part that matters — a stale PAGE does not mean stale NUMBERS. Every
+    // pick, price and result is fetched no-store on each load, so the figures
+    // are current whatever build is drawing them.
     const b=document.querySelector("#update-bar button");
-    if(b){b.disabled=false;b.textContent="UPDATE NOW";}
+    const msg=document.getElementById("update-msg");
+    if(tried){
+      if(msg)msg.innerHTML="⏳ This device is still being served the previous build ("
+        +"<code>"+BUILD+"</code> rather than <code>"+j.sha+"</code>). That clears on its own within about ten "
+        +"minutes. <b>It does not change what you are looking at</b> — picks, prices and results are fetched "
+        +"fresh on every load, so the numbers on this page are current either way.";
+      if(b){b.disabled=false;b.textContent="TRY AGAIN";}
+    }else{
+      if(msg)msg.textContent="⬆ A newer build is deployed — this page is stale.";
+      if(b){b.disabled=false;b.textContent="UPDATE NOW";}
+    }
+    if(bar)bar.style.display="flex";
   }catch(e){/* offline or no build.json — nothing to do */}
 }
 async function getJSON(url){
@@ -567,19 +713,51 @@ async function load(){
     try{const r=await fetch("data/model-log.json?t="+Date.now());if(r.ok)cal=await r.json();}catch(e){/* uncalibrated */}
     // The ladder's settled history. Absent means the ladder has not started;
     // the card then shows rung one off the seed rather than hiding itself.
-    try{const r=await fetch("data/ladder.json?t="+Date.now());if(r.ok)ladderHist=await r.json();}catch(e){/* not started */}
+    // The published ledger, remembered once seen.
+    //
+    // A single failed fetch used to drop ladderHist back to null, which made
+    // the card fall through to its own pinned guess — so a network blip could
+    // put a different name on the board than the one in the Telegram alert.
+    // The alerter's row is the pick; the board must not be able to forget it.
+    try{
+      const r=await fetch("data/ladder.json?t="+Date.now());
+      if(r.ok){
+        ladderHist=await r.json();
+        try{localStorage.setItem("dd.ledgerCache",JSON.stringify(ladderHist));}catch(e){}
+      }else if(!ladderHist){
+        try{ladderHist=JSON.parse(localStorage.getItem("dd.ledgerCache")||"null");}catch(e){}
+      }
+    }catch(e){
+      if(!ladderHist){try{ladderHist=JSON.parse(localStorage.getItem("dd.ledgerCache")||"null");}catch(e2){}}
+    }
+    // Paint the ladder NOW, before the slate is built.
+    //
+    // buildBoard() throws whenever the MLB feed is unreachable, and the catch
+    // at the bottom of this function only sets the status line — so the ladder
+    // card was left empty on a feed outage even though data/ladder.json had
+    // already loaded and the card needs nothing else to draw itself. The one
+    // bet that runs every day rendered as a blank box for a reason that has
+    // nothing to do with it. It is drawn again after the board resolves, which
+    // is what fills in today's pick.
+    renderLadder();
     board=await M.buildBoard({getJSON,cal:cal||null,american:setting("price"),
       onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
     if(!board.pairs.length){status(`No qualifying pairs for ${board.date}.`,"var(--yellow)");renderEmpty();return;}
     render();
+    // Settle any pinned rung whose game has finished, then repaint if it moved.
+    try{ if(await settlePins()) renderLadder(); }catch(e){}
     const posted=board.candidates.filter(c=>c.posted).length;
     const calN=cal&&cal.global?cal.global.n:0;
     const deg=(board.degraded||[]).length
       ? ` · <b style="color:var(--yellow)">⚠ ${board.degraded.join(" + ")} feed unavailable — those inputs fell back to league average</b>`:"";
     status(`✓ ${board.pairs.length} games · ${board.candidates.length} hitters (${posted} in confirmed lineups) · lg avg ${av(board.lg.avg)} · ${calN?calN+" graded legs feeding calibration":"calibration: no history yet"} · ${board.date} ${new Date().toLocaleTimeString()}${deg}`,
       (board.degraded||[]).length?"var(--yellow)":"var(--green)");
-  }catch(e){status(`✗ ${e.message}. Feed may be blocked — try again.`,"var(--red)");setProg(0);}
+  }catch(e){
+    status(`✗ ${e.message}. Feed may be blocked — try again. The ladder below is unaffected: it reads the published ledger, not the live feed.`,"var(--red)");
+    setProg(0);
+    try{renderLadder();}catch(e2){}
+  }
   finally{btn.disabled=false;}
 }
 
@@ -792,7 +970,18 @@ function ladderPick(){
 
 function renderLadder(){
   const el=document.getElementById("ladder"),note=document.getElementById("ldNote");
-  const raw=(ladderHist&&Array.isArray(ladderHist.bets))?ladderHist.bets:[];
+  const published=(ladderHist&&Array.isArray(ladderHist.bets))?ladderHist.bets:[];
+  // A locally recorded rung fills a day the ledger has not published, so the
+  // ladder compounds off the bet that was actually placed rather than skipping
+  // it. A published row always wins over a local one for the same day.
+  const haveDay=new Set(published.map(b=>b.date));
+  const localRows=Object.entries(pinnedPick)
+    .filter(([d])=>!haveDay.has(d))
+    .map(([d,v])=>({date:d,pick:v.pick,playerId:v.playerId,
+                    price:oddsByDay[d]!=null?oddsByDay[d]:(v.price!=null?v.price:null),
+                    stakeActual:v.stakeActual,topUp:v.topUp,realisedBefore:v.realisedBefore,
+                    status:v.status||"open",local:true}));
+  const raw=published.concat(localRows).sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
   // Replay against the prices actually taken, not the ones assumed.
   const hist=raw.map(b=>oddsByDay[b.date]!=null?Object.assign({},b,{price:oddsByDay[b.date]}):b);
   // Every dollar below is computed from the viewer's own account, never from
@@ -826,7 +1015,12 @@ function renderLadder(){
   const today=(board&&board.date)||M.slateYmd();
   // Today's price: what you typed, else what the alerter published for today,
   // else the slip's leg price as a starting guess.
-  const pub=raw.find(b=>b.date===today);
+  // Only a PUBLISHED row counts as locked. Searching the merged list made a
+  // locally recorded pick masquerade as a committed one and render through the
+  // locked panel, which then printed NaN% and an empty publish time because a
+  // hand-entered row carries none of that. Your own entry has its own panel.
+  const pub=published.find(b=>b.date===today);
+  let myPick=pinnedPick[today]||null;
   // Once the alerter has committed a rung, THAT is the pick — not whatever the
   // board would choose if it recomputed now. The committed row is what was
   // published to the repo before first pitch, and a dashboard that quietly
@@ -837,8 +1031,25 @@ function renderLadder(){
   ldLockAt=lk&&!locked?lk.lockAt:null;
   if(ldLockAt==null)ldFired=false;
   const waiting=!locked&&lk&&!lk.open;
+  // After the lock, with nothing published and nothing recorded by hand, the
+  // card must NOT fall back to a live recompute. That is what made a pick that
+  // had already been alerted and bet appear to change: the board was re-ranking
+  // the slate every three minutes and showing whoever led at that moment. A
+  // name that moves after you have bet it is worse than no name, so this state
+  // says plainly that a pick is locked and has not reached the record yet.
+  // The moment the lock passes with nothing published, compute the pick once
+  // and pin it. This is what makes the card always able to name a player
+  // without ever renaming one: after this, `myPick` is read, never recomputed.
+  if(!locked&&!myPick&&lk&&lk.open&&board){
+    const p0=ladderPick();
+    if(p0)pinPick(today,p0.c,p0.edge);
+  }
+  const pinned=pinnedPick[today]||null;
+  // Only true before the board can produce any candidate at all.
+  const orphaned=!locked&&!pinned&&lk&&lk.open;
   const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
-                 :(locked&&locked.price!=null?locked.price:setting("legPrice"));
+                 :(pinnedPick[today]&&pinnedPick[today].price!=null?pinnedPick[today].price
+                 :(locked&&locked.price!=null?locked.price:setting("legPrice")));
   const dec=M.decFromAmerican(todayOdds)||1;
   const typed=oddsByDay[today]!=null;
   // The locked row's probability is the one that was published; the live
@@ -846,7 +1057,12 @@ function renderLadder(){
   // honest without naming anyone.
   const p=locked?locked.p:(pick?pick.c.p:null);
   const risk=p?M.ladderRisk(p,todayOdds,st):null;
-  const stake=st.stake, mine=st.atRisk, house=st.onTable;
+  // The live rung shows what is REALLY on it. A day traded differently on an
+  // exchange carries its own size, and quoting the derived number there would
+  // be showing a stake that is not the one at risk.
+  const pinnedToday=pinnedPick[today]||null;
+  const stake=(pinnedToday&&pinnedToday.stakeActual!=null)?pinnedToday.stakeActual:st.stake;
+  const mine=st.atRisk, house=st.onTable;
   const bar=betBar();
   const lbeToday=1/dec, edgeToday=p!=null?p-lbeToday:null;
   const qualifies=edgeToday!=null&&edgeToday>=bar;
@@ -913,10 +1129,10 @@ function renderLadder(){
     <div class="ld-nb win"><div class="l">If it hits → ${closes?"cycle closes, next seed":"tomorrow's bet"}</div>
       <div class="v">${money(nextIfWin)}</div>
       ${closes?`<div class="s">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
-              :`<div class="s">still only ${money(st.base)} of your money at risk</div>`}</div>
+              :`<div class="s">${st.toppedUp>0?`${money(st.cashIn)} of your money in this cycle (${money(st.base)} seed + ${money(st.toppedUp)} added)`:`still only ${money(st.base)} of your money at risk`}</div>`}</div>
     <div class="ld-nb lose"><div class="l">If it misses → next seed</div>
       <div class="v">${money(nextIfLose)}</div>
-      <div class="s">cycle ends, costs ${money(st.base)} — the seed, whatever day it lands</div></div>
+      <div class="s">cycle ends, costs ${money(st.cashIn)}${st.toppedUp>0?" — the seed plus what you added on top":" — the seed, whatever day it lands"}</div></div>
   </div>`;
 
   const lockedHtml=locked?`
@@ -946,6 +1162,54 @@ function renderLadder(){
         No player rides more than two days running — after that he sits out one placement, so a hot name cannot quietly become the whole system. The bench is computed from the published ledger, so the card and the alert always agree on who is eligible.
         The ladder keeps the clock rather than using the doubles' lineup trigger: it makes one choice across the whole slate, so locking when the first lineups post would mean comparing one real lineup against a dozen projections. An hour out, most lineups are in and the field is real.
       </div></details>
+    </div>`:"";
+
+  // Shown once the lock has passed but no row has reached the ledger. The
+  // alerter has chosen and sent a pick by now; the board simply cannot prove
+  // which, so it refuses to guess and offers to record what you took.
+  // Only reachable when the board has no scored candidate at all — no slate, or
+  // the feed is down. It never asks who to bet; there is simply nothing to name.
+  const orphanHtml=orphaned?`
+    <div class="ld-pick ld-orphan">
+      <div class="l">No pick yet</div>
+      <div class="s">The lock has passed but the board has not scored a single bat — usually the feed is
+      unreachable. Hit refresh; the pick appears and fixes itself the moment one candidate can be priced.</div>
+    </div>`:"";
+
+  const myHtml=pinned?`
+    <div class="ld-pick ld-mine">
+      <div class="nm">${pinned.pick} <span class="tag warn">${pinned.adjusted?"YOUR TRADE":"PROVISIONAL"}</span></div>
+      ${pinned.adjusted?`<div class="sub" style="color:var(--yellow);margin-top:4px">
+        Adjusted${pinned.adjustedFrom?` — the system's pick was ${pinned.adjustedFrom}`:""}.
+        ${pinned.exitedFor!=null?`Exited that rung for ${money(pinned.exitedFor)}` :""}${pinned.stakeActual!=null?`, re-staked ${money(pinned.stakeActual)}`:""}${pinned.topUp?` (${money(pinned.topUp)} of new money)`:""}.
+        The published record still shows the system's pick; this only changes your ladder.</div>`:""}
+      ${pinned.adjusted?"":`<div class="sub">#${pinned.slot||"—"} · ${pinned.teams||""} · ${pinned.sp||"SP TBD"}
+        ${pinned.posted?' · <span style="color:var(--green)">confirmed lineup</span>':pinned.startProb?`<span style="color:var(--yellow)"> · projected, ${pct(pinned.startProb)} to start</span>`:""}</div>`}
+      ${pinned.adjusted?`<div class="num"><span style="color:var(--muted)">Taken at ${todayOdds>0?"+":""}${todayOdds} · not modelled</span></div>`
+        :`<div class="num">
+        <span style="color:var(--blue)">${pct(pinned.p)} to hit</span>
+        <span style="color:var(--yellow)">fair ${M.amOdds(pinned.p)}</span>
+        <span style="color:${edgeToday>=bar?"var(--green)":"var(--red)"}">${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${todayOdds>0?"+":""}${todayOdds}</span>
+      </div>`}
+      ${pinned.adjusted?"":`<div class="ld-why">
+        <div><span>Soft arm / park</span><b style="color:${spotColor(pinned.soft)}">${pts(pinned.soft)}pts</b></div>
+        <div><span>Good bats</span><b style="color:${spotColor(pinned.offIdx)}">${pts(pinned.offIdx)}pts</b></div>
+        <div><span>Spot vs league</span><b style="color:${spotColor(pinned.spotDelta)}">${pts(pinned.spotDelta)}pts</b></div>
+        <div><span>Expected at-bats</span><b>${pinned.eAb!=null?pinned.eAb.toFixed(2):"—"}</b></div>
+        ${pinned.venue?`<div><span>Park</span><b>${pinned.venue}${pinned.pf!=null?` · PF ${pinned.pf}`:""}</b></div>`:""}
+        <div><span>Chosen from</span><b>${pinned.fromN||"—"} bats${pinned.fromGames?` · ${pinned.fromGames} games`:""}</b></div>
+      </div>`}
+      <div class="sub" style="margin-top:7px;color:var(--muted)">
+        ${pinned.adjusted?"This is your own substitution, so the model's matchup readings are not shown — they described the pick it made, not this one."
+          :"Best combination of hitter, matchup, bullpen, defence, park and expected at-bats on the whole slate — one number, every factor in it."}
+        Locked at ${etTime(Date.parse(pinned.pinnedAt))} ET and fixed from then on. This name does not change on a refresh.
+        ${locked?"":`<br><b style="color:var(--yellow)">This is the board's own read, not the alert.</b> The alerter's pick is the one that counts and has not reached the record yet — if your Telegram names someone else, go with Telegram. This card corrects itself the moment the row lands.`}
+      </div>
+      <div class="sub" style="margin-top:8px">
+        ${pinned.status==="won"?`<b style="color:var(--green)">✓ WON</b> — ${pinned.hits} hit${pinned.hits===1?"":"s"}, graded from the official boxscore.`
+          :pinned.status==="lost"?`<b style="color:var(--red)">✗ LOST</b> — hitless at the final, graded from the official boxscore.`
+          :`<b style="color:var(--muted)">OPEN</b> — settles itself from the boxscore once the game ends.`}
+      </div>
     </div>`:"";
 
   const pickHtml=pick?`
@@ -995,14 +1259,14 @@ function renderLadder(){
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
       <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${oddsBox}</div>
-      ${locked?lockedHtml:waiting?waitHtml:pickHtml}
+      ${locked?lockedHtml:pinned?myHtml:waiting?waitHtml:orphaned?orphanHtml:pickHtml}
     </div>
     ${waiting?"":nextBox}
     <div class="ld-steps">${steps}</div>
     <div class="ld-strip">
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account</div></div>
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${st.pl>=0?"+":""}${money(st.pl)}</div><div class="l">P&amp;L</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">Your money at risk</div></div>
+      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">${st.toppedUp>0?`Cash in · ${money(st.base)} seed + ${money(st.toppedUp)} added`:"Your money at risk"}</div></div>
       <div class="ld-box"><div class="v" style="color:var(--purple)">${money(house)}</div><div class="l">House money riding</div></div>
       <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">Cycles done–bust</div></div>
       <div class="ld-box ld-acct" onclick="clearLadderAccount()" title="Change your bankroll"><div class="v" style="color:var(--blue)">${money(ladderAccount)}</div><div class="l">Bankroll · tap to change</div></div>

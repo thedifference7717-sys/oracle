@@ -1,0 +1,86 @@
+# Recover doubles that were alerted but whose ledger row never reached the repo.
+#
+# The row lives in a tracked file; the "this game is already decided" flag lives
+# in gitignored state.json, carried by the Actions cache. When a push fails or a
+# runner is cancelled mid-pass, the flag survives and the row does not, and the
+# alerter then skips the game forever. The alerter reconciles the two on every
+# pass now, but it only does so from inside its own six-hour loop — which holds
+# the `parlaiy-alerts` concurrency group and cannot be inspected while running.
+#
+# This job does the same reconciliation on demand, in its own concurrency group,
+# with logs anyone can read. Caches are shared across workflows in a repository,
+# so `restore-keys: parlaiy-state-` reaches the alerter's state from here.
+#
+# Read-only with respect to state: it restores the cache and never saves one, so
+# it cannot corrupt what the alerter is using.
+name: Recover missing ledger rows
+
+on:
+  # Hourly, because the record has to keep itself right without anyone
+  # watching. Recovery used to live only inside the alerter's six-hour loop,
+  # which meant a run that was cancelled, that failed to push, or that simply
+  # was not running left the record short until a human noticed — which is
+  # exactly how three days of bets went missing. This job is small, idempotent
+  # and in its own concurrency group, so it cannot queue behind the alerter and
+  # cannot make anything worse by running when there is nothing to do.
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ledger-recover
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          # The audit diffs consecutive data/model-log.json commits, so it
+          # needs the history, not just the tip.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Restore the alerter's state
+        uses: actions/cache/restore@v4
+        with:
+          path: state.json
+          key: parlaiy-state-never-matches-on-purpose
+          restore-keys: |
+            parlaiy-state-
+
+      - name: Reconcile the ledger against it
+        run: node scripts/ledger-recover.mjs
+
+      # Independent of everything above: does the published record contain
+      # every double that was actually bet? Compares the ledger against the
+      # calibration log, which is written by different code on a different
+      # schedule. Runs AFTER the recovery so it judges the repaired file, and
+      # fails the job when the record is short — a red run is the only thing
+      # that turns a silent gap into a visible one.
+      - name: Audit the record for completeness
+        run: node scripts/ledger-audit.mjs
+
+      - name: Publish whatever it recovered
+        if: always()
+        run: |
+          git config user.name  "sportsai-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git add -A data
+          git diff --cached --quiet && { echo "nothing to publish"; exit 0; }
+          git commit -q -m "SportsAI: recover ledger rows lost before they were committed"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash -q origin main && git push -q origin HEAD:main && { echo "pushed"; exit 0; }
+            echo "push failed, retry $i"; sleep $((2**i))
+          done
+          echo "could not push"; exit 1

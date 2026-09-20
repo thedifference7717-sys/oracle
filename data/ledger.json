@@ -40,7 +40,462 @@
     1,
     0
    ]
+  },
+  {
+   "id": "2026-09-16:824467",
+   "date": "2026-09-16",
+   "sport": "MLB",
+   "published": null,
+   "firstPitch": null,
+   "teams": "LAD vs CIN",
+   "venue": "Great American Ball Park",
+   "price": -175,
+   "prob": 0.5788616715137592,
+   "edge": -0.05750196484987713,
+   "evPct": -9.036023047837837,
+   "kelly": 0,
+   "soft": 0.061736395725999316,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 18,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 605141,
+     "name": "Mookie Betts",
+     "slot": 2,
+     "p": 0.7662476452415083,
+     "sp": "Andrew Abbott"
+    },
+    {
+     "id": 669242,
+     "name": "Tommy Edman",
+     "slot": 1,
+     "p": 0.7381463196825321,
+     "sp": "Andrew Abbott"
+    }
+   ],
+   "status": "lost",
+   "recovered": true,
+   "note": "Alerted on Telegram but its ledger row never reached the repo; rebuilt from the run's own saved state, so it carries no publication timestamp.",
+   "settled": "2026-09-19T18:16:41.294Z"
+  },
+  {
+   "id": "2026-09-16:822926",
+   "date": "2026-09-16",
+   "sport": "MLB",
+   "published": null,
+   "firstPitch": null,
+   "teams": "TB vs ATH",
+   "venue": "Tropicana Field",
+   "price": -175,
+   "prob": 0.6254766860968111,
+   "edge": -0.01088695026682529,
+   "evPct": -1.7108064705011194,
+   "kelly": 0,
+   "soft": 0.061722111042234795,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 22.5,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 650490,
+     "name": "Yandy Díaz",
+     "slot": 1,
+     "p": 0.7937999607249756,
+     "sp": "Brady Basso"
+    },
+    {
+     "id": 802415,
+     "name": "Chandler Simpson",
+     "slot": 5,
+     "p": 0.7722618344936175,
+     "sp": "Brady Basso"
+    }
+   ],
+   "status": "lost",
+   "recovered": true,
+   "note": "Alerted on Telegram but its ledger row never reached the repo; rebuilt from the run's own saved state, so it carries no publication timestamp.",
+   "settled": "2026-09-19T18:16:41.294Z"
+  },
+  {
+   "id": "2026-09-16:824306",
+   "date": "2026-09-16",
+   "sport": "MLB",
+   "published": null,
+   "firstPitch": null,
+   "teams": "SD vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6437349212392147,
+   "edge": 0.0073712848755783655,
+   "evPct": 1.1583447661623114,
+   "kelly": 0.005067758351960064,
+   "soft": 0.09708377192385731,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 22.75,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 687957,
+     "name": "Dustin Harris",
+     "slot": 2,
+     "p": 0.796349031700994,
+     "sp": "Mason Adams"
+    },
+    {
+     "id": 665487,
+     "name": "Fernando Tatis Jr.",
+     "slot": 1,
+     "p": 0.7935998646287971,
+     "sp": "Mason Adams"
+    }
+   ],
+   "status": "lost",
+   "recovered": true,
+   "note": "Alerted on Telegram but its ledger row never reached the repo; rebuilt from the run's own saved state, so it carries no publication timestamp.",
+   "settled": "2026-09-19T18:16:41.294Z"
+  },
+  {
+   "id": "2026-09-17:824464",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T14:01:49.187Z",
+   "firstPitch": "2026-09-17T16:40:00Z",
+   "teams": "LAD vs CIN",
+   "venue": "Great American Ball Park",
+   "price": -175,
+   "prob": 0.5827395872821128,
+   "edge": -0.05362404908152352,
+   "evPct": -8.426636284239414,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 20.5,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 518692,
+     "name": "Freddie Freeman",
+     "slot": 2,
+     "p": 0.767057210359029,
+     "sp": "Brady Singer"
+    },
+    {
+     "id": 669242,
+     "name": "Tommy Edman",
+     "slot": 1,
+     "p": 0.7418238903107416,
+     "sp": "Brady Singer"
+    }
+   ],
+   "status": "lost",
+   "settled": "2026-09-17T19:23:49.113Z",
+   "hits": [
+    2,
+    0
+   ]
+  },
+  {
+   "id": "2026-09-17:822924",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T14:30:28.571Z",
+   "firstPitch": "2026-09-17T17:10:00Z",
+   "teams": "TB vs ATH",
+   "venue": "Tropicana Field",
+   "price": -175,
+   "prob": 0.6241013939197401,
+   "edge": -0.012262242443896287,
+   "evPct": -1.9269238126122745,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 650490,
+     "name": "Yandy Díaz",
+     "slot": 1,
+     "p": 0.7950576261717316,
+     "sp": "Jeffrey Springs"
+    },
+    {
+     "id": 802415,
+     "name": "Chandler Simpson",
+     "slot": 6,
+     "p": 0.7686439899090068,
+     "sp": "Jeffrey Springs"
+    }
+   ],
+   "status": "lost",
+   "settled": "2026-09-17T19:58:44.333Z",
+   "hits": [
+    0,
+    2
+   ]
+  },
+  {
+   "id": "2026-09-17:824305",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T16:11:11.476Z",
+   "firstPitch": "2026-09-17T19:10:00Z",
+   "teams": "SD vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6800489507203406,
+   "edge": 0.0436853143567042,
+   "evPct": 6.864835113196372,
+   "kelly": 0.03003365362023415,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 30.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 687957,
+     "name": "Dustin Harris",
+     "slot": 2,
+     "p": 0.8216139557634985,
+     "sp": "Tanner Gordon"
+    },
+    {
+     "id": 665487,
+     "name": "Fernando Tatis Jr.",
+     "slot": 1,
+     "p": 0.8136468780636334,
+     "sp": "Tanner Gordon"
+    }
+   ],
+   "status": "won",
+   "settled": "2026-09-17T20:09:01.963Z",
+   "hits": [
+    2,
+    1
+   ]
+  },
+  {
+   "id": "2026-09-17:824141",
+   "date": "2026-09-17",
+   "sport": "MLB",
+   "published": "2026-09-17T19:56:39.235Z",
+   "firstPitch": "2026-09-17T23:15:00Z",
+   "teams": "HOU vs KC",
+   "venue": "Daikin Park",
+   "price": -175,
+   "prob": 0.5630504881863561,
+   "edge": -0.0733131481772803,
+   "evPct": -11.520637570715481,
+   "kelly": 0,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 14.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 670541,
+     "name": "Yordan Alvarez",
+     "slot": 2,
+     "p": 0.7455240006552637,
+     "sp": "Seth Lugo"
+    },
+    {
+     "id": 673237,
+     "name": "Yainer Diaz",
+     "slot": 5,
+     "p": 0.7379218333305387,
+     "sp": "Seth Lugo"
+    }
+   ],
+   "status": "won",
+   "settled": "2026-09-18T00:11:18.105Z",
+   "hits": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": "2026-09-18:823331",
+   "date": "2026-09-18",
+   "sport": "MLB",
+   "published": null,
+   "firstPitch": null,
+   "teams": "PIT vs KC",
+   "venue": "PNC Park",
+   "price": -175,
+   "prob": 0.5396248391401699,
+   "edge": -0.09673879722346646,
+   "evPct": -15.201810992259018,
+   "kelly": 0,
+   "soft": 0.05176201116747747,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 17,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 664040,
+     "name": "Brandon Lowe",
+     "slot": 2,
+     "p": 0.7257674924481174,
+     "sp": "Randy Dobnak"
+    },
+    {
+     "id": 693304,
+     "name": "Nick Gonzales",
+     "slot": 5,
+     "p": 0.7236515593392956,
+     "sp": "Randy Dobnak"
+    }
+   ],
+   "status": "won",
+   "recovered": true,
+   "note": "Alerted on Telegram but its ledger row never reached the repo; rebuilt from the run's own saved state, so it carries no publication timestamp.",
+   "settled": "2026-09-19T18:16:41.294Z"
+  },
+  {
+   "id": "2026-09-18:824303",
+   "date": "2026-09-18",
+   "sport": "MLB",
+   "published": null,
+   "firstPitch": null,
+   "teams": "SEA vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6305136580244292,
+   "edge": -0.005849978339207196,
+   "evPct": -0.9192823104468506,
+   "kelly": 0,
+   "soft": 0.11429475397760314,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 23.75,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 647304,
+     "name": "Josh Naylor",
+     "slot": 6,
+     "p": 0.7916171309807347,
+     "sp": "Gabriel Hughes"
+    },
+    {
+     "id": 686527,
+     "name": "Dominic Canzone",
+     "slot": 3,
+     "p": 0.7806763922144263,
+     "sp": "Gabriel Hughes"
+    }
+   ],
+   "status": "won",
+   "recovered": true,
+   "note": "Alerted on Telegram but its ledger row never reached the repo; rebuilt from the run's own saved state, so it carries no publication timestamp.",
+   "settled": "2026-09-19T18:16:41.294Z"
+  },
+  {
+   "id": "2026-09-19:824461",
+   "date": "2026-09-19",
+   "sport": "MLB",
+   "published": "2026-09-19T19:45:21.692Z",
+   "firstPitch": "2026-09-19T22:40:00Z",
+   "teams": "CHC vs CIN",
+   "venue": "Great American Ball Park",
+   "price": -175,
+   "prob": 0.5990926338904712,
+   "edge": -0.03727100247316517,
+   "evPct": -5.8568718172116725,
+   "kelly": 0,
+   "soft": 0.06995718768120562,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 19.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 621438,
+     "name": "Tyrone Taylor",
+     "slot": 4,
+     "p": 0.7672828947505347,
+     "sp": "Nick Lodolo"
+    },
+    {
+     "id": 608324,
+     "name": "Alex Bregman",
+     "slot": 2,
+     "p": 0.7640951148302175,
+     "sp": "Nick Lodolo"
+    }
+   ],
+   "status": "lost",
+   "settled": "2026-09-20T01:16:16.754Z",
+   "hits": [
+    0,
+    0
+   ]
+  },
+  {
+   "id": "2026-09-19:824304",
+   "date": "2026-09-19",
+   "sport": "MLB",
+   "published": "2026-09-19T21:33:19.072Z",
+   "firstPitch": "2026-09-20T00:10:00Z",
+   "teams": "SEA vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6523142480544897,
+   "edge": 0.015950611690853322,
+   "evPct": 2.506524694276946,
+   "kelly": 0.010966045537461638,
+   "soft": 0.09427752716055543,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 23.5,
+   "qualifiedOn": "soft",
+   "sameTeam": false,
+   "legs": [
+    {
+     "id": 668227,
+     "name": "Randy Arozarena",
+     "slot": 2,
+     "p": 0.8068734815163415,
+     "sp": "Jose Quintana"
+    },
+    {
+     "id": 664983,
+     "name": "Jake McCarthy",
+     "slot": 1,
+     "p": 0.8039671259409384,
+     "sp": "Bryce Miller"
+    }
+   ],
+   "status": "won",
+   "settled": "2026-09-20T01:08:03.262Z",
+   "hits": [
+    1,
+    1
+   ]
   }
  ],
- "updated": "2026-09-16T03:13:21.968Z"
+ "updated": "2026-09-20T01:16:16.754Z"
 }

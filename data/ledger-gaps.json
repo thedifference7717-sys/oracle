@@ -1,0 +1,13 @@
+{
+ "v": 1,
+ "note": "Days where the calibration log records more settled doubles than data/ledger.json holds rows for, and the difference cannot be recovered. Written by hand, never by the alerter. Each entry has to say why, because an unexplained entry here is indistinguishable from hiding a loss. The audit subtracts these before judging the record complete, and record.html discloses them.",
+ "gaps": [
+  {
+   "date": "2026-09-15",
+   "w": 1,
+   "l": 2,
+   "reason": "The per-game ledger's first row was published at 7:13 PM ET on 2026-09-15. Three doubles had already settled that day under the board scheme that preceded it, which recorded only a cumulative win-loss count and no rows. They are counted here and in the all-time calibration record, but there is nothing to show row by row and no way to reconstruct their stakes or prices.",
+   "recoverable": false
+  }
+ ]
+}
