@@ -584,7 +584,10 @@ function setGamePrice(id, v){
 }
 
 const state = { boards: {}, loading: false, propCache: {}, openProps: {}, exchange: null, kprops: {}, propBoard: [], bookLines: null, bets: [], probCal: null, sims: {}, legs: [], parlays: [],
-  legPools: {}, spots: {}, propRows: {}, doubles: [], log: null, lgTs: null, rankError: null, pricedAt: null };
+  legPools: {}, spots: {}, propRows: {}, doubles: [], log: null, lgTs: null, rankError: null, pricedAt: null,
+  // true only while rankProps is actually working, so the card area can tell
+  // "still pricing" apart from "never started".
+  ranking: false };
 
 // ── loading ─────────────────────────────────────────────────────────────────
 async function load(manual){
@@ -609,8 +612,20 @@ async function load(manual){
     status("Board built — " + parts.join("  ·  ") + ". Prices from " + bookName() + ".", "var(--green)");
     render();
     // Props are half the board now, so they arrive without being asked for.
-    // Both steps are best-effort: a failure here must not take the board down.
-    loadExchange().then(() => rankProps()).catch(() => {});
+    //
+    // The exchange step is a BONUS and the props step is the board, and they
+    // were chained the wrong way round: `loadExchange().then(rankProps)` meant
+    // any rejection out of loadExchange — a bad bridge URL, a 500 on one
+    // series, anything — skipped straight to the catch, and rankProps never
+    // ran. state.legPools stayed empty, and an empty legPools with no
+    // rankError rendered the "Pricing the slate…" spinner, which then span for
+    // ever because nothing was left to resolve it. One failure in the optional
+    // half silently emptied the whole board and reported nothing.
+    //
+    // So the exchange's failure is swallowed BEFORE the props are asked for,
+    // and the props run either way: without live exchange prices they fall
+    // back to the committed snapshot, and failing that they say so.
+    loadExchange().catch(() => {}).then(() => rankProps());
   }catch(e){
     setProg(0);
     status("Could not load: " + (e && e.message ? e.message : e) + ". The feed or the proxy is refusing — try refresh.", "var(--red)");
@@ -675,9 +690,17 @@ function renderPairCards(top, all){
         esc(state.rankError) + "</b>.<br>The feeds go down for a minute at a time on a Sunday morning — press <b>⟳ REFRESH</b> and it usually comes straight back.</div>";
       return;
     }
-    const pricing = nothingPriced;
+    // Only claim to be pricing if something actually is. This was
+    // unconditional, so a board whose prop step never ran showed a spinner
+    // that could never resolve — which is what "nothing is being added"
+    // looks like from the outside.
+    const pricing = nothingPriced && (state.loading || state.ranking);
     el.innerHTML = '<div class="empty">' + (pricing
       ? '<span class="spin">⟳</span> Pricing the slate — usage, rosters, injuries and depth charts for every game, then ten thousand simulated afternoons apiece. Fifteen seconds or so.'
+      : nothingPriced
+        ? "The slate loaded, but no player prices came back, so there are no legs to pair. " +
+          "Player lines come from the exchange — open <b>Book vs exchange</b> and press <b>Load exchange</b> — " +
+          "or paste your own book's prop lines under <b>Single player props</b> and press <b>Price my lines</b>."
       : all.length
         ? "No double on the board clears <b>+" + setting("minEdge").toFixed(1) + " edge points</b> at " + M.fmtAm(setting("price")) +
           ". That is a normal slate — of " + all.length + " games priced, the best pair is " +
@@ -1856,6 +1879,7 @@ async function rankProps(usePaste){
   const btn = $("pbRun"), body = $("pb-body");
   if (!Object.keys(state.boards).length){ body.innerHTML = '<div class="empty">Load the board first.</div>'; return; }
   btn.disabled = true;
+  state.ranking = true;
   const pasted = usePaste ? String($("pbPaste").value || "").split("\n").map(parsePropLine).filter(Boolean) : [];
   try{
     const rows = [];
@@ -1978,7 +2002,7 @@ async function rankProps(usePaste){
     // spinner there is how "it was working a minute ago" happens.
     state.rankError = (e && e.message) || String(e);
     render();
-  }finally{ btn.disabled = false; }
+  }finally{ btn.disabled = false; state.ranking = false; }
 }
 
 // ── the range ───────────────────────────────────────────────────────────────
