@@ -484,8 +484,13 @@
      "sp": "Bryce Miller"
     }
    ],
-   "status": "open"
+   "status": "won",
+   "settled": "2026-09-20T01:08:03.262Z",
+   "hits": [
+    1,
+    1
+   ]
   }
  ],
- "updated": "2026-09-19T21:33:19.077Z"
+ "updated": "2026-09-20T01:08:03.262Z"
 }
