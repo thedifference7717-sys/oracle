@@ -332,7 +332,6 @@ textarea{width:100%;background:var(--bg3);border:none;border-radius:11px;color:v
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
-<div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
 <div id="record"></div>
 
@@ -477,6 +476,7 @@ textarea{width:100%;background:var(--bg3);border:none;border-radius:11px;color:v
 <div class="legend" id="legend"></div>
 
 <script src="gridiron-model.js"></script>
+<script src="build-check.js"></script>
 <script>
 "use strict";
 const M = window.GridModel;
@@ -493,38 +493,13 @@ const M = window.GridModel;
 // on every load forever. This file had the spaces and escaped it, but the
 // hazard was structural, not typographical: one source of truth cannot
 // disagree with itself.
-const BUILD = (document.getElementById("buildsha")||{textContent:"c598378"}).textContent.trim();
-let liveSha = null;
 const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
              set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} } };
 // Same fix as the MLB board: the token must differ on EVERY attempt. Keyed on
 // the sha alone, the button navigates to the URL a failed automatic attempt
 // already cached — a cache hit, so pressing it does visibly nothing.
-function hardReload(){
-  const btn = document.querySelector("#update-bar button");
-  if (btn) { btn.textContent = "UPDATING…"; btn.disabled = true; }
-  const base = location.pathname.replace(/[?#].*$/, "");
-  location.replace(base + "?b=" + (liveSha || "new") + "."
-    + Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
-}
-async function checkBuild(){
-  // An unstamped page cannot tell whether it is stale, so it must not claim to
-  // be current either. The stamp now happens on main, where Pages actually
-  // serves from, so this should never be the token in the wild.
-  if (BUILD.charAt(0) === "_") return;
-  try{
-    const r = await fetch("build.json?t=" + Date.now(), { cache:"no-store" });
-    if (!r.ok) return;
-    const j = await r.json();
-    if (!j || !j.sha || j.sha === BUILD) return;
-    liveSha = j.sha;
-    const key = "gi.upd." + j.sha;
-    if (!ss.get(key)) { ss.set(key,"1"); hardReload(); return; }
-    const b = document.querySelector("#update-bar button");
-    if (b) { b.disabled = false; b.textContent = "UPDATE NOW"; }
-    document.getElementById("update-bar").style.display = "flex";
-  }catch(e){}
-}
+
+
 
 const $ = id => document.getElementById(id);
 function status(m, c){ const el = $("status"); el.style.color = c || "var(--muted)"; el.innerHTML = m; }

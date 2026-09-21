@@ -312,7 +312,6 @@ td.num{text-align:right}
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
-<div id="update-bar"><span id="update-msg">⬆ A newer build is deployed — this page is stale.</span><button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
 
 <div class="section-h lead">
@@ -378,6 +377,7 @@ td.num{text-align:right}
 
 <div class="legend" id="legend"></div>
 
+<script src="build-check.js"></script>
 <script src="dd-model.js?v=b9fef9e"></script>
 <script>
 // The engine lives in a separate file as of BUILD 3. If it fails to load,
@@ -569,8 +569,6 @@ function setLadderOdds(day,v){
 // build.json and declared the page stale on every single load, forever, which
 // no amount of reloading could clear. One source of truth cannot disagree
 // with itself.
-const BUILD=(document.getElementById("buildsha")||{textContent:"c598378"}).textContent.trim();
-let liveSha=null;
 // Attempts are counted in localStorage, not sessionStorage: a page launched
 // from the iOS home screen starts a fresh session every time, which would
 // reset the count and put us back to retrying the same doomed reload forever.
@@ -588,68 +586,8 @@ const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
 // seen, so it must go
 // to the origin. Also strips any ?b= already on the address so the query does
 // not grow with every press.
-async function hardReload(){
-  const btn=document.querySelector("#update-bar button");
-  if(btn){btn.textContent="UPDATING…";btn.disabled=true;}
-  const base=location.pathname.replace(/[?#].*$/,"");
-  if(liveSha)LS.set("dd.upd.tried."+liveSha,String(Date.now()));
-  // THE step that was missing, and the reason pressing the button looked like
-  // it did nothing.
-  //
-  // The old version only navigated to base + "?b=<fresh token>" and trusted a
-  // new URL to mean a new document. It does not. GitHub Pages serves HTML with
-  // a ten-minute max-age through a CDN that keys on the PATH, and WebKit does
-  // the same for a page launched from the iOS home screen — so every one of
-  // those unique-looking URLs was answered with the identical cached copy. The
-  // page reloaded, came back byte-for-byte the same, re-ran checkBuild, found
-  // the same mismatch, and put the bar straight back up.
-  //
-  // `cache:"reload"` is the part that actually bites: it forces a revalidation
-  // against the origin and REWRITES the stored entry, so the navigation that
-  // follows is served the new document rather than the one already held.
-  try{ await fetch(base,{cache:"reload"}); }catch(e){}
-  location.replace(base + "?b=" + (liveSha || "new") + "."
-    + Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
-}
-async function checkBuild(){
-  if(BUILD.charAt(0)==="_")return;            // unstamped: local checkout or branch preview
-  const bar=document.getElementById("update-bar");
-  try{
-    const r=await fetch("build.json?t="+Date.now(),{cache:"no-store"});
-    if(!r.ok)return;
-    const j=await r.json();
-    if(!j||!j.sha)return;
-    if(j.sha===BUILD){                        // caught up — clear the bar and the bookkeeping
-      if(bar)bar.style.display="none";
-      LS.del("dd.upd.tried."+BUILD);
-      return;
-    }
-    liveSha=j.sha;
-    const tried=+LS.get("dd.upd.tried."+j.sha)||0;
-    // One silent attempt per build. With a real cache bypass this now fixes
-    // the ordinary case, so most of the time nobody sees a banner at all.
-    if(!tried && !ss.get("dd.upd."+j.sha)){ss.set("dd.upd."+j.sha,"1");hardReload();return;}
-    // Still stale after an attempt. Say what is actually true instead of
-    // offering the same button again and letting it look broken: nothing on
-    // the page can force a CDN to drop an entry before its time, and — the
-    // part that matters — a stale PAGE does not mean stale NUMBERS. Every
-    // pick, price and result is fetched no-store on each load, so the figures
-    // are current whatever build is drawing them.
-    const b=document.querySelector("#update-bar button");
-    const msg=document.getElementById("update-msg");
-    if(tried){
-      if(msg)msg.innerHTML="⏳ This device is still being served the previous build ("
-        +"<code>"+BUILD+"</code> rather than <code>"+j.sha+"</code>). That clears on its own within about ten "
-        +"minutes. <b>It does not change what you are looking at</b> — picks, prices and results are fetched "
-        +"fresh on every load, so the numbers on this page are current either way.";
-      if(b){b.disabled=false;b.textContent="TRY AGAIN";}
-    }else{
-      if(msg)msg.textContent="⬆ A newer build is deployed — this page is stale.";
-      if(b){b.disabled=false;b.textContent="UPDATE NOW";}
-    }
-    if(bar)bar.style.display="flex";
-  }catch(e){/* offline or no build.json — nothing to do */}
-}
+
+
 async function getJSON(url){
   const order=good!=null?[good,...SOURCES.map((_,i)=>i).filter(i=>i!==good)]:SOURCES.map((_,i)=>i);
   let e;for(const i of order){try{const r=await fetch(SOURCES[i](url),{headers:{Accept:"application/json"}});if(!r.ok)throw 0;const j=await r.json();good=i;return j;}catch(x){e=x;}}

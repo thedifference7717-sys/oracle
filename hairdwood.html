@@ -322,7 +322,6 @@ td.num{text-align:right}
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
-<div id="update-bar">⬆ A newer build is deployed — this page is stale.<button onclick="hardReload()">UPDATE NOW</button></div>
 <div id="status"></div>
 
 <div class="section-h lead">
@@ -388,6 +387,7 @@ td.num{text-align:right}
 <div class="legend" id="legend"></div>
 
 <script src="hairdwood-model.js?v=1"></script>
+<script src="build-check.js"></script>
 <script>
 // The engine lives in its own file so the page and any alerter price the same
 // board. If it fails to load, say so in the status bar rather than throwing at
@@ -415,31 +415,10 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",
 // and the no-cache <meta> tags are not honoured for the document itself, so the
 // page has to notice a deploy and pull itself forward. One source of truth —
 // the sha in the visible span — because two stamped copies drift, and did.
-const BUILD=(document.getElementById("buildsha")||{textContent:"_dev"}).textContent.trim();
-let liveSha=null;
 const ss={get(k){try{return sessionStorage.getItem(k);}catch(e){return null;}},
           set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}};
-function hardReload(){
-  const btn=document.querySelector("#update-bar button");
-  if(btn){btn.textContent="UPDATING…";btn.disabled=true;}
-  const base=location.pathname.replace(/[?#].*$/,"");
-  location.replace(base+"?b="+(liveSha||"new")+"."+Date.now().toString(36)+Math.random().toString(36).slice(2,7));
-}
-async function checkBuild(){
-  if(BUILD.charAt(0)==="_")return;            // unstamped: local checkout or branch preview
-  try{
-    const r=await fetch("build.json?t="+Date.now(),{cache:"no-store"});
-    if(!r.ok)return;
-    const j=await r.json();
-    if(!j||!j.sha||j.sha===BUILD)return;
-    liveSha=j.sha;
-    const key="hw.upd."+j.sha;
-    if(!ss.get(key)){ss.set(key,"1");hardReload();return;}
-    document.getElementById("update-bar").style.display="flex";
-    const b=document.querySelector("#update-bar button");
-    if(b){b.disabled=false;b.textContent="UPDATE NOW";}
-  }catch(e){/* offline or no build.json — nothing to do */}
-}
+
+
 
 // ── settings ────────────────────────────────────────────────────────────────
 // The market filter is built from the model's own list, so adding a fifth

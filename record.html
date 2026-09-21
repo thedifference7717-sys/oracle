@@ -136,6 +136,7 @@ td.num{text-align:right}
      and the alerter use, so a backfilled rung moves this page without anyone
      having to remember to rewrite the stored state. If it fails to load the
      section falls back to that stored state, which is correct but can lag. -->
+<script src="build-check.js"></script>
 <script src="dd-model.js"></script>
 
 <script>
@@ -253,6 +254,18 @@ function renderLadder(K, first){
   let live=null; try{ live=(window.DDModel||null)&&window.DDModel.ladder(K.bets,{account:(K.cfg&&K.cfg.account)||100}); }catch(e){}
   const cyc=live?live.cycle:st.cycle, base=live?live.base:st.base;
   const acct=live?live.account:st.account, pl=live?live.pl:st.pl;
+  // The account cannot move in the middle of a cycle — only the seed is ever
+  // at stake, so nothing is banked until the cycle completes or busts. That is
+  // correct, and it is also why this page looked frozen for three days while
+  // the ladder won three in a row: the two headline figures were the only
+  // things being shown, and neither of them is allowed to change until a cycle
+  // ends. What IS moving is the position, so show that too.
+  const rungOf=live?live.rung:(st.rung||1), rungs=(live&&live.cfg?live.cfg.rungs:5);
+  const riding=live?live.stake:st.stake, house=live?live.onTable:null;
+  // `settled` is newest-first (rows are sorted descending), so the current
+  // streak runs from the FRONT. Walking it from the back counts the oldest
+  // rungs instead and reports 1 after three straight wins.
+  const streak=(()=>{ let n=0; for(let i=0;i<settled.length;i++){ if(settled[i].status==="won")n++; else break; } return n; })();
   // The alerter writes its own standing into the file; this page replays the
   // same rows with the same engine. They are two computations of one number,
   // so they can only disagree if a row changed after the alerter last wrote,
@@ -275,11 +288,16 @@ function renderLadder(K, first){
       <div class="stat"><div class="v" style="color:${(pl||0)>=0?"var(--green)":"var(--red)"}">${money(acct||0)}</div><div class="l">Account</div></div>
       <div class="stat"><div class="v" style="color:${(pl||0)>=0?"var(--green)":"var(--red)"}">${(pl||0)>=0?"+":""}${money(pl||0)}</div><div class="l">P&amp;L</div></div>
       <div class="stat"><div class="v">${w}-${l}</div><div class="l">Rungs won–lost${open?` · ${open} open`:""}</div></div>
-      <div class="stat"><div class="v">${cyc||1}</div><div class="l">Cycle · seed ${money(base||0)}</div></div>
+      <div class="stat"><div class="v">${cyc||1} · ${rungOf}/${rungs}</div><div class="l">Cycle · rung, on a ${money(base||0)} seed</div></div>
+      ${open?`<div class="stat"><div class="v" style="color:var(--yellow)">${money(riding||0)}</div>
+        <div class="l">Riding today${house?` · ${money(house)} of it house money`:""}</div></div>`:""}
     </div>
     ${drift}
     <div class="note">
-      <b>Read this by the cycle, not the rung.</b> A rung losing is not the system losing money five times over —
+      <b>Account and P&amp;L only move when a cycle ends.</b> Nothing is banked mid-cycle, so those two figures can
+      sit unchanged for days while the ladder is winning — ${streak>=2?`they have not moved since the cycle-2 bust on 9/17, through ${streak} straight wins`:"that is the rule, not a stalled page"}.
+      The cycle and the amount riding are what move daily, which is why they are up there beside them.
+      <br><b>Read this by the cycle, not the rung.</b> A rung losing is not the system losing money five times over —
       only a cycle's seed is at stake, so a miss on day four costs exactly what a miss on day one costs. What
       compounds against you is the escalation: every busted cycle restarts 25&#37; bigger, which is why the seed
       above is the number to watch rather than the win-loss line.

@@ -7,23 +7,56 @@ import M from "../dd-model.js";
 import { readFileSync } from "fs";
 
 let failures = 0;
-const ok = (name, got, want) => {
-  const pass = Math.abs(got - want) < 0.005;
+const okTol = (name, got, want, tol) => {
+  const pass = Math.abs(got - want) <= tol;
   if (!pass) failures++;
   console.log(`  ${pass ? "ok  " : "FAIL"} ${name}${pass ? "" : `  got ${got}, want ${want}`}`);
 };
+const ok = (name, got, want) => okTol(name, got, want, 0.005);
 
-console.log("the published history replays to the standing on the card");
+// Invariants, not snapshots.
+//
+// The first version of this file asserted the live standing — account 76,
+// cycle 3, "today's stake" 21.88 — which is a photograph of one afternoon, not
+// a rule. Three rungs later the ladder had moved on and the test failed while
+// the code was perfectly correct. A test that has to be edited every time the
+// product does its job is worse than no test: it trains you to ignore it.
+// So assert what must hold on every possible history instead.
+console.log("the replay agrees with what the alerter published");
 const K = JSON.parse(readFileSync(new URL("../data/ladder.json", import.meta.url), "utf8"));
 const L = M.ladder(K.bets, { account: 100 });
-// 100 - 10 (cycle 1's seed) - 14 (cycle 2, every dollar of it fresh cash,
-// because cycle 1's winnings were already lost on the 16th).
-ok("account", L.account, 76);
-ok("profit and loss", L.pl, -24);
-ok("cycle", L.cycle, 3);
-ok("seed", L.base, 15.63);
-ok("today's stake", L.stake, 21.88);
-ok("the file's stored state agrees with the replay", K.state.account, L.account);
+ok("stored state matches a fresh replay", K.state.account, L.account);
+ok("stored seed matches", K.state.base, L.base);
+ok("stored next stake matches", K.state.stake, L.stake);
+ok("profit and loss is account minus the starting bankroll", L.pl, L.account - 100);
+
+console.log("the account only moves when a cycle ends");
+{
+  let acct = 100, moves = 0, ends = 0;
+  for (const r of L.rows) {
+    if (r.closed) ends++;
+    if (Math.abs((r.pl || 0)) > 0.005) moves++;
+  }
+  // Every row that changed the account is a row that closed a cycle, and no
+  // other row did. This is why the headline can sit still for days.
+  const movedWithoutEnding = L.rows.filter(r => Math.abs(r.pl || 0) > 0.005 && !r.closed).length;
+  ok("no row changes the account without ending a cycle", movedWithoutEnding, 0);
+  ok("cycles ended equals busts plus completions", ends, L.cycles.busted + L.cycles.done);
+}
+
+console.log("a winning rung rolls its whole return onto the next one");
+{
+  const rows = L.rows;
+  let checked = 0, wrong = 0;
+  for (let i = 0; i < rows.length - 1; i++) {
+    const a = rows[i], b = rows[i + 1];
+    if (a.status !== "won" || a.closed) continue;   // mid-cycle win only
+    checked++;
+    if (Math.abs(b.stake - a.ret) > 0.02) wrong++;
+  }
+  ok("every mid-cycle win is followed by a stake equal to its return", wrong, 0);
+  ok("and there was at least one to check", checked > 0 ? 1 : 0, 1);
+}
 
 console.log("the 9/17 rung is charged what was actually risked");
 const r17 = L.rows.find(r => r.date === "2026-09-17");
@@ -31,9 +64,19 @@ ok("stake shown", r17.stake, 14);
 ok("charged to the account", r17.pl, -14);
 ok("and it is flagged, not silently absorbed", r17.topUp, 1.5);
 
-console.log("a mis-sized rung scales to any bankroll");
-for (const [acct, want] of [[100, 76], [500, 380], [1000, 760]]) {
-  ok(`$${acct} bankroll`, M.ladder(K.bets, { account: acct }).account, want);
+console.log("the whole ladder scales linearly with the bankroll");
+// Stated as a ratio so it keeps holding as the history grows: doubling the
+// account doubles every figure, including the 9/17 correction.
+// Exactly linear is too strong a claim for the seed: every cycle's escalation
+// is rounded to the cent, so a bigger bankroll rounds at a bigger scale and
+// the two drift by up to a cent per escalation. 10 -> 12.50 -> 15.63 at $100;
+// 50 -> 62.50 -> 78.13 at $500, against 15.63 x 5 = 78.15. That is the money
+// being real, not an error — so allow a cent per cycle and no more.
+for (const k of [5, 10]) {
+  const scaled = M.ladder(K.bets, { account: 100 * k });
+  const cycles = scaled.cycles.busted + scaled.cycles.done + 1;
+  ok(`x${k} bankroll gives x${k} account`, scaled.account, L.account * k);
+  okTol(`x${k} bankroll gives x${k} seed (to the rounding)`, scaled.base, L.base * k, 0.01 * k * cycles);
 }
 
 console.log("an exchange adjustment is untouched by the proportional form");
