@@ -180,7 +180,7 @@ function reconcileLedger(D, games) {
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT = process.env.TELEGRAM_CHAT_ID;
-if (!TOKEN || !CHAT) { console.log("Telegram secrets not set — skipping."); process.exit(0); }
+if ((!TOKEN || !CHAT) && process.env.DRY_RUN !== "1") { console.log("Telegram secrets not set — skipping."); process.exit(0); }
 
 const API = M.API;
 const SNAP_V = M.VERSION;                        // board schema = model version

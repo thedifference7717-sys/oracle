@@ -100,6 +100,32 @@ b,strong{font-weight:600}
 .section-h .disc{margin-top:8px}
 
 /* ── bet cards ── */
+/* ── the Robin ── */
+.rb{padding:0 var(--pad)}
+.rb-card{background:var(--bg3);border-radius:16px;padding:16px;display:grid;gap:14px}
+.rb-ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
+.rb-ctl .seg{display:inline-flex;background:var(--bg);border-radius:980px;padding:2px}
+.rb-ctl .seg button{border:none;background:transparent;color:var(--muted);font:600 13px var(--sys);padding:6px 12px;border-radius:980px;cursor:pointer;min-height:32px}
+.rb-ctl .seg button.on{background:var(--blue);color:#fff}
+.rb-ctl input{width:84px;background:var(--bg);border:.5px solid var(--border);border-radius:10px;color:var(--text);font:600 16px var(--num);padding:7px 9px}
+.rb-legs{display:grid;gap:8px}
+.rb-leg{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
+.rb-leg .nm{font-weight:600;color:var(--text)}
+.rb-leg .sub{grid-column:1;font-size:12px;color:var(--dim)}
+.rb-leg .p{grid-row:1/3;grid-column:2;text-align:right;font:600 15px var(--num);color:var(--blue)}
+.rb-leg .p small{display:block;font-size:11px;color:var(--dim);font-weight:500}
+.rb-odds{display:flex;gap:8px;flex-wrap:wrap}
+.rb-odds div{flex:1 1 90px;background:var(--bg);border-radius:12px;padding:9px 10px}
+.rb-odds .v{font:700 17px var(--num);color:var(--text)}
+.rb-odds .l{font-size:11px;color:var(--dim);margin-top:2px}
+.rb-rows{display:grid;gap:8px}
+.rb-row{background:var(--bg);border-radius:12px;padding:11px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 12px}
+.rb-row.best{box-shadow:inset 0 0 0 1.5px var(--green)}
+.rb-row .t{font-weight:600;color:var(--text)}
+.rb-row .s{font-size:12px;color:var(--dim)}
+.rb-row .ev{grid-row:1/3;grid-column:2;text-align:right;font:700 16px var(--num)}
+.rb-row .ev small{display:block;font-size:11px;font-weight:500;color:var(--dim)}
+.rb-fine{font-size:12px;color:var(--dim);line-height:1.5}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:12px;padding:0 var(--pad)}
 @media(max-width:900px){.cards{grid-template-columns:1fr}}
 .bet{background:var(--elev);border:none;border-radius:16px;padding:16px 17px}
@@ -337,37 +363,41 @@ td.num{text-align:right}
 <div id="topbar">
   <div>
     <div class="brand">SPORTSAI</div>
-    <div class="logo">⚾ Two BAIgger</div>
+    <div class="logo">Two BAIgger</div>
     <div class="logo-sub">
-      The ladder + hit parlays · Build 9 ·
+      The Ladder · The Dub · The Robin · Build 10 ·
       <!-- stamped by the deploy; keep on its own line -->
       <span id="buildsha">0b96ce0</span>
     </div>
   </div>
   <div class="controls">
-    <a class="navlink" href="record.html">📜 Record</a>
-    <a class="navlink" href="gridiron.html">🏈 PlAIybook</a>
-    <a class="navlink" href="hairdwood.html">🏀 HAIrdwood</a>
+    <nav class="tabs" aria-label="Sections">
+      <a class="navlink" href="#sec-ladder">🪜 The Ladder</a>
+      <a class="navlink" href="#sec-dub">✌️ The Dub</a>
+      <a class="navlink" href="#sec-robin">🐦 The Robin</a>
+    </nav>
     <button class="run-btn" id="run" onclick="load()">⟳ REFRESH</button>
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="status"></div>
 
-<div class="section-h lead">
+<div class="section-h lead" id="sec-ladder">
   <div class="sh-row"><h2>🪜 The Ladder</h2><span class="sh-note" id="ldNote"></span></div>
   <details class="disc"><summary>How the ladder works</summary><div class="disc-b">
-    <p>One bet a day: a single <b>“to record a hit”</b> leg — the highest-edge hitter on the whole slate — staked from an account you set yourself. Every figure on the card is worked out from your number.</p>
+    <p>One bet a day, chosen from <b>every sport on the slate</b>: ⚾ a hitter to record a hit, 🏀 a player's points, rebounds, assists or threes, 🏈 a player's passing, receiving or rushing yards. Each sport's model rates every prop, each prop is priced at what it costs on Kalshi, and the ladder takes the one <b>most likely to win</b> — between −200 and −350, and only where the model agrees with the price.</p>
+    <p>It is not simply the biggest number. A sport's model is trusted only as far as its record has earned: a sport with no settled rungs yet leans on the market's price instead of its own opinion, and earns its say as results come in. Form, the opponent and injury tags break near-ties; a player listed out, or without a real recent workload, is never picked.</p>
+    <p>Staked from an account you set yourself — every figure on the card is worked out from your number.</p>
     <p>Win and the entire return rides the next day. Five straight closes the cycle and the money comes off the table, with the next cycle seeded at 10% of the grown account. Any miss ends the cycle there and the next one starts <b>25% bigger</b>.</p>
     <p>Only the cycle's <b>seed</b> is ever your money — everything above it is the book's — so a miss on day four costs exactly what a miss on day one costs. That is the one thing separating this from a martingale.</p>
-    <p>The pick stays blank until it locks <b>one hour before the day's first pitch</b>, then shows the rung actually published to the repo, with its publish time beside first pitch. Read the red panel on the card before you run it.</p>
+    <p>The pick stays blank until it locks <b>one hour before the day's first game in any sport</b>, then shows the rung actually published to the repo, with its publish time beside the start. Read the red panel on the card before you run it.</p>
   </div></details>
 </div>
 <div id="ladder"></div>
 
-<div class="group-h"><span>Daily Double</span><small>2-man same-game hit parlay · a different bet from the ladder</small></div>
+<div class="group-h" id="sec-dub"><span>✌️ The Dub</span><small>2-man same-game hit parlay · a different bet from the ladder</small></div>
 <div class="section-h">
-  <div class="sh-row"><h2>🎲 Bet cards</h2><span class="sh-note" id="cardsNote"></span></div>
+  <div class="sh-row"><h2>Today's Dubs</h2><span class="sh-note" id="cardsNote"></span></div>
   <details class="disc"><summary>Why these games and no others</summary><div class="disc-b">
     <p>A card for every game whose opposing arm is soft enough, and nothing else — the same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
     <p><b>Soft arm</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are, in points of hit probability against a league-neutral leg. It rates the spot rather than the hitters, which is why it decides eligibility: an ace is a different bet from batting practice even when the price says otherwise.</p>
@@ -393,6 +423,17 @@ td.num{text-align:right}
     <div class="table-wrap"><table><thead><tr id="lhead"></tr></thead><tbody id="lbody"></tbody></table></div>
   </details>
 </div>
+<div class="group-h" id="sec-robin"><span>🐦 The Robin</span><small>a round robin of the day's surest hitters · every 2- and 3-leg parlay between them</small></div>
+<div class="section-h">
+  <div class="sh-row"><h2>Today's Robin</h2><span class="sh-note" id="robinNote"></span></div>
+  <details class="disc"><summary>How the Robin works</summary><div class="disc-b">
+    <p>The likeliest hitters on the slate, <b>one per game</b> so no two legs lean on the same pitcher, bet as a round robin: every 2-leg parlay between them, every 3-leg parlay, and so on. One cold bat costs you the tickets he is on, not the whole bet.</p>
+    <p>Each row prices a size at the leg price you set (the same one the ladder assumes, −275 unless you change it) and shows what a ticket pays, how many tickets you should expect to cash, and whether that adds up to more than you put in. The chances come from the same model as the ladder and the Dub, so the three can never disagree about a hitter.</p>
+    <p>Treat the legs as close to independent — they are in different games — but not perfectly: a slate-wide cold night hits everyone at once, and no round robin is protected from that.</p>
+  </div></details>
+</div>
+<div id="robin" class="rb"></div>
+
 <div class="group-h"><span>Settings &amp; reference</span><small>prices, filters, and how every number is built</small></div>
 <details id="slip-wrap"><summary>⚙️ Bet slip &amp; filters</summary>
 <div id="slip">
@@ -838,7 +879,71 @@ async function load(){
   finally{btn.disabled=false;}
 }
 
-function renderEmpty(){renderLadder();document.getElementById("cards").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="10"><div class="empty">No games / eligible hitters right now.</div></td></tr>`;document.getElementById("lbody").innerHTML="";}
+// ── The Robin ───────────────────────────────────────────────────────────────
+// A round robin of the likeliest hitters, one per game. Priced at the leg
+// price the client set, because the page cannot reach Kalshi's quotes and a
+// made-up live price is worse than a stated assumption.
+let robinN=4, robinStake=10;
+try{const n=+localStorage.getItem("dd.robinN");if(n>=3&&n<=6)robinN=n;}catch(e){}
+try{const v=parseFloat(localStorage.getItem("dd.robinStake"));if(isFinite(v)&&v>0)robinStake=v;}catch(e){}
+function setRobinN(n){robinN=n;try{localStorage.setItem("dd.robinN",String(n));}catch(e){}renderRobin();}
+function setRobinStake(v){const x=parseFloat(v);if(!(isFinite(x)&&x>0))return;robinStake=+x.toFixed(2);
+  try{localStorage.setItem("dd.robinStake",String(robinStake));}catch(e){}renderRobin({keepFocus:true});}
+function robinLegs(n){
+  if(!board||!Array.isArray(board.candidates))return [];
+  const now=Date.now(), open=new Set((board.games||[]).filter(g=>!(Date.parse(g.startTime)<=now)).map(g=>g.pk));
+  const seen=new Set(), out=[];
+  for(const c of board.candidates.slice().sort((a,b)=>b.p-a.p)){
+    if(!open.has(c.gk)||seen.has(c.gk))continue;       // one per game, and only games still to play
+    seen.add(c.gk); out.push(c);
+    if(out.length>=n)break;
+  }
+  return out;
+}
+function renderRobin(opts){
+  const el=document.getElementById("robin"), note=document.getElementById("robinNote");
+  if(!el)return;
+  const legs=robinLegs(robinN);
+  if(legs.length<3){
+    el.innerHTML=`<div class="empty">${board?"Not enough games still to play for a round robin today.":"Loads with the slate."}</div>`;
+    if(note)note.textContent="";
+    return;
+  }
+  const lp=setting("legPrice"), ps=legs.map(c=>c.p);
+  const sizes=[];for(let m=2;m<=legs.length;m++)sizes.push(m);
+  const rr=M.roundRobin(ps,lp,sizes);
+  const best=rr.rows.reduce((b,r)=>r.ev!=null&&(!b||r.ev>b.ev)?r:b,null);
+  const legHtml=legs.map(c=>`<div class="rb-leg">
+      <div class="nm">${c.name}${c.posted?' <span class="tag ok">✓LU</span>':""}</div>
+      <div class="sub">${c.teamName} ${c.isHome?"vs":"@"} ${c.oppName} · #${c.slot||"—"} · vs ${c.spName||"SP TBD"}</div>
+      <div class="p">${pct(c.p)}<small>fair ${M.amOdds(c.p)}</small></div></div>`).join("");
+  const at=k=>rr.atLeast[k]!=null?rr.atLeast[k]:0;
+  const oddsHtml=`<div class="rb-odds">
+    <div><div class="v">${pct(rr.allHit)}</div><div class="l">all ${legs.length} hit</div></div>
+    <div><div class="v">${pct(at(legs.length-1))}</div><div class="l">${legs.length-1}+ hit</div></div>
+    <div><div class="v">${pct(at(2))}</div><div class="l">2+ hit</div></div>
+    <div><div class="v">${rr.expHits.toFixed(1)}</div><div class="l">expected hits</div></div></div>`;
+  const rows=rr.rows.map(r=>{
+    const cost=r.tickets*robinStake, pays=robinStake*r.payout, expBack=r.expWin*pays;
+    return `<div class="rb-row${best&&r===best&&r.ev>0?" best":""}">
+      <div class="t">By ${r.m}s · ${r.tickets} ticket${r.tickets===1?"":"s"} · ${money(cost)}</div>
+      <div class="s">each pays ${money(pays)} · expect ${r.expWin.toFixed(2)} to cash (${money(expBack)} back) · breaks even at ${r.breakevenLeg} a leg</div>
+      <div class="ev" style="color:${r.ev>=0?"var(--green)":"var(--red)"}">${r.ev>=0?"+":""}${(r.ev*100).toFixed(1)}%<small>expected</small></div></div>`;
+  }).join("");
+  const had=document.activeElement&&document.activeElement.id==="rbStake";
+  el.innerHTML=`<div class="rb-card">
+    <div class="rb-ctl">Legs <span class="seg">${[3,4,5,6].map(n=>`<button class="${n===robinN?"on":""}" onclick="setRobinN(${n})">${n}</button>`).join("")}</span>
+      <label>$ per ticket <input id="rbStake" type="text" inputmode="decimal" value="${robinStake}" onchange="setRobinStake(this.value)"></label></div>
+    <div class="rb-legs">${legHtml}</div>
+    ${oddsHtml}
+    <div class="rb-rows">${rows}</div>
+    <div class="rb-fine">Priced at ${lp>0?"+":""}${lp} a leg — the leg price in settings. Shop each leg: every point better than that goes straight to every ticket it is on. Model estimate, not advice.</div>
+  </div>`;
+  if(note)note.innerHTML=best?`best size: <b>by ${best.m}s</b>`:"";
+  if(had&&opts&&opts.keepFocus){const i=document.getElementById("rbStake");if(i)i.focus();}
+}
+
+function renderEmpty(){renderLadder();renderRobin();document.getElementById("cards").innerHTML="";document.getElementById("tbody").innerHTML=`<tr><td colspan="10"><div class="empty">No games / eligible hitters right now.</div></td></tr>`;document.getElementById("lbody").innerHTML="";}
 
 // The whole slate, ordered, with the display filters applied but NOT the bet
 // bar — this is what the table below shows, and it is meant to be every game.
@@ -1440,6 +1545,7 @@ function renderLadderInner(){
 }
 
 function render(){
+  renderRobin();
   const pairs=filtered();
   const B=bets();
   const barPts=(betBar()*100).toFixed(1);

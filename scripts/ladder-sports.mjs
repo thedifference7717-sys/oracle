@@ -253,8 +253,11 @@ export async function nflCandidates(day, { get = getJSON, say = say0 } = {}) {
   // "current" week, which on a Tuesday is the one that just finished — every
   // game final, nothing to bet, and Thursday's game never considered.
   const sb = await get(`${ESPN}/football/nfl/scoreboard?limit=50&dates=${compact(day)}`);
-  const season = (sb.season || {}).year, week = (sb.week || {}).number;
-  if (!season || !week) return { candidates: [], note: "no NFL week for this day" };
+  // A dated scoreboard carries the week on each event rather than at the top.
+  const ev0 = (sb.events || []).find(e => HW.etDayOf(e.date) === day) || (sb.events || [])[0] || {};
+  const season = (sb.season || {}).year || (ev0.season || {}).year;
+  const week = (sb.week || {}).number || (ev0.week || {}).number;
+  if (!season || !week) return { candidates: [], note: `no NFL week for this day (keys: ${Object.keys(sb).join(",")}; event keys: ${Object.keys(ev0).join(",")})` };
   const board = await GM.loadLeagueBoard("nfl", { season, week }, () => {});
   const today = board.games.filter(e => HW.etDayOf(e.game.date) === day && !e.game.final && Date.parse(e.game.date) > now);
   if (!today.length) return { candidates: [], note: "no NFL games" };
