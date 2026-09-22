@@ -924,7 +924,21 @@ function renderLadder(){
   const hist=raw.map(b=>oddsByDay[b.date]!=null?Object.assign({},b,{price:oddsByDay[b.date]}):b);
   // Every dollar below is computed from the viewer's own account, never from
   // the account recorded in the published ledger.
-  const st=M.ladder(hist,{account:ladderAccount||M.LADDER.account});
+  // What to assume for a rung that reached the ladder without a price.
+  //
+  // The engine's own default is -250, which is what the alerter stakes
+  // against — but it is not what every book pays. Someone taking -300 and
+  // -325 would have an unpriced rung quietly credited at -250, overstating
+  // the return on the one rung nobody has a real number for. The best evidence
+  // of what THIS viewer actually gets is the most recent price their own
+  // history records, so use that, and fall back to the slip's leg price only
+  // when there is no history at all.
+  const assumePrice=(()=>{
+    for(let i=hist.length-1;i>=0;i--){const q=hist[i]&&hist[i].price;
+      if(q!=null&&isFinite(+q)&&Math.abs(+q)>=100)return +q;}
+    return setting("legPrice");
+  })();
+  const st=M.ladder(hist,{account:ladderAccount||M.LADDER.account,price:assumePrice});
   const C=st.cfg, pick=board?ladderPick():null;
 
   if(ladderAccount==null){
@@ -985,9 +999,13 @@ function renderLadder(){
   const pinned=pinnedPick[today]||null;
   // Only true before the board can produce any candidate at all.
   const orphaned=!locked&&!pinned&&lk&&lk.open;
+  // Same question as assumePrice above — "what do we assume when the price is
+  // not known?" — so it gets the same answer rather than a second one. Quoting
+  // the slip's -250 to someone whose last three rungs went off at -300 and
+  // -325 overstates what today is worth to them.
   const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
                  :(pinnedPick[today]&&pinnedPick[today].price!=null?pinnedPick[today].price
-                 :(locked&&locked.price!=null?locked.price:setting("legPrice")));
+                 :(locked&&locked.price!=null?locked.price:assumePrice));
   const dec=M.decFromAmerican(todayOdds)||1;
   const typed=oddsByDay[today]!=null;
   // The locked row's probability is the one that was published; the live
