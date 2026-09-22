@@ -12,6 +12,14 @@
 // it is obvious which are real and which are dormant out of season.
 //
 // Read-only. Writes nothing, commits nothing. Run: node scripts/kalshi-discover.mjs
+//
+// One pass, deliberately. The first version listed every series and then made
+// a second call PER SERIES to count its open markets, which is hundreds of
+// sequential round trips behind a retrying client — it ran for six minutes
+// without finishing. Open markets are the thing worth knowing, so ask for
+// those directly and group them by series afterwards: the same answer, in a
+// number of calls that depends on how many markets are live rather than on
+// how many series Kalshi has ever created.
 
 const KALSHI = "https://api.elections.kalshi.com/trade-api/v2";
 
@@ -28,41 +36,49 @@ async function get(url, tries = 4) {
   throw last;
 }
 
-// Sports we already have a model for. Anything else is not useful yet.
+// Sports we have a model for. Anything else is not useful to the ladder yet.
 const SPORTS = {
-  NBA: /\bNBA\b|BASKETBALL/i,
-  MLB: /\bMLB\b|BASEBALL/i,
-  NFL: /\bNFL\b|FOOTBALL/i
+  NBA: /NBA|BASKETBALL/i,
+  MLB: /MLB|BASEBALL/i,
+  NFL: /NFL|FOOTBALL/i
 };
 
-const series = [];
+// Every market currently open, in pages. This is the expensive call, so it is
+// the only one we make.
+const markets = [];
 let cursor = "";
-for (let page = 0; page < 40; page++) {
-  const d = await get(`${KALSHI}/series?limit=200${cursor ? "&cursor=" + cursor : ""}`);
-  const batch = d.series || d.series_list || [];
-  series.push(...batch);
+for (let page = 0; page < 60; page++) {
+  const d = await get(`${KALSHI}/markets?status=open&limit=1000${cursor ? "&cursor=" + cursor : ""}`);
+  const batch = d.markets || [];
+  markets.push(...batch);
   cursor = d.cursor || "";
+  process.stdout.write(`\rfetched ${markets.length} open markets…`);
   if (!cursor || !batch.length) break;
 }
-console.log(`Kalshi lists ${series.length} series in total.\n`);
+console.log(`\rKalshi has ${markets.length} open markets right now.\n`);
+
+// Group by series. The API gives series_ticker on most markets; where it does
+// not, the series is the ticker up to the first dash.
+const bySeries = new Map();
+for (const m of markets) {
+  const key = m.series_ticker || String(m.ticker || "").split("-")[0];
+  if (!key) continue;
+  const e = bySeries.get(key) || { n: 0, sample: m.title || m.subtitle || "", yes: [] };
+  e.n++;
+  if (e.yes.length < 3 && m.yes_bid != null && m.yes_ask != null) {
+    e.yes.push(`${m.yes_bid}/${m.yes_ask}c`);
+  }
+  bySeries.set(key, e);
+}
 
 for (const [sport, re] of Object.entries(SPORTS)) {
-  const mine = series.filter(s =>
-    re.test(`${s.ticker || ""} ${s.title || ""} ${s.category || ""}`));
-  console.log(`=== ${sport} — ${mine.length} series ===`);
-  const rows = [];
-  for (const s of mine) {
-    let open = 0;
-    try {
-      const m = await get(`${KALSHI}/markets?series_ticker=${encodeURIComponent(s.ticker)}&status=open&limit=200`);
-      open = (m.markets || []).length;
-    } catch (e) { open = -1; }
-    rows.push({ ticker: s.ticker, open, title: (s.title || "").slice(0, 64) });
-  }
-  // Live ones first: an empty series is out of season, not useless.
-  rows.sort((a, b) => b.open - a.open);
-  for (const r of rows) {
-    console.log(`  ${String(r.open).padStart(4)} open  ${String(r.ticker).padEnd(24)} ${r.title}`);
+  const rows = [...bySeries.entries()]
+    .filter(([k, v]) => re.test(k) || re.test(v.sample))
+    .sort((a, b) => b[1].n - a[1].n);
+  console.log(`=== ${sport} — ${rows.length} series with live markets ===`);
+  if (!rows.length) console.log("  (nothing open — out of season, or the name does not match)");
+  for (const [k, v] of rows.slice(0, 25)) {
+    console.log(`  ${String(v.n).padStart(4)} open  ${k.padEnd(26)} ${v.yes.join(" ").padEnd(22)} ${String(v.sample).slice(0, 60)}`);
   }
   console.log();
 }
