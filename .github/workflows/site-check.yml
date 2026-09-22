@@ -1,0 +1,35 @@
+# What is the public site ACTUALLY serving right now?
+#
+# "Nothing has changed" after a deploy has come up again and again, and the
+# answer has too often been "wait for the cache" without anyone looking at the
+# cache. This looks. It fetches the live files the way a phone does, with and
+# without a cache-busting query, and prints the CDN's own headers — age,
+# x-cache, cache-control — next to what the file says, so a stale copy is a
+# measured fact with a time on it rather than a guess.
+name: Check the live site
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: What the CDN is serving
+        run: |
+          BASE="https://thedifference7717-sys.github.io/oracle"
+          for path in "data/ladder.json" "build.json" "index.html"; do
+            for q in "" "?t=$(date +%s%N)"; do
+              echo "=== ${path}${q:+ (cache-busted)} ==="
+              curl -s -D /tmp/h -o /tmp/b "$BASE/$path$q"
+              grep -iE '^(age|x-cache|x-cache-hits|cache-control|last-modified|x-served-by):' /tmp/h | sed 's/^/  /'
+              case "$path" in
+                data/ladder.json) python3 -c "import json;d=json.load(open('/tmp/b'));print('  state.stake =',d['state']['stake'],'| updated',d.get('updated'))" ;;
+                build.json) echo "  $(cat /tmp/b)" ;;
+                index.html) echo "  buildsha: $(grep -o 'id=\"buildsha\">[^<]*' /tmp/b | cut -d'>' -f2)" ;;
+              esac
+            done
+          done
