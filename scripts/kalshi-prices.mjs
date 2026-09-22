@@ -35,10 +35,31 @@ async function get(url, tries = 3) {
   throw last;
 }
 
-// Kalshi quotes in cents of probability. A 73c ask is a 73% implied chance,
-// which is -270 in American terms.
-const centsToAmerican = c => {
-  const p = c / 100;
+// Read the quote out of whichever fields this response actually carries.
+//
+// The first version of this read m.yes_bid and m.yes_ask and reported "0 of
+// 315 markets have a two-sided quote" — which was not a fact about Kalshi, it
+// was a fact about me reading keys that do not exist. This endpoint returns
+// yes_bid_dollars / yes_ask_dollars as decimal strings, and where the yes
+// side is absent the no side is there instead: a no_bid of 0.97 IS a yes ask
+// of 0.03. I printed the raw shape precisely so the names would not be
+// guessed, and then guessed anyway.
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : null; };
+function quote(m) {
+  // Probabilities in 0..1, however they are spelled.
+  let yb = num(m.yes_bid_dollars), ya = num(m.yes_ask_dollars);
+  if (yb == null && m.yes_bid != null) yb = num(m.yes_bid) / 100;
+  if (ya == null && m.yes_ask != null) ya = num(m.yes_ask) / 100;
+  const nb = num(m.no_bid_dollars), na = num(m.no_ask_dollars);
+  // A no quote is the yes quote inverted: buying yes at 1 - no_bid.
+  if (ya == null && nb != null) ya = 1 - nb;
+  if (yb == null && na != null) yb = 1 - na;
+  const last = num(m.last_price_dollars);
+  return { yb, ya, last };
+}
+
+// A probability as American odds. 0.73 is -270.
+const probToAmerican = p => {
   if (!(p > 0 && p < 1)) return null;
   const d = 1 / p;
   return d >= 2 ? Math.round((d - 1) * 100) : -Math.round(100 / (d - 1));
@@ -54,22 +75,33 @@ console.log("── raw shape of one market, so field names are established not 
 console.log(JSON.stringify(ms[0], null, 1).split("\n").slice(0, 34).join("\n"));
 
 let quoted = 0, band = 0;
-const rows = [];
+const rows = [], strikes = new Map();
 for (const m of ms) {
-  const bid = m.yes_bid, ask = m.yes_ask, last = m.last_price;
-  const has = bid != null && ask != null && (bid > 0 || ask > 0);
+  const q = quote(m);
+  const has = q.ya != null && q.ya > 0 && q.ya < 1;
   if (has) quoted++;
-  // What you would actually PAY is the ask.
-  const am = has && ask > 0 ? centsToAmerican(ask) : null;
-  if (inBand(am)) { band++; rows.push({ t: m.ticker, title: m.title, bid, ask, last, am, spread: (ask != null && bid != null) ? ask - bid : null }); }
+  // The strike is what the bet actually is. "1+ hits" is the ladder's market;
+  // "3+ hits" is a lottery ticket that happens to live in the same series.
+  const k = m.floor_strike != null ? String(m.floor_strike) : "?";
+  strikes.set(k, (strikes.get(k) || 0) + 1);
+  const am = has ? probToAmerican(q.ya) : null;      // what you PAY is the ask
+  if (inBand(am)) {
+    band++;
+    rows.push({ title: m.no_sub_title || m.title, strike: k, am,
+                bid: q.yb, ask: q.ya,
+                spread: (q.ya != null && q.yb != null) ? +(q.ya - q.yb).toFixed(2) : null });
+  }
 }
+console.log("\n── strikes on this board (which bet each market actually is) ──");
+[...strikes.entries()].sort((a, b) => b[1] - a[1]).forEach(([k, n]) =>
+  console.log(`  ${String(n).padStart(4)} markets at ${k}+`));
 
 console.log(`\n${quoted} of ${ms.length} markets have a two-sided quote.`);
 console.log(`${band} are inside ${BAND.lo}..${BAND.hi} at the ASK — i.e. actually bettable there.\n`);
 if (rows.length) {
-  console.log("  AMERICAN  BID/ASK  SPREAD  MARKET");
+  console.log("  AMERICAN     BID/ASK  SPREAD  STRIKE  MARKET");
   rows.sort((a, b) => b.am - a.am).slice(0, 30).forEach(r =>
-    console.log(`  ${String(r.am).padStart(8)}  ${String(r.bid + "/" + r.ask + "c").padStart(8)}  ${String(r.spread + "c").padStart(6)}  ${String(r.title).slice(0, 56)}`));
+    console.log(`  ${String(r.am).padStart(8)}  ${String((r.bid != null ? r.bid.toFixed(2) : "–") + "/" + (r.ask != null ? r.ask.toFixed(2) : "–")).padStart(11)}  ${String(r.spread != null ? r.spread.toFixed(2) : "–").padStart(6)}  ${String(r.strike + "+").padStart(5)}  ${String(r.title).slice(0, 46)}`));
 } else {
   console.log("  NOTHING is bettable in the band right now. The band assumption is wrong,");
   console.log("  or the liquidity sits elsewhere on this board.");
