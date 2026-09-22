@@ -568,23 +568,54 @@ function setLadderReturn(day,v){
 // Called immediately below its store, not up with the other URL handler:
 // retByDay is a `let`, and reading it earlier throws on the temporal dead zone
 // and takes the whole page script down. That has happened here before.
-function applyPaidFromUrl(){
-  let q; try{ q=new URLSearchParams(location.search).get("paid"); }catch(e){ return false; }
-  if(!q)return false;
+// Carry the personal layer between devices.
+//
+// Everything that is yours rather than the system's — the bankroll, the price
+// you got on each rung, what each one paid back — lives in this browser's
+// localStorage and nowhere else. That is deliberate: the published record
+// stays the system's and cannot be reshaped by one bettor's fills. But it
+// also means a phone and a tablet are two different ladders. Open the same
+// account on a second device and it shows the published chain at the assumed
+// price, which is nobody's actual money.
+//
+// So the personal layer is portable by link:
+//   ?acct=100
+//   &odds=2026-09-18:-325,2026-09-19:-300
+//   &paid=2026-09-21:55.32
+// Each part is optional, each is plain text you can read before tapping, and
+// the whole thing is stripped from the address bar once applied.
+function applyLadderStateFromUrl(){
+  let Q; try{ Q=new URLSearchParams(location.search); }catch(e){ return false; }
   let n=0;
-  for(const part of q.split(",")){
-    const [day,amt]=part.split(":").map(x=>(x||"").trim());
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(day||""))continue;
-    const r=parseFloat(amt);
-    if(!isFinite(r)||r<=0){delete retByDay[day];n++;continue;}
-    retByDay[day]=+r.toFixed(2); n++;
+  const acct=parseFloat(Q.get("acct"));
+  if(isFinite(acct)&&acct>0){
+    ladderAccount=acct;
+    try{localStorage.setItem("dd.ladderAccount",String(acct));}catch(e){}
+    n++;
   }
+  const pairs=(raw,apply)=>{
+    if(!raw)return;
+    for(const part of String(raw).split(",")){
+      const i=part.lastIndexOf(":");            // the date has colons of its own only if malformed
+      const day=(i<0?part:part.slice(0,i)).trim();
+      const val=(i<0?"":part.slice(i+1)).trim();
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(day))continue;
+      apply(day,parseFloat(val)); n++;
+    }
+  };
+  pairs(Q.get("odds"),(day,v)=>{
+    if(!isFinite(v)||Math.abs(v)<100)delete oddsByDay[day]; else oddsByDay[day]=v;
+  });
+  pairs(Q.get("paid"),(day,v)=>{
+    if(!isFinite(v)||v<=0)delete retByDay[day]; else retByDay[day]=+v.toFixed(2);
+  });
   if(!n)return false;
+  try{localStorage.setItem("dd.ladderOdds",JSON.stringify(oddsByDay));}catch(e){}
   try{localStorage.setItem("dd.ladderReturns",JSON.stringify(retByDay));}catch(e){}
   try{history.replaceState(null,"",location.pathname);}catch(e){}
   return true;
 }
-applyPaidFromUrl();
+applyLadderStateFromUrl();
 // Commits on change (blur or Enter), never on every keystroke: this re-renders
 // the whole card, which would rip the input out from under the cursor halfway
 // through typing "-180".
@@ -1262,7 +1293,8 @@ function renderLadder(){
         <td style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
         <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
         <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table>
-    <div class="ld-foot">Green is yours, grey is assumed. Enter either the odds you got or what the rung <b>paid back</b> — the payout is exact and the price is worked back from it, which is why it wins when both are present. Edit any cell and every stake above it recompounds.</div></div>`
+    <div class="ld-foot"><b>These figures live in this browser only.</b> Your bankroll, the odds you got and what each rung paid are stored on this device and never sent anywhere — which also means a phone and a tablet are two separate ladders, and a second device shows the published chain at the assumed price until you tell it otherwise.<br>
+      Green is yours, grey is assumed. Enter either the odds you got or what the rung <b>paid back</b> — the payout is exact and the price is worked back from it, which is why it wins when both are present. Edit any cell and every stake above it recompounds.</div></div>`
     :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;
 
   el.innerHTML=`<div class="ld">
