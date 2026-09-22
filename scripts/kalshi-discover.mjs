@@ -13,13 +13,24 @@
 //
 // Read-only. Writes nothing, commits nothing. Run: node scripts/kalshi-discover.mjs
 //
-// One pass, deliberately. The first version listed every series and then made
-// a second call PER SERIES to count its open markets, which is hundreds of
-// sequential round trips behind a retrying client — it ran for six minutes
-// without finishing. Open markets are the thing worth knowing, so ask for
-// those directly and group them by series afterwards: the same answer, in a
-// number of calls that depends on how many markets are live rather than on
-// how many series Kalshi has ever created.
+// PROBE NAMED TICKERS. Do not enumerate.
+//
+// Two earlier versions of this got it wrong in the same way — they tried to
+// see everything. The first called the API once per series and ran six
+// minutes without finishing. The second pulled open markets in bulk and was
+// STILL truncated at 400,000, because that is the order of magnitude Kalshi
+// actually has open. You cannot sweep it.
+//
+// Worse, sweeping produced a confident wrong answer: filtering on /NBA/ also
+// matches WNBA, so a run that looked like it had found twenty NBA prop series
+// had in fact found none, and every one of them was the women's league. A
+// substring is not a league.
+//
+// Kalshi names series KX<LEAGUE><MARKET>, which the WNBA and MLB results make
+// unambiguous. So ask about exactly the ones we care about, by name, and let
+// a 404 or an empty list be the answer. Roughly sixty calls, definitive, and
+// it distinguishes "does not exist" from "out of season" by reporting both
+// the market count and whether the series itself resolves.
 
 const KALSHI = "https://api.elections.kalshi.com/trade-api/v2";
 
@@ -36,57 +47,36 @@ async function get(url, tries = 4) {
   throw last;
 }
 
-// Sports we have a model for. Anything else is not useful to the ladder yet.
-const SPORTS = {
-  NBA: /NBA|BASKETBALL/i,
-  MLB: /MLB|BASEBALL/i,
-  NFL: /NFL|FOOTBALL/i
+// Exactly what we want to know about, by name. Nothing is inferred from a
+// substring: KXNBAPTS and KXWNBAPTS are different leagues and are listed as
+// such, which is the mistake that made the last run meaningless.
+const PROBE = {
+  NBA:  ["KXNBAPTS","KXNBAREB","KXNBAAST","KXNBA3PT","KXNBAPRA","KXNBASTL","KXNBABLK"],
+  WNBA: ["KXWNBAPTS","KXWNBAREB","KXWNBAAST","KXWNBA3PT"],
+  MLB:  ["KXMLBHIT","KXMLBKS","KXMLBTB","KXMLBHRR","KXMLBRBI","KXMLBHR","KXMLBSB",
+         "KXMLBWA","KXMLBHA","KXMLBERA","KXMLBOUTS"],
+  NFL:  ["KXNFLPASSYDS","KXNFLRECYDS","KXNFLREC","KXNFLPASSTDS","KXNFLRUSHYDS",
+         "KXNFLRECTDS","KXNFLRUSHTDS","KXNFLANYTD"]
 };
 
-// Every market currently open, in pages. This is the expensive call, so it is
-// the only one we make.
-const markets = [];
-let cursor = "";
-// 60 pages was exactly 60,000 markets on the first real run — i.e. the scan
-// stopped at the cap, not at the end of the data, and "NBA: 0 series" was an
-// artefact of that rather than a finding. A limit you actually hit is not a
-// limit, it is a truncation, so this one is high enough to be provably
-// unreached and the total is checked against it below.
-const MAX_PAGES = 400;
-for (let page = 0; page < MAX_PAGES; page++) {
-  const d = await get(`${KALSHI}/markets?status=open&limit=1000${cursor ? "&cursor=" + cursor : ""}`);
-  const batch = d.markets || [];
-  markets.push(...batch);
-  cursor = d.cursor || "";
-  process.stdout.write(`\rfetched ${markets.length} open markets…`);
-  if (!cursor || !batch.length) break;
-}
-const truncated = !!cursor;
-console.log(`\rKalshi has ${markets.length} open markets right now.` +
-  (truncated ? `  *** STILL TRUNCATED at ${MAX_PAGES} pages — treat any "0 series" below as unknown ***` : "  (complete: the cursor ran out before the page cap)") + "\n");
-
-// Group by series. The API gives series_ticker on most markets; where it does
-// not, the series is the ticker up to the first dash.
-const bySeries = new Map();
-for (const m of markets) {
-  const key = m.series_ticker || String(m.ticker || "").split("-")[0];
-  if (!key) continue;
-  const e = bySeries.get(key) || { n: 0, sample: m.title || m.subtitle || "", yes: [] };
-  e.n++;
-  if (e.yes.length < 3 && m.yes_bid != null && m.yes_ask != null) {
-    e.yes.push(`${m.yes_bid}/${m.yes_ask}c`);
-  }
-  bySeries.set(key, e);
-}
-
-for (const [sport, re] of Object.entries(SPORTS)) {
-  const rows = [...bySeries.entries()]
-    .filter(([k, v]) => re.test(k) || re.test(v.sample))
-    .sort((a, b) => b[1].n - a[1].n);
-  console.log(`=== ${sport} — ${rows.length} series with live markets ===`);
-  if (!rows.length) console.log("  (nothing open — out of season, or the name does not match)");
-  for (const [k, v] of rows.slice(0, 25)) {
-    console.log(`  ${String(v.n).padStart(4)} open  ${k.padEnd(26)} ${v.yes.join(" ").padEnd(22)} ${String(v.sample).slice(0, 60)}`);
+for (const [league, tickers] of Object.entries(PROBE)) {
+  console.log(`=== ${league} ===`);
+  for (const t of tickers) {
+    let line;
+    try {
+      const d = await get(`${KALSHI}/markets?series_ticker=${encodeURIComponent(t)}&status=open&limit=200`);
+      const ms = d.markets || [];
+      if (!ms.length) {
+        line = `     0 open   ${t.padEnd(16)} exists, nothing live (out of season, or no slate today)`;
+      } else {
+        const m = ms[0];
+        const px = (m.yes_bid != null && m.yes_ask != null) ? `${m.yes_bid}/${m.yes_ask}c` : "no quote";
+        line = `  ${String(ms.length).padStart(4)} open   ${t.padEnd(16)} ${px.padEnd(12)} ${String(m.title || "").slice(0, 52)}`;
+      }
+    } catch (e) {
+      line = `     -       ${t.padEnd(16)} no such series (${String(e.message).slice(0, 40)})`;
+    }
+    console.log(line);
   }
   console.log();
 }
