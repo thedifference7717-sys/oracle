@@ -29,3 +29,15 @@ jobs:
         if: always()
         run: |
           { echo "## Ladder scan"; echo; echo '```'; cat scan.log | tail -60; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      # The real alerter, end to end, with the clock ignored and nothing sent:
+      # DRY_RUN prints each Telegram message instead, and this job cannot push.
+      - name: Alerter dry run (forced lock, nothing sent or published)
+        if: always()
+        env:
+          DRY_RUN: "1"
+          LADDER_FORCE_LOCK: "1"
+        run: |
+          rm -f state.json
+          node scripts/parlaiy-alerts.mjs 2>&1 | grep -v "^game [0-9]" | tail -80
+          echo "--- the row it would publish ---"
+          node -e 'const L=require("./data/ladder.json");const b=L.bets[L.bets.length-1];console.log(JSON.stringify(b,null,1));console.log("next:",JSON.stringify(L.next))'

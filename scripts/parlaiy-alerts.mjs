@@ -19,6 +19,11 @@ import { execSync } from "child_process";
 import { pathToFileURL } from "url";
 import M from "../dd-model.js";
 import { fetchHitQuotes, lookup as quoteFor } from "./kalshi-quotes.mjs";
+// Loaded on first use, not at the top: it pulls in the basketball and football
+// models, and a problem in any of them must cost the ladder one pass — never
+// the doubles alerts, which have nothing to do with it.
+let _LSP = null;
+const ladderSports = async () => (_LSP = _LSP || await import("./ladder-sports.mjs"));
 
 const STATE_FILE = "state.json";
 const PUBLIC_LOG = "data/model-log.json";
@@ -235,7 +240,11 @@ const stakeFor = d => Math.max(0, +((d.spotDelta || 0) * 100).toFixed(1)) * PER_
 const av = v => v == null ? "—" : v.toFixed(3).replace(/^0/, "");
 
 async function j(url, opts) { const r = await fetch(url, opts); if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`); return r.json(); }
+// DRY_RUN=1 prints every alert instead of sending it — for running the real
+// alerter end to end on a runner without touching anyone's phone.
+const DRY_RUN = process.env.DRY_RUN === "1";
 async function tg(text) {
+  if (DRY_RUN) { console.log("\n[telegram, not sent]\n" + text.replace(/<[^>]+>/g, "") + "\n"); return; }
   await j(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chat_id: CHAT, text, parse_mode: "HTML", disable_web_page_preview: true })
@@ -401,6 +410,30 @@ function writeLadderFile(L) {
   writeFileSync(LADDER_FILE, JSON.stringify(L, null, 1));
 }
 
+// Which sports the ladder may pick from. All three by default; LADDER_SPORTS
+// narrows it (e.g. "MLB,NFL") without a code change.
+const LADDER_SPORTS = new Set(String(process.env.LADDER_SPORTS || "MLB,NBA,NFL").toUpperCase().split(",").map(s => s.trim()).filter(Boolean));
+// How far the model's own number must sit above the Kalshi ask. Zero means it
+// only has to agree with the price: the ladder takes the LIKELIEST winner,
+// not the biggest edge, and a prop the model rates below what the market
+// charges is not that.
+const LADDER_MIN_EDGE = +(process.env.LADDER_MIN_EDGE || 0);
+
+// Start times for every sport on the slate, held in state for ten minutes so
+// a pass every sixty seconds is not two scoreboard calls every sixty seconds.
+async function ladderStarts(day, games, D) {
+  const { slateStarts } = await ladderSports();
+  const mlb = games.map(g => ({ sport: "MLB", id: String(g.gamePk), start: g.gameDate }));
+  let other = null;
+  const cached = D && D.ladderStarts;
+  if (cached && cached.day === day && Date.now() - cached.at < 10 * 60e3) other = cached.list;
+  else {
+    other = await slateStarts(day);
+    if (D) D.ladderStarts = { day, at: Date.now(), list: other };
+  }
+  return mlb.concat(other || []).filter(g => LADDER_SPORTS.has(g.sport) && !isNaN(Date.parse(g.start)));
+}
+
 async function ladderPlace(day, games, D, saveState) {
   // THE dedupe, and it lives in state.json rather than in the ledger.
   //
@@ -426,36 +459,36 @@ async function ladderPlace(day, games, D, saveState) {
     return;
   }
   const now = Date.now();
-  // The ladder keeps the clock, and deliberately does not use the doubles'
-  // lineup trigger. It makes ONE choice across the whole slate, so the moment
-  // it chooses decides how much of that slate is confirmed. Locking when the
-  // first game's lineups post would fire three or four hours out, when almost
-  // every other game is still a projection, and the cross-slate comparison it
-  // is supposed to make would be mostly guesswork. An hour before the first
-  // pitch, most lineups are in and the field is real.
+  // ONE bet a day across baseball, basketball and football, so the clock is
+  // the whole slate's: an hour before the first game of the day in ANY sport.
+  // Not per sport — the choice is made once, between all of them, and a
+  // sport whose games had not been considered yet is not a choice at all.
   //
-  // A double is the opposite case: it is judged on one game alone, so that
-  // game's own lineups are all the information it will ever need and there is
-  // nothing to wait for once they land.
-  const locking = games.some(g => { const t = Date.parse(g.gameDate); return !isNaN(t) && now >= t - HOUR && now < t; });
+  // Not earlier either. An hour out, baseball lineups are mostly posted and
+  // the NBA's inactive lists are landing; the field is real. (A double is the
+  // opposite case: judged on one game, it locks on that game's own lineups.)
+  const { mlbCandidates, nbaCandidates, nflCandidates, sportRecords, benched, choose, SPORT } = await ladderSports();
+  const starts = await ladderStarts(day, games, D);
+  const upcoming = starts.filter(g => now < Date.parse(g.start));
+  // Tell the dashboard when today locks, and what is in play, so it can say
+  // so instead of guessing from baseball alone. Written only when it changes.
+  if (upcoming.length) {
+    const first = Math.min(...starts.map(g => Date.parse(g.start)));
+    const count = {}; starts.forEach(g => count[g.sport] = (count[g.sport] || 0) + 1);
+    const next = { date: day, first: new Date(first).toISOString(), lockAt: new Date(first - HOUR).toISOString(), games: count };
+    if (JSON.stringify(L.next || null) !== JSON.stringify(next)) { L.next = next; writeLadderFile(L); }
+  }
+  // LADDER_FORCE_LOCK=1 ignores the clock — dry runs only.
+  const locking = process.env.LADDER_FORCE_LOCK === "1" ||
+    starts.some(g => { const t = Date.parse(g.start); return now >= t - HOUR && now < t; });
   if (!locking) return;
   // EVERY game that has not started, not just the ones with a lineup up. The
-  // model already prices an unposted bat off his projected slot and multiplies
-  // by his real chance of starting (starts per team game, capped at 0.95;
-  // posted is 0.985, and anyone under 0.55 is dropped as a part-timer). So a
-  // projected leg and a confirmed leg are directly comparable in expected
-  // value, and a confirmed regular outranks an unposted equivalent on its own
-  // without needing a rule to say so.
-  //
-  // Restricting this to posted lineups threw away most of the slate: at the
-  // first lock of the day only the earliest game or two has a lineup up, so
-  // the ladder was picking the best of two games and calling it the best play
-  // of the day. The doubles alerter still waits for a confirmed lineup per
-  // game — that is a different bet on a single game, and it can afford to
-  // wait because each game locks on its own clock. The ladder cannot: it
-  // chooses once, for the whole slate.
-  const live = games.filter(g => now < Date.parse(g.gameDate));
-  if (!live.length) { console.log("ladder: at lock, every game has already started — skipping today."); return; }
+  // baseball model already prices an unposted bat off his projected slot and
+  // his real chance of starting, so a projected leg and a confirmed one are
+  // directly comparable; restricting to posted lineups left the ladder picking
+  // the best of two games at the first lock and calling it the best of the day.
+  if (!upcoming.length) { console.log("ladder: at lock, every game has already started — skipping today."); return; }
+  const liveMlb = games.filter(g => now < Date.parse(g.gameDate));
 
   const st = M.ladder(L.bets);
   if (!st.canFund) {
@@ -467,122 +500,164 @@ async function ladderPlace(day, games, D, saveState) {
     return;
   }
 
-  const board = await M.buildBoard({
-    getJSON: j, day, cal: null, american: PRICE,
-    schedule: { dates: [{ games: live }] },
-    onStatus: m => console.log("  · ladder:", m)
-  });
-  // Price every candidate at what it actually costs on Kalshi right now,
-  // not at an assumed leg price. Every rung before this one was compounded on
-  // -250 while the real 1+ hit asks ran -203 to -270; the ladder was paying
-  // itself more than the market ever would.
-  //
-  // If the feed is up, a man with no 1+ market is not bettable and is skipped
-  // — you cannot place what is not listed. If the feed is DOWN, everyone
-  // falls back to LEG_PRICE and the rung says so, rather than the ladder going
-  // dark for a day because an exchange blinked.
-  let quotes = null;
-  try { quotes = await fetchHitQuotes(); console.log(`  · ladder: ${quotes.size} players quoted on Kalshi`); }
-  catch (e) { console.log("  · ladder: Kalshi quotes unavailable (" + e.message + ") — falling back to " + LEG_PRICE); }
-  const live_ = quotes && quotes.size >= 10;          // a handful of markets is a broken feed, not a board
-  const inBand = a => a != null && a <= LADDER_BAND.hi && a >= LADDER_BAND.lo;
-  const priceFor = c => {
-    if (!live_) return { american: LEG_PRICE, ask: 1 / M.decFromAmerican(LEG_PRICE), source: "assumed" };
-    const g = live.find(x => x.gamePk === c.gk);
-    const q = quoteFor(quotes, c.name, g && g.gameDate);
-    return q ? { american: q.american, ask: q.ask, bid: q.bid, spread: q.spread, ticker: q.ticker, source: "kalshi" } : null;
-  };
+  // ── every sport's candidates, each priced on Kalshi ──
+  // A sport that fails to load drops out of today's choice and says so; it
+  // never takes the other two down with it.
+  const cands = [], notes = [];
+  if (LADDER_SPORTS.has("MLB") && liveMlb.length) {
+    try {
+      const board = await M.buildBoard({
+        getJSON: j, day, cal: null, american: PRICE,
+        schedule: { dates: [{ games: liveMlb }] },
+        onStatus: m => console.log("  · MLB:", m)
+      });
+      // Priced at what a hit actually costs on Kalshi right now. If the feed
+      // is up, a man with no 1+ market is not bettable and is skipped; if it
+      // is DOWN, everyone falls back to LEG_PRICE and the rung says so.
+      let quotes = null;
+      try { quotes = await fetchHitQuotes(); console.log(`  · MLB: ${quotes.size} players quoted on Kalshi`); }
+      catch (e) { console.log("  · MLB: Kalshi quotes unavailable (" + e.message + ") — falling back to " + LEG_PRICE); }
+      const live_ = quotes && quotes.size >= 10;          // a handful of markets is a broken feed, not a board
+      const priceFor = c => {
+        if (!live_) return { american: LEG_PRICE, ask: 1 / M.decFromAmerican(LEG_PRICE), source: "assumed" };
+        const g = liveMlb.find(x => x.gamePk === c.gk);
+        const q = quoteFor(quotes, c.name, g && g.gameDate);
+        return q ? { american: q.american, ask: q.ask, bid: q.bid, spread: q.spread, ticker: q.ticker, source: "kalshi" } : null;
+      };
+      const r = mlbCandidates(board, liveMlb, priceFor);
+      cands.push(...r.candidates);
+      notes.push(`MLB ${r.candidates.length} priced of ${board.candidates.length} bats in ${liveMlb.length} game${liveMlb.length === 1 ? "" : "s"}${live_ ? "" : " (Kalshi down — assumed price)"}`);
+    } catch (e) { notes.push(`MLB failed (${e.message})`); }
+  }
+  for (const [sport, fn] of [["NBA", nbaCandidates], ["NFL", nflCandidates]]) {
+    if (!LADDER_SPORTS.has(sport) || !upcoming.some(g => g.sport === sport)) continue;
+    try {
+      const r = await fn(day, { say: m => console.log(m) });
+      cands.push(...r.candidates);
+      notes.push(`${sport} ${r.candidates.length} priced — ${r.note}`);
+    } catch (e) { notes.push(`${sport} failed (${e.message})`); }
+  }
+  notes.forEach(n => console.log("  · ladder: " + n));
 
-  // Nobody rides the ladder more than two days running; after that he sits out
-  // one placement. Computed from the ledger rather than from anything held in
-  // this runner, so a fresh checkout applies the same bench.
-  const blocked = M.ladderBlocked(L.bets);
-  let best = null, benched = null, unlisted = 0, outOfBand = 0;
-  for (const c of board.candidates) {
-    const q = priceFor(c);
-    if (!q) { unlisted++; continue; }
-    if (!inBand(q.american)) { outOfBand++; continue; }
-    const edge = c.p - q.ask;                     // c.p already carries scratch risk
-    c._q = q;
-    if (blocked.has(M.pickKey({ playerId: c.id, pick: c.name }))) {
-      if (!benched || edge > benched.edge) benched = { c, edge };
-      continue;
-    }
-    if (!best || edge > best.edge) best = { c, edge };
-  }
-  if (benched) {
-    console.log(`ladder: ${benched.c.name} benched — two days running, sitting this one out` +
-      `${best ? ` (he was ${benched.edge > best.edge ? "ahead of" : "behind"} ${best.c.name})` : ""}.`);
-  }
-  if (live_) console.log(`  · ladder: ${unlisted} candidates not listed on Kalshi, ${outOfBand} outside ${LADDER_BAND.lo}..${LADDER_BAND.hi}`);
-  if (!best) { console.log("ladder: no candidate could be scored."); return; }
-  if (best.edge < MIN_EDGE) {
-    console.log(`ladder: best leg ${best.c.name} at ${(best.edge * 100).toFixed(1)}pts — under the bar, no rung today.`);
+  const records = sportRecords(L.bets, D && D.cal);
+  const res = choose(cands, records, { band: LADDER_BAND, blocked: benched(L.bets, M.LADDER.maxStreak), minEdge: LADDER_MIN_EDGE });
+  console.log(`  · ladder: ${cands.length} props, ${res.ranked.length} eligible, ${res.rejected.length} outside ${LADDER_BAND.lo}..${LADDER_BAND.hi} or vetoed, ${res.doubted.length} the model rates below the price`);
+  res.ranked.slice(0, 5).forEach((c, i) => console.log(`    ${i + 1}. ${c.sport} ${c.player} ${c.need} @ ${c.price} — ${(c.pAdj * 100).toFixed(1)}% (model ${(c.p * 100).toFixed(1)}%)`));
+  const bench = res.benched[0] || null;
+  if (bench) console.log(`ladder: ${bench.player} benched — two days running, sitting this one out.`);
+  if (!res.pick) {
+    console.log("ladder: no prop in any sport qualified — no rung today.");
+    if (!cands.length && notes.some(n => /failed/.test(n))) return;   // a broken feed is not a pass: try again next pass
     if (D) { D.ladderDay = day; if (saveState) saveState(); }
-    L.bets.push({ date: day, status: "noplay", reason: `best leg ${(best.edge * 100).toFixed(1)}pts, under the +${(MIN_EDGE * 100).toFixed(1)}pt bar`,
+    L.bets.push({ date: day, status: "noplay",
+                  reason: cands.length ? `nothing between ${LADDER_BAND.lo} and ${LADDER_BAND.hi} the models agreed with` : "no priced props on the slate",
                   published: new Date().toISOString() });
     writeLadderFile(L);
     return;
   }
 
-  const c = best.c, g = live.find(x => x.gamePk === c.gk);
+  const c = res.pick;
   const row = {
-    id: `${day}:ladder`, date: day, sport: "MLB",
+    id: `${day}:ladder`, date: day, sport: c.sport,
     published: new Date().toISOString(),
-    firstPitch: g ? g.gameDate : null,
+    start: c.start, firstPitch: c.sport === "MLB" ? c.start : undefined,
     cycle: st.cycle, rung: st.rung, seed: st.base,
-    stake: st.stake, price: c._q.american, priceSource: c._q.source,
-    kalshi: c._q.source === "kalshi"
-      ? { ticker: c._q.ticker, bid: c._q.bid, ask: c._q.ask, spread: c._q.spread, at: new Date().toISOString() }
-      : null,
-    p: c.p, edge: best.edge,
-    pick: c.name, playerId: c.id, slot: c.slot, gk: c.gk,
-    posted: !!c.posted, startProb: c.startProb,
-    teams: `${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName}`, sp: c.spName || null,
-    fromGames: live.length, status: "open"
+    stake: st.stake, price: c.price, priceSource: c.priceSource || "kalshi",
+    kalshi: c.kalshi ? Object.assign({}, c.kalshi, { at: new Date().toISOString() }) : null,
+    p: c.p, pAdj: +c.pAdj.toFixed(4), edge: c.rawEdge,
+    pick: c.player, playerId: c.playerId, market: c.market, line: c.line, need: c.need,
+    eventId: c.eventId, teams: c.teams, detail: c.detail || null,
+    status: "open",
+    fromProps: cands.length,
+    games: upcoming.reduce((o, g) => (o[g.sport] = (o[g.sport] || 0) + 1, o), {}),
+    runnersUp: res.ranked.slice(1, 4).map(x => ({ sport: x.sport, pick: x.player, need: x.need, price: x.price, pAdj: +x.pAdj.toFixed(4) }))
   };
+  if (c.sport === "MLB") Object.assign(row, { gk: c.gk, slot: c.mlb.slot, posted: c.mlb.posted, startProb: c.mlb.startProb, sp: c.mlb.sp });
   L.bets.push(row);
   // Claim the day in gitignored state BEFORE writing the ledger or sending the
   // alert. If anything below fails, the worst case is a rung that was claimed
   // and not announced — recoverable. The reverse, announced and not claimed,
   // is what sends a second player to a phone.
   if (D) {
-    D.ladderDay = day; D.ladderPick = { pick: c.name, playerId: c.id, gk: c.gk };
+    D.ladderDay = day; D.ladderPick = { pick: c.player, playerId: c.playerId, sport: c.sport, gk: c.gk };
     D.ladderRows = (D.ladderRows || []).filter(b => b.date !== day).concat([row]);
     stateRows = D.ladderRows;
     if (saveState) saveState();
   }
   writeLadderFile(L);
 
-  const risk = M.ladderRisk(c.p, row.price, st);
-  const first = g ? new Date(g.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "—";
+  const risk = M.ladderRisk(c.pAdj, row.price, st);
+  const when = c.start ? new Date(c.start).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "—";
+  const emoji = (SPORT[c.sport] || {}).emoji || "";
+  const counted = Object.entries(row.games).map(([s, n]) => `${n} ${s}`).join(", ");
   await tg(
     `🪜 <b>THE LADDER</b> · cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs}\n` +
     `➖➖➖➖➖➖➖➖\n` +
-    `<b>${money(st.stake)}</b> on <b>${c.name}</b> to record a hit\n` +
-    `#${c.slot} · ${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName} · ${first} ET\n` +
-    `vs ${c.spName || "SP TBD"}\n\n` +
-    `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(c.p - MIN_EDGE)}</b>\n` +
-    `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${row.price}\n` +
+    `${emoji} <b>${money(st.stake)}</b> on <b>${c.player}</b> ${c.need}\n` +
+    `${c.teams} · ${when} ET\n` +
+    (c.detail ? `${c.detail}\n` : "") +
+    `\n` +
+    `🎯 ${pct(c.pAdj)} to win · model ${pct(c.p)} · fair ${M.amOdds(c.pAdj)}\n` +
     (row.priceSource === "kalshi"
-      ? `💱 Kalshi ask <b>${row.price}</b> (${row.kalshi.bid != null ? (row.kalshi.bid * 100).toFixed(0) : "–"}/${(row.kalshi.ask * 100).toFixed(0)}¢)\n`
+      ? `💱 Kalshi ask <b>${row.price}</b> (${row.kalshi.bid != null ? (row.kalshi.bid * 100).toFixed(0) : "–"}/${(row.kalshi.ask * 100).toFixed(0)}¢) — bet it at this or better\n`
       : `⚠ Kalshi unavailable — priced at the assumed ${row.price}\n`) +
-    `${c.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.slot}, ${pct(c.startProb)} to start (already priced in)`}\n` +
-    `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n` +
-    `${live.filter(posted).length} of ${live.length} games had confirmed lineups at lock\n` +
-    `${benched && benched.edge > best.edge ? `⏸ ${benched.c.name} rated higher but has ridden two days running — benched\n` : ""}` +
+    (c.sport === "MLB" ? `${c.mlb.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.mlb.slot}, ${pct(c.mlb.startProb)} to start (already priced in)`}\n` : "") +
+    (c.status ? `⚠ Listed ${c.status}\n` : "") +
+    `Likeliest of ${res.ranked.length} props across ${counted}\n` +
+    (row.runnersUp.length ? `Next: ${row.runnersUp.map(x => `${x.pick} ${x.need} (${pct(x.pAdj)})`).join(" · ")}\n` : "") +
+    `${bench ? `⏸ ${bench.player} has ridden two days running — benched\n` : ""}` +
     `\n` +
     `<i>Your money at risk: ${money(st.base)} (the seed). Riding on top of it: ${money(st.stake - st.base)} of theirs.\n` +
     (risk ? `Five straight at this rate completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${money(risk.cycleProfit)}. Account ${money(st.account)}.` : "") +
     `</i>`
   );
-  console.log(`ladder: ${money(st.stake)} on ${c.name} (${(best.edge * 100).toFixed(1)}pts), cycle ${st.cycle} day ${st.rung}.`);
+  console.log(`ladder: ${money(st.stake)} on ${c.sport} ${c.player} ${c.need} @ ${c.price}, cycle ${st.cycle} day ${st.rung}.`);
+}
+
+// A basketball or football rung, graded off ESPN's final box score. Baseball
+// keeps its own path below, which reads the MLB boxscore the doubles already
+// fetched.
+async function ladderSettleOther() {
+  const L = readLadderFile();
+  const b = L.bets.find(x => x.status === "open" && (x.sport === "NBA" || x.sport === "NFL"));
+  if (!b) return;
+  const { settleRung } = await ladderSports();
+  const r = await settleRung(b);
+  if (!r) return;                                             // not final yet
+  b.status = r.status; b.actual = r.actual; b.result = r.note;
+  b.settled = new Date().toISOString();
+  writeLadderFile(L);
+  const st = M.ladder(L.bets);
+  const C = M.LADDER;
+  if (r.status === "void") {
+    await tg(`🪜 <b>RUNG VOID</b> — ${b.pick} ${b.need}: ${r.note}.\nNothing lost; tomorrow's rung stays at ${money(st.stake)}.`);
+  } else if (r.status === "won") {
+    const ret = +(b.stake * M.decFromAmerican(b.price)).toFixed(2);
+    const done = b.rung >= C.rungs;
+    await tg(
+      `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${b.rung} IN</b>`} — ${b.pick} ${b.need}: ${r.note}\n` +
+      `${money(b.stake)} returns ${money(ret)}\n` +
+      (done
+        ? `All ${C.rungs} days. ${money(b.seed)} of yours became ${money(ret)} — ${money(ret - b.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
+        : `It all rides tomorrow: <b>${money(ret)}</b> on day ${b.rung + 1} of ${C.rungs}.\nStill only ${money(b.seed)} of your money in this cycle.`)
+    );
+  } else {
+    await tg(
+      `🪜 <b>CYCLE BUSTED</b> on day ${b.rung} of ${C.rungs} — ${b.pick} ${b.need}: ${r.note}\n` +
+      `Cost: ${money(b.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
+      `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
+      (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`)
+    );
+  }
+  console.log(`ladder: ${b.sport} ${b.pick} ${r.status.toUpperCase()} (${r.note}) — account ${money(st.account)}.`);
 }
 
 async function ladderSettle(hitsById, finalByGk) {
   const L = readLadderFile();
   const b = L.bets.find(x => x.status === "open");
-  if (!b || b.playerId == null) return;
+  // Baseball only: an NBA or NFL player id means nothing in an MLB boxscore,
+  // and could even collide with one.
+  if (!b || b.playerId == null || (b.sport && b.sport !== "MLB")) return;
   const hits = hitsById[b.playerId];
   const got = (hits || 0) >= 1;
   if (!got && !finalByGk[b.gk]) return;                       // still live
@@ -618,7 +693,7 @@ async function ladderSettle(hitsById, finalByGk) {
 // different game. This fetches just that one boxscore.
 async function settleLadderOnly(games) {
   const b = readLadderFile().bets.find(x => x.status === "open");
-  if (!b || b.gk == null) return;
+  if (!b || b.gk == null || (b.sport && b.sport !== "MLB")) return;
   const g = games.find(x => x.gamePk === b.gk);
   if (!g || g.status?.abstractGameState === "Preview") return;
   const bx = await j(`${API}/game/${b.gk}/boxscore`);
@@ -657,11 +732,22 @@ async function main() {
   const day = M.slateYmd();
   const sched = await j(`${API}/schedule?sportId=1&date=${day}&hydrate=probablePitcher,team,venue,lineups`);
   const games = (sched?.dates?.[0]?.games || []).filter(g => !/postpon|suspend|cancel/i.test(g.status?.detailedState || ""));
-  if (!games.length) { console.log(`No MLB games ${day}.`); return; }
 
   let blob = {};
   try { if (existsSync(STATE_FILE)) blob = JSON.parse(readFileSync(STATE_FILE, "utf8")) || {}; } catch (e) { console.log("State read failed:", e.message); }
   const D = blob.dd = blob.dd || {};
+  // No baseball is no longer a day off: the ladder picks across basketball
+  // and football too, so it still has to settle yesterday's rung and look for
+  // today's. Nothing below this line is about anything but baseball.
+  if (!games.length) {
+    console.log(`No MLB games ${day}.`);
+    stateRows = Array.isArray(D.ladderRows) ? D.ladderRows : [];
+    const save = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
+    try { await ladderSettleOther(); } catch (e) { console.log("ladder settle failed:", e.message); }
+    try { await ladderPlace(day, [], D, save); } catch (e) { console.log("ladder place failed:", e.message); }
+    save();
+    return;
+  }
   D.record = D.record || { w: 0, l: 0 };
   D.bets = D.bets || {};              // `${day}:${gamePk}` -> { date, teams, gk, double, results }
   D.seen = D.seen || {};              // `${day}:${gamePk}` -> "bet" | "noedge" | "missed"
@@ -788,6 +874,7 @@ async function main() {
     }
   }
   const saveState = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
+  try { await ladderSettleOther(); } catch (e) { console.log("ladder settle failed:", e.message); }
   try { await ladderPlace(day, games, D, saveState); } catch (e) { console.log("ladder place failed:", e.message); }
 
   // ── Live tracking of everything alerted today ──

@@ -245,11 +245,17 @@ export async function nbaCandidates(day, { get = getJSON, say = say0 } = {}) {
 // the same two steps the football board takes before it prices anything.
 const kPlayerKey = t => String(t || "").split(":")[0].toLowerCase().replace(/[^a-z ]/g, "").replace(/\s+/g, " ").trim();
 
-export async function nflCandidates(day, { say = say0 } = {}) {
+export async function nflCandidates(day, { get = getJSON, say = say0 } = {}) {
   // The board's own series list has no rushing ladder; the ladder bets one.
   GM.KALSHI_PROP_SERIES.nfl.rushYds = GM.KALSHI_PROP_SERIES.nfl.rushYds || MARKETS.NFL.rushYds.series;
   const now = Date.now();
-  const board = await GM.loadLeagueBoard("nfl", {}, () => {});
+  // The week THIS day belongs to. Left to itself the board loads ESPN's
+  // "current" week, which on a Tuesday is the one that just finished — every
+  // game final, nothing to bet, and Thursday's game never considered.
+  const sb = await get(`${ESPN}/football/nfl/scoreboard?limit=50&dates=${compact(day)}`);
+  const season = (sb.season || {}).year, week = (sb.week || {}).number;
+  if (!season || !week) return { candidates: [], note: "no NFL week for this day" };
+  const board = await GM.loadLeagueBoard("nfl", { season, week }, () => {});
   const today = board.games.filter(e => HW.etDayOf(e.game.date) === day && !e.game.final && Date.parse(e.game.date) > now);
   if (!today.length) return { candidates: [], note: "no NFL games" };
   const kal = await GM.loadKalshi("nfl");
