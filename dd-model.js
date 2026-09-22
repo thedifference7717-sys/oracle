@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Two BAIgger — shared hit-probability engine (BUILD 3)
+// Prop Shop — shared hit-probability engine (BUILD 3)
 //
 // One file, two consumers: the browser dashboard loads it as a classic script
 // (window.DDModel) and scripts/parlaiy-alerts.mjs imports it as a CJS default.

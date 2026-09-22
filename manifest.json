@@ -1,7 +1,7 @@
 {
-  "name": "SportsAI",
-  "short_name": "SportsAI",
-  "description": "Two BAIgger and PlAIybook \u2014 model-priced same-game parlays with live edge and stake sizing.",
+  "name": "Prop Shop",
+  "short_name": "Prop Shop",
+  "description": "Prop Shop by SportsAI — the Ladder, the Dub and the Robin: one model-priced player-prop card a day across baseball, basketball and football.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

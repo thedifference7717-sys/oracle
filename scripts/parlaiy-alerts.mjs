@@ -1,4 +1,4 @@
-// Two BAIgger — Telegram alerts (GitHub Actions cron, self-looping every ~60s).
+// Prop Shop — Telegram alerts (GitHub Actions cron, self-looping every ~60s).
 //
 // 1. At lock (1h before the day's first pitch) sends the strongest two-man
 //    same-game hit parlays that actually clear the price on offer.
@@ -625,7 +625,7 @@ async function ladderPlace(day, games, D, saveState) {
   const emoji = (SPORT[c.sport] || {}).emoji || "";
   const counted = Object.entries(row.games).map(([s, n]) => `${n} ${s}`).join(", ") + " games";
   await tg(
-    `🪜 <b>THE LADDER</b> · cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs}\n` +
+    `🪜 <b>PROP SHOP · THE LADDER</b> · cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs}\n` +
     `➖➖➖➖➖➖➖➖\n` +
     `${emoji} <b>${money(st.stake)}</b> on <b>${c.player}</b> ${c.need}\n` +
     `${c.teams} · ${when} ET\n` +
@@ -716,7 +716,7 @@ async function picksPlace(day, games, D, saveState) {
                   : { id: `${day}:dub`, date: day, published: now, status: "noplay", reason: "fewer than two qualifying props in different games" };
     dubs.bets.push(row); writeDaily(DUB_FILE, dubs, D, "dubRows"); if (saveState) saveState();
     if (d) {
-      await tg(`✌️ <b>THE DUB</b> · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+      await tg(`✌️ <b>PROP SHOP · THE DUB</b> · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
         d.legs.map(legText).join("\n") + `\n\n` +
         `🎯 Both hit <b>${pct(d.prob)}</b> · parlay <b>${d.price > 0 ? "+" : ""}${d.price}</b> at these prices (fair ${d.fair > 0 ? "+" : ""}${d.fair})\n` +
         `The best two-leg parlay across ${across} — two different games, and never the ladder's bet` +
@@ -730,7 +730,7 @@ async function picksPlace(day, games, D, saveState) {
                   : { id: `${day}:robin`, date: day, published: now, status: "noplay", reason: "fewer than three qualifying props" };
     robins.bets.push(row); writeDaily(ROBIN_FILE, robins, D, "robinRows"); if (saveState) saveState();
     if (r) {
-      await tg(`🐦 <b>THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+      await tg(`🐦 <b>PROP SHOP · THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
         r.legs.map((l, i) => `${i + 1}. ${legText(l)}`).join("\n") + `\n\n` +
         r.sizes.map(z => `By ${z.m}s: ${z.tickets} ticket${z.tickets === 1 ? "" : "s"} · avg ticket pays ${z.avgPays.toFixed(2)}x · expect ${z.expWin.toFixed(1)} to cash · ${z.ev >= 0 ? "+" : ""}${(z.ev * 100).toFixed(1)}% expected`).join("\n") +
         `\n\n<i>The ${r.legs.length} likeliest props across ${across}.</i>`);
@@ -882,7 +882,7 @@ async function alertGame(day, g, d) {
   if (!GAME_ALERTS) return;
   const first = new Date(g.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
   await tgLong(
-    `⚾ <b>TWO BAIGGER</b> · ${d.teams}\n` +
+    `⚾ <b>PROP SHOP · GAME DOUBLE</b> · ${d.teams}\n` +
     `First pitch ${first} ET · ${d.venue || ""}\n` +
     `➖➖➖➖➖➖➖➖\n` +
     // The double is offered anywhere from +100 to -175 depending on the legs,
