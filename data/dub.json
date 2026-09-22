@@ -1,0 +1,74 @@
+{
+ "v": 1,
+ "bets": [
+  {
+   "id": "2026-09-22:dub",
+   "date": "2026-09-22",
+   "published": "2026-09-22T21:52:41.869Z",
+   "status": "open",
+   "games": {
+    "MLB": 14
+   },
+   "excludes": {
+    "sport": "MLB",
+    "pick": "Geraldo Perdomo"
+   },
+   "legs": [
+    {
+     "sport": "MLB",
+     "player": "Jake McCarthy",
+     "playerId": 664983,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824302",
+     "gk": 824302,
+     "teams": "COL vs AZ",
+     "start": "2026-09-23T00:40:00Z",
+     "price": -285,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP222040AZCOL-COLJMCCARTHY31-1",
+      "bid": 0.71,
+      "ask": 0.74,
+      "spread": 0.03
+     },
+     "p": 0.7763,
+     "pAdj": 0.7523,
+     "detail": "#1 · vs Michael Soroka · lineup confirmed"
+    },
+    {
+     "sport": "MLB",
+     "player": "Drake Baldwin",
+     "playerId": 686948,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824867",
+     "gk": 824867,
+     "teams": "ATL vs CIN",
+     "start": "2026-09-22T23:15:00Z",
+     "price": -257,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP221915CINATL-ATLDBALDWIN30-1",
+      "bid": 0.71,
+      "ask": 0.72,
+      "spread": 0.01
+     },
+     "p": 0.7103,
+     "pAdj": 0.7129,
+     "detail": "#2 · vs Brandon Williamson · lineup confirmed"
+    }
+   ],
+   "prob": 0.5363,
+   "price": -114,
+   "fair": -116
+  }
+ ],
+ "updated": "2026-09-22T21:52:41.870Z",
+ "record": {
+  "w": 0,
+  "l": 0
+ }
+}
