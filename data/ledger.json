@@ -619,7 +619,45 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-22:824061",
+   "date": "2026-09-22",
+   "sport": "MLB",
+   "published": "2026-09-22T20:00:32.227Z",
+   "firstPitch": "2026-09-22T23:40:00Z",
+   "teams": "CWS vs KC",
+   "venue": "Kauffman Stadium",
+   "price": -175,
+   "prob": 0.549090563055415,
+   "edge": -0.08727307330822132,
+   "evPct": -13.714340091291927,
+   "kelly": 0,
+   "soft": 0.049516642368422126,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 7.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 545341,
+     "name": "Randal Grichuk",
+     "slot": 3,
+     "p": 0.7464520097133824,
+     "sp": "Daniel Lynch IV"
+    },
+    {
+     "id": 678246,
+     "name": "Miguel Vargas",
+     "slot": 1,
+     "p": 0.7200565187595345,
+     "sp": "Daniel Lynch IV"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-22T19:24:43.773Z"
+ "updated": "2026-09-22T20:00:32.233Z"
 }
