@@ -243,6 +243,12 @@ async function j(url, opts) { const r = await fetch(url, opts); if (!r.ok) throw
 // DRY_RUN=1 prints every alert instead of sending it — for running the real
 // alerter end to end on a runner without touching anyone's phone.
 const DRY_RUN = process.env.DRY_RUN === "1";
+// The per-game same-game doubles are no longer a product of their own: the
+// Dub is now ONE parlay a day across every sport. They are still built and
+// graded silently, because their graded legs are what calibrates the baseball
+// model — but they only reach Telegram with DD_GAME_ALERTS=1.
+const GAME_ALERTS = process.env.DD_GAME_ALERTS === "1";
+const tgGame = (...a) => GAME_ALERTS ? tg(...a) : Promise.resolve();
 async function tg(text) {
   if (DRY_RUN) { console.log("\n[telegram, not sent]\n" + text.replace(/<[^>]+>/g, "") + "\n"); return; }
   await j(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
@@ -434,6 +440,75 @@ async function ladderStarts(day, games, D) {
   return mlb.concat(other || []).filter(g => LADDER_SPORTS.has(g.sport) && !isNaN(Date.parse(g.start)));
 }
 
+// Today's clock, shared by the Ladder, the Dub and the Robin: they all lock an
+// hour before the first game of the day in any sport. Also tells the
+// dashboard when that is (written into the ladder file only when it changes).
+async function lockState(day, games, D, L) {
+  const now = Date.now();
+  const starts = await ladderStarts(day, games, D);
+  const upcoming = starts.filter(g => now < Date.parse(g.start));
+  if (upcoming.length && L) {
+    const first = Math.min(...starts.map(g => Date.parse(g.start)));
+    const count = {}; starts.forEach(g => count[g.sport] = (count[g.sport] || 0) + 1);
+    const next = { date: day, first: new Date(first).toISOString(), lockAt: new Date(first - HOUR).toISOString(), games: count };
+    if (JSON.stringify(L.next || null) !== JSON.stringify(next)) { L.next = next; writeLadderFile(L); }
+  }
+  // LADDER_FORCE_LOCK=1 ignores the clock — dry runs only.
+  const locking = process.env.LADDER_FORCE_LOCK === "1" ||
+    starts.some(g => { const t = Date.parse(g.start); return now >= t - HOUR && now < t; });
+  return { starts, upcoming, locking };
+}
+
+// Every sport's props for today, each priced on Kalshi — gathered ONCE per pass
+// and shared, because the Dub and the Robin choose from the same pool as the
+// ladder and building three NFL simulations to answer one question is waste.
+// A sport that fails to load drops out and says so; it never takes the other
+// two down with it.
+let _props = null;
+async function gatherProps(day, games, upcoming) {
+  if (_props && _props.day === day) return _props;
+  const { mlbCandidates, nbaCandidates, nflCandidates } = await ladderSports();
+  const now = Date.now();
+  const liveMlb = games.filter(g => now < Date.parse(g.gameDate));
+  const cands = [], notes = [];
+  if (LADDER_SPORTS.has("MLB") && liveMlb.length) {
+    try {
+      const board = await M.buildBoard({
+        getJSON: j, day, cal: null, american: PRICE,
+        schedule: { dates: [{ games: liveMlb }] },
+        onStatus: m => console.log("  · MLB:", m)
+      });
+      // Priced at what a hit actually costs on Kalshi right now. If the feed
+      // is up, a man with no 1+ market is not bettable and is skipped; if it
+      // is DOWN, everyone falls back to LEG_PRICE and the row says so.
+      let quotes = null;
+      try { quotes = await fetchHitQuotes(); console.log(`  · MLB: ${quotes.size} players quoted on Kalshi`); }
+      catch (e) { console.log("  · MLB: Kalshi quotes unavailable (" + e.message + ") — falling back to " + LEG_PRICE); }
+      const live_ = quotes && quotes.size >= 10;          // a handful of markets is a broken feed, not a board
+      const priceFor = c => {
+        if (!live_) return { american: LEG_PRICE, ask: 1 / M.decFromAmerican(LEG_PRICE), source: "assumed" };
+        const g = liveMlb.find(x => x.gamePk === c.gk);
+        const q = quoteFor(quotes, c.name, g && g.gameDate);
+        return q ? { american: q.american, ask: q.ask, bid: q.bid, spread: q.spread, ticker: q.ticker, source: "kalshi" } : null;
+      };
+      const r = mlbCandidates(board, liveMlb, priceFor);
+      cands.push(...r.candidates);
+      notes.push(`MLB ${r.candidates.length} priced of ${board.candidates.length} bats in ${liveMlb.length} game${liveMlb.length === 1 ? "" : "s"}${live_ ? "" : " (Kalshi down — assumed price)"}`);
+    } catch (e) { notes.push(`MLB failed (${e.message})`); }
+  }
+  for (const [sport, fn] of [["NBA", nbaCandidates], ["NFL", nflCandidates]]) {
+    if (!LADDER_SPORTS.has(sport) || !upcoming.some(g => g.sport === sport)) continue;
+    try {
+      const r = await fn(day, { say: m => console.log(m) });
+      cands.push(...r.candidates);
+      notes.push(`${sport} ${r.candidates.length} priced — ${r.note}`);
+    } catch (e) { notes.push(`${sport} failed (${e.message})`); }
+  }
+  notes.forEach(n => console.log("  · props: " + n));
+  _props = { day, cands, notes };
+  return _props;
+}
+
 // Claim the day in gitignored state, WITH the row. A pass or a skip used to
 // set only `ladderDay`, so when its push failed the row was lost with the
 // working tree while state went on insisting the day was decided — the
@@ -481,28 +556,10 @@ async function ladderPlace(day, games, D, saveState) {
   // Not earlier either. An hour out, baseball lineups are mostly posted and
   // the NBA's inactive lists are landing; the field is real. (A double is the
   // opposite case: judged on one game, it locks on that game's own lineups.)
-  const { mlbCandidates, nbaCandidates, nflCandidates, sportRecords, benched, choose, SPORT } = await ladderSports();
-  const starts = await ladderStarts(day, games, D);
-  const upcoming = starts.filter(g => now < Date.parse(g.start));
-  // Tell the dashboard when today locks, and what is in play, so it can say
-  // so instead of guessing from baseball alone. Written only when it changes.
-  if (upcoming.length) {
-    const first = Math.min(...starts.map(g => Date.parse(g.start)));
-    const count = {}; starts.forEach(g => count[g.sport] = (count[g.sport] || 0) + 1);
-    const next = { date: day, first: new Date(first).toISOString(), lockAt: new Date(first - HOUR).toISOString(), games: count };
-    if (JSON.stringify(L.next || null) !== JSON.stringify(next)) { L.next = next; writeLadderFile(L); }
-  }
-  // LADDER_FORCE_LOCK=1 ignores the clock — dry runs only.
-  const locking = process.env.LADDER_FORCE_LOCK === "1" ||
-    starts.some(g => { const t = Date.parse(g.start); return now >= t - HOUR && now < t; });
+  const { sportRecords, benched, choose, SPORT } = await ladderSports();
+  const { upcoming, locking } = await lockState(day, games, D, L);
   if (!locking) return;
-  // EVERY game that has not started, not just the ones with a lineup up. The
-  // baseball model already prices an unposted bat off his projected slot and
-  // his real chance of starting, so a projected leg and a confirmed one are
-  // directly comparable; restricting to posted lineups left the ladder picking
-  // the best of two games at the first lock and calling it the best of the day.
   if (!upcoming.length) { console.log("ladder: at lock, every game has already started — skipping today."); return; }
-  const liveMlb = games.filter(g => now < Date.parse(g.gameDate));
 
   const st = M.ladder(L.bets);
   if (!st.canFund) {
@@ -515,44 +572,7 @@ async function ladderPlace(day, games, D, saveState) {
     return;
   }
 
-  // ── every sport's candidates, each priced on Kalshi ──
-  // A sport that fails to load drops out of today's choice and says so; it
-  // never takes the other two down with it.
-  const cands = [], notes = [];
-  if (LADDER_SPORTS.has("MLB") && liveMlb.length) {
-    try {
-      const board = await M.buildBoard({
-        getJSON: j, day, cal: null, american: PRICE,
-        schedule: { dates: [{ games: liveMlb }] },
-        onStatus: m => console.log("  · MLB:", m)
-      });
-      // Priced at what a hit actually costs on Kalshi right now. If the feed
-      // is up, a man with no 1+ market is not bettable and is skipped; if it
-      // is DOWN, everyone falls back to LEG_PRICE and the rung says so.
-      let quotes = null;
-      try { quotes = await fetchHitQuotes(); console.log(`  · MLB: ${quotes.size} players quoted on Kalshi`); }
-      catch (e) { console.log("  · MLB: Kalshi quotes unavailable (" + e.message + ") — falling back to " + LEG_PRICE); }
-      const live_ = quotes && quotes.size >= 10;          // a handful of markets is a broken feed, not a board
-      const priceFor = c => {
-        if (!live_) return { american: LEG_PRICE, ask: 1 / M.decFromAmerican(LEG_PRICE), source: "assumed" };
-        const g = liveMlb.find(x => x.gamePk === c.gk);
-        const q = quoteFor(quotes, c.name, g && g.gameDate);
-        return q ? { american: q.american, ask: q.ask, bid: q.bid, spread: q.spread, ticker: q.ticker, source: "kalshi" } : null;
-      };
-      const r = mlbCandidates(board, liveMlb, priceFor);
-      cands.push(...r.candidates);
-      notes.push(`MLB ${r.candidates.length} priced of ${board.candidates.length} bats in ${liveMlb.length} game${liveMlb.length === 1 ? "" : "s"}${live_ ? "" : " (Kalshi down — assumed price)"}`);
-    } catch (e) { notes.push(`MLB failed (${e.message})`); }
-  }
-  for (const [sport, fn] of [["NBA", nbaCandidates], ["NFL", nflCandidates]]) {
-    if (!LADDER_SPORTS.has(sport) || !upcoming.some(g => g.sport === sport)) continue;
-    try {
-      const r = await fn(day, { say: m => console.log(m) });
-      cands.push(...r.candidates);
-      notes.push(`${sport} ${r.candidates.length} priced — ${r.note}`);
-    } catch (e) { notes.push(`${sport} failed (${e.message})`); }
-  }
-  notes.forEach(n => console.log("  · ladder: " + n));
+  const { cands, notes } = await gatherProps(day, games, upcoming);
 
   const records = sportRecords(L.bets, D && D.cal);
   const res = choose(cands, records, { band: LADDER_BAND, blocked: benched(L.bets, M.LADDER.maxStreak), minEdge: LADDER_MIN_EDGE });
@@ -626,6 +646,142 @@ async function ladderPlace(day, games, D, saveState) {
     `</i>`
   );
   console.log(`ladder: ${money(st.stake)} on ${c.sport} ${c.player} ${c.need} @ ${c.price}, cycle ${st.cycle} day ${st.rung}.`);
+}
+
+// ── the Dub and the Robin ───────────────────────────────────────────────────
+// Placed at the ladder's lock, from the same priced pool, and published to
+// their own files the same way: committed before the first game, so they are
+// on the record before anything can be known about them.
+const DUB_FILE = "data/dub.json", ROBIN_FILE = "data/robin.json";
+function readJsonFile(f) { try { const x = JSON.parse(readFileSync(f, "utf8")); if (Array.isArray(x.bets)) return x; } catch (e) {} return null; }
+function readJsonOrigin(f) {
+  try { const x = JSON.parse(execSync(`git show origin/main:${f} 2>/dev/null`, { encoding: "utf8" })); return Array.isArray(x.bets) ? x : null; }
+  catch (e) { return null; }
+}
+// Same union as the ladder: what is published, what this runner has locally,
+// and what it holds in state from a push that did not land. For a given day
+// the most-settled copy wins, so a graded row is never replaced by the open
+// copy an unpushed commit left behind.
+const settledness = b => (b.status && b.status !== "open" ? 2 : 0) + (b.legs || []).filter(l => l.result).length / 100;
+function readDaily(f, held) {
+  const byDate = new Map();
+  for (const src of [readJsonOrigin(f), readJsonFile(f), { bets: held || [] }]) {
+    for (const b of (src && src.bets) || []) {
+      const cur = byDate.get(b.date);
+      if (!cur || settledness(b) > settledness(cur)) byDate.set(b.date, b);
+    }
+  }
+  return { v: 1, bets: [...byDate.values()].sort((a, b) => String(a.date).localeCompare(String(b.date))) };
+}
+function writeDaily(f, J, D, key) {
+  J.updated = new Date().toISOString();
+  const done = J.bets.filter(b => b.status && b.status !== "open" && b.status !== "noplay");
+  J.record = { w: done.filter(b => b.status === "won").length, l: done.filter(b => b.status === "lost").length };
+  mkdirSync("data", { recursive: true });
+  writeFileSync(f, JSON.stringify(J, null, 1));
+  if (D) {                                              // hold the last two weeks in state
+    const from = M.ymd(new Date(Date.now() - 14 * 86400000));
+    D[key] = J.bets.filter(b => b.date >= from);
+  }
+}
+const legText = l => `${SPORT_EMOJI[l.sport] || ""} <b>${l.player}</b> ${l.need}\n   ${l.teams} · ${l.start ? new Date(l.start).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) + " ET" : ""} · ${l.price > 0 ? "+" : ""}${l.price} (${pct(l.pAdj)})`;
+const SPORT_EMOJI = { MLB: "⚾", NBA: "🏀", NFL: "🏈" };
+
+async function picksPlace(day, games, D, saveState) {
+  if (D && D.picksDay === day) return;
+  const dubs = readDaily(DUB_FILE, D && D.dubRows), robins = readDaily(ROBIN_FILE, D && D.robinRows);
+  const haveDub = dubs.bets.some(b => b.date === day), haveRobin = robins.bets.some(b => b.date === day);
+  if (haveDub && haveRobin) { if (D) { D.picksDay = day; if (saveState) saveState(); } return; }
+  const L = readLadderFile();
+  const { upcoming, locking } = await lockState(day, games, D, null);
+  if (!locking || !upcoming.length) return;
+  // The Dub must not contain the ladder's bet, so it waits for the ladder to
+  // decide — unless the ladder is not placing today at all (a rung from an
+  // earlier day still open).
+  const ladderRow = L.bets.find(b => b.date === day) || null;
+  const ladderBusy = L.bets.some(b => b.status === "open" && b.date !== day);
+  if (!ladderRow && !ladderBusy) { console.log("picks: waiting for the ladder's pick first."); return; }
+  const { cands, notes } = await gatherProps(day, games, upcoming);
+  if (!cands.length && notes.some(n => /failed/.test(n))) return;     // broken feed: try again next pass
+  const { sportRecords, choose, pickDub, pickRobin } = await ladderSports();
+  const res = choose(cands, sportRecords(L.bets, D && D.cal), { band: LADDER_BAND });
+  const now = new Date().toISOString();
+  const counted = upcoming.reduce((o, g) => (o[g.sport] = (o[g.sport] || 0) + 1, o), {});
+  const across = Object.entries(counted).map(([k, n]) => `${n} ${k}`).join(", ") + " games";
+
+  if (!haveDub) {
+    const d = pickDub(res.pool, ladderRow && ladderRow.pick ? ladderRow : null);
+    const row = d ? Object.assign({ id: `${day}:dub`, date: day, published: now, status: "open", games: counted,
+                                    excludes: ladderRow && ladderRow.pick ? { sport: ladderRow.sport || "MLB", pick: ladderRow.pick } : null }, d)
+                  : { id: `${day}:dub`, date: day, published: now, status: "noplay", reason: "fewer than two qualifying props in different games" };
+    dubs.bets.push(row); writeDaily(DUB_FILE, dubs, D, "dubRows"); if (saveState) saveState();
+    if (d) {
+      await tg(`✌️ <b>THE DUB</b> · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+        d.legs.map(legText).join("\n") + `\n\n` +
+        `🎯 Both hit <b>${pct(d.prob)}</b> · parlay <b>${d.price > 0 ? "+" : ""}${d.price}</b> at these prices (fair ${d.fair > 0 ? "+" : ""}${d.fair})\n` +
+        `The best two-leg parlay across ${across} — two different games, and never the ladder's bet` +
+        (row.excludes ? ` (${row.excludes.pick})` : "") + `.`);
+      console.log(`dub: ${d.legs.map(l => l.player).join(" + ")} — ${pct(d.prob)} at ${d.price}`);
+    } else console.log("dub: no pair today.");
+  }
+  if (!haveRobin) {
+    const r = pickRobin(res.pool, 6);
+    const row = r ? Object.assign({ id: `${day}:robin`, date: day, published: now, status: "open", games: counted }, r)
+                  : { id: `${day}:robin`, date: day, published: now, status: "noplay", reason: "fewer than three qualifying props" };
+    robins.bets.push(row); writeDaily(ROBIN_FILE, robins, D, "robinRows"); if (saveState) saveState();
+    if (r) {
+      await tg(`🐦 <b>THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+        r.legs.map((l, i) => `${i + 1}. ${legText(l)}`).join("\n") + `\n\n` +
+        r.sizes.map(z => `By ${z.m}s: ${z.tickets} ticket${z.tickets === 1 ? "" : "s"} · avg ticket pays ${z.avgPays.toFixed(2)}x · expect ${z.expWin.toFixed(1)} to cash · ${z.ev >= 0 ? "+" : ""}${(z.ev * 100).toFixed(1)}% expected`).join("\n") +
+        `\n\n<i>The ${r.legs.length} likeliest props across ${across}.</i>`);
+      console.log(`robin: ${r.legs.map(l => l.player).join(", ")}`);
+    } else console.log("robin: not enough props today.");
+  }
+  if (D) { D.picksDay = day; if (saveState) saveState(); }
+}
+
+// Grade every open Dub and Robin leg from its final box score. Each result is
+// announced once — the alert key lives in state, so a push that fails and
+// leaves the open copy on origin cannot make it announce twice.
+async function picksSettle(D, saveState) {
+  const { settleLeg, gradeDub, gradeRobin } = await ladderSports();
+  D.picksAlerted = D.picksAlerted || {};
+  const from = M.ymd(new Date(Date.now() - 14 * 86400000));
+  for (const k of Object.keys(D.picksAlerted)) if ((k.split(":")[1] || "") < from) delete D.picksAlerted[k];
+  for (const [f, key, kind] of [[DUB_FILE, "dubRows", "dub"], [ROBIN_FILE, "robinRows", "robin"]]) {
+    const J = readDaily(f, D[key]);
+    let moved = false;
+    for (const b of J.bets.filter(x => x.status === "open")) {
+      for (const l of b.legs) {
+        if (l.result) continue;
+        try {
+          const r = await settleLeg(l);
+          if (r) { l.result = r.status; l.actual = r.actual; l.note = r.note; moved = true; }
+        } catch (e) { console.log(`${kind}: ${l.player} not gradable yet (${e.message})`); }
+      }
+      if (kind === "dub") {
+        const st = gradeDub(b);
+        if (st) { b.status = st; b.settled = new Date().toISOString(); moved = true; }
+      } else {
+        const g = gradeRobin(b);
+        if (g) { b.status = "settled"; b.graded = g; b.settled = new Date().toISOString(); moved = true; }
+      }
+      const ak = `${kind}:${b.date}:${b.status}`;
+      if (b.status !== "open" && !D.picksAlerted[ak]) {
+        D.picksAlerted[ak] = 1;
+        if (kind === "dub") {
+          await tg(`✌️ <b>DUB ${b.status === "won" ? "CASHED" : b.status === "lost" ? "DEAD" : "VOID"}</b> · ${prettyDate(b.date)}\n` +
+            b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need} — ${l.note || l.result}`).join("\n"));
+        } else {
+          const g = b.graded;
+          await tg(`🐦 <b>ROBIN DONE</b> · ${prettyDate(b.date)} · ${g.hit} of ${g.of} hit\n` +
+            b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need}`).join("\n") + `\n\n` +
+            g.sizes.map(z => `By ${z.m}s: ${z.cashed}/${z.tickets} cashed · ${z.pl >= 0 ? "+" : ""}${z.pl.toFixed(2)} units`).join("\n"));
+        }
+      }
+    }
+    if (moved) { writeDaily(f, J, D, key); if (saveState) saveState(); }
+  }
 }
 
 // A basketball or football rung, graded off ESPN's final box score. Baseball
@@ -723,6 +879,7 @@ async function settleLadderOnly(games) {
 const legLine = c => `• <b>${c.name}</b> #${c.slot} · ${av(c.avg)}→${av(c.proj)} proj · ${c.eAb.toFixed(1)} AB\n  vs ${c.sp || "SP TBD"}${c.spBaa != null ? " (" + av(c.spBaa) + " BAA" + (c.spHr9 != null ? ", " + c.spHr9.toFixed(1) + " HR/9" : "") + ")" : ""}${c.plt === "adv" ? " ▲plat" : c.plt === "dis" ? " ▽plat" : ""} · <b>${pct(c.p)}</b>`;
 
 async function alertGame(day, g, d) {
+  if (!GAME_ALERTS) return;
   const first = new Date(g.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
   await tgLong(
     `⚾ <b>TWO BAIGGER</b> · ${d.teams}\n` +
@@ -759,6 +916,8 @@ async function main() {
     const save = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
     try { await ladderSettleOther(); } catch (e) { console.log("ladder settle failed:", e.message); }
     try { await ladderPlace(day, [], D, save); } catch (e) { console.log("ladder place failed:", e.message); }
+    try { await picksSettle(D, save); } catch (e) { console.log("picks settle failed:", e.message); }
+    try { await picksPlace(day, [], D, save); } catch (e) { console.log("picks place failed:", e.message); }
     save();
     return;
   }
@@ -890,6 +1049,8 @@ async function main() {
   const saveState = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
   try { await ladderSettleOther(); } catch (e) { console.log("ladder settle failed:", e.message); }
   try { await ladderPlace(day, games, D, saveState); } catch (e) { console.log("ladder place failed:", e.message); }
+  try { await picksSettle(D, saveState); } catch (e) { console.log("picks settle failed:", e.message); }
+  try { await picksPlace(day, games, D, saveState); } catch (e) { console.log("picks place failed:", e.message); }
 
   // ── Live tracking of everything alerted today ──
   const todays = Object.entries(D.bets).filter(([, b]) => b.date === day).map(([k, b]) => ({ k, b }));
@@ -936,7 +1097,7 @@ async function main() {
     if (inCount === 2) {
       cashed++; D.record.w++;
       gradeLeg(d.a, true); gradeLeg(d.b, true);
-      await tg(`💣 <b>CASHED — ${b.teams}</b>\nBoth hit! ${d.a.name} + ${d.b.name}\n${tally()}`);
+      await tgGame(`💣 <b>CASHED — ${b.teams}</b>\nBoth hit! ${d.a.name} + ${d.b.name}\n${tally()}`);
       st.cashed = true; st.hits = [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0];
       changed = true; console.log(`${b.teams} cashed.`);
       ledgerSettle(`${day}:${b.gk}`, true, st.hits, D);
@@ -944,13 +1105,13 @@ async function main() {
       dead++; D.record.l++;
       gradeLeg(d.a, hA); gradeLeg(d.b, hB);
       const cold = [!hA ? d.a.name : null, !hB ? d.b.name : null].filter(Boolean).join(" & ");
-      await tg(`💀 <b>DEAD — ${b.teams}</b>\nHitless: ${cold} (final)\n${tally()}`);
+      await tgGame(`💀 <b>DEAD — ${b.teams}</b>\nHitless: ${cold} (final)\n${tally()}`);
       st.dead = true; st.hits = [hitsById[d.a.id] || 0, hitsById[d.b.id] || 0];
       changed = true; console.log(`${b.teams} dead.`);
       ledgerSettle(`${day}:${b.gk}`, false, st.hits, D);
     } else if (inCount === 1 && !st.half) {
       const got = hA ? d.a.name : d.b.name, need = hA ? d.b.name : d.a.name;
-      await tg(`✅ <b>1/2 IN — ${b.teams}</b>\n${got} has a hit · need ${need}`);
+      await tgGame(`✅ <b>1/2 IN — ${b.teams}</b>\n${got} has a hit · need ${need}`);
       st.half = true; changed = true; console.log(`${b.teams} half.`);
     }
   }
@@ -970,7 +1131,7 @@ async function main() {
     const calLine = gl.n > 0
       ? `\nModel calibration: predicted <b>${pct(gl.sump / gl.n)}</b> per leg, actual <b>${pct(gl.hits / gl.n)}</b> over ${gl.n} graded legs`
       : "";
-    await tg(`📊 <b>DAY DONE</b> · ${prettyDate(day)}\n` +
+    await tgGame(`📊 <b>DAY DONE</b> · ${prettyDate(day)}\n` +
       `Bets: <b>${won}/${todays.length}</b> cashed · ${skipped} game${skipped === 1 ? "" : "s"} had no edge` +
       (missed ? ` · ${missed} missed (no lineup)` : "") +
       `\nAll-time record: <b>${D.record.w}-${D.record.l}</b> (${pctW}%)${calLine}`);

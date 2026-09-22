@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>SportsAI · The Robin</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SportsAI">
+<link rel="icon" type="image/svg+xml" href="sportsai.svg">
+<link rel="apple-touch-icon" href="sportsai-180.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="pages.css">
+</head>
+<body>
+<div id="topbar">
+  <div>
+    <div class="brand">SPORTSAI</div>
+    <div class="logo">Two BAIgger</div>
+    <div class="logo-sub">
+      The Ladder · The Dub · The Robin ·
+      <!-- stamped by the deploy; keep on its own line -->
+      <span id="buildsha">_dev</span>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Sections">
+    <a class="navlink" href="index.html">🪜 The Ladder</a>
+    <a class="navlink" href="dub.html">✌️ The Dub</a>
+    <a class="navlink on" href="robin.html" aria-current="page">🐦 The Robin</a>
+  </nav>
+</div>
+<div id="status"></div>
+
+<div class="section-h">
+  <div class="sh-row"><h1>🐦 The Robin</h1><span class="sh-note" id="note"></span></div>
+  <details class="disc"><summary>How the Robin works</summary><div class="disc-b">
+    <p>The <b>six likeliest props across every sport</b> on the slate — baseball hits, basketball points, rebounds, assists and threes, football passing, receiving and rushing yards — bet as a round robin: every 2-leg parlay between them, every 3-leg parlay, and so on up to all six.</p>
+    <p>A round robin forgives a miss. One cold leg costs only the tickets it is on; with six legs, by 2s is fifteen tickets and a single miss still leaves ten of them alive. The legs come from different games wherever the slate allows, because a round robin only prices honestly when its legs are independent.</p>
+    <p>Chosen from the same ranked pool as the Ladder and the Dub, at the same lock, each leg at its live Kalshi price. Every row below prices one size at those prices: what it costs at your stake per ticket, what an average ticket pays, how many should cash, and whether that adds up to more than you put in.</p>
+  </div></details>
+</div>
+<div id="today"></div>
+
+<div class="section-h"><div class="sh-row"><h2>Record</h2><span class="sh-note" id="recNote"></span></div></div>
+<div class="card"><div class="hist" id="hist"></div></div>
+<p class="fine">Every Robin is committed to the repo before its first game, so it cannot be improved afterwards. Model estimate — not betting advice. Bet only what you can afford to lose.</p>
+
+<script src="build-check.js"></script>
+<script src="pages.js"></script>
+<script>
+const P = window.Pages;
+let robins = null, ladder = null, lockAt = null;
+let stake = +P.store.get("robin.stake", 5) || 5;
+let size = +P.store.get("robin.size", 2) || 2;       // the size you are playing, for the record's P&L
+
+function setStake(v){ const x=parseFloat(v); if(!(x>0))return; stake=+x.toFixed(2); P.store.set("robin.stake",stake); P.flashSaved("stSaved"); paintRows(); renderHist(); }
+function setSize(m){ size=m; P.store.set("robin.size",m); paintRows(); renderHist(); }
+
+function sizeRows(row){
+  const best=row.sizes.reduce((b,z)=>!b||z.ev>b.ev?z:b,null);
+  const graded=row.graded?Object.fromEntries(row.graded.sizes.map(z=>[z.m,z])):null;
+  return row.sizes.map(z=>{
+    const cost=z.tickets*stake, g=graded&&graded[z.m];
+    return `<div class="row${z===best&&z.ev>0?" best":""}" onclick="setSize(${z.m})" style="cursor:pointer;${size===z.m?"outline:1.5px solid var(--blue);":""}">
+      <div class="t">By ${z.m}s · ${z.tickets} ticket${z.tickets===1?"":"s"} · ${P.money(cost)}${size===z.m?' <span class="tag ok">YOUR SIZE</span>':""}</div>
+      <div class="s">${g?`<b style="color:${g.pl>=0?"var(--green)":"var(--red)"}">${g.cashed} of ${g.tickets} cashed · ${g.pl>=0?"+":""}${P.money(g.pl*stake)}</b>`
+        :`average ticket pays ${P.money(stake*z.avgPays)} · expect ${z.expWin.toFixed(1)} to cash · about ${P.money(cost*(1+z.ev))} back`}</div>
+      <div class="ev" style="color:${z.ev>=0?"var(--green)":"var(--red)"}">${z.ev>=0?"+":""}${(z.ev*100).toFixed(1)}%<small>expected</small></div></div>`;
+  }).join("");
+}
+function paintRows(){ const el=document.getElementById("rows"); const row=todayRow(); if(el&&row&&row.sizes)el.innerHTML=sizeRows(row); }
+const todayRow=()=>robins&&robins.bets?robins.bets.find(b=>b.date===P.slateDay()):null;
+
+function render(){
+  const el=document.getElementById("today"), row=todayRow(), lk=P.lockOf(ladder);
+  lockAt=lk&&!row?lk.lockAt:null;
+  if(!row){
+    el.innerHTML=`<div class="card">${lk&&!lk.open?`<div class="wait"><div class="l">The Robin locks in</div><div class="v" id="clock">—</div>
+        <div class="s">With the Ladder, one hour before the day's first game (${P.etTime(lk.first)} ET) — from ${P.gamesLine(lk.games)}.</div></div>`
+      :lk?`<div class="wait"><div class="l">Choosing now</div><div class="s">The lock has passed and today's six are being chosen across ${P.gamesLine(lk.games)}. They appear here the moment they are published, with the Telegram alert. This page checks every minute.</div></div>`
+      :`<div class="empty">No slate published for today yet. The Robin locks with the Ladder, an hour before the first game.</div>`}</div>`;
+    tick(); return;
+  }
+  if(row.status==="noplay"){ el.innerHTML=`<div class="card"><div class="empty">No Robin today — ${row.reason||"nothing qualified"}.</div></div>`; return; }
+  const hit=row.legs.filter(l=>l.result==="won").length, done=row.legs.filter(l=>l.result).length;
+  el.innerHTML=`<div class="card">
+    <div class="hero">
+      <div class="big" style="color:var(--blue)">${row.legs.length} legs<small>${done?`${hit} of ${done} settled have hit`:`published ${row.published?P.etTime(Date.parse(row.published))+" ET":""}`} · ${P.gamesLine(row.games)}</small></div>
+      <div class="field" style="margin-top:0;max-width:160px"><label for="st">$ per ticket <span class="saved" id="stSaved"></span></label>
+        <input id="st" type="text" inputmode="decimal" autocomplete="off" value="${stake}" oninput="setStake(this.value)"></div>
+    </div>
+    <div class="legs">${row.legs.map((l,i)=>P.leg(Object.assign({},l,{player:`${i+1}. ${l.player}`}))).join("")}</div>
+    <h3 style="margin-top:18px">Every size · tap the one you play</h3>
+    <div class="rows" id="rows">${sizeRows(row)}</div>
+    <div class="field" style="max-width:none"><div class="hint">Priced at each leg's Kalshi ask. Your book's parlay prices may differ; shop every leg, since each point better goes straight onto every ticket it is on. Stake and size are saved on this device.</div></div>
+  </div>`;
+}
+
+function renderHist(){
+  const el=document.getElementById("hist"), list=(robins&&robins.bets||[]).filter(b=>b.status!=="noplay").slice().reverse();
+  let pl=0,n=0;
+  list.forEach(b=>{const z=b.graded&&b.graded.sizes.find(x=>x.m===size); if(z){pl+=z.pl*stake;n++;}});
+  document.getElementById("recNote").innerHTML=n?`by ${size}s: <b style="color:${pl>=0?"var(--green)":"var(--red)"}">${pl>=0?"+":""}${P.money(pl)}</b> over ${n}`:"";
+  el.innerHTML=list.length?list.slice(0,30).map(b=>{
+    const z=b.graded&&b.graded.sizes.find(x=>x.m===size);
+    return `<div class="hrow">
+      <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
+        <span>${b.graded?`<b>${b.graded.hit} of ${b.graded.of} hit</b>${z?` · by ${size}s <b style="color:${z.pl>=0?"var(--green)":"var(--red)"}">${z.pl>=0?"+":""}${P.money(z.pl*stake)}</b>`:""}`:'<span class="tag warn">OPEN</span>'}</span></div>
+      <div class="who">${b.legs.map(l=>`${l.result==="won"?"✅":l.result==="lost"?"❌":l.result==="void"?"➖":"·"} ${P.EMOJI[l.sport]||""} ${l.player} <span style="color:var(--dim)">${l.need}</span>`).join("<br>")}</div>
+    </div>`;}).join(""):`<div class="empty">The first Robin publishes at the next lock.</div>`;
+}
+
+function tick(){ const c=document.getElementById("clock"); if(!c||lockAt==null)return; const ms=lockAt-Date.now(); c.textContent=P.clock(ms); if(ms<=0){lockAt=null;load(true);} }
+setInterval(tick,1000);
+
+async function load(fresh){
+  const pending=()=>{const lk=P.lockOf(ladder);return lk&&lk.open&&!todayRow();};
+  [robins,ladder]=await Promise.all([P.load("data/robin.json",{fresh}),P.load("data/ladder.json",{fresh})]);
+  if(!fresh&&pending())[robins,ladder]=await Promise.all([P.load("data/robin.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
+  if(document.activeElement&&document.activeElement.id==="st")return;             // never repaint under a thumb
+  render(); renderHist();
+  document.getElementById("status").textContent=robins&&robins.updated?`Updated ${new Date(robins.updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})} ET`:"";
+  if(pending())setTimeout(()=>load(true),60000);
+}
+load();
+setInterval(()=>load(),180000);
+</script>
+</body>
+</html>

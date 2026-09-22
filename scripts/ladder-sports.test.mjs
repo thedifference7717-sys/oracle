@@ -110,5 +110,51 @@ console.log("each sport's record");
   ok("MLB uses the larger calibration sample", rec.MLB.n === 144);
 }
 
+
+console.log("the Dub: best pair, two games, never the ladder's bet");
+{
+  const pool = [
+    { sport: "MLB", player: "Ladder Man", playerId: 1, eventId: "g1", p: 0.8, pAdj: 0.78, price: -340 },
+    { sport: "MLB", player: "Same Game",  playerId: 2, eventId: "g2", p: 0.78, pAdj: 0.76, price: -320 },
+    { sport: "MLB", player: "Teammate",   playerId: 3, eventId: "g2", p: 0.77, pAdj: 0.75, price: -300 },
+    { sport: "NFL", player: "Receiver",   playerId: 9, eventId: "n1", p: 0.74, pAdj: 0.72, price: -260 }
+  ];
+  const d = S.pickDub(pool, { sport: "MLB", playerId: 1, pick: "Ladder Man" });
+  ok("the ladder's man is left out", d && !d.legs.some(l => l.player === "Ladder Man"));
+  ok("the two legs come from different games", d.legs[0].eventId !== d.legs[1].eventId);
+  ok("it pairs the best leg with the best from another game", d.legs.map(l => l.player).join("+") === "Same Game+Receiver", d.legs.map(l => l.player).join("+"));
+  ok("joint chance is the product", Math.abs(d.prob - 0.76 * 0.72) < 1e-4, String(d.prob));
+  const dd = (1 + 100 / 320) * (1 + 100 / 260);
+  ok("parlay price multiplies the legs", d.price === -Math.round(100 / (dd - 1)), String(d.price));
+  ok("with no ladder pick the top leg is used", S.pickDub(pool, null).legs[0].player === "Ladder Man");
+  ok("one game only is no Dub", S.pickDub(pool.slice(1, 3), null) === null);
+}
+
+console.log("the Robin: six likeliest, one per game where possible");
+{
+  const pool = Array.from({ length: 9 }, (_, i) => ({ sport: "MLB", player: "P" + i, playerId: i, eventId: "g" + Math.floor(i / 2),
+    p: 0.8 - i * 0.01, pAdj: 0.78 - i * 0.01, price: -300 + i * 10 }));
+  const r = S.pickRobin(pool, 6);
+  ok("six legs", r.legs.length === 6, String(r.legs.length));
+  ok("five games give five, then it fills", new Set(r.legs.slice(0, 5).map(l => l.eventId)).size === 5);
+  ok("sizes 2 through 6", r.sizes.map(z => z.m).join(",") === "2,3,4,5,6");
+  ok("by 2s is fifteen tickets", r.sizes[0].tickets === 15);
+  ok("by 6s is one ticket", r.sizes[4].tickets === 1);
+}
+
+console.log("grading");
+{
+  const L = rs => ({ legs: rs.map((x, i) => ({ result: x, price: -300, player: "L" + i })) });
+  ok("both won is won", S.gradeDub(L(["won", "won"])) === "won");
+  ok("one lost is lost, even with the other open", S.gradeDub(L(["lost", null])) === "lost");
+  ok("one open is still open", S.gradeDub(L(["won", null])) === null);
+  ok("a void leg drops out", S.gradeDub(L(["won", "void"])) === "won");
+  const g = S.gradeRobin(L(["won", "won", "won", "lost"]));
+  ok("robin counts hits", g.hit === 3 && g.of === 4);
+  ok("by 2s: three of six tickets cash", g.sizes[0].cashed === 3 && g.sizes[0].tickets === 6);
+  ok("by 4s: the lost leg kills the only ticket", g.sizes[2].cashed === 0);
+  ok("a robin with an open leg is not graded", S.gradeRobin(L(["won", null, "won"])) === null);
+}
+
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
 process.exit(failures ? 1 : 0);

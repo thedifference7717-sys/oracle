@@ -41,3 +41,4 @@ jobs:
           node scripts/parlaiy-alerts.mjs 2>&1 | grep -v "^game [0-9]" | tail -80
           echo "--- the row it would publish ---"
           node -e 'const L=require("./data/ladder.json");const b=L.bets[L.bets.length-1];console.log(JSON.stringify(b,null,1));console.log("next:",JSON.stringify(L.next))'
+          for f in dub robin; do echo "--- $f ---"; node -e 'const fs=require("fs");const f=process.argv[1];if(!fs.existsSync(f)){console.log("(none written)");process.exit(0)}const J=JSON.parse(fs.readFileSync(f,"utf8"));console.log(JSON.stringify(J.bets[J.bets.length-1],null,1).slice(0,2500))' data/$f.json; done

@@ -382,7 +382,7 @@ export function choose(candidates, records, { band, blocked = new Set(), minEdge
     if (blocked.has(benchKey(c))) { bench.push(c); continue; }
     ranked.push(c);
   }
-  return { pick: ranked[0] || null, ranked, benched: bench, doubted, rejected: r.rejected, all: r.all, band: r.band };
+  return { pick: ranked[0] || null, ranked, benched: bench, doubted, pool: r.eligible, rejected: r.rejected, all: r.all, band: r.band };
 }
 
 // ── settling a basketball or football rung ──────────────────────────────────
@@ -408,4 +408,121 @@ export async function settleRung(b, { get = getJSON } = {}) {
   const got = me[b.market] != null ? +me[b.market] : 0;      // in the box but no line here = 0 yards
   return { status: got > b.line ? "won" : "lost", actual: got,
            note: `${got} ${MARKETS.NFL[b.market] ? MARKETS.NFL[b.market].label : b.market} against a ${b.line} line` };
+}
+
+// ── the Dub and the Robin ───────────────────────────────────────────────────
+// Both are built from the same priced, ranked pool as the ladder, at the same
+// lock: every prop inside the price band that no veto rules out, likeliest
+// first. They do not need the ladder's "model agrees with the price" test —
+// that guards a bet that compounds, and a parlay that does not compound can
+// take the market's own favourites.
+const legOf = c => ({
+  sport: c.sport, player: c.player, playerId: c.playerId, market: c.market, line: c.line, need: c.need,
+  eventId: c.eventId, gk: c.gk, teams: c.teams, start: c.start, price: c.price, priceSource: c.priceSource || "kalshi",
+  kalshi: c.kalshi || null, p: +(+c.p).toFixed(4), pAdj: +(+c.pAdj).toFixed(4), detail: c.detail || null
+});
+const dec = a => { a = +a; return a > 0 ? 1 + a / 100 : 1 + 100 / Math.abs(a); };
+const american = d => d >= 2 ? Math.round((d - 1) * 100) : -Math.round(100 / (d - 1));
+const sameMan = (a, b) => a.sport === b.sport && String(a.playerId ?? a.player) === String(b.playerId ?? b.player);
+const gameKey = c => `${c.sport}:${c.eventId}`;
+
+// The best two-leg parlay: the likeliest pair from DIFFERENT games (so the two
+// legs are as close to independent as a parlay gets, and the joint chance is
+// honest), never including the ladder's own bet. Taking the top leg and the
+// best leg from another game is optimal for a product of two.
+export function pickDub(pool, ladderRow) {
+  const legs = (pool || []).filter(c => !(ladderRow && ladderRow.pick && sameMan(c, { sport: ladderRow.sport || "MLB", playerId: ladderRow.playerId, player: ladderRow.pick })));
+  const a = legs[0];
+  if (!a) return null;
+  const b = legs.find(c => c !== a && gameKey(c) !== gameKey(a) && !sameMan(c, a));
+  if (!b) return null;
+  const prob = a.pAdj * b.pAdj, d = dec(a.price) * dec(b.price);
+  return { legs: [legOf(a), legOf(b)], prob: +prob.toFixed(4), price: american(d), fair: american(1 / prob) };
+}
+
+// The six likeliest props, one per game where the slate allows it — a round
+// robin assumes its legs are independent, and two legs from one game are not.
+export function pickRobin(pool, n = 6) {
+  const out = [], games = new Set();
+  for (const c of pool || []) {
+    if (out.length >= n) break;
+    if (games.has(gameKey(c)) || out.some(x => sameMan(x, c))) continue;
+    out.push(c); games.add(gameKey(c));
+  }
+  // A thin slate: fill from games already used rather than bet fewer legs.
+  for (const c of pool || []) {
+    if (out.length >= n) break;
+    if (out.includes(c) || out.some(x => sameMan(x, c))) continue;
+    out.push(c);
+  }
+  return out.length >= 3 ? { legs: out.map(legOf), sizes: robinSizes(out) } : null;
+}
+
+// Every size of round robin over these legs, at each leg's own price: how many
+// tickets, what the average ticket pays, how many should cash, and what that
+// is worth per unit staked on every ticket.
+export function robinSizes(legs) {
+  const n = legs.length, rows = [];
+  const combos = (m, start = 0, acc = []) => m === 0 ? [acc] :
+    Array.from({ length: n - start }, (_, i) => combos(m - 1, start + i + 1, acc.concat(start + i))).flat();
+  for (let m = 2; m <= n; m++) {
+    const cs = combos(m);
+    let expBack = 0, pay = 0, expWin = 0;
+    for (const c of cs) {
+      const p = c.reduce((a, i) => a * legs[i].pAdj, 1), d = c.reduce((a, i) => a * dec(legs[i].price), 1);
+      expBack += p * d; pay += d; expWin += p;
+    }
+    rows.push({ m, tickets: cs.length, avgPays: +(pay / cs.length).toFixed(3), expWin: +expWin.toFixed(3),
+                ev: +(expBack / cs.length - 1).toFixed(4) });
+  }
+  return rows;
+}
+
+// One leg of any sport against its final box score. null while unknowable.
+export async function settleLeg(leg, { get = getJSON } = {}) {
+  if (leg.sport === "NBA" || leg.sport === "NFL") {
+    return settleRung({ sport: leg.sport, eventId: leg.eventId, playerId: leg.playerId, market: leg.market, line: leg.line, pick: leg.player }, { get });
+  }
+  const API = "https://statsapi.mlb.com/api/v1";
+  const sc = await get(`${API}/schedule?gamePk=${leg.gk}`);
+  const g = (((sc.dates || [])[0] || {}).games || [])[0];
+  const state = g && g.status && g.status.abstractGameState;
+  if (!g || state === "Preview") return null;
+  if (/postpon|cancel/i.test(g.status.detailedState || "")) return { status: "void", actual: null, note: "game not played" };
+  const bx = await get(`${API}/game/${leg.gk}/boxscore`);
+  let hits = null;
+  for (const side of ["home", "away"]) for (const pp of Object.values(bx?.teams?.[side]?.players || {})) {
+    if (String(pp?.person?.id) === String(leg.playerId) && pp?.stats?.batting && pp.stats.batting.atBats != null) hits = +pp.stats.batting.hits || 0;
+  }
+  if (hits >= 1) return { status: "won", actual: hits, note: `${hits} hit${hits === 1 ? "" : "s"}` };
+  if (state !== "Final") return null;
+  if (hits == null) return { status: "void", actual: null, note: "did not play" };
+  return { status: "lost", actual: 0, note: "hitless" };
+}
+
+// A parlay settles on its live legs: a void leg drops out, as at a book.
+export function gradeDub(b) {
+  const r = b.legs.map(l => l.result);
+  if (r.some(x => x === "lost")) return "lost";
+  if (r.some(x => x == null || x === "open")) return null;
+  return r.every(x => x === "void") ? "void" : "won";
+}
+export function gradeRobin(b) {
+  if (b.legs.some(l => l.result == null || l.result === "open")) return null;
+  const live = b.legs.map(l => l.result);
+  const n = b.legs.length, out = [];
+  const combos = (m, start = 0, acc = []) => m === 0 ? [acc] :
+    Array.from({ length: n - start }, (_, i) => combos(m - 1, start + i + 1, acc.concat(start + i))).flat();
+  for (let m = 2; m <= n; m++) {
+    let cashed = 0, back = 0, tickets = 0;
+    for (const c of combos(m)) {
+      tickets++;
+      if (c.some(i => live[i] === "lost")) continue;
+      const kept = c.filter(i => live[i] === "won");
+      const d = kept.length ? kept.reduce((a, i) => a * dec(b.legs[i].price), 1) : 1;   // all-void ticket: stake back
+      cashed += kept.length ? 1 : 0; back += d;
+    }
+    out.push({ m, tickets, cashed, back: +back.toFixed(3), pl: +(back - tickets).toFixed(3) });
+  }
+  return { hit: live.filter(x => x === "won").length, of: n, sizes: out };
 }
