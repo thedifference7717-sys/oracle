@@ -47,7 +47,13 @@ const SPORTS = {
 // the only one we make.
 const markets = [];
 let cursor = "";
-for (let page = 0; page < 60; page++) {
+// 60 pages was exactly 60,000 markets on the first real run — i.e. the scan
+// stopped at the cap, not at the end of the data, and "NBA: 0 series" was an
+// artefact of that rather than a finding. A limit you actually hit is not a
+// limit, it is a truncation, so this one is high enough to be provably
+// unreached and the total is checked against it below.
+const MAX_PAGES = 400;
+for (let page = 0; page < MAX_PAGES; page++) {
   const d = await get(`${KALSHI}/markets?status=open&limit=1000${cursor ? "&cursor=" + cursor : ""}`);
   const batch = d.markets || [];
   markets.push(...batch);
@@ -55,7 +61,9 @@ for (let page = 0; page < 60; page++) {
   process.stdout.write(`\rfetched ${markets.length} open markets…`);
   if (!cursor || !batch.length) break;
 }
-console.log(`\rKalshi has ${markets.length} open markets right now.\n`);
+const truncated = !!cursor;
+console.log(`\rKalshi has ${markets.length} open markets right now.` +
+  (truncated ? `  *** STILL TRUNCATED at ${MAX_PAGES} pages — treat any "0 series" below as unknown ***` : "  (complete: the cursor ran out before the page cap)") + "\n");
 
 // Group by series. The API gives series_ticker on most markets; where it does
 // not, the series is the ticker up to the first dash.
