@@ -337,7 +337,7 @@ const LADDER_FILE = "data/ladder.json";
 // The price a single "to record a hit" prop is actually offered at. Overridden
 // with DD_LEG_PRICE. This is an assumption until the real number is confirmed,
 // and it decides both whether there is a bet and how fast the ladder climbs.
-const LEG_PRICE = +(process.env.DD_LEG_PRICE || -250);
+const LEG_PRICE = +(process.env.DD_LEG_PRICE || M.LADDER.price);
 
 // Read the ledger as the UNION of this runner's copy and what is actually
 // published on origin/main.

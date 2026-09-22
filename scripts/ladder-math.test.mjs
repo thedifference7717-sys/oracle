@@ -86,13 +86,35 @@ console.log("a rung with no recorded price does not compound at even money");
   // stake and the ladder silently stopped growing. It also rendered as the
   // literal string "null" wherever the price was shown.
   const unpriced = M.ladder([{ date: "d1", status: "won", price: null, pick: "X" }], { account: 100 });
-  const priced   = M.ladder([{ date: "d1", status: "won", price: -250, pick: "X" }], { account: 100 });
+  // Compare against the CURRENT default, not a number typed here — the base
+  // price is a setting and moved from -250 to -275 the first time it changed.
+  const priced   = M.ladder([{ date: "d1", status: "won", price: M.LADDER.price, pick: "X" }], { account: 100 });
   ok("it returns what the assumed price pays", unpriced.rows[0].ret, priced.rows[0].ret);
   ok("it rolls the same stake forward", unpriced.stake, priced.stake);
   ok("the price shown is a number, never null", unpriced.rows[0].price, M.LADDER.price);
   ok("and the row says the price was assumed", unpriced.rows[0].assumedPrice ? 1 : 0, 1);
   ok("a recorded price is not flagged", priced.rows[0].assumedPrice ? 1 : 0, 0);
 }
+
+console.log("a recorded payout beats the price");
+{
+  // Odds move every day and every book, and a bettor knows what came back more
+  // reliably than the American number behind it. A rounded price is also lossy:
+  // -191 turns $36.33 into $55.35, three cents adrift, and the ladder compounds
+  // that into every rung after it. So the payout is taken as given.
+  const r = M.ladder([{ date: "d1", status: "won", price: -300,
+                        stakeActual: 36.33, returnActual: 55.32, pick: "X" }], { account: 363.3 });
+  ok("the return is exactly what was recorded", r.rows[0].ret, 55.32);
+  ok("the next rung rides that number", r.stake, 55.32);
+  ok("the price is back-solved from it", r.rows[0].price, -191);
+  ok("and the row says so", r.rows[0].retActual ? 1 : 0, 1);
+  // A payout of zero or nonsense must not be mistaken for a real one.
+  const junk = M.ladder([{ date: "d1", status: "won", price: -275, returnActual: 0, pick: "X" }], { account: 100 });
+  ok("a zero payout falls back to the price", junk.rows[0].ret, M.ladder([{ date: "d1", status: "won", price: -275, pick: "X" }], { account: 100 }).rows[0].ret);
+}
+
+console.log("the base price is the documented assumption");
+ok("LADDER.price", M.LADDER.price, -275);
 
 console.log("an exchange adjustment is untouched by the proportional form");
 const ex = M.ladder([{ date: "d", status: "lost", price: -250, stakeActual: 18.5, topUp: 11.5 }],

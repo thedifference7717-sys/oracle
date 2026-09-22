@@ -113,7 +113,7 @@ jobs:
           # The single "to record a hit" prop price the ladder is staked and
           # compounded against. This one is an assumption until confirmed, and
           # it decides both whether the rung is a bet and how fast it climbs.
-          DD_LEG_PRICE: ${{ vars.DD_LEG_PRICE || '-250' }}
+          DD_LEG_PRICE: ${{ vars.DD_LEG_PRICE || '-275' }}
           # How soft the opposing arm must be before a double is taken, as a
           # fraction of hit probability: 0.049 is +4.9pts against a
           # league-neutral leg. A second gate on top of DD_MIN_EDGE, not a

@@ -316,6 +316,11 @@ function roundRobin(ps, legAmerican, sizes) {
 
 // ── prices, EV, staking ─────────────────────────────────────────────────────
 function amOdds(p) { if (!(p > 0 && p < 1)) return "—"; const d = 1 / p; return d >= 2 ? "+" + Math.round((d - 1) * 100) : "-" + Math.round(100 / (d - 1)); }
+// The inverse of decFromAmerican, for back-solving a price from a payout.
+function americanFromDec(d) {
+  if (!(d > 1)) return null;
+  return d >= 2 ? Math.round((d - 1) * 100) : -Math.round(100 / (d - 1));
+}
 function decFromAmerican(a) { a = +a; if (!a) return null; return a > 0 ? 1 + a / 100 : 1 + 100 / Math.abs(a); }
 // EV per unit staked, plus Kelly. Quarter-Kelly is the number to actually bet:
 // full Kelly on a model this uncertain is a good way to go broke while right.
@@ -355,11 +360,12 @@ const LADDER = {
   missGain: 0.25,  // a busted cycle restarts this much bigger
   maxStreak: 2,    // a player cannot be the rung more than this many days running
   // The price a "to record a hit" leg is assumed to be offered at, used ONLY
-  // when a row reached the file without one. It is not a guess about the
-  // market — it is the same number the alerter stakes and compounds against
-  // (DD_LEG_PRICE), so a row missing its price behaves like every other row
-  // instead of like a bet at even money. Rows that fall back are flagged.
-  price: -250
+  // when a rung has no price of its own. It is a starting assumption, not a
+  // claim about the market: the real number moves every day and every book,
+  // so any rung can override it — with the price, or with what it actually
+  // paid, which is usually the number a bettor has to hand. Rows that fall
+  // back to this are flagged so the page can say the price was assumed.
+  price: -275
 };
 const round2 = v => Math.round(v * 100) / 100;
 const seedFor = C => round2(Math.max(0, C.account) * C.basePct);
@@ -453,7 +459,19 @@ function ladder(history, cfg) {
     if (topUp) { cashIn = round2(cashIn + topUp); row.topUp = topUp; }
     if (banked) row.banked = banked;          // shown, not re-applied
     if (b.status === "won") {
-      const ret = round2(at * dec);
+      // What it actually paid beats what the price says it should have paid.
+      // Odds differ by book and by day, and a bettor knows the payout more
+      // reliably than the American number behind it — so a recorded return is
+      // taken as given and the price is back-solved from it for display.
+      const paid = b.returnActual != null && isFinite(+b.returnActual) && +b.returnActual > 0
+        ? round2(+b.returnActual) : null;
+      const ret = paid != null ? paid : round2(at * dec);
+      if (paid != null && at > 0) {
+        row.retActual = true;
+        const impliedDec = paid / at;
+        row.price = impliedDec > 1 ? +americanFromDec(impliedDec) : row.price;
+        row.assumedPrice = false;
+      }
       row.ret = ret;
       if (rung >= C.rungs) {                                 // cycle complete
         row.pl = round2(ret - cashIn); row.closed = "complete";
@@ -906,7 +924,7 @@ async function buildBoard(o) {
 }
 
 return { VERSION, API, CFG, K, PARK, park, clamp, erf, normCdf, normPdf, normInv, logit, expit,
-  log5, shrink, hitProbability, jointProb, rhoFor, amOdds, decFromAmerican, evaluate,
+  log5, shrink, americanFromDec, hitProbability, jointProb, rhoFor, amOdds, decFromAmerican, evaluate,
   esp, hitCountDist, nCr, roundRobin, LADDER, ladder, ladderRisk, ladderBlocked, pickKey,
   calibrate, record, etNow, ymd, slateYmd, platoon, pool, buildBoard };
 });

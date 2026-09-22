@@ -359,7 +359,7 @@ td.num{text-align:right}
   <div class="fld"><label>Double price (American)</label><input id="price" type="number" step="5" value="-175"></div>
   <div class="fld"><label>Bankroll</label><input id="bank" type="number" step="10" value="1000"></div>
   <div class="fld"><label>$ per spot point</label><input id="perSpot" type="number" step="0.25" min="0" value="2.50"></div>
-  <div class="fld"><label>Leg price (hit prop)</label><input id="legPrice" type="number" step="5" value="-250"></div>
+  <div class="fld"><label>Leg price (hit prop)</label><input id="legPrice" type="number" step="5" value="-275"></div>
   <div class="fld"><label>Bet bar (edge pts)</label><input id="minEdge" type="number" step="0.5" value="2"></div>
   <div class="fld"><label>Min spot (pts)</label><input id="minSpot" type="number" step="0.5" value="0"></div>
   <div class="fld"><label>Min soft arm (pts)</label><input id="minSoft" type="number" step="0.1" value="4.9"></div>
@@ -543,6 +543,48 @@ function clearLadderAccount(){
 
 let oddsByDay={};
 try{oddsByDay=JSON.parse(localStorage.getItem("dd.ladderOdds")||"{}")||{};}catch(e){oddsByDay={};}
+// What a rung actually paid back, by day. The odds differ every day and every
+// book, and the payout is the number a bettor reliably has — "I put $36.33 on
+// and got $55.32 back" — while the American price behind it often is not shown
+// at all. Recording the payout is therefore exact where recording the price is
+// a rounding: -191 turns $36.33 into $55.35, three cents adrift, and the
+// ladder compounds that error into every rung after it.
+let retByDay={};
+try{retByDay=JSON.parse(localStorage.getItem("dd.ladderReturns")||"{}")||{};}catch(e){retByDay={};}
+function setLadderReturn(day,v){
+  const r=parseFloat(v);
+  if(!isFinite(r)||r<=0)delete retByDay[day]; else retByDay[day]=+r.toFixed(2);
+  try{localStorage.setItem("dd.ladderReturns",JSON.stringify(retByDay));}catch(e){}
+  renderLadder();
+}
+// Record payouts from a link: ?paid=2026-09-21:55.32,2026-09-20:36.33
+//
+// Everything about a rung that is personal to the bettor — the price they got,
+// what it paid — lives in this browser and nowhere else, which is the point:
+// the published record is the system's, this layer is yours. It also means it
+// cannot be corrected from the outside, so a link is the only way to hand
+// someone a correction they can apply in one tap.
+//
+// Called immediately below its store, not up with the other URL handler:
+// retByDay is a `let`, and reading it earlier throws on the temporal dead zone
+// and takes the whole page script down. That has happened here before.
+function applyPaidFromUrl(){
+  let q; try{ q=new URLSearchParams(location.search).get("paid"); }catch(e){ return false; }
+  if(!q)return false;
+  let n=0;
+  for(const part of q.split(",")){
+    const [day,amt]=part.split(":").map(x=>(x||"").trim());
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(day||""))continue;
+    const r=parseFloat(amt);
+    if(!isFinite(r)||r<=0){delete retByDay[day];n++;continue;}
+    retByDay[day]=+r.toFixed(2); n++;
+  }
+  if(!n)return false;
+  try{localStorage.setItem("dd.ladderReturns",JSON.stringify(retByDay));}catch(e){}
+  try{history.replaceState(null,"",location.pathname);}catch(e){}
+  return true;
+}
+applyPaidFromUrl();
 // Commits on change (blur or Enter), never on every keystroke: this re-renders
 // the whole card, which would rip the input out from under the cursor halfway
 // through typing "-180".
@@ -921,7 +963,12 @@ function renderLadder(){
                     status:v.status||"open",local:true}));
   const raw=published.concat(localRows).sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
   // Replay against the prices actually taken, not the ones assumed.
-  const hist=raw.map(b=>oddsByDay[b.date]!=null?Object.assign({},b,{price:oddsByDay[b.date]}):b);
+  const hist=raw.map(b=>{
+    const o={};
+    if(oddsByDay[b.date]!=null)o.price=oddsByDay[b.date];
+    if(retByDay[b.date]!=null)o.returnActual=retByDay[b.date];
+    return Object.keys(o).length?Object.assign({},b,o):b;
+  });
   // Every dollar below is computed from the viewer's own account, never from
   // the account recorded in the published ledger.
   // What to assume for a rung that reached the ladder without a price.
@@ -1196,7 +1243,7 @@ function renderLadder(){
   // Every settled rung's price is editable too — get a different number three
   // days ago and the whole chain above it is wrong until you say so.
   const histHtml=st.rows.length?`<div class="table-wrap"><table class="ld-hist">
-    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>RESULT</th><th>P&amp;L</th><th>Account</th></tr></thead>
+    <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>PAID BACK</th><th>RESULT</th><th>P&amp;L</th><th>Account</th></tr></thead>
     <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
       return out.slice(-12).reverse().map(({r,acc})=>`<tr>
         <td style="color:var(--dim)">${r.date}</td>
@@ -1205,12 +1252,17 @@ function renderLadder(){
         <td>${money(r.stake)}</td>
         <td><input class="ld-in" type="number" step="5" value="${r.price!=null?r.price:""}"
              onchange="setLadderOdds('${r.date}',this.value)"
-             title="${oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
+             title="${retByDay[r.date]!=null?"worked back from what it paid":oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
              style="color:${oddsByDay[r.date]!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
+        <td><input class="ld-in" type="number" step="0.01" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
+             value="${retByDay[r.date]!=null?retByDay[r.date]:""}"
+             onchange="setLadderReturn('${r.date}',this.value)"
+             title="What this rung actually paid back, stake included. Enter it and the price above is worked back from it — exact, where a rounded price is not."
+             style="color:${retByDay[r.date]!=null?'var(--green)':'var(--dim)'}"></td>
         <td style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
         <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
         <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table>
-    <div class="ld-foot">Green odds are prices you typed; grey are what the alerter assumed. Edit any of them and every stake above it recompounds.</div></div>`
+    <div class="ld-foot">Green is yours, grey is assumed. Enter either the odds you got or what the rung <b>paid back</b> — the payout is exact and the price is worked back from it, which is why it wins when both are present. Edit any cell and every stake above it recompounds.</div></div>`
     :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;
 
   el.innerHTML=`<div class="ld">
@@ -1332,7 +1384,7 @@ function render(){
   </div></details>
   <details class="disc"><summary>Staking</summary><div class="disc-b">
     <p><b>BET.</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $2.50), so a +5.5pt game stakes $13.75 and a +2.0pt game stakes $5.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.</p>
-    <p><b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and any account funds only a handful of them before it cannot fund the next. Both the completion rate and the chance of running the account dry are computed live on the card. The rungs are not a fixed sequence — the old one assumed a -250 price and a fixed bankroll. Type the price the book is actually showing into <b>Odds you got</b> and every rung ahead, the next bet, and the whole risk panel recompute off it. Past rungs are editable in the same way, so a price you got three days ago corrects the chain above it. Rank it by the red panel, not by the payout.</p>
+    <p><b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and any account funds only a handful of them before it cannot fund the next. Both the completion rate and the chance of running the account dry are computed live on the card. The rungs are not a fixed sequence. The price starts at an assumed -275 and the real one moves every day and every book, so nothing here is fixed: type the price your book is showing into <b>Odds you got</b>, or — better, because it is exact where a rounded price is not — type what a rung actually <b>paid back</b> and the price is worked back from it. Every rung ahead, the next bet, and the whole risk panel recompute off whichever you give. Past rungs are editable the same way, so a payout from three days ago corrects the chain above it. Rank it by the red panel, not by the payout.</p>
   </div></details>
   <details class="disc"><summary>What changed, and the caveat</summary><div class="disc-b">
     <p><b>A card per qualifying game.</b> Every game whose double clears the bet bar (default +2.0 edge points) gets its own card, however many that is — no top-N cap — and games below the bar get none. That is the same test the Telegram alerter applies, so the board and your phone cannot disagree about what counts as a bet. The table underneath still lists every game on the slate, bar or no bar.</p>
