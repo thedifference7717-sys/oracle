@@ -740,14 +740,15 @@ async function picksPlace(day, games, D, saveState) {
                   : { id: `${day}:robin`, date: day, published: now, status: "noplay", reason: "fewer than three qualifying props" };
     robins.bets.push(row); writeDaily(ROBIN_FILE, robins, D, "robinRows"); if (saveState) saveState();
     if (r) {
-      // The day's bet on a reference $100 Robin bankroll, played by 2s — the
-      // same rule and file the Robin page uses. Loaded on demand, as for the Dub.
+      // The ticket amount on a reference $570 Robin bankroll — ten full days
+      // at $1 — by the same rule and file the Robin page uses. Loaded on
+      // demand, as for the Dub.
       let stakeLine = "";
       try {
         const DS = (await import("../dub-stake.js")).default;
-        const st = DS.stakeFor(DS.robinChain(robins.bets, 100, 2), day);
-        const by2 = r.sizes.find(z => z.m === 2);
-        stakeLine = `💵 <b>${money(st.stake)}</b> on a $100 Robin bankroll${by2 ? ` — by 2s, ${by2.tickets} tickets × ${money(st.stake / by2.tickets)}` : ""} (${st.why})\n`;
+        const u = DS.robinUnitFor(DS.robinChain(robins.bets, 570), day);
+        const tickets = r.sizes.reduce((a, z) => a + z.tickets, 0);
+        stakeLine = `💵 <b>${money(u.unit)} a ticket</b> × ${tickets} tickets = <b>${money(u.unit * tickets)}</b> — every size, at this amount until the Robin balance is over ${money(u.bar)}\n`;
       } catch (e) { console.log("robin: stake line skipped (" + e.message + ")"); }
       await tg(`🐦 <b>PROP SHOP · THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
         stakeLine +
