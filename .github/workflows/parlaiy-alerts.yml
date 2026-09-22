@@ -77,11 +77,19 @@ jobs:
             # Nothing of ours outstanding? Then there is genuinely nothing to do.
             [ -z "$(git rev-list origin/main..HEAD 2>/dev/null)" ] && return 0
             for k in 1 2 3; do
-              git pull --rebase --autostash -q origin main >/dev/null 2>&1 \
-                && git push -q origin HEAD:main >/dev/null 2>&1 && { echo "published data/"; return 0; }
+              if git pull --rebase --autostash -q origin main >/tmp/pub.log 2>&1 \
+                && git push -q origin HEAD:main >>/tmp/pub.log 2>&1; then echo "published data/"; return 0; fi
+              # A rebase that stops on a conflict is left IN PROGRESS, and every
+              # later pull then fails with "rebase in progress" — which is how a
+              # whole day of pushes failed on 2026-09-22 with the same two
+              # commits stuck local. Abort it so the next attempt starts clean.
+              if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+                echo "publish: rebase stopped on a conflict — aborting it"; git rebase --abort >/dev/null 2>&1 || true
+              fi
               sleep $((k*3))
             done
             echo "could not push data/ this pass — $(git rev-list --count origin/main..HEAD) commit(s) still local, will retry next pass"
+            sed 's/^/  git: /' /tmp/pub.log | tail -6
           }
           while :; do
             if git fetch --depth=1 -q origin main 2>/dev/null; then
