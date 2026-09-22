@@ -170,5 +170,18 @@ console.log("the Dub and Robin pool keeps out what the model doubts");
   ok("agreement is in", r.pool.some(x => x.player === "Agreed"));
 }
 
+
+console.log("a one-sided quote is not a market");
+{
+  const board = { candidates: [
+    { name: "No Bid", id: 1, p: 0.75, gk: 9, teamName: "A", oppName: "B", isHome: true, slot: 2, posted: true },
+    { name: "Wide",   id: 2, p: 0.75, gk: 9, teamName: "A", oppName: "B", isHome: true, slot: 3, posted: true },
+    { name: "Real",   id: 3, p: 0.75, gk: 9, teamName: "A", oppName: "B", isHome: true, slot: 4, posted: true } ] };
+  const q = { "No Bid": { bid: 0, ask: 0.7, spread: 0.7 }, "Wide": { bid: 0.55, ask: 0.72, spread: 0.17 }, "Real": { bid: 0.71, ask: 0.72, spread: 0.01 } };
+  const r = S.mlbCandidates(board, [{ gamePk: 9, gameDate: "2026-09-22T23:00:00Z" }],
+    c => Object.assign({ american: -250, source: "kalshi" }, q[c.name]));
+  ok("only the two-sided, tight quote survives", r.candidates.map(c => c.player).join() === "Real", r.candidates.map(c => c.player).join());
+}
+
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
 process.exit(failures ? 1 : 0);

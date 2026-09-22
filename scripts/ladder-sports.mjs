@@ -160,6 +160,9 @@ export function quotesFor(idx, name, start) {
   return list.filter(q => { const a = Date.parse(q.at); return isNaN(a) || Math.abs(a - t) < 18 * 3600e3; });
 }
 
+// The widest bid-ask spread a leg may carry, in dollars per contract.
+export const MAX_SPREAD = 0.10;
+
 const clamp = (v, lo, hi) => v < lo ? lo : v > hi ? hi : v;
 const fin = v => v != null && isFinite(+v);
 
@@ -174,6 +177,10 @@ export function mlbCandidates(board, live, priceFor) {
   for (const c of (board && board.candidates) || []) {
     const q = priceFor(c);
     if (!q) { unlisted++; continue; }
+    // A one-sided quote is not a market: Otto Lopez went into the 9/22 Robin
+    // on a 70c ask with no bid at all. Needs a real bid and a spread a bettor
+    // could actually trade at.
+    if (q.source === "kalshi" && !(q.bid > 0 && q.spread != null && q.spread <= MAX_SPREAD)) { unlisted++; continue; }
     const g = live.find(x => x.gamePk === c.gk);
     out.push({
       sport: "MLB", market: "hit", line: 0.5, need: needText("MLB", "hit"),
@@ -213,6 +220,7 @@ export async function nbaCandidates(day, { get = getJSON, say = say0 } = {}) {
     if (leg.game.started || !(Date.parse(leg.game.date) > now)) continue;
     const qs = quotesFor(idx[leg.market] || new Map(), leg.pl.name, leg.game.date);
     for (const q of qs) {
+      if (!(q.bid > 0 && q.spread != null && q.spread <= MAX_SPREAD)) continue;   // no real market
       const r = (leg.rungs || []).find(x => Math.abs(x.line - q.strike) < 1e-6);
       if (!r) { noRung++; continue; }
       const def = leg.factors && leg.factors.def && leg.factors.def[leg.market];
