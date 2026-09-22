@@ -434,6 +434,20 @@ async function ladderStarts(day, games, D) {
   return mlb.concat(other || []).filter(g => LADDER_SPORTS.has(g.sport) && !isNaN(Date.parse(g.start)));
 }
 
+// Claim the day in gitignored state, WITH the row. A pass or a skip used to
+// set only `ladderDay`, so when its push failed the row was lost with the
+// working tree while state went on insisting the day was decided — the
+// record then showed nothing for that day, not even that it was passed.
+// Held in ladderRows, it is restored into the ledger and re-pushed exactly
+// like a placed rung.
+function claimDay(D, day, row, saveState) {
+  if (!D) return;
+  D.ladderDay = day;
+  D.ladderRows = (D.ladderRows || []).filter(b => b.date !== day).concat([row]);
+  stateRows = D.ladderRows;
+  if (saveState) saveState();
+}
+
 async function ladderPlace(day, games, D, saveState) {
   // THE dedupe, and it lives in state.json rather than in the ledger.
   //
@@ -493,9 +507,10 @@ async function ladderPlace(day, games, D, saveState) {
   const st = M.ladder(L.bets);
   if (!st.canFund) {
     await tg(`🪜 <b>LADDER STOPPED</b>\nRung ${st.rung} of cycle ${st.cycle} needs ${money(st.stake)} and the account is down to ${money(st.account)}.\nThe escalation has no next move that is not a deposit. No bet.`);
-    if (D) { D.ladderDay = day; if (saveState) saveState(); }
-    L.bets.push({ date: day, status: "skipped", reason: "account cannot fund the rung",
-                  stake: st.stake, account: st.account, published: new Date().toISOString() });
+    const row = { date: day, status: "skipped", reason: "account cannot fund the rung",
+                  stake: st.stake, account: st.account, published: new Date().toISOString() };
+    claimDay(D, day, row, saveState);
+    L.bets.push(row);
     writeLadderFile(L);
     return;
   }
@@ -548,10 +563,13 @@ async function ladderPlace(day, games, D, saveState) {
   if (!res.pick) {
     console.log("ladder: no prop in any sport qualified — no rung today.");
     if (!cands.length && notes.some(n => /failed/.test(n))) return;   // a broken feed is not a pass: try again next pass
-    if (D) { D.ladderDay = day; if (saveState) saveState(); }
-    L.bets.push({ date: day, status: "noplay",
+    const near = res.doubted.slice().sort((a, b) => b.pAdj - a.pAdj)[0] || null;
+    const row = { date: day, status: "noplay",
                   reason: cands.length ? `nothing between ${LADDER_BAND.lo} and ${LADDER_BAND.hi} the models agreed with` : "no priced props on the slate",
-                  published: new Date().toISOString() });
+                  closest: near ? { sport: near.sport, pick: near.player, need: near.need, price: near.price, p: +near.p.toFixed(4) } : null,
+                  published: new Date().toISOString() };
+    claimDay(D, day, row, saveState);
+    L.bets.push(row);
     writeLadderFile(L);
     return;
   }
@@ -578,18 +596,14 @@ async function ladderPlace(day, games, D, saveState) {
   // alert. If anything below fails, the worst case is a rung that was claimed
   // and not announced — recoverable. The reverse, announced and not claimed,
   // is what sends a second player to a phone.
-  if (D) {
-    D.ladderDay = day; D.ladderPick = { pick: c.player, playerId: c.playerId, sport: c.sport, gk: c.gk };
-    D.ladderRows = (D.ladderRows || []).filter(b => b.date !== day).concat([row]);
-    stateRows = D.ladderRows;
-    if (saveState) saveState();
-  }
+  if (D) D.ladderPick = { pick: c.player, playerId: c.playerId, sport: c.sport, gk: c.gk };
+  claimDay(D, day, row, saveState);
   writeLadderFile(L);
 
   const risk = M.ladderRisk(c.pAdj, row.price, st);
   const when = c.start ? new Date(c.start).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "—";
   const emoji = (SPORT[c.sport] || {}).emoji || "";
-  const counted = Object.entries(row.games).map(([s, n]) => `${n} ${s}`).join(", ");
+  const counted = Object.entries(row.games).map(([s, n]) => `${n} ${s}`).join(", ") + " games";
   await tg(
     `🪜 <b>THE LADDER</b> · cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs}\n` +
     `➖➖➖➖➖➖➖➖\n` +
@@ -603,7 +617,7 @@ async function ladderPlace(day, games, D, saveState) {
       : `⚠ Kalshi unavailable — priced at the assumed ${row.price}\n`) +
     (c.sport === "MLB" ? `${c.mlb.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.mlb.slot}, ${pct(c.mlb.startProb)} to start (already priced in)`}\n` : "") +
     (c.status ? `⚠ Listed ${c.status}\n` : "") +
-    `Likeliest of ${res.ranked.length} props across ${counted}\n` +
+    `Likeliest of ${res.ranked.length} qualifying prop${res.ranked.length === 1 ? "" : "s"} across ${counted}\n` +
     (row.runnersUp.length ? `Next: ${row.runnersUp.map(x => `${x.pick} ${x.need} (${pct(x.pAdj)})`).join(" · ")}\n` : "") +
     `${bench ? `⏸ ${bench.player} has ridden two days running — benched\n` : ""}` +
     `\n` +

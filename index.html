@@ -90,6 +90,8 @@ b,strong{font-weight:600}
   text-transform:uppercase;color:var(--dim)}
 .group-h small{display:block;font-size:12px;color:var(--dim);margin-top:3px;opacity:.75}
 .group-h+.section-h{padding-top:12px}
+[id^="sec-"]{scroll-margin-top:84px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
 .section-h{padding:26px var(--pad) 10px}
 .sh-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .sh-row h2{font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
@@ -395,9 +397,9 @@ td.num{text-align:right}
 </div>
 <div id="ladder"></div>
 
-<div class="group-h" id="sec-dub"><span>✌️ The Dub</span><small>2-man same-game hit parlay · a different bet from the ladder</small></div>
+<div class="group-h" id="sec-dub"><span>Bet two</span><small>2-man same-game hit parlay · a different bet from the ladder</small></div>
 <div class="section-h">
-  <div class="sh-row"><h2>Today's Dubs</h2><span class="sh-note" id="cardsNote"></span></div>
+  <div class="sh-row"><h2>✌️ The Dub</h2><span class="sh-note" id="cardsNote"></span></div>
   <details class="disc"><summary>Why these games and no others</summary><div class="disc-b">
     <p>A card for every game whose opposing arm is soft enough, and nothing else — the same rule the Telegram alerts use, so the board and your phone cannot disagree about what counts as a bet.</p>
     <p><b>Soft arm</b> holds the offence at league average and asks only how bad the opposing starter, his bullpen, the defence and the park are, in points of hit probability against a league-neutral leg. It rates the spot rather than the hitters, which is why it decides eligibility: an ace is a different bet from batting practice even when the price says otherwise.</p>
@@ -423,9 +425,9 @@ td.num{text-align:right}
     <div class="table-wrap"><table><thead><tr id="lhead"></tr></thead><tbody id="lbody"></tbody></table></div>
   </details>
 </div>
-<div class="group-h" id="sec-robin"><span>🐦 The Robin</span><small>a round robin of the day's surest hitters · every 2- and 3-leg parlay between them</small></div>
+<div class="group-h" id="sec-robin"><span>Bet three</span><small>a round robin of the day's surest hitters · every 2- and 3-leg parlay between them</small></div>
 <div class="section-h">
-  <div class="sh-row"><h2>Today's Robin</h2><span class="sh-note" id="robinNote"></span></div>
+  <div class="sh-row"><h2>🐦 The Robin</h2><span class="sh-note" id="robinNote"></span></div>
   <details class="disc"><summary>How the Robin works</summary><div class="disc-b">
     <p>The likeliest hitters on the slate, <b>one per game</b> so no two legs lean on the same pitcher, bet as a round robin: every 2-leg parlay between them, every 3-leg parlay, and so on. One cold bat costs you the tickets he is on, not the whole bet.</p>
     <p>Each row prices a size at the leg price you set (the same one the ladder assumes, −275 unless you change it) and shows what a ticket pays, how many tickets you should expect to cash, and whether that adds up to more than you put in. The chances come from the same model as the ladder and the Dub, so the three can never disagree about a hitter.</p>
@@ -558,6 +560,11 @@ function applyAdjustmentFromUrl(){
 // the two ever differ, the card says so rather than swapping silently.
 let pinnedPick={};
 try{pinnedPick=JSON.parse(localStorage.getItem("dd.ladderPinned")||"{}")||{};}catch(e){pinnedPick={};}
+// Only a trade you recorded yourself survives. The page used to pin its own
+// baseball guess at the lock; the ladder now chooses across every sport with
+// prices this page cannot see, so an old guess is not a bet anyone placed and
+// must not stand in for one — on the card or in the stakes.
+for(const k of Object.keys(pinnedPick)){ if(!(pinnedPick[k]&&pinnedPick[k].adjusted)) delete pinnedPick[k]; }
 // After the store exists, never before: `pinnedPick` is a `let`, so calling
 // this above its declaration threw on the temporal dead zone and took the
 // whole page script down.
@@ -1094,14 +1101,43 @@ let ladderHist=null;
 // count is still shown here because it says how real the field was at lock.
 const lineupIn=g=>!!(g&&g.home&&g.home.order&&g.away&&g.away.order);
 function lockInfo(){
+  // The alerter publishes today's lock with every sport's games in it. Use
+  // that whenever it is for today; baseball's own schedule is only the
+  // fallback for a ledger that has not been written by the new alerter yet.
+  const nx=ladderHist&&ladderHist.next, today=(board&&board.date)||M.slateYmd();
+  if(nx&&nx.date===today&&nx.lockAt){
+    const lockAt=Date.parse(nx.lockAt),first=Date.parse(nx.first);
+    if(!isNaN(lockAt))return {lockAt,first,open:Date.now()>=lockAt,games:nx.games||{},
+      postedCount:board&&board.games?board.games.filter(lineupIn).length:null,total:board&&board.games?board.games.length:null};
+  }
   if(!board||!Array.isArray(board.games)||!board.games.length)return null;
   const ts=board.games.map(g=>Date.parse(g.startTime)).filter(t=>!isNaN(t));
   if(!ts.length)return null;
   const first=Math.min.apply(null,ts);
-  return {lockAt:first-3600000,first,open:Date.now()>=first-3600000,
+  return {lockAt:first-3600000,first,open:Date.now()>=first-3600000,games:{MLB:board.games.length},
           postedCount:board.games.filter(lineupIn).length,total:board.games.length};
 }
 const etTime=ms=>new Date(ms).toLocaleTimeString("en-US",{timeZone:"America/New_York",hour:"numeric",minute:"2-digit"});
+const SPORT_EMOJI={MLB:"⚾",NBA:"🏀",NFL:"🏈"};
+// What a rung is a bet ON, in bet-slip words. Rows from before the ladder went
+// cross-sport carry no `need` and were all "to record a hit".
+const rungNeed=b=>b&&b.need?b.need:"to record a hit";
+const gamesLine=g=>Object.entries(g||{}).filter(([,n])=>n>0).map(([s,n])=>`${SPORT_EMOJI[s]||""} ${n} ${s}`).join(" · ");
+// Today's rung, straight from the repo rather than the Pages cache, which holds
+// data/ladder.json for up to ten minutes. Only used while a lock is pending,
+// so it stays well inside the API's hourly allowance.
+let ldFastAt=0;
+async function refreshLadderFast(){
+  if(Date.now()-ldFastAt<55000)return;
+  ldFastAt=Date.now();
+  try{
+    const r=await fetch("https://api.github.com/repos/thedifference7717-sys/oracle/contents/data/ladder.json?ref=main",
+      {headers:{Accept:"application/vnd.github.raw"},cache:"no-store"});
+    if(!r.ok)return;
+    const j=await r.json();
+    if(j&&Array.isArray(j.bets)){ladderHist=j;try{localStorage.setItem("dd.ledgerCache",JSON.stringify(j));}catch(e){}renderLadder();}
+  }catch(e){}
+}
 
 // The countdown ticks by writing one text node. It must never call render():
 // replacing the card's innerHTML every second would rip the odds input out
@@ -1237,7 +1273,7 @@ function renderLadderInner(){
   // good fill (-191 on 9/21) into the default for every day after it and
   // overstated today's return. The base is the stated assumption; use it.
   const st=M.ladder(hist,{account:ladderAccount||M.LADDER.account,price:setting("legPrice")});
-  const C=st.cfg, pick=board?ladderPick():null;
+  const C=st.cfg, pick=null;
 
   if(ladderAccount==null){
     const note=document.getElementById("ldNote"); if(note)note.textContent="";
@@ -1290,10 +1326,10 @@ function renderLadderInner(){
   // The moment the lock passes with nothing published, compute the pick once
   // and pin it. This is what makes the card always able to name a player
   // without ever renaming one: after this, `myPick` is read, never recomputed.
-  if(!locked&&!myPick&&lk&&lk.open&&board){
-    const p0=ladderPick();
-    if(p0)pinPick(today,p0.c,p0.edge);
-  }
+  // No local guess. The pick is chosen across every sport, with live Kalshi
+  // prices this page cannot read, so the board here could only ever guess a
+  // baseball name — and a guessed name next to a real alert is how the wrong
+  // bet gets placed. Until the rung publishes, the card says it is choosing.
   const pinned=pinnedPick[today]||null;
   // Only true before the board can produce any candidate at all.
   const orphaned=!locked&&!pinned&&lk&&lk.open;
@@ -1311,7 +1347,11 @@ function renderLadderInner(){
   // The locked row's probability is the one that was published; the live
   // pick's is only a stand-in used before the lock, to keep the risk panel
   // honest without naming anyone.
-  const p=locked?locked.p:(pick?pick.c.p:null);
+  // Before the lock there is no pick, so the risk panel uses what recent
+  // rungs have actually been rated at — a typical rung, said to be one.
+  const recentP=(()=>{const ps=published.filter(b=>b.p!=null).slice(-10).map(b=>+(b.pAdj!=null?b.pAdj:b.p));
+    return ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null;})();
+  const p=locked?(locked.pAdj!=null?locked.pAdj:locked.p):recentP;
   const risk=p?M.ladderRisk(p,todayOdds,st):null;
   // The live rung shows what is REALLY on it. A day traded differently on an
   // exchange carries its own size, and quoting the derived number there would
@@ -1320,8 +1360,12 @@ function renderLadderInner(){
   const stake=(pinnedToday&&pinnedToday.stakeActual!=null)?pinnedToday.stakeActual:st.stake;
   const mine=st.atRisk, house=st.onTable;
   const bar=betBar();
-  const lbeToday=1/dec, edgeToday=p!=null?p-lbeToday:null;
-  const qualifies=edgeToday!=null&&edgeToday>=bar;
+  // The edge is the MODEL's own number against the price — what it thinks
+  // the bet is worth. The ranking chance (pAdj) is pulled toward the price by
+  // design, so measuring it against the price would always read about zero.
+  const pModel=locked&&locked.p!=null?+locked.p:p;
+  const lbeToday=1/dec, edgeToday=pModel!=null?pModel-lbeToday:null;
+  const qualifies=edgeToday!=null&&edgeToday>=0;
   note.textContent=`cycle ${st.cycle} · day ${st.rung} of ${C.rungs} · account ${money(st.account)}`;
 
   // What today actually turns into. This is the number the box exists for:
@@ -1349,12 +1393,12 @@ function renderLadderInner(){
       <div class="o">at ${fmtOdds(done.price)}${done.assumedPrice?" <span style=\"opacity:.7\">(assumed)</span>":""}</div></div>`;
     if(d===st.rung)return `<div class="ld-step now"><div class="d">Day ${d} · today</div>
       <div class="v" style="color:var(--yellow)">${money(stake)}</div>
-      <div class="o">${waiting?"price set at lock":`at ${fmtOdds(todayOdds)}`}</div></div>`;
+      <div class="o">${(waiting||orphaned)?"price set at lock":`at ${fmtOdds(todayOdds)}`}</div></div>`;
     // Before the lock there is no pick and therefore no price, so tomorrow is
     // not computable either — the same reason the rungs past tomorrow stay
     // blank. Showing $14.00 here off the slip's assumed -250 would be exactly
     // the invented projection this card exists to avoid.
-    if(d===st.rung+1)return waiting
+    if(d===st.rung+1)return (waiting||orphaned)
       ? `<div class="ld-step"><div class="d">Day ${d}</div>
          <div class="v" style="color:var(--dim)">—</div>
          <div class="o">needs today's price</div></div>`
@@ -1370,10 +1414,10 @@ function renderLadderInner(){
   // hiding the field entirely just made it unfindable ("where do I enter my
   // odds?"). It is shown disabled instead, saying when it opens, so the
   // absence explains itself rather than looking like a missing feature.
-  const oddsBox=waiting?`<div class="ld-odds">
+  const oddsBox=(waiting||orphaned)?`<div class="ld-odds">
     <label>Odds you got on this pick</label>
     <input type="text" value="—" disabled>
-    <div class="hint">Opens when the pick locks at ${etTime(lk.lockAt)} ET. Until there is a hitter there is no price to enter.</div>
+    <div class="hint">${waiting?`Opens when the pick locks at ${etTime(lk.lockAt)} ET.`:"Opens the moment the pick publishes."} Until there is a pick there is no price to enter.</div>
   </div>`:`<div class="ld-odds">
     <label for="ldOdds">Odds you got on this pick <span id="ldSaved" class="ld-saved"></span></label>
     <input id="ldOdds" data-k="top-odds" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${fmtOdds(todayOdds)}"
@@ -1393,18 +1437,22 @@ function renderLadderInner(){
       <div class="s">cycle ends, costs ${money(st.cashIn)}${st.toppedUp>0?" — the seed plus what you added on top":" — the seed, whatever day it lands"}</div></div>
   </div>`;
 
+  const lockedP=locked?(locked.pAdj!=null?locked.pAdj:locked.p):null;
   const lockedHtml=locked?`
     <div class="ld-pick">
-      <div class="nm">${locked.pick} <span class="tag ok">LOCKED</span></div>
-      <div class="sub">#${locked.slot||"—"} · ${locked.teams||""} · ${locked.sp||"SP TBD"}
-        ${locked.posted===false?`<span style="color:var(--yellow)"> · projected lineup, ${pct(locked.startProb||0)} to start</span>`:locked.posted?' · <span style="color:var(--green)">confirmed lineup</span>':""}</div>
+      <div class="nm">${SPORT_EMOJI[locked.sport||"MLB"]||""} ${locked.pick} <span class="tag ok">LOCKED</span></div>
+      <div class="sub" style="color:var(--text);font-weight:600;margin-top:2px">${rungNeed(locked)}</div>
+      <div class="sub">${locked.teams||""}${(locked.start||locked.firstPitch)?` · ${etTime(Date.parse(locked.start||locked.firstPitch))} ET`:""}${(locked.sport||"MLB")==="MLB"?` · #${locked.slot||"—"} · vs ${locked.sp||"SP TBD"}`:""}
+        ${(locked.sport||"MLB")!=="MLB"?"":locked.posted===false?`<span style="color:var(--yellow)"> · projected lineup, ${pct(locked.startProb||0)} to start</span>`:locked.posted?' · <span style="color:var(--green)">confirmed lineup</span>':""}</div>
+      ${locked.detail&&(locked.sport||"MLB")!=="MLB"?`<div class="sub">${locked.detail}</div>`:""}
       <div class="num">
-        <span style="color:var(--blue)">${pct(locked.p)} to hit</span>
-        <span style="color:var(--yellow)">fair ${M.amOdds(locked.p)}</span>
-        <span style="color:${qualifies?"var(--green)":"var(--red)"}">${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${todayOdds>0?"+":""}${todayOdds}</span>
+        <span style="color:var(--blue)">${pct(lockedP)} to win</span>
+        <span style="color:var(--yellow)">fair ${M.amOdds(lockedP)}</span>
+        <span style="color:${qualifies?"var(--green)":"var(--red)"}">model ${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${fmtOdds(todayOdds)}</span>
       </div>
+      ${Array.isArray(locked.runnersUp)&&locked.runnersUp.length?`<div class="sub" style="margin-top:6px">Next best: ${locked.runnersUp.map(x=>`${SPORT_EMOJI[x.sport]||""} ${x.pick} ${x.need} (${pct(x.pAdj)})`).join(" · ")}</div>`:""}
       <div class="sub" style="margin-top:7px;color:var(--green)">
-        Published ${locked.published?etTime(Date.parse(locked.published)):"—"} ET${locked.firstPitch?` · first pitch ${etTime(Date.parse(locked.firstPitch))} ET`:""}
+        Published ${locked.published?etTime(Date.parse(locked.published)):"—"} ET${locked.games?` · chosen from ${gamesLine(locked.games)}`:""}
       </div>
     </div>`:"";
 
@@ -1412,13 +1460,13 @@ function renderLadderInner(){
     <div class="ld-pick ld-wait">
       <div class="l">Pick locks in</div>
       <div class="v" id="ldClock">—:—:—</div>
-      <div class="s">One hour before first pitch (${etTime(lk.first)} ET), from every game on the slate.
-      ${lk.postedCount} of ${lk.total} lineups posted so far.</div>
+      <div class="s">One hour before the day's first game (${etTime(lk.first)} ET), from every game on the slate${gamesLine(lk.games)?`: ${gamesLine(lk.games)}`:""}.
+      ${lk.total?`${lk.postedCount} of ${lk.total} baseball lineups posted so far.`:""}</div>
       <details class="disc ld-disc"><summary>Why it's blank</summary><div class="disc-b">
-        The pick is chosen from every game — projected lineups included, with each bat's chance of actually starting already priced into his number.
+        The pick is chosen from every game in every sport — baseball hits, basketball points, rebounds, assists and threes, football passing, receiving and rushing yards — each priced at its live Kalshi ask, and the likeliest to win between −200 and −350 is the bet.
         It stays blank until the lock on purpose: the board re-ranks every time a lineup posts and scratch risk resolves, and a pick that quietly swaps itself is not a pick. The lock is the commitment.
         No player rides more than two days running — after that he sits out one placement, so a hot name cannot quietly become the whole system. The bench is computed from the published ledger, so the card and the alert always agree on who is eligible.
-        The ladder keeps the clock rather than using the doubles' lineup trigger: it makes one choice across the whole slate, so locking when the first lineups post would mean comparing one real lineup against a dozen projections. An hour out, most lineups are in and the field is real.
+        The ladder keeps one clock for the whole slate: it makes one choice between every sport, so it locks an hour before the first game of the day, when lineups and injury reports are mostly in.
       </div></details>
     </div>`:"";
 
@@ -1429,9 +1477,9 @@ function renderLadderInner(){
   // the feed is down. It never asks who to bet; there is simply nothing to name.
   const orphanHtml=orphaned?`
     <div class="ld-pick ld-orphan">
-      <div class="l">No pick yet</div>
-      <div class="s">The lock has passed but the board has not scored a single bat — usually the feed is
-      unreachable. Hit refresh; the pick appears and fixes itself the moment one candidate can be priced.</div>
+      <div class="l">Choosing now</div>
+      <div class="s">The lock has passed and the pick is being chosen across ${gamesLine(lk.games)||"today's slate"}.
+      It appears here the moment it is published — usually within a couple of minutes, at the same time as the Telegram alert. This card checks for it every minute.</div>
     </div>`:"";
 
   const myHtml=pinned?`
@@ -1470,6 +1518,7 @@ function renderLadderInner(){
       </div>
     </div>`:"";
 
+  const noSlateHtml=`<div class="ld-pick"><div class="sub">${lk?"":"No games on today's slate in any sport — no rung today. The ladder picks up on the next slate."}</div></div>`;
   const pickHtml=pick?`
     <div class="ld-pick">
       <div class="nm">${pick.c.name}${pick.c.posted?' <span class="tag ok">✓LU</span>':` <span class="tag warn">${pct(pick.c.startProb)} to start</span>`}</div>
@@ -1502,7 +1551,7 @@ function renderLadderInner(){
     <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
       return out.slice(-12).reverse().map(({r,acc})=>`<tr>
         <td class="c-date" style="color:var(--dim)">${r.date}</td>
-        <td class="c-pick">${r.pick||"—"}</td>
+        <td class="c-pick">${(()=>{const b=published.find(x=>x.date===r.date)||{};return `${SPORT_EMOJI[b.sport||"MLB"]||""} ${r.pick||"—"}${b.need&&b.sport&&b.sport!=="MLB"?` <span style="color:var(--dim);font-size:12px">${b.need}</span>`:""}`;})()}</td>
         <td class="c-cd" style="color:var(--dim)">${r.cycle}·${r.rung}</td>
         <td class="c-stake">${money(r.stake)}</td>
         <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${r.price!=null?fmtOdds(r.price):""}"
@@ -1524,9 +1573,9 @@ function renderLadderInner(){
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
       <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${oddsBox}</div>
-      ${locked?lockedHtml:pinned?myHtml:waiting?waitHtml:orphaned?orphanHtml:pickHtml}
+      ${locked?lockedHtml:pinned?myHtml:waiting?waitHtml:orphaned?orphanHtml:noSlateHtml}
     </div>
-    ${waiting?"":nextBox}
+    ${(waiting||orphaned)?"":nextBox}
     <div class="ld-steps">${steps}</div>
     <div class="ld-strip">
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account</div></div>
@@ -1542,6 +1591,7 @@ function renderLadderInner(){
     ${histHtml}
   </div>`;
   tickLadderClock();
+  if(orphaned){refreshLadderFast();setTimeout(()=>{if(!ladderBusy())refreshLadderFast();},60000);}
 }
 
 function render(){
