@@ -323,7 +323,8 @@ function renderLadder(K, first){
           <td class="num odds">${(()=>{const rp=byDate[b.date];
             const pr=b.price!=null?b.price:(rp?rp.price:null);
             if(pr==null)return "—";
-            return (pr>0?"+":"")+pr+((b.price==null&&rp&&rp.assumedPrice)?' <span class="lead">assumed</span>':"");})()}</td>
+            const pw=Math.round(+pr);
+            return (pw>0?"+":"")+pw+(b.priceSource==="fill"?' <span class="lead">fill</span>':"")+((b.price==null&&rp&&rp.assumedPrice)?' <span class="lead">assumed</span>':"");})()}</td>
           <td class="num">${b.hits!=null?b.hits+(b.ab!=null?`/${b.ab}`:""):"—"}</td>
         </tr>`).join("")}</tbody>
       </table></div>

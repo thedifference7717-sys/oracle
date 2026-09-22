@@ -93,7 +93,7 @@
    "rung": 1,
    "seed": 15.63,
    "stake": 15.63,
-   "price": -250,
+   "price": -325,
    "p": 0.7928935452341973,
    "edge": 0.078607830948483,
    "pick": "Josh Naylor",
@@ -107,7 +107,11 @@
    "fromGames": 15,
    "status": "won",
    "hits": 1,
-   "settled": "2026-09-19T00:25:36.954Z"
+   "settled": "2026-09-19T00:25:36.954Z",
+   "publishedPrice": -250,
+   "publishedStake": 15.63,
+   "priceSource": "fill",
+   "note": "Priced at the fill actually taken, not the -250 the ladder assumed. This rung was placed before the alerter read live prices, so the published -250 was a placeholder nobody bet at; the real prices were -325, -300, -300 and a $55.32 payout on $36.33 (-191.3). The original placeholder is kept in publishedPrice/publishedStake."
   },
   {
    "id": "2026-09-19:ladder",
@@ -118,8 +122,8 @@
    "cycle": 3,
    "rung": 2,
    "seed": 15.63,
-   "stake": 21.88,
-   "price": -250,
+   "stake": 20.44,
+   "price": -300,
    "p": 0.7616782797742977,
    "edge": 0.047392565488583394,
    "pick": "Chandler Simpson",
@@ -133,7 +137,11 @@
    "fromGames": 15,
    "status": "won",
    "hits": 1,
-   "settled": "2026-09-19T21:59:54.879Z"
+   "settled": "2026-09-19T21:59:54.879Z",
+   "publishedPrice": -250,
+   "publishedStake": 21.88,
+   "priceSource": "fill",
+   "note": "Priced at the fill actually taken, not the -250 the ladder assumed. This rung was placed before the alerter read live prices, so the published -250 was a placeholder nobody bet at; the real prices were -325, -300, -300 and a $55.32 payout on $36.33 (-191.3). The original placeholder is kept in publishedPrice/publishedStake."
   },
   {
    "id": "2026-09-20:ladder",
@@ -144,8 +152,8 @@
    "cycle": 3,
    "rung": 3,
    "seed": 15.63,
-   "stake": 30.63,
-   "price": -250,
+   "stake": 27.25,
+   "price": -300,
    "p": 0.7987132347571192,
    "edge": 0.0844275204714049,
    "pick": "Jake McCarthy",
@@ -159,7 +167,11 @@
    "fromGames": 15,
    "status": "won",
    "hits": 1,
-   "settled": "2026-09-20T20:42:27.844Z"
+   "settled": "2026-09-20T20:42:27.844Z",
+   "publishedPrice": -250,
+   "publishedStake": 30.63,
+   "priceSource": "fill",
+   "note": "Priced at the fill actually taken, not the -250 the ladder assumed. This rung was placed before the alerter read live prices, so the published -250 was a placeholder nobody bet at; the real prices were -325, -300, -300 and a $55.32 payout on $36.33 (-191.3). The original placeholder is kept in publishedPrice/publishedStake."
   },
   {
    "id": "2026-09-21:ladder",
@@ -170,8 +182,8 @@
    "cycle": 3,
    "rung": 4,
    "seed": 15.63,
-   "stake": 42.88,
-   "price": -250,
+   "stake": 36.33,
+   "price": -191.3,
    "p": 0.7404741303771284,
    "edge": 0.02618841609141409,
    "pick": "Eduardo Valencia",
@@ -185,14 +197,22 @@
    "fromGames": 3,
    "status": "won",
    "hits": 1,
-   "settled": "2026-09-21T22:54:51.929Z"
+   "settled": "2026-09-21T22:54:51.929Z",
+   "publishedPrice": -250,
+   "publishedStake": 42.88,
+   "priceSource": "fill",
+   "note": "Priced at the fill actually taken, not the -250 the ladder assumed. This rung was placed before the alerter read live prices, so the published -250 was a placeholder nobody bet at; the real prices were -325, -300, -300 and a $55.32 payout on $36.33 (-191.3). The original placeholder is kept in publishedPrice/publishedStake.",
+   "fill": {
+    "stake": 36.33,
+    "paid": 55.32
+   }
   }
  ],
- "updated": "2026-09-21T22:54:51.929Z",
+ "updated": "2026-09-22T17:22:33.755Z",
  "state": {
   "account": 76,
   "base": 15.63,
-  "stake": 60.03,
+  "stake": 55.32,
   "rung": 5,
   "cycle": 3,
   "pl": -24,

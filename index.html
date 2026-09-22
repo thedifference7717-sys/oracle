@@ -1054,6 +1054,9 @@ function ladderPick(){
 // What the next play is, updated as the client types — without rebuilding the
 // card, which would destroy the box under their thumb. The full recompute
 // still happens when they leave the box.
+// A price worked back from a payout can be fractional (-191.3). Keep that
+// precision in the maths; show the client a whole-number price.
+function fmtOdds(a){ a=+a; if(!isFinite(a))return "—"; const r=Math.round(a); return (r>0?"+":"")+r; }
 let ldCtx=null;
 function previewNextPlay(){
   if(!ldCtx)return;
@@ -1123,21 +1126,12 @@ function renderLadderInner(){
   });
   // Every dollar below is computed from the viewer's own account, never from
   // the account recorded in the published ledger.
-  // What to assume for a rung that reached the ladder without a price.
-  //
-  // The engine's own default is -250, which is what the alerter stakes
-  // against — but it is not what every book pays. Someone taking -300 and
-  // -325 would have an unpriced rung quietly credited at -250, overstating
-  // the return on the one rung nobody has a real number for. The best evidence
-  // of what THIS viewer actually gets is the most recent price their own
-  // history records, so use that, and fall back to the slip's leg price only
-  // when there is no history at all.
-  const assumePrice=(()=>{
-    for(let i=hist.length-1;i>=0;i--){const q=hist[i]&&hist[i].price;
-      if(q!=null&&isFinite(+q)&&Math.abs(+q)>=100)return +q;}
-    return setting("legPrice");
-  })();
-  const st=M.ladder(hist,{account:ladderAccount||M.LADDER.account,price:assumePrice});
+  // An unpriced rung is credited at the BASE price — the one the client set
+  // and asked to be assumed until they say otherwise. An earlier version used
+  // "the most recent price in the history" instead, which turned one unusually
+  // good fill (-191 on 9/21) into the default for every day after it and
+  // overstated today's return. The base is the stated assumption; use it.
+  const st=M.ladder(hist,{account:ladderAccount||M.LADDER.account,price:setting("legPrice")});
   const C=st.cfg, pick=board?ladderPick():null;
 
   if(ladderAccount==null){
@@ -1198,13 +1192,11 @@ function renderLadderInner(){
   const pinned=pinnedPick[today]||null;
   // Only true before the board can produce any candidate at all.
   const orphaned=!locked&&!pinned&&lk&&lk.open;
-  // Same question as assumePrice above — "what do we assume when the price is
-  // not known?" — so it gets the same answer rather than a second one. Quoting
-  // the slip's -250 to someone whose last three rungs went off at -300 and
-  // -325 overstates what today is worth to them.
+  // Today's price: what the client typed, else what the rung was placed at on
+  // Kalshi, else the base price they set. Nothing else — not yesterday's fill.
   const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
                  :(pinnedPick[today]&&pinnedPick[today].price!=null?pinnedPick[today].price
-                 :(locked&&locked.price!=null?locked.price:assumePrice));
+                 :(locked&&locked.price!=null?locked.price:setting("legPrice")));
   const dec=M.decFromAmerican(todayOdds)||1;
   const typed=oddsByDay[today]!=null;
   // The published rung now carries the real Kalshi ask it was placed at. When
@@ -1249,10 +1241,10 @@ function renderLadderInner(){
     const d=i+1, done=byRung[d];
     if(done)return `<div class="ld-step done"><div class="d">Day ${d} ✓</div>
       <div class="v" style="color:var(--green)">${money(done.stake)}</div>
-      <div class="o">at ${done.price>0?"+":""}${done.price}${done.assumedPrice?" <span style=\"opacity:.7\">(assumed)</span>":""}</div></div>`;
+      <div class="o">at ${fmtOdds(done.price)}${done.assumedPrice?" <span style=\"opacity:.7\">(assumed)</span>":""}</div></div>`;
     if(d===st.rung)return `<div class="ld-step now"><div class="d">Day ${d} · today</div>
       <div class="v" style="color:var(--yellow)">${money(stake)}</div>
-      <div class="o">${waiting?"price set at lock":`at ${todayOdds>0?"+":""}${todayOdds}`}</div></div>`;
+      <div class="o">${waiting?"price set at lock":`at ${fmtOdds(todayOdds)}`}</div></div>`;
     // Before the lock there is no pick and therefore no price, so tomorrow is
     // not computable either — the same reason the rungs past tomorrow stay
     // blank. Showing $14.00 here off the slip's assumed -250 would be exactly
@@ -1279,7 +1271,7 @@ function renderLadderInner(){
     <div class="hint">Opens when the pick locks at ${etTime(lk.lockAt)} ET. Until there is a hitter there is no price to enter.</div>
   </div>`:`<div class="ld-odds">
     <label for="ldOdds">Odds you got on this pick <span id="ldSaved" class="ld-saved"></span></label>
-    <input id="ldOdds" data-k="top-odds" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${todayOdds}"
+    <input id="ldOdds" data-k="top-odds" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${fmtOdds(todayOdds)}"
       oninput="draftLadderOdds('${today}',this.value)" onchange="setLadderOdds('${today}',this.value)">
     <div class="hint" id="ldHint">${typed?`Your price. ${money(stake)} returns <b id="ldRet">${money(ret)}</b>.`
       :kalshiAtLock?`<b style="color:var(--green)">Kalshi ask at lock</b>${kalshiAtLock.bid!=null?` · ${(kalshiAtLock.bid*100).toFixed(0)}/${(kalshiAtLock.ask*100).toFixed(0)}¢`:""}. ${money(stake)} returns <b id="ldRet">${money(ret)}</b> — type your own fill if it differs.`
@@ -1408,7 +1400,7 @@ function renderLadderInner(){
         <td class="c-pick">${r.pick||"—"}</td>
         <td class="c-cd" style="color:var(--dim)">${r.cycle}·${r.rung}</td>
         <td class="c-stake">${money(r.stake)}</td>
-        <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${r.price!=null?r.price:""}"
+        <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${r.price!=null?fmtOdds(r.price):""}"
              oninput="draftLadderOdds('${r.date}',this.value)" onchange="setLadderOdds('${r.date}',this.value)"
              title="${retByDay[r.date]!=null?"worked back from what it paid":oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
              style="color:${oddsByDay[r.date]!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
