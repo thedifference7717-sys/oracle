@@ -10,6 +10,10 @@ on:
         description: "Slate day YYYY-MM-DD (blank = today)"
         required: false
         default: ""
+      watch:
+        description: "Players to report on, comma-separated (optional)"
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -24,6 +28,8 @@ jobs:
         with:
           node-version: 20
       - name: Scan every sport
+        env:
+          WATCH: ${{ github.event.inputs.watch }}
         run: node scripts/ladder-scan.mjs ${{ github.event.inputs.day }} 2>&1 | tee scan.log
       - name: Summarise
         if: always()

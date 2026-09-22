@@ -67,4 +67,16 @@ for (const s of ["MLB", "NBA", "NFL"]) {
   const top = res.ranked.find(c => c.sport === s);
   if (top) log(`best ${s}: ${top.player} ${top.need} @ ${top.price} — ${top.teams} — ${(top.pAdj * 100).toFixed(1)}% · ${top.why.join("; ")}`);
 }
+// The wider pool the Dub and Robin draw from, and every in-band prop by the
+// model's own number — so a pick can be compared with what it beat.
+const row = c => `  ${c.sport.padEnd(4)} ${c.player.slice(0, 24).padEnd(24)} ${c.need.slice(0, 22).padEnd(22)} ${String(c.price).padStart(5)}  mkt ${(c.implied * 100).toFixed(1).padStart(5)}%  model ${(c.p * 100).toFixed(1).padStart(5)}%  ${c.teams}${c.start ? " " + new Date(c.start).toISOString().slice(11, 16) + "Z" : ""}`;
+log("\nPOOL (likeliest first, model within 3 pts of price):");
+res.pool.slice(0, 12).forEach(c => log(row(c)));
+log("\nIN BAND by the model's own number:");
+res.all.filter(c => c.inBand && !c.vetoed).sort((a, b) => b.p - a.p).slice(0, 12).forEach(c => log(row(c)));
+if (process.env.WATCH) for (const w of process.env.WATCH.split(",")) {
+  const hit = res.all.filter(c => c.player.toLowerCase().includes(w.trim().toLowerCase()));
+  log(`\nWATCH ${w}: ` + (hit.length ? "" : "not priced / not on the board"));
+  hit.forEach(c => log(row(c) + `  inBand ${c.inBand} vetoed ${c.vetoed}`));
+}
 log(res.pick ? `\nPICK: ${res.pick.sport} ${res.pick.player} ${res.pick.need} @ ${res.pick.price} (${res.pick.teams})` : "\nPICK: none");
