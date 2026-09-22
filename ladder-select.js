@@ -23,6 +23,91 @@
   else root.LadderSelect = factory();
 })(typeof self !== "undefined" ? self : this, function () {
 
+  // ── CONTEXT: form, opponent, injuries ────────────────────────────────────
+  //
+  // The per-sport models already fold all of this into their probability —
+  // dd-model pulls last-30-day hitting form, hairdwood carries status,
+  // questionable, outShare, recentMin and usage. So the one thing this layer
+  // must NOT do is score form again and multiply it in: that double-counts
+  // what p already knows and quietly makes the number wrong.
+  //
+  // Context is used three ways instead, none of which touch p:
+  //
+  //   VETO        a fact that disqualifies the bet outright. A man listed out
+  //               is not a 78% chance of anything.
+  //   CONFIDENCE  a fact that makes the model's own number less believable
+  //               without making it wrong — a questionable tag, a thin recent
+  //               sample. This reduces how far we trust p and hands the
+  //               difference to the market, which is the same lever the
+  //               calibration weighting already pulls.
+  //   TIE-BREAK   everything else. Two candidates inside a couple of points
+  //               of each other are not meaningfully different, and THAT is
+  //               where recent form and how the opponent has been playing
+  //               decide it, rather than a third decimal place of p.
+  //
+  // Two candidates within this much adjusted probability are treated as level.
+  const TIE_BAND = 0.02;
+  // Below this many recent games there is not enough to judge form on.
+  const MIN_RECENT = 3;
+
+  // Facts that end the conversation.
+  const VETOES = [
+    { key: "out",        why: "listed out or doubtful",
+      test: c => c.status && /^(out|doubtful|inactive|susp)/i.test(String(c.status)) },
+    { key: "noLineup",   why: "not in a confirmed lineup",
+      test: c => c.requiresLineup === true && c.posted === false },
+    { key: "thinRecent", why: `fewer than ${MIN_RECENT} recent games to judge`,
+      test: c => c.recentGames != null && c.recentGames < MIN_RECENT },
+    { key: "noVolume",   why: "no recent workload — not an established role",
+      test: c => c.recentVolume != null && c.recentVolume <= 0 }
+  ];
+
+  function vetoes(c) {
+    return VETOES.filter(v => { try { return v.test(c); } catch (e) { return false; } });
+  }
+
+  // How believable the model's own number is for THIS candidate, 0..1. Applied
+  // on top of the sport's earned trust, never to p itself.
+  function confidence(c) {
+    let k = 1, notes = [];
+    if (c.status && /^quest/i.test(String(c.status))) { k *= 0.5; notes.push("questionable — model trusted half as far"); }
+    if (c.status && /^prob/i.test(String(c.status)))  { k *= 0.85; notes.push("probable"); }
+    if (c.recentGames != null && c.recentGames < 10) {
+      const f = clamp(c.recentGames / 10, 0.3, 1);
+      k *= f; notes.push(`${c.recentGames} recent games — a thin sample`);
+    }
+    if (c.minutesTrend != null && c.minutesTrend < -0.15) {
+      k *= 0.8; notes.push("workload trending down");
+    }
+    return { k: clamp(k, 0, 1), notes };
+  }
+
+  // The tie-break score. Only consulted between candidates that are already
+  // level on probability, so it can be a blunt instrument without doing harm.
+  // Positive is better: the player is going well, the opponent is not.
+  function contextScore(c) {
+    let s = 0;
+    if (c.formEdge != null) s += clamp(+c.formEdge, -1, 1);          // player vs his own baseline
+    if (c.oppWeakness != null) s += clamp(+c.oppWeakness, -1, 1);    // opponent conceding this stat lately
+    if (c.minutesTrend != null) s += clamp(+c.minutesTrend, -1, 1) * 0.5;
+    if (c.homeAway === "home") s += 0.05;
+    return +s.toFixed(4);
+  }
+
+  // Why this candidate, in words, so a pick can be argued with.
+  function reasons(c, adj, conf, vet) {
+    const out = [];
+    for (const v of vet) out.push(`VETO: ${v.why}`);
+    if (c.formEdge != null) out.push(`${c.formEdge >= 0 ? "in form" : "below his baseline"} (${(c.formEdge * 100).toFixed(0)}% vs own rate)`);
+    if (c.oppWeakness != null) out.push(`${c.oppWeakness >= 0 ? "soft matchup" : "tough matchup"} (${(c.oppWeakness * 100).toFixed(0)}% vs league)`);
+    if (c.recentGames != null) out.push(`${c.recentGames} recent games`);
+    if (c.status) out.push(`status: ${c.status}`);
+    out.push(...conf.notes);
+    if (adj.priced) out.push(`market ${(adj.market * 100).toFixed(1)}%, model ${(adj.own * 100).toFixed(1)}%`);
+    else out.push("no tradeable price — anchored to the band");
+    return out;
+  }
+
   // Legs at which a model's own probability carries half the weight. 200 is
   // the same order as the per-stat stabilisation points inside dd-model.js,
   // and it is deliberately slow: this is the guard against a new model, so it
@@ -44,14 +129,18 @@
   // One candidate's probability, after both corrections that its record
   // justifies: the measured bias (a model that runs hot gets marked down by
   // exactly how hot it has run) and the shrink toward the market.
-  function adjusted(c, rec) {
+  function adjusted(c, rec, confK) {
     const n = rec && rec.n > 0 ? rec.n : 0;
     const bias = rec && rec.n > 0 && rec.predicted != null && rec.actual != null
       ? rec.actual - rec.predicted : 0;
     const own = clamp((+c.p || 0) + bias, 0.01, 0.99);
     const mkt = c.price != null ? impliedFrom(c.price) : null;
     const anchor = mkt != null ? mkt : NO_PRICE_PRIOR;
-    const w = trust(n);
+    // The sport's earned trust, further reduced by anything about THIS
+    // candidate that makes its number less believable. Both pull the same
+    // lever — toward the market — because that is the honest place to go when
+    // you are less sure, rather than inventing a different probability.
+    const w = trust(n) * (confK == null ? 1 : confK);
     return {
       p: clamp(w * own + (1 - w) * anchor, 0.01, 0.99),
       own, anchor, weight: w, bias,
@@ -78,21 +167,44 @@
     const o = opts || {};
     const band = o.band || { lo: -350, hi: -200 };
     const rows = (candidates || []).map(c => {
-      const a = adjusted(c, (records || {})[c.sport]);
+      const vet = vetoes(c);
+      const conf = confidence(c);
+      const a = adjusted(c, (records || {})[c.sport], conf.k);
       return Object.assign({}, c, {
         pAdj: a.p, pOwn: a.own, anchor: a.anchor, trust: a.weight,
         bias: a.bias, implied: a.market, edge: a.edge, priced: a.priced,
-        inBand: o.requireBand === false ? true : inBand(c.price, band)
+        inBand: o.requireBand === false ? true : inBand(c.price, band),
+        vetoes: vet.map(v => v.key), vetoed: vet.length > 0,
+        confidence: conf.k, context: contextScore(c),
+        why: reasons(c, a, conf, vet)
       });
     });
-    const eligible = rows.filter(r => r.inBand);
+    const eligible = rows.filter(r => r.inBand && !r.vetoed);
     // Rank on the adjusted number — the question asked is which is likeliest
     // to hit, and this is that number after each model's record is accounted
     // for. Ties break toward the shorter price, which busts less often, and
     // a ladder is punished by busts more than it is rewarded by payouts.
-    eligible.sort((x, y) => y.pAdj - x.pAdj || (x.price - y.price));
-    return { pick: eligible[0] || null, eligible, all: rows, band };
+    //
+    // Probability first, but bucketed: two candidates inside TIE_BAND of each
+    // other are not really different, and pretending a third decimal place
+    // separates them is false precision. Inside a bucket the question becomes
+    // the one that actually distinguishes them — who is going well, against
+    // whom — and only then the shorter price, which busts less often.
+    const bucket = p => Math.round(p / TIE_BAND);
+    eligible.sort((x, y) =>
+      bucket(y.pAdj) - bucket(x.pAdj) ||
+      y.context - x.context ||
+      y.pAdj - x.pAdj ||
+      (x.price - y.price));
+    return {
+      pick: eligible[0] || null, eligible, all: rows, band,
+      rejected: rows.filter(r => r.vetoed || !r.inBand)
+        .map(r => ({ sport: r.sport, player: r.player, market: r.market,
+                     price: r.price,
+                     reason: r.vetoed ? r.vetoes.join(", ") : "outside the price band" }))
+    };
   }
 
-  return { select, adjusted, inBand, trust, STAB, NO_PRICE_PRIOR, impliedFrom };
+  return { select, adjusted, inBand, trust, vetoes, confidence, contextScore,
+           STAB, NO_PRICE_PRIOR, TIE_BAND, MIN_RECENT, impliedFrom };
 });
