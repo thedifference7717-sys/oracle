@@ -156,5 +156,19 @@ console.log("grading");
   ok("a robin with an open leg is not graded", S.gradeRobin(L(["won", null, "won"])) === null);
 }
 
+
+console.log("the Dub and Robin pool keeps out what the model doubts");
+{
+  const c = [
+    { sport: "MLB", player: "Doubtful Starter", playerId: 1, eventId: "a", p: 0.46, price: -245 },
+    { sport: "MLB", player: "Close Call",       playerId: 2, eventId: "b", p: 0.69, price: -245 },
+    { sport: "MLB", player: "Agreed",           playerId: 3, eventId: "c", p: 0.74, price: -245 }
+  ];
+  const r = S.choose(c, RECORDS, { band: BAND });
+  ok("a 46% model number at a 71% price is out", !r.pool.some(x => x.player === "Doubtful Starter"));
+  ok("within three points is in", r.pool.some(x => x.player === "Close Call"));
+  ok("agreement is in", r.pool.some(x => x.player === "Agreed"));
+}
+
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
 process.exit(failures ? 1 : 0);

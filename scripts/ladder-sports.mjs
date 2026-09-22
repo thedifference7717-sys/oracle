@@ -370,7 +370,7 @@ export function benched(bets, maxStreak = 2) {
 // inside the ladder's price band. On top of that the model must at least agree
 // with the price: a prop the model itself rates below what the market charges
 // is not the likeliest winner, it is the market's favourite that we doubt.
-export function choose(candidates, records, { band, blocked = new Set(), minEdge = 0 } = {}) {
+export function choose(candidates, records, { band, blocked = new Set(), minEdge = 0, poolTolerance = 0.03 } = {}) {
   const r = LS.select(candidates, records, { band });
   const ranked = [], bench = [], doubted = [];
   for (const c of r.eligible) {
@@ -382,7 +382,12 @@ export function choose(candidates, records, { band, blocked = new Set(), minEdge
     if (blocked.has(benchKey(c))) { bench.push(c); continue; }
     ranked.push(c);
   }
-  return { pick: ranked[0] || null, ranked, benched: bench, doubted, pool: r.eligible, rejected: r.rejected, all: r.all, band: r.band };
+  // The Dub's and the Robin's pool. Looser than the ladder's — a parlay may
+  // take the market's favourites — but not blind: a man our own model rates
+  // well below his price (a doubtful starter the market has not caught up
+  // with) is not one of the likeliest winners just because the price says so.
+  const pool = r.eligible.filter(c => c.implied == null || c.p >= c.implied - poolTolerance);
+  return { pick: ranked[0] || null, ranked, benched: bench, doubted, pool, rejected: r.rejected, all: r.all, band: r.band };
 }
 
 // ── settling a basketball or football rung ──────────────────────────────────
@@ -412,10 +417,11 @@ export async function settleRung(b, { get = getJSON } = {}) {
 
 // ── the Dub and the Robin ───────────────────────────────────────────────────
 // Both are built from the same priced, ranked pool as the ladder, at the same
-// lock: every prop inside the price band that no veto rules out, likeliest
-// first. They do not need the ladder's "model agrees with the price" test —
-// that guards a bet that compounds, and a parlay that does not compound can
-// take the market's own favourites.
+// lock: every prop inside the price band that no veto rules out and that our
+// model rates within three points of its price, likeliest first. That is
+// looser than the ladder's "model agrees with the price" test — the ladder
+// compounds, a parlay does not — but it still keeps out a man the market
+// likes and the model does not.
 const legOf = c => ({
   sport: c.sport, player: c.player, playerId: c.playerId, market: c.market, line: c.line, need: c.need,
   eventId: c.eventId, gk: c.gk, teams: c.teams, start: c.start, price: c.price, priceSource: c.priceSource || "kalshi",
