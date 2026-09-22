@@ -1,0 +1,31 @@
+# What the cross-sport ladder would pick right now — MLB, NBA and NFL — without
+# placing, publishing or alerting anything. A preview of a lock, run where the
+# sports feeds and Kalshi are reachable.
+name: Ladder scan (dry run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: "Slate day YYYY-MM-DD (blank = today)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Scan every sport
+        run: node scripts/ladder-scan.mjs ${{ github.event.inputs.day }} 2>&1 | tee scan.log
+      - name: Summarise
+        if: always()
+        run: |
+          { echo "## Ladder scan"; echo; echo '```'; cat scan.log | tail -60; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
