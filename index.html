@@ -209,6 +209,7 @@ b,strong{font-weight:600}
 .ld-nb.win .v{color:var(--green)}
 .ld-nb.lose .v{color:var(--red)}
 .ld-nb .s{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+.ld-saved{margin-left:6px;font-size:11px;font-weight:600;color:var(--green);opacity:0;transition:opacity .25s}
 .ld-in{width:84px;background:var(--bg3);border:none;border-radius:8px;color:var(--text);
   padding:6px 7px;font-family:var(--num);font-size:12px;text-align:right}
 .ld-foot{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
@@ -572,7 +573,7 @@ function setLadderAccount(v){
   if(!isFinite(n)||n<=0)return;
   ladderAccount=n;
   try{localStorage.setItem("dd.ladderAccount",String(n));}catch(e){}
-  renderLadder();
+  renderLadder({force:true});
 }
 function clearLadderAccount(){
   ladderAccount=null;
@@ -590,11 +591,18 @@ try{oddsByDay=JSON.parse(localStorage.getItem("dd.ladderOdds")||"{}")||{};}catch
 // ladder compounds that error into every rung after it.
 let retByDay={};
 try{retByDay=JSON.parse(localStorage.getItem("dd.ladderReturns")||"{}")||{};}catch(e){retByDay={};}
-function setLadderReturn(day,v){
+function storeLadderReturn(day,v){
   const r=parseFloat(v);
-  if(!isFinite(r)||r<=0)delete retByDay[day]; else retByDay[day]=+r.toFixed(2);
+  if(String(v).trim()===""){delete retByDay[day];}
+  else if(!isFinite(r)||r<=0){return false;}
+  else retByDay[day]=+r.toFixed(2);
   try{localStorage.setItem("dd.ladderReturns",JSON.stringify(retByDay));}catch(e){}
-  renderLadder();
+  return true;
+}
+function draftLadderReturn(day,v){ if(storeLadderReturn(day,v))flashSaved(); else clearSaved(); }
+function setLadderReturn(day,v){
+  storeLadderReturn(day,v);
+  renderLadder({force:true});
 }
 // Record payouts from a link: ?paid=2026-09-21:55.32,2026-09-20:36.33
 //
@@ -658,11 +666,30 @@ applyLadderStateFromUrl();
 // Commits on change (blur or Enter), never on every keystroke: this re-renders
 // the whole card, which would rip the input out from under the cursor halfway
 // through typing "-180".
-function setLadderOdds(day,v){
+function storeLadderOdds(day,v){
   const p=parseFloat(v);
-  if(!isFinite(p)||p===0||Math.abs(p)<100)delete oddsByDay[day]; else oddsByDay[day]=p;
+  // A half-typed "-" or "-2" is not a price yet: leave what was stored alone
+  // rather than deleting it on the way to "-275".
+  if(String(v).trim()===""){delete oddsByDay[day];}
+  else if(!isFinite(p)||p===0||Math.abs(p)<100){return false;}
+  else oddsByDay[day]=p;
   try{localStorage.setItem("dd.ladderOdds",JSON.stringify(oddsByDay));}catch(e){}
-  renderLadder();
+  return true;
+}
+// Saved on EVERY keystroke. It used to save only on "change", which on an
+// iPhone fires when the box loses focus — so typing -300 and then closing the
+// app, locking the phone or switching to the sportsbook never saved anything.
+// Reproduced: stored = null after reopening, box back on the old price.
+function draftLadderOdds(day,v){
+  // "-3" on the way to "-300" is not a price. Say nothing rather than leave a
+  // "Saved" from an earlier keystroke sitting next to a number that was not.
+  if(!storeLadderOdds(day,v)){clearSaved();return;}
+  flashSaved();
+  if(ldCtx&&day===ldCtx.today)previewNextPlay();
+}
+function setLadderOdds(day,v){
+  storeLadderOdds(day,v);
+  renderLadder({force:true});
 }
 
 // ── self-update ─────────────────────────────────────────────────────────────
@@ -1024,7 +1051,48 @@ function ladderPick(){
 // drops, and the second entry never happens. Filling a column of odds on a
 // phone looked like "I changed them and nothing took". Put focus back where it
 // was, by a stable key rather than by element, since the element is new.
-function renderLadder(){
+// What the next play is, updated as the client types — without rebuilding the
+// card, which would destroy the box under their thumb. The full recompute
+// still happens when they leave the box.
+let ldCtx=null;
+function previewNextPlay(){
+  if(!ldCtx)return;
+  const o=oddsByDay[ldCtx.today];
+  const dec=M.decFromAmerican(o!=null?o:ldCtx.odds)||1;
+  const ret=ldCtx.stake*dec;
+  const next=ldCtx.closes?Math.max(0,ldCtx.account+(ret-ldCtx.base))*ldCtx.basePct:ret;
+  const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t;};
+  // Once they have typed their own number, the hint is about THEIR price —
+  // not "Kalshi ask at lock" sitting above a figure the client entered.
+  const h=document.getElementById("ldHint");
+  if(h&&o!=null)h.innerHTML=`Your price. ${money(ldCtx.stake)} returns <b id="ldRet">${money(ret)}</b>.`;
+  set("ldRet",money(ret));
+  set("ldNextWin",money(next));
+  if(ldCtx.closes)set("ldNextWinSub",`${money(ldCtx.base)} of yours became ${money(ret)} · +${money(ret-ldCtx.base)}`);
+}
+let ldSavedT=null;
+function clearSaved(){const e=document.getElementById("ldSaved");if(e){clearTimeout(ldSavedT);e.style.opacity="0";e.textContent="";}}
+function flashSaved(){
+  const e=document.getElementById("ldSaved"); if(!e)return;
+  e.textContent="✓ Saved"; e.style.opacity="1";
+  clearTimeout(ldSavedT); ldSavedT=setTimeout(()=>{e.style.opacity="0";},1600);
+}
+
+// The board reloads every three minutes and redraws the card. If that lands
+// while someone is typing, their half-entered price was replaced by the stored
+// one — reproduced. A background redraw now waits until nobody is in a box;
+// only an edit being committed may redraw while one is focused.
+let ldPending=false;
+function ladderBusy(){const a=document.activeElement;
+  return !!(a&&a.tagName==="INPUT"&&a.closest&&a.closest("#ladder"));}
+document.addEventListener("focusout",e=>{
+  if(!ldPending||!e.target||!e.target.closest||!e.target.closest("#ladder"))return;
+  setTimeout(()=>{if(ldPending&&!ladderBusy())renderLadder();},0);
+});
+
+function renderLadder(opts){
+  if(!(opts&&opts.force)&&ladderBusy()){ldPending=true;return;}
+  ldPending=false;
   const act=document.activeElement;
   const key=act&&act.dataset?act.dataset.k:null;
   renderLadderInner();
@@ -1167,6 +1235,7 @@ function renderLadderInner(){
   const closes=st.rung>=C.rungs;
   const nextIfWin=closes?Math.max(0,(st.account+(ret-st.base)))*C.basePct:ret;
   const nextIfLose=st.base*(1+C.missGain);
+  ldCtx={today,stake,closes,account:st.account,base:st.base,basePct:C.basePct,odds:todayOdds};
 
   // Only two rungs on this staircase are real numbers: the ones already bet,
   // at the prices those bets were actually taken at, and today's. Tomorrow is
@@ -1209,18 +1278,18 @@ function renderLadderInner(){
     <input type="text" value="—" disabled>
     <div class="hint">Opens when the pick locks at ${etTime(lk.lockAt)} ET. Until there is a hitter there is no price to enter.</div>
   </div>`:`<div class="ld-odds">
-    <label for="ldOdds">Odds you got on this pick</label>
-    <input id="ldOdds" data-k="top-odds" type="number" step="5" inputmode="numbers-and-punctuation" value="${todayOdds}"
-      onchange="setLadderOdds('${today}',this.value)">
-    <div class="hint">${typed?`Your price. ${money(stake)} returns <b>${money(ret)}</b>.`
-      :kalshiAtLock?`<b style="color:var(--green)">Kalshi ask at lock</b>${kalshiAtLock.bid!=null?` · ${(kalshiAtLock.bid*100).toFixed(0)}/${(kalshiAtLock.ask*100).toFixed(0)}¢`:""}. ${money(stake)} returns <b>${money(ret)}</b> — type your own fill if it differs.`
-      :`Assumed — no live quote for this pick. Type what your book is showing. ${money(stake)} would return <b>${money(ret)}</b>.`}</div>
+    <label for="ldOdds">Odds you got on this pick <span id="ldSaved" class="ld-saved"></span></label>
+    <input id="ldOdds" data-k="top-odds" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${todayOdds}"
+      oninput="draftLadderOdds('${today}',this.value)" onchange="setLadderOdds('${today}',this.value)">
+    <div class="hint" id="ldHint">${typed?`Your price. ${money(stake)} returns <b id="ldRet">${money(ret)}</b>.`
+      :kalshiAtLock?`<b style="color:var(--green)">Kalshi ask at lock</b>${kalshiAtLock.bid!=null?` · ${(kalshiAtLock.bid*100).toFixed(0)}/${(kalshiAtLock.ask*100).toFixed(0)}¢`:""}. ${money(stake)} returns <b id="ldRet">${money(ret)}</b> — type your own fill if it differs.`
+      :`Assumed — no live quote for this pick. Type what your book is showing. ${money(stake)} would return <b id="ldRet">${money(ret)}</b>.`}</div>
   </div>`;
 
   const nextBox=`<div class="ld-next">
     <div class="ld-nb win"><div class="l">If it hits → ${closes?"cycle closes, next seed":"tomorrow's bet"}</div>
-      <div class="v">${money(nextIfWin)}</div>
-      ${closes?`<div class="s">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
+      <div class="v" id="ldNextWin">${money(nextIfWin)}</div>
+      ${closes?`<div class="s" id="ldNextWinSub">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
               :`<div class="s">${st.toppedUp>0?`${money(st.cashIn)} of your money in this cycle (${money(st.base)} seed + ${money(st.toppedUp)} added)`:`still only ${money(st.base)} of your money at risk`}</div>`}</div>
     <div class="ld-nb lose"><div class="l">If it misses → next seed</div>
       <div class="v">${money(nextIfLose)}</div>
@@ -1339,13 +1408,13 @@ function renderLadderInner(){
         <td class="c-pick">${r.pick||"—"}</td>
         <td class="c-cd" style="color:var(--dim)">${r.cycle}·${r.rung}</td>
         <td class="c-stake">${money(r.stake)}</td>
-        <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="number" step="5" value="${r.price!=null?r.price:""}"
-             onchange="setLadderOdds('${r.date}',this.value)"
+        <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${r.price!=null?r.price:""}"
+             oninput="draftLadderOdds('${r.date}',this.value)" onchange="setLadderOdds('${r.date}',this.value)"
              title="${retByDay[r.date]!=null?"worked back from what it paid":oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
              style="color:${oddsByDay[r.date]!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
-        <td class="c-paid" data-label="Paid back"><input class="ld-in" data-k="paid:${r.date}" type="number" step="0.01" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
+        <td class="c-paid" data-label="Paid back"><input class="ld-in" data-k="paid:${r.date}" type="text" inputmode="decimal" autocomplete="off" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
              value="${retByDay[r.date]!=null?retByDay[r.date]:""}"
-             onchange="setLadderReturn('${r.date}',this.value)"
+             oninput="draftLadderReturn('${r.date}',this.value)" onchange="setLadderReturn('${r.date}',this.value)"
              title="What this rung actually paid back, stake included. Enter it and the price above is worked back from it — exact, where a rounded price is not."
              style="color:${retByDay[r.date]!=null?'var(--green)':'var(--dim)'}"></td>
         <td class="c-res" style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
