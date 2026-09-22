@@ -242,6 +242,45 @@ b,strong{font-weight:600}
 .ld-hist th:first-child,.ld-hist td:first-child{text-align:left}
 .ld-hist td{text-align:right;padding:9px 8px;border-bottom:.5px solid var(--hair);white-space:nowrap}
 .ld-hist td:nth-child(2){text-align:left;color:var(--text);font-weight:500}
+/* On a phone the nine-column history cannot fit: it clipped stakes mid-number
+   ("$57.") and put the two boxes people actually need — the odds they got and
+   what the rung paid — off the right edge behind a sideways scroll. Each rung
+   becomes a card instead, with the inputs full-width and labelled. */
+@media (max-width:640px){
+  .ld-hist thead{display:none}
+  /* .ld-hist outranks the global table{min-width:760px} further down the
+     sheet on specificity, which is what makes this win despite coming first. */
+  .ld-hist,.ld-hist tbody{display:block;min-width:0}
+  .ld-hist tr{display:grid;grid-template-columns:1fr 1fr;
+    grid-template-areas:"pick res" "date stake" "odds paid" "pl acct";
+    gap:6px 12px;padding:14px 15px;margin:0 0 10px;background:var(--bg3);
+    border:.5px solid var(--hair);border-radius:16px}
+  .ld-hist td{display:block;border:none;padding:0;text-align:left;white-space:normal}
+  .ld-hist .c-pick{grid-area:pick;font-size:15px;font-weight:600;color:var(--text)}
+  .ld-hist .c-res{grid-area:res;text-align:right;font-weight:600}
+  .ld-hist .c-date{grid-area:date;font-size:12px}
+  .ld-hist .c-cd{display:none}
+  .ld-hist .c-stake{grid-area:stake;text-align:right;font-size:15px;color:var(--text)}
+  .ld-hist .c-odds{grid-area:odds}
+  .ld-hist .c-paid{grid-area:paid}
+  .ld-hist .c-pl{grid-area:pl;font-size:12px;margin-top:2px}
+  .ld-hist .c-acct{grid-area:acct;text-align:right;font-size:12px;color:var(--dim);margin-top:2px}
+  .ld-hist .c-odds::before,.ld-hist .c-paid::before{content:attr(data-label);display:block;
+    font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+  /* P&L and account are context, not controls: one quiet line, label inline. */
+  .ld-hist .c-pl::before,.ld-hist .c-acct::before{content:attr(data-label) " ";
+    font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim)}
+  /* The card and the box were the same grey, so the boxes vanished and the
+     card read as text rather than something you can type into. */
+  .ld-hist .ld-in{width:100%;font-size:16px;padding:10px 12px;text-align:left;   /* 16px stops iOS zooming on focus */
+    background:var(--bg);border:.5px solid var(--hair);border-radius:10px}
+  /* Scoped to the ladder: the slate tables further down still need to scroll. */
+  #ladder .table-wrap{overflow:visible}
+  /* The sticky bar took a third of a phone screen and let the card underneath
+     show through its translucent backdrop. On a phone it scrolls away with the
+     page; the controls are one flick up. */
+  #topbar{position:static;background:var(--bg)}
+}
 
 /* ── slate panels ── */
 .wrap{padding:0 var(--pad)}
@@ -979,7 +1018,21 @@ function ladderPick(){
   return best;
 }
 
+// Every edit re-renders the whole card, which replaces its innerHTML. On iOS
+// a number box commits on BLUR — i.e. at the moment you tap the next box — so
+// the re-render then destroys the box you just tapped into, the keyboard
+// drops, and the second entry never happens. Filling a column of odds on a
+// phone looked like "I changed them and nothing took". Put focus back where it
+// was, by a stable key rather than by element, since the element is new.
 function renderLadder(){
+  const act=document.activeElement;
+  const key=act&&act.dataset?act.dataset.k:null;
+  renderLadderInner();
+  if(!key)return;
+  const again=document.querySelector(`#ladder [data-k="${CSS&&CSS.escape?CSS.escape(key):key}"]`);
+  if(again){try{again.focus({preventScroll:true});}catch(e){again.focus();}}
+}
+function renderLadderInner(){
   const el=document.getElementById("ladder"),note=document.getElementById("ldNote");
   const published=(ladderHist&&Array.isArray(ladderHist.bets))?ladderHist.bets:[];
   // A locally recorded rung fills a day the ledger has not published, so the
@@ -1086,6 +1139,10 @@ function renderLadder(){
                  :(locked&&locked.price!=null?locked.price:assumePrice));
   const dec=M.decFromAmerican(todayOdds)||1;
   const typed=oddsByDay[today]!=null;
+  // The published rung now carries the real Kalshi ask it was placed at. When
+  // it does, say so — "Assumed" on a price that came off the exchange at lock
+  // is exactly the kind of wrong label that makes a correct number look fake.
+  const kalshiAtLock=(!typed&&locked&&locked.priceSource==="kalshi"&&locked.kalshi)?locked.kalshi:null;
   // The locked row's probability is the one that was published; the live
   // pick's is only a stand-in used before the lock, to keep the risk panel
   // honest without naming anyone.
@@ -1153,10 +1210,11 @@ function renderLadder(){
     <div class="hint">Opens when the pick locks at ${etTime(lk.lockAt)} ET. Until there is a hitter there is no price to enter.</div>
   </div>`:`<div class="ld-odds">
     <label for="ldOdds">Odds you got on this pick</label>
-    <input id="ldOdds" type="number" step="5" inputmode="numbers-and-punctuation" value="${todayOdds}"
+    <input id="ldOdds" data-k="top-odds" type="number" step="5" inputmode="numbers-and-punctuation" value="${todayOdds}"
       onchange="setLadderOdds('${today}',this.value)">
     <div class="hint">${typed?`Your price. ${money(stake)} returns <b>${money(ret)}</b>.`
-      :`Assumed — type what your book is actually showing. ${money(stake)} would return <b>${money(ret)}</b>.`}</div>
+      :kalshiAtLock?`<b style="color:var(--green)">Kalshi ask at lock</b>${kalshiAtLock.bid!=null?` · ${(kalshiAtLock.bid*100).toFixed(0)}/${(kalshiAtLock.ask*100).toFixed(0)}¢`:""}. ${money(stake)} returns <b>${money(ret)}</b> — type your own fill if it differs.`
+      :`Assumed — no live quote for this pick. Type what your book is showing. ${money(stake)} would return <b>${money(ret)}</b>.`}</div>
   </div>`;
 
   const nextBox=`<div class="ld-next">
@@ -1277,22 +1335,22 @@ function renderLadder(){
     <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>PAID BACK</th><th>RESULT</th><th>P&amp;L</th><th>Account</th></tr></thead>
     <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
       return out.slice(-12).reverse().map(({r,acc})=>`<tr>
-        <td style="color:var(--dim)">${r.date}</td>
-        <td>${r.pick||"—"}</td>
-        <td style="color:var(--dim)">${r.cycle}·${r.rung}</td>
-        <td>${money(r.stake)}</td>
-        <td><input class="ld-in" type="number" step="5" value="${r.price!=null?r.price:""}"
+        <td class="c-date" style="color:var(--dim)">${r.date}</td>
+        <td class="c-pick">${r.pick||"—"}</td>
+        <td class="c-cd" style="color:var(--dim)">${r.cycle}·${r.rung}</td>
+        <td class="c-stake">${money(r.stake)}</td>
+        <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="number" step="5" value="${r.price!=null?r.price:""}"
              onchange="setLadderOdds('${r.date}',this.value)"
              title="${retByDay[r.date]!=null?"worked back from what it paid":oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
              style="color:${oddsByDay[r.date]!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
-        <td><input class="ld-in" type="number" step="0.01" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
+        <td class="c-paid" data-label="Paid back"><input class="ld-in" data-k="paid:${r.date}" type="number" step="0.01" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
              value="${retByDay[r.date]!=null?retByDay[r.date]:""}"
              onchange="setLadderReturn('${r.date}',this.value)"
              title="What this rung actually paid back, stake included. Enter it and the price above is worked back from it — exact, where a rounded price is not."
              style="color:${retByDay[r.date]!=null?'var(--green)':'var(--dim)'}"></td>
-        <td style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
-        <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
-        <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table>
+        <td class="c-res" style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
+        <td class="c-pl" data-label="P&amp;L" style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
+        <td class="c-acct" data-label="Account">${money(acc)}</td></tr>`).join("");})()}</tbody></table>
     <div class="ld-foot"><b>These figures live in this browser only.</b> Your bankroll, the odds you got and what each rung paid are stored on this device and never sent anywhere — which also means a phone and a tablet are two separate ladders, and a second device shows the published chain at the assumed price until you tell it otherwise.<br>
       Green is yours, grey is assumed. Enter either the odds you got or what the rung <b>paid back</b> — the payout is exact and the price is worked back from it, which is why it wins when both are present. Edit any cell and every stake above it recompounds.</div></div>`
     :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;

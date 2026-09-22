@@ -18,6 +18,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { execSync } from "child_process";
 import { pathToFileURL } from "url";
 import M from "../dd-model.js";
+import { fetchHitQuotes, lookup as quoteFor } from "./kalshi-quotes.mjs";
 
 const STATE_FILE = "state.json";
 const PUBLIC_LOG = "data/model-log.json";
@@ -338,6 +339,10 @@ const LADDER_FILE = "data/ladder.json";
 // with DD_LEG_PRICE. This is an assumption until the real number is confirmed,
 // and it decides both whether there is a bet and how fast the ladder climbs.
 const LEG_PRICE = +(process.env.DD_LEG_PRICE || M.LADDER.price);
+// The prices a rung may be placed at. Too short and a cycle cannot pay for its
+// own busts; too long and five in a row stops being a plan. On the real board
+// the 1+ hit market sits at -203..-270, comfortably inside.
+const LADDER_BAND = { lo: +(process.env.DD_BAND_LO || -350), hi: +(process.env.DD_BAND_HI || -200) };
 
 // Read the ledger as the UNION of this runner's copy and what is actually
 // published on origin/main.
@@ -467,14 +472,38 @@ async function ladderPlace(day, games, D, saveState) {
     schedule: { dates: [{ games: live }] },
     onStatus: m => console.log("  · ladder:", m)
   });
-  const lbe = 1 / M.decFromAmerican(LEG_PRICE);
+  // Price every candidate at what it actually costs on Kalshi right now,
+  // not at an assumed leg price. Every rung before this one was compounded on
+  // -250 while the real 1+ hit asks ran -203 to -270; the ladder was paying
+  // itself more than the market ever would.
+  //
+  // If the feed is up, a man with no 1+ market is not bettable and is skipped
+  // — you cannot place what is not listed. If the feed is DOWN, everyone
+  // falls back to LEG_PRICE and the rung says so, rather than the ladder going
+  // dark for a day because an exchange blinked.
+  let quotes = null;
+  try { quotes = await fetchHitQuotes(); console.log(`  · ladder: ${quotes.size} players quoted on Kalshi`); }
+  catch (e) { console.log("  · ladder: Kalshi quotes unavailable (" + e.message + ") — falling back to " + LEG_PRICE); }
+  const live_ = quotes && quotes.size >= 10;          // a handful of markets is a broken feed, not a board
+  const inBand = a => a != null && a <= LADDER_BAND.hi && a >= LADDER_BAND.lo;
+  const priceFor = c => {
+    if (!live_) return { american: LEG_PRICE, ask: 1 / M.decFromAmerican(LEG_PRICE), source: "assumed" };
+    const g = live.find(x => x.gamePk === c.gk);
+    const q = quoteFor(quotes, c.name, g && g.gameDate);
+    return q ? { american: q.american, ask: q.ask, bid: q.bid, spread: q.spread, ticker: q.ticker, source: "kalshi" } : null;
+  };
+
   // Nobody rides the ladder more than two days running; after that he sits out
   // one placement. Computed from the ledger rather than from anything held in
   // this runner, so a fresh checkout applies the same bench.
   const blocked = M.ladderBlocked(L.bets);
-  let best = null, benched = null;
+  let best = null, benched = null, unlisted = 0, outOfBand = 0;
   for (const c of board.candidates) {
-    const edge = c.p - lbe;                       // c.p already carries scratch risk
+    const q = priceFor(c);
+    if (!q) { unlisted++; continue; }
+    if (!inBand(q.american)) { outOfBand++; continue; }
+    const edge = c.p - q.ask;                     // c.p already carries scratch risk
+    c._q = q;
     if (blocked.has(M.pickKey({ playerId: c.id, pick: c.name }))) {
       if (!benched || edge > benched.edge) benched = { c, edge };
       continue;
@@ -485,6 +514,7 @@ async function ladderPlace(day, games, D, saveState) {
     console.log(`ladder: ${benched.c.name} benched — two days running, sitting this one out` +
       `${best ? ` (he was ${benched.edge > best.edge ? "ahead of" : "behind"} ${best.c.name})` : ""}.`);
   }
+  if (live_) console.log(`  · ladder: ${unlisted} candidates not listed on Kalshi, ${outOfBand} outside ${LADDER_BAND.lo}..${LADDER_BAND.hi}`);
   if (!best) { console.log("ladder: no candidate could be scored."); return; }
   if (best.edge < MIN_EDGE) {
     console.log(`ladder: best leg ${best.c.name} at ${(best.edge * 100).toFixed(1)}pts — under the bar, no rung today.`);
@@ -501,7 +531,11 @@ async function ladderPlace(day, games, D, saveState) {
     published: new Date().toISOString(),
     firstPitch: g ? g.gameDate : null,
     cycle: st.cycle, rung: st.rung, seed: st.base,
-    stake: st.stake, price: LEG_PRICE, p: c.p, edge: best.edge,
+    stake: st.stake, price: c._q.american, priceSource: c._q.source,
+    kalshi: c._q.source === "kalshi"
+      ? { ticker: c._q.ticker, bid: c._q.bid, ask: c._q.ask, spread: c._q.spread, at: new Date().toISOString() }
+      : null,
+    p: c.p, edge: best.edge,
     pick: c.name, playerId: c.id, slot: c.slot, gk: c.gk,
     posted: !!c.posted, startProb: c.startProb,
     teams: `${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName}`, sp: c.spName || null,
@@ -520,7 +554,7 @@ async function ladderPlace(day, games, D, saveState) {
   }
   writeLadderFile(L);
 
-  const risk = M.ladderRisk(c.p, LEG_PRICE, st);
+  const risk = M.ladderRisk(c.p, row.price, st);
   const first = g ? new Date(g.gameDate).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "—";
   await tg(
     `🪜 <b>THE LADDER</b> · cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs}\n` +
@@ -529,7 +563,10 @@ async function ladderPlace(day, games, D, saveState) {
     `#${c.slot} · ${c.teamName} ${c.isHome ? "vs" : "@"} ${c.oppName} · ${first} ET\n` +
     `vs ${c.spName || "SP TBD"}\n\n` +
     `🎯 <b>BET ONLY BETTER THAN ${M.amOdds(c.p - MIN_EDGE)}</b>\n` +
-    `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${LEG_PRICE}\n` +
+    `${pct(c.p)} to hit · fair ${M.amOdds(c.p)} · ${pts(best.edge)}pts vs ${row.price}\n` +
+    (row.priceSource === "kalshi"
+      ? `💱 Kalshi ask <b>${row.price}</b> (${row.kalshi.bid != null ? (row.kalshi.bid * 100).toFixed(0) : "–"}/${(row.kalshi.ask * 100).toFixed(0)}¢)\n`
+      : `⚠ Kalshi unavailable — priced at the assumed ${row.price}\n`) +
     `${c.posted ? "✓ Confirmed in the lineup" : `⚠ Lineup not posted — projected #${c.slot}, ${pct(c.startProb)} to start (already priced in)`}\n` +
     `Best of ${board.candidates.length} bats across all ${live.length} game${live.length === 1 ? "" : "s"} on the slate\n` +
     `${live.filter(posted).length} of ${live.length} games had confirmed lineups at lock\n` +
