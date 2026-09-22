@@ -6,7 +6,8 @@
   "basePct": 0.1,
   "rungs": 5,
   "missGain": 0.25,
-  "maxStreak": 2
+  "maxStreak": 2,
+  "price": -275
  },
  "bets": [
   {
@@ -206,9 +207,33 @@
     "stake": 36.33,
     "paid": 55.32
    }
+  },
+  {
+   "id": "2026-09-22:ladder",
+   "date": "2026-09-22",
+   "sport": "MLB",
+   "published": "2026-09-22T16:05:36.608Z",
+   "firstPitch": "2026-09-23T00:40:00Z",
+   "cycle": 3,
+   "rung": 5,
+   "seed": 15.63,
+   "stake": 60.03,
+   "price": -250,
+   "p": 0.7416361308165088,
+   "edge": 0.027350416530794508,
+   "pick": "Geraldo Perdomo",
+   "playerId": 672695,
+   "slot": 5,
+   "gk": 824302,
+   "posted": false,
+   "startProb": 0.95,
+   "teams": "AZ @ COL",
+   "sp": "Kyle Freeland",
+   "fromGames": 16,
+   "status": "open"
   }
  ],
- "updated": "2026-09-22T17:22:33.755Z",
+ "updated": "2026-09-22T18:16:23.360Z",
  "state": {
   "account": 76,
   "base": 15.63,
