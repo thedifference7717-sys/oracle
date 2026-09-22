@@ -22,3 +22,5 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - run: node scripts/kalshi-discover.mjs
+      - name: Real quotes in the band (MLB hits)
+        run: node scripts/kalshi-prices.mjs KXMLBHIT
