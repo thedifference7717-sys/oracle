@@ -79,6 +79,21 @@ for (const k of [5, 10]) {
   okTol(`x${k} bankroll gives x${k} seed (to the rounding)`, scaled.base, L.base * k, 0.01 * k * cycles);
 }
 
+console.log("a rung with no recorded price does not compound at even money");
+{
+  // decFromAmerican(null) is null, and `null || 1` is EVEN MONEY — so a
+  // winning rung whose price never reached the file returned exactly its
+  // stake and the ladder silently stopped growing. It also rendered as the
+  // literal string "null" wherever the price was shown.
+  const unpriced = M.ladder([{ date: "d1", status: "won", price: null, pick: "X" }], { account: 100 });
+  const priced   = M.ladder([{ date: "d1", status: "won", price: -250, pick: "X" }], { account: 100 });
+  ok("it returns what the assumed price pays", unpriced.rows[0].ret, priced.rows[0].ret);
+  ok("it rolls the same stake forward", unpriced.stake, priced.stake);
+  ok("the price shown is a number, never null", unpriced.rows[0].price, M.LADDER.price);
+  ok("and the row says the price was assumed", unpriced.rows[0].assumedPrice ? 1 : 0, 1);
+  ok("a recorded price is not flagged", priced.rows[0].assumedPrice ? 1 : 0, 0);
+}
+
 console.log("an exchange adjustment is untouched by the proportional form");
 const ex = M.ladder([{ date: "d", status: "lost", price: -250, stakeActual: 18.5, topUp: 11.5 }],
                     { account: 100 }).rows[0];

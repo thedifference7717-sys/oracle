@@ -1027,7 +1027,7 @@ function renderLadder(){
     const d=i+1, done=byRung[d];
     if(done)return `<div class="ld-step done"><div class="d">Day ${d} ✓</div>
       <div class="v" style="color:var(--green)">${money(done.stake)}</div>
-      <div class="o">at ${done.price>0?"+":""}${done.price}</div></div>`;
+      <div class="o">at ${done.price>0?"+":""}${done.price}${done.assumedPrice?" <span style=\"opacity:.7\">(assumed)</span>":""}</div></div>`;
     if(d===st.rung)return `<div class="ld-step now"><div class="d">Day ${d} · today</div>
       <div class="v" style="color:var(--yellow)">${money(stake)}</div>
       <div class="o">${waiting?"price set at lock":`at ${todayOdds>0?"+":""}${todayOdds}`}</div></div>`;
@@ -1185,9 +1185,10 @@ function renderLadder(){
         <td>${r.pick||"—"}</td>
         <td style="color:var(--dim)">${r.cycle}·${r.rung}</td>
         <td>${money(r.stake)}</td>
-        <td><input class="ld-in" type="number" step="5" value="${r.price}"
+        <td><input class="ld-in" type="number" step="5" value="${r.price!=null?r.price:""}"
              onchange="setLadderOdds('${r.date}',this.value)"
-             style="color:${oddsByDay[r.date]!=null?'var(--green)':'var(--dim)'}"></td>
+             title="${oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
+             style="color:${oddsByDay[r.date]!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
         <td style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
         <td style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
         <td>${money(acc)}</td></tr>`).join("");})()}</tbody></table>

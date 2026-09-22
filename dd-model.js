@@ -353,7 +353,13 @@ const LADDER = {
   basePct: 0.10,   // a cycle seeds at this share of the account
   rungs: 5,        // wins needed to close a cycle
   missGain: 0.25,  // a busted cycle restarts this much bigger
-  maxStreak: 2     // a player cannot be the rung more than this many days running
+  maxStreak: 2,    // a player cannot be the rung more than this many days running
+  // The price a "to record a hit" leg is assumed to be offered at, used ONLY
+  // when a row reached the file without one. It is not a guess about the
+  // market — it is the same number the alerter stakes and compounds against
+  // (DD_LEG_PRICE), so a row missing its price behaves like every other row
+  // instead of like a bet at even money. Rows that fall back are flagged.
+  price: -250
 };
 const round2 = v => Math.round(v * 100) / 100;
 const seedFor = C => round2(Math.max(0, C.account) * C.basePct);
@@ -400,7 +406,16 @@ function ladder(history, cfg) {
   let peak = account, maxDD = 0, staked = 0, cycles = { done: 0, busted: 0 };
   const rows = [];
   for (const b of history || []) {
-    const dec = decFromAmerican(b.price) || 1;
+    // A missing price used to fall through `decFromAmerican(null) || 1` to
+    // EVEN MONEY, so a winning rung returned exactly its stake and the ladder
+    // quietly stopped compounding on it — a wrong number, not a cosmetic one.
+    // It also rendered as the literal string "null" wherever the price was
+    // shown. Fall back to the configured leg price and mark the row, so the
+    // maths is right and the page can say the price was assumed rather than
+    // recorded.
+    const hasPrice = b.price != null && isFinite(+b.price) && Math.abs(+b.price) >= 100;
+    const price = hasPrice ? +b.price : C.price;
+    const dec = decFromAmerican(price) || 1;
     // Derived, never read back from the row — the published ledger records the
     // publisher's own stake, and replaying that would show every viewer
     // somebody else's bankroll.
@@ -428,7 +443,7 @@ function ladder(history, cfg) {
     // charges the cycle for $14 must not print $12.50 in the stake column.
     const at = b.stakeActual != null ? +b.stakeActual
              : topUp ? round2(stake + topUp) : stake;
-    const row = { date: b.date, cycle, rung, stake: at, price: b.price, pick: b.pick || null,
+    const row = { date: b.date, cycle, rung, stake: at, price: price, assumedPrice: !hasPrice, pick: b.pick || null,
                   p: b.p != null ? b.p : null, status: b.status, pl: 0, closed: null };
     // cashIn is the whole truth for the cycle: seed plus anything added later.
     // A partial exit is already inside it — recovering $7 of a $14 rung and

@@ -277,6 +277,12 @@ function renderLadder(K, first){
         Replaying the rungs below gives ${money(live.account)}; the figure the alerter last wrote is ${money(st.account)}.
         The replay is what is shown above, because it is derived from the rows you can see. The gap means a row was
         corrected after the alerter last published, and it closes on the next run.</div>` : "";
+  // The table lists the rows as published; the figures above come from the
+  // replay. Where a row reached the file without a price, the replay falls
+  // back to the ladder's assumed leg price — so show that number here too,
+  // marked as assumed, rather than a dash the account above does not agree
+  // with. A missing price used to make a winning rung compound at even money.
+  const byDate={}; if(live&&live.rows)live.rows.forEach(r=>{byDate[r.date]=r;});
   const res=b=>b.status==="won"?'<span class="res won">WON</span>'
             :b.status==="lost"?'<span class="res lost">LOST</span>'
             :b.status==="open"?'<span class="res open">OPEN</span>'
@@ -314,7 +320,10 @@ function renderLadder(K, first){
           <td>${esc(b.pick||"—")}${b.backfilled?' <span class="res" style="background:rgba(255,214,10,.16);color:var(--yellow)">BACKFILLED</span>':""}</td>
           <td style="font-size:12px;color:var(--muted)">${esc(b.teams||"—")}${b.pos?` · ${esc(b.pos)}`:""}</td>
           <td class="num">${b.stake!=null?money(b.stake):"—"}</td>
-          <td class="num odds">${b.price!=null?(b.price>0?"+":"")+b.price:"—"}</td>
+          <td class="num odds">${(()=>{const rp=byDate[b.date];
+            const pr=b.price!=null?b.price:(rp?rp.price:null);
+            if(pr==null)return "—";
+            return (pr>0?"+":"")+pr+((b.price==null&&rp&&rp.assumedPrice)?' <span class="lead">assumed</span>':"");})()}</td>
           <td class="num">${b.hits!=null?b.hits+(b.ab!=null?`/${b.ab}`:""):"—"}</td>
         </tr>`).join("")}</tbody>
       </table></div>
