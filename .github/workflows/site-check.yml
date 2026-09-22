@@ -21,7 +21,7 @@ jobs:
       - name: What the CDN is serving
         run: |
           BASE="https://thedifference7717-sys.github.io/oracle"
-          for path in "data/ladder.json" "build.json" "index.html"; do
+          for path in "data/ladder.json" "build.json" "index.html" "dub.html" "robin.html" "data/dub.json" "data/robin.json" "pages.css" "pages.js"; do
             for q in "" "?t=$(date +%s%N)"; do
               echo "=== ${path}${q:+ (cache-busted)} ==="
               curl -s -D /tmp/h -o /tmp/b "$BASE/$path$q"
@@ -29,7 +29,9 @@ jobs:
               case "$path" in
                 data/ladder.json) python3 -c "import json;d=json.load(open('/tmp/b'));print('  state.stake =',d['state']['stake'],'| updated',d.get('updated'))" ;;
                 build.json) echo "  $(cat /tmp/b)" ;;
-                index.html) echo "  buildsha: $(grep -o 'id=\"buildsha\">[^<]*' /tmp/b | cut -d'>' -f2)" ;;
+                *.html) echo "  status $(grep -m1 -o 'HTTP/[0-9.]* [0-9]*' /tmp/h) · buildsha: $(grep -o 'id=\"buildsha\">[^<]*' /tmp/b | cut -d'>' -f2) · title: $(grep -o '<title>[^<]*' /tmp/b | cut -d'>' -f2) · tabs: $(grep -o 'class=\"navlink[^\"]*\" href=\"[^\"]*' /tmp/b | sed 's/.*href=\"//' | tr '\n' ' ')" ;;
+                data/dub.json|data/robin.json) python3 -c "import json;d=json.load(open('/tmp/b'));print('  rows',[(b['date'],b['status']) for b in d['bets']])" 2>/dev/null || echo "  $(head -c 120 /tmp/b)" ;;
+                *) echo "  status $(grep -m1 -o 'HTTP/[0-9.]* [0-9]*' /tmp/h) · $(wc -c </tmp/b) bytes" ;;
               esac
             done
           done
