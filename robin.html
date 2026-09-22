@@ -136,7 +136,7 @@ function renderHist(){
   const el=document.getElementById("hist"), list=(robins&&robins.bets||[]).filter(b=>b.status!=="noplay").slice().reverse();
   const ch=chainNow(), byDate=Object.fromEntries(ch.rows.map(r=>[r.date,r]));
   document.getElementById("recNote").innerHTML=`<b>${ch.w}–${ch.l}</b> days · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
-  el.innerHTML=list.length?list.slice(0,30).map(b=>{
+  el.innerHTML=list.length?list.map(b=>{
     const r=byDate[b.date];
     return `<div class="hrow">
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>

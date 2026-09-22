@@ -128,7 +128,7 @@ function renderHist(){
   const el=document.getElementById("hist"), list=(dubs&&dubs.bets||[]).filter(b=>b.status!=="noplay").slice().reverse();
   const ch=chainNow(), byDate=Object.fromEntries(ch.rows.map(r=>[r.date,r]));
   document.getElementById("recNote").innerHTML=`<b>${ch.w}–${ch.l}</b> · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
-  el.innerHTML=list.length?list.slice(0,30).map(b=>`<div class="hrow">
+  el.innerHTML=list.length?list.map(b=>`<div class="hrow">
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
         <span>${b.status==="won"?'<span class="tag ok">✓ CASHED</span>':b.status==="lost"?'<span class="tag bad">✗ DEAD</span>':b.status==="void"?'<span class="tag dim">VOID</span>':'<span class="tag warn">OPEN</span>'}
         <b style="font-family:var(--num);margin-left:6px">${P.odds(myOdds[b.date]!=null?myOdds[b.date]:b.price)}</b></span></div>

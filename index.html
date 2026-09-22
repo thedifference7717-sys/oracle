@@ -279,7 +279,7 @@ b,strong{font-weight:600}
   .ld-hist .ld-in{width:100%;font-size:16px;padding:10px 12px;text-align:left;   /* 16px stops iOS zooming on focus */
     background:var(--bg);border:.5px solid var(--hair);border-radius:10px}
   /* Scoped to the ladder: the slate tables further down still need to scroll. */
-  #ladder .table-wrap{overflow:visible}
+  #ladder .table-wrap,#ldRecord .table-wrap{overflow:visible}
   /* The sticky bar took a third of a phone screen and let the card underneath
      show through its translucent backdrop. On a phone it scrolls away with the
      page; the controls are one flick up. */
@@ -371,6 +371,9 @@ td.num{text-align:right}
   </div></details>
 </div>
 <div id="ladder"></div>
+
+<div class="section-h"><div class="sh-row"><h2>Record</h2><span class="sh-note" id="ldRecNote"></span></div></div>
+<div id="ldRecord" class="ld"></div>
 
 
 <div class="section-h"><div class="sh-row"><h2>⚙️ Base price</h2></div>
@@ -1092,9 +1095,9 @@ function flashSaved(){
 // only an edit being committed may redraw while one is focused.
 let ldPending=false;
 function ladderBusy(){const a=document.activeElement;
-  return !!(a&&a.tagName==="INPUT"&&a.closest&&a.closest("#ladder"));}
+  return !!(a&&a.tagName==="INPUT"&&a.closest&&a.closest("#ladder,#ldRecord"));}
 document.addEventListener("focusout",e=>{
-  if(!ldPending||!e.target||!e.target.closest||!e.target.closest("#ladder"))return;
+  if(!ldPending||!e.target||!e.target.closest||!e.target.closest("#ladder,#ldRecord"))return;
   setTimeout(()=>{if(ldPending&&!ladderBusy())renderLadder();},0);
 });
 
@@ -1105,7 +1108,8 @@ function renderLadder(opts){
   const key=act&&act.dataset?act.dataset.k:null;
   renderLadderInner();
   if(!key)return;
-  const again=document.querySelector(`#ladder [data-k="${CSS&&CSS.escape?CSS.escape(key):key}"]`);
+  const k_=CSS&&CSS.escape?CSS.escape(key):key;
+  const again=document.querySelector(`#ladder [data-k="${k_}"], #ldRecord [data-k="${k_}"]`);
   if(again){try{again.focus({preventScroll:true});}catch(e){again.focus();}}
 }
 function renderLadderInner(){
@@ -1413,7 +1417,7 @@ function renderLadderInner(){
   const histHtml=st.rows.length?`<div class="table-wrap"><table class="ld-hist">
     <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>PAID BACK</th><th>RESULT</th><th>P&amp;L</th><th>Account</th></tr></thead>
     <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
-      return out.slice(-12).reverse().map(({r,acc})=>`<tr>
+      return out.slice().reverse().map(({r,acc})=>`<tr>
         <td class="c-date" style="color:var(--dim)">${r.date}</td>
         <td class="c-pick">${(()=>{const b=published.find(x=>x.date===r.date)||{};return `${SPORT_EMOJI[b.sport||"MLB"]||""} ${r.pick||"—"}${b.need&&b.sport&&b.sport!=="MLB"?` <span style="color:var(--dim);font-size:12px">${b.need}</span>`:""}`;})()}</td>
         <td class="c-cd" style="color:var(--dim)">${r.cycle}·${r.rung}</td>
@@ -1452,8 +1456,15 @@ function renderLadderInner(){
     </div>
     ${st.canFund?"":`<div class="ld-warn"><b>The account cannot fund this rung.</b> ${money(stake)} is more than the ${money(st.account)} left. That is where the escalation ends — the ladder has no next move that is not a deposit.</div>`}
     ${warn}
-    ${histHtml}
   </div>`;
+  // The running record lives in its own section under the card — every rung
+  // ever placed, newest first, with the odds and payouts still editable.
+  const rec=document.getElementById("ldRecord"), recNote=document.getElementById("ldRecNote");
+  if(rec)rec.innerHTML=histHtml;
+  if(recNote){
+    const won=st.rows.filter(r=>r.status==="won").length, lost=st.rows.filter(r=>r.status==="lost").length;
+    recNote.innerHTML=`<b>${won}–${lost}</b> rungs · cycles <b>${st.cycles.done}–${st.cycles.busted}</b> · ${money(C.account)} → <b style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</b>`;
+  }
   tickLadderClock();
   if(orphaned){refreshLadderFast();setTimeout(()=>{if(!ladderBusy())refreshLadderFast();},60000);}
 }
