@@ -740,7 +740,17 @@ async function picksPlace(day, games, D, saveState) {
                   : { id: `${day}:robin`, date: day, published: now, status: "noplay", reason: "fewer than three qualifying props" };
     robins.bets.push(row); writeDaily(ROBIN_FILE, robins, D, "robinRows"); if (saveState) saveState();
     if (r) {
+      // The day's bet on a reference $100 Robin bankroll, played by 2s — the
+      // same rule and file the Robin page uses. Loaded on demand, as for the Dub.
+      let stakeLine = "";
+      try {
+        const DS = (await import("../dub-stake.js")).default;
+        const st = DS.stakeFor(DS.robinChain(robins.bets, 100, 2), day);
+        const by2 = r.sizes.find(z => z.m === 2);
+        stakeLine = `💵 <b>${money(st.stake)}</b> on a $100 Robin bankroll${by2 ? ` — by 2s, ${by2.tickets} tickets × ${money(st.stake / by2.tickets)}` : ""} (${st.why})\n`;
+      } catch (e) { console.log("robin: stake line skipped (" + e.message + ")"); }
       await tg(`🐦 <b>PROP SHOP · THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+        stakeLine +
         r.legs.map((l, i) => `${i + 1}. ${legText(l)}`).join("\n") + `\n\n` +
         r.sizes.map(z => `By ${z.m}s: ${z.tickets} ticket${z.tickets === 1 ? "" : "s"} · avg ticket pays ${z.avgPays.toFixed(2)}x · expect ${z.expWin.toFixed(1)} to cash · ${z.ev >= 0 ? "+" : ""}${(z.ev * 100).toFixed(1)}% expected`).join("\n") +
         `\n\n<i>The ${r.legs.length} likeliest props across ${across}.</i>`);

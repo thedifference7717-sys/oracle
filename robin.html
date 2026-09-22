@@ -38,7 +38,7 @@
   <details class="disc"><summary>How the Robin works</summary><div class="disc-b">
     <p>The <b>six likeliest props across every sport</b> on the slate — baseball hits, basketball points, rebounds, assists and threes, football passing, receiving and rushing yards — bet as a round robin: every 2-leg parlay between them, every 3-leg parlay, and so on up to all six.</p>
     <p>A round robin forgives a miss. One cold leg costs only the tickets it is on; with six legs, by 2s is fifteen tickets and a single miss still leaves ten of them alive. The legs come from different games wherever the slate allows, because a round robin only prices honestly when its legs are independent.</p>
-    <p>Chosen from the same ranked pool as the Ladder and the Dub, at the same lock — between −200 and −350, and only props our model rates within a few points of their price — each leg at its live Kalshi price. Every row below prices one size at those prices: what it costs at your stake per ticket, what an average ticket pays, how many should cash, and whether that adds up to more than you put in.</p>
+    <p>Chosen from the same ranked pool as the Ladder and the Dub, at the same lock — between −200 and −350, and only props our model rates within a few points of their price — each leg at its live Kalshi price. <b>How much to bet:</b> the Robin has its own bankroll. Day one is 10% of it; after a day that pays back more than it cost, the next is 10% of the new balance; after a day that doesn't, it is the last bet plus 12.5%. That day's bet is split evenly across the tickets of the size you play. Every row below prices one size at those prices: what each ticket costs, what an average ticket pays, how many should cash, and whether that adds up to more than you put in.</p>
   </div></details>
 </div>
 <div id="today"></div>
@@ -49,24 +49,39 @@
 
 <script src="build-check.js"></script>
 <script src="pages.js"></script>
+<script src="dub-stake.js"></script>
 <script>
 const P = window.Pages;
 let robins = null, ladder = null, lockAt = null;
-let stake = +P.store.get("robin.stake", 5) || 5;
-let size = +P.store.get("robin.size", 2) || 2;       // the size you are playing, for the record's P&L
+// Your Robin bankroll, separate from the Dub's. Each day's Robin bet is 10% to
+// start, 10% of the new balance after a winning day, the last bet plus 12.5%
+// after a losing one — split evenly across the tickets of the size you play.
+let bankroll = +P.store.get("robin.bankroll", 100) || 100;
+let size = +P.store.get("robin.size", 2) || 2;       // the size you are playing
+const chainNow = () => window.DubStake.robinChain(robins && robins.bets, bankroll, size);
+const dayStake = () => window.DubStake.stakeFor(chainNow(), P.slateDay());
 
-function setStake(v){ const x=parseFloat(v); if(!(x>0))return; stake=+x.toFixed(2); P.store.set("robin.stake",stake); P.flashSaved("stSaved"); paintRows(); renderHist(); }
-function setSize(m){ size=m; P.store.set("robin.size",m); paintRows(); renderHist(); }
+function paintBank(){
+  const c=chainNow(), st=window.DubStake.stakeFor(c,P.slateDay());
+  const sb=document.getElementById("stakeBig"); if(sb){sb.firstChild.textContent=P.money(st.stake);sb.querySelector("small").textContent=`today's Robin · ${st.why}`;}
+  const bb=document.getElementById("balBig"); if(bb){bb.textContent=P.money(c.balance);bb.style.color=c.pl>=0?"var(--green)":"var(--red)";}
+  const rl=document.getElementById("recLine"); if(rl)rl.textContent=`Robin balance · ${c.w}–${c.l}`;
+  paintRows(); renderHist();
+}
+function setBankroll(v){ const x=parseFloat(v); if(!(x>0))return; bankroll=+x.toFixed(2); P.store.set("robin.bankroll",bankroll); P.flashSaved("bkSaved"); paintBank(); }
+function setSize(m){ size=m; P.store.set("robin.size",m); paintBank(); }
 
 function sizeRows(row){
   const best=row.sizes.reduce((b,z)=>!b||z.ev>b.ev?z:b,null);
   const graded=row.graded?Object.fromEntries(row.graded.sizes.map(z=>[z.m,z])):null;
+  const bet=dayStake().stake;                         // the day's whole Robin bet
+  const mine=window.DubStake.robinSize(row,size);
   return row.sizes.map(z=>{
-    const cost=z.tickets*stake, g=graded&&graded[z.m];
-    return `<div class="row${z===best&&z.ev>0?" best":""}" onclick="setSize(${z.m})" style="cursor:pointer;${size===z.m?"outline:1.5px solid var(--blue);":""}">
-      <div class="t">By ${z.m}s · ${z.tickets} ticket${z.tickets===1?"":"s"} · ${P.money(cost)}${size===z.m?' <span class="tag ok">YOUR SIZE</span>':""}</div>
-      <div class="s">${g?`<b style="color:${g.pl>=0?"var(--green)":"var(--red)"}">${g.cashed} of ${g.tickets} cashed · ${g.pl>=0?"+":""}${P.money(g.pl*stake)}</b>`
-        :`average ticket pays ${P.money(stake*z.avgPays)} · expect ${z.expWin.toFixed(1)} to cash · about ${P.money(cost*(1+z.ev))} back`}</div>
+    const per=bet/z.tickets, g=graded&&graded[z.m], on=mine&&mine.m===z.m;
+    return `<div class="row${z===best&&z.ev>0?" best":""}" onclick="setSize(${z.m})" style="cursor:pointer;${on?"outline:1.5px solid var(--blue);":""}">
+      <div class="t">By ${z.m}s · ${z.tickets} ticket${z.tickets===1?"":"s"} × ${P.money(per)} = ${P.money(bet)}${on?' <span class="tag ok">YOUR SIZE</span>':""}</div>
+      <div class="s">${g?`<b style="color:${g.pl>=0?"var(--green)":"var(--red)"}">${g.cashed} of ${g.tickets} cashed · ${g.pl>=0?"+":""}${P.money(g.pl*per)}</b>`
+        :`average ticket pays ${P.money(per*z.avgPays)} · expect ${z.expWin.toFixed(1)} to cash · about ${P.money(bet*(1+z.ev))} back`}</div>
       <div class="ev" style="color:${z.ev>=0?"var(--green)":"var(--red)"}">${z.ev>=0?"+":""}${(z.ev*100).toFixed(1)}%<small>expected</small></div></div>`;
   }).join("");
 }
@@ -85,29 +100,34 @@ function render(){
   }
   if(row.status==="noplay"){ el.innerHTML=`<div class="card"><div class="empty">No Robin today — ${row.reason||"nothing qualified"}.</div></div>`; return; }
   const hit=row.legs.filter(l=>l.result==="won").length, done=row.legs.filter(l=>l.result).length;
+  const ch=chainNow(), st=window.DubStake.stakeFor(ch,P.slateDay());
   el.innerHTML=`<div class="card">
     <div class="hero">
-      <div class="big" style="color:var(--blue)">${row.legs.length} legs<small>${done?`${hit} of ${done} settled have hit`:`published ${row.published?P.etTime(Date.parse(row.published))+" ET":""}`} · ${P.gamesLine(row.games)}</small></div>
-      <div class="field" style="margin-top:0;max-width:160px"><label for="st">$ per ticket <span class="saved" id="stSaved"></span></label>
-        <input id="st" type="text" inputmode="decimal" autocomplete="off" value="${stake}" oninput="setStake(this.value)"></div>
+      <div class="big" id="stakeBig" style="color:var(--yellow)">${P.money(st.stake)}<small>today's Robin · ${st.why}</small></div>
+      <div class="big" style="color:var(--blue);text-align:right">${row.legs.length} legs<small>${done?`${hit} of ${done} settled have hit`:`published ${row.published?P.etTime(Date.parse(row.published))+" ET":""}`} · ${P.gamesLine(row.games)}</small></div>
+    </div>
+    <div class="nums" style="margin-top:12px">
+      <div><div class="v" id="balBig" style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</div><div class="l" id="recLine">Robin balance · ${ch.w}–${ch.l}</div></div>
+      <div class="field" style="margin-top:0;flex:1 1 150px;max-width:none"><label for="bk">Robin bankroll you started with <span class="saved" id="bkSaved"></span></label>
+        <input id="bk" type="text" inputmode="decimal" autocomplete="off" value="${bankroll}" oninput="setBankroll(this.value)"></div>
     </div>
     <div class="legs">${row.legs.map((l,i)=>P.leg(Object.assign({},l,{player:`${i+1}. ${l.player}`}))).join("")}</div>
     <h3 style="margin-top:18px">Every size · tap the one you play</h3>
     <div class="rows" id="rows">${sizeRows(row)}</div>
-    <div class="field" style="max-width:none"><div class="hint">Priced at each leg's Kalshi ask. Your book's parlay prices may differ; shop every leg, since each point better goes straight onto every ticket it is on. Stake and size are saved on this device.</div></div>
+    <div class="field" style="max-width:none"><div class="hint">Priced at each leg's Kalshi ask. Your book's parlay prices may differ; shop every leg, since each point better goes straight onto every ticket it is on. Today's bet is split evenly across the tickets of the size you play. It starts at 10% of your Robin bankroll, goes to 10% of the new balance after a day that pays back more than it cost, and up 12.5% after a day that doesn't. Bankroll and size are saved on this device.</div></div>
   </div>`;
 }
 
 function renderHist(){
   const el=document.getElementById("hist"), list=(robins&&robins.bets||[]).filter(b=>b.status!=="noplay").slice().reverse();
-  let pl=0,n=0;
-  list.forEach(b=>{const z=b.graded&&b.graded.sizes.find(x=>x.m===size); if(z){pl+=z.pl*stake;n++;}});
-  document.getElementById("recNote").innerHTML=n?`by ${size}s: <b style="color:${pl>=0?"var(--green)":"var(--red)"}">${pl>=0?"+":""}${P.money(pl)}</b> over ${n}`:"";
+  const ch=chainNow(), byDate=Object.fromEntries(ch.rows.map(r=>[r.date,r]));
+  document.getElementById("recNote").innerHTML=`<b>${ch.w}–${ch.l}</b> by ${size}s · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
   el.innerHTML=list.length?list.slice(0,30).map(b=>{
-    const z=b.graded&&b.graded.sizes.find(x=>x.m===size);
+    const r=byDate[b.date];
     return `<div class="hrow">
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
-        <span>${b.graded?`<b>${b.graded.hit} of ${b.graded.of} hit</b>${z?` · by ${size}s <b style="color:${z.pl>=0?"var(--green)":"var(--red)"}">${z.pl>=0?"+":""}${P.money(z.pl*stake)}</b>`:""}`:'<span class="tag warn">OPEN</span>'}</span></div>
+        <span>${b.graded?`<b>${b.graded.hit} of ${b.graded.of} hit</b>`:'<span class="tag warn">OPEN</span>'}</span></div>
+      ${r?`<div class="d" style="margin-top:3px">bet ${P.money(r.stake)} by ${size}s${r.pl?` · <b style="color:${r.pl>0?"var(--green)":"var(--red)"}">${r.pl>0?"+":""}${P.money(r.pl)}</b>`:""} · balance ${P.money(r.balance)}</div>`:""}
       <div class="who">${b.legs.map(l=>`${l.result==="won"?"✅":l.result==="lost"?"❌":l.result==="void"?"➖":"·"} ${P.EMOJI[l.sport]||""} ${l.player} <span style="color:var(--dim)">${l.need}</span>`).join("<br>")}</div>
     </div>`;}).join(""):`<div class="empty">The first Robin publishes at the next lock.</div>`;
 }
@@ -119,7 +139,7 @@ async function load(fresh){
   const pending=()=>{const lk=P.lockOf(ladder);return lk&&lk.open&&!todayRow();};
   [robins,ladder]=await Promise.all([P.load("data/robin.json",{fresh}),P.load("data/ladder.json",{fresh})]);
   if(!fresh&&pending())[robins,ladder]=await Promise.all([P.load("data/robin.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
-  if(document.activeElement&&document.activeElement.id==="st")return;             // never repaint under a thumb
+  if(document.activeElement&&document.activeElement.id==="bk")return;             // never repaint under a thumb
   render(); renderHist();
   document.getElementById("status").textContent=robins&&robins.updated?`Updated ${new Date(robins.updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})} ET`:"";
   if(pending())setTimeout(()=>load(true),60000);

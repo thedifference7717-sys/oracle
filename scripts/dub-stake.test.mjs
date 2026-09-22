@@ -50,5 +50,24 @@ console.log("the price you actually got decides the payout");
   ok("your +120 on $10 pays $12", r.rows[0].pl === 12, String(r.rows[0].pl));
 }
 
+
+console.log("the Robin on its own bankroll");
+{
+  // Six legs by 2s: fifteen tickets. graded pl is per unit on every ticket.
+  const robin = (date, pl) => ({ date, status: "settled", legs: [{}, {}], graded: { sizes: [{ m: 2, tickets: 15, pl }, { m: 3, tickets: 20, pl: -20 }] } });
+  const open = { date: "d9", status: "open", legs: [{}, {}], sizes: [{ m: 2, tickets: 15 }] };
+  ok("first Robin is $10", D.robinChain([], 100, 2).next === 10);
+  const up = D.robinChain([robin("d1", 6)], 100, 2);
+  ok("tickets up 6 units at $10/15 each: +$4", up.rows[0].pl === 4, String(up.rows[0].pl));
+  ok("a day up is a win: next is 10% of $104", up.next === 10.4 && up.w === 1, String(up.next));
+  const down = D.robinChain([robin("d1", -9)], 100, 2);
+  ok("tickets down 9 units: -$6", down.rows[0].pl === -6, String(down.rows[0].pl));
+  ok("a day down is a loss: next is $11.25", down.next === 11.25 && down.l === 1);
+  const by3 = D.robinChain([robin("d1", 6)], 100, 3);
+  ok("the size played decides it: by 3s that day lost $10", by3.rows[0].pl === -10 && by3.next === 11.25, String(by3.rows[0].pl));
+  const o = D.robinChain([robin("d1", -9), open], 100, 2);
+  ok("an ungraded Robin rides without moving anything", o.rows[1].status === "open" && o.balance === 94 && o.next === 11.25);
+}
+
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
 process.exit(failures ? 1 : 0);
