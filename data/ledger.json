@@ -657,7 +657,45 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-22:824953",
+   "date": "2026-09-22",
+   "sport": "MLB",
+   "published": "2026-09-22T21:53:46.620Z",
+   "firstPitch": "2026-09-23T01:40:00Z",
+   "teams": "LAA vs ATH",
+   "venue": "Sutter Health Park",
+   "price": -175,
+   "prob": 0.542126715890874,
+   "edge": -0.09423692047276233,
+   "evPct": -14.808658931434081,
+   "kelly": 0,
+   "soft": 0.07042562346006964,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 13.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 687093,
+     "name": "Vaughn Grissom",
+     "slot": 3,
+     "p": 0.7274514474315382,
+     "sp": "Brady Basso"
+    },
+    {
+     "id": 687263,
+     "name": "Zach Neto",
+     "slot": 1,
+     "p": 0.7268386931654175,
+     "sp": "Brady Basso"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-22T20:00:32.233Z"
+ "updated": "2026-09-22T21:53:46.626Z"
 }
