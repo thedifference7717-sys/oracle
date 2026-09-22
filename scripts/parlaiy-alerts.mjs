@@ -716,7 +716,17 @@ async function picksPlace(day, games, D, saveState) {
                   : { id: `${day}:dub`, date: day, published: now, status: "noplay", reason: "fewer than two qualifying props in different games" };
     dubs.bets.push(row); writeDaily(DUB_FILE, dubs, D, "dubRows"); if (saveState) saveState();
     if (d) {
+      // The stake on a reference $100 Dub bankroll, by the same rule the page
+      // uses. Loaded on demand: a runner that predates the file must lose only
+      // this line, never the alert.
+      let stakeLine = "";
+      try {
+        const DS = (await import("../dub-stake.js")).default;
+        const st = DS.stakeFor(DS.chain(dubs.bets, 100), day);
+        stakeLine = `💵 <b>${money(st.stake)}</b> on a $100 Dub bankroll — ${st.why}\n`;
+      } catch (e) { console.log("dub: stake line skipped (" + e.message + ")"); }
       await tg(`✌️ <b>PROP SHOP · THE DUB</b> · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+        stakeLine +
         d.legs.map(legText).join("\n") + `\n\n` +
         `🎯 Both hit <b>${pct(d.prob)}</b> · parlay <b>${d.price > 0 ? "+" : ""}${d.price}</b> at these prices (fair ${d.fair > 0 ? "+" : ""}${d.fair})\n` +
         `The best two-leg parlay across ${across} — two different games, and never the ladder's bet` +

@@ -93,7 +93,7 @@ jobs:
           }
           while :; do
             if git fetch --depth=1 -q origin main 2>/dev/null; then
-              git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js hairdwood-model.js gridiron-model.js ladder-select.js 2>/dev/null || true
+              git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js hairdwood-model.js gridiron-model.js ladder-select.js dub-stake.js 2>/dev/null || true
               LIVE=$(git rev-parse --short FETCH_HEAD || echo unknown)
               if [ "$LIVE" != "${LAST:-}" ]; then echo "alerter now at $LIVE"; LAST=$LIVE; fi
             fi

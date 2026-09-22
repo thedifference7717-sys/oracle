@@ -38,6 +38,7 @@
   <details class="disc"><summary>How the Dub works</summary><div class="disc-b">
     <p>One parlay a day: the <b>best two-leg parlay across every sport</b> on the slate — baseball hits, basketball points, rebounds, assists and threes, football passing, receiving and rushing yards — each leg priced at its live Kalshi ask.</p>
     <p>It is chosen from the same ranked pool as the Ladder, at the same lock, an hour before the day's first game: the two likeliest props between −200 and −350 that our model rates within a few points of their price, from <b>two different games</b> so one game cannot sink both legs, and <b>never the Ladder's own bet</b> — the Dub is a separate bet, not a second helping of the same one.</p>
+    <p><b>How much to bet:</b> the first Dub is 10% of the bankroll you set. After a win, the next is 10% of the new balance; after a loss, it is the last bet plus 12.5% ($10, then $11.25, then $12.66…) until a win resets it. A void keeps the same bet.</p>
     <p>The legs are close to independent, so the chance both hit is the two chances multiplied. The parlay price shown is what those two Kalshi prices multiply to; your book's parlay price may differ, so type the one you got.</p>
   </div></details>
 </div>
@@ -49,21 +50,32 @@
 
 <script src="build-check.js"></script>
 <script src="pages.js"></script>
+<script src="dub-stake.js"></script>
 <script>
 const P = window.Pages;
 let dubs = null, ladder = null, lockAt = null;
-let stake = +P.store.get("dub.stake", 10) || 10;
+// Your Dub bankroll. Every stake is worked out from it: 10% to start, 10% of
+// the new balance after a win, the last stake plus 12.5% after a loss.
+let bankroll = +P.store.get("dub.bankroll", 100) || 100;
 let myOdds = P.store.get("dub.odds", {});          // day -> the parlay price you actually got
+let stake = 0;                                     // today's, from the chain
+const chainNow = () => window.DubStake.chain(dubs && dubs.bets, bankroll,
+  { priceOf: b => myOdds[b.date] != null ? myOdds[b.date] : b.price });
 
-function setStake(v){ const x=parseFloat(v); if(!(x>0))return; stake=+x.toFixed(2); P.store.set("dub.stake",stake); P.flashSaved("stSaved"); paintReturn(); }
+function setBankroll(v){ const x=parseFloat(v); if(!(x>0))return; bankroll=+x.toFixed(2); P.store.set("dub.bankroll",bankroll); P.flashSaved("bkSaved");
+  const c=chainNow(), s0=window.DubStake.stakeFor(c,P.slateDay()); stake=s0.stake;
+  const el=document.getElementById("stakeBig"); if(el)el.firstChild.textContent=P.money(stake);
+  const bb=document.getElementById("balBig"); if(bb){bb.textContent=P.money(c.balance);bb.style.color=c.pl>=0?"var(--green)":"var(--red)";}
+  paintReturn(); renderHist(); }
 function setOdds(day,v){ const x=parseFloat(v);
   if(String(v).trim()===""){delete myOdds[day];} else if(!isFinite(x)||Math.abs(x)<100){return;} else myOdds[day]=x;
   P.store.set("dub.odds",myOdds); P.flashSaved("odSaved");
   const r=document.getElementById("ret"); if(r)r.dataset.px=myOdds[day]!=null?myOdds[day]:r.dataset.base;
-  paintReturn(); }
+  paintReturn(); renderHist(); }
 function paintReturn(){
   const el=document.getElementById("ret"); if(!el)return;
   const px=+el.dataset.px; el.textContent=P.money(stake*P.dec(px));
+  const t=document.getElementById("stakeTxt"); if(t)t.textContent=P.money(stake);
 }
 
 function render(){
@@ -82,11 +94,16 @@ function render(){
     el.innerHTML=`<div class="card"><div class="empty">No Dub today — ${row.reason||"nothing qualified"}.</div></div>`; return;
   }
   const px=myOdds[today]!=null?myOdds[today]:row.price;
+  const ch=chainNow(), st=window.DubStake.stakeFor(ch,today); stake=st.stake;
   const badge=row.status==="won"?'<span class="tag ok">✓ CASHED</span>':row.status==="lost"?'<span class="tag bad">✗ DEAD</span>':row.status==="void"?'<span class="tag dim">VOID</span>':'<span class="tag ok">LOCKED</span>';
   el.innerHTML=`<div class="card">
     <div class="hero">
-      <div class="big" style="color:var(--blue)">${P.pct(row.prob)}<small>both legs hit · ${badge}</small></div>
-      <div class="big" style="color:var(--yellow);text-align:right">${P.odds(row.price)}<small>parlay at Kalshi prices · fair ${P.odds(row.fair)}</small></div>
+      <div class="big" id="stakeBig" style="color:var(--yellow)">${P.money(stake)}<small>today's Dub · ${st.why}</small></div>
+      <div class="big" style="color:var(--blue);text-align:right">${P.pct(row.prob)}<small>both legs hit · ${badge}</small></div>
+    </div>
+    <div class="nums" style="margin-top:12px">
+      <div><div class="v" style="color:var(--yellow)">${P.odds(row.price)}</div><div class="l">parlay at Kalshi prices · fair ${P.odds(row.fair)}</div></div>
+      <div><div class="v" id="balBig" style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</div><div class="l">Dub balance · ${ch.w}–${ch.l}</div></div>
     </div>
     <div class="legs">${row.legs.map(l=>P.leg(l)).join("")}</div>
     <div class="nums txt">
@@ -98,22 +115,24 @@ function render(){
       <div class="field"><label for="od">Parlay odds you got <span class="saved" id="odSaved"></span></label>
         <input id="od" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${P.odds(px)}"
           oninput="setOdds('${today}',this.value)"></div>
-      <div class="field"><label for="st">Stake <span class="saved" id="stSaved"></span></label>
-        <input id="st" type="text" inputmode="decimal" autocomplete="off" value="${stake}" oninput="setStake(this.value)"></div>
+      <div class="field"><label for="bk">Dub bankroll you started with <span class="saved" id="bkSaved"></span></label>
+        <input id="bk" type="text" inputmode="decimal" autocomplete="off" value="${bankroll}" oninput="setBankroll(this.value)"></div>
     </div>
     <div class="field" style="max-width:none"><div class="hint">${myOdds[today]!=null?"Your price.":"Kalshi prices multiplied — type your book's parlay price if it differs."}
-      ${P.money(stake)} returns <b id="ret" data-px="${px}" data-base="${row.price}">${P.money(stake*P.dec(px))}</b> if both legs hit. Saved on this device.</div></div>
+      <span id="stakeTxt">${P.money(stake)}</span> returns <b id="ret" data-px="${px}" data-base="${row.price}">${P.money(stake*P.dec(px))}</b> if both legs hit.
+      The bet starts at 10% of your bankroll, goes to 10% of the new balance after a win, and up 12.5% after a loss. Saved on this device.</div></div>
   </div>`;
 }
 
 function renderHist(){
   const el=document.getElementById("hist"), list=(dubs&&dubs.bets||[]).filter(b=>b.status!=="noplay").slice().reverse();
-  const rec=dubs&&dubs.record;
-  document.getElementById("recNote").innerHTML=rec?`<b>${rec.w}–${rec.l}</b>`:"";
+  const ch=chainNow(), byDate=Object.fromEntries(ch.rows.map(r=>[r.date,r]));
+  document.getElementById("recNote").innerHTML=`<b>${ch.w}–${ch.l}</b> · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
   el.innerHTML=list.length?list.slice(0,30).map(b=>`<div class="hrow">
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
         <span>${b.status==="won"?'<span class="tag ok">✓ CASHED</span>':b.status==="lost"?'<span class="tag bad">✗ DEAD</span>':b.status==="void"?'<span class="tag dim">VOID</span>':'<span class="tag warn">OPEN</span>'}
         <b style="font-family:var(--num);margin-left:6px">${P.odds(myOdds[b.date]!=null?myOdds[b.date]:b.price)}</b></span></div>
+      ${byDate[b.date]?`<div class="d" style="margin-top:3px">bet ${P.money(byDate[b.date].stake)}${byDate[b.date].pl?` · <b style="color:${byDate[b.date].pl>0?"var(--green)":"var(--red)"}">${byDate[b.date].pl>0?"+":""}${P.money(byDate[b.date].pl)}</b>`:""} · balance ${P.money(byDate[b.date].balance)}</div>`:""}
       <div class="who">${b.legs.map(l=>`${l.result==="won"?"✅":l.result==="lost"?"❌":l.result==="void"?"➖":"·"} ${P.EMOJI[l.sport]||""} ${l.player} <span style="color:var(--dim)">${l.need}</span>`).join("<br>")}</div>
     </div>`).join(""):`<div class="empty">The first Dub publishes at the next lock.</div>`;
 }
@@ -125,7 +144,7 @@ async function load(fresh){
   const pending=()=>{const lk=P.lockOf(ladder);return lk&&lk.open&&!(dubs&&dubs.bets&&dubs.bets.some(b=>b.date===P.slateDay()));};
   [dubs,ladder]=await Promise.all([P.load("data/dub.json",{fresh}),P.load("data/ladder.json",{fresh})]);
   if(!fresh&&pending())[dubs,ladder]=await Promise.all([P.load("data/dub.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
-  if(document.activeElement&&/^(od|st)$/.test(document.activeElement.id))return;   // never repaint under a thumb
+  if(document.activeElement&&/^(od|bk)$/.test(document.activeElement.id))return;   // never repaint under a thumb
   render(); renderHist();
   document.getElementById("status").textContent=dubs&&dubs.updated?`Updated ${new Date(dubs.updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})} ET`:"";
   if(pending())setTimeout(()=>load(true),60000);
