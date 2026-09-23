@@ -1337,8 +1337,8 @@ function renderLadderInner(){
     <div class="ld-pick">
       <div class="nm">${SPORT_EMOJI[locked.sport||"MLB"]||""} ${locked.pick} <span class="tag ok">LOCKED</span></div>
       <div class="sub" style="color:var(--text);font-weight:600;margin-top:2px">${rungNeed(locked)}</div>
-      <div class="sub">${locked.teams||""}${(locked.start||locked.firstPitch)?` · ${etTime(Date.parse(locked.start||locked.firstPitch))} ET`:""}${(locked.sport||"MLB")==="MLB"?` · #${locked.slot||"—"} · vs ${locked.sp||"SP TBD"}`:""}
-        ${(locked.sport||"MLB")!=="MLB"?"":locked.posted===false?`<span style="color:var(--yellow)"> · projected lineup, ${pct(locked.startProb||0)} to start</span>`:locked.posted?' · <span style="color:var(--green)">confirmed lineup</span>':""}</div>
+      <div class="sub">${locked.teams||""}${(locked.start||locked.firstPitch)?` · ${etTime(Date.parse(locked.start||locked.firstPitch))} ET`:""}${(locked.sport||"MLB")==="MLB"?` · #${(locked.lineup&&locked.lineup.slot)||locked.slot||"—"} · vs ${locked.sp||"SP TBD"}`:""}
+        ${(locked.sport||"MLB")!=="MLB"?"":locked.lineup?(locked.lineup.in?` · <span style="color:var(--green)">lineup out — batting #${locked.lineup.slot}</span>`:' · <span style="color:var(--red)">lineup out — not in it</span>'):locked.posted===false?`<span style="color:var(--yellow)"> · projected lineup, ${pct(locked.startProb||0)} to start</span>`:locked.posted?' · <span style="color:var(--green)">confirmed lineup</span>':""}</div>
       ${locked.detail&&(locked.sport||"MLB")!=="MLB"?`<div class="sub">${locked.detail}</div>`:""}
       <div class="num">
         <span style="color:var(--blue)">${pct(lockedP)} to win</span>
