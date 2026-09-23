@@ -14,7 +14,9 @@
 // between runs by the workflow's Actions cache. Requires repo secrets
 // TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
 import { execSync } from "child_process";
 import { pathToFileURL } from "url";
 import M from "../dd-model.js";
@@ -383,9 +385,12 @@ const fillsLib = async () => {
   try { _F = (await import("../fills.js")).default; }
   catch (e) {
     // Fetched but not restored by an older loop: take it from what was fetched.
+    // Written OUTSIDE the checkout: an untracked fills.js in the working tree
+    // blocks every `git pull` in publish() once main tracks the file.
     try {
-      writeFileSync("fills.js", execSync("git show FETCH_HEAD:fills.js 2>/dev/null || git show origin/main:fills.js", { encoding: "utf8" }));
-      _F = (await import("../fills.js?r=1")).default;
+      const tmp = join(tmpdir(), "prop-shop-fills.cjs");
+      writeFileSync(tmp, execSync("git show FETCH_HEAD:fills.js 2>/dev/null || git show origin/main:fills.js", { encoding: "utf8" }));
+      _F = (await import(pathToFileURL(tmp).href)).default;
     } catch (e2) { console.log("fills.js unavailable:", e.message); _F = NO_FILLS; }
   }
   return _F;
@@ -397,8 +402,19 @@ function readFills(D) {
   }
   return { ladder: {}, dub: {} };
 }
+// A loop checked out before data/fills.json existed must not create it: its
+// publish would then add a file main already has, and that rebase conflicts
+// on every pass. Keep the fills in state until a fresh checkout can write it.
+const fillsFileWritable = () => {
+  try {
+    if (execSync(`git ls-files ${FILLS_FILE}`, { encoding: "utf8" }).trim()) return true;
+    execSync(`git cat-file -e FETCH_HEAD:${FILLS_FILE} 2>/dev/null || git cat-file -e origin/main:${FILLS_FILE}`, { stdio: "ignore" });
+    return false;                                         // main has it, this checkout does not
+  } catch (e) { return true; }                            // nobody has it yet, or no git
+};
 function writeFills(D, f) {
   if (D) D.fills = f;
+  if (!fillsFileWritable()) { console.log("fills: held in state until this checkout tracks " + FILLS_FILE); return; }
   mkdirSync("data", { recursive: true });
   writeFileSync(FILLS_FILE, JSON.stringify(Object.assign({ updated: new Date().toISOString() }, f), null, 1));
 }
@@ -1051,6 +1067,9 @@ async function main() {
   // Your fills first — every amount below is worked out with them — then any
   // /odds, /paid, /dub or /bets you have sent the bot since the last pass.
   stateRows = Array.isArray(D.ladderRows) ? D.ladderRows : [];
+  // An earlier version wrote fills.js into this checkout untracked, and since
+  // main started tracking it that file has made every publish's pull fail.
+  try { if (existsSync("fills.js") && !execSync("git ls-files fills.js", { encoding: "utf8" }).trim()) { unlinkSync("fills.js"); console.log("removed an untracked fills.js that was blocking publish"); } } catch (e) {}
   try {
     await fillsLib(); FILLS = readFills(D);
     if (D.fills && !existsSync(FILLS_FILE)) writeFills(D, D.fills);   // a reverted push: write it back
