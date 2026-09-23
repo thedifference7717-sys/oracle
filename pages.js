@@ -51,12 +51,18 @@
   };
   P.hasOpen = j => !!(j && Array.isArray(j.bets) && j.bets.some(b => b && b.status === "open"));
 
-  // A published file: Pages first (cached up to ten minutes by the CDN), the
-  // last good copy if that fails, and — while a bet is live or today's pick is
-  // pending — the repo at its newest commit, which is never stale.
-  P.load = async function (path, { fresh } = {}) {
+  // A published file, always from the repo at its newest commit first; then
+  // the Pages copy, then the last good copy.
+  //
+  // The Pages copy cannot be the first choice. The site is redeployed only by
+  // pushes GitHub counts as real, and the alerter's automated data commits are
+  // not among them — so data/*.json on Pages stays frozen at the last code
+  // push, sometimes for a day. That is how the Dub and Robin pages showed no
+  // bet on 2026-09-23 while the alerts had gone out: the frozen ladder.json
+  // carried no lock for the day, so the pages never knew to look further.
+  P.load = async function (path) {
     const key = "pg.cache." + path;
-    if (fresh) {
+    {
       try {
         const sha = await P.head();
         if (sha) {
@@ -64,9 +70,10 @@
           if (r.ok) { const j = await r.json(); P.store.set(key, j); return j; }
         }
       } catch (e) {}
+      // No commit id (the API is out of calls): the branch copy on raw is at
+      // most a few minutes old, which still beats the Pages copy by hours.
       try {
-        const r = await fetch("https://api.github.com/repos/thedifference7717-sys/oracle/contents/" + path + "?ref=main",
-          { headers: { Accept: "application/vnd.github.raw" }, cache: "no-store" });
+        const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/${path}?t=${Date.now()}`, { cache: "no-store" });
         if (r.ok) { const j = await r.json(); P.store.set(key, j); return j; }
       } catch (e) {}
     }

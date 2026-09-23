@@ -792,7 +792,7 @@ async function load(){
     // The alerter publishes graded results here, once a day at settlement.
     // Absent is fine — the model just runs uncalibrated. Re-checked on every
     // pass so a page left open all evening picks the log up when it lands.
-    try{const r=await fetch("data/model-log.json?t="+Date.now());if(r.ok)cal=await r.json();}catch(e){/* uncalibrated */}
+    try{const j=window.Pages?await Pages.load("data/model-log.json"):null;if(j)cal=j;else{const r=await fetch("data/model-log.json?t="+Date.now());if(r.ok)cal=await r.json();}}catch(e){/* uncalibrated */}
     // The ladder's settled history. Absent means the ladder has not started;
     // the card then shows rung one off the seed rather than hiding itself.
     // The published ledger, remembered once seen.
@@ -803,9 +803,11 @@ async function load(){
     // The alerter's row is the pick; the board must not be able to forget it.
     try{await loadFills();}catch(e){}
     try{
-      const r=await fetch("data/ladder.json?t="+Date.now());
-      if(r.ok){
-        ladderHist=await r.json();
+      // From the repo itself, not the Pages copy: see Pages.load for why the
+      // deployed data files can be a day behind.
+      const j=window.Pages?await Pages.load("data/ladder.json"):await (await fetch("data/ladder.json?t="+Date.now())).json();
+      if(j&&Array.isArray(j.bets)){
+        ladderHist=j;
         try{localStorage.setItem("dd.ledgerCache",JSON.stringify(ladderHist));}catch(e){}
       }else if(!ladderHist){
         try{ladderHist=JSON.parse(localStorage.getItem("dd.ledgerCache")||"null");}catch(e){}
