@@ -300,7 +300,10 @@
      },
      "p": 0.7364,
      "pAdj": 0.6996,
-     "detail": "#2 · vs Richard Lovelady · lineup confirmed"
+     "detail": "#2 · vs Richard Lovelady · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -434,7 +437,7 @@
    ]
   }
  ],
- "updated": "2026-09-23T16:10:51.882Z",
+ "updated": "2026-09-23T17:20:10.056Z",
  "record": {
   "w": 6,
   "l": 0,
