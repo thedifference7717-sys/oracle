@@ -143,8 +143,9 @@ function renderHist(){
     const r=byDate[b.date];
     return `<div class="hrow">
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
-        <span>${b.graded?(t=>`<b>${legsRec(t)}</b> · ${t.w} of ${t.w+t.l+t.p} tickets cashed`)(window.DubStake.robinTickets(b)):'<span class="tag warn">OPEN</span>'}</span></div>
-      ${r?`<div class="d" style="margin-top:3px">${r.tickets} tickets × ${P.money(r.unit)} = ${P.money(r.stake)}${r.pl?` · <b style="color:${r.pl>0?"var(--green)":"var(--red)"}">${r.pl>0?"+":""}${P.money(r.pl)}</b>`:""} · balance ${P.money(r.balance)}</div>`:""}
+        <span>${b.graded?(t=>`<b>${legsRec(t)}</b>${r&&r.status==="won"?' · <span class="tag ok">WINNING DAY</span>':r&&r.status==="lost"?' · <span class="tag bad">LOSING DAY</span>':""}`)(window.DubStake.robinTickets(b)):'<span class="tag warn">OPEN</span>'}</span></div>
+      ${r?`<div class="d" style="margin-top:3px">${r.tickets} tickets × ${P.money(r.unit)} = ${P.money(r.stake)}${r.pl?` · <b style="color:${r.pl>0?"var(--green)":"var(--red)"}">${r.pl>0?"+":""}${P.money(r.pl)}</b>`:""} · balance ${P.money(r.balance)}${b.graded&&r.tickets_?` · ${r.tickets_.w} of ${r.tickets_.w+r.tickets_.l+r.tickets_.p} tickets cashed`:""}</div>`:""}
+      ${r&&r.run?`<div class="d" style="margin-top:3px">Running: <b>${legsRec(r.run)}</b> bets · <b>${r.run.w}–${r.run.l}</b> days</div>`:""}
       <div class="who">${b.legs.map(l=>`${l.result==="won"?"✅":l.result==="lost"?"❌":l.result==="void"?"➖":"·"} ${P.EMOJI[l.sport]||""} ${l.player} <span style="color:var(--dim)">${l.need}</span>`).join("<br>")}</div>
     </div>`;}).join(""):`<div class="empty">The first Robin publishes at the next lock.</div>`;
 }

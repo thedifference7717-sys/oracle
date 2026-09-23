@@ -117,6 +117,7 @@
         if (row.pl > 0) w++; else if (row.pl < 0) l++;
         const t = robinTickets(b);
         if (t) { row.tickets_ = t; for (const k in rec) rec[k] += t[k]; }
+        row.run = Object.assign({}, rec, { w, l });            // the running totals after this night (w/l = days)
       }
       rows.push(row);
     }

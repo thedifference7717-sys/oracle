@@ -84,6 +84,8 @@ console.log("the Robin: a ticket is the balance divided by 570");
     graded: { sizes: [{ m: 2, tickets: 6, cashed: 2 }, { m: 3, tickets: 4, cashed: 1 }, { m: 4, tickets: 1, cashed: 0 }] } };
   ok("an all-void ticket is a push, not a win or a loss", JSON.stringify(D.robinTickets(mixed)) === JSON.stringify({ w: 3, l: 7, p: 1, legsW: 1, legsL: 1, legsV: 2 }), JSON.stringify(D.robinTickets(mixed)));
   ok("an open Robin is not in the record", D.robinTickets(open) === null);
+  const run2 = D.robinChain([perfect, Object.assign({}, perfect, { date: "d3" })], 570).rows;
+  ok("each night carries the running totals: bets and days", run2[1].run.legsW === 12 && run2[1].run.w === 2 && run2[0].run.w === 1, JSON.stringify(run2[1].run));
 }
 
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
