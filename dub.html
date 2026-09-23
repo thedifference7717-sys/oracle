@@ -137,7 +137,7 @@ function renderHist(){
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
         <span>${b.status==="won"?'<span class="tag ok">✓ CASHED</span>':b.status==="lost"?'<span class="tag bad">✗ DEAD</span>':b.status==="void"?'<span class="tag dim">VOID</span>':'<span class="tag warn">OPEN</span>'}
         <b style="font-family:var(--num);margin-left:6px">${P.odds(oddsOf(b))}</b></span></div>
-      ${byDate[b.date]?`<div class="d" style="margin-top:3px">bet ${P.money(byDate[b.date].stake)}${byDate[b.date].pl?` · <b style="color:${byDate[b.date].pl>0?"var(--green)":"var(--red)"}">${byDate[b.date].pl>0?"+":""}${P.money(byDate[b.date].pl)}</b>`:""} · balance ${P.money(byDate[b.date].balance)}</div>`:""}
+      ${byDate[b.date]?`<div class="d" style="margin-top:3px">bet ${P.money(byDate[b.date].stake)}${byDate[b.date].pl?` · <b style="color:${byDate[b.date].pl>0?"var(--green)":"var(--red)"}">${byDate[b.date].pl>0?"+":""}${P.money(byDate[b.date].pl)}</b>`:""} · balance ${P.money(byDate[b.date].balance)}</div>${byDate[b.date].run?`<div class="d" style="margin-top:3px">Running: <b>${byDate[b.date].run.w}–${byDate[b.date].run.l}</b></div>`:""}`:""}
       <div class="who">${b.legs.map(l=>`${l.result==="won"?"✅":l.result==="lost"?"❌":l.result==="void"?"➖":"·"} ${P.EMOJI[l.sport]||""} ${l.player} <span style="color:var(--dim)">${l.need}</span>`).join("<br>")}</div>
     </div>`).join(""):`<div class="empty">The first Dub publishes at the next lock.</div>`;
 }

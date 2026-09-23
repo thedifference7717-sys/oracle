@@ -54,7 +54,7 @@
       } else {
         rows.push(row); continue;                     // open: nothing moves until it settles
       }
-      row.balance = balance;
+      row.balance = balance; row.run = { w, l };              // the running record after this one
       rows.push(row);
     }
     return { start, balance, next: stake, why, rows, w, l, pl: r2(balance - start), canFund: stake <= balance + 1e-9 };

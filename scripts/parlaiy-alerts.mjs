@@ -915,7 +915,7 @@ async function picksSettle(D, saveState) {
           const DS = (await import("../dub-stake.js")).default;
           if (kind === "dub") {
             const c = DS.chain(J.bets, 100, { priceOf: x => (_F ? _F.dubPrice(FILLS, x) : x.price) }), r = c.rows.find(x => x.date === b.date);
-            if (r) money_ = `\n💵 ${money(r.stake)} bet → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Dub balance ${money(c.balance)} on $100 · next Dub ${money(c.next)}`;
+            if (r) money_ = `\n💵 ${money(r.stake)} bet → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Dub balance ${money(c.balance)} on $100 · next Dub ${money(c.next)}\n📊 Record: ${c.w}–${c.l}`;
           } else {
             const c = DS.robinChain(J.bets, 570), r = c.rows.find(x => x.date === b.date);
             if (r) money_ = `\n💵 ${r.tickets} tickets × ${money(r.unit)} = ${money(r.stake)} → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Robin balance ${money(c.balance)} on $570 · next ${money(c.unit)} a ticket\n📊 Record: ${c.rec.legsW}–${c.rec.legsL}${c.rec.legsV ? `–${c.rec.legsV}` : ""} bets · ${c.w}–${c.l} days`;
@@ -963,19 +963,22 @@ async function ladderSettleOther() {
       (done
         ? `All ${C.rungs} days. ${money(a.seed)} of yours became ${money(a.ret)} — ${money(a.ret - a.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
         : `It all rides tomorrow: <b>${money(a.ret)}</b> on day ${a.rung + 1} of ${C.rungs}.\nStill only ${money(a.seed)} of your money in this cycle.`) +
-      `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
+      ladderRec(st) + `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
     );
   } else {
     await tg(
       `🪜 <b>CYCLE BUSTED</b> on day ${a.rung} of ${C.rungs} — ${b.pick} ${b.need}: ${r.note}\n` +
       `Cost: ${money(a.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
       `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
-      (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`)
+      (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`) + ladderRec(st)
     );
   }
   console.log(`ladder: ${b.sport} ${b.pick} ${r.status.toUpperCase()} (${r.note}) — account ${money(st.account)}.`);
 }
 
+// The ladder's running record, as the page shows it.
+const ladderRec = st => { const w = st.rows.filter(r => r.status === "won").length, l = st.rows.filter(r => r.status === "lost").length;
+  return `\n📊 Record: ${w}–${l} rungs · cycles ${st.cycles.done}–${st.cycles.busted}`; };
 // A settled rung's amounts as the dashboard shows them: replayed from the
 // whole ledger with your fills, not read off the row as it was placed (that
 // row carries the stake and price assumed at the time — Perdomo's said
@@ -1011,14 +1014,14 @@ async function ladderSettle(hitsById, finalByGk) {
       (done
         ? `All ${C.rungs} days. ${money(a.seed)} of yours became ${money(a.ret)} — ${money(a.ret - a.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
         : `It all rides tomorrow: <b>${money(a.ret)}</b> on day ${a.rung + 1} of ${C.rungs}.\nStill only ${money(a.seed)} of your money in this cycle.`) +
-      `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
+      ladderRec(st) + `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
     );
   } else {
     await tg(
       `🪜 <b>CYCLE BUSTED</b> on day ${a.rung} of ${C.rungs} — ${b.pick} went hitless\n` +
       `Cost: ${money(a.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
       `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
-      (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`)
+      (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`) + ladderRec(st)
     );
   }
   console.log(`ladder: ${b.pick} ${got ? "HIT" : "hitless"} — account ${money(st.account)}.`);
