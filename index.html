@@ -577,6 +577,24 @@ try{oddsByDay=JSON.parse(localStorage.getItem("dd.ladderOdds")||"{}")||{};}catch
 // ladder compounds that error into every rung after it.
 let retByDay={};
 try{retByDay=JSON.parse(localStorage.getItem("dd.ladderReturns")||"{}")||{};}catch(e){retByDay={};}
+// The fills you sent the bot (/odds -300, /paid 72.77), published to
+// data/fills.json. The Telegram alerts work every amount out with them, so the
+// page uses them too — that is what keeps the two on the same numbers. A
+// number typed here still wins on this phone, for that day.
+let pubFills={ladder:{},dub:{}};
+try{pubFills=JSON.parse(localStorage.getItem("dd.fillsCache")||"null")||pubFills;}catch(e){}
+const localFill=d=>oddsByDay[d]!=null||retByDay[d]!=null;
+const pubFill=d=>(!localFill(d)&&pubFills.ladder&&pubFills.ladder[d])||null;
+function oddsAt(d){ if(localFill(d))return oddsByDay[d]; const f=pubFill(d); return f&&f.price!=null?f.price:null; }
+function retAt(d){ if(localFill(d))return retByDay[d]; const f=pubFill(d); return f&&f.paid!=null?f.paid:null; }
+async function loadFills(){
+  for(const [url,opt] of [["https://api.github.com/repos/thedifference7717-sys/oracle/contents/data/fills.json?ref=main",{headers:{Accept:"application/vnd.github.raw"},cache:"no-store"}],
+                          ["data/fills.json?t="+Date.now(),{cache:"no-store"}]]){
+    try{const r=await fetch(url,opt); if(!r.ok)continue; const j=await r.json();
+      if(j&&typeof j==="object"){pubFills={ladder:j.ladder||{},dub:j.dub||{}};try{localStorage.setItem("dd.fillsCache",JSON.stringify(pubFills));}catch(e){}return true;}}catch(e){}
+  }
+  return false;
+}
 function storeLadderReturn(day,v){
   const r=parseFloat(v);
   if(String(v).trim()===""){delete retByDay[day];}
@@ -783,6 +801,7 @@ async function load(){
     // the card fall through to its own pinned guess — so a network blip could
     // put a different name on the board than the one in the Telegram alert.
     // The alerter's row is the pick; the board must not be able to forget it.
+    try{await loadFills();}catch(e){}
     try{
       const r=await fetch("data/ladder.json?t="+Date.now());
       if(r.ok){
@@ -1076,7 +1095,7 @@ function fmtOdds(a){ a=+a; if(!isFinite(a))return "—"; const r=Math.round(a); 
 let ldCtx=null;
 function previewNextPlay(){
   if(!ldCtx)return;
-  const o=oddsByDay[ldCtx.today];
+  const o=oddsAt(ldCtx.today);
   const dec=M.decFromAmerican(o!=null?o:ldCtx.odds)||1;
   const ret=ldCtx.stake*dec;
   const next=ldCtx.closes?Math.max(0,ldCtx.account+(ret-ldCtx.base))*ldCtx.basePct:ret;
@@ -1130,15 +1149,15 @@ function renderLadderInner(){
   const localRows=Object.entries(pinnedPick)
     .filter(([d])=>!haveDay.has(d))
     .map(([d,v])=>({date:d,pick:v.pick,playerId:v.playerId,
-                    price:oddsByDay[d]!=null?oddsByDay[d]:(v.price!=null?v.price:null),
+                    price:oddsAt(d)!=null?oddsAt(d):(v.price!=null?v.price:null),
                     stakeActual:v.stakeActual,topUp:v.topUp,realisedBefore:v.realisedBefore,
                     status:v.status||"open",local:true}));
   const raw=published.concat(localRows).sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
   // Replay against the prices actually taken, not the ones assumed.
   const hist=raw.map(b=>{
     const o={};
-    if(oddsByDay[b.date]!=null)o.price=oddsByDay[b.date];
-    if(retByDay[b.date]!=null)o.returnActual=retByDay[b.date];
+    if(oddsAt(b.date)!=null)o.price=oddsAt(b.date);
+    if(retAt(b.date)!=null)o.returnActual=retAt(b.date);
     return Object.keys(o).length?Object.assign({},b,o):b;
   });
   // Every dollar below is computed from the viewer's own account, never from
@@ -1211,11 +1230,11 @@ function renderLadderInner(){
   const orphaned=!locked&&!pinned&&lk&&lk.open;
   // Today's price: what the client typed, else what the rung was placed at on
   // Kalshi, else the base price they set. Nothing else — not yesterday's fill.
-  const todayOdds=oddsByDay[today]!=null?oddsByDay[today]
+  const todayOdds=oddsAt(today)!=null?oddsAt(today)
                  :(pinnedPick[today]&&pinnedPick[today].price!=null?pinnedPick[today].price
                  :(locked&&locked.price!=null?locked.price:setting("legPrice")));
   const dec=M.decFromAmerican(todayOdds)||1;
-  const typed=oddsByDay[today]!=null;
+  const typed=oddsAt(today)!=null;
   // The published rung now carries the real Kalshi ask it was placed at. When
   // it does, say so — "Assumed" on a price that came off the exchange at lock
   // is exactly the kind of wrong label that makes a correct number look fake.
@@ -1418,17 +1437,17 @@ function renderLadderInner(){
         <td class="c-stake">${money(r.stake)}</td>
         <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${r.price!=null?fmtOdds(r.price):""}"
              oninput="draftLadderOdds('${r.date}',this.value)" onchange="setLadderOdds('${r.date}',this.value)"
-             title="${retByDay[r.date]!=null?"worked back from what it paid":oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
-             style="color:${oddsByDay[r.date]!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
+             title="${retAt(r.date)!=null?"worked back from what it paid":oddsByDay[r.date]!=null?"the price you typed":pubFill(r.date)?"the price you sent the bot":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
+             style="color:${oddsAt(r.date)!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
         <td class="c-paid" data-label="Paid"><input class="ld-in" data-k="paid:${r.date}" type="text" inputmode="decimal" autocomplete="off" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
-             value="${retByDay[r.date]!=null?retByDay[r.date]:""}"
+             value="${retAt(r.date)!=null?retAt(r.date):""}"
              oninput="draftLadderReturn('${r.date}',this.value)" onchange="setLadderReturn('${r.date}',this.value)"
              title="What this rung actually paid back, stake included. Enter it and the price above is worked back from it — exact, where a rounded price is not."
-             style="color:${retByDay[r.date]!=null?'var(--green)':'var(--dim)'}"></td>
+             style="color:${retAt(r.date)!=null?'var(--green)':'var(--dim)'}"></td>
         <td class="c-res" style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
         <td class="c-pl" data-label="P&amp;L" style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
         <td class="c-acct" data-label="Account">${money(acc)}</td></tr>`).join("");})()}</tbody></table>
-    <div class="ld-foot">Type the odds you got or what a rung paid back — saved on this phone only, and every stake after it recalculates.</div></div>`
+    <div class="ld-foot">Got a different price? Send the bot <code>/odds -300</code> or <code>/paid 72.77</code> — this page and the alerts both recalculate. Typing it here changes this phone only.</div></div>`
     :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;
 
   el.innerHTML=`<div class="ld">

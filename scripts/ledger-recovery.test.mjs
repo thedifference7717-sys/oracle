@@ -28,7 +28,7 @@ try {
   // A repo whose published ledger stops on the 17th, exactly as main did.
   cpSync(join(root, "scripts"), join(dir, "scripts"), { recursive: true });
   // The alerter now imports every sport's model for the cross-sport ladder.
-  for (const f of ["dd-model.js", "hairdwood-model.js", "gridiron-model.js", "ladder-select.js", "dub-stake.js"]) cpSync(join(root, f), join(dir, f));
+  for (const f of ["dd-model.js", "hairdwood-model.js", "gridiron-model.js", "ladder-select.js", "dub-stake.js", "fills.js"]) cpSync(join(root, f), join(dir, f));
   mkdirSync(join(dir, "data"), { recursive: true });
   writeFileSync(join(dir, "data/ledger.json"), JSON.stringify({
     v: 1, sport: "MLB", updated: "2026-09-18T00:11:18.105Z",

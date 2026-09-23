@@ -58,9 +58,14 @@ let dubs = null, ladder = null, lockAt = null;
 // the new balance after a win, the last stake plus 12.5% after a loss.
 let bankroll = +P.store.get("dub.bankroll", 100) || 100;
 let myOdds = P.store.get("dub.odds", {});          // day -> the parlay price you actually got
+// The price you sent the bot (/dub +120), from data/fills.json. The Telegram
+// alerts use it for every Dub amount, so this page does too. A price typed
+// here still wins on this phone.
+let fills = null;
+const sentOdds = d => fills && fills.dub && fills.dub[d] && fills.dub[d].price != null ? fills.dub[d].price : null;
+const oddsOf = b => myOdds[b.date] != null ? myOdds[b.date] : sentOdds(b.date) != null ? sentOdds(b.date) : b.price;
 let stake = 0;                                     // today's, from the chain
-const chainNow = () => window.DubStake.chain(dubs && dubs.bets, bankroll,
-  { priceOf: b => myOdds[b.date] != null ? myOdds[b.date] : b.price });
+const chainNow = () => window.DubStake.chain(dubs && dubs.bets, bankroll, { priceOf: oddsOf });
 
 function setBankroll(v){ const x=parseFloat(v); if(!(x>0))return; bankroll=+x.toFixed(2); P.store.set("dub.bankroll",bankroll); P.flashSaved("bkSaved");
   const c=chainNow(), s0=window.DubStake.stakeFor(c,P.slateDay()); stake=s0.stake;
@@ -70,7 +75,7 @@ function setBankroll(v){ const x=parseFloat(v); if(!(x>0))return; bankroll=+x.to
 function setOdds(day,v){ const x=parseFloat(v);
   if(String(v).trim()===""){delete myOdds[day];} else if(!isFinite(x)||Math.abs(x)<100){return;} else myOdds[day]=x;
   P.store.set("dub.odds",myOdds); P.flashSaved("odSaved");
-  const r=document.getElementById("ret"); if(r)r.dataset.px=myOdds[day]!=null?myOdds[day]:r.dataset.base;
+  const r=document.getElementById("ret"); if(r)r.dataset.px=oddsOf({date:day,price:+r.dataset.base});
   paintReturn(); renderHist(); }
 function paintReturn(){
   const el=document.getElementById("ret"); if(!el)return;
@@ -93,7 +98,7 @@ function render(){
   if(row.status==="noplay"){
     el.innerHTML=`<div class="card"><div class="empty">No Dub today — ${row.reason||"nothing qualified"}.</div></div>`; return;
   }
-  const px=myOdds[today]!=null?myOdds[today]:row.price;
+  const px=oddsOf(row);
   const ch=chainNow(), st=window.DubStake.stakeFor(ch,today); stake=st.stake;
   const badge=row.status==="won"?'<span class="tag ok">✓ CASHED</span>':row.status==="lost"?'<span class="tag bad">✗ DEAD</span>':row.status==="void"?'<span class="tag dim">VOID</span>':'<span class="tag ok">LOCKED</span>';
   el.innerHTML=`<div class="card">
@@ -118,9 +123,9 @@ function render(){
       <div class="field"><label for="bk">Dub bankroll you started with <span class="saved" id="bkSaved"></span></label>
         <input id="bk" type="text" inputmode="decimal" autocomplete="off" value="${bankroll}" oninput="setBankroll(this.value)"></div>
     </div>
-    <div class="field" style="max-width:none"><div class="hint">${myOdds[today]!=null?"Your price.":"Kalshi prices multiplied — type your book's parlay price if it differs."}
+    <div class="field" style="max-width:none"><div class="hint">${myOdds[today]!=null?"Your price, on this phone.":sentOdds(today)!=null?"The price you sent the bot.":"Kalshi prices multiplied. Got a different price? Send the bot <code>/dub +120</code> and this page and the alerts both update."}
       <span id="stakeTxt">${P.money(stake)}</span> returns <b id="ret" data-px="${px}" data-base="${row.price}">${P.money(stake*P.dec(px))}</b> if both legs hit.
-      The bet starts at 10% of your bankroll, goes to 10% of the new balance after a win, and up 12.5% after a loss. Saved on this device.</div></div>
+      The bet starts at 10% of your bankroll, goes to 10% of the new balance after a win, and up 12.5% after a loss. The bankroll is saved on this device; the alerts work from $100.</div></div>
   </div>`;
 }
 
@@ -131,7 +136,7 @@ function renderHist(){
   el.innerHTML=list.length?list.map(b=>`<div class="hrow">
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
         <span>${b.status==="won"?'<span class="tag ok">✓ CASHED</span>':b.status==="lost"?'<span class="tag bad">✗ DEAD</span>':b.status==="void"?'<span class="tag dim">VOID</span>':'<span class="tag warn">OPEN</span>'}
-        <b style="font-family:var(--num);margin-left:6px">${P.odds(myOdds[b.date]!=null?myOdds[b.date]:b.price)}</b></span></div>
+        <b style="font-family:var(--num);margin-left:6px">${P.odds(oddsOf(b))}</b></span></div>
       ${byDate[b.date]?`<div class="d" style="margin-top:3px">bet ${P.money(byDate[b.date].stake)}${byDate[b.date].pl?` · <b style="color:${byDate[b.date].pl>0?"var(--green)":"var(--red)"}">${byDate[b.date].pl>0?"+":""}${P.money(byDate[b.date].pl)}</b>`:""} · balance ${P.money(byDate[b.date].balance)}</div>`:""}
       <div class="who">${b.legs.map(l=>`${l.result==="won"?"✅":l.result==="lost"?"❌":l.result==="void"?"➖":"·"} ${P.EMOJI[l.sport]||""} ${l.player} <span style="color:var(--dim)">${l.need}</span>`).join("<br>")}</div>
     </div>`).join(""):`<div class="empty">The first Dub publishes at the next lock.</div>`;
@@ -142,7 +147,7 @@ setInterval(tick,1000);
 
 async function load(fresh){
   const pending=()=>{const lk=P.lockOf(ladder);return lk&&lk.open&&!(dubs&&dubs.bets&&dubs.bets.some(b=>b.date===P.slateDay()));};
-  [dubs,ladder]=await Promise.all([P.load("data/dub.json",{fresh}),P.load("data/ladder.json",{fresh})]);
+  [dubs,ladder,fills]=await Promise.all([P.load("data/dub.json",{fresh}),P.load("data/ladder.json",{fresh}),P.load("data/fills.json",{fresh:true})]);
   if(!fresh&&pending())[dubs,ladder]=await Promise.all([P.load("data/dub.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
   if(document.activeElement&&/^(od|bk)$/.test(document.activeElement.id))return;   // never repaint under a thumb
   render(); renderHist();

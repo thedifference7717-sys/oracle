@@ -369,6 +369,91 @@ const LADDER_BAND = { lo: +(process.env.DD_BAND_LO || -350), hi: +(process.env.D
 // by date, means a rung announced anywhere is never announced again — which is
 // the only guarantee that matters, because a Telegram message cannot be
 // unsent.
+// ── your fills: one set of numbers for the alerts and the pages ────────────
+// data/fills.json holds the prices you actually got (see fills.js). Every bet
+// amount in an alert is worked out with them folded in, and every page reads
+// the same file, so the two cannot drift apart. You set them from Telegram.
+const FILLS_FILE = "data/fills.json";
+let _F = null;
+// A runner started before fills.js existed restores scripts/ but not fills.js,
+// so a missing file must mean "no fills", never a failed alert.
+const NO_FILLS = { parse: () => null, apply: () => "", ladderRows: b => b, dubPrice: (f, b) => b.price, empty: () => ({ ladder: {}, dub: {} }) };
+const fillsLib = async () => {
+  if (_F) return _F;
+  try { _F = (await import("../fills.js")).default; } catch (e) { console.log("fills.js unavailable:", e.message); _F = NO_FILLS; }
+  return _F;
+};
+function readFills(D) {
+  if (D && D.fills) return D.fills;                         // this runner is the only writer
+  for (const src of [() => readFileSync(FILLS_FILE, "utf8"), () => execSync(`git show origin/main:${FILLS_FILE} 2>/dev/null`, { encoding: "utf8" })]) {
+    try { const f = JSON.parse(src()); if (f && typeof f === "object") return { ladder: f.ladder || {}, dub: f.dub || {} }; } catch (e) {}
+  }
+  return { ladder: {}, dub: {} };
+}
+function writeFills(D, f) {
+  if (D) D.fills = f;
+  mkdirSync("data", { recursive: true });
+  writeFileSync(FILLS_FILE, JSON.stringify(Object.assign({ updated: new Date().toISOString() }, f), null, 1));
+}
+let FILLS = { ladder: {}, dub: {} };                          // loaded at the start of each pass
+const ladderBets = bets => { try { return _F ? _F.ladderRows(bets, FILLS) : bets; } catch (e) { return bets; } };
+
+// Commands sent to the bot in the alerts chat: /odds, /paid, /dub, /clear,
+// and /bets for today's amounts. Read with getUpdates each pass; only the
+// configured chat is listened to.
+async function tgCommands(D, saveState) {
+  if (DRY_RUN || !TOKEN || !CHAT) return;
+  const F = await fillsLib();
+  let r;
+  try { r = await j(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${(D.tgOffset || 0) + 1}&timeout=0&allowed_updates=${encodeURIComponent('["message","channel_post"]')}`); }
+  catch (e) { console.log("telegram: commands unavailable (" + e.message + ")"); return; }
+  for (const u of (r && r.result) || []) {
+    D.tgOffset = Math.max(D.tgOffset || 0, u.update_id);
+    const msg = u.message || u.channel_post;
+    if (!msg || String(msg.chat && msg.chat.id) !== String(CHAT)) continue;
+    const year = +M.slateYmd().slice(0, 4);
+    if (/^\/bets\b/i.test(String(msg.text || "").trim())) { await tg(await betsSummary(D)); continue; }
+    const c = F.parse(msg.text, year);
+    if (!c) continue;
+    if (c.error) { await tg(`⚠ Didn't catch that — use ${c.error}.`); continue; }
+    const f = readFills(D);
+    let day = c.day;
+    if (!day) {
+      if (c.kind === "dub" || (c.kind === "clear" && c.what === "dub")) {
+        const Dj = readDaily(DUB_FILE, D.dubRows).bets.filter(b => b.legs);
+        day = Dj.length ? Dj[Dj.length - 1].date : M.slateYmd();
+      } else {
+        const Lb = readLadderFile().bets.filter(b => b.pick);
+        day = Lb.length ? Lb[Lb.length - 1].date : M.slateYmd();
+      }
+    }
+    const what = F.apply(f, c, day);
+    writeFills(D, f); FILLS = f;
+    if (saveState) saveState();
+    console.log("telegram: " + what);
+    await tg(`✓ ${what}\n\n` + await betsSummary(D));
+  }
+  if (saveState) saveState();
+}
+
+// The bet amounts the pages show, from the same files and fills.
+async function betsSummary(D) {
+  const lines = ["💵 <b>Bet amounts</b> (as on the dashboard)"];
+  try {
+    const st = M.ladder(ladderBets(readLadderFile().bets));
+    lines.push(`🪜 Ladder: <b>${money(st.stake)}</b> — cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs} · account ${money(st.account)}`);
+  } catch (e) {}
+  try {
+    const DS = (await import("../dub-stake.js")).default, F = await fillsLib();
+    const dubs = readDaily(DUB_FILE, D && D.dubRows).bets, day = M.slateYmd();
+    const dc = DS.chain(dubs, 100, { priceOf: b => F.dubPrice(FILLS, b) }), ds = DS.stakeFor(dc, day);
+    lines.push(`✌️ Dub: <b>${money(ds.stake)}</b> on a $100 bankroll · balance ${money(dc.balance)} (${dc.w}–${dc.l})`);
+    const rc = DS.robinChain(readDaily(ROBIN_FILE, D && D.robinRows).bets, 570), ru = DS.robinUnitFor(rc, day);
+    lines.push(`🐦 Robin: <b>${money(ru.unit)} a ticket</b> on a $570 bankroll · balance ${money(rc.balance)} (${rc.w}–${rc.l})`);
+  } catch (e) {}
+  return lines.join("\n");
+}
+
 function readLadderLocal() {
   try { const L = JSON.parse(readFileSync(LADDER_FILE, "utf8")); if (Array.isArray(L.bets)) return L; } catch (e) {}
   return null;
@@ -411,7 +496,7 @@ function writeLadderFile(L) {
   L.updated = new Date().toISOString();
   L.cfg = M.LADDER;
   L.state = (({ account, base, stake, rung, cycle, pl, cycles, canFund }) =>
-    ({ account, base, stake, rung, cycle, pl, cycles, canFund }))(M.ladder(L.bets));
+    ({ account, base, stake, rung, cycle, pl, cycles, canFund }))(M.ladder(ladderBets(L.bets)));
   mkdirSync("data", { recursive: true });
   writeFileSync(LADDER_FILE, JSON.stringify(L, null, 1));
 }
@@ -561,7 +646,7 @@ async function ladderPlace(day, games, D, saveState) {
   if (!locking) return;
   if (!upcoming.length) { console.log("ladder: at lock, every game has already started — skipping today."); return; }
 
-  const st = M.ladder(L.bets);
+  const st = M.ladder(ladderBets(L.bets));
   if (!st.canFund) {
     await tg(`🪜 <b>LADDER STOPPED</b>\nRung ${st.rung} of cycle ${st.cycle} needs ${money(st.stake)} and the account is down to ${money(st.account)}.\nThe escalation has no next move that is not a deposit. No bet.`);
     const row = { date: day, status: "skipped", reason: "account cannot fund the rung",
@@ -722,7 +807,8 @@ async function picksPlace(day, games, D, saveState) {
       let stakeLine = "";
       try {
         const DS = (await import("../dub-stake.js")).default;
-        const st = DS.stakeFor(DS.chain(dubs.bets, 100), day);
+        const F = await fillsLib();
+        const st = DS.stakeFor(DS.chain(dubs.bets, 100, { priceOf: b => F.dubPrice(FILLS, b) }), day);
         stakeLine = `💵 <b>${money(st.stake)}</b> on a $100 Dub bankroll — ${st.why}\n`;
       } catch (e) { console.log("dub: stake line skipped (" + e.message + ")"); }
       await tg(`✌️ <b>PROP SHOP · THE DUB</b> · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
@@ -790,14 +876,27 @@ async function picksSettle(D, saveState) {
       const ak = `${kind}:${b.date}:${b.status}`;
       if (b.status !== "open" && !D.picksAlerted[ak]) {
         D.picksAlerted[ak] = 1;
+        // The dollar amounts, on the same reference bankrolls as the placing
+        // alerts and the pages' defaults ($100 Dub, $570 Robin).
+        let money_ = "";
+        try {
+          const DS = (await import("../dub-stake.js")).default;
+          if (kind === "dub") {
+            const c = DS.chain(J.bets, 100, { priceOf: x => (_F ? _F.dubPrice(FILLS, x) : x.price) }), r = c.rows.find(x => x.date === b.date);
+            if (r) money_ = `\n💵 ${money(r.stake)} bet → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Dub balance ${money(c.balance)} on $100 · next Dub ${money(c.next)}`;
+          } else {
+            const c = DS.robinChain(J.bets, 570), r = c.rows.find(x => x.date === b.date);
+            if (r) money_ = `\n💵 ${r.tickets} tickets × ${money(r.unit)} = ${money(r.stake)} → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Robin balance ${money(c.balance)} on $570 · next ${money(c.unit)} a ticket`;
+          }
+        } catch (e) { console.log(`${kind}: amount line skipped (${e.message})`); }
         if (kind === "dub") {
           await tg(`✌️ <b>DUB ${b.status === "won" ? "CASHED" : b.status === "lost" ? "DEAD" : "VOID"}</b> · ${prettyDate(b.date)}\n` +
-            b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need} — ${l.note || l.result}`).join("\n"));
+            b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need} — ${l.note || l.result}`).join("\n") + money_);
         } else {
           const g = b.graded;
           await tg(`🐦 <b>ROBIN DONE</b> · ${prettyDate(b.date)} · ${g.hit} of ${g.of} hit\n` +
             b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need}`).join("\n") + `\n\n` +
-            g.sizes.map(z => `By ${z.m}s: ${z.cashed}/${z.tickets} cashed · ${z.pl >= 0 ? "+" : ""}${z.pl.toFixed(2)} units`).join("\n"));
+            g.sizes.map(z => `By ${z.m}s: ${z.cashed}/${z.tickets} cashed · ${z.pl >= 0 ? "+" : ""}${z.pl.toFixed(2)} units`).join("\n") + money_);
         }
       }
     }
@@ -818,29 +917,41 @@ async function ladderSettleOther() {
   b.status = r.status; b.actual = r.actual; b.result = r.note;
   b.settled = new Date().toISOString();
   writeLadderFile(L);
-  const st = M.ladder(L.bets);
+  const st = M.ladder(ladderBets(L.bets));
   const C = M.LADDER;
+  const a = rungAmounts(st, b);
   if (r.status === "void") {
     await tg(`🪜 <b>RUNG VOID</b> — ${b.pick} ${b.need}: ${r.note}.\nNothing lost; tomorrow's rung stays at ${money(st.stake)}.`);
   } else if (r.status === "won") {
-    const ret = +(b.stake * M.decFromAmerican(b.price)).toFixed(2);
-    const done = b.rung >= C.rungs;
+    const done = a.rung >= C.rungs;
     await tg(
-      `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${b.rung} IN</b>`} — ${b.pick} ${b.need}: ${r.note}\n` +
-      `${money(b.stake)} returns ${money(ret)}\n` +
+      `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${a.rung} IN</b>`} — ${b.pick} ${b.need}: ${r.note}\n` +
+      `${money(a.stake)} returns ${money(a.ret)}${a.price != null ? ` (at ${a.price > 0 ? "+" : ""}${Math.round(a.price)})` : ""}\n` +
       (done
-        ? `All ${C.rungs} days. ${money(b.seed)} of yours became ${money(ret)} — ${money(ret - b.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
-        : `It all rides tomorrow: <b>${money(ret)}</b> on day ${b.rung + 1} of ${C.rungs}.\nStill only ${money(b.seed)} of your money in this cycle.`)
+        ? `All ${C.rungs} days. ${money(a.seed)} of yours became ${money(a.ret)} — ${money(a.ret - a.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
+        : `It all rides tomorrow: <b>${money(a.ret)}</b> on day ${a.rung + 1} of ${C.rungs}.\nStill only ${money(a.seed)} of your money in this cycle.`) +
+      `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
     );
   } else {
     await tg(
-      `🪜 <b>CYCLE BUSTED</b> on day ${b.rung} of ${C.rungs} — ${b.pick} ${b.need}: ${r.note}\n` +
-      `Cost: ${money(b.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
+      `🪜 <b>CYCLE BUSTED</b> on day ${a.rung} of ${C.rungs} — ${b.pick} ${b.need}: ${r.note}\n` +
+      `Cost: ${money(a.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
       `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
       (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`)
     );
   }
   console.log(`ladder: ${b.sport} ${b.pick} ${r.status.toUpperCase()} (${r.note}) — account ${money(st.account)}.`);
+}
+
+// A settled rung's amounts as the dashboard shows them: replayed from the
+// whole ledger with your fills, not read off the row as it was placed (that
+// row carries the stake and price assumed at the time — Perdomo's said
+// $60.03 at -250 while the chain said $55.32).
+function rungAmounts(st, b) {
+  const r = st.rows.find(x => x.date === b.date) || {};
+  const first = st.rows.find(x => x.cycle === r.cycle && x.rung === 1);
+  return { stake: r.stake != null ? r.stake : b.stake, ret: r.ret != null ? r.ret : +(b.stake * M.decFromAmerican(b.price)).toFixed(2),
+           price: r.price != null ? r.price : b.price, rung: r.rung || b.rung, seed: first ? first.stake : b.seed };
 }
 
 async function ladderSettle(hitsById, finalByGk) {
@@ -856,22 +967,23 @@ async function ladderSettle(hitsById, finalByGk) {
   b.hits = hits || 0;
   b.settled = new Date().toISOString();
   writeLadderFile(L);
-  const st = M.ladder(L.bets);
+  const st = M.ladder(ladderBets(L.bets));
   const C = M.LADDER;
+  const a = rungAmounts(st, b);
   if (got) {
-    const ret = +(b.stake * M.decFromAmerican(b.price)).toFixed(2);
-    const done = b.rung >= C.rungs;
+    const done = a.rung >= C.rungs;
     await tg(
-      `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${b.rung} IN</b>`} — ${b.pick} had ${b.hits} hit${b.hits === 1 ? "" : "s"}\n` +
-      `${money(b.stake)} returns ${money(ret)}\n` +
+      `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${a.rung} IN</b>`} — ${b.pick} had ${b.hits} hit${b.hits === 1 ? "" : "s"}\n` +
+      `${money(a.stake)} returns ${money(a.ret)}${a.price != null ? ` (at ${a.price > 0 ? "+" : ""}${Math.round(a.price)})` : ""}\n` +
       (done
-        ? `All ${C.rungs} days. ${money(b.seed)} of yours became ${money(ret)} — ${money(ret - b.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
-        : `It all rides tomorrow: <b>${money(ret)}</b> on day ${b.rung + 1} of ${C.rungs}.\nStill only ${money(b.seed)} of your money in this cycle.`)
+        ? `All ${C.rungs} days. ${money(a.seed)} of yours became ${money(a.ret)} — ${money(a.ret - a.seed)} profit.\nAccount ${money(st.account)}. Next cycle seeds at ${money(st.base)} (10% of it).`
+        : `It all rides tomorrow: <b>${money(a.ret)}</b> on day ${a.rung + 1} of ${C.rungs}.\nStill only ${money(a.seed)} of your money in this cycle.`) +
+      `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
     );
   } else {
     await tg(
-      `🪜 <b>CYCLE BUSTED</b> on day ${b.rung} of ${C.rungs} — ${b.pick} went hitless\n` +
-      `Cost: ${money(b.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
+      `🪜 <b>CYCLE BUSTED</b> on day ${a.rung} of ${C.rungs} — ${b.pick} went hitless\n` +
+      `Cost: ${money(a.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
       `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
       (st.canFund ? "" : `\n⚠ The account cannot fund that rung. The ladder stops here.`)
     );
@@ -928,6 +1040,14 @@ async function main() {
   let blob = {};
   try { if (existsSync(STATE_FILE)) blob = JSON.parse(readFileSync(STATE_FILE, "utf8")) || {}; } catch (e) { console.log("State read failed:", e.message); }
   const D = blob.dd = blob.dd || {};
+  // Your fills first — every amount below is worked out with them — then any
+  // /odds, /paid, /dub or /bets you have sent the bot since the last pass.
+  stateRows = Array.isArray(D.ladderRows) ? D.ladderRows : [];
+  try {
+    await fillsLib(); FILLS = readFills(D);
+    if (D.fills && !existsSync(FILLS_FILE)) writeFills(D, D.fills);   // a reverted push: write it back
+    await tgCommands(D, () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) {} });
+  } catch (e) { console.log("fills failed:", e.message); }
   // No baseball is no longer a day off: the ladder picks across basketball
   // and football too, so it still has to settle yesterday's rung and look for
   // today's. Nothing below this line is about anything but baseball.
