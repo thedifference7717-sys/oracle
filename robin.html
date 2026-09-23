@@ -38,7 +38,7 @@
   <details class="disc"><summary>How the Robin works</summary><div class="disc-b">
     <p>The <b>six likeliest props across every sport</b> on the slate — baseball hits, basketball points, rebounds, assists and threes, football passing, receiving and rushing yards — bet as a round robin: every 2-leg parlay between them, every 3-leg parlay, and so on up to all six.</p>
     <p>A round robin forgives a miss. One cold leg costs only the tickets it is on; with six legs, by 2s is fifteen tickets and a single miss still leaves ten of them alive. The legs come from different games wherever the slate allows, because a round robin only prices honestly when its legs are independent.</p>
-    <p>Chosen from the same ranked pool as the Ladder and the Dub, at the same lock — between −200 and −350, and only props our model rates within a few points of their price — each leg at its live Kalshi price. <b>How much to bet:</b> the Robin has its own bankroll and plays the <b>whole</b> round robin — every 2-, 3-, 4-, 5- and 6-leg ticket, 57 with six legs. Each ticket is $1 until your balance is over $570 (ten full days at $1), then $1.10 until $627, $1.21 until $689.70, and so on — up 10% at each new ten-day mark. It never steps back down. Every row below prices one size at those prices: what each ticket costs, what an average ticket pays, how many should cash, and whether that adds up to more than you put in.</p>
+    <p>Chosen from the same ranked pool as the Ladder and the Dub, at the same lock — between −200 and −350, and only props our model rates within a few points of their price — each leg at its live Kalshi price. <b>How much to bet:</b> the Robin has its own bankroll and plays the <b>whole</b> round robin — every 2-, 3-, 4-, 5- and 6-leg ticket, 57 with six legs. Each ticket is your Robin balance divided by 570, so the bankroll always covers ten full days: $1 a ticket at $570, $1.22 at $694.52. It moves with the balance, up after a winning day and down after a losing one. Every row below prices one size at those prices: what each ticket costs, what an average ticket pays, how many should cash, and whether that adds up to more than you put in.</p>
   </div></details>
 </div>
 <div id="today"></div>
@@ -54,16 +54,15 @@
 const P = window.Pages;
 let robins = null, ladder = null, lockAt = null;
 // Your Robin bankroll, separate from the Dub's. The Robin plays every ticket
-// of the full round robin (57 with six legs) at one unit: $1 a ticket until
-// the balance is over $570 — ten full days — then up 10% at each new ten-day
-// mark ($1.10 until $627, $1.21 until $689.70…). The unit never steps down.
+// of the full round robin (57 with six legs) at one unit: the balance divided
+// by 570, so the bankroll always covers ten full days at it.
 let bankroll = +P.store.get("robin.bankroll", 570) || 570;
 const chainNow = () => window.DubStake.robinChain(robins && robins.bets, bankroll);
 const unitNow = () => window.DubStake.robinUnitFor(chainNow(), P.slateDay());
 // Once today's Robin has settled, the unit that matters is the NEXT one.
 const unitLabel = (c, row) => row && row.graded
-  ? { unit: c.unit, text: `a ticket from the next Robin, until your balance is over ${P.money(c.bar)}` }
-  : (u => ({ unit: u.unit, text: `a ticket until your balance is over ${P.money(u.bar)}` }))(window.DubStake.robinUnitFor(c, P.slateDay()));
+  ? { unit: c.unit, text: `a ticket from the next Robin — ${P.money(c.balance)} ÷ 570` }
+  : (u => ({ unit: u.unit, text: `a ticket — your balance before today ÷ 570` }))(window.DubStake.robinUnitFor(c, P.slateDay()));
 
 function paintBank(){
   const c=chainNow(), u=window.DubStake.robinUnitFor(c,P.slateDay()), row=todayRow();
@@ -128,7 +127,7 @@ function render(){
     <div class="legs">${row.legs.map((l,i)=>P.leg(Object.assign({},l,{player:`${i+1}. ${l.player}`}))).join("")}</div>
     <h3 style="margin-top:18px">Every ticket, every size</h3>
     <div class="rows" id="rows">${sizeRows(row)}</div>
-    <div class="field" style="max-width:none"><div class="hint">Priced at each leg's Kalshi ask. Your book's parlay prices may differ; shop every leg, since each point better goes straight onto every ticket it is on. Every ticket of every size is played at the same amount: $1 a ticket until your Robin balance is over ten full days' worth ($570), then 10% more at each new ten-day mark. It never steps back down. Your bankroll is saved on this device.</div></div>
+    <div class="field" style="max-width:none"><div class="hint">Priced at each leg's Kalshi ask. Your book's parlay prices may differ; shop every leg, since each point better goes straight onto every ticket it is on. Every ticket of every size is played at the same amount: your Robin balance divided by 570, so the bankroll always covers ten full days. Your bankroll is saved on this device.</div></div>
   </div>`;
 }
 

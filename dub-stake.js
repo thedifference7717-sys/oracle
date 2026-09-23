@@ -9,8 +9,8 @@
 // resets the stake to 10% of whatever the balance is by then.
 //
 // The Robin has its own bankroll and its own rule — see robinChain below:
-// $1 a ticket on the full round robin until the balance covers ten full days,
-// then up 10% at each new ten-day mark.
+// every ticket of the full round robin at the balance divided by 570, so the
+// bankroll always covers ten full days.
 //
 // One file for the page and the alerter, so the stake on your phone and the
 // stake in the Telegram alert cannot disagree.
@@ -69,59 +69,51 @@
 
   // ── The Robin ────────────────────────────────────────────────────────────
   // The Robin plays the FULL round robin every day: every 2-, 3-, 4-, 5- and
-  // 6-leg ticket, 57 of them with six legs. Every ticket is the same unit:
+  // 6-leg ticket, 57 of them with six legs. Every ticket is the same unit,
+  // and the unit is the balance divided by 570 — so the bankroll always
+  // covers exactly ten full days (10 x 57 tickets) at the unit it is betting:
   //
-  //   $1.00 a ticket until the balance is over $570  (10 x a full day at $1)
-  //   $1.10 a ticket until it is over $627           (10 x a full day at $1.10)
-  //   $1.21 until $689.70, and so on — each time up 10%.
+  //   $570.00 -> $1.00 a ticket      $694.52 -> $1.22      $538.33 -> $0.94
   //
-  // The unit only ever steps UP: a losing run keeps the unit where it is
-  // rather than cutting it. The 10x is measured against a full six-leg day
-  // (57 tickets), so a thinner five-leg slate does not move the goalposts.
-  const ROBIN_TICKETS = 57, ROBIN_COVER = 10, ROBIN_STEP = 0.10, ROBIN_UNIT = 1;
-  const robinUnitAt = level => ROBIN_UNIT * Math.pow(1 + ROBIN_STEP, level);
-  const robinBar = level => ROBIN_COVER * ROBIN_TICKETS * robinUnitAt(level);
-  function robinLevel(balance, level) {
-    let k = level || 0;
-    while (balance > robinBar(k) + 1e-9) k++;
-    return k;
-  }
+  // It moves with the balance every day, up after a winning day and down
+  // after a losing one, rounded to the cent. The 570 is measured against a
+  // full six-leg day, so a thinner five-leg slate does not move it.
+  const ROBIN_TICKETS = 57, ROBIN_COVER = 10, ROBIN_DAYS = ROBIN_COVER * ROBIN_TICKETS;
+  const robinUnitOf = balance => r2(Math.max(0, balance) / ROBIN_DAYS);
   function robinSize(b, size) {
     const sizes = (b.graded && b.graded.sizes) || b.sizes || [];
     return sizes.find(z => z.m === size) || sizes[sizes.length - 1] || null;
   }
   // bets: the published Robin rows. Every graded size is played, at the unit.
   function robinChain(bets, bankroll) {
-    const start = +bankroll > 0 ? +bankroll : 570;
-    let balance = start, level = robinLevel(start, 0);
+    const start = +bankroll > 0 ? +bankroll : ROBIN_DAYS;
+    let balance = start;
     const rows = [];
     let w = 0, l = 0;
     const list = (bets || []).filter(b => b && b.status !== "noplay" && Array.isArray(b.legs))
       .slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
     for (const b of list) {
-      const unit = r2(robinUnitAt(level));
+      const unit = robinUnitOf(balance);
       const sizes = (b.graded && b.graded.sizes) || b.sizes || [];
       const tickets = sizes.reduce((a, z) => a + (z.tickets || 0), 0);
-      const row = { date: b.date, unit, tickets, stake: r2(unit * tickets), status: "open", pl: 0, balance, bar: r2(robinBar(level)) };
+      const row = { date: b.date, unit, tickets, stake: r2(unit * tickets), status: "open", pl: 0, balance };
       if (b.graded) {
         row.pl = r2(sizes.reduce((a, z) => a + (z.pl || 0), 0) * unit);
         row.status = row.pl > 0 ? "won" : row.pl < 0 ? "lost" : "void";
         balance = r2(balance + row.pl); row.balance = balance;
         if (row.pl > 0) w++; else if (row.pl < 0) l++;
-        level = robinLevel(balance, level);                   // up only, never down
       }
       rows.push(row);
     }
-    const unit = r2(robinUnitAt(level));
-    return { start, balance, unit, level, bar: r2(robinBar(level)), rows, w, l, pl: r2(balance - start),
-             perDay: r2(unit * ROBIN_TICKETS) };
+    const unit = robinUnitOf(balance);
+    return { start, balance, unit, rows, w, l, pl: r2(balance - start), perDay: r2(unit * ROBIN_TICKETS) };
   }
   // The unit that rides on a given day: that day's row if it exists, else the
   // one the next Robin would be played at.
   function robinUnitFor(res, day) {
     const r = res.rows.find(x => x.date === day);
-    return r ? { unit: r.unit, bar: r.bar } : { unit: res.unit, bar: res.bar };
+    return { unit: r ? r.unit : res.unit };
   }
 
-  return { chain, stakeFor, robinChain, robinUnitFor, robinSize, PCT, MISS_GAIN, ROBIN_TICKETS };
+  return { chain, stakeFor, robinChain, robinUnitFor, robinUnitOf, robinSize, PCT, MISS_GAIN, ROBIN_TICKETS };
 });

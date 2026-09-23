@@ -858,7 +858,7 @@ async function picksPlace(day, games, D, saveState) {
         const DS = (await import("../dub-stake.js")).default;
         const u = DS.robinUnitFor(DS.robinChain(robins.bets, 570), day);
         const tickets = r.sizes.reduce((a, z) => a + z.tickets, 0);
-        stakeLine = `💵 <b>${money(u.unit)} a ticket</b> × ${tickets} tickets = <b>${money(u.unit * tickets)}</b> — every size, at this amount until the Robin balance is over ${money(u.bar)}\n`;
+        stakeLine = `💵 <b>${money(u.unit)} a ticket</b> × ${tickets} tickets = <b>${money(u.unit * tickets)}</b> — every size, at the Robin balance ÷ 570\n`;
       } catch (e) { console.log("robin: stake line skipped (" + e.message + ")"); }
       await tg(`🐦 <b>PROP SHOP · THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
         stakeLine +

@@ -51,37 +51,28 @@ console.log("the price you actually got decides the payout");
 }
 
 
-console.log("the Robin: $1 a ticket until the balance covers ten full days");
+console.log("the Robin: a ticket is the balance divided by 570");
 {
   // A full six-leg Robin: 15 + 20 + 15 + 6 + 1 = 57 tickets. graded pl is per unit.
   const sizes = pls => [2, 3, 4, 5, 6].map((m, i) => ({ m, tickets: [15, 20, 15, 6, 1][i], pl: pls[i] }));
   const robin = (date, pls) => ({ date, status: "settled", legs: [{}, {}], graded: { sizes: sizes(pls) } });
   const open = { date: "d9", status: "open", legs: [{}, {}], sizes: sizes([0, 0, 0, 0, 0]) };
   ok("57 tickets a full day", D.ROBIN_TICKETS === 57);
-  const r0 = D.robinChain([], 300);
-  ok("$1 a ticket on a $300 bankroll", r0.unit === 1 && r0.perDay === 57);
-  ok("the bar is $570", r0.bar === 570);
-  const up = D.robinChain([robin("d1", [10, 5, 0, 0, 0])], 300);
-  ok("a day up 15 units at $1 is +$15", up.rows[0].pl === 15 && up.balance === 315, String(up.rows[0].pl));
-  ok("still $1 below $570", up.unit === 1);
   const at = D.robinChain([], 570);
-  ok("exactly $570 is not over it: still $1", at.unit === 1);
-  const over = D.robinChain([], 571);
-  ok("over $570: $1.10 a ticket", over.unit === 1.1, String(over.unit));
-  ok("next bar $627", over.bar === 627, String(over.bar));
-  const mid = D.robinChain([], 650);
-  ok("over $627: $1.21, next bar $689.70", mid.unit === 1.21 && mid.bar === 689.7, `${mid.unit} ${mid.bar}`);
-  const big = D.robinChain([], 700);
-  ok("over $689.70 too: $1.33, next bar $758.67", big.unit === 1.33 && big.bar === 758.67, `${big.unit} ${big.bar}`);
-  const climb = D.robinChain([robin("d1", [60, 0, 0, 0, 0])], 520);
-  ok("a winning day that crosses $570 steps the next day up", climb.balance === 580 && climb.unit === 1.1, `${climb.balance} ${climb.unit}`);
-  ok("the day itself was played at $1", climb.rows[0].unit === 1 && climb.rows[0].stake === 57);
-  const back = D.robinChain([robin("d1", [60, 0, 0, 0, 0]), robin("d2", [-40, 0, 0, 0, 0])], 520);
-  ok("a loss back under $570 does not cut the unit", back.balance === 536 && back.unit === 1.1, `${back.balance} ${back.unit}`);
-  const withOpen = D.robinChain([robin("d1", [-10, 0, 0, 0, 0]), open], 300);
-  ok("an open Robin rides at the unit without moving the balance", withOpen.rows[1].status === "open" && withOpen.balance === 290);
-  ok("robinUnitFor finds today's row", D.robinUnitFor(withOpen, "d9").unit === 1);
-  ok("a record of days up and down", back.w === 1 && back.l === 1);
+  ok("$570 is $1 a ticket, $57 a day", at.unit === 1 && at.perDay === 57);
+  ok("$694.52 is $1.22 (1.218 to the cent)", D.robinChain([], 694.52).unit === 1.22);
+  ok("$300 is $0.53", D.robinChain([], 300).unit === 0.53, String(D.robinChain([], 300).unit));
+  ok("no bankroll given is $570", D.robinChain([], 0).start === 570);
+  const up = D.robinChain([robin("d1", [10, 5, 0, 0, 0])], 570);
+  ok("a day up 15 units at $1 is +$15", up.rows[0].pl === 15 && up.balance === 585, String(up.rows[0].pl));
+  ok("the next day is $585 / 570 = $1.03", up.unit === 1.03, String(up.unit));
+  const two = D.robinChain([robin("d1", [60, 0, 0, 0, 0]), robin("d2", [-40, 0, 0, 0, 0])], 570);
+  ok("day two is played at the new unit", two.rows[1].unit === 1.11 && two.rows[1].pl === -44.4, `${two.rows[1].unit} ${two.rows[1].pl}`);
+  ok("and a losing day brings the unit down", two.balance === 585.6 && two.unit === 1.03, `${two.balance} ${two.unit}`);
+  const withOpen = D.robinChain([robin("d1", [-10, 0, 0, 0, 0]), open], 570);
+  ok("an open Robin rides at the unit without moving the balance", withOpen.rows[1].status === "open" && withOpen.balance === 560 && withOpen.rows[1].unit === 0.98);
+  ok("robinUnitFor finds today's row", D.robinUnitFor(withOpen, "d9").unit === 0.98);
+  ok("a record of days up and down", two.w === 1 && two.l === 1);
 }
 
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
