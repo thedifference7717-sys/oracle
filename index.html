@@ -66,6 +66,7 @@ b,strong{font-weight:600}
   background:rgba(255,214,10,.14);border-bottom:.5px solid rgba(255,214,10,.4);color:var(--yellow);font-size:13px}
 #update-bar button{margin-left:auto;padding:7px 15px;background:var(--yellow);border:none;
   border-radius:980px;color:#000;font-family:var(--sys);font-size:12px;font-weight:600;cursor:pointer}
+#status:empty{display:none}
 #status{font-size:12px;color:var(--muted);padding:10px var(--pad);min-height:16px;
   border-bottom:.5px solid var(--hair);font-variant-numeric:tabular-nums}
 
@@ -216,19 +217,25 @@ b,strong{font-weight:600}
 .ld-in{width:84px;background:var(--bg3);border:none;border-radius:8px;color:var(--text);
   padding:6px 7px;font-family:var(--num);font-size:12px;text-align:right}
 .ld-foot{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
-.ld-steps{display:flex;gap:8px;margin:16px 0 0;flex-wrap:wrap}
-.ld-step{flex:1;min-width:82px;background:var(--bg3);border:none;border-radius:11px;padding:10px 5px;text-align:center}
+.ld-steps{display:flex;gap:6px;margin:14px 0 0;flex-wrap:nowrap}
+.ld-step{flex:1;min-width:0;background:var(--bg3);border:none;border-radius:10px;padding:7px 2px;text-align:center}
+.ld-step .o{display:none}
+.ld-out{display:flex;gap:8px;margin-top:14px}
+.ld-out>div{flex:1;background:var(--bg3);border-radius:12px;padding:9px 12px}
+.ld-out span{display:block;font-size:11px;color:var(--muted)}
+.ld-out b{display:block;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:1px}
+.ld-out small{display:block;font-size:10.5px;color:var(--dim)}
 .ld-step.done{background:rgba(48,209,88,.14)}
 .ld-step.now{background:rgba(255,214,10,.16)}
 .ld-step.next{background:rgba(10,132,255,.14)}
 .ld-step .d{font-size:10px;color:var(--dim);font-weight:500}
-.ld-step .v{font-size:15px;font-weight:600;margin-top:3px;font-variant-numeric:tabular-nums}
+.ld-step .v{font-size:13px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
 .ld-step .o{font-size:9.5px;color:var(--dim);margin-top:3px;line-height:1.3}
 .ld-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:15px;border-top:.5px solid var(--hair)}
 .ld-box{flex:1;min-width:98px;background:var(--bg3);border:none;border-radius:11px;padding:10px 11px;text-align:center}
 .ld-box .v{font-size:17px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
 .ld-box .l{font-size:10px;color:var(--dim);margin-top:3px}
-.ld-warn{margin-top:14px;padding:0 14px;background:rgba(255,69,58,.12);border:none;
+.ld-warn{margin-top:12px;padding:0 12px;background:var(--bg3);border:none;
   border-radius:12px;font-size:12.5px;color:rgba(255,155,150,.95);line-height:1.6}
 .ld-warn>summary{list-style:none;cursor:pointer;padding:13px 26px 13px 0;position:relative;
   display:block;font-size:12.5px;color:#FF8A82;font-weight:500;line-height:1.5}
@@ -255,28 +262,29 @@ b,strong{font-weight:600}
   /* .ld-hist outranks the global table{min-width:760px} further down the
      sheet on specificity, which is what makes this win despite coming first. */
   .ld-hist,.ld-hist tbody{display:block;min-width:0}
-  .ld-hist tr{display:grid;grid-template-columns:1fr 1fr;
-    grid-template-areas:"pick res" "date stake" "odds paid" "pl acct";
-    gap:6px 12px;padding:14px 15px;margin:0 0 10px;background:var(--bg3);
-    border:.5px solid var(--hair);border-radius:16px}
+  .ld-hist tr{display:grid;grid-template-columns:1fr auto 78px 78px;
+    grid-template-areas:"pick pick pick res" "date stake odds paid";
+    gap:4px 8px;padding:10px 12px;margin:0 0 8px;background:var(--bg3);
+    border:none;border-radius:12px;align-items:end}
+  .ld-hist .c-pl,.ld-hist .c-acct{display:none}
   .ld-hist td{display:block;border:none;padding:0;text-align:left;white-space:normal}
   .ld-hist .c-pick{grid-area:pick;font-size:15px;font-weight:600;color:var(--text)}
   .ld-hist .c-res{grid-area:res;text-align:right;font-weight:600}
-  .ld-hist .c-date{grid-area:date;font-size:12px}
+  .ld-hist .c-date{grid-area:date;font-size:12px;padding-bottom:9px}
   .ld-hist .c-cd{display:none}
-  .ld-hist .c-stake{grid-area:stake;text-align:right;font-size:15px;color:var(--text)}
+  .ld-hist .c-stake{grid-area:stake;text-align:right;font-size:14px;color:var(--text);padding-bottom:8px}
   .ld-hist .c-odds{grid-area:odds}
   .ld-hist .c-paid{grid-area:paid}
   .ld-hist .c-pl{grid-area:pl;font-size:12px;margin-top:2px}
   .ld-hist .c-acct{grid-area:acct;text-align:right;font-size:12px;color:var(--dim);margin-top:2px}
   .ld-hist .c-odds::before,.ld-hist .c-paid::before{content:attr(data-label);display:block;
-    font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+    font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
   /* P&L and account are context, not controls: one quiet line, label inline. */
   .ld-hist .c-pl::before,.ld-hist .c-acct::before{content:attr(data-label) " ";
     font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim)}
   /* The card and the box were the same grey, so the boxes vanished and the
      card read as text rather than something you can type into. */
-  .ld-hist .ld-in{width:100%;font-size:16px;padding:10px 12px;text-align:left;   /* 16px stops iOS zooming on focus */
+  .ld-hist .ld-in{width:100%;font-size:16px;padding:6px 8px;text-align:left;   /* 16px stops iOS zooming on focus */
     background:var(--bg);border:.5px solid var(--hair);border-radius:10px}
   /* Scoped to the ladder: the slate tables further down still need to scroll. */
   #ladder .table-wrap,#ldRecord .table-wrap{overflow:visible}
@@ -353,7 +361,7 @@ td.num{text-align:right}
       <a class="navlink" href="dub.html">✌️ The Dub</a>
       <a class="navlink" href="robin.html">🐦 The Robin</a>
     </nav>
-    <button class="run-btn" id="run" onclick="load()">⟳ REFRESH</button>
+    <button class="run-btn" id="run" onclick="load()" hidden>⟳ REFRESH</button>
   </div>
 </div>
 <div id="progress-wrap"><div id="progress-bar"></div></div>
@@ -376,10 +384,9 @@ td.num{text-align:right}
 <div id="ldRecord" class="ld"></div>
 
 
-<div class="section-h"><div class="sh-row"><h2>⚙️ Base price</h2></div>
-  <p style="font-size:13px;color:var(--muted);margin-top:6px">The price a rung is assumed at when neither Kalshi nor you have given one. −275 unless you change it; saved on this device.</p>
-</div>
-<div id="slip" style="padding:0 var(--pad)">
+<details class="disc" style="margin:14px var(--pad) 0"><summary>⚙️ Base price</summary>
+  <p style="font-size:13px;color:var(--muted);margin:2px 0 8px">The price a rung is assumed at when neither Kalshi nor you have given one. −275 unless you change it.</p>
+<div id="slip">
   <div class="fld"><label>Base price (American)</label><input id="legPrice" type="number" step="5" value="-275"></div>
   <!-- The same-game double's settings, kept only because the shared board code reads them. -->
   <input id="price" type="hidden" value="-175"><input id="bank" type="hidden" value="1000">
@@ -387,6 +394,7 @@ td.num{text-align:right}
   <input id="minSpot" type="hidden" value="0"><input id="minSoft" type="hidden" value="4.9">
   <input id="sortBy" type="hidden" value="edge"><input id="onlyPosted" type="hidden" value="0"><input id="onlyTeam" type="hidden" value="0">
 </div>
+</details>
 <p style="font-size:12px;color:var(--dim);padding:18px var(--pad) 0;line-height:1.5">⚠ Model estimate — not betting advice. Bet only what you can afford to lose.</p>
 
 
@@ -797,7 +805,7 @@ async function load(){
     // is what fills in today's pick.
     renderLadder();
     board=await M.buildBoard({getJSON,cal:cal||null,american:setting("price"),
-      onStatus:m=>status('<span class="spin">⟳</span> '+m),onProgress:setProg});
+      onStatus:()=>{},onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
     if(!board.pairs.length){status(`No qualifying pairs for ${board.date}.`,"var(--yellow)");renderEmpty();return;}
     render();
@@ -807,7 +815,7 @@ async function load(){
     const calN=cal&&cal.global?cal.global.n:0;
     const deg=(board.degraded||[]).length
       ? ` · <b style="color:var(--yellow)">⚠ ${board.degraded.join(" + ")} feed unavailable — those inputs fell back to league average</b>`:"";
-    status(`✓ ${board.pairs.length} games · ${board.candidates.length} hitters (${posted} in confirmed lineups) · lg avg ${av(board.lg.avg)} · ${calN?calN+" graded legs feeding calibration":"calibration: no history yet"} · ${board.date} ${new Date().toLocaleTimeString()}${deg}`,
+    status("");if(false)status(`✓ ${board.pairs.length} games · ${board.candidates.length} hitters (${posted} in confirmed lineups) · lg avg ${av(board.lg.avg)} · ${calN?calN+" graded legs feeding calibration":"calibration: no history yet"} · ${board.date} ${new Date().toLocaleTimeString()}${deg}`,
       (board.degraded||[]).length?"var(--yellow)":"var(--green)");
   }catch(e){
     status(`✗ ${e.message}. Feed may be blocked — try again. The ladder below is unaffected: it reads the published ledger, not the live feed.`,"var(--red)");
@@ -1234,7 +1242,7 @@ function renderLadderInner(){
   const pModel=locked&&locked.p!=null?+locked.p:p;
   const lbeToday=1/dec, edgeToday=pModel!=null?pModel-lbeToday:null;
   const qualifies=edgeToday!=null&&edgeToday>=0;
-  note.textContent=`cycle ${st.cycle} · day ${st.rung} of ${C.rungs} · account ${money(st.account)}`;
+  note.textContent=`Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}`;
 
   // What today actually turns into. This is the number the box exists for:
   // win at the price you typed and that is tomorrow's stake, unless today
@@ -1290,19 +1298,12 @@ function renderLadderInner(){
     <label for="ldOdds">Odds you got on this pick <span id="ldSaved" class="ld-saved"></span></label>
     <input id="ldOdds" data-k="top-odds" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${fmtOdds(todayOdds)}"
       oninput="draftLadderOdds('${today}',this.value)" onchange="setLadderOdds('${today}',this.value)">
-    <div class="hint" id="ldHint">${typed?`Your price. ${money(stake)} returns <b id="ldRet">${money(ret)}</b>.`
-      :kalshiAtLock?`<b style="color:var(--green)">Kalshi ask at lock</b>${kalshiAtLock.bid!=null?` · ${(kalshiAtLock.bid*100).toFixed(0)}/${(kalshiAtLock.ask*100).toFixed(0)}¢`:""}. ${money(stake)} returns <b id="ldRet">${money(ret)}</b> — type your own fill if it differs.`
-      :`Assumed — no live quote for this pick. Type what your book is showing. ${money(stake)} would return <b id="ldRet">${money(ret)}</b>.`}</div>
+    <div class="hint" id="ldHint">${typed?"Your price.":kalshiAtLock?"Kalshi price at lock.":"Assumed price — type yours."} ${money(stake)} returns <b id="ldRet">${money(ret)}</b>.</div>
   </div>`;
 
-  const nextBox=`<div class="ld-next">
-    <div class="ld-nb win"><div class="l">If it hits → ${closes?"cycle closes, next seed":"tomorrow's bet"}</div>
-      <div class="v" id="ldNextWin">${money(nextIfWin)}</div>
-      ${closes?`<div class="s" id="ldNextWinSub">${money(st.base)} of yours became ${money(ret)} · +${money(ret-st.base)}</div>`
-              :`<div class="s">${st.toppedUp>0?`${money(st.cashIn)} of your money in this cycle (${money(st.base)} seed + ${money(st.toppedUp)} added)`:`still only ${money(st.base)} of your money at risk`}</div>`}</div>
-    <div class="ld-nb lose"><div class="l">If it misses → next seed</div>
-      <div class="v">${money(nextIfLose)}</div>
-      <div class="s">cycle ends, costs ${money(st.cashIn)}${st.toppedUp>0?" — the seed plus what you added on top":" — the seed, whatever day it lands"}</div></div>
+  const nextBox=`<div class="ld-out">
+    <div><span>If it hits</span><b id="ldNextWin" style="color:var(--green)">${money(nextIfWin)}</b><small>${closes?"next cycle's first bet":"rides tomorrow"}</small></div>
+    <div><span>If it misses</span><b style="color:var(--red)">${money(nextIfLose)}</b><small>next cycle's first bet</small></div>
   </div>`;
 
   const lockedP=locked?(locked.pAdj!=null?locked.pAdj:locked.p):null;
@@ -1316,9 +1317,7 @@ function renderLadderInner(){
       <div class="num">
         <span style="color:var(--blue)">${pct(lockedP)} to win</span>
         <span style="color:var(--yellow)">fair ${M.amOdds(lockedP)}</span>
-        <span style="color:${qualifies?"var(--green)":"var(--red)"}">model ${edgeToday>=0?"+":""}${(edgeToday*100).toFixed(1)}pts vs ${fmtOdds(todayOdds)}</span>
       </div>
-      ${Array.isArray(locked.runnersUp)&&locked.runnersUp.length?`<div class="sub" style="margin-top:6px">Next best: ${locked.runnersUp.map(x=>`${SPORT_EMOJI[x.sport]||""} ${x.pick} ${x.need} (${pct(x.pAdj)})`).join(" · ")}</div>`:""}
       <div class="sub" style="margin-top:7px;color:var(--green)">
         Published ${locked.published?etTime(Date.parse(locked.published)):"—"} ET${locked.games?` · chosen from ${gamesLine(locked.games)}`:""}
       </div>
@@ -1330,12 +1329,7 @@ function renderLadderInner(){
       <div class="v" id="ldClock">—:—:—</div>
       <div class="s">One hour before the day's first game (${etTime(lk.first)} ET), from every game on the slate${gamesLine(lk.games)?`: ${gamesLine(lk.games)}`:""}.
       ${lk.total?`${lk.postedCount} of ${lk.total} baseball lineups posted so far.`:""}</div>
-      <details class="disc ld-disc"><summary>Why it's blank</summary><div class="disc-b">
-        The pick is chosen from every game in every sport — baseball hits, basketball points, rebounds, assists and threes, football passing, receiving and rushing yards — each priced at its live Kalshi ask, and the likeliest to win between −200 and −350 is the bet.
-        It stays blank until the lock on purpose: the board re-ranks every time a lineup posts and scratch risk resolves, and a pick that quietly swaps itself is not a pick. The lock is the commitment.
-        No player rides more than two days running — after that he sits out one placement, so a hot name cannot quietly become the whole system. The bench is computed from the published ledger, so the card and the alert always agree on who is eligible.
-        The ladder keeps one clock for the whole slate: it makes one choice between every sport, so it locks an hour before the first game of the day, when lineups and injury reports are mostly in.
-      </div></details>
+
     </div>`:"";
 
   // Shown once the lock has passed but no row has reached the ledger. The
@@ -1408,7 +1402,7 @@ function renderLadderInner(){
   // rate and the ruin chance, which are the two numbers that should stop
   // someone. Only the working is folded, because a wall of red text on every
   // load is how a disclosure gets scrolled past instead of read.
-  const warn=risk?`<details class="ld-warn"><summary>Only <b>${(risk.cycleWin*100).toFixed(1)}%</b> of cycles complete, and there is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the account dry. Read this.</summary>
+  const warn=risk?`<details class="ld-warn"><summary>Risk: about ${Math.round(risk.cycleWin*100)}% of cycles complete</summary>
     <div class="ld-warn-b"><b>What this actually is.</b> Five legs at ${pct(p)}${waiting?" (a typical top leg — tonight's is not chosen yet)":""} complete a cycle <b>${(risk.cycleWin*100).toFixed(1)}%</b> of the time — so about ${Math.round((1-risk.cycleWin)*10)} cycles in ten bust, and the +${Math.round(C.missGain*100)}% escalation compounds each time. At this seed the account funds <b>${risk.bustsSurvived}</b> consecutive busted cycles and cannot fund the next, which is a <b>${(risk.pBust*100).toFixed(1)}%</b> chance of running the ${money(C.account)} dry before the escalation ever pays. At ${todayOdds>0?"+":""}${todayOdds} the ladder is ${risk.cycleEv>=0?`+EV — <b>${money(risk.cycleEv)}</b> expected per cycle, because each leg is +${(risk.legEv*100).toFixed(1)}% on its own`:`<b>−EV</b> (${money(risk.cycleEv)} per cycle) — compounding a losing leg loses faster, it does not fix it`}, but the distribution is brutal: mostly small losses, occasionally a large win — <b>${money(risk.cycleProfit)}</b> <i>if</i> all five legs priced like today's, which is a what-if and not a forecast: only tomorrow's stake is a real number. Do not size it as though it wins often.
   </div></details>`:"";
 
@@ -1418,7 +1412,7 @@ function renderLadderInner(){
     <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>PAID BACK</th><th>RESULT</th><th>P&amp;L</th><th>Account</th></tr></thead>
     <tbody>${(()=>{let acc=C.account;const out=[];for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);out.push({r,acc});}
       return out.slice().reverse().map(({r,acc})=>`<tr>
-        <td class="c-date" style="color:var(--dim)">${r.date}</td>
+        <td class="c-date" style="color:var(--dim)">${new Date(r.date+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"})}</td>
         <td class="c-pick">${(()=>{const b=published.find(x=>x.date===r.date)||{};return `${SPORT_EMOJI[b.sport||"MLB"]||""} ${r.pick||"—"}${b.need&&b.sport&&b.sport!=="MLB"?` <span style="color:var(--dim);font-size:12px">${b.need}</span>`:""}`;})()}</td>
         <td class="c-cd" style="color:var(--dim)">${r.cycle}·${r.rung}</td>
         <td class="c-stake">${money(r.stake)}</td>
@@ -1426,7 +1420,7 @@ function renderLadderInner(){
              oninput="draftLadderOdds('${r.date}',this.value)" onchange="setLadderOdds('${r.date}',this.value)"
              title="${retByDay[r.date]!=null?"worked back from what it paid":oddsByDay[r.date]!=null?"the price you typed":r.assumedPrice?"assumed — this rung reached the record without a price":"the price the alerter published"}"
              style="color:${oddsByDay[r.date]!=null?'var(--green)':r.assumedPrice?'var(--yellow)':'var(--dim)'}"></td>
-        <td class="c-paid" data-label="Paid back"><input class="ld-in" data-k="paid:${r.date}" type="text" inputmode="decimal" autocomplete="off" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
+        <td class="c-paid" data-label="Paid"><input class="ld-in" data-k="paid:${r.date}" type="text" inputmode="decimal" autocomplete="off" placeholder="${r.status==="won"?money(r.ret||0).replace("$",""):"—"}"
              value="${retByDay[r.date]!=null?retByDay[r.date]:""}"
              oninput="draftLadderReturn('${r.date}',this.value)" onchange="setLadderReturn('${r.date}',this.value)"
              title="What this rung actually paid back, stake included. Enter it and the price above is worked back from it — exact, where a rounded price is not."
@@ -1434,25 +1428,20 @@ function renderLadderInner(){
         <td class="c-res" style="color:${r.status==="won"?"var(--green)":r.status==="lost"?"var(--red)":"var(--dim)"}">${r.status==="won"?(r.closed==="complete"?"✓ CYCLE":"✓ ride"):r.status==="lost"?"✗ bust":"open"}</td>
         <td class="c-pl" data-label="P&amp;L" style="color:${r.pl>0?"var(--green)":r.pl<0?"var(--red)":"var(--dim)"}">${r.pl?money(r.pl):"—"}</td>
         <td class="c-acct" data-label="Account">${money(acc)}</td></tr>`).join("");})()}</tbody></table>
-    <div class="ld-foot"><b>These figures live in this browser only.</b> Your bankroll, the odds you got and what each rung paid are stored on this device and never sent anywhere — which also means a phone and a tablet are two separate ladders, and a second device shows the published chain at the assumed price until you tell it otherwise.<br>
-      Green is yours, grey is assumed. Enter either the odds you got or what the rung <b>paid back</b> — the payout is exact and the price is worked back from it, which is why it wins when both are present. Edit any cell and every stake above it recompounds.</div></div>`
+    <div class="ld-foot">Type the odds you got or what a rung paid back — saved on this phone only, and every stake after it recalculates.</div></div>`
     :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;
 
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
-      <div><div class="ld-stake">${money(stake)}<small>Today · Cycle ${st.cycle} · Day ${st.rung} of ${C.rungs}</small></div>${oddsBox}</div>
+      <div><div class="ld-stake">${money(stake)}<small>Today's bet</small></div>${oddsBox}</div>
       ${locked?lockedHtml:pinned?myHtml:waiting?waitHtml:orphaned?orphanHtml:noSlateHtml}
     </div>
     ${(waiting||orphaned)?"":nextBox}
     <div class="ld-steps">${steps}</div>
     <div class="ld-strip">
-      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account</div></div>
-      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${st.pl>=0?"+":""}${money(st.pl)}</div><div class="l">P&amp;L</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--yellow)">${money(mine)}</div><div class="l">${st.toppedUp>0?`Cash in · ${money(st.base)} seed + ${money(st.toppedUp)} added`:"Your money at risk"}</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--purple)">${money(house)}</div><div class="l">House money riding</div></div>
+      <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account · ${st.pl>=0?"+":""}${money(st.pl)}</div></div>
       <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">Cycles done–bust</div></div>
       <div class="ld-box ld-acct" onclick="clearLadderAccount()" title="Change your bankroll"><div class="v" style="color:var(--blue)">${money(ladderAccount)}</div><div class="l">Bankroll · tap to change</div></div>
-      <div class="ld-box"><div class="v" style="color:var(--red)">${money(st.maxDD)}</div><div class="l">Max drawdown</div></div>
     </div>
     ${st.canFund?"":`<div class="ld-warn"><b>The account cannot fund this rung.</b> ${money(stake)} is more than the ${money(st.account)} left. That is where the escalation ends — the ladder has no next move that is not a deposit.</div>`}
     ${warn}
