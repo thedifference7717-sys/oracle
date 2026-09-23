@@ -183,5 +183,24 @@ console.log("a one-sided quote is not a market");
   ok("only the two-sided, tight quote survives", r.candidates.map(c => c.player).join() === "Real", r.candidates.map(c => c.player).join());
 }
 
+console.log("graded as soon as it is known");
+{
+  const summary = (state, pts) => ({
+    header: { competitions: [{ status: { type: { state, completed: state === "post", name: "STATUS_" + state } } }] },
+    boxscore: { players: [{ statistics: [{ names: ["MIN", "PTS", "REB", "AST", "3PT"],
+      athletes: [{ athlete: { id: "7", displayName: "Scorer" }, stats: ["24", String(pts), "5", "4", "3-7"] }] }] }] }
+  });
+  const bet = { sport: "NBA", eventId: "e1", playerId: 7, market: "pts", line: 24.5, pick: "Scorer" };
+  const at = (state, pts) => S.settleRung(bet, { get: async () => summary(state, pts) });
+  const w = await at("in", 26);
+  ok("an NBA line passed mid-game is won right then", w && w.status === "won" && w.actual === 26, JSON.stringify(w));
+  ok("one still short mid-game waits", (await at("in", 20)) === null);
+  ok("short at the final buzzer is lost", (await at("post", 20)).status === "lost");
+  ok("before tip-off nothing is graded", (await at("pre", 0)) === null);
+  const nfl = await S.settleRung({ sport: "NFL", eventId: "e2", playerId: 9, market: "rushYds", line: 49.5, pick: "Back" },
+    { get: async () => summary("in", 0) });
+  ok("football waits for the final — yards can go backwards", nfl === null);
+}
+
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
 process.exit(failures ? 1 : 0);

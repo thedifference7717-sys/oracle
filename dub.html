@@ -148,14 +148,18 @@ setInterval(tick,1000);
 async function load(fresh){
   const pending=()=>{const lk=P.lockOf(ladder);return lk&&lk.open&&!(dubs&&dubs.bets&&dubs.bets.some(b=>b.date===P.slateDay()));};
   [dubs,ladder,fills]=await Promise.all([P.load("data/dub.json",{fresh}),P.load("data/ladder.json",{fresh}),P.load("data/fills.json",{fresh:true})]);
-  if(!fresh&&pending())[dubs,ladder]=await Promise.all([P.load("data/dub.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
-  if(document.activeElement&&/^(od|bk)$/.test(document.activeElement.id))return;   // never repaint under a thumb
+  if(!fresh&&(pending()||P.hasOpen(dubs)))[dubs,ladder]=await Promise.all([P.load("data/dub.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
+  if(document.activeElement&&/^(od|bk)$/.test(document.activeElement.id)){schedule(pending()||P.hasOpen(dubs));return;}   // never repaint under a thumb
   render(); renderHist();
   document.getElementById("status").textContent=dubs&&dubs.updated?`Updated ${new Date(dubs.updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})} ET`:"";
-  if(pending())setTimeout(()=>load(true),60000);
+  schedule(pending()||P.hasOpen(dubs));
 }
+// While a dub is open (or today's is about to publish) check every minute,
+// straight from the repo; otherwise every three minutes is plenty.
+let liveT=null, isLive=false;
+function schedule(live){ isLive=live; clearTimeout(liveT); liveT=setTimeout(()=>load(live),live?60000:180000); }
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden)load(isLive); });
 load();
-setInterval(()=>load(),180000);
 </script>
 </body>
 </html>

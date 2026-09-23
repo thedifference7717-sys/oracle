@@ -408,7 +408,14 @@ export async function settleRung(b, { get = getJSON } = {}) {
   const st = (((((d.header || {}).competitions || [])[0] || {}).status || {}).type) || {};
   const final = st.completed === true || st.state === "post";
   if (/postpon|cancel/i.test(st.name || "")) return { status: "void", actual: null, note: "game not played — stake returned" };
-  if (!final) return null;
+  // Points, rebounds, assists and threes only ever go up, so an NBA prop is
+  // won the moment the line is passed — graded then, not at the final buzzer.
+  // Yards can go backwards (a sack, a loss on a run), so football waits.
+  if (!final) {
+    if (b.sport !== "NBA" || st.state !== "in") return null;
+    const r = HW.settle({ playerId: b.playerId, market: b.market, line: b.line }, HW.parseBoxScore(d));
+    return r && r.status === "won" ? r : null;
+  }
   if (b.sport === "NBA") {
     const box = HW.parseBoxScore(d);
     const r = HW.settle({ playerId: b.playerId, market: b.market, line: b.line }, box);

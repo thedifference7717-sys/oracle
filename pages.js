@@ -24,12 +24,46 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   };
 
+  // ── Live: the repo itself, not the ten-minute Pages cache ────────────────
+  // The alerter grades every leg within a minute or two of it happening and
+  // commits the result, but GitHub Pages can hold the old file for up to ten
+  // minutes after that. So while a bet is live the pages read the file at the
+  // repo's newest commit instead: one small API call for the commit id, shared
+  // by every open tab and made at most every 75 seconds (the API allows 60 an
+  // hour without a login), then the file at that commit from
+  // raw.githubusercontent.com, which is not rate-limited and never stale,
+  // because a commit's files never change.
+  const REPO = "thedifference7717-sys/oracle";
+  P.head = async function () {
+    const c = P.store.get("pg.head", null);
+    if (c && Date.now() < c.until) return c.sha;
+    try {
+      const r = await fetch(`https://api.github.com/repos/${REPO}/commits/main`,
+        { headers: { Accept: "application/vnd.github.sha" }, cache: "no-store" });
+      if (r.ok) {
+        const sha = (await r.text()).trim();
+        if (/^[0-9a-f]{40}$/.test(sha)) { P.store.set("pg.head", { sha, until: Date.now() + 75000 }); return sha; }
+      }
+      // Out of calls for the hour: keep the last id and back off five minutes.
+      if (r.status === 403 || r.status === 429) P.store.set("pg.head", { sha: c && c.sha, until: Date.now() + 300000 });
+    } catch (e) {}
+    return c && c.sha;
+  };
+  P.hasOpen = j => !!(j && Array.isArray(j.bets) && j.bets.some(b => b && b.status === "open"));
+
   // A published file: Pages first (cached up to ten minutes by the CDN), the
-  // last good copy if that fails, and — only while today's pick is pending —
-  // the repo itself, which is never stale.
+  // last good copy if that fails, and — while a bet is live or today's pick is
+  // pending — the repo at its newest commit, which is never stale.
   P.load = async function (path, { fresh } = {}) {
     const key = "pg.cache." + path;
     if (fresh) {
+      try {
+        const sha = await P.head();
+        if (sha) {
+          const r = await fetch(`https://raw.githubusercontent.com/${REPO}/${sha}/${path}`, { cache: "no-store" });
+          if (r.ok) { const j = await r.json(); P.store.set(key, j); return j; }
+        }
+      } catch (e) {}
       try {
         const r = await fetch("https://api.github.com/repos/thedifference7717-sys/oracle/contents/" + path + "?ref=main",
           { headers: { Accept: "application/vnd.github.raw" }, cache: "no-store" });

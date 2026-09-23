@@ -399,6 +399,7 @@ td.num{text-align:right}
 
 
 <script src="build-check.js"></script>
+<script src="pages.js"></script>
 <script src="dd-model.js?v=b9fef9e"></script>
 <script>
 // The engine lives in a separate file as of BUILD 3. If it fails to load,
@@ -588,11 +589,8 @@ const pubFill=d=>(!localFill(d)&&pubFills.ladder&&pubFills.ladder[d])||null;
 function oddsAt(d){ if(localFill(d))return oddsByDay[d]; const f=pubFill(d); return f&&f.price!=null?f.price:null; }
 function retAt(d){ if(localFill(d))return retByDay[d]; const f=pubFill(d); return f&&f.paid!=null?f.paid:null; }
 async function loadFills(){
-  for(const [url,opt] of [["https://api.github.com/repos/thedifference7717-sys/oracle/contents/data/fills.json?ref=main",{headers:{Accept:"application/vnd.github.raw"},cache:"no-store"}],
-                          ["data/fills.json?t="+Date.now(),{cache:"no-store"}]]){
-    try{const r=await fetch(url,opt); if(!r.ok)continue; const j=await r.json();
-      if(j&&typeof j==="object"){pubFills={ladder:j.ladder||{},dub:j.dub||{}};try{localStorage.setItem("dd.fillsCache",JSON.stringify(pubFills));}catch(e){}return true;}}catch(e){}
-  }
+  try{const j=window.Pages?await Pages.load("data/fills.json",{fresh:true}):null;
+    if(j&&typeof j==="object"){pubFills={ladder:j.ladder||{},dub:j.dub||{}};try{localStorage.setItem("dd.fillsCache",JSON.stringify(pubFills));}catch(e){}return true;}}catch(e){}
   return false;
 }
 function storeLadderReturn(day,v){
@@ -813,6 +811,7 @@ async function load(){
     }catch(e){
       if(!ladderHist){try{ladderHist=JSON.parse(localStorage.getItem("dd.ledgerCache")||"null");}catch(e2){}}
     }
+    if(ladderLive())refreshLadderFast();      // the Pages copy can be ten minutes behind a live rung
     // Paint the ladder NOW, before the slate is built.
     //
     // buildBoard() throws whenever the MLB feed is unreachable, and the catch
@@ -1018,20 +1017,24 @@ const SPORT_EMOJI={MLB:"⚾",NBA:"🏀",NFL:"🏈"};
 const rungNeed=b=>b&&b.need?b.need:"to record a hit";
 const gamesLine=g=>Object.entries(g||{}).filter(([,n])=>n>0).map(([s,n])=>`${SPORT_EMOJI[s]||""} ${n} ${s}`).join(" · ");
 // Today's rung, straight from the repo rather than the Pages cache, which holds
-// data/ladder.json for up to ten minutes. Only used while a lock is pending,
-// so it stays well inside the API's hourly allowance.
+// data/ladder.json for up to ten minutes: while the lock is pending, and every
+// minute while a rung is live, so a hit shows here within a minute or two of
+// the alerter grading it (see Pages.head for how the API allowance is kept).
 let ldFastAt=0;
 async function refreshLadderFast(){
-  if(Date.now()-ldFastAt<55000)return;
+  if(Date.now()-ldFastAt<55000||!window.Pages)return;
   ldFastAt=Date.now();
   try{
-    const r=await fetch("https://api.github.com/repos/thedifference7717-sys/oracle/contents/data/ladder.json?ref=main",
-      {headers:{Accept:"application/vnd.github.raw"},cache:"no-store"});
-    if(!r.ok)return;
-    const j=await r.json();
-    if(j&&Array.isArray(j.bets)){ladderHist=j;try{localStorage.setItem("dd.ledgerCache",JSON.stringify(j));}catch(e){}renderLadder();}
+    const before=JSON.stringify(ladderHist)+JSON.stringify(pubFills);
+    const j=await Pages.load("data/ladder.json",{fresh:true});
+    await loadFills();
+    if(j&&Array.isArray(j.bets)){ladderHist=j;try{localStorage.setItem("dd.ledgerCache",JSON.stringify(j));}catch(e){}}
+    if(JSON.stringify(ladderHist)+JSON.stringify(pubFills)!==before&&!ladderBusy())renderLadder();
   }catch(e){}
 }
+const ladderLive=()=>!!(ladderHist&&window.Pages&&Pages.hasOpen(ladderHist));
+setInterval(()=>{if(!document.hidden&&ladderLive())refreshLadderFast();},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&ladderLive())refreshLadderFast();});
 
 // The countdown ticks by writing one text node. It must never call render():
 // replacing the card's innerHTML every second would rip the odds input out

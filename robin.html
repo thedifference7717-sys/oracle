@@ -152,14 +152,18 @@ setInterval(tick,1000);
 async function load(fresh){
   const pending=()=>{const lk=P.lockOf(ladder);return lk&&lk.open&&!todayRow();};
   [robins,ladder]=await Promise.all([P.load("data/robin.json",{fresh}),P.load("data/ladder.json",{fresh})]);
-  if(!fresh&&pending())[robins,ladder]=await Promise.all([P.load("data/robin.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
-  if(document.activeElement&&document.activeElement.id==="bk")return;             // never repaint under a thumb
+  if(!fresh&&(pending()||P.hasOpen(robins)))[robins,ladder]=await Promise.all([P.load("data/robin.json",{fresh:true}),P.load("data/ladder.json",{fresh:true})]);
+  if(document.activeElement&&document.activeElement.id==="bk"){schedule(pending()||P.hasOpen(robins));return;}             // never repaint under a thumb
   render(); renderHist();
   document.getElementById("status").textContent=robins&&robins.updated?`Updated ${new Date(robins.updated).toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})} ET`:"";
-  if(pending())setTimeout(()=>load(true),60000);
+  schedule(pending()||P.hasOpen(robins));
 }
+// While a robin is open (or today's is about to publish) check every minute,
+// straight from the repo; otherwise every three minutes is plenty.
+let liveT=null, isLive=false;
+function schedule(live){ isLive=live; clearTimeout(liveT); liveT=setTimeout(()=>load(live),live?60000:180000); }
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden)load(isLive); });
 load();
-setInterval(()=>load(),180000);
 </script>
 </body>
 </html>
