@@ -1,9 +1,13 @@
 // Prop Shop — Telegram alerts (GitHub Actions cron, self-looping every ~60s).
 //
-// 1. At lock (1h before the day's first pitch) sends the strongest two-man
-//    same-game hit parlays that actually clear the price on offer.
-// 2. Then tracks each double from live boxscores: a leg lands (1/2 in), the
-//    double CASHES (both hitters record a hit), or it DIES (game final).
+// 1. The Ladder, the Dub and the Robin lock on the clock: an hour before the
+//    day's first game in any sport. Each is published to data/ and sent.
+//    An MLB pick locked on a projected lineup gets a `lineup` note on its
+//    row once that game's lineups post — no alert, and the pick stands.
+// 2. Per-game same-game doubles lock the moment BOTH of a game's lineups
+//    are posted — no clock. They are built and graded silently (Telegram
+//    only with DD_GAME_ALERTS=1) and tracked from live boxscores until the
+//    double CASHES (both hitters record a hit) or DIES (game final).
 // 3. At settlement every graded leg is folded back into the calibration log
 //    and published to data/model-log.json, which the dashboard reads on load.
 //
