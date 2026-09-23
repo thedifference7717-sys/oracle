@@ -94,7 +94,7 @@
     const voids = res.filter(x => x === "void").length;
     let w = 0, l = 0, p = 0;
     for (const z of sizes) { const push = choose(voids, z.m); w += z.cashed; p += push; l += z.tickets - z.cashed - push; }
-    return { w, l, p, legsW: res.filter(x => x === "won").length, legsL: res.filter(x => x === "lost").length };
+    return { w, l, p, legsW: res.filter(x => x === "won").length, legsL: res.filter(x => x === "lost").length, legsV: voids };
   }
   // bets: the published Robin rows. Every graded size is played, at the unit.
   function robinChain(bets, bankroll) {
@@ -102,7 +102,7 @@
     let balance = start;
     const rows = [];
     let w = 0, l = 0;
-    const rec = { w: 0, l: 0, p: 0, legsW: 0, legsL: 0 };     // every ticket and every leg graded
+    const rec = { w: 0, l: 0, p: 0, legsW: 0, legsL: 0, legsV: 0 };   // every ticket and every leg graded
     const list = (bets || []).filter(b => b && b.status !== "noplay" && Array.isArray(b.legs))
       .slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
     for (const b of list) {
