@@ -5,7 +5,7 @@
    "id": "2026-09-22:dub",
    "date": "2026-09-22",
    "published": "2026-09-22T21:52:41.869Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 14
    },
@@ -35,7 +35,10 @@
      },
      "p": 0.7763,
      "pAdj": 0.7523,
-     "detail": "#1 · vs Michael Soroka · lineup confirmed"
+     "detail": "#1 · vs Michael Soroka · lineup confirmed",
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless"
     },
     {
      "sport": "MLB",
@@ -58,17 +61,21 @@
      },
      "p": 0.7103,
      "pAdj": 0.7129,
-     "detail": "#2 · vs Brandon Williamson · lineup confirmed"
+     "detail": "#2 · vs Brandon Williamson · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     }
    ],
    "prob": 0.5363,
    "price": -114,
-   "fair": -116
+   "fair": -116,
+   "settled": "2026-09-23T03:12:15.066Z"
   }
  ],
- "updated": "2026-09-22T21:52:41.870Z",
+ "updated": "2026-09-23T03:24:33.015Z",
  "record": {
   "w": 0,
-  "l": 0
+  "l": 1
  }
 }

@@ -5,7 +5,7 @@
    "id": "2026-09-22:robin",
    "date": "2026-09-22",
    "published": "2026-09-22T21:52:41.869Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 14
    },
@@ -109,7 +109,10 @@
      },
      "p": 0.7513,
      "pAdj": 0.7183,
-     "detail": "#2 · vs Shota Imanaga · lineup confirmed"
+     "detail": "#2 · vs Shota Imanaga · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -132,7 +135,10 @@
      },
      "p": 0.7224,
      "pAdj": 0.695,
-     "detail": "#1 · vs Payton Tolle · lineup confirmed"
+     "detail": "#1 · vs Payton Tolle · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -197,10 +203,52 @@
      "expWin": 0.139,
      "ev": 0.0405
     }
-   ]
+   ],
+   "graded": {
+    "hit": 6,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 29.397,
+      "pl": 14.397
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 20,
+      "back": 54.853,
+      "pl": 34.853
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 57.56,
+      "pl": 42.56
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 6,
+      "back": 32.206,
+      "pl": 26.206
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 7.507,
+      "pl": 6.507
+     }
+    ]
+   },
+   "settled": "2026-09-23T03:06:52.292Z"
   }
  ],
- "updated": "2026-09-23T00:49:54.846Z",
+ "updated": "2026-09-23T03:24:33.020Z",
  "record": {
   "w": 0,
   "l": 0
