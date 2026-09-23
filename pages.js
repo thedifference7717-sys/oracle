@@ -99,10 +99,14 @@
     const res = l.result === "won" ? '<span class="tag ok">✓ WON</span>' : l.result === "lost" ? '<span class="tag bad">✗ LOST</span>'
               : l.result === "void" ? '<span class="tag dim">VOID</span>' : "";
     const when = l.start ? ` · ${P.etTime(Date.parse(l.start))} ET` : "";
+    // A leg locked on a projected lineup carries `lineup` once the real one posts.
+    const detail = l.detail && l.lineup
+      ? l.detail.replace(/^#\d+ · /, "").replace(/ · projected, \d+% to start$/, "") + (l.lineup.in ? ` · lineup out — batting #${l.lineup.slot}` : " · lineup out — not in it")
+      : l.detail;
     return `<div class="leg ${l.result || ""}">
       <div class="nm">${P.EMOJI[l.sport] || ""} ${l.player} ${res}</div>
       <div class="need">${l.need}${l.note && l.result ? ` <span style="color:var(--dim);font-weight:400">— ${l.note}</span>` : ""}</div>
-      <div class="sub">${l.teams || ""}${when}${l.detail ? ` · ${l.detail}` : ""}</div>
+      <div class="sub">${l.teams || ""}${when}${detail ? ` · ${detail}` : ""}</div>
       <div class="px">${P.odds(l.price)}<small>${P.pct(l.pAdj)} to win</small></div>
       ${extra || ""}</div>`;
   };

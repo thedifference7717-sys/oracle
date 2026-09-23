@@ -879,6 +879,46 @@ async function picksPlace(day, games, D, saveState) {
   if (D) { D.picksDay = day; if (saveState) saveState(); }
 }
 
+// ── lineup updates ──────────────────────────────────────────────────────────
+// The Ladder, Dub and Robin lock on the clock, so an MLB pick can go out on a
+// projected lineup. When that game's lineups post, record on the published row
+// whether he's in and where he bats, so the pages can show it. Only the
+// `lineup` field is written: the pick, its price and the at-lock `posted` /
+// `detail` stay exactly as they were published. No alert is sent.
+// Recomputed every pass until first pitch, so a push that fails is simply
+// written again next pass.
+function lineupFor(g, playerId) {
+  if (!g || !posted(g) || Date.now() >= Date.parse(g.gameDate)) return null;
+  for (const side of ["homePlayers", "awayPlayers"]) {
+    const i = g.lineups[side].findIndex(x => String(x.id) === String(playerId));
+    if (i >= 0) return { in: true, slot: i + 1 };
+  }
+  return { in: false };
+}
+const sameLineup = (a, b) => !!a && !!b && a.in === b.in && a.slot === b.slot;
+function lineupUpdates(day, games, D) {
+  const game = gk => games.find(x => String(x.gamePk) === String(gk));
+  const L = readLadderFile();
+  let moved = false;
+  for (const b of L.bets) {
+    if (b.date !== day || b.status !== "open" || (b.sport || "MLB") !== "MLB" || b.posted !== false || b.gk == null) continue;
+    const lu = lineupFor(game(b.gk), b.playerId);
+    if (lu && !sameLineup(lu, b.lineup)) { b.lineup = Object.assign(lu, { at: new Date().toISOString() }); moved = true; console.log(`lineup: ladder ${b.pick} ${lu.in ? "in, #" + lu.slot : "not in"}`); }
+  }
+  if (moved) writeLadderFile(L);
+  for (const [f, key] of [[DUB_FILE, "dubRows"], [ROBIN_FILE, "robinRows"]]) {
+    const J = readDaily(f, D[key]);
+    const b = J.bets.find(x => x.date === day && x.status === "open");
+    let changed = false;
+    for (const l of (b && b.legs) || []) {
+      if (l.sport !== "MLB" || l.result || !/projected/.test(l.detail || "") || l.gk == null) continue;
+      const lu = lineupFor(game(l.gk), l.playerId);
+      if (lu && !sameLineup(lu, l.lineup)) { l.lineup = Object.assign(lu, { at: new Date().toISOString() }); changed = true; console.log(`lineup: ${key} ${l.player} ${lu.in ? "in, #" + lu.slot : "not in"}`); }
+    }
+    if (changed) writeDaily(f, J, D, key);
+  }
+}
+
 // Grade every open Dub and Robin leg from its final box score. Each result is
 // announced once — the alert key lives in state, so a push that fails and
 // leaves the open copy on origin cannot make it announce twice.
@@ -1244,6 +1284,7 @@ async function main() {
   try { await ladderPlace(day, games, D, saveState); } catch (e) { console.log("ladder place failed:", e.message); }
   try { await picksSettle(D, saveState); } catch (e) { console.log("picks settle failed:", e.message); }
   try { await picksPlace(day, games, D, saveState); } catch (e) { console.log("picks place failed:", e.message); }
+  try { lineupUpdates(day, games, D); saveState(); } catch (e) { console.log("lineup update failed:", e.message); }
 
   // ── Live tracking of everything alerted today ──
   const todays = Object.entries(D.bets).filter(([, b]) => b.date === day).map(([k, b]) => ({ k, b }));
