@@ -1,25 +1,25 @@
 {
-  "at": "2026-09-16T18:58:51.902Z",
+  "at": "2026-09-23T10:37:45.021Z",
   "season": 2026,
   "slates": 16,
   "stride": 9,
   "leakage": "player lines rebuilt as-of from game logs; team splits full-season (clamped ±10-12%); injuries unavailable on finished games, so the backtest runs blind to them",
   "legCounts": {
-    "tpm": 856,
-    "ast": 1005,
-    "reb": 1006,
-    "pts": 1006
+    "tpm": 853,
+    "ast": 1008,
+    "reb": 1009,
+    "pts": 1009
   },
   "legs": {
-    "n": 3873,
-    "graded": 3654,
-    "void": 219,
+    "n": 3879,
+    "graded": 3651,
+    "void": 228,
     "predicted": 0.7,
-    "actual": 0.707,
+    "actual": 0.706,
     "edge": 0.007,
     "brier": 0.2049,
     "predictedRaw": 0.699,
-    "brierRaw": 0.2052
+    "brierRaw": 0.2051
   },
   "byGrade": [
     {
@@ -38,105 +38,105 @@
     },
     {
       "key": "B+",
-      "n": 335,
-      "predicted": 0.764,
-      "actual": 0.8,
-      "edge": 0.036
+      "n": 337,
+      "predicted": 0.765,
+      "actual": 0.804,
+      "edge": 0.039
     },
     {
       "key": "B",
-      "n": 655,
-      "predicted": 0.737,
-      "actual": 0.745,
-      "edge": 0.008
+      "n": 652,
+      "predicted": 0.738,
+      "actual": 0.747,
+      "edge": 0.009
     },
     {
       "key": "C+",
-      "n": 1180,
+      "n": 1176,
       "predicted": 0.703,
-      "actual": 0.708,
-      "edge": 0.004
+      "actual": 0.707,
+      "edge": 0.003
     },
     {
       "key": "C",
-      "n": 1097,
+      "n": 1101,
       "predicted": 0.665,
-      "actual": 0.676,
-      "edge": 0.011
+      "actual": 0.673,
+      "edge": 0.008
     },
     {
       "key": "D",
-      "n": 327,
-      "predicted": 0.643,
-      "actual": 0.621,
-      "edge": -0.023
+      "n": 325,
+      "predicted": 0.642,
+      "actual": 0.622,
+      "edge": -0.021
     }
   ],
   "byMarket": [
     {
       "key": "pts",
       "n": 948,
-      "predicted": 0.684,
-      "actual": 0.68,
-      "edge": -0.003
+      "predicted": 0.683,
+      "actual": 0.678,
+      "edge": -0.005
     },
     {
       "key": "reb",
       "n": 948,
       "predicted": 0.695,
-      "actual": 0.732,
-      "edge": 0.037
+      "actual": 0.731,
+      "edge": 0.036
     },
     {
       "key": "ast",
       "n": 948,
       "predicted": 0.706,
-      "actual": 0.696,
-      "edge": -0.01
+      "actual": 0.699,
+      "edge": -0.007
     },
     {
       "key": "tpm",
-      "n": 810,
+      "n": 807,
       "predicted": 0.716,
-      "actual": 0.721,
-      "edge": 0.005
+      "actual": 0.719,
+      "edge": 0.003
     }
   ],
   "byBand": [
     {
       "key": "60-65%",
-      "n": 837,
+      "n": 841,
       "predicted": 0.627,
-      "actual": 0.643,
-      "edge": 0.016
+      "actual": 0.637,
+      "edge": 0.011
     },
     {
       "key": "65-70%",
-      "n": 1037,
+      "n": 1029,
       "predicted": 0.676,
-      "actual": 0.691,
-      "edge": 0.015
+      "actual": 0.693,
+      "edge": 0.017
     },
     {
       "key": "70-75%",
-      "n": 1039,
+      "n": 1042,
       "predicted": 0.723,
-      "actual": 0.721,
-      "edge": -0.003
+      "actual": 0.719,
+      "edge": -0.005
     },
     {
       "key": "75-80%",
-      "n": 563,
+      "n": 557,
       "predicted": 0.771,
-      "actual": 0.774,
-      "edge": 0.003
+      "actual": 0.777,
+      "edge": 0.006
     },
     {
       "key": "80-85%",
-      "n": 178,
+      "n": 182,
       "predicted": 0.814,
-      "actual": 0.803,
-      "edge": -0.01
+      "actual": 0.813,
+      "edge": -0.001
     }
   ],
   "monotonic": {
@@ -147,7 +147,7 @@
     "min": 30.4,
     "p10": 47.5,
     "p25": 52.5,
-    "median": 58.6,
+    "median": 58.7,
     "p75": 65.1,
     "p90": 70.2,
     "p99": 75.9,
@@ -233,10 +233,10 @@
         "pick": "Andrew Wiggins",
         "market": "ast",
         "line": 1.5,
-        "p": 0.7825,
+        "p": 0.7818,
         "score": 76.8,
         "grade": "A",
-        "price": -433,
+        "price": -431,
         "status": "void",
         "actual": null
       },
@@ -315,17 +315,17 @@
     ]
   },
   "doubles": {
-    "n": 43,
-    "predicted": 0.626,
-    "actual": 0.651,
-    "naive": 0.656,
+    "n": 46,
+    "predicted": 0.627,
+    "actual": 0.652,
+    "naive": 0.657,
     "edge": 0.025,
     "byTeam": [
       {
         "key": "opposing",
-        "n": 20,
-        "predicted": 0.625,
-        "actual": 0.65,
+        "n": 23,
+        "predicted": 0.628,
+        "actual": 0.652,
         "edge": 0.025
       },
       {
@@ -339,10 +339,10 @@
     "byMarkets": [
       {
         "key": "ast|tpm",
-        "n": 19,
-        "predicted": 0.626,
-        "actual": 0.684,
-        "edge": 0.058
+        "n": 20,
+        "predicted": 0.627,
+        "actual": 0.7,
+        "edge": 0.073
       },
       {
         "key": "tpm|tpm",
@@ -352,7 +352,7 @@
         "edge": 0.046
       }
     ],
-    "legHit": 0.802
+    "legHit": 0.804
   },
   "fetches": 502,
   "retries": 3

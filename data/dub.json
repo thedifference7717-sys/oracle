@@ -71,9 +71,76 @@
    "price": -114,
    "fair": -116,
    "settled": "2026-09-23T03:12:15.066Z"
+  },
+  {
+   "id": "2026-09-23:dub",
+   "date": "2026-09-23",
+   "published": "2026-09-23T16:10:51.382Z",
+   "status": "open",
+   "games": {
+    "MLB": 16
+   },
+   "excludes": {
+    "sport": "MLB",
+    "pick": "Bo Bichette"
+   },
+   "legs": [
+    {
+     "sport": "MLB",
+     "player": "Hao-Yu Lee",
+     "playerId": 701678,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824223",
+     "gk": 824223,
+     "teams": "DET vs WSH",
+     "start": "2026-09-23T17:10:00Z",
+     "price": -203,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP231310WSHDET-DETHLEE50-1",
+      "bid": 0.65,
+      "ask": 0.67,
+      "spread": 0.02
+     },
+     "p": 0.7364,
+     "pAdj": 0.6996,
+     "detail": "#2 · vs Richard Lovelady · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
+    },
+    {
+     "sport": "MLB",
+     "player": "Miguel Vargas",
+     "playerId": 678246,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824060",
+     "gk": 824060,
+     "teams": "CWS @ KC",
+     "start": "2026-09-23T23:40:00Z",
+     "price": -213,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP231940CWSKC-CWSMVARGAS20-1",
+      "bid": 0.65,
+      "ask": 0.68,
+      "spread": 0.03
+     },
+     "p": 0.6845,
+     "pAdj": 0.6834,
+     "detail": "#4 · vs Seth Lugo · projected, 95% to start"
+    }
+   ],
+   "prob": 0.4781,
+   "price": 119,
+   "fair": 109
   }
  ],
- "updated": "2026-09-23T03:24:33.015Z",
+ "updated": "2026-09-23T17:20:09.950Z",
  "record": {
   "w": 0,
   "l": 1

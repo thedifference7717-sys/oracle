@@ -246,11 +246,210 @@
     ]
    },
    "settled": "2026-09-23T03:06:52.292Z"
+  },
+  {
+   "id": "2026-09-23:robin",
+   "date": "2026-09-23",
+   "published": "2026-09-23T16:10:51.382Z",
+   "status": "open",
+   "games": {
+    "MLB": 16
+   },
+   "legs": [
+    {
+     "sport": "MLB",
+     "player": "Bo Bichette",
+     "playerId": 666182,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "822841",
+     "gk": 822841,
+     "teams": "NYM @ TEX",
+     "start": "2026-09-24T00:05:00Z",
+     "price": -213,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP232005NYMTEX-NYMBBICHETTE19-1",
+      "bid": 0.66,
+      "ask": 0.68,
+      "spread": 0.02
+     },
+     "p": 0.7142,
+     "pAdj": 0.6961,
+     "detail": "#4 · vs Cody Bradford · projected, 95% to start"
+    },
+    {
+     "sport": "MLB",
+     "player": "Hao-Yu Lee",
+     "playerId": 701678,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824223",
+     "gk": 824223,
+     "teams": "DET vs WSH",
+     "start": "2026-09-23T17:10:00Z",
+     "price": -203,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP231310WSHDET-DETHLEE50-1",
+      "bid": 0.65,
+      "ask": 0.67,
+      "spread": 0.02
+     },
+     "p": 0.7364,
+     "pAdj": 0.6996,
+     "detail": "#2 · vs Richard Lovelady · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
+    },
+    {
+     "sport": "MLB",
+     "player": "Miguel Vargas",
+     "playerId": 678246,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824060",
+     "gk": 824060,
+     "teams": "CWS @ KC",
+     "start": "2026-09-23T23:40:00Z",
+     "price": -213,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP231940CWSKC-CWSMVARGAS20-1",
+      "bid": 0.65,
+      "ask": 0.68,
+      "spread": 0.03
+     },
+     "p": 0.6845,
+     "pAdj": 0.6834,
+     "detail": "#4 · vs Seth Lugo · projected, 95% to start"
+    },
+    {
+     "sport": "MLB",
+     "player": "Yordan Alvarez",
+     "playerId": 670541,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "823086",
+     "gk": 823086,
+     "teams": "HOU @ SEA",
+     "start": "2026-09-24T02:10:00Z",
+     "price": -213,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP232210HOUSEA-HOUYALVAREZ44-1",
+      "bid": 0.66,
+      "ask": 0.68,
+      "spread": 0.02
+     },
+     "p": 0.678,
+     "pAdj": 0.6806,
+     "detail": "#4 · vs George Kirby · projected, 95% to start"
+    },
+    {
+     "sport": "MLB",
+     "player": "Ozzie Albies",
+     "playerId": 645277,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824868",
+     "gk": 824868,
+     "teams": "ATL vs CIN",
+     "start": "2026-09-23T23:15:00Z",
+     "price": -203,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP231915CINATL-ATLOALBIES1-1",
+      "bid": 0.66,
+      "ask": 0.67,
+      "spread": 0.01
+     },
+     "p": 0.6483,
+     "pAdj": 0.6618,
+     "detail": "#5 · vs Andrew Abbott · projected, 95% to start"
+    },
+    {
+     "sport": "MLB",
+     "player": "Alec Burleson",
+     "playerId": 676475,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "823327",
+     "gk": 823327,
+     "teams": "STL @ PIT",
+     "start": "2026-09-23T22:40:00Z",
+     "price": -203,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP231840STLPIT-STLABURLESON41-1",
+      "bid": 0.64,
+      "ask": 0.67,
+      "spread": 0.03
+     },
+     "p": 0.6444,
+     "pAdj": 0.6602,
+     "detail": "#5 · vs Lake Bachar · projected, 95% to start"
+    }
+   ],
+   "sizes": [
+    {
+     "m": 2,
+     "tickets": 15,
+     "avgPays": 2.193,
+     "expWin": 6.941,
+     "ev": 0.0148
+    },
+    {
+     "m": 3,
+     "tickets": 20,
+     "avgPays": 3.249,
+     "expWin": 6.294,
+     "ev": 0.0222
+    },
+    {
+     "m": 4,
+     "tickets": 15,
+     "avgPays": 4.811,
+     "expWin": 3.21,
+     "ev": 0.0296
+    },
+    {
+     "m": 5,
+     "tickets": 6,
+     "avgPays": 7.125,
+     "expWin": 0.873,
+     "ev": 0.0369
+    },
+    {
+     "m": 6,
+     "tickets": 1,
+     "avgPays": 10.552,
+     "expWin": 0.099,
+     "ev": 0.0442
+    }
+   ]
   }
  ],
- "updated": "2026-09-23T03:24:33.020Z",
+ "updated": "2026-09-23T17:20:10.056Z",
  "record": {
-  "w": 0,
-  "l": 0
+  "w": 6,
+  "l": 0,
+  "void": 0,
+  "unit": "bets",
+  "tickets": {
+   "w": 57,
+   "l": 0
+  },
+  "days": {
+   "w": 1,
+   "l": 0
+  }
  }
 }
