@@ -791,7 +791,45 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-23:822841",
+   "date": "2026-09-23",
+   "sport": "MLB",
+   "published": "2026-09-23T20:30:27.020Z",
+   "firstPitch": "2026-09-24T00:05:00Z",
+   "teams": "NYM vs TEX",
+   "venue": "Globe Life Field",
+   "price": -175,
+   "prob": 0.5596257844905426,
+   "edge": -0.07673785187309379,
+   "evPct": -12.058805294343312,
+   "kelly": 0,
+   "soft": 0.06464109252411898,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 15.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 666182,
+     "name": "Bo Bichette",
+     "slot": 3,
+     "p": 0.7516336178095526,
+     "sp": "Cody Bradford"
+    },
+    {
+     "id": 596019,
+     "name": "Francisco Lindor",
+     "slot": 1,
+     "p": 0.7268990575357113,
+     "sp": "Cody Bradford"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-23T20:02:30.681Z"
+ "updated": "2026-09-23T20:30:27.025Z"
 }
