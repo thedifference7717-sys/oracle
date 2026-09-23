@@ -474,7 +474,7 @@ async function betsSummary(D) {
     const dc = DS.chain(dubs, 100, { priceOf: b => F.dubPrice(FILLS, b) }), ds = DS.stakeFor(dc, day);
     lines.push(`✌️ Dub: <b>${money(ds.stake)}</b> on a $100 bankroll · balance ${money(dc.balance)} (${dc.w}–${dc.l})`);
     const rc = DS.robinChain(readDaily(ROBIN_FILE, D && D.robinRows).bets, 570), ru = DS.robinUnitFor(rc, day);
-    lines.push(`🐦 Robin: <b>${money(ru.unit)} a ticket</b> on a $570 bankroll · balance ${money(rc.balance)} (${rc.rec.w}–${rc.rec.l} tickets)`);
+    lines.push(`🐦 Robin: <b>${money(ru.unit)} a ticket</b> on a $570 bankroll · balance ${money(rc.balance)} (${rc.rec.w}–${rc.rec.l} tickets · ${rc.w}–${rc.l} days)`);
   } catch (e) {}
   return lines.join("\n");
 }
@@ -789,7 +789,9 @@ function writeDaily(f, J, D, key) {
   J.record = { w: done.filter(b => b.status === "won").length, l: done.filter(b => b.status === "lost").length };
   if (f === ROBIN_FILE && _DS.robinTickets) {                        // the Robin's record is its tickets, not its days
     const t = done.map(b => _DS.robinTickets(b)).filter(Boolean);
-    J.record = { w: t.reduce((a, x) => a + x.w, 0), l: t.reduce((a, x) => a + x.l, 0), push: t.reduce((a, x) => a + x.p, 0), unit: "tickets" };
+    const pl = b => ((b.graded && b.graded.sizes) || []).reduce((a, z) => a + (z.pl || 0), 0);
+    J.record = { w: t.reduce((a, x) => a + x.w, 0), l: t.reduce((a, x) => a + x.l, 0), push: t.reduce((a, x) => a + x.p, 0), unit: "tickets",
+                 days: { w: done.filter(b => pl(b) > 0).length, l: done.filter(b => pl(b) < 0).length } };
   }
   mkdirSync("data", { recursive: true });
   writeFileSync(f, JSON.stringify(J, null, 1));
@@ -915,7 +917,7 @@ async function picksSettle(D, saveState) {
             if (r) money_ = `\n💵 ${money(r.stake)} bet → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Dub balance ${money(c.balance)} on $100 · next Dub ${money(c.next)}`;
           } else {
             const c = DS.robinChain(J.bets, 570), r = c.rows.find(x => x.date === b.date);
-            if (r) money_ = `\n💵 ${r.tickets} tickets × ${money(r.unit)} = ${money(r.stake)} → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Robin balance ${money(c.balance)} on $570 · next ${money(c.unit)} a ticket`;
+            if (r) money_ = `\n💵 ${r.tickets} tickets × ${money(r.unit)} = ${money(r.stake)} → ${r.pl >= 0 ? "+" : ""}${money(r.pl)} · Robin balance ${money(c.balance)} on $570 · next ${money(c.unit)} a ticket\n📊 Record: ${c.rec.w}–${c.rec.l}${c.rec.p ? `–${c.rec.p}` : ""} tickets · ${c.w}–${c.l} days`;
           }
         } catch (e) { console.log(`${kind}: amount line skipped (${e.message})`); }
         if (kind === "dub") {

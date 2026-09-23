@@ -59,8 +59,9 @@ let robins = null, ladder = null, lockAt = null;
 let bankroll = +P.store.get("robin.bankroll", 570) || 570;
 const chainNow = () => window.DubStake.robinChain(robins && robins.bets, bankroll);
 const unitNow = () => window.DubStake.robinUnitFor(chainNow(), P.slateDay());
-// The record is every ticket graded (won–lost, then pushed if any), not days.
-const recText = c => `${c.rec.w}–${c.rec.l}${c.rec.p?`–${c.rec.p}`:""} tickets`;
+// Two records: every ticket graded (won–lost, then pushed if any), and days —
+// a winning day is one the tickets paid back more than they cost.
+const recText = c => `${c.rec.w}–${c.rec.l}${c.rec.p?`–${c.rec.p}`:""} tickets · ${c.w}–${c.l} days`;
 // Once today's Robin has settled, the unit that matters is the NEXT one.
 const unitLabel = (c, row) => row && row.graded
   ? { unit: c.unit, text: `a ticket from the next Robin — ${P.money(c.balance)} ÷ 570` }
@@ -136,7 +137,7 @@ function render(){
 function renderHist(){
   const el=document.getElementById("hist"), list=(robins&&robins.bets||[]).filter(b=>b.status!=="noplay").slice().reverse();
   const ch=chainNow(), byDate=Object.fromEntries(ch.rows.map(r=>[r.date,r]));
-  document.getElementById("recNote").innerHTML=`<b>${ch.rec.w}–${ch.rec.l}</b>${ch.rec.p?`–${ch.rec.p}`:""} tickets · legs ${ch.rec.legsW}–${ch.rec.legsL} · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
+  document.getElementById("recNote").innerHTML=`<b>${ch.rec.w}–${ch.rec.l}${ch.rec.p?`–${ch.rec.p}`:""}</b> tickets · <b>${ch.w}–${ch.l}</b> days · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
   el.innerHTML=list.length?list.map(b=>{
     const r=byDate[b.date];
     return `<div class="hrow">
