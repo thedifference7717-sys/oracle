@@ -1075,6 +1075,19 @@ async function main() {
     if (D.fills && !existsSync(FILLS_FILE)) writeFills(D, D.fills);   // a reverted push: write it back
     await tgCommands(D, () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) {} });
   } catch (e) { console.log("fills failed:", e.message); }
+  // Rows held in state that the published files lack — a push that failed,
+  // or a runner that was replaced before its push landed — are written back
+  // now, not only when something new happens to them. Without this a day
+  // graded by a runner that could not publish stays "open" on the dashboard
+  // for good, because nothing about it ever changes again.
+  try {
+    const L0 = readLadderFile(), l0 = readLadderLocal();
+    if (JSON.stringify(L0.bets) !== JSON.stringify(l0 && l0.bets)) { writeLadderFile(L0); console.log("ladder: re-wrote rows held in state"); }
+    for (const [f, key] of [[DUB_FILE, "dubRows"], [ROBIN_FILE, "robinRows"]]) {
+      const J = readDaily(f, D[key]), local = readJsonFile(f);
+      if (J.bets.length && JSON.stringify(J.bets) !== JSON.stringify(local && local.bets)) { writeDaily(f, J, D, key); console.log(`${f}: re-wrote rows held in state`); }
+    }
+  } catch (e) { console.log("resync failed:", e.message); }
   // No baseball is no longer a day off: the ladder picks across basketball
   // and football too, so it still has to settle yesterday's rung and look for
   // today's. Nothing below this line is about anything but baseball.
