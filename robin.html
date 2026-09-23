@@ -59,6 +59,8 @@ let robins = null, ladder = null, lockAt = null;
 let bankroll = +P.store.get("robin.bankroll", 570) || 570;
 const chainNow = () => window.DubStake.robinChain(robins && robins.bets, bankroll);
 const unitNow = () => window.DubStake.robinUnitFor(chainNow(), P.slateDay());
+// The record is every ticket graded (won–lost, then pushed if any), not days.
+const recText = c => `${c.rec.w}–${c.rec.l}${c.rec.p?`–${c.rec.p}`:""} tickets`;
 // Once today's Robin has settled, the unit that matters is the NEXT one.
 const unitLabel = (c, row) => row && row.graded
   ? { unit: c.unit, text: `a ticket from the next Robin — ${P.money(c.balance)} ÷ 570` }
@@ -72,7 +74,7 @@ function paintBank(){
   const ub=document.getElementById("unitBig"); if(ub)ub.textContent=P.money(lb.unit);
   const ul=document.getElementById("unitLine"); if(ul)ul.textContent=lb.text;
   const bb=document.getElementById("balBig"); if(bb){bb.textContent=P.money(c.balance);bb.style.color=c.pl>=0?"var(--green)":"var(--red)";}
-  const rl=document.getElementById("recLine"); if(rl)rl.textContent=`Robin balance · ${c.w}–${c.l} days`;
+  const rl=document.getElementById("recLine"); if(rl)rl.textContent=`Robin balance · ${recText(c)}`;
   paintRows(); renderHist();
 }
 function setBankroll(v){ const x=parseFloat(v); if(!(x>0))return; bankroll=+x.toFixed(2); P.store.set("robin.bankroll",bankroll); P.flashSaved("bkSaved"); paintBank(); }
@@ -120,7 +122,7 @@ function render(){
     </div>
     <div class="nums" style="margin-top:12px">
       <div><div class="v" id="unitBig" style="color:var(--yellow)">${P.money(unitLabel(ch,row).unit)}</div><div class="l" id="unitLine">${unitLabel(ch,row).text}</div></div>
-      <div><div class="v" id="balBig" style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</div><div class="l" id="recLine">Robin balance · ${ch.w}–${ch.l} days</div></div>
+      <div><div class="v" id="balBig" style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</div><div class="l" id="recLine">Robin balance · ${recText(ch)}</div></div>
       <div class="field" style="margin-top:0;flex:1 1 150px;max-width:none"><label for="bk">Robin bankroll you started with <span class="saved" id="bkSaved"></span></label>
         <input id="bk" type="text" inputmode="decimal" autocomplete="off" value="${bankroll}" oninput="setBankroll(this.value)"></div>
     </div>
@@ -134,12 +136,12 @@ function render(){
 function renderHist(){
   const el=document.getElementById("hist"), list=(robins&&robins.bets||[]).filter(b=>b.status!=="noplay").slice().reverse();
   const ch=chainNow(), byDate=Object.fromEntries(ch.rows.map(r=>[r.date,r]));
-  document.getElementById("recNote").innerHTML=`<b>${ch.w}–${ch.l}</b> days · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
+  document.getElementById("recNote").innerHTML=`<b>${ch.rec.w}–${ch.rec.l}</b>${ch.rec.p?`–${ch.rec.p}`:""} tickets · legs ${ch.rec.legsW}–${ch.rec.legsL} · ${P.money(ch.start)} → <b style="color:${ch.pl>=0?"var(--green)":"var(--red)"}">${P.money(ch.balance)}</b>`;
   el.innerHTML=list.length?list.map(b=>{
     const r=byDate[b.date];
     return `<div class="hrow">
       <div class="top"><span class="d">${P.prettyDate(b.date)}</span>
-        <span>${b.graded?`<b>${b.graded.hit} of ${b.graded.of} hit</b>`:'<span class="tag warn">OPEN</span>'}</span></div>
+        <span>${b.graded?(t=>`<b>${t.w}–${t.l}${t.p?`–${t.p}`:""}</b> tickets · ${b.graded.hit} of ${b.graded.of} hit`)(window.DubStake.robinTickets(b)):'<span class="tag warn">OPEN</span>'}</span></div>
       ${r?`<div class="d" style="margin-top:3px">${r.tickets} tickets × ${P.money(r.unit)} = ${P.money(r.stake)}${r.pl?` · <b style="color:${r.pl>0?"var(--green)":"var(--red)"}">${r.pl>0?"+":""}${P.money(r.pl)}</b>`:""} · balance ${P.money(r.balance)}</div>`:""}
       <div class="who">${b.legs.map(l=>`${l.result==="won"?"✅":l.result==="lost"?"❌":l.result==="void"?"➖":"·"} ${P.EMOJI[l.sport]||""} ${l.player} <span style="color:var(--dim)">${l.need}</span>`).join("<br>")}</div>
     </div>`;}).join(""):`<div class="empty">The first Robin publishes at the next lock.</div>`;

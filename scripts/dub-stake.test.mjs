@@ -73,6 +73,16 @@ console.log("the Robin: a ticket is the balance divided by 570");
   ok("an open Robin rides at the unit without moving the balance", withOpen.rows[1].status === "open" && withOpen.balance === 560 && withOpen.rows[1].unit === 0.98);
   ok("robinUnitFor finds today's row", D.robinUnitFor(withOpen, "d9").unit === 0.98);
   ok("a record of days up and down", two.w === 1 && two.l === 1);
+  // The record counts every ticket: 6 legs, all won -> 57-0.
+  const legs = r => r.map(x => ({ result: x }));
+  const perfect = { date: "d1", legs: legs(["won", "won", "won", "won", "won", "won"]), graded: { sizes: sizes([1, 1, 1, 1, 1]).map(z => Object.assign(z, { cashed: z.tickets })) } };
+  ok("a perfect Robin is 57-0", JSON.stringify(D.robinTickets(perfect)) === JSON.stringify({ w: 57, l: 0, p: 0, legsW: 6, legsL: 0 }), JSON.stringify(D.robinTickets(perfect)));
+  ok("the chain adds up tickets across days", D.robinChain([perfect], 570).rec.w === 57);
+  // Two voids and a loss among four: by 2s the void pair is a push.
+  const mixed = { date: "d2", legs: legs(["won", "lost", "void", "void"]),
+    graded: { sizes: [{ m: 2, tickets: 6, cashed: 2 }, { m: 3, tickets: 4, cashed: 1 }, { m: 4, tickets: 1, cashed: 0 }] } };
+  ok("an all-void ticket is a push, not a win or a loss", JSON.stringify(D.robinTickets(mixed)) === JSON.stringify({ w: 3, l: 7, p: 1, legsW: 1, legsL: 1 }), JSON.stringify(D.robinTickets(mixed)));
+  ok("an open Robin is not in the record", D.robinTickets(open) === null);
 }
 
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");

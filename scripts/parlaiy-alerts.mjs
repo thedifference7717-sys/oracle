@@ -20,6 +20,7 @@ import { join } from "path";
 import { execSync } from "child_process";
 import { pathToFileURL } from "url";
 import M from "../dd-model.js";
+import _DS from "../dub-stake.js";
 import { fetchHitQuotes, lookup as quoteFor } from "./kalshi-quotes.mjs";
 // Loaded on first use, not at the top: it pulls in the basketball and football
 // models, and a problem in any of them must cost the ladder one pass — never
@@ -473,7 +474,7 @@ async function betsSummary(D) {
     const dc = DS.chain(dubs, 100, { priceOf: b => F.dubPrice(FILLS, b) }), ds = DS.stakeFor(dc, day);
     lines.push(`✌️ Dub: <b>${money(ds.stake)}</b> on a $100 bankroll · balance ${money(dc.balance)} (${dc.w}–${dc.l})`);
     const rc = DS.robinChain(readDaily(ROBIN_FILE, D && D.robinRows).bets, 570), ru = DS.robinUnitFor(rc, day);
-    lines.push(`🐦 Robin: <b>${money(ru.unit)} a ticket</b> on a $570 bankroll · balance ${money(rc.balance)} (${rc.w}–${rc.l})`);
+    lines.push(`🐦 Robin: <b>${money(ru.unit)} a ticket</b> on a $570 bankroll · balance ${money(rc.balance)} (${rc.rec.w}–${rc.rec.l} tickets)`);
   } catch (e) {}
   return lines.join("\n");
 }
@@ -786,6 +787,10 @@ function writeDaily(f, J, D, key) {
   J.updated = new Date().toISOString();
   const done = J.bets.filter(b => b.status && b.status !== "open" && b.status !== "noplay");
   J.record = { w: done.filter(b => b.status === "won").length, l: done.filter(b => b.status === "lost").length };
+  if (f === ROBIN_FILE && _DS.robinTickets) {                        // the Robin's record is its tickets, not its days
+    const t = done.map(b => _DS.robinTickets(b)).filter(Boolean);
+    J.record = { w: t.reduce((a, x) => a + x.w, 0), l: t.reduce((a, x) => a + x.l, 0), push: t.reduce((a, x) => a + x.p, 0), unit: "tickets" };
+  }
   mkdirSync("data", { recursive: true });
   writeFileSync(f, JSON.stringify(J, null, 1));
   if (D) {                                              // hold the last two weeks in state
@@ -918,7 +923,8 @@ async function picksSettle(D, saveState) {
             b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need} — ${l.note || l.result}`).join("\n") + money_);
         } else {
           const g = b.graded;
-          await tg(`🐦 <b>ROBIN DONE</b> · ${prettyDate(b.date)} · ${g.hit} of ${g.of} hit\n` +
+          const tk = _DS.robinTickets ? _DS.robinTickets(b) : null;
+          await tg(`🐦 <b>ROBIN DONE</b> · ${prettyDate(b.date)} · ${tk ? `<b>${tk.w}–${tk.l}${tk.p ? `–${tk.p}` : ""}</b> tickets · ` : ""}${g.hit} of ${g.of} hit\n` +
             b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need}`).join("\n") + `\n\n` +
             g.sizes.map(z => `By ${z.m}s: ${z.cashed}/${z.tickets} cashed · ${z.pl >= 0 ? "+" : ""}${z.pl.toFixed(2)} units`).join("\n") + money_);
         }

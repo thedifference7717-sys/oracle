@@ -84,12 +84,25 @@
     const sizes = (b.graded && b.graded.sizes) || b.sizes || [];
     return sizes.find(z => z.m === size) || sizes[sizes.length - 1] || null;
   }
+  // A graded Robin as a record of its bets: every ticket won, lost or pushed
+  // (a ticket whose legs all voided returns its stake), and its legs.
+  const choose = (n, k) => { let r = 1; for (let i = 0; i < k; i++) r = r * (n - i) / (i + 1); return Math.round(r); };
+  function robinTickets(b) {
+    const sizes = (b && b.graded && b.graded.sizes) || [];
+    if (!sizes.length) return null;
+    const res = (b.legs || []).map(l => l.result);
+    const voids = res.filter(x => x === "void").length;
+    let w = 0, l = 0, p = 0;
+    for (const z of sizes) { const push = choose(voids, z.m); w += z.cashed; p += push; l += z.tickets - z.cashed - push; }
+    return { w, l, p, legsW: res.filter(x => x === "won").length, legsL: res.filter(x => x === "lost").length };
+  }
   // bets: the published Robin rows. Every graded size is played, at the unit.
   function robinChain(bets, bankroll) {
     const start = +bankroll > 0 ? +bankroll : ROBIN_DAYS;
     let balance = start;
     const rows = [];
     let w = 0, l = 0;
+    const rec = { w: 0, l: 0, p: 0, legsW: 0, legsL: 0 };     // every ticket and every leg graded
     const list = (bets || []).filter(b => b && b.status !== "noplay" && Array.isArray(b.legs))
       .slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
     for (const b of list) {
@@ -102,11 +115,13 @@
         row.status = row.pl > 0 ? "won" : row.pl < 0 ? "lost" : "void";
         balance = r2(balance + row.pl); row.balance = balance;
         if (row.pl > 0) w++; else if (row.pl < 0) l++;
+        const t = robinTickets(b);
+        if (t) { row.tickets_ = t; for (const k in rec) rec[k] += t[k]; }
       }
       rows.push(row);
     }
     const unit = robinUnitOf(balance);
-    return { start, balance, unit, rows, w, l, pl: r2(balance - start), perDay: r2(unit * ROBIN_TICKETS) };
+    return { start, balance, unit, rows, w, l, rec, pl: r2(balance - start), perDay: r2(unit * ROBIN_TICKETS) };
   }
   // The unit that rides on a given day: that day's row if it exists, else the
   // one the next Robin would be played at.
@@ -115,5 +130,5 @@
     return { unit: r ? r.unit : res.unit };
   }
 
-  return { chain, stakeFor, robinChain, robinUnitFor, robinUnitOf, robinSize, PCT, MISS_GAIN, ROBIN_TICKETS };
+  return { chain, stakeFor, robinChain, robinUnitFor, robinUnitOf, robinSize, robinTickets, PCT, MISS_GAIN, ROBIN_TICKETS };
 });
