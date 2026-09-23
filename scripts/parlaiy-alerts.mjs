@@ -380,7 +380,14 @@ let _F = null;
 const NO_FILLS = { parse: () => null, apply: () => "", ladderRows: b => b, dubPrice: (f, b) => b.price, empty: () => ({ ladder: {}, dub: {} }) };
 const fillsLib = async () => {
   if (_F) return _F;
-  try { _F = (await import("../fills.js")).default; } catch (e) { console.log("fills.js unavailable:", e.message); _F = NO_FILLS; }
+  try { _F = (await import("../fills.js")).default; }
+  catch (e) {
+    // Fetched but not restored by an older loop: take it from what was fetched.
+    try {
+      writeFileSync("fills.js", execSync("git show FETCH_HEAD:fills.js 2>/dev/null || git show origin/main:fills.js", { encoding: "utf8" }));
+      _F = (await import("../fills.js?r=1")).default;
+    } catch (e2) { console.log("fills.js unavailable:", e.message); _F = NO_FILLS; }
+  }
   return _F;
 };
 function readFills(D) {
@@ -404,6 +411,7 @@ const ladderBets = bets => { try { return _F ? _F.ladderRows(bets, FILLS) : bets
 async function tgCommands(D, saveState) {
   if (DRY_RUN || !TOKEN || !CHAT) return;
   const F = await fillsLib();
+  if (F === NO_FILLS) return;                                 // leave the commands unread until it can apply them
   let r;
   try { r = await j(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${(D.tgOffset || 0) + 1}&timeout=0&allowed_updates=${encodeURIComponent('["message","channel_post"]')}`); }
   catch (e) { console.log("telegram: commands unavailable (" + e.message + ")"); return; }
