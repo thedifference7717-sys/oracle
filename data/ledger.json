@@ -753,7 +753,45 @@
     1,
     1
    ]
+  },
+  {
+   "id": "2026-09-23:824060",
+   "date": "2026-09-23",
+   "sport": "MLB",
+   "published": "2026-09-23T20:02:30.677Z",
+   "firstPitch": "2026-09-23T23:40:00Z",
+   "teams": "CWS vs KC",
+   "venue": "Kauffman Stadium",
+   "price": -175,
+   "prob": 0.5945370122391999,
+   "edge": -0.041826624124436496,
+   "evPct": -6.572755219554311,
+   "kelly": 0,
+   "soft": 0.08944895363055783,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 17.5,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 803011,
+     "name": "Sam Antonacci",
+     "slot": 1,
+     "p": 0.7812087207326133,
+     "sp": "Seth Lugo"
+    },
+    {
+     "id": 671976,
+     "name": "Tristan Peters",
+     "slot": 6,
+     "p": 0.7450285336994152,
+     "sp": "Seth Lugo"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-23T17:50:10.131Z"
+ "updated": "2026-09-23T20:02:30.681Z"
 }
