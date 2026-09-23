@@ -879,6 +879,52 @@ async function picksPlace(day, games, D, saveState) {
   if (D) { D.picksDay = day; if (saveState) saveState(); }
 }
 
+// ── lineup updates ──────────────────────────────────────────────────────────
+// The Ladder, Dub and Robin lock on the clock, so an MLB pick can go out on a
+// projected lineup. When that game's lineups post, say whether he's in and
+// where he bats. A note only — the locked pick and its published row are
+// never touched. Sent once per game per day; the key lives in state.
+async function lineupUpdates(day, games, D, saveState) {
+  D.lineupNoted = D.lineupNoted || {};
+  for (const k of Object.keys(D.lineupNoted)) if (k.slice(0, 10) < M.ymd(new Date(Date.now() - 3 * 86400000))) delete D.lineupNoted[k];
+  const picks = [];
+  const L = readLadderFile();
+  for (const b of L.bets) {
+    if (b.date === day && b.status === "open" && (b.sport || "MLB") === "MLB" && b.posted === false && b.gk != null)
+      picks.push({ what: "🪜 Ladder", player: b.pick, playerId: b.playerId, gk: b.gk });
+  }
+  for (const [f, key, what] of [[DUB_FILE, "dubRows", "✌️ Dub"], [ROBIN_FILE, "robinRows", "🐦 Robin"]]) {
+    const b = readDaily(f, D[key]).bets.find(x => x.date === day && x.status === "open");
+    for (const l of (b && b.legs) || []) {
+      if (l.sport === "MLB" && !l.result && /projected/.test(l.detail || "") && l.gk != null)
+        picks.push({ what, player: l.player, playerId: l.playerId, gk: l.gk });
+    }
+  }
+  const byGame = new Map();
+  for (const p of picks) {
+    const k = `${day}:${p.gk}`;
+    if (D.lineupNoted[k]) continue;
+    if (!byGame.has(k)) byGame.set(k, []);
+    byGame.get(k).push(p);
+  }
+  for (const [k, ps] of byGame) {
+    const g = games.find(x => String(x.gamePk) === String(ps[0].gk));
+    if (!g || !posted(g) || Date.now() >= Date.parse(g.gameDate)) continue;
+    const lines = ps.map(p => {
+      for (const side of ["homePlayers", "awayPlayers"]) {
+        const i = g.lineups[side].findIndex(x => String(x.id) === String(p.playerId));
+        if (i >= 0) return `✓ <b>${p.player}</b> is in — batting #${i + 1} (${p.what})`;
+      }
+      return `✗ <b>${p.player}</b> is NOT in the lineup (${p.what})`;
+    });
+    const teams = `${g.teams.away.team.abbreviation || g.teams.away.team.name} @ ${g.teams.home.team.abbreviation || g.teams.home.team.name}`;
+    await tg(`📋 <b>LINEUP OUT</b> · ${teams}\n` + lines.join("\n") + `\n<i>Update only — the locked picks stand.</i>`);
+    D.lineupNoted[k] = new Date().toISOString();
+    if (saveState) saveState();
+    console.log(`lineup update ${k}: ${ps.map(p => p.player).join(", ")}`);
+  }
+}
+
 // Grade every open Dub and Robin leg from its final box score. Each result is
 // announced once — the alert key lives in state, so a push that fails and
 // leaves the open copy on origin cannot make it announce twice.
@@ -1244,6 +1290,7 @@ async function main() {
   try { await ladderPlace(day, games, D, saveState); } catch (e) { console.log("ladder place failed:", e.message); }
   try { await picksSettle(D, saveState); } catch (e) { console.log("picks settle failed:", e.message); }
   try { await picksPlace(day, games, D, saveState); } catch (e) { console.log("picks place failed:", e.message); }
+  try { await lineupUpdates(day, games, D, saveState); } catch (e) { console.log("lineup update failed:", e.message); }
 
   // ── Live tracking of everything alerted today ──
   const todays = Object.entries(D.bets).filter(([, b]) => b.date === day).map(([k, b]) => ({ k, b }));
