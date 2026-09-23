@@ -290,10 +290,15 @@
    "slot": 4,
    "posted": false,
    "startProb": 0.95,
-   "sp": "Cody Bradford"
+   "sp": "Cody Bradford",
+   "lineup": {
+    "in": true,
+    "slot": 3,
+    "at": "2026-09-23T22:27:02.176Z"
+   }
   }
  ],
- "updated": "2026-09-23T16:10:51.091Z",
+ "updated": "2026-09-23T22:27:02.177Z",
  "state": {
   "account": 132.55,
   "base": 13.26,

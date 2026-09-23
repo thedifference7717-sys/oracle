@@ -132,7 +132,12 @@
      },
      "p": 0.6845,
      "pAdj": 0.6834,
-     "detail": "#4 · vs Seth Lugo · projected, 95% to start"
+     "detail": "#4 · vs Seth Lugo · projected, 95% to start",
+     "lineup": {
+      "in": true,
+      "slot": 3,
+      "at": "2026-09-23T22:27:02.182Z"
+     }
     }
    ],
    "prob": 0.4781,
@@ -140,7 +145,7 @@
    "fair": 109
   }
  ],
- "updated": "2026-09-23T17:20:09.950Z",
+ "updated": "2026-09-23T22:27:02.182Z",
  "record": {
   "w": 0,
   "l": 1
