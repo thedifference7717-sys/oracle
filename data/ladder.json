@@ -230,19 +230,21 @@
    "teams": "AZ @ COL",
    "sp": "Kyle Freeland",
    "fromGames": 16,
-   "status": "open"
+   "status": "won",
+   "hits": 1,
+   "settled": "2026-09-23T00:49:54.913Z"
   }
  ],
- "updated": "2026-09-22T18:16:23.360Z",
+ "updated": "2026-09-23T00:49:54.913Z",
  "state": {
-  "account": 76,
-  "base": 15.63,
-  "stake": 55.32,
-  "rung": 5,
-  "cycle": 3,
-  "pl": -24,
+  "account": 137.82,
+  "base": 13.78,
+  "stake": 13.78,
+  "rung": 1,
+  "cycle": 4,
+  "pl": 37.82,
   "cycles": {
-   "done": 0,
+   "done": 1,
    "busted": 2
   },
   "canFund": true

@@ -31,7 +31,10 @@
      },
      "p": 0.7777,
      "pAdj": 0.7645,
-     "detail": "#4 · vs Kyle Freeland · lineup confirmed"
+     "detail": "#4 · vs Kyle Freeland · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -54,7 +57,10 @@
      },
      "p": 0.7103,
      "pAdj": 0.7129,
-     "detail": "#2 · vs Brandon Williamson · lineup confirmed"
+     "detail": "#2 · vs Brandon Williamson · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -77,7 +83,10 @@
      },
      "p": 0.7398,
      "pAdj": 0.7252,
-     "detail": "#4 · vs Dustin May · lineup confirmed"
+     "detail": "#4 · vs Dustin May · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -146,7 +155,10 @@
      },
      "p": 0.6988,
      "pAdj": 0.7024,
-     "detail": "#1 · vs Andre Pallante · lineup confirmed"
+     "detail": "#1 · vs Andre Pallante · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     }
    ],
    "sizes": [
@@ -188,7 +200,7 @@
    ]
   }
  ],
- "updated": "2026-09-22T21:52:42.350Z",
+ "updated": "2026-09-23T00:49:54.846Z",
  "record": {
   "w": 0,
   "l": 0
