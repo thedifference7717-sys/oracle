@@ -362,7 +362,12 @@
      },
      "p": 0.678,
      "pAdj": 0.6806,
-     "detail": "#4 · vs George Kirby · projected, 95% to start"
+     "detail": "#4 · vs George Kirby · projected, 95% to start",
+     "lineup": {
+      "in": true,
+      "slot": 2,
+      "at": "2026-09-24T00:35:51.092Z"
+     }
     },
     {
      "sport": "MLB",
@@ -463,7 +468,7 @@
    ]
   }
  ],
- "updated": "2026-09-24T00:34:46.457Z",
+ "updated": "2026-09-24T00:35:51.093Z",
  "record": {
   "w": 6,
   "l": 0,
