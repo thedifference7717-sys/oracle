@@ -298,9 +298,75 @@
    },
    "hits": 0,
    "settled": "2026-09-24T02:39:10.420Z"
+  },
+  {
+   "id": "2026-09-24:ladder",
+   "date": "2026-09-24",
+   "sport": "MLB",
+   "published": "2026-09-24T15:35:13.984Z",
+   "start": "2026-09-24T19:10:00Z",
+   "firstPitch": "2026-09-24T19:10:00Z",
+   "cycle": 5,
+   "rung": 1,
+   "seed": 16.58,
+   "stake": 16.58,
+   "price": -257,
+   "priceSource": "kalshi",
+   "kalshi": {
+    "ticker": "KXMLBHIT-26SEP241510AZCOL-AZCCARROLL7-1",
+    "bid": 0.71,
+    "ask": 0.72,
+    "spread": 0.01,
+    "at": "2026-09-24T15:35:13.985Z"
+   },
+   "p": 0.721840637647133,
+   "pAdj": 0.7232,
+   "edge": 0.002,
+   "pick": "Corbin Carroll",
+   "playerId": 682998,
+   "market": "hit",
+   "line": 0.5,
+   "need": "to record a hit",
+   "eventId": "824298",
+   "teams": "AZ @ COL",
+   "detail": "#5 · vs Tanner Gordon · projected, 94% to start",
+   "status": "open",
+   "fromProps": 171,
+   "games": {
+    "MLB": 12,
+    "NFL": 1
+   },
+   "runnersUp": [
+    {
+     "sport": "MLB",
+     "pick": "Nolan Arenado",
+     "need": "to record a hit",
+     "price": -223,
+     "pAdj": 0.6954
+    },
+    {
+     "sport": "MLB",
+     "pick": "Miguel Vargas",
+     "need": "to record a hit",
+     "price": -213,
+     "pAdj": 0.6932
+    },
+    {
+     "sport": "MLB",
+     "pick": "Pete Crow-Armstrong",
+     "need": "to record a hit",
+     "price": -213,
+     "pAdj": 0.698
+    }
+   ],
+   "gk": 824298,
+   "slot": 5,
+   "posted": false,
+   "startProb": 0.9437908496732026,
+   "sp": "Tanner Gordon"
   }
  ],
- "updated": "2026-09-24T10:00:01.749Z",
+ "updated": "2026-09-24T15:35:13.986Z",
  "state": {
   "account": 119.29,
   "base": 16.58,

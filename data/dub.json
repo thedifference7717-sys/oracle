@@ -147,9 +147,73 @@
    "price": 119,
    "fair": 109,
    "settled": "2026-09-24T00:34:46.073Z"
+  },
+  {
+   "id": "2026-09-24:dub",
+   "date": "2026-09-24",
+   "published": "2026-09-24T15:35:14.633Z",
+   "status": "open",
+   "games": {
+    "MLB": 12,
+    "NFL": 1
+   },
+   "excludes": {
+    "sport": "MLB",
+    "pick": "Corbin Carroll"
+   },
+   "legs": [
+    {
+     "sport": "NFL",
+     "player": "Drake London",
+     "playerId": "4426502",
+     "market": "recYds",
+     "line": 39.5,
+     "need": "40+ receiving yards",
+     "eventId": "401872948",
+     "teams": "ATL @ GB",
+     "start": "2026-09-25T00:15Z",
+     "price": -335,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXNFLRECYDS-26SEP24ATLGB-ATLDLONDON5-40",
+      "bid": 0.75,
+      "ask": 0.77,
+      "spread": 0.02
+     },
+     "p": 0.7435,
+     "pAdj": 0.7701,
+     "detail": "WR · sim median 56 receiving yards"
+    },
+    {
+     "sport": "MLB",
+     "player": "Yordan Alvarez",
+     "playerId": 670541,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824950",
+     "gk": 824950,
+     "teams": "HOU @ ATH",
+     "start": "2026-09-25T01:40:00Z",
+     "price": -300,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP242140HOUATH-HOUYALVAREZ44-1",
+      "bid": 0.73,
+      "ask": 0.75,
+      "spread": 0.02
+     },
+     "p": 0.726,
+     "pAdj": 0.7418,
+     "detail": "#4 · vs Mason Barnett · projected, 95% to start"
+    }
+   ],
+   "prob": 0.5712,
+   "price": -137,
+   "fair": -133
   }
  ],
- "updated": "2026-09-24T00:34:46.362Z",
+ "updated": "2026-09-24T15:35:14.633Z",
  "record": {
   "w": 1,
   "l": 1

@@ -517,9 +517,195 @@
     ]
    },
    "settled": "2026-09-24T02:54:22.160Z"
+  },
+  {
+   "id": "2026-09-24:robin",
+   "date": "2026-09-24",
+   "published": "2026-09-24T15:35:14.633Z",
+   "status": "open",
+   "games": {
+    "MLB": 12,
+    "NFL": 1
+   },
+   "legs": [
+    {
+     "sport": "NFL",
+     "player": "Drake London",
+     "playerId": "4426502",
+     "market": "recYds",
+     "line": 39.5,
+     "need": "40+ receiving yards",
+     "eventId": "401872948",
+     "teams": "ATL @ GB",
+     "start": "2026-09-25T00:15Z",
+     "price": -335,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXNFLRECYDS-26SEP24ATLGB-ATLDLONDON5-40",
+      "bid": 0.75,
+      "ask": 0.77,
+      "spread": 0.02
+     },
+     "p": 0.7435,
+     "pAdj": 0.7701,
+     "detail": "WR · sim median 56 receiving yards"
+    },
+    {
+     "sport": "MLB",
+     "player": "Yordan Alvarez",
+     "playerId": 670541,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824950",
+     "gk": 824950,
+     "teams": "HOU @ ATH",
+     "start": "2026-09-25T01:40:00Z",
+     "price": -300,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP242140HOUATH-HOUYALVAREZ44-1",
+      "bid": 0.73,
+      "ask": 0.75,
+      "spread": 0.02
+     },
+     "p": 0.726,
+     "pAdj": 0.7418,
+     "detail": "#4 · vs Mason Barnett · projected, 95% to start"
+    },
+    {
+     "sport": "MLB",
+     "player": "Corbin Carroll",
+     "playerId": 682998,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824298",
+     "gk": 824298,
+     "teams": "AZ @ COL",
+     "start": "2026-09-24T19:10:00Z",
+     "price": -257,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP241510AZCOL-AZCCARROLL7-1",
+      "bid": 0.71,
+      "ask": 0.72,
+      "spread": 0.01
+     },
+     "p": 0.7218,
+     "pAdj": 0.7232,
+     "detail": "#5 · vs Tanner Gordon · projected, 94% to start"
+    },
+    {
+     "sport": "MLB",
+     "player": "Miguel Vargas",
+     "playerId": 678246,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824059",
+     "gk": 824059,
+     "teams": "CWS @ KC",
+     "start": "2026-09-24T18:10:00Z",
+     "price": -213,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP241410CWSKC-CWSMVARGAS20-1",
+      "bid": 0.65,
+      "ask": 0.68,
+      "spread": 0.03
+     },
+     "p": 0.7037,
+     "pAdj": 0.6932,
+     "detail": "#3 · vs Randy Dobnak · lineup confirmed"
+    },
+    {
+     "sport": "MLB",
+     "player": "Pete Crow-Armstrong",
+     "playerId": 691718,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824623",
+     "gk": 824623,
+     "teams": "CHC vs MIA",
+     "start": "2026-09-24T18:20:00Z",
+     "price": -213,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP241420MIACHC-CHCPCROWARMSTRONG4-1",
+      "bid": 0.66,
+      "ask": 0.68,
+      "spread": 0.02
+     },
+     "p": 0.7144,
+     "pAdj": 0.698,
+     "detail": "#1 · vs Tyler Phillips · lineup confirmed"
+    },
+    {
+     "sport": "MLB",
+     "player": "Nick Gonzales",
+     "playerId": 693304,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "823326",
+     "gk": 823326,
+     "teams": "PIT vs STL",
+     "start": "2026-09-24T16:35:00Z",
+     "price": -233,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP241235STLPIT-PITNGONZALES3-1",
+      "bid": 0.68,
+      "ask": 0.7,
+      "spread": 0.02
+     },
+     "p": 0.6983,
+     "pAdj": 0.7015,
+     "detail": "#5 · vs Kyle Leahy · lineup confirmed"
+    }
+   ],
+   "sizes": [
+    {
+     "m": 2,
+     "tickets": 15,
+     "avgPays": 1.954,
+     "expWin": 7.801,
+     "ev": 0.0135
+    },
+    {
+     "m": 3,
+     "tickets": 20,
+     "avgPays": 2.73,
+     "expWin": 7.498,
+     "ev": 0.0203
+    },
+    {
+     "m": 4,
+     "tickets": 15,
+     "avgPays": 3.812,
+     "expWin": 4.053,
+     "ev": 0.027
+    },
+    {
+     "m": 5,
+     "tickets": 6,
+     "avgPays": 5.32,
+     "expWin": 1.168,
+     "ev": 0.0338
+    },
+    {
+     "m": 6,
+     "tickets": 1,
+     "avgPays": 7.422,
+     "expWin": 0.14,
+     "ev": 0.0407
+    }
+   ]
   }
  ],
- "updated": "2026-09-24T08:38:20.618Z",
+ "updated": "2026-09-24T15:35:15.213Z",
  "record": {
   "w": 11,
   "l": 1,
