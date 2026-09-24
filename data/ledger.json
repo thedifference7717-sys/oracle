@@ -925,7 +925,45 @@
     1,
     1
    ]
+  },
+  {
+   "id": "2026-09-24:824059",
+   "date": "2026-09-24",
+   "sport": "MLB",
+   "published": "2026-09-24T15:00:58.570Z",
+   "firstPitch": "2026-09-24T18:10:00Z",
+   "teams": "CWS vs KC",
+   "venue": "Kauffman Stadium",
+   "price": -175,
+   "prob": 0.5733521452450839,
+   "edge": -0.06301149111855242,
+   "evPct": -9.901805747201099,
+   "kelly": 0,
+   "soft": 0.07516886776198617,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 14,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 803011,
+     "name": "Sam Antonacci",
+     "slot": 1,
+     "p": 0.7694664226116008,
+     "sp": "Randy Dobnak"
+    },
+    {
+     "id": 671976,
+     "name": "Tristan Peters",
+     "slot": 6,
+     "p": 0.7289367346169324,
+     "sp": "Randy Dobnak"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-24T02:47:26.891Z"
+ "updated": "2026-09-24T15:00:58.576Z"
 }
