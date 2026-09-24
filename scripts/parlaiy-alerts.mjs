@@ -500,6 +500,21 @@ function readLadderOrigin() {
 // means the next pass restores it into the ledger and tries the push again,
 // instead of the pick simply disappearing from the record.
 let stateRows = [];
+// Rung results already sent, by date — held in state, set by main(). The
+// published ledger is not enough to dedupe on: when a pass cannot push, the
+// next pass reads the rung as still open from origin and settles it again,
+// and on 2026-09-24 that sent "RUNG 1 IN" once a minute for as long as the
+// push kept failing. Claimed before the message goes, like claimDay.
+let ladderSaid = {}, persistState = () => {};
+function claimRungResult(b) {
+  if (ladderSaid[b.date]) {
+    console.log(`ladder: ${b.date} result already announced — not sending it again.`);
+    return false;
+  }
+  ladderSaid[b.date] = b.status;
+  persistState();
+  return true;
+}
 function readLadderFile() {
   const local = readLadderLocal(), origin = readLadderOrigin();
   const base = local || origin || { v: 1, sport: "MLB", cfg: M.LADDER, bets: [] };
@@ -993,7 +1008,9 @@ async function ladderSettleOther() {
   if (!r) return;                                             // not final yet
   b.status = r.status; b.actual = r.actual; b.result = r.note;
   b.settled = new Date().toISOString();
+  const say = claimRungResult(b);
   writeLadderFile(L);
+  if (!say) return;
   const st = M.ladder(ladderBets(L.bets));
   const C = M.LADDER;
   const a = rungAmounts(st, b);
@@ -1046,7 +1063,9 @@ async function ladderSettle(hitsById, finalByGk) {
   b.status = got ? "won" : "lost";
   b.hits = hits || 0;
   b.settled = new Date().toISOString();
+  const say = claimRungResult(b);
   writeLadderFile(L);
+  if (!say) return;
   const st = M.ladder(ladderBets(L.bets));
   const C = M.LADDER;
   const a = rungAmounts(st, b);
@@ -1120,6 +1139,9 @@ async function main() {
   let blob = {};
   try { if (existsSync(STATE_FILE)) blob = JSON.parse(readFileSync(STATE_FILE, "utf8")) || {}; } catch (e) { console.log("State read failed:", e.message); }
   const D = blob.dd = blob.dd || {};
+  ladderSaid = D.ladderSaid = D.ladderSaid || {};
+  for (const k of Object.keys(ladderSaid)) if (k < M.ymd(new Date(Date.now() - 14 * 86400000))) delete ladderSaid[k];
+  persistState = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
   // Your fills first — every amount below is worked out with them — then any
   // /odds, /paid, /dub or /bets you have sent the bot since the last pass.
   stateRows = Array.isArray(D.ladderRows) ? D.ladderRows : [];
