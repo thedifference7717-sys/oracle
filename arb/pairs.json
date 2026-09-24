@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Cincinnati vs Pittsburgh \u2014 Pittsburgh",
+    "kalshi": "KXNFLGAME-26SEP27CINPIT-PIT",
+    "polySlug": "nfl-cin-pit-2026-09-27",
+    "polyOutcomeSameAsKalshiYes": "Steelers",
+    "verified": false,
+    "notes": "Read BOTH rulebooks before setting verified: true \u2014 ties, postponements, cut-off times, data source."
+  },
+  {
+    "name": "Cincinnati vs Pittsburgh \u2014 Cincinnati",
+    "kalshi": "KXNFLGAME-26SEP27CINPIT-CIN",
+    "polySlug": "nfl-cin-pit-2026-09-27",
+    "polyOutcomeSameAsKalshiYes": "Bengals",
+    "verified": false,
+    "notes": "Read BOTH rulebooks before setting verified: true \u2014 ties, postponements, cut-off times, data source."
+  },
+  {
+    "name": "New York J vs Detroit \u2014 Detroit",
+    "kalshi": "KXNFLGAME-26SEP27NYJDET-DET",
+    "polySlug": "nfl-nyj-det-2026-09-27",
+    "polyOutcomeSameAsKalshiYes": "Lions",
+    "verified": false,
+    "notes": "Read BOTH rulebooks before setting verified: true \u2014 ties, postponements, cut-off times, data source."
+  }
+]

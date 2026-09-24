@@ -3,3 +3,10 @@ state.json
 build.json
 .cache/
 build/
+
+# arb bot: local run state, trade log, scan output, SDK install
+arb/state.json
+arb/trades.jsonl
+arb/candidates.json
+arb/node_modules/
+arb/package-lock.json

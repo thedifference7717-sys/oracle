@@ -1,0 +1,16 @@
+{
+  "name": "kalshi-polymarket-arb",
+  "private": true,
+  "type": "module",
+  "description": "Finds and (optionally) trades price gaps between matching Kalshi and Polymarket markets.",
+  "scripts": {
+    "discover": "node scan.mjs discover",
+    "scan": "node scan.mjs pairs",
+    "bot": "node bot.mjs",
+    "test": "node arb.test.mjs"
+  },
+  "dependencies": {
+    "@polymarket/clob-client": "^5.8.1",
+    "viem": "^2.46.3"
+  }
+}
