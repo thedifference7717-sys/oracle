@@ -622,7 +622,10 @@
      },
      "p": 0.7037,
      "pAdj": 0.6932,
-     "detail": "#3 · vs Randy Dobnak · lineup confirmed"
+     "detail": "#3 · vs Randy Dobnak · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -713,7 +716,7 @@
    ]
   }
  ],
- "updated": "2026-09-24T16:53:35.677Z",
+ "updated": "2026-09-24T18:13:44.151Z",
  "record": {
   "w": 11,
   "l": 1,
