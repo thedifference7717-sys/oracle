@@ -251,7 +251,7 @@
    "id": "2026-09-23:robin",
    "date": "2026-09-23",
    "published": "2026-09-23T16:10:51.382Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 16
    },
@@ -370,7 +370,10 @@
       "in": true,
       "slot": 2,
       "at": "2026-09-24T00:35:51.092Z"
-     }
+     },
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -471,21 +474,63 @@
      "expWin": 0.099,
      "ev": 0.0442
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 22.003,
+      "pl": 7.003
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 32.638,
+      "pl": 12.638
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 24.206,
+      "pl": 9.206
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 7.181,
+      "pl": 1.181
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-09-24T02:54:22.160Z"
   }
  ],
- "updated": "2026-09-24T02:39:10.319Z",
+ "updated": "2026-09-24T08:38:20.618Z",
  "record": {
-  "w": 6,
-  "l": 0,
+  "w": 11,
+  "l": 1,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 57,
-   "l": 0
+   "w": 83,
+   "l": 31
   },
   "days": {
-   "w": 1,
+   "w": 2,
    "l": 0
   }
  }
