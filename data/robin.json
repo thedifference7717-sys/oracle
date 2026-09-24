@@ -594,7 +594,12 @@
      },
      "p": 0.7218,
      "pAdj": 0.7232,
-     "detail": "#5 · vs Tanner Gordon · projected, 94% to start"
+     "detail": "#5 · vs Tanner Gordon · projected, 94% to start",
+     "lineup": {
+      "in": true,
+      "slot": 7,
+      "at": "2026-09-24T16:35:51.189Z"
+     }
     },
     {
      "sport": "MLB",
@@ -705,7 +710,7 @@
    ]
   }
  ],
- "updated": "2026-09-24T15:35:15.213Z",
+ "updated": "2026-09-24T16:35:51.190Z",
  "record": {
   "w": 11,
   "l": 1,

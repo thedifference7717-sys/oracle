@@ -963,7 +963,45 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-24:824298",
+   "date": "2026-09-24",
+   "sport": "MLB",
+   "published": "2026-09-24T16:35:50.706Z",
+   "firstPitch": "2026-09-24T19:10:00Z",
+   "teams": "AZ vs COL",
+   "venue": "Coors Field",
+   "price": -175,
+   "prob": 0.6740163798676444,
+   "edge": 0.037652743504008046,
+   "evPct": 5.916859693486975,
+   "kelly": 0.02588626115900547,
+   "soft": 0.13284083846286043,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 34.75,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 606466,
+     "name": "Ketel Marte",
+     "slot": 2,
+     "p": 0.8139018942413409,
+     "sp": "Tanner Gordon"
+    },
+    {
+     "id": 672515,
+     "name": "Gabriel Moreno",
+     "slot": 3,
+     "p": 0.8125776986167885,
+     "sp": "Tanner Gordon"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-24T15:00:58.576Z"
+ "updated": "2026-09-24T16:35:50.711Z"
 }
