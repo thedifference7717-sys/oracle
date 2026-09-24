@@ -1006,7 +1006,45 @@
     }
    ],
    "status": "open"
+  },
+  {
+   "id": "2026-09-24:823411",
+   "date": "2026-09-24",
+   "sport": "MLB",
+   "published": "2026-09-24T19:23:26.010Z",
+   "firstPitch": "2026-09-24T22:05:00Z",
+   "teams": "MIL vs PHI",
+   "venue": "Citizens Bank Park",
+   "price": -175,
+   "prob": 0.5413491257024401,
+   "edge": -0.09501451066119626,
+   "evPct": -14.930851675330842,
+   "kelly": 0,
+   "soft": 0.05335817376315277,
+   "softBar": 0.049,
+   "stakeRate": 2.5,
+   "stakeBasis": "spot",
+   "stake": 17.25,
+   "qualifiedOn": "soft",
+   "sameTeam": true,
+   "legs": [
+    {
+     "id": 661388,
+     "name": "William Contreras",
+     "slot": 3,
+     "p": 0.7288346473002895,
+     "sp": "Andrew Painter"
+    },
+    {
+     "id": 668930,
+     "name": "Brice Turang",
+     "slot": 2,
+     "p": 0.7229039784893114,
+     "sp": "Andrew Painter"
+    }
+   ],
+   "status": "open"
   }
  ],
- "updated": "2026-09-24T18:17:56.372Z"
+ "updated": "2026-09-24T19:23:26.016Z"
 }
