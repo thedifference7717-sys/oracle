@@ -265,7 +265,7 @@
    "eventId": "822841",
    "teams": "NYM @ TEX",
    "detail": "#4 · vs Cody Bradford · projected, 95% to start",
-   "status": "open",
+   "status": "lost",
    "fromProps": 99,
    "games": {
     "MLB": 16
@@ -295,20 +295,22 @@
     "in": true,
     "slot": 3,
     "at": "2026-09-23T22:27:02.176Z"
-   }
+   },
+   "hits": 0,
+   "settled": "2026-09-24T02:39:10.420Z"
   }
  ],
- "updated": "2026-09-23T22:27:02.177Z",
+ "updated": "2026-09-24T02:39:10.420Z",
  "state": {
-  "account": 132.55,
-  "base": 13.26,
-  "stake": 13.26,
+  "account": 119.29,
+  "base": 16.58,
+  "stake": 16.58,
   "rung": 1,
-  "cycle": 4,
-  "pl": 32.55,
+  "cycle": 5,
+  "pl": 19.29,
   "cycles": {
    "done": 1,
-   "busted": 2
+   "busted": 3
   },
   "canFund": true
  },
