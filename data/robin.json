@@ -648,7 +648,10 @@
      },
      "p": 0.7144,
      "pAdj": 0.698,
-     "detail": "#1 · vs Tyler Phillips · lineup confirmed"
+     "detail": "#1 · vs Tyler Phillips · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -716,7 +719,7 @@
    ]
   }
  ],
- "updated": "2026-09-24T18:13:44.151Z",
+ "updated": "2026-09-24T19:08:52.124Z",
  "record": {
   "w": 11,
   "l": 1,
