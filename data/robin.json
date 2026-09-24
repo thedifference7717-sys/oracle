@@ -668,7 +668,10 @@
      },
      "p": 0.6983,
      "pAdj": 0.7015,
-     "detail": "#5 · vs Kyle Leahy · lineup confirmed"
+     "detail": "#5 · vs Kyle Leahy · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     }
    ],
    "sizes": [
@@ -710,7 +713,7 @@
    ]
   }
  ],
- "updated": "2026-09-24T16:35:51.190Z",
+ "updated": "2026-09-24T16:53:35.677Z",
  "record": {
   "w": 11,
   "l": 1,
