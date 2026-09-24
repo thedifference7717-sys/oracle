@@ -330,7 +330,7 @@
    "eventId": "824298",
    "teams": "AZ @ COL",
    "detail": "#5 · vs Tanner Gordon · projected, 94% to start",
-   "status": "open",
+   "status": "won",
    "fromProps": 171,
    "games": {
     "MLB": 12,
@@ -368,15 +368,17 @@
     "in": true,
     "slot": 7,
     "at": "2026-09-24T16:35:51.179Z"
-   }
+   },
+   "hits": 1,
+   "settled": "2026-09-24T21:19:18.748Z"
   }
  ],
- "updated": "2026-09-24T16:35:51.179Z",
+ "updated": "2026-09-24T21:19:18.748Z",
  "state": {
   "account": 119.29,
   "base": 16.58,
-  "stake": 16.58,
-  "rung": 1,
+  "stake": 23.03,
+  "rung": 2,
   "cycle": 5,
   "pl": 19.29,
   "cycles": {
