@@ -22,6 +22,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        # The newest main, not the commit this run was triggered on. A run can
+        # sit queued behind the six-hour loop for hours; on 2026-09-24 one
+        # started from a commit 3h stale and every publish failed to rebase.
+        with:
+          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
