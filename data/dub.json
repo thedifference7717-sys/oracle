@@ -182,7 +182,10 @@
      },
      "p": 0.7435,
      "pAdj": 0.7701,
-     "detail": "WR · sim median 56 receiving yards"
+     "detail": "WR · sim median 56 receiving yards",
+     "result": "won",
+     "actual": 70,
+     "note": "70 receiving yards against a 39.5 line (graded early, 20+ clear)"
     },
     {
      "sport": "MLB",
@@ -213,7 +216,7 @@
    "fair": -133
   }
  ],
- "updated": "2026-09-24T15:35:14.633Z",
+ "updated": "2026-09-25T02:19:02.169Z",
  "record": {
   "w": 1,
   "l": 1
