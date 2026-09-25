@@ -894,7 +894,12 @@
      },
      "p": 0.7019,
      "pAdj": 0.6866,
-     "detail": "#4 · vs Cristopher Sánchez · projected, 94% to start"
+     "detail": "#4 · vs Cristopher Sánchez · projected, 94% to start",
+     "lineup": {
+      "in": true,
+      "slot": 1,
+      "at": "2026-09-25T20:00:26.397Z"
+     }
     },
     {
      "sport": "MLB",
@@ -959,7 +964,7 @@
    ]
   }
  ],
- "updated": "2026-09-25T18:21:34.969Z",
+ "updated": "2026-09-25T20:00:26.397Z",
  "record": {
   "w": 17,
   "l": 1,
