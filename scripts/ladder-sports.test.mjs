@@ -200,6 +200,15 @@ console.log("graded as soon as it is known");
   const nfl = await S.settleRung({ sport: "NFL", eventId: "e2", playerId: 9, market: "rushYds", line: 49.5, pick: "Back" },
     { get: async () => summary("in", 0) });
   ok("football waits for the final — yards can go backwards", nfl === null);
+  const fb = (state, yds) => ({
+    header: { competitions: [{ status: { type: { state, completed: state === "post", name: "STATUS_" + state } } }] },
+    boxscore: { players: [{ statistics: [{ name: "receiving", keys: ["receptions", "receivingYards"],
+      athletes: [{ athlete: { id: "11", displayName: "Drake London" }, stats: ["5", String(yds)] }] }] }] }
+  });
+  const wr = { sport: "NFL", eventId: "e3", playerId: 11, market: "recYds", line: 39.5, pick: "Drake London" };
+  const early = await S.settleRung(wr, { get: async () => fb("in", 60) });
+  ok("20+ yards past the line mid-game is won right then", early && early.status === "won" && early.actual === 60, JSON.stringify(early));
+  ok("over the line but under 20 clear still waits", (await S.settleRung(wr, { get: async () => fb("in", 59) })) === null);
 }
 
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");
