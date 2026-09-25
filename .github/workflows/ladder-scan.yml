@@ -42,6 +42,7 @@ jobs:
         env:
           DRY_RUN: "1"
           LADDER_FORCE_LOCK: "1"
+          PICKS_KEY: ${{ secrets.PICKS_KEY }}
         run: |
           rm -f state.json
           node scripts/parlaiy-alerts.mjs 2>&1 | grep -v "^game [0-9]" | tail -80

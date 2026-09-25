@@ -22,6 +22,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } from "
 import { tmpdir } from "os";
 import { join } from "path";
 import { execSync } from "child_process";
+import { sealer, keyFrom, canon } from "./seal.mjs";
 import { pathToFileURL } from "url";
 import M from "../dd-model.js";
 import _DS from "../dub-stake.js";
@@ -484,14 +485,16 @@ async function betsSummary(D) {
 }
 
 function readLadderLocal() {
-  try { const L = JSON.parse(readFileSync(LADDER_FILE, "utf8")); if (Array.isArray(L.bets)) return L; } catch (e) {}
+  try { const L = JSON.parse(readFileSync(LADDER_FILE, "utf8")); if (Array.isArray(L.bets)) { L.bets = L.bets.map(SEAL.ladderIn); return L; } } catch (e) {}
   return null;
 }
 function readLadderOrigin() {
   try {
     const raw = execSync(`git show origin/main:${LADDER_FILE} 2>/dev/null`, { encoding: "utf8" });
     const L = JSON.parse(raw);
-    return Array.isArray(L.bets) ? L : null;
+    if (!Array.isArray(L.bets)) return null;
+    L.bets = L.bets.map(SEAL.ladderIn);
+    return L;
   } catch (e) { return null; }   // not fetched, not committed yet, or no git
 }
 // Rows this runner has placed, held in gitignored state so a git operation
@@ -500,6 +503,11 @@ function readLadderOrigin() {
 // means the next pass restores it into the ledger and tries the push again,
 // instead of the pick simply disappearing from the record.
 let stateRows = [];
+// Sealed picks (scripts/seal.mjs): with PICKS_KEY set, a new Ladder, Dub or
+// Robin pick is committed encrypted and revealed leg by leg as its game
+// starts. Everything in this file works on the opened rows; the files are
+// sealed on the way out and opened on the way in, and nowhere else.
+const SEAL = sealer(keyFrom(process.env.PICKS_KEY));
 // Rung results already sent, by date — held in state, set by main(). The
 // published ledger is not enough to dedupe on: when a pass cannot push, the
 // next pass reads the rung as still open from origin and settles it again,
@@ -542,7 +550,7 @@ function writeLadderFile(L) {
   L.state = (({ account, base, stake, rung, cycle, pl, cycles, canFund }) =>
     ({ account, base, stake, rung, cycle, pl, cycles, canFund }))(M.ladder(ladderBets(L.bets)));
   mkdirSync("data", { recursive: true });
-  writeFileSync(LADDER_FILE, JSON.stringify(L, null, 1));
+  writeFileSync(LADDER_FILE, JSON.stringify(Object.assign({}, L, { bets: L.bets.map(SEAL.ladderOut) }), null, 1));
 }
 
 // Which sports the ladder may pick from. All three by default; LADDER_SPORTS
@@ -725,7 +733,7 @@ async function ladderPlace(day, games, D, saveState) {
 
   const c = res.pick;
   const row = {
-    id: `${day}:ladder`, date: day, sport: c.sport,
+    id: `${day}:ladder`, date: day, sport: c.sport, seal: SEAL.on ? 1 : undefined,
     published: new Date().toISOString(),
     start: c.start, firstPitch: c.sport === "MLB" ? c.start : undefined,
     cycle: st.cycle, rung: st.rung, seed: st.base,
@@ -782,9 +790,9 @@ async function ladderPlace(day, games, D, saveState) {
 // their own files the same way: committed before the first game, so they are
 // on the record before anything can be known about them.
 const DUB_FILE = "data/dub.json", ROBIN_FILE = "data/robin.json";
-function readJsonFile(f) { try { const x = JSON.parse(readFileSync(f, "utf8")); if (Array.isArray(x.bets)) return x; } catch (e) {} return null; }
+function readJsonFile(f) { try { const x = JSON.parse(readFileSync(f, "utf8")); if (Array.isArray(x.bets)) { x.bets = x.bets.map(SEAL.cardIn); return x; } } catch (e) {} return null; }
 function readJsonOrigin(f) {
-  try { const x = JSON.parse(execSync(`git show origin/main:${f} 2>/dev/null`, { encoding: "utf8" })); return Array.isArray(x.bets) ? x : null; }
+  try { const x = JSON.parse(execSync(`git show origin/main:${f} 2>/dev/null`, { encoding: "utf8" })); if (!Array.isArray(x.bets)) return null; x.bets = x.bets.map(SEAL.cardIn); return x; }
   catch (e) { return null; }
 }
 // Same union as the ladder: what is published, what this runner has locally,
@@ -814,7 +822,8 @@ function writeDaily(f, J, D, key) {
                  days: { w: done.filter(b => pl(b) > 0).length, l: done.filter(b => pl(b) < 0).length } };
   }
   mkdirSync("data", { recursive: true });
-  writeFileSync(f, JSON.stringify(J, null, 1));
+  const kind = f === DUB_FILE ? "dub" : "robin";
+  writeFileSync(f, JSON.stringify(Object.assign({}, J, { bets: J.bets.map(b => SEAL.cardOut(b, kind)) }), null, 1));
   if (D) {                                              // hold the last two weeks in state
     const from = M.ymd(new Date(Date.now() - 14 * 86400000));
     D[key] = J.bets.filter(b => b.date >= from);
@@ -847,8 +856,8 @@ async function picksPlace(day, games, D, saveState) {
 
   if (!haveDub) {
     const d = pickDub(res.pool, ladderRow && ladderRow.pick ? ladderRow : null);
-    const row = d ? Object.assign({ id: `${day}:dub`, date: day, published: now, status: "open", games: counted,
-                                    excludes: ladderRow && ladderRow.pick ? { sport: ladderRow.sport || "MLB", pick: ladderRow.pick } : null }, d)
+    const row = d ? Object.assign({ id: `${day}:dub`, date: day, published: now, status: "open", games: counted, seal: SEAL.on ? 1 : undefined,
+                                    excludes: ladderRow && ladderRow.pick ? { sport: ladderRow.sport || "MLB", pick: ladderRow.pick, start: SEAL.on ? ladderRow.start : undefined } : null }, d)
                   : { id: `${day}:dub`, date: day, published: now, status: "noplay", reason: "fewer than two qualifying props in different games" };
     dubs.bets.push(row); writeDaily(DUB_FILE, dubs, D, "dubRows"); if (saveState) saveState();
     if (d) {
@@ -873,7 +882,7 @@ async function picksPlace(day, games, D, saveState) {
   }
   if (!haveRobin) {
     const r = pickRobin(res.pool, 6);
-    const row = r ? Object.assign({ id: `${day}:robin`, date: day, published: now, status: "open", games: counted }, r)
+    const row = r ? Object.assign({ id: `${day}:robin`, date: day, published: now, status: "open", games: counted, seal: SEAL.on ? 1 : undefined }, r)
                   : { id: `${day}:robin`, date: day, published: now, status: "noplay", reason: "fewer than three qualifying props" };
     robins.bets.push(row); writeDaily(ROBIN_FILE, robins, D, "robinRows"); if (saveState) saveState();
     if (r) {
@@ -907,7 +916,9 @@ async function picksPlace(day, games, D, saveState) {
 // Recomputed every pass until first pitch, so a push that fails is simply
 // written again next pass.
 function lineupFor(g, playerId) {
-  if (!g || !posted(g) || Date.now() >= Date.parse(g.gameDate)) return null;
+  // Not cut off at first pitch: a sealed pick is only revealed then, and its
+  // lineup note can only be published once it is.
+  if (!g || !posted(g)) return null;
   for (const side of ["homePlayers", "awayPlayers"]) {
     const i = g.lineups[side].findIndex(x => String(x.id) === String(playerId));
     if (i >= 0) return { in: true, slot: i + 1 };
@@ -921,6 +932,7 @@ function lineupUpdates(day, games, D) {
   let moved = false;
   for (const b of L.bets) {
     if (b.date !== day || b.status !== "open" || (b.sport || "MLB") !== "MLB" || b.posted !== false || b.gk == null) continue;
+    if (SEAL.ladderHidden(b)) continue;                      // nothing about a sealed pick is published
     const lu = lineupFor(game(b.gk), b.playerId);
     if (lu && !sameLineup(lu, b.lineup)) { b.lineup = Object.assign(lu, { at: new Date().toISOString() }); moved = true; console.log(`lineup: ladder ${b.pick} ${lu.in ? "in, #" + lu.slot : "not in"}`); }
   }
@@ -931,6 +943,7 @@ function lineupUpdates(day, games, D) {
     let changed = false;
     for (const l of (b && b.legs) || []) {
       if (l.sport !== "MLB" || l.result || !/projected/.test(l.detail || "") || l.gk == null) continue;
+      if (SEAL.legHidden(b, l)) continue;
       const lu = lineupFor(game(l.gk), l.playerId);
       if (lu && !sameLineup(lu, l.lineup)) { l.lineup = Object.assign(lu, { at: new Date().toISOString() }); changed = true; console.log(`lineup: ${key} ${l.player} ${lu.in ? "in, #" + lu.slot : "not in"}`); }
     }
@@ -1166,6 +1179,17 @@ async function main() {
       if (J.bets.length && JSON.stringify(J.bets) !== JSON.stringify(local && local.bets)) { writeDaily(f, J, D, key); console.log(`${f}: re-wrote rows held in state`); }
     }
   } catch (e) { console.log("resync failed:", e.message); }
+  // A sealed pick is revealed by the first write after its game starts —
+  // on a quiet pass nothing else writes, so check. Compared in canonical
+  // form: the file's key order is not the sealer's.
+  if (SEAL.on) try {
+    const L1 = readLadderFile(), raw = (() => { try { return JSON.parse(readFileSync(LADDER_FILE, "utf8")).bets; } catch (e) { return null; } })();
+    if (raw && canon(raw) !== canon(L1.bets.map(SEAL.ladderOut))) { writeLadderFile(L1); console.log("ladder: revealed what has started"); }
+    for (const [f, key, kind] of [[DUB_FILE, "dubRows", "dub"], [ROBIN_FILE, "robinRows", "robin"]]) {
+      const J = readDaily(f, D[key]), r = (() => { try { return JSON.parse(readFileSync(f, "utf8")).bets; } catch (e) { return null; } })();
+      if (r && canon(r) !== canon(J.bets.map(b => SEAL.cardOut(b, kind)))) { writeDaily(f, J, D, key); console.log(`${f}: revealed what has started`); }
+    }
+  } catch (e) { console.log("reveal failed:", e.message); }
   // No baseball is no longer a day off: the ladder picks across basketball
   // and football too, so it still has to settle yesterday's rung and look for
   // today's. Nothing below this line is about anything but baseball.

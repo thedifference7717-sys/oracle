@@ -110,6 +110,9 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Seals each Ladder, Dub and Robin pick until its game starts
+          # (scripts/seal.mjs). Unset = picks are published in the clear.
+          PICKS_KEY: ${{ secrets.PICKS_KEY }}
           # American odds the doubles are priced against, and the minimum
           # modelled edge before one is alerted as a bet rather than tracked.
           # Set DD_PRICE to whatever your book actually offers.
