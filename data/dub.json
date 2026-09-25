@@ -218,9 +218,73 @@
    "price": -137,
    "fair": -133,
    "settled": "2026-09-25T03:33:36.086Z"
+  },
+  {
+   "id": "2026-09-25:dub",
+   "date": "2026-09-25",
+   "published": "2026-09-25T16:05:38.102Z",
+   "status": "open",
+   "games": {
+    "MLB": 17
+   },
+   "excludes": {
+    "sport": "MLB",
+    "pick": "Nico Hoerner"
+   },
+   "legs": [
+    {
+     "sport": "MLB",
+     "player": "Yordan Alvarez",
+     "playerId": 670541,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824947",
+     "gk": 824947,
+     "teams": "HOU @ ATH",
+     "start": "2026-09-26T01:40:00Z",
+     "price": -257,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP252140HOUATH-HOUYALVAREZ44-1",
+      "bid": 0.66,
+      "ask": 0.72,
+      "spread": 0.06
+     },
+     "p": 0.7005,
+     "pAdj": 0.7131,
+     "detail": "#4 · vs Jacob Lopez · projected, 95% to start"
+    },
+    {
+     "sport": "MLB",
+     "player": "Pete Crow-Armstrong",
+     "playerId": 691718,
+     "market": "hit",
+     "line": 0.5,
+     "need": "to record a hit",
+     "eventId": "824706",
+     "gk": 824706,
+     "teams": "CHC @ BOS",
+     "start": "2026-09-25T21:35:00Z",
+     "price": -203,
+     "priceSource": "kalshi",
+     "kalshi": {
+      "ticker": "KXMLBHIT-26SEP251305CHCBOSG1-CHCPCROWARMSTRONG4-1",
+      "bid": 0.65,
+      "ask": 0.67,
+      "spread": 0.02
+     },
+     "p": 0.7144,
+     "pAdj": 0.6923,
+     "detail": "#3 · vs Brayan Bello · projected, 95% to start"
+    }
+   ],
+   "prob": 0.4937,
+   "price": 107,
+   "fair": 103
   }
  ],
- "updated": "2026-09-25T03:33:36.435Z",
+ "updated": "2026-09-25T16:05:38.103Z",
  "record": {
   "w": 2,
   "l": 1

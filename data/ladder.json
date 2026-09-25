@@ -371,9 +371,74 @@
    },
    "hits": 1,
    "settled": "2026-09-24T21:19:18.748Z"
+  },
+  {
+   "id": "2026-09-25:ladder",
+   "date": "2026-09-25",
+   "sport": "MLB",
+   "published": "2026-09-25T16:05:37.787Z",
+   "start": "2026-09-25T21:35:00Z",
+   "firstPitch": "2026-09-25T21:35:00Z",
+   "cycle": 5,
+   "rung": 2,
+   "seed": 16.58,
+   "stake": 23.03,
+   "price": -213,
+   "priceSource": "kalshi",
+   "kalshi": {
+    "ticker": "KXMLBHIT-26SEP251305CHCBOSG1-CHCNHOERNER2-1",
+    "bid": 0.66,
+    "ask": 0.68,
+    "spread": 0.02,
+    "at": "2026-09-25T16:05:37.787Z"
+   },
+   "p": 0.717677929052648,
+   "pAdj": 0.6995,
+   "edge": 0.0372,
+   "pick": "Nico Hoerner",
+   "playerId": 663538,
+   "market": "hit",
+   "line": 0.5,
+   "need": "to record a hit",
+   "eventId": "824706",
+   "teams": "CHC @ BOS",
+   "detail": "#4 · vs Brayan Bello · projected, 95% to start",
+   "status": "open",
+   "fromProps": 111,
+   "games": {
+    "MLB": 17
+   },
+   "runnersUp": [
+    {
+     "sport": "MLB",
+     "pick": "Pete Crow-Armstrong",
+     "need": "to record a hit",
+     "price": -203,
+     "pAdj": 0.6923
+    },
+    {
+     "sport": "MLB",
+     "pick": "Nico Hoerner",
+     "need": "to record a hit",
+     "price": -213,
+     "pAdj": 0.7096
+    },
+    {
+     "sport": "MLB",
+     "pick": "Isaac Paredes",
+     "need": "to record a hit",
+     "price": -203,
+     "pAdj": 0.6848
+    }
+   ],
+   "gk": 824706,
+   "slot": 4,
+   "posted": false,
+   "startProb": 0.95,
+   "sp": "Brayan Bello"
   }
  ],
- "updated": "2026-09-25T10:00:33.794Z",
+ "updated": "2026-09-25T16:05:37.788Z",
  "state": {
   "account": 119.29,
   "base": 16.58,
