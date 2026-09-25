@@ -1,12 +1,183 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>Prop Shop</title>
-<!-- This section was folded into the dashboard: the Ladder (every sport), the Dub and the Robin. -->
-<meta http-equiv="refresh" content="0; url=index.html">
-<link rel="canonical" href="index.html">
-<style>:root{color-scheme:dark}body{background:#000;color:#f5f5f7;font:15px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;padding:24px 16px}a{color:#0a84ff}</style>
-<script>location.replace("index.html");</script>
-</head><body>
-<p>This page has moved into <a href="index.html">the dashboard</a> — 🪜 The Ladder, ✌️ The Dub and 🐦 The Robin.</p>
-</body></html>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Prop Shop · Record</title>
+<meta name="description" content="The Prop Shop's full record: every Ladder, Dub and Robin pick, committed before its game.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prop Shop">
+<link rel="icon" type="image/svg+xml" href="sportsai.svg">
+<link rel="apple-touch-icon" href="sportsai-180.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="pages.css">
+<style>
+.prods{display:grid;gap:12px;margin:0 var(--pad) 12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.prods .card{margin:0}
+.prods .big{font-size:38px}
+.roi{font:700 15px var(--num);margin-top:10px}
+.why{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
+.pf{font-size:12px;color:var(--muted);margin-top:3px}
+.pf .ok{color:var(--green)}
+.pf code{font-family:var(--num);font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div>
+    <div class="brand">SPORTSAI</div>
+    <div class="logo">Prop Shop</div>
+    <div class="logo-sub">
+      The Ladder · The Dub · The Robin ·
+      <!-- stamped by the deploy; keep on its own line -->
+      <span id="buildsha">46bc875</span>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Sections">
+    <a class="navlink" href="index.html">🪜 The Ladder</a>
+    <a class="navlink" href="dub.html">✌️ The Dub</a>
+    <a class="navlink" href="robin.html">🐦 The Robin</a>
+    <a class="navlink on" href="record.html" aria-current="page">📈 Record</a>
+  </nav>
+</div>
+<div id="status"></div>
+
+<div class="section-h">
+  <div class="sh-row"><h1>📈 The record</h1><span class="sh-note" id="note"></span></div>
+  <details class="disc"><summary>How this record is kept</summary><div class="disc-b">
+    <p>Every pick is <b>committed to this site's public repository before its game starts</b>, with the time it was published. Nothing is added, edited or removed afterwards: a pick that loses stays on the record.</p>
+    <p>Each pick is now published <b>sealed</b> at lock: encrypted, next to a fingerprint of it. When its game starts, it is revealed in the clear. Anyone can re-run the fingerprint and find the commit that carried it sealed, which has to be earlier than the game. <a href="https://github.com/thedifference7717-sys/oracle/blob/main/docs/sealed-picks.md" style="color:var(--blue)">How to check it yourself</a>.</p>
+    <p><b>ROI</b> is at a flat stake, at the price each pick was published at (the live Kalshi ask): one unit on each Ladder pick and each Dub parlay, and one unit on every ticket of each Robin round robin. Voids and pushes are left out. The Ladder also shows its result as played: each rung at the stake it was published with.</p>
+  </div></details>
+</div>
+
+<div class="prods" id="prods"></div>
+
+<div class="section-h"><div class="sh-row"><h2>Every pick</h2><span class="sh-note" id="histNote"></span></div></div>
+<div class="card"><div class="hist" id="hist"></div></div>
+<p class="fine">Past results don't guarantee future ones. Model estimates, not betting advice. Bet only what you can afford to lose.</p>
+
+<script src="build-check.js"></script>
+<script src="pages.js"></script>
+<script>
+const P = window.Pages;
+let ladder = null, dub = null, robin = null;
+
+const DONE = new Set(["won", "lost"]);
+const markOf = r => r === "won" ? "✅" : r === "lost" ? "❌" : r === "void" ? "➖" : "·";
+const sign = v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2);
+const roiTxt = (pl, staked) => staked ? `${sign(pl)}u on ${staked}u · ${pl >= 0 ? "+" : "−"}${Math.abs(pl / staked * 100).toFixed(1)}% ROI` : "—";
+const roiColor = pl => pl > 0 ? "var(--green)" : pl < 0 ? "var(--red)" : "var(--muted)";
+
+// Flat one unit a bet, at its published price.
+function flat(bets) {
+  let w = 0, l = 0, pl = 0;
+  for (const b of bets) {
+    if (b.status === "won") { w++; pl += P.dec(b.price) - 1; }
+    else if (b.status === "lost") { l++; pl -= 1; }
+  }
+  return { w, l, pl, staked: w + l };
+}
+// One unit on every ticket of each graded round robin (graded.sizes holds
+// each size's result per unit).
+function robinFlat(bets) {
+  let pl = 0, staked = 0, lw = 0, ll = 0, days = 0;
+  for (const b of bets) {
+    const sizes = b.graded && b.graded.sizes;
+    if (!sizes) continue;
+    days++;
+    for (const z of sizes) { pl += z.pl || 0; staked += z.tickets || 0; }
+    for (const g of b.legs || []) { if (g.result === "won") lw++; else if (g.result === "lost") ll++; }
+  }
+  return { pl, staked, lw, ll, days };
+}
+
+// Minutes between publishing and the first game the pick is on.
+function lead(b, starts) {
+  const pub = Date.parse(b.published), first = Math.min(...starts.map(s => Date.parse(s)).filter(isFinite));
+  if (!isFinite(pub) || !isFinite(first)) return "";
+  const m = Math.round((first - pub) / 60000);
+  if (m <= 0) return `<div class="pf">published ${P.etTime(pub)} ET</div>`;
+  const t = m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ""}` : `${m}m`;
+  return `<div class="pf"><span class="ok">✓</span> published ${P.etTime(pub)} ET, ${t} before first pitch</div>`;
+}
+
+// The Ladder as it is played: each rung at the stake it was published with.
+function ladderPlayed(bets) {
+  let pl = 0, staked = 0;
+  for (const b of bets) {
+    if (!(b.stake > 0) || !DONE.has(b.status)) continue;
+    staked += b.stake;
+    pl += b.status === "won" ? b.stake * (P.dec(b.price) - 1) : -b.stake;
+  }
+  return { pl, staked };
+}
+
+function card(emoji, name, big, sub, pl, staked, why) {
+  return `<div class="card">
+    <h3>${emoji} ${name}</h3>
+    <div class="big">${big}<small>${sub}</small></div>
+    <div class="roi" style="color:${roiColor(pl)}">${roiTxt(pl, staked)}</div>
+    <div class="why">${why}</div>
+  </div>`;
+}
+
+function render() {
+  const L = (ladder && ladder.bets || []).filter(b => b && b.date);
+  const D = (dub && dub.bets || []).filter(b => b && Array.isArray(b.legs));
+  const R = (robin && robin.bets || []).filter(b => b && Array.isArray(b.legs));
+  const lf = flat(L), df = flat(D), rf = robinFlat(R), lp = ladderPlayed(L);
+  const since = [L[0], D[0], R[0]].filter(Boolean).map(b => b.date).sort()[0];
+  document.getElementById("note").textContent = since ? `since ${P.prettyDate(since)}` : "";
+
+  document.getElementById("prods").innerHTML =
+    card("🪜", "The Ladder", `${lf.w}–${lf.l}`, "one pick a day", lf.pl, lf.staked, "The single likeliest prop on the slate." +
+      (lp.staked ? `<br>As played, at each rung's published stake: <b style="color:${roiColor(lp.pl)}">${lp.pl >= 0 ? "+" : "−"}${P.money(Math.abs(lp.pl))}</b> on ${P.money(lp.staked)} staked.` : "")) +
+    card("✌️", "The Dub", `${df.w}–${df.l}`, "two-leg parlays", df.pl, df.staked, "The best two-leg parlay, from two different games.") +
+    card("🐦", "The Robin", `${rf.lw}–${rf.ll}`, `legs · ${rf.days} round robin${rf.days === 1 ? "" : "s"}`, rf.pl, rf.staked, "Six props, every 2- to 6-leg ticket between them.");
+
+  // One row per slate, newest first, with every product's picks that day.
+  // Graded slates only: a slate still in play stays on its own page until it settles.
+  const at = (list, d) => list.find(b => b.date === d);
+  const days = [...new Set([...L, ...D, ...R].map(b => b.date))].sort().reverse()
+    .filter(d => ![at(L, d), at(D, d), at(R, d)].some(b => b && b.status === "open"));
+  const settled = days.length;
+  document.getElementById("hist").innerHTML = days.length ? days.map(d => {
+    const l = at(L, d), du = at(D, d), r = at(R, d);
+    const lines = [];
+    if (l && l.status !== "noplay") {
+      const who = l.sealed ? "🔒 sealed until its game" : `${P.EMOJI[l.sport] || ""} ${l.pick} <span style="color:var(--dim)">${l.need || ""}</span>`;
+      lines.push(`🪜 ${markOf(l.status)} ${who} <span style="color:var(--dim)">${P.odds(l.price)}</span>`);
+    }
+    if (du && du.status !== "noplay") {
+      lines.push(`✌️ ${markOf(du.status)} ` + du.legs.map(g => `${markOf(g.result)} ${g.player}`).join(" + ") + ` <span style="color:var(--dim)">${P.odds(du.price)}</span>`);
+    }
+    if (r && r.status !== "noplay") {
+      lines.push(`🐦 ` + r.legs.map(g => `${markOf(g.result)} ${g.player}`).join(", "));
+    }
+    const starts = [l && (l.firstPitch || l.start), ...(du ? du.legs.map(g => g.start) : []), ...(r ? r.legs.map(g => g.start) : [])].filter(Boolean);
+    const first = [l, du, r].filter(b => b && b.published).sort((a, b) => a.published.localeCompare(b.published))[0];
+    return `<div class="hrow">
+      <div class="top"><span class="d">${P.prettyDate(d)}</span></div>
+      ${first ? lead(first, starts) : ""}
+      <div class="who">${lines.join("<br>") || '<span style="color:var(--dim)">No play</span>'}</div>
+    </div>`;
+  }).join("") : `<div class="empty">No picks published yet.</div>`;
+  document.getElementById("histNote").textContent = settled ? `${settled} slate${settled === 1 ? "" : "s"} graded` : "";
+}
+
+async function load() {
+  [ladder, dub, robin] = await Promise.all(["data/ladder.json", "data/dub.json", "data/robin.json"].map(p => P.load(p)));
+  render();
+  const up = [ladder, dub, robin].map(j => j && j.updated).filter(Boolean).sort().pop();
+  document.getElementById("status").textContent = up ? `Updated ${new Date(up).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })} ET` : "";
+  const live = [ladder, dub, robin].some(P.hasOpen);
+  setTimeout(load, live ? 60000 : 600000);
+}
+load();
+</script>
+</body>
+</html>
