@@ -253,7 +253,12 @@
      },
      "p": 0.7005,
      "pAdj": 0.7131,
-     "detail": "#4 · vs Jacob Lopez · projected, 95% to start"
+     "detail": "#4 · vs Jacob Lopez · projected, 95% to start",
+     "lineup": {
+      "in": true,
+      "slot": 2,
+      "at": "2026-09-25T23:21:11.887Z"
+     }
     },
     {
      "sport": "MLB",
@@ -289,7 +294,7 @@
    "fair": 103
   }
  ],
- "updated": "2026-09-25T20:24:29.822Z",
+ "updated": "2026-09-25T23:21:11.887Z",
  "record": {
   "w": 2,
   "l": 1
