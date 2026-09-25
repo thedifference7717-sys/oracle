@@ -276,7 +276,12 @@
      },
      "p": 0.7144,
      "pAdj": 0.6923,
-     "detail": "#3 · vs Brayan Bello · projected, 95% to start"
+     "detail": "#3 · vs Brayan Bello · projected, 95% to start",
+     "lineup": {
+      "in": true,
+      "slot": 1,
+      "at": "2026-09-25T20:24:29.822Z"
+     }
     }
    ],
    "prob": 0.4937,
@@ -284,7 +289,7 @@
    "fair": 103
   }
  ],
- "updated": "2026-09-25T16:05:38.103Z",
+ "updated": "2026-09-25T20:24:29.822Z",
  "record": {
   "w": 2,
   "l": 1
