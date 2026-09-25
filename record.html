@@ -50,7 +50,7 @@
   <details class="disc"><summary>How this record is kept</summary><div class="disc-b">
     <p>Every pick is <b>committed to this site's public repository before its game starts</b>, with the time it was published. Nothing is added, edited or removed afterwards: a pick that loses stays on the record.</p>
     <p>Each pick is now published <b>sealed</b> at lock: encrypted, next to a fingerprint of it. When its game starts, it is revealed in the clear. Anyone can re-run the fingerprint and find the commit that carried it sealed, which has to be earlier than the game. <a href="https://github.com/thedifference7717-sys/oracle/blob/main/docs/sealed-picks.md" style="color:var(--blue)">How to check it yourself</a>.</p>
-    <p><b>ROI</b> is at a flat stake, at the price each pick was published at (the live Kalshi ask): one unit on each Ladder pick and each Dub parlay, and one unit on every ticket of each Robin round robin. Voids and pushes are left out. The Ladder also shows its result as played: each rung at the stake it was published with.</p>
+    <p><b>ROI</b> is at the price each pick was published at (the live Kalshi ask). The Ladder is counted as it is played: each rung at the stake it was published with. The Dub is one unit on each parlay, and the Robin one unit on every ticket of each round robin. Voids and pushes are left out.</p>
   </div></details>
 </div>
 
@@ -116,11 +116,11 @@ function ladderPlayed(bets) {
   return { pl, staked };
 }
 
-function card(emoji, name, big, sub, pl, staked, why) {
+function card(emoji, name, big, sub, pl, staked, why, roi) {
   return `<div class="card">
     <h3>${emoji} ${name}</h3>
     <div class="big">${big}<small>${sub}</small></div>
-    <div class="roi" style="color:${roiColor(pl)}">${roiTxt(pl, staked)}</div>
+    <div class="roi" style="color:${roiColor(pl)}">${roi || roiTxt(pl, staked)}</div>
     <div class="why">${why}</div>
   </div>`;
 }
@@ -134,8 +134,8 @@ function render() {
   document.getElementById("note").textContent = since ? `since ${P.prettyDate(since)}` : "";
 
   document.getElementById("prods").innerHTML =
-    card("🪜", "The Ladder", `${lf.w}–${lf.l}`, "one pick a day", lf.pl, lf.staked, "The single likeliest prop on the slate." +
-      (lp.staked ? `<br>As played, at each rung's published stake: <b style="color:${roiColor(lp.pl)}">${lp.pl >= 0 ? "+" : "−"}${P.money(Math.abs(lp.pl))}</b> on ${P.money(lp.staked)} staked.` : "")) +
+    card("🪜", "The Ladder", `${lf.w}–${lf.l}`, "one pick a day", lp.pl, lp.staked, "The single likeliest prop on the slate, played up the ladder at each rung's published stake.",
+      lp.staked ? `${lp.pl >= 0 ? "+" : "−"}${P.money(Math.abs(lp.pl))} on ${P.money(lp.staked)} · ${lp.pl >= 0 ? "+" : "−"}${Math.abs(lp.pl / lp.staked * 100).toFixed(1)}% ROI` : "—") +
     card("✌️", "The Dub", `${df.w}–${df.l}`, "two-leg parlays", df.pl, df.staked, "The best two-leg parlay, from two different games.") +
     card("🐦", "The Robin", `${rf.lw}–${rf.ll}`, `legs · ${rf.days} round robin${rf.days === 1 ? "" : "s"}`, rf.pl, rf.staked, "Six props, every 2- to 6-leg ticket between them.");
 
