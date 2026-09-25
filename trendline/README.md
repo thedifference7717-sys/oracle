@@ -137,3 +137,39 @@ each year, each side and double fees.
   with losing streaks of 7–8 R. That is a modest edge, not a money machine. At
   1% risk per trade, that is roughly 5–10% a year with 7–8% drawdowns. Results
   on one market over six years can still change. Paper-trade it first.
+
+## Quick trades (holds of minutes to a few hours)
+
+[`scalp.py`](./scalp.py) tested 474 settings each on BTCUSDT 5m and 15m across
+six families: RSI(2), Bollinger and VWAP stretch fades, session
+opening-range breakouts, liquidity-sweep reversals and momentum bursts.
+[`scalp_validate.py`](./scalp_validate.py) then stress-tested the one family
+that survived. Both use the same split: settings chosen on 2020-09 → 2024-08,
+tested on 2024-09 → 2026-08. Returns are % of notional at 1×. The workflow is
+[`quick-trades`](../.github/workflows/quick-trades.yml).
+
+- **5m:** nothing beats fees. Raw edges are 1–3 bps (0.01–0.03%) per trade,
+  and a round trip costs 4–10 bps.
+- **Mean reversion, VWAP, ORB and sweeps:** most show a small raw edge, and
+  fees wipe it out.
+- **15m momentum-burst continuation** is the only survivor. When a 15m candle's
+  body is larger than 2.5 × ATR(14), trade in its direction with a 1.5 × ATR
+  stop and exit after a set time. It averages about +11 bps per trade before
+  fees, so **the result depends on fees**:
+
+| Fee per side | Neighbouring settings profitable in both periods (of 240) | Centre setting, test period (next-open entry) |
+|---|---|---|
+| 0.00% | 95% | — |
+| 0.02% (limit orders) | 78% | +15.6%/yr, PF 1.33, max DD 12% |
+| 0.035% (mixed) | 48% | +9.8%/yr, PF 1.19, max DD 14% |
+| 0.05% (market orders) | 22% | +3.9%/yr, PF 1.07, max DD 17% |
+
+**Weak points:**
+
+- It lost money in 2022 (−6%) and 2023 (−16%) at 0.035% fees.
+- It does not carry over to 5m or 30m, so it looks specific to 15m.
+- At market-order fees, the tuning period is negative with next-open fills
+  (−4.7%/yr, 61% drawdown).
+
+It is only worth trading with limit-order (maker) fees, and even then it is a
+thin, uneven edge.
