@@ -887,11 +887,55 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#4 · vs Andrew Alvarez · projected, 95% to start",
+     "eventId": "822681",
+     "gk": 822681,
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26SEP251845NYMWSH-NYMBBICHETTE19-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.684,
+     "pAdj": 0.6946,
+     "player": "Bo Bichette",
+     "playerId": 666182,
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-25T22:45:00Z",
+     "teams": "NYM @ WSH",
+     "lineup": {
+      "in": true,
+      "slot": 3,
+      "at": "2026-09-25T22:45:49.979Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "a888c75816db5dd2baf59da78188fc0d6e8bf3244aa71c41f4b656d5f9d36e91",
-      "iv": "y+9TvML2asLSRXOs",
-      "ct": "Djry1XvK1aI8KMMiipN5L6qrv5idxkoD1L01U7bq1gqqRr4vG3wHRfRAh1v4Ua1hHRmkR9gvAHE8Dk/pJS6A6ZsaWMNHbEH81CjYMvLiAc2We8YWcSoQWuv6gzeFlNjx3Gzr2s9LLAapW7qzXD3jvhh4tmDVxU6EUuFWlpMSQyX42NfhcUYax01E3mmXz8X0/Uk9ucwx6j/zJOjwdZEbxQvUUMD3pafPpxmDEM43T8VcqX49av26KedUezXKczGwx4JxTbXJ5evmx1zsZE/fRfcMv2P0duLbPNqAmSLZNEG8Q8j5quM3GFOhWMvwKe0qk416RQ0yLhZrn7k1dQ75Lm4YVxWPoQb6AK/HrhFjpeePGGBnhx/zo5brxZyOgb46wZ4emVJqsrrCdvVaQV8GE3yRn4OMU74KiK1YmzENAb8yRUSnvJrThOwkyPfvDzrDQKyTTMloLCPSyiAGuJxBpOXIgYdKhI/2vfGOT8bQNWbBusV5XnM1g7hxFc0I88UBULGvPcCw/HYDIy0jlWoSDN5Zb8A7zvJULRiRNm1JhI1Zb+4mDxO7Yg1G13C1YazbxWY15zl0dwZJH6b36LF8On82Ywg7kfxV+RhccsSdF3eXcpZOsdakktL8XrsNY3LPiJAOrboYG9pUPjWMVhv3R4p/bTU88mzn+4okXA=="
+      "salt": "deb1cb9004d988fe53a9682822b0e869",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-25:robin#2"
      }
     },
     {
@@ -1007,7 +1051,7 @@
    ]
   }
  ],
- "updated": "2026-09-25T22:40:37.554Z",
+ "updated": "2026-09-25T22:45:49.979Z",
  "record": {
   "w": 17,
   "l": 1,
