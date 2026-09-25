@@ -76,3 +76,25 @@ TP1, TP2 and TP3, and move the stop to entry after TP1.
 Before fees, every timeframe is roughly breakeven. Fees cost 0.29 R per trade
 on 5m, 0.20 R on 15m and 0.11 R on 1H, so the shorter timeframes lose the most.
 With the default settings, none of them made money over this period.
+
+## Tuning (walk-forward, BTCUSDT 2020 → 2026)
+
+`tune.py` tried 2,880 setting combinations per timeframe. They cover the
+slope and separation filters, the HTF rule (3 / 4 / all of the timeframes, with
+or without requiring 4H and D to agree), the confirmation line, the stop
+(swing, 1.5 or 2.5 ATR, Type 2 line) and the exit plan (thirds, all out at 2R,
+all out at 3R, half at 1R then a runner, or trend-flip exit). Settings were
+chosen on **2020-09 → 2024-08** only and then tested on **2024-09 → 2026-08**.
+The workflow is [`trendline-tune`](../.github/workflows/trendline-tune.yml).
+
+**Result: no setting shows a reliable edge.**
+
+- **15m:** 87% of the combinations lost money in the test period. The best
+  in-sample picks came out between −1 and +2 R per year, from about 20 trades.
+- **1H:** 63% lost money. The only group that made money in both periods is
+  *slope 0–0.01 · 3-of-N · Type 1 · 2.5 ATR stop · all out at 3R*. It made
+  about +6 R/yr in the tuning period and +9–11 R/yr in the test period, with a
+  profit factor around 1.2, 31% winners and a 10–13 R max drawdown. Its
+  in-sample t-stat is below 1, and 2,880 combinations were tried, so a result
+  this good is likely to appear by luck. Treat it as a hypothesis, not a proven
+  edge.
