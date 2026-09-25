@@ -152,7 +152,7 @@
    "id": "2026-09-24:dub",
    "date": "2026-09-24",
    "published": "2026-09-24T15:35:14.633Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 12,
     "NFL": 1
@@ -208,17 +208,21 @@
      },
      "p": 0.726,
      "pAdj": 0.7418,
-     "detail": "#4 · vs Mason Barnett · projected, 95% to start"
+     "detail": "#4 · vs Mason Barnett · projected, 95% to start",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     }
    ],
    "prob": 0.5712,
    "price": -137,
-   "fair": -133
+   "fair": -133,
+   "settled": "2026-09-25T03:33:36.086Z"
   }
  ],
- "updated": "2026-09-25T02:19:02.169Z",
+ "updated": "2026-09-25T03:33:36.435Z",
  "record": {
-  "w": 1,
+  "w": 2,
   "l": 1
  }
 }

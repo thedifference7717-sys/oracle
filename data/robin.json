@@ -522,7 +522,7 @@
    "id": "2026-09-24:robin",
    "date": "2026-09-24",
    "published": "2026-09-24T15:35:14.633Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 12,
     "NFL": 1
@@ -574,7 +574,10 @@
      },
      "p": 0.726,
      "pAdj": 0.7418,
-     "detail": "#4 · vs Mason Barnett · projected, 95% to start"
+     "detail": "#4 · vs Mason Barnett · projected, 95% to start",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -722,21 +725,63 @@
      "expWin": 0.14,
      "ev": 0.0407
     }
-   ]
+   ],
+   "graded": {
+    "hit": 6,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 29.311,
+      "pl": 14.311
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 20,
+      "back": 54.596,
+      "pl": 34.596
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 57.176,
+      "pl": 42.176
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 6,
+      "back": 31.921,
+      "pl": 25.921
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 7.422,
+      "pl": 6.422
+     }
+    ]
+   },
+   "settled": "2026-09-25T03:33:36.452Z"
   }
  ],
- "updated": "2026-09-25T02:19:02.224Z",
+ "updated": "2026-09-25T03:33:36.678Z",
  "record": {
-  "w": 11,
+  "w": 17,
   "l": 1,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 83,
+   "w": 140,
    "l": 31
   },
   "days": {
-   "w": 2,
+   "w": 3,
    "l": 0
   }
  }
