@@ -24,7 +24,7 @@
 //
 // Only rows marked `seal: 1` (set at placement while a key is configured) are
 // touched. With no PICKS_KEY the whole module is a pass-through.
-import { createHmac, createHash, createCipheriv, createDecipheriv } from "crypto";
+import { createHmac, createHash, createCipheriv, createDecipheriv, randomBytes } from "crypto";
 
 // Stable JSON: sorted keys, undefined dropped. Mirrored in pages.js — the two
 // must agree byte for byte or no browser can verify a reveal.
@@ -152,4 +152,29 @@ export function sealer(key, { now = () => Date.now() } = {}) {
       return out;
     }
   };
+}
+
+// ── The alerter's own state (state.json) ────────────────────────────────────
+// It holds every open pick in the clear — the rows it has placed, the client
+// messages it has queued — and lives in the Actions cache, which anything that
+// can run a workflow in this repo can restore. With a key it is written
+// encrypted (a fresh IV every write; nothing here needs to be deterministic).
+export function stateEncode(key, obj) {
+  const json = JSON.stringify(obj);
+  if (!key) return json;
+  const iv = randomBytes(12), c = createCipheriv("aes-256-gcm", key, iv);
+  const ct = Buffer.concat([c.update(json, "utf8"), c.final(), c.getAuthTag()]);
+  return JSON.stringify({ enc: 1, iv: iv.toString("base64"), ct: ct.toString("base64") });
+}
+// Plain state (from before the key existed) still reads. Encrypted state
+// without the key throws — starting again from nothing would forget which
+// alerts were already sent.
+export function stateDecode(key, raw) {
+  const o = JSON.parse(raw);
+  if (!o || o.enc !== 1) return o || {};
+  if (!key) throw new Error("state.json is encrypted but PICKS_KEY is not set");
+  const buf = Buffer.from(o.ct, "base64");
+  const d = createDecipheriv("aes-256-gcm", key, Buffer.from(o.iv, "base64"));
+  d.setAuthTag(buf.subarray(buf.length - 16));
+  return JSON.parse(Buffer.concat([d.update(buf.subarray(0, buf.length - 16)), d.final()]).toString("utf8"));
 }

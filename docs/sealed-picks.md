@@ -43,6 +43,11 @@ exactly as before.
 
 Picks placed after that are sealed. Picks already published stay as they were.
 
+The same key also encrypts the alerter's own state (`state.json` in the Actions
+cache), which holds the day's picks before they're revealed. If the key is ever
+missing while that state is encrypted, the alerter stops with an error rather
+than start from nothing and re-send alerts.
+
 ## Seeing sealed picks on the site yourself
 
 Open any page once with the key in the link:

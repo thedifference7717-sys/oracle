@@ -23,7 +23,7 @@ if (!existsSync(STATE)) {
   process.exit(0);
 }
 let blob = {};
-try { blob = JSON.parse(readFileSync(STATE, "utf8")) || {}; }
+try { blob = A.readState() || {}; }                       // decrypted with PICKS_KEY if it is encrypted
 catch (e) { console.log("state.json unreadable:", e.message); process.exit(1); }
 
 const D = (blob.dd = blob.dd || {});

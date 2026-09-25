@@ -1,6 +1,6 @@
 // Sealed picks: nothing readable before its game, everything checkable after.
 import { randomBytes } from "crypto";
-import { sealer, keyFrom, openSeal, checkReveal, canon } from "./seal.mjs";
+import { sealer, keyFrom, openSeal, checkReveal, canon, stateEncode, stateDecode } from "./seal.mjs";
 
 let failures = 0;
 const ok = (name, cond, detail) => { console.log(`  ${cond ? "ok  " : "FAIL"} ${name}${cond || detail == null ? "" : " — " + detail}`); if (!cond) failures++; };
@@ -77,6 +77,18 @@ console.log("no key, no change");
   ok("without PICKS_KEY rows are published untouched", off.ladderOut(row) === row && off.cardOut(row, "dub") === row);
   const sealedRow = { id: "x", seal: 1, status: "open", sealed: { v: 1, hash: "h", iv: "i", ct: "c" } };
   ok("and a sealed row it cannot open is passed through, never guessed at", off.ladderOut(off.ladderIn(sealedRow)).sealed.hash === "h");
+}
+
+console.log("the alerter's state file");
+{
+  const st = { dd: { ladderRows: [{ pick: "Corbin Carroll" }], clientQueue: [{ text: "Carroll to record a hit" }] } };
+  const enc = stateEncode(key, st);
+  ok("with a key, no pick is readable in it", !/Carroll/.test(enc) && JSON.parse(enc).enc === 1);
+  ok("the key reads it back", stateDecode(key, enc).dd.ladderRows[0].pick === "Corbin Carroll");
+  ok("state from before the key still reads", stateDecode(key, JSON.stringify(st)).dd.clientQueue.length === 1);
+  ok("without a key it stays plain JSON, as before", stateEncode(null, st) === JSON.stringify(st));
+  ok("encrypted state without the key refuses, never starts empty", (() => { try { stateDecode(null, enc); return false; } catch (e) { return /PICKS_KEY/.test(e.message); } })());
+  ok("and a wrong key fails loudly", (() => { try { stateDecode(randomBytes(32), enc); return false; } catch (e) { return true; } })());
 }
 
 console.log(failures ? `\n${failures} check(s) FAILED.` : "\nAll checks passed.");

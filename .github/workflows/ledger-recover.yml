@@ -60,6 +60,8 @@ jobs:
             parlaiy-state-
 
       - name: Reconcile the ledger against it
+        env:
+          PICKS_KEY: ${{ secrets.PICKS_KEY }}      # state.json is encrypted with it once set
         run: node scripts/ledger-recover.mjs
 
       # Independent of everything above: does the published record contain
