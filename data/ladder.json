@@ -403,7 +403,7 @@
    "eventId": "824706",
    "teams": "CHC @ BOS",
    "detail": "#4 · vs Brayan Bello · projected, 95% to start",
-   "status": "open",
+   "status": "won",
    "fromProps": 111,
    "games": {
     "MLB": 17
@@ -440,15 +440,17 @@
     "in": true,
     "slot": 6,
     "at": "2026-09-25T20:24:29.816Z"
-   }
+   },
+   "hits": 1,
+   "settled": "2026-09-25T21:58:02.488Z"
   }
  ],
- "updated": "2026-09-25T20:24:29.816Z",
+ "updated": "2026-09-25T21:58:02.490Z",
  "state": {
   "account": 119.29,
   "base": 16.58,
-  "stake": 23.03,
-  "rung": 2,
+  "stake": 33.84,
+  "rung": 3,
   "cycle": 5,
   "pl": 19.29,
   "cycles": {
