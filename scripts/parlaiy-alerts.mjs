@@ -34,7 +34,18 @@ import { fetchHitQuotes, lookup as quoteFor } from "./kalshi-quotes.mjs";
 let _LSP = null;
 const ladderSports = async () => (_LSP = _LSP || await import("./ladder-sports.mjs"));
 
-const STATE_FILE = "state.json";
+// On the engine's own server the state lives outside the checkout, at a fixed
+// path (STATE_FILE), so it never goes near GitHub's cache.
+const STATE_FILE = process.env.STATE_FILE || "state.json";
+// The public record (ladder, dub, robin, fills) can live in a different
+// checkout from this code: the engine's repo is private, and the record is
+// published to the public one, checked out at PUBLIC_DIR. Git reads of those
+// files run in that checkout. Unset, everything is in this one, as before.
+const PUB = String(process.env.PUBLIC_DIR || "").replace(/\/+$/, "");
+const pubPath = f => PUB ? `${PUB}/${f}` : f;
+const gitFor = f => PUB && f.startsWith(PUB + "/") ? { C: `-C ${PUB} `, rel: f.slice(PUB.length + 1) } : { C: "", rel: f };
+const showOrigin = f => { const g = gitFor(f); return execSync(`git ${g.C}show origin/main:${g.rel} 2>/dev/null`, { encoding: "utf8" }); };
+const dirOf = f => f.includes("/") ? f.slice(0, f.lastIndexOf("/")) : ".";
 const PUBLIC_LOG = "data/model-log.json";
 const LEDGER = "data/ledger.json";
 
@@ -387,7 +398,7 @@ const posted = g => {
 // the early game has started and skipping it was never an option we had. So
 // "best play of the day" means best play available at the moment we must
 // choose, which is the only version of it that can actually be bet.
-const LADDER_FILE = "data/ladder.json";
+const LADDER_FILE = pubPath("data/ladder.json");
 // The price a single "to record a hit" prop is actually offered at. Overridden
 // with DD_LEG_PRICE. This is an assumption until the real number is confirmed,
 // and it decides both whether there is a bet and how fast the ladder climbs.
@@ -411,7 +422,7 @@ const LADDER_BAND = { lo: +(process.env.DD_BAND_LO || -350), hi: +(process.env.D
 // data/fills.json holds the prices you actually got (see fills.js). Every bet
 // amount in an alert is worked out with them folded in, and every page reads
 // the same file, so the two cannot drift apart. You set them from Telegram.
-const FILLS_FILE = "data/fills.json";
+const FILLS_FILE = pubPath("data/fills.json");
 let _F = null;
 // A runner started before fills.js existed restores scripts/ but not fills.js,
 // so a missing file must mean "no fills", never a failed alert.
@@ -433,7 +444,7 @@ const fillsLib = async () => {
 };
 function readFills(D) {
   if (D && D.fills) return D.fills;                         // this runner is the only writer
-  for (const src of [() => readFileSync(FILLS_FILE, "utf8"), () => execSync(`git show origin/main:${FILLS_FILE} 2>/dev/null`, { encoding: "utf8" })]) {
+  for (const src of [() => readFileSync(FILLS_FILE, "utf8"), () => showOrigin(FILLS_FILE)]) {
     try { const f = JSON.parse(src()); if (f && typeof f === "object") return { ladder: f.ladder || {}, dub: f.dub || {} }; } catch (e) {}
   }
   return { ladder: {}, dub: {} };
@@ -443,15 +454,16 @@ function readFills(D) {
 // on every pass. Keep the fills in state until a fresh checkout can write it.
 const fillsFileWritable = () => {
   try {
-    if (execSync(`git ls-files ${FILLS_FILE}`, { encoding: "utf8" }).trim()) return true;
-    execSync(`git cat-file -e FETCH_HEAD:${FILLS_FILE} 2>/dev/null || git cat-file -e origin/main:${FILLS_FILE}`, { stdio: "ignore" });
+    const g = gitFor(FILLS_FILE);
+    if (execSync(`git ${g.C}ls-files ${g.rel}`, { encoding: "utf8" }).trim()) return true;
+    execSync(`git ${g.C}cat-file -e FETCH_HEAD:${g.rel} 2>/dev/null || git ${g.C}cat-file -e origin/main:${g.rel}`, { stdio: "ignore" });
     return false;                                         // main has it, this checkout does not
   } catch (e) { return true; }                            // nobody has it yet, or no git
 };
 function writeFills(D, f) {
   if (D) D.fills = f;
   if (!fillsFileWritable()) { console.log("fills: held in state until this checkout tracks " + FILLS_FILE); return; }
-  mkdirSync("data", { recursive: true });
+  mkdirSync(dirOf(FILLS_FILE), { recursive: true });
   writeFileSync(FILLS_FILE, JSON.stringify(Object.assign({ updated: new Date().toISOString() }, f), null, 1));
 }
 let FILLS = { ladder: {}, dub: {} };                          // loaded at the start of each pass
@@ -547,7 +559,7 @@ function readLadderLocal() {
 }
 function readLadderOrigin() {
   try {
-    const raw = execSync(`git show origin/main:${LADDER_FILE} 2>/dev/null`, { encoding: "utf8" });
+    const raw = showOrigin(LADDER_FILE);
     const L = JSON.parse(raw);
     if (!Array.isArray(L.bets)) return null;
     L.bets = L.bets.map(SEAL.ladderIn);
@@ -610,7 +622,7 @@ function writeLadderFile(L) {
   L.cfg = M.LADDER;
   L.state = (({ account, base, stake, rung, cycle, pl, cycles, canFund }) =>
     ({ account, base, stake, rung, cycle, pl, cycles, canFund }))(M.ladder(ladderBets(L.bets)));
-  mkdirSync("data", { recursive: true });
+  mkdirSync(dirOf(LADDER_FILE), { recursive: true });
   writeFileSync(LADDER_FILE, JSON.stringify(Object.assign({}, L, { bets: L.bets.map(SEAL.ladderOut) }), null, 1));
 }
 
@@ -850,10 +862,10 @@ async function ladderPlace(day, games, D, saveState) {
 // Placed at the ladder's lock, from the same priced pool, and published to
 // their own files the same way: committed before the first game, so they are
 // on the record before anything can be known about them.
-const DUB_FILE = "data/dub.json", ROBIN_FILE = "data/robin.json";
+const DUB_FILE = pubPath("data/dub.json"), ROBIN_FILE = pubPath("data/robin.json");
 function readJsonFile(f) { try { const x = JSON.parse(readFileSync(f, "utf8")); if (Array.isArray(x.bets)) { x.bets = x.bets.map(SEAL.cardIn); return x; } } catch (e) {} return null; }
 function readJsonOrigin(f) {
-  try { const x = JSON.parse(execSync(`git show origin/main:${f} 2>/dev/null`, { encoding: "utf8" })); if (!Array.isArray(x.bets)) return null; x.bets = x.bets.map(SEAL.cardIn); return x; }
+  try { const x = JSON.parse(showOrigin(f)); if (!Array.isArray(x.bets)) return null; x.bets = x.bets.map(SEAL.cardIn); return x; }
   catch (e) { return null; }
 }
 // Same union as the ladder: what is published, what this runner has locally,
@@ -882,7 +894,7 @@ function writeDaily(f, J, D, key) {
                  tickets: { w: t.reduce((a, x) => a + x.w, 0), l: t.reduce((a, x) => a + x.l, 0) },
                  days: { w: done.filter(b => pl(b) > 0).length, l: done.filter(b => pl(b) < 0).length } };
   }
-  mkdirSync("data", { recursive: true });
+  mkdirSync(dirOf(f), { recursive: true });
   const kind = f === DUB_FILE ? "dub" : "robin";
   writeFileSync(f, JSON.stringify(Object.assign({}, J, { bets: J.bets.map(b => SEAL.cardOut(b, kind)) }), null, 1));
   if (D) {                                              // hold the last two weeks in state

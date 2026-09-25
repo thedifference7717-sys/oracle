@@ -17,7 +17,7 @@ process.env.TELEGRAM_CHAT_ID ||= "unused-by-this-script";
 
 const A = await import("./parlaiy-alerts.mjs");
 
-const STATE = "state.json";
+const STATE = process.env.STATE_FILE || "state.json";
 if (!existsSync(STATE)) {
   console.log("No state.json restored — nothing to recover from.");
   process.exit(0);
