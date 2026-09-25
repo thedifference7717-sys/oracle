@@ -1,28 +1,28 @@
 {
-  "name": "Prop Shop",
+  "name": "The Prop Shop",
   "short_name": "Prop Shop",
-  "description": "Prop Shop by SportsAI — the Ladder, the Dub and the Robin: one model-priced player-prop card a day across baseball, basketball and football.",
+  "description": "The Prop Shop: the Ladder, the Dub and the Robin. Daily player props across baseball, basketball and football, every pick sealed before its game.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#05050E",
-  "theme_color": "#05050E",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     {
-      "src": "sportsai-180.png",
+      "src": "propshop-180.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "sportsai-512.png",
+      "src": "propshop-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "sportsai-512.png",
+      "src": "propshop-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

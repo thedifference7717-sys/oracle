@@ -65,11 +65,11 @@ jobs:
         if: always()
         working-directory: engine
         run: |
-          git config user.name  "sportsai-bot"
+          git config user.name  "prop-shop-bot"
           git config user.email "noreply@users.noreply.github.com"
           git add -A data
           git diff --cached --quiet && { echo "nothing to publish"; exit 0; }
-          git commit -q -m "SportsAI: recover ledger rows lost before they were committed"
+          git commit -q -m "Prop Shop: recover ledger rows lost before they were committed"
           for i in 1 2 3 4; do
             git pull --rebase --autostash -q origin main && git push -q origin HEAD:main && { echo "pushed"; exit 0; }
             echo "push failed, retry $i"; sleep $((2**i))

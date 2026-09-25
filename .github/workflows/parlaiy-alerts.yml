@@ -69,7 +69,7 @@ jobs:
           END=$(( $(date +%s) + 350*60 ))
           export PUBLIC_DIR="$GITHUB_WORKSPACE/public" STATE_FILE="$GITHUB_WORKSPACE/state.json"
           for d in public engine; do
-            git -C "$d" config user.name  "sportsai-bot"
+            git -C "$d" config user.name  "prop-shop-bot"
             git -C "$d" config user.email "noreply@users.noreply.github.com"
           done
           # Commit and push one checkout's data/. A pick is only verifiable if
@@ -80,7 +80,7 @@ jobs:
           push_data() {
             local dir="$1" what="$2"
             git -C "$dir" add -A data 2>/dev/null || true
-            git -C "$dir" diff --cached --quiet -- data || git -C "$dir" commit -q -m "SportsAI: publish picks and results" || true
+            git -C "$dir" diff --cached --quiet -- data || git -C "$dir" commit -q -m "Prop Shop: publish picks and results" || true
             git -C "$dir" fetch -q origin main 2>/dev/null || true
             [ -z "$(git -C "$dir" rev-list origin/main..HEAD 2>/dev/null)" ] && return 0
             for k in 1 2 3; do
