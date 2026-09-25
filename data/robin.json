@@ -1044,17 +1044,58 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#3 · vs Tomoyuki Sugano · lineup confirmed",
+     "eventId": "824544",
+     "gk": 824544,
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.67,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26SEP251940COLCWS-CWSMVARGAS20-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.701,
+     "pAdj": 0.6919,
+     "player": "Miguel Vargas",
+     "playerId": 678246,
+     "price": -213,
+     "priceSource": "kalshi",
+     "published": "2026-09-25T20:05:39.383Z",
+     "sport": "MLB",
+     "start": "2026-09-25T23:40:00Z",
+     "teams": "CWS vs COL",
+     "revealed": {
       "v": 1,
       "hash": "66bdf2b35f7ca77b4f490fc9e33221a51e93df1f0b87e7a5e0e97e4ce9a2415c",
-      "iv": "D6MWbYzdTjssHVun",
-      "ct": "7GMGcKZWduMk6Plwq1jPX5KGd9+YuDUI0j4BusTylL6P5fVYPazu6EMIWen7XkRUBl5VlFgkH5XDxPMJ7ciUa60hOm74wlXoKwDk2FckXMHlgwbL8PzKgEhOLv+NtZTApPmk81uPRUYs1bwYDrS501m9+g6Q2kmEIU1tLeSweUWPowzPHgsZ3k159h1S1+lkO8Vxoc7dDt1+CbNvZwD7ldnojliLCVGya8e7W7J9bDixOxJgCBI2ba9CwWQfHR8guYM439AZw2tFwvGaibC54nUoqP0OjoymN0xQ2hN3Iwr714AavCA6m9tA+DvwKh+xJl7YSFigJetKWP9MoG6OEuNTSZN7j441ihKfq70z+XoT+Suxmi4nGVdOugMIdKE8F88akOuI2pTrB/nehPNGHKIXzWFjpQAoCPx/DNFmOCnX5i7HAM5iNWBIcY2vQ2J4iqkoJ3MGY5LdCtngG6bsrRN/TvL4y40DXuVephwWgHLO7B+SLWDMSvzGk221yV1H0cR95mf2b/U7t/U4m0sCQfew9xFzAWWMmTghsqE+j9AqUA+X4yWqVwolaS7/8njvx0VgKMhAE52OmtyG855Eti1/O1XJVlx+iV0Hoe4npeF3l3zbh0cX+8KFYT5utn4CJ7wFH/fTVB3bSxTAya/bXbZOYin1jgR3u2oaBCIGry0GwRNAH7ODbmtJ7kY2tymvrzZ4GSHkXD/vQu3v4rst"
+      "salt": "6aa49fa1cd0c6d84aff9d80f8d1860dc",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "published",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-25:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-09-25T23:34:45.301Z",
+ "updated": "2026-09-25T23:40:59.439Z",
  "record": {
   "w": 17,
   "l": 1,
