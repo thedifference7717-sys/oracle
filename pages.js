@@ -92,6 +92,19 @@
     } catch (e) { return o; }
   }
   const SEALED_LEG = { player: "🔒 Sealed", need: "revealed when its game starts", sport: "" };
+  // The in-page way to store the key. A home-screen app on iPhone or iPad
+  // keeps its own storage, separate from Safari's, and has no address bar
+  // for #key=, so it needs a button. Checked before it is kept: 32 bytes,
+  // base64. Nothing is sent anywhere.
+  P.promptKey = function () {
+    const k = (window.prompt("Paste your PICKS_KEY to see sealed picks on this device:") || "").trim();
+    if (!k) return;
+    let ok = false; try { ok = b64(k).length === 32; } catch (e) {}
+    if (!ok) { window.alert("That isn't a valid key — it should be the 44-character line ending in ="); return; }
+    try { localStorage.setItem("pg.key", k); } catch (e) {}
+    location.reload();
+  };
+  P.unlockButton = () => `<button type="button" onclick="Pages.promptKey()" style="margin-top:6px;font:inherit;font-size:12px;padding:4px 10px;border-radius:8px;border:1px solid var(--dim);background:transparent;color:var(--muted)">🔓 Unlock</button>`;
   P.present = async function (j) {
     if (!j || !Array.isArray(j.bets) || !j.bets.some(b => b && (b.sealed || (b.legs || []).some(l => l && l.sealed)))) return j;
     const k = await pickKey();
@@ -147,6 +160,7 @@
     if (l.sealed) return `<div class="leg">
       <div class="nm">${l.player}</div>
       <div class="need" style="font-weight:400;color:var(--dim)">${l.need}</div>
+      ${P.unlockButton()}
       ${extra || ""}</div>`;
     const res = l.result === "won" ? '<span class="tag ok">✓ WON</span>' : l.result === "lost" ? '<span class="tag bad">✗ LOST</span>'
               : l.result === "void" ? '<span class="tag dim">VOID</span>' : "";

@@ -1364,6 +1364,7 @@ function renderLadderInner(){
     <div class="ld-pick">
       <div class="nm">🔒 Sealed <span class="tag ok">LOCKED</span></div>
       <div class="sub" style="margin-top:2px">Today's pick is on the record, encrypted, and is revealed when its game starts.</div>
+      ${window.Pages?Pages.unlockButton():""}
       <div class="sub" style="margin-top:7px;color:var(--green)">
         Published ${sealedPub.published?etTime(Date.parse(sealedPub.published)):"—"} ET${sealedPub.games?` · chosen from ${gamesLine(sealedPub.games)}`:""}
       </div>
