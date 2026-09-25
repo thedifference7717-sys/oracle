@@ -22,7 +22,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } from "
 import { tmpdir } from "os";
 import { join } from "path";
 import { execSync } from "child_process";
-import { sealer, keyFrom, canon } from "./seal.mjs";
+import { sealer, keyFrom, canon, stateEncode, stateDecode } from "./seal.mjs";
 import { tierConfig, routes, forClients, enqueue, flush } from "./tiers.mjs";
 import { pathToFileURL } from "url";
 import M from "../dd-model.js";
@@ -260,9 +260,11 @@ const GAME_ALERTS = process.env.DD_GAME_ALERTS === "1";
 const tgGame = (...a) => GAME_ALERTS ? tg(...a) : Promise.resolve();
 async function tgTo(chat, text) {
   if (DRY_RUN) { console.log(`\n[telegram → ${chat === CHAT ? "you" : chat}, not sent]\n` + text.replace(/<[^>]+>/g, "") + "\n"); return; }
+  // Client copies are protected: Telegram blocks forwarding and saving them.
+  // It cannot stop a photo of the screen, but it stops the one-tap reshare.
   await j(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chat, text, parse_mode: "HTML", disable_web_page_preview: true })
+    body: JSON.stringify({ chat_id: chat, text, parse_mode: "HTML", disable_web_page_preview: true, protect_content: String(chat) !== String(CHAT) })
   });
 }
 // The owner's chat: everything, always.
@@ -562,7 +564,11 @@ let stateRows = [];
 // Robin pick is committed encrypted and revealed leg by leg as its game
 // starts. Everything in this file works on the opened rows; the files are
 // sealed on the way out and opened on the way in, and nowhere else.
-const SEAL = sealer(keyFrom(process.env.PICKS_KEY));
+const PICKS_KEY = keyFrom(process.env.PICKS_KEY);
+const SEAL = sealer(PICKS_KEY);
+// state.json, encrypted with the same key when there is one (seal.mjs).
+const writeState = blob => writeFileSync(STATE_FILE, stateEncode(PICKS_KEY, blob));
+export const readState = () => existsSync(STATE_FILE) ? stateDecode(PICKS_KEY, readFileSync(STATE_FILE, "utf8")) : {};
 // Rung results already sent, by date — held in state, set by main(). The
 // published ledger is not enough to dedupe on: when a pass cannot push, the
 // next pass reads the rung as still open from origin and settles it again,
@@ -1205,12 +1211,18 @@ async function main() {
   const games = (sched?.dates?.[0]?.games || []).filter(g => !/postpon|suspend|cancel/i.test(g.status?.detailedState || ""));
 
   let blob = {};
-  try { if (existsSync(STATE_FILE)) blob = JSON.parse(readFileSync(STATE_FILE, "utf8")) || {}; } catch (e) { console.log("State read failed:", e.message); }
+  try { blob = readState() || {}; }
+  catch (e) {
+    // Encrypted state and no key: stop rather than run on empty state, which
+    // would forget what was already alerted and send it all again.
+    if (/PICKS_KEY/.test(e.message)) { console.log("State read failed:", e.message, "— not running."); process.exitCode = 1; return; }
+    console.log("State read failed:", e.message);
+  }
   const D = blob.dd = blob.dd || {};
   ladderSaid = D.ladderSaid = D.ladderSaid || {};
   clientQ = D.clientQueue = D.clientQueue || [];
   for (const k of Object.keys(ladderSaid)) if (k < M.ymd(new Date(Date.now() - 14 * 86400000))) delete ladderSaid[k];
-  persistState = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
+  persistState = () => { try { writeState(blob); } catch (e) { console.log("State write failed:", e.message); } };
   try { await flushClients(); } catch (e) { console.log("client send failed:", e.message); }
   // Your fills first — every amount below is worked out with them — then any
   // /odds, /paid, /dub or /bets you have sent the bot since the last pass.
@@ -1221,7 +1233,7 @@ async function main() {
   try {
     await fillsLib(); FILLS = readFills(D);
     if (D.fills && !existsSync(FILLS_FILE)) writeFills(D, D.fills);   // a reverted push: write it back
-    await tgCommands(D, () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) {} });
+    await tgCommands(D, () => { try { writeState(blob); } catch (e) {} });
   } catch (e) { console.log("fills failed:", e.message); }
   // Rows held in state that the published files lack — a push that failed,
   // or a runner that was replaced before its push landed — are written back
@@ -1253,7 +1265,7 @@ async function main() {
   if (!games.length) {
     console.log(`No MLB games ${day}.`);
     stateRows = Array.isArray(D.ladderRows) ? D.ladderRows : [];
-    const save = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
+    const save = () => { try { writeState(blob); } catch (e) { console.log("State write failed:", e.message); } };
     try { await ladderSettleOther(); } catch (e) { console.log("ladder settle failed:", e.message); }
     try { await ladderPlace(day, [], D, save); } catch (e) { console.log("ladder place failed:", e.message); }
     try { await picksSettle(D, save); } catch (e) { console.log("picks settle failed:", e.message); }
@@ -1386,7 +1398,7 @@ async function main() {
       console.log(`ladder: restored ${stateRows.length} row(s) from state into the ledger.`);
     }
   }
-  const saveState = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
+  const saveState = () => { try { writeState(blob); } catch (e) { console.log("State write failed:", e.message); } };
   try { await ladderSettleOther(); } catch (e) { console.log("ladder settle failed:", e.message); }
   try { await ladderPlace(day, games, D, saveState); } catch (e) { console.log("ladder place failed:", e.message); }
   try { await picksSettle(D, saveState); } catch (e) { console.log("picks settle failed:", e.message); }
@@ -1399,7 +1411,7 @@ async function main() {
   // cleared the bar — those are different bets on different games.
   if (!todays.length) {
     try { await settleLadderOnly(games); } catch (e) { console.log("ladder settle failed:", e.message); }
-    try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); }
+    try { writeState(blob); } catch (e) { console.log("State write failed:", e.message); }
     console.log("Nothing alerted yet today."); return;
   }
 
@@ -1487,7 +1499,7 @@ async function main() {
     } catch (e) { console.log("Publish failed:", e.message); }
   }
 
-  try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); }
+  try { writeState(blob); } catch (e) { console.log("State write failed:", e.message); }
   console.log(`Done — 💣 ${cashed} / 💀 ${dead} of ${todays.length} alerted.${changed ? " [state updated]" : ""}`);
 }
 

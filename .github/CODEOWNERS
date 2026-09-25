@@ -1,0 +1,10 @@
+# Every change needs the owner's review once branch protection on `main` has
+# "Require a pull request" and "Require review from Code Owners" turned on.
+#
+# Worth knowing: an AI tool connected to GitHub through your login acts AS
+# you, so GitHub can't tell its changes from yours. Review rules stop
+# collaborators and other accounts; they can't stop a tool holding your own
+# login. The real limit on those is which repositories you grant them.
+*                    @thedifference7717-sys
+/.github/            @thedifference7717-sys
+/scripts/            @thedifference7717-sys
