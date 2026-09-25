@@ -56,3 +56,23 @@ To get these on your phone, point the alert's webhook at the existing
 - **Gold / forex scalping (1-5m):** keep MTF on with *Min timeframes agreeing* 3-4, and set *Min slope* to 0.005-0.01.
 - **Too few signals:** lower *Min slope* or *Min separation*, raise *Re-confirm within*, or switch the confirmation line to Type 2.
 - **Too many signals in chop:** raise *Min slope* or *Min timeframes agreeing*.
+
+## Backtest (BTCUSDT, default settings)
+
+`backtest.py` replays the script's default logic on Binance BTCUSDT 5m klines.
+It builds 15m, 1H and every higher timeframe from those 5m candles. The
+[`trendline-backtest`](../.github/workflows/trendline-backtest.yml) workflow
+runs it in Actions, where exchange data is reachable.
+
+Test window: 2025-09-01 → 2026-08-31. Fee: 0.05% per side. Plan: take ⅓ off at
+TP1, TP2 and TP3, and move the stop to entry after TP1.
+
+| TF | Trades | TP1 / TP2 / TP3 hit | Full SL | Median risk | Gross R | Net R | PF (net) | Max DD |
+|---|---|---|---|---|---|---|---|---|
+| 5m | 405 | 50% / 25% / 16% | 50% | 0.40% | −6.0 | **−125.2** | 0.54 | 125 R |
+| 15m | 237 | 50% / 25% / 17% | 50% | 0.64% | +1.0 | **−46.9** | 0.68 | 55 R |
+| 1H | 80 | 51% / 28% / 19% | 49% | 1.15% | +4.3 | **−4.3** | 0.90 | 9 R |
+
+Before fees, every timeframe is roughly breakeven. Fees cost 0.29 R per trade
+on 5m, 0.20 R on 15m and 0.11 R on 1H, so the shorter timeframes lose the most.
+With the default settings, none of them made money over this period.
