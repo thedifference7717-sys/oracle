@@ -402,6 +402,29 @@ export function choose(candidates, records, { band, blocked = new Set(), minEdge
 // Only once the game is final: yardage can go backwards on a sack or a loss,
 // and a record settled on a guess is not a record.
 // Returns null while it is not knowable yet.
+// How far past the line a football yardage over must be before it is graded
+// won mid-game rather than at the final.
+export const NFL_CLEAR = 20;
+const NFL_STAT = { passYds: ["passing", "passingYards"], rushYds: ["rushing", "rushingYards"], recYds: ["receiving", "receivingYards"] };
+// One man's yards in one market from an ESPN summary already fetched, or null
+// if he is not in it yet.
+function nflLiveYards(d, pick, market) {
+  const [cat, key] = NFL_STAT[market] || [];
+  if (!cat) return null;
+  for (const T of ((d || {}).boxscore || {}).players || []) {
+    for (const c of T.statistics || []) {
+      if (c.name !== cat) continue;
+      const i = (c.keys || []).indexOf(key);
+      if (i < 0) continue;
+      for (const a of c.athletes || []) {
+        if (kPlayerKey(a.athlete && a.athlete.displayName) !== kPlayerKey(pick)) continue;
+        const n = parseFloat(a.stats[i]);
+        return isFinite(n) ? n : null;
+      }
+    }
+  }
+  return null;
+}
 export async function settleRung(b, { get = getJSON } = {}) {
   if (b.sport !== "NBA" && b.sport !== "NFL") return null;
   const d = await get(`${ESPN}/${SPORT[b.sport].espn}/summary?event=${b.eventId}`);
@@ -410,8 +433,18 @@ export async function settleRung(b, { get = getJSON } = {}) {
   if (/postpon|cancel/i.test(st.name || "")) return { status: "void", actual: null, note: "game not played — stake returned" };
   // Points, rebounds, assists and threes only ever go up, so an NBA prop is
   // won the moment the line is passed — graded then, not at the final buzzer.
-  // Yards can go backwards (a sack, a loss on a run), so football waits.
+  // Yards can go backwards (a sack, a loss on a run), so football waits —
+  // unless he is already NFL_CLEAR yards past the line, a cushion a loss
+  // is not going to give back. A miss still waits for the final.
   if (!final) {
+    if (b.sport === "NFL" && st.state === "in") {
+      const got = nflLiveYards(d, b.pick, b.market);
+      if (got != null && got >= b.line + NFL_CLEAR) {
+        return { status: "won", actual: got,
+                 note: `${got} ${MARKETS.NFL[b.market] ? MARKETS.NFL[b.market].label : b.market} against a ${b.line} line (graded early, ${NFL_CLEAR}+ clear)` };
+      }
+      return null;
+    }
     if (b.sport !== "NBA" || st.state !== "in") return null;
     const r = HW.settle({ playerId: b.playerId, market: b.market, line: b.line }, HW.parseBoxScore(d));
     return r && r.status === "won" ? r : null;
