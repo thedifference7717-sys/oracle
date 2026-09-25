@@ -5,6 +5,10 @@ description of **ZynAlgo Trendline** says it works. ZynAlgo's script is
 invite-only and closed source, so this code is not copied from it. It follows
 their published feature list, and every threshold is a setting you can change.
 
+![Oracle Trendline on a 15m chart (simulated data)](./preview.png)
+
+*Preview drawn from a Python port of the script's logic on simulated prices, not a TradingView screenshot.*
+
 > Not financial advice. It draws levels and sends alerts. It never places a trade.
 
 ## Install
