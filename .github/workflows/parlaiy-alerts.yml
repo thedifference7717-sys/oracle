@@ -119,6 +119,8 @@ jobs:
           TG_TIER2: ${{ vars.TG_TIER2 }}
           TG_TIER3: ${{ vars.TG_TIER3 }}
           TG_CLIENT_DELAY_MIN: ${{ vars.TG_CLIENT_DELAY_MIN || '0' }}
+          # The free public channel: the daily sealed and results posts.
+          TG_PUBLIC: ${{ vars.TG_PUBLIC }}
           DD_PRICE: ${{ vars.DD_PRICE || '-175' }}
           DD_MIN_EDGE: ${{ vars.DD_MIN_EDGE || '0.02' }}
           DD_PER_SPOT_PT: ${{ vars.DD_PER_SPOT_PT || vars.DD_PER_EDGE_PT || '2.50' }}
