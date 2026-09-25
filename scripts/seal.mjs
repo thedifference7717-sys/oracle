@@ -43,9 +43,9 @@ export const RULES = {
            "startProb", "sp"]
   },
   dub: { pub: ["id", "date", "published", "status", "games", "seal", "reason"], priv: ["prob", "price", "fair", "excludes"] },
-  robin: { pub: ["id", "date", "published", "status", "games", "seal", "reason", "sizes"], priv: [] },
+  robin: { pub: ["id", "date", "published", "status", "games", "seal", "reason", "sizes", "rev"], priv: ["revised"] },
   leg: { pub: [], priv: ["sport", "player", "playerId", "market", "line", "need", "eventId", "gk", "teams", "start",
-                         "price", "priceSource", "kalshi", "p", "pAdj", "detail"] }
+                         "price", "priceSource", "kalshi", "p", "pAdj", "detail", "published"] }
 };
 
 export function keyFrom(b64) {
