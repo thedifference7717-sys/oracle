@@ -832,11 +832,55 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#4 · vs Brayan Bello · projected, 95% to start",
+     "eventId": "824706",
+     "gk": 824706,
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26SEP251305CHCBOSG1-CHCNHOERNER2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7177,
+     "pAdj": 0.6995,
+     "player": "Nico Hoerner",
+     "playerId": 663538,
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-25T21:35:00Z",
+     "teams": "CHC @ BOS",
+     "lineup": {
+      "in": true,
+      "slot": 6,
+      "at": "2026-09-25T21:35:09.910Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "43116d7279a862b0aa5139c8f21bbc7c6239a29a02a1574a3c322f39eeffc832",
-      "iv": "l5uuQjbqH82TyuHg",
-      "ct": "x+uVnVmSvIC5u05qlUUEbka8VKCsKjN2yhINKwukOOfJLHslN3XbyDlm/eiHl4Ge9KNwkji5Q8ruLUkZsfoCeptLX5/Xrg+MgKBiqyBoM0o9DV/FZWO13HNXJy/ASvIz9jOqxqhMKXUFi+OuVPioe1g8X9L3EhH50y2A7WqBLy7YGG4ogCIYs+AIPhhSjteZa5fFQatz2tC8OLcR02P3etljDeMK0xRsHVg4U1PIJ/z6fq60JKS1ZgVk8zfp3ZwN13gQftstbsYMbFpIXBTL6NrBfAicbPKSFJiCB4rFJASoEBgFL8r1on7geGtY9EQzTcMhGPg+BVUEMojJu/Up8R+DNJpMkygtBFb2+412Zzc7vsVbHwtNAKxshKeZQKx1YF6ZTTU0QSqbFmu9agmLo4jWUi1yCj5H37iZWHO+QxXuWx2wAVMmF38bsh9XklFlViFktDhITfluNm4jYp3PNZ96MAUXOUPrwpHPOLF9eSkKrFzh8vs3c/+Pw0YEplKT72crdgBCMDQfj+C6G/8jLzCvdd/EncRmTyul7OFilqU+/CPfDXpQb8d5gtp0QFWrIlpEWQD7uCfpXQnlJFXgSA+opzB4e6Gl2g6WwtK1tYdR8VlMEg8VRRzd6yZoQtdEGzvXF/cgbBLTQX4WYmjTzwaw50xxMUscS/Q3G/U="
+      "salt": "2202f5d9369fcbfb3783e667be415a90",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-25:robin#1"
      }
     },
     {
@@ -916,7 +960,7 @@
    ]
   }
  ],
- "updated": "2026-09-25T20:13:03.595Z",
+ "updated": "2026-09-25T21:35:09.910Z",
  "record": {
   "w": 17,
   "l": 1,
