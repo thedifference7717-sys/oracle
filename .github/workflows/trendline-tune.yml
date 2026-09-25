@@ -8,6 +8,7 @@ on:
     branches: [claude/zynalgo-trendline-indicator-fjt2mz]
     paths:
       - trendline/tune.py
+      - trendline/explore.py
       - .github/workflows/trendline-tune.yml
 
 jobs:
@@ -32,7 +33,14 @@ jobs:
         run: |
           python tune.py
           cat tune-report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Explore new entry ideas
+        working-directory: trendline
+        run: |
+          python explore.py
+          cat explore-report.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: trendline-tune
-          path: trendline/tune-report.md
+          path: |
+            trendline/tune-report.md
+            trendline/explore-report.md
