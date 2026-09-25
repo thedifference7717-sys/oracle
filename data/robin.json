@@ -945,11 +945,55 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#4 · vs Cristopher Sánchez · projected, 94% to start",
+     "eventId": "823409",
+     "gk": 823409,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26SEP251840TBPHI-TBYDIAZ2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7019,
+     "pAdj": 0.6866,
+     "player": "Yandy Díaz",
+     "playerId": 650490,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-25T22:40:00Z",
+     "teams": "TB @ PHI",
+     "lineup": {
+      "in": true,
+      "slot": 1,
+      "at": "2026-09-25T22:40:37.554Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "3b892c4d0e1770d7d61ccc6a46635262ecd7b2cd09cd7e7775158585c6479e85",
-      "iv": "IeTl6Pn4XJxQVqeV",
-      "ct": "zw2JaEjFCF+Ew/udcdlGJdSKJtACxnQJ+vRrWoxSx4QXaLIwpRjGSRUng+qoQQSfL/OPWioh7AkPAgbEdyKzKSCbh/od19naJ5nxV3BL1PXphctRyi3d4AJR6sQYxtr6sCDqlK+cRZt2PHC6Sma+CoR334dNqYcx7UZI74T4szHLEqwz/XLl0SVgJ5EMNnNu5OeIiEXVXLpoHRrGs/4HJj6Kto5Q/HMLddj5FN9XMFvAPBWSFw3e+xIKJOrSQGggema8mUQ0h32gCQoDH5mgi3H//6N5ndLHJbnJVtqcS2OeZ9pv437jrUY4tjdSyZ0MOdEOn6JjMBroaVBaOIZMgNh3s6t3SF3QUwrfwJpSh5SHXHvr9MsGDTZFoLj6cNaENu1t8o6lO2ptsWr9bZgEnps2lR7SAE8Ryqyxy5ycSGwhRCJDxZzicS7e+iB+DNy7ugVPMrN9obPNq7WUNqIuf1M7sWkr5EcfUrk9cBt5GJa8E2UlUEsKW4SYM/EATDMm2/iikQJAaf696Us+jTLJjbDwJYBb2Tqdvu23uBfX7N3TRSsBwpukV3ZSFB9vBcB683ODtSDdZj+Nt/+qI7mla6IjmsprWSyaDYIqNqrAGTE8ag22W04ckVR/jLop33Yuf4SIeN2KvYs9OsOiWrx3lj7HsImrwRBY0iAx"
+      "salt": "39404d65c6b0d0bb6b5882ca653cdb8f",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-25:robin#4"
      }
     },
     {
@@ -963,7 +1007,7 @@
    ]
   }
  ],
- "updated": "2026-09-25T21:58:02.400Z",
+ "updated": "2026-09-25T22:40:37.554Z",
  "record": {
   "w": 17,
   "l": 1,
