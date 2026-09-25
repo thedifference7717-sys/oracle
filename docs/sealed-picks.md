@@ -27,7 +27,8 @@ pitch. Sealing keeps both.
   commit that carried it sealed. That commit has to predate the game.
 
 Telegram alerts are unchanged: subscribers still get the full pick at lock.
-The code is in `scripts/seal.mjs`, with tests in `scripts/seal.test.mjs`.
+The code is in `scripts/seal.mjs`, with tests in `scripts/seal.test.mjs`. The alerter that uses
+it is in the private `prop-shop-engine` repo.
 
 ## Turning it on
 

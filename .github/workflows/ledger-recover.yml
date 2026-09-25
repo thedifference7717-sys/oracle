@@ -1,34 +1,19 @@
-# Recover doubles that were alerted but whose ledger row never reached the repo.
-#
-# The row lives in a tracked file; the "this game is already decided" flag lives
-# in gitignored state.json, carried by the Actions cache. When a push fails or a
-# runner is cancelled mid-pass, the flag survives and the row does not, and the
-# alerter then skips the game forever. The alerter reconciles the two on every
-# pass now, but it only does so from inside its own six-hour loop — which holds
-# the `parlaiy-alerts` concurrency group and cannot be inspected while running.
-#
-# This job does the same reconciliation on demand, in its own concurrency group,
-# with logs anyone can read. Caches are shared across workflows in a repository,
-# so `restore-keys: parlaiy-state-` reaches the alerter's state from here.
-#
-# Read-only with respect to state: it restores the cache and never saves one, so
-# it cannot corrupt what the alerter is using.
 name: Recover missing ledger rows
 
+# Hourly: puts back any doubles-ledger row the alerter holds in its state but
+# whose push never landed, then audits the ledger against the calibration
+# log. Both files are private now and live in prop-shop-engine; this runs
+# here only because the alerter's state rides this repo's Actions cache. The
+# code is checked out from the engine with ENGINE_TOKEN, as in
+# parlaiy-alerts.yml, and logs nothing that names a pick.
+
 on:
-  # Hourly, because the record has to keep itself right without anyone
-  # watching. Recovery used to live only inside the alerter's six-hour loop,
-  # which meant a run that was cancelled, that failed to push, or that simply
-  # was not running left the record short until a human noticed — which is
-  # exactly how three days of bets went missing. This job is small, idempotent
-  # and in its own concurrency group, so it cannot queue behind the alerter and
-  # cannot make anything worse by running when there is nothing to do.
   schedule:
     - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ledger-recover
@@ -38,13 +23,20 @@ jobs:
   recover:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout the public record
         uses: actions/checkout@v4
         with:
           ref: main
-          # The audit diffs consecutive data/model-log.json commits, so it
-          # needs the history, not just the tip.
-          fetch-depth: 0
+          path: public
+
+      - name: Checkout the engine (private)
+        uses: actions/checkout@v4
+        with:
+          repository: thedifference7717-sys/prop-shop-engine
+          token: ${{ secrets.ENGINE_TOKEN }}
+          ref: main
+          path: engine
+          fetch-depth: 0          # the audit diffs consecutive model-log commits
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -59,22 +51,19 @@ jobs:
           restore-keys: |
             parlaiy-state-
 
-      - name: Reconcile the ledger against it
+      - name: Reconcile and audit (output withheld; this repo's logs are public)
+        working-directory: engine
         env:
-          PICKS_KEY: ${{ secrets.PICKS_KEY }}      # state.json is encrypted with it once set
-        run: node scripts/ledger-recover.mjs
+          PICKS_KEY: ${{ secrets.PICKS_KEY }}
+          PUBLIC_DIR: ${{ github.workspace }}/public
+          STATE_FILE: ${{ github.workspace }}/state.json
+        run: |
+          node scripts/ledger-recover.mjs > "$RUNNER_TEMP/recover.log" 2>&1 && echo "recover: ok" || echo "recover: failed"
+          node scripts/ledger-audit.mjs   > "$RUNNER_TEMP/audit.log"   2>&1 && echo "audit: ok"   || { echo "audit: the record is short"; exit 1; }
 
-      # Independent of everything above: does the published record contain
-      # every double that was actually bet? Compares the ledger against the
-      # calibration log, which is written by different code on a different
-      # schedule. Runs AFTER the recovery so it judges the repaired file, and
-      # fails the job when the record is short — a red run is the only thing
-      # that turns a silent gap into a visible one.
-      - name: Audit the record for completeness
-        run: node scripts/ledger-audit.mjs
-
-      - name: Publish whatever it recovered
+      - name: Push whatever it recovered to the engine
         if: always()
+        working-directory: engine
         run: |
           git config user.name  "sportsai-bot"
           git config user.email "noreply@users.noreply.github.com"
