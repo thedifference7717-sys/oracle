@@ -402,12 +402,14 @@ td.num{text-align:right}
 
 <script src="build-check.js"></script>
 <script src="pages.js"></script>
-<script src="dd-model.js?v=b9fef9e"></script>
+<!-- The ladder's arithmetic only (ladder-math.js). The model that picks the
+     bets is not published, so this page no longer builds a live board. -->
+<script src="ladder-math.js?v=1"></script>
 <script>
 // The engine lives in a separate file as of BUILD 3. If it fails to load,
 // say so in the status bar rather than throwing at parse time and leaving the
 // user staring at an empty board.
-const M=window.DDModel||null;
+const M=window.LadderMath||null;
 // GitHub Pages is same-origin with the API only through a proxy; keep the
 // existing fallback chain so a blocked direct fetch still resolves.
 const SOURCES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://thingproxy.freeboard.io/fetch/"+u];
@@ -786,13 +788,12 @@ const setting=id=>{const el=document.getElementById(id);
 
 async function load(){
   checkBuild();
-  if(!M){status("✗ dd-model.js did not load — hard-refresh the page. (The scoring engine moved into its own file in BUILD 3.)","var(--red)");return;}
+  if(!M){status("✗ ladder-math.js did not load — hard-refresh the page.","var(--red)");return;}
   const btn=document.getElementById("run");btn.disabled=true;
   try{
     // The alerter publishes graded results here, once a day at settlement.
     // Absent is fine — the model just runs uncalibrated. Re-checked on every
     // pass so a page left open all evening picks the log up when it lands.
-    try{const j=window.Pages?await Pages.load("data/model-log.json"):null;if(j)cal=j;else{const r=await fetch("data/model-log.json?t="+Date.now());if(r.ok)cal=await r.json();}}catch(e){/* uncalibrated */}
     // The ladder's settled history. Absent means the ladder has not started;
     // the card then shows rung one off the seed rather than hiding itself.
     // The published ledger, remembered once seen.
@@ -826,6 +827,13 @@ async function load(){
     // nothing to do with it. It is drawn again after the board resolves, which
     // is what fills in today's pick.
     renderLadder();
+    // The page stops here. It used to build the whole slate with the model
+    // from here on; the model is private now, and the card above is drawn
+    // entirely from the published ledger. A rung pinned on this device
+    // before that still settles itself from the boxscore.
+    try{ if(await settlePins()) renderLadder(); }catch(e){}
+    status("");
+    return;
     board=await M.buildBoard({getJSON,cal:cal||null,american:setting("price"),
       onStatus:()=>{},onProgress:setProg});
     setProg(100);setTimeout(()=>setProg(0),300);
