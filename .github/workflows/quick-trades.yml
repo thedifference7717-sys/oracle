@@ -1,0 +1,39 @@
+name: Quick-trade research
+
+# Walk-forward search for short-hold BTCUSDT systems (trendline/scalp.py).
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/zynalgo-trendline-indicator-fjt2mz]
+    paths:
+      - trendline/scalp*.py
+      - .github/workflows/quick-trades.yml
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas numpy numba
+      - name: Month key for the data cache
+        id: month
+        run: echo "ym=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: trendline/btc5m_v.pkl
+          key: btc5m-v-${{ steps.month.outputs.ym }}
+      - name: Research
+        working-directory: trendline
+        run: |
+          for s in scalp*.py; do
+            python "$s"
+          done
+          cat scalp*-report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quick-trades
+          path: trendline/scalp*-report.md
