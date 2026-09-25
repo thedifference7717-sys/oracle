@@ -148,7 +148,6 @@ vote(bool en, simple string tf, int h) =>
 
 actives = array.from(a1, a2, a3, a4, a5, a6, a7, a8)
 votes   = array.from(v1, v2, v3, v4, v5, v6, v7, v8)
-tfs     = array.from(tf1, tf2, tf3, tf4, tf5, tf6, tf7, tf8)
 
 activeN = 0
 bullN   = 0
@@ -343,6 +342,8 @@ stateText(int v) =>
 stateCol(int v) =>
     v == 1 ? colBull : v == -1 ? colBear : colSide
 
+tfNames = array.from(tfName(tf1), tfName(tf2), tfName(tf3), tfName(tf4), tfName(tf5), tfName(tf6), tfName(tf7), tfName(tf8))
+
 pos = switch dashPos
     "Top left"     => position.top_left
     "Bottom right" => position.bottom_right
@@ -365,8 +366,7 @@ if showDash and barstate.islast
     cell(1, r, stateText(trend), stateCol(trend))
     for i = 0 to 7
         r += 1
-        tf = array.get(tfs, i)
-        cell(0, r, tfName(tf), dim)
+        cell(0, r, array.get(tfNames, i), dim)
         if array.get(actives, i)
             v = array.get(votes, i)
             cell(1, r, stateText(v), stateCol(v))
