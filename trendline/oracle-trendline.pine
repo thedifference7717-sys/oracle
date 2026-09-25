@@ -1,0 +1,402 @@
+// Oracle Trendline — a clean-room trend-following indicator modelled on the
+// publicly described behaviour of "ZynAlgo Trendline" (their code is closed
+// source; nothing here is copied from it).
+//
+//   • Three MA layers: Type 1 (fast), Type 2 (medium), Trendline (200 base)
+//   • Trend = stacked AND sloped AND spaced apart   → green / red / white candles
+//   • Entry  = price touches the confirmation line, then direction re-confirms
+//              within N candles
+//   • Valid only when a minimum number of up to 8 higher timeframes agree
+//   • Auto Entry / SL / TP1-TP3 (R:R based) with hit tracking + stats dashboard
+//   • Signals are evaluated on bar close and HTF data is offset one bar with
+//     lookahead_on, so nothing repaints once a bar has closed.
+//
+// Not financial advice. It draws levels; it never places trades.
+
+//@version=5
+indicator("Oracle Trendline", "Oracle TL", overlay = true, max_lines_count = 500, max_labels_count = 500)
+
+// ───────────────────────────── Inputs ─────────────────────────────
+G_MA = "Trendline framework"
+src    = input.source(close, "Source", group = G_MA)
+t1Type = input.string("EMA", "Type 1 (fast)", options = ["SMA", "EMA", "WMA", "RMA", "HMA", "SWMA", "ALMA", "VWMA", "VWAP"], inline = "t1", group = G_MA)
+t1Len  = input.int(20, "", minval = 1, inline = "t1", group = G_MA)
+t2Type = input.string("EMA", "Type 2 (medium)", options = ["SMA", "EMA", "WMA", "RMA", "HMA", "SWMA", "ALMA", "VWMA", "VWAP"], inline = "t2", group = G_MA)
+t2Len  = input.int(50, "", minval = 1, inline = "t2", group = G_MA)
+t3Type = input.string("SMA", "Trendline (base)", options = ["SMA", "EMA", "WMA", "RMA", "HMA", "SWMA", "ALMA", "VWMA", "VWAP"], inline = "t3", group = G_MA)
+t3Len  = input.int(200, "", minval = 1, inline = "t3", group = G_MA)
+
+G_FLT = "Chop filter"
+slopeLen     = input.int(5, "Slope lookback (bars)", minval = 1, group = G_FLT)
+slopeMin     = input.float(0.01, "Min slope, Type 1 & 2 (% per bar)", minval = 0, step = 0.005, group = G_FLT)
+slopeMinBase = input.float(0.0, "Min slope, Trendline (% per bar)", minval = 0, step = 0.005, group = G_FLT)
+sepMin       = input.float(0.05, "Min MA separation (% of price)", minval = 0, step = 0.01, group = G_FLT)
+
+G_ENT = "Entries"
+confSel     = input.string("Type 1", "Confirmation line", options = ["Type 1", "Type 2"], group = G_ENT)
+confirmBars = input.int(3, "Re-confirm within (candles)", minval = 0, group = G_ENT)
+
+G_MTF = "Multi-timeframe confirmation"
+useMtf  = input.bool(true, "Require higher-timeframe confluence", group = G_MTF)
+minConf = input.int(3, "Min timeframes agreeing", minval = 1, maxval = 8, group = G_MTF)
+en1 = input.bool(true, "", inline = "m1", group = G_MTF)
+tf1 = input.timeframe("5", "TF 1", inline = "m1", group = G_MTF)
+en2 = input.bool(true, "", inline = "m2", group = G_MTF)
+tf2 = input.timeframe("15", "TF 2", inline = "m2", group = G_MTF)
+en3 = input.bool(true, "", inline = "m3", group = G_MTF)
+tf3 = input.timeframe("30", "TF 3", inline = "m3", group = G_MTF)
+en4 = input.bool(true, "", inline = "m4", group = G_MTF)
+tf4 = input.timeframe("60", "TF 4", inline = "m4", group = G_MTF)
+en5 = input.bool(true, "", inline = "m5", group = G_MTF)
+tf5 = input.timeframe("120", "TF 5", inline = "m5", group = G_MTF)
+en6 = input.bool(true, "", inline = "m6", group = G_MTF)
+tf6 = input.timeframe("240", "TF 6", inline = "m6", group = G_MTF)
+en7 = input.bool(true, "", inline = "m7", group = G_MTF)
+tf7 = input.timeframe("720", "TF 7", inline = "m7", group = G_MTF)
+en8 = input.bool(true, "", inline = "m8", group = G_MTF)
+tf8 = input.timeframe("D", "TF 8", inline = "m8", group = G_MTF)
+
+G_RISK = "Stop loss & targets"
+slMode     = input.string("Swing", "Stop loss", options = ["Swing", "ATR", "Type 2 line"], group = G_RISK)
+swingLen   = input.int(10, "Swing lookback (bars)", minval = 2, group = G_RISK)
+atrLen     = input.int(14, "ATR length", minval = 1, group = G_RISK)
+atrMult    = input.float(1.5, "ATR multiplier (ATR stop)", minval = 0.1, step = 0.1, group = G_RISK)
+atrBuf     = input.float(0.25, "ATR buffer (Swing / line stop)", minval = 0, step = 0.05, group = G_RISK)
+rr1        = input.float(1.0, "TP1 R:R", minval = 0.1, step = 0.1, inline = "rr", group = G_RISK)
+rr2        = input.float(2.0, "TP2", minval = 0.1, step = 0.1, inline = "rr", group = G_RISK)
+rr3        = input.float(3.0, "TP3", minval = 0.1, step = 0.1, inline = "rr", group = G_RISK)
+beAfterTp1 = input.bool(true, "Move stop to entry after TP1", group = G_RISK)
+
+G_VIS = "Visuals"
+showMas    = input.bool(true, "Show MA lines", group = G_VIS)
+colorBars  = input.bool(true, "Colour candles by trend", group = G_VIS)
+showLevels = input.bool(true, "Show Entry / SL / TP levels", group = G_VIS)
+showDash   = input.bool(true, "Show dashboard", group = G_VIS)
+dashPos    = input.string("Top right", "Dashboard position", options = ["Top right", "Top left", "Bottom right", "Bottom left"], group = G_VIS)
+colBull    = input.color(#14F195, "Bull", inline = "c", group = G_VIS)
+colBear    = input.color(#FF4D6D, "Bear", inline = "c", group = G_VIS)
+colSide    = input.color(#E6E6E6, "Sideways", inline = "c", group = G_VIS)
+
+// ──────────────────────────── Trend core ────────────────────────────
+ma(float x, simple int len, simple string kind) =>
+    switch kind
+        "SMA"  => ta.sma(x, len)
+        "EMA"  => ta.ema(x, len)
+        "WMA"  => ta.wma(x, len)
+        "RMA"  => ta.rma(x, len)
+        "HMA"  => ta.hma(x, len)
+        "SWMA" => ta.swma(ta.sma(x, len))
+        "ALMA" => ta.alma(x, len, 0.85, 6)
+        "VWMA" => ta.vwma(x, len)
+        "VWAP" => ta.vwap(x)
+        => ta.ema(x, len)
+
+f_mas() =>
+    [ma(src, t1Len, t1Type), ma(src, t2Len, t2Type), ma(src, t3Len, t3Type)]
+
+// Average % change per bar over the slope lookback.
+slopePct(float x) =>
+    (x - x[slopeLen]) / x[slopeLen] * 100 / slopeLen
+
+// 1 = bull, -1 = bear, 0 = sideways / no-trade.
+f_state(float f, float m, float s) =>
+    sf = slopePct(f)
+    sm = slopePct(m)
+    sb = slopePct(s)
+    spaced = math.min(math.abs(f - m), math.abs(m - s)) / close * 100 >= sepMin
+    bull = f > m and m > s and sf > slopeMin and sm > slopeMin and sb > slopeMinBase and spaced
+    bear = f < m and m < s and sf < -slopeMin and sm < -slopeMin and sb < -slopeMinBase and spaced
+    bull ? 1 : bear ? -1 : 0
+
+f_trend() =>
+    [a, b, c] = f_mas()
+    f_state(a, b, c)
+
+[fast, med, base] = f_mas()
+trend = f_state(fast, med, base)
+
+// ─────────────────────── Multi-timeframe votes ───────────────────────
+// Previous closed HTF bar + lookahead_on = the standard non-repainting request.
+htf(simple string tf) =>
+    request.security(syminfo.tickerid, tf, f_trend()[1], lookahead = barmerge.lookahead_on)
+
+h1 = htf(tf1)
+h2 = htf(tf2)
+h3 = htf(tf3)
+h4 = htf(tf4)
+h5 = htf(tf5)
+h6 = htf(tf6)
+h7 = htf(tf7)
+h8 = htf(tf8)
+
+chartSec = timeframe.in_seconds()
+
+// Timeframes below the chart's are skipped; the chart's own timeframe uses the live trend.
+vote(bool en, simple string tf, int h) =>
+    sec = timeframe.in_seconds(tf)
+    active = en and sec >= chartSec
+    [active, active ? (sec == chartSec ? trend : nz(h)) : 0]
+
+[a1, v1] = vote(en1, tf1, h1)
+[a2, v2] = vote(en2, tf2, h2)
+[a3, v3] = vote(en3, tf3, h3)
+[a4, v4] = vote(en4, tf4, h4)
+[a5, v5] = vote(en5, tf5, h5)
+[a6, v6] = vote(en6, tf6, h6)
+[a7, v7] = vote(en7, tf7, h7)
+[a8, v8] = vote(en8, tf8, h8)
+
+actives = array.from(a1, a2, a3, a4, a5, a6, a7, a8)
+votes   = array.from(v1, v2, v3, v4, v5, v6, v7, v8)
+tfs     = array.from(tf1, tf2, tf3, tf4, tf5, tf6, tf7, tf8)
+
+activeN = 0
+bullN   = 0
+bearN   = 0
+for i = 0 to 7
+    if array.get(actives, i)
+        activeN += 1
+        bullN += array.get(votes, i) == 1 ? 1 : 0
+        bearN += array.get(votes, i) == -1 ? 1 : 0
+
+need    = math.min(minConf, activeN)
+mtfBull = not useMtf or activeN == 0 or bullN >= need
+mtfBear = not useMtf or activeN == 0 or bearN >= need
+
+// ─────────────────────────── Trade state ───────────────────────────
+atr     = ta.atr(atrLen)
+swingLo = ta.lowest(low, swingLen)
+swingHi = ta.highest(high, swingLen)
+
+var int   tDir   = 0
+var int   tBar   = na
+var float tEntry = na
+var float tSL    = na
+var float tTP1   = na
+var float tTP2   = na
+var float tTP3   = na
+var int   tHits  = 0
+
+var line  lE = na
+var line  lS = na
+var line  l1 = na
+var line  l2 = na
+var line  l3 = na
+var label xE = na
+var label xS = na
+var label x1 = na
+var label x2 = na
+var label x3 = na
+
+var int nClosed = 0
+var int nTP1    = 0
+var int nTP2    = 0
+var int nTP3    = 0
+var int nSL     = 0
+
+lvl(float p) =>
+    str.tostring(p, format.mintick)
+
+mkLine(float y, color c, string st) =>
+    showLevels ? line.new(bar_index, y, bar_index + 1, y, color = c, style = st, width = 1) : na
+
+mkLabel(float y, string txt, color c) =>
+    showLevels ? label.new(bar_index + 1, y, txt, style = label.style_label_left, color = color.new(c, 25), textcolor = color.white, size = size.tiny) : na
+
+hitMark(float y, string txt, color c, bool above) =>
+    if showLevels
+        label.new(bar_index, y, txt, style = above ? label.style_label_down : label.style_label_up, color = color.new(c, 10), textcolor = color.black, size = size.tiny)
+
+endTrade() =>
+    label.delete(xE)
+    label.delete(xS)
+    label.delete(x1)
+    label.delete(x2)
+    label.delete(x3)
+
+// 1) Manage the open trade on each closed bar (stop checked first — conservative).
+if barstate.isconfirmed and tDir != 0 and bar_index > tBar
+    up      = tDir == 1
+    stopped = up ? low <= tSL : high >= tSL
+    if stopped
+        outcome = tHits == 0 ? "SL" : "BE"
+        nSL += tHits == 0 ? 1 : 0
+        nClosed += 1
+        hitMark(tSL, outcome, colBear, not up)
+        alert(syminfo.ticker + " [" + timeframe.period + "] " + (up ? "LONG" : "SHORT") + " closed at " + outcome + " " + lvl(tSL), alert.freq_once_per_bar_close)
+        endTrade()
+        tDir := 0
+    else
+        if tHits < 1 and (up ? high >= tTP1 : low <= tTP1)
+            tHits := 1
+            nTP1 += 1
+            hitMark(tTP1, "TP1 ✓", colBull, up)
+            alert(syminfo.ticker + " [" + timeframe.period + "] TP1 hit " + lvl(tTP1), alert.freq_once_per_bar_close)
+            if beAfterTp1
+                tSL := tEntry
+                line.set_y1(lS, tSL)
+                line.set_y2(lS, tSL)
+                label.set_y(xS, tSL)
+                label.set_text(xS, "SL → BE " + lvl(tSL))
+        if tHits < 2 and (up ? high >= tTP2 : low <= tTP2)
+            tHits := 2
+            nTP2 += 1
+            hitMark(tTP2, "TP2 ✓", colBull, up)
+            alert(syminfo.ticker + " [" + timeframe.period + "] TP2 hit " + lvl(tTP2), alert.freq_once_per_bar_close)
+        if tHits < 3 and (up ? high >= tTP3 : low <= tTP3)
+            tHits := 3
+            nTP3 += 1
+            nClosed += 1
+            hitMark(tTP3, "TP3 ✓", colBull, up)
+            alert(syminfo.ticker + " [" + timeframe.period + "] TP3 hit " + lvl(tTP3) + " — trade complete", alert.freq_once_per_bar_close)
+            endTrade()
+            tDir := 0
+
+if tDir != 0
+    for ln in array.from(lE, lS, l1, l2, l3)
+        line.set_x2(ln, bar_index + 1)
+    for lb in array.from(xE, xS, x1, x2, x3)
+        label.set_x(lb, bar_index + 1)
+
+// 2) Entry: touch of the confirmation line, then re-confirmation within N candles.
+confLine = confSel == "Type 1" ? fast : med
+
+var int bullTouch = na
+var int bearTouch = na
+var int lastBull  = na
+var int lastBear  = na
+
+if trend == 1 and low <= confLine
+    bullTouch := bar_index
+if trend == -1 and high >= confLine
+    bearTouch := bar_index
+
+freshBull = not na(bullTouch) and bar_index - bullTouch <= confirmBars and (na(lastBull) or bullTouch > lastBull)
+freshBear = not na(bearTouch) and bar_index - bearTouch <= confirmBars and (na(lastBear) or bearTouch > lastBear)
+
+bullSig = barstate.isconfirmed and trend == 1 and mtfBull and freshBull and close > confLine and close > open and tDir != 1
+bearSig = barstate.isconfirmed and trend == -1 and mtfBear and freshBear and close < confLine and close < open and tDir != -1
+
+// 3) Open a new trade (an opposite signal closes the current one first).
+if bullSig or bearSig
+    dir = bullSig ? 1 : -1
+    if tDir != 0
+        nClosed += 1
+        endTrade()
+    rawSL = switch slMode
+        "Swing" => dir == 1 ? swingLo - atr * atrBuf : swingHi + atr * atrBuf
+        "ATR"   => close - dir * atr * atrMult
+        => med - dir * atr * atrBuf
+    risk = math.max(dir * (close - rawSL), atr * 0.25)
+
+    tDir   := dir
+    tBar   := bar_index
+    tHits  := 0
+    tEntry := close
+    tSL    := close - dir * risk
+    tTP1   := close + dir * risk * rr1
+    tTP2   := close + dir * risk * rr2
+    tTP3   := close + dir * risk * rr3
+    if dir == 1
+        lastBull := bar_index
+    else
+        lastBear := bar_index
+
+    lE := mkLine(tEntry, color.gray, line.style_solid)
+    lS := mkLine(tSL, colBear, line.style_solid)
+    l1 := mkLine(tTP1, colBull, line.style_dashed)
+    l2 := mkLine(tTP2, colBull, line.style_dashed)
+    l3 := mkLine(tTP3, colBull, line.style_dashed)
+    xE := mkLabel(tEntry, "Entry " + lvl(tEntry), color.gray)
+    xS := mkLabel(tSL, "SL " + lvl(tSL), colBear)
+    x1 := mkLabel(tTP1, "TP1 " + lvl(tTP1), colBull)
+    x2 := mkLabel(tTP2, "TP2 " + lvl(tTP2), colBull)
+    x3 := mkLabel(tTP3, "TP3 " + lvl(tTP3), colBull)
+
+    alert((dir == 1 ? "BUY " : "SELL ") + syminfo.ticker + " [" + timeframe.period + "] entry " + lvl(tEntry) + " | SL " + lvl(tSL) + " | TP1 " + lvl(tTP1) + " | TP2 " + lvl(tTP2) + " | TP3 " + lvl(tTP3) + " | HTF " + str.tostring(dir == 1 ? bullN : bearN) + "/" + str.tostring(activeN), alert.freq_once_per_bar_close)
+
+// ───────────────────────────── Plots ─────────────────────────────
+trendCol = trend == 1 ? colBull : trend == -1 ? colBear : colSide
+
+plot(showMas ? fast : na, "Type 1", trendCol, 2)
+plot(showMas ? med : na, "Type 2", color.new(#FBBF24, 0), 2)
+plot(showMas ? base : na, "Trendline", color.new(#A78BFA, 0), 3)
+barcolor(colorBars ? trendCol : na)
+
+plotshape(bullSig, "Buy", shape.labelup, location.belowbar, colBull, text = "BUY", textcolor = color.black, size = size.small)
+plotshape(bearSig, "Sell", shape.labeldown, location.abovebar, colBear, text = "SELL", textcolor = color.white, size = size.small)
+
+alertcondition(bullSig, "Buy signal", "Oracle TL BUY {{ticker}} [{{interval}}] @ {{close}}")
+alertcondition(bearSig, "Sell signal", "Oracle TL SELL {{ticker}} [{{interval}}] @ {{close}}")
+alertcondition(trend == 1 and trend[1] != 1, "Trend turned bullish", "Oracle TL {{ticker}} [{{interval}}] trend → BULL")
+alertcondition(trend == -1 and trend[1] != -1, "Trend turned bearish", "Oracle TL {{ticker}} [{{interval}}] trend → BEAR")
+alertcondition(trend == 0 and trend[1] != 0, "Trend turned sideways", "Oracle TL {{ticker}} [{{interval}}] trend → SIDEWAYS")
+
+// ─────────────────────────── Dashboard ───────────────────────────
+tfName(simple string tf) =>
+    s = timeframe.in_seconds(tf)
+    s < 3600 ? str.tostring(math.round(s / 60)) + "m" : s < 86400 ? str.tostring(math.round(s / 3600)) + "H" : s < 604800 ? str.tostring(math.round(s / 86400)) + "D" : tf
+
+stateText(int v) =>
+    v == 1 ? "▲ Bull" : v == -1 ? "▼ Bear" : "— Side"
+
+stateCol(int v) =>
+    v == 1 ? colBull : v == -1 ? colBear : colSide
+
+pos = switch dashPos
+    "Top left"     => position.top_left
+    "Bottom right" => position.bottom_right
+    "Bottom left"  => position.bottom_left
+    => position.top_right
+
+var table dash = table.new(pos, 2, 20, bgcolor = color.new(#08081A, 10), border_color = color.new(#1A1A35, 0), border_width = 1, frame_color = color.new(#1A1A35, 0), frame_width = 1)
+
+cell(int c, int r, string txt, color fg) =>
+    table.cell(dash, c, r, txt, text_color = fg, text_size = size.small, text_halign = c == 0 ? text.align_left : text.align_right)
+
+if showDash and barstate.islast
+    fg  = color.new(#F0F0FF, 0)
+    dim = color.new(#8C95A4, 0)
+    r = 0
+    cell(0, r, "Oracle Trendline", fg)
+    cell(1, r, timeframe.period, dim)
+    r += 1
+    cell(0, r, "Trend (chart)", dim)
+    cell(1, r, stateText(trend), stateCol(trend))
+    for i = 0 to 7
+        r += 1
+        tf = array.get(tfs, i)
+        cell(0, r, tfName(tf), dim)
+        if array.get(actives, i)
+            v = array.get(votes, i)
+            cell(1, r, stateText(v), stateCol(v))
+        else
+            cell(1, r, "off", color.new(#8C95A4, 50))
+    r += 1
+    cell(0, r, "HTF confluence", dim)
+    cell(1, r, useMtf ? "▲" + str.tostring(bullN) + "  ▼" + str.tostring(bearN) + "  / " + str.tostring(activeN) + " (need " + str.tostring(need) + ")" : "off", fg)
+    r += 1
+    cell(0, r, "Position", dim)
+    cell(1, r, tDir == 1 ? "LONG" : tDir == -1 ? "SHORT" : "FLAT", tDir == 1 ? colBull : tDir == -1 ? colBear : dim)
+    if tDir != 0
+        r += 1
+        cell(0, r, "Entry / SL", dim)
+        cell(1, r, lvl(tEntry) + " / " + lvl(tSL), fg)
+        r += 1
+        cell(0, r, "TP1 · TP2 · TP3", dim)
+        cell(1, r, lvl(tTP1) + " · " + lvl(tTP2) + " · " + lvl(tTP3), fg)
+    // TP hits of the open trade are already counted, so include it in the base
+    nTrades = nClosed + (tDir != 0 ? 1 : 0)
+    r += 1
+    cell(0, r, "Trades", dim)
+    cell(1, r, str.tostring(nTrades), fg)
+    r += 1
+    cell(0, r, "TP1 / TP2 / TP3 hit", dim)
+    cell(1, r, nTrades > 0 ? str.tostring(math.round(nTP1 * 100.0 / nTrades)) + "% / " + str.tostring(math.round(nTP2 * 100.0 / nTrades)) + "% / " + str.tostring(math.round(nTP3 * 100.0 / nTrades)) + "%" : "—", fg)
+    r += 1
+    cell(0, r, "Full stop-outs", dim)
+    cell(1, r, str.tostring(nSL), nSL > 0 ? colBear : fg)
+    // blank any rows left over from a longer previous render
+    for k = r + 1 to 19
+        table.cell(dash, 0, k, "")
+        table.cell(dash, 1, k, "")
