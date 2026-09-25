@@ -23,6 +23,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { execSync } from "child_process";
 import { sealer, keyFrom, canon } from "./seal.mjs";
+import { tierConfig, routes, forClients, enqueue, flush } from "./tiers.mjs";
 import { pathToFileURL } from "url";
 import M from "../dd-model.js";
 import _DS from "../dub-stake.js";
@@ -257,12 +258,39 @@ const DRY_RUN = process.env.DRY_RUN === "1";
 // model — but they only reach Telegram with DD_GAME_ALERTS=1.
 const GAME_ALERTS = process.env.DD_GAME_ALERTS === "1";
 const tgGame = (...a) => GAME_ALERTS ? tg(...a) : Promise.resolve();
-async function tg(text) {
-  if (DRY_RUN) { console.log("\n[telegram, not sent]\n" + text.replace(/<[^>]+>/g, "") + "\n"); return; }
+async function tgTo(chat, text) {
+  if (DRY_RUN) { console.log(`\n[telegram → ${chat === CHAT ? "you" : chat}, not sent]\n` + text.replace(/<[^>]+>/g, "") + "\n"); return; }
   await j(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: CHAT, text, parse_mode: "HTML", disable_web_page_preview: true })
+    body: JSON.stringify({ chat_id: chat, text, parse_mode: "HTML", disable_web_page_preview: true })
   });
+}
+// The owner's chat: everything, always.
+const tg = text => tgTo(CHAT, text);
+
+// A pick or a result for one product (scripts/tiers.mjs): the owner's copy
+// goes first and alone, then the client copies are queued for that product's
+// tier channels and sent — straight away, or TG_CLIENT_DELAY_MIN later. The
+// queue lives in state (set by main), so a held or failed copy is not lost.
+const TIERS = tierConfig(process.env);
+let clientQ = null;
+async function tgProduct(product, text) {
+  let err = null;
+  try { await tg(text); } catch (e) { err = e; }
+  const chats = routes(TIERS, product);
+  if (chats.length) {
+    const q = clientQ || [];
+    enqueue(q, chats, forClients(text), Date.now() + TIERS.delayMs);
+    persistState();
+    await flushClients(q);
+  }
+  if (err) throw err;
+}
+async function flushClients(q = clientQ) {
+  if (!q || !q.length) return;
+  const before = q.length;
+  await flush(q, tgTo, Date.now(), m => console.log(m.replace(/bot[^/\s]+\//g, "bot…/")));
+  if (q.length !== before) persistState();
 }
 
 // Telegram rejects anything over 4096 characters outright — the whole alert is
@@ -435,14 +463,27 @@ async function tgCommands(D, saveState) {
   const F = await fillsLib();
   if (F === NO_FILLS) return;                                 // leave the commands unread until it can apply them
   let r;
-  try { r = await j(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${(D.tgOffset || 0) + 1}&timeout=0&allowed_updates=${encodeURIComponent('["message","channel_post"]')}`); }
+  try { r = await j(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${(D.tgOffset || 0) + 1}&timeout=0&allowed_updates=${encodeURIComponent('["message","channel_post","my_chat_member"]')}`); }
   catch (e) { console.log("telegram: commands unavailable (" + e.message + ")"); return; }
   for (const u of (r && r.result) || []) {
     D.tgOffset = Math.max(D.tgOffset || 0, u.update_id);
+    // Added to a channel: tell the owner its ID, which is what TG_TIER1..3
+    // need and is otherwise awkward to find.
+    const mcm = u.my_chat_member;
+    if (mcm) {
+      const c = mcm.chat || {}, st = mcm.new_chat_member && mcm.new_chat_member.status;
+      if (String(c.id) !== String(CHAT) && (st === "administrator" || st === "member")) {
+        await tg(`📣 Added to <b>${c.title || c.username || "a chat"}</b> (${c.type}) as ${st}.\nIts ID: <code>${c.id}</code>\n` +
+          `Set that as TG_TIER1 (Ladder), TG_TIER2 (Ladder + Dub) or TG_TIER3 (all three) in the repo's Actions variables.` +
+          (st === "administrator" ? "" : `\n⚠ Make me an admin with permission to post, or I can't send there.`));
+      }
+      continue;
+    }
     const msg = u.message || u.channel_post;
     if (!msg || String(msg.chat && msg.chat.id) !== String(CHAT)) continue;
     const year = +M.slateYmd().slice(0, 4);
     if (/^\/bets\b/i.test(String(msg.text || "").trim())) { await tg(await betsSummary(D)); continue; }
+    if (/^\/tiers\b/i.test(String(msg.text || "").trim())) { await tg(await tiersCheck()); continue; }
     const c = F.parse(msg.text, year);
     if (!c) continue;
     if (c.error) { await tg(`⚠ Didn't catch that — use ${c.error}.`); continue; }
@@ -464,6 +505,20 @@ async function tgCommands(D, saveState) {
     await tg(`✓ ${what}\n\n` + await betsSummary(D));
   }
   if (saveState) saveState();
+}
+
+// /tiers: which client channels are set, with a test post to each.
+async function tiersCheck() {
+  const names = ["Tier 1 · Ladder", "Tier 2 · Ladder + Dub", "Tier 3 · all three"];
+  const lines = ["📣 <b>Client channels</b>"];
+  for (let i = 0; i < 3; i++) {
+    const ch = TIERS.channels[i];
+    if (!ch) { lines.push(`${names[i]}: not set (TG_TIER${i + 1})`); continue; }
+    try { await tgTo(ch, `✅ Prop Shop test post — this channel is ${names[i]}.`); lines.push(`${names[i]}: ✅ posted to ${ch}`); }
+    catch (e) { lines.push(`${names[i]}: ❌ ${ch} — ${e.message.replace(/bot[^/]+\//, "bot…/")}`); }
+  }
+  lines.push(TIERS.delayMs ? `Clients get each message ${TIERS.delayMs / 60000} min after you.` : "Clients get each message right after you.");
+  return lines.join("\n");
 }
 
 // The bet amounts the pages show, from the same files and fills.
@@ -761,7 +816,7 @@ async function ladderPlace(day, games, D, saveState) {
   const when = c.start ? new Date(c.start).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "—";
   const emoji = (SPORT[c.sport] || {}).emoji || "";
   const counted = Object.entries(row.games).map(([s, n]) => `${n} ${s}`).join(", ") + " games";
-  await tg(
+  await tgProduct("ladder", 
     `🪜 <b>PROP SHOP · THE LADDER</b> · cycle ${st.cycle}, day ${st.rung} of ${M.LADDER.rungs}\n` +
     `➖➖➖➖➖➖➖➖\n` +
     `${emoji} <b>${money(st.stake)}</b> on <b>${c.player}</b> ${c.need}\n` +
@@ -871,7 +926,7 @@ async function picksPlace(day, games, D, saveState) {
         const st = DS.stakeFor(DS.chain(dubs.bets, 100, { priceOf: b => F.dubPrice(FILLS, b) }), day);
         stakeLine = `💵 <b>${money(st.stake)}</b> on a $100 Dub bankroll — ${st.why}\n`;
       } catch (e) { console.log("dub: stake line skipped (" + e.message + ")"); }
-      await tg(`✌️ <b>PROP SHOP · THE DUB</b> · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+      await tgProduct("dub", `✌️ <b>PROP SHOP · THE DUB</b> · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
         stakeLine +
         d.legs.map(legText).join("\n") + `\n\n` +
         `🎯 Both hit <b>${pct(d.prob)}</b> · parlay <b>${d.price > 0 ? "+" : ""}${d.price}</b> at these prices (fair ${d.fair > 0 ? "+" : ""}${d.fair})\n` +
@@ -896,7 +951,7 @@ async function picksPlace(day, games, D, saveState) {
         const tickets = r.sizes.reduce((a, z) => a + z.tickets, 0);
         stakeLine = `💵 <b>${money(u.unit)} a ticket</b> × ${tickets} tickets = <b>${money(u.unit * tickets)}</b> — every size, at the Robin balance ÷ 570\n`;
       } catch (e) { console.log("robin: stake line skipped (" + e.message + ")"); }
-      await tg(`🐦 <b>PROP SHOP · THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
+      await tgProduct("robin", `🐦 <b>PROP SHOP · THE ROBIN</b> · ${r.legs.length} legs · ${prettyDate(day)}\n➖➖➖➖➖➖➖➖\n` +
         stakeLine +
         r.legs.map((l, i) => `${i + 1}. ${legText(l)}`).join("\n") + `\n\n` +
         r.sizes.map(z => `By ${z.m}s: ${z.tickets} ticket${z.tickets === 1 ? "" : "s"} · avg ticket pays ${z.avgPays.toFixed(2)}x · expect ${z.expWin.toFixed(1)} to cash · ${z.ev >= 0 ? "+" : ""}${(z.ev * 100).toFixed(1)}% expected`).join("\n") +
@@ -994,12 +1049,12 @@ async function picksSettle(D, saveState) {
           }
         } catch (e) { console.log(`${kind}: amount line skipped (${e.message})`); }
         if (kind === "dub") {
-          await tg(`✌️ <b>DUB ${b.status === "won" ? "CASHED" : b.status === "lost" ? "DEAD" : "VOID"}</b> · ${prettyDate(b.date)}\n` +
+          await tgProduct("dub", `✌️ <b>DUB ${b.status === "won" ? "CASHED" : b.status === "lost" ? "DEAD" : "VOID"}</b> · ${prettyDate(b.date)}\n` +
             b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need} — ${l.note || l.result}`).join("\n") + money_);
         } else {
           const g = b.graded;
           const tk = _DS.robinTickets ? _DS.robinTickets(b) : null;
-          await tg(`🐦 <b>ROBIN DONE</b> · ${prettyDate(b.date)} · <b>${g.hit}–${b.legs.filter(l => l.result === "lost").length}</b>${tk ? ` · ${tk.w} of ${tk.w + tk.l + tk.p} tickets cashed` : ""}\n` +
+          await tgProduct("robin", `🐦 <b>ROBIN DONE</b> · ${prettyDate(b.date)} · <b>${g.hit}–${b.legs.filter(l => l.result === "lost").length}</b>${tk ? ` · ${tk.w} of ${tk.w + tk.l + tk.p} tickets cashed` : ""}\n` +
             b.legs.map(l => `${l.result === "won" ? "✅" : l.result === "lost" ? "❌" : "➖"} ${l.player} ${l.need}`).join("\n") + `\n\n` +
             g.sizes.map(z => `By ${z.m}s: ${z.cashed}/${z.tickets} cashed · ${z.pl >= 0 ? "+" : ""}${z.pl.toFixed(2)} units`).join("\n") + money_);
         }
@@ -1028,10 +1083,10 @@ async function ladderSettleOther() {
   const C = M.LADDER;
   const a = rungAmounts(st, b);
   if (r.status === "void") {
-    await tg(`🪜 <b>RUNG VOID</b> — ${b.pick} ${b.need}: ${r.note}.\nNothing lost; tomorrow's rung stays at ${money(st.stake)}.`);
+    await tgProduct("ladder", `🪜 <b>RUNG VOID</b> — ${b.pick} ${b.need}: ${r.note}.\nNothing lost; tomorrow's rung stays at ${money(st.stake)}.`);
   } else if (r.status === "won") {
     const done = a.rung >= C.rungs;
-    await tg(
+    await tgProduct("ladder", 
       `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${a.rung} IN</b>`} — ${b.pick} ${b.need}: ${r.note}\n` +
       `${money(a.stake)} returns ${money(a.ret)}${a.price != null ? ` (at ${a.price > 0 ? "+" : ""}${Math.round(a.price)})` : ""}\n` +
       (done
@@ -1040,7 +1095,7 @@ async function ladderSettleOther() {
       ladderRec(st) + `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
     );
   } else {
-    await tg(
+    await tgProduct("ladder", 
       `🪜 <b>CYCLE BUSTED</b> on day ${a.rung} of ${C.rungs} — ${b.pick} ${b.need}: ${r.note}\n` +
       `Cost: ${money(a.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
       `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
@@ -1084,7 +1139,7 @@ async function ladderSettle(hitsById, finalByGk) {
   const a = rungAmounts(st, b);
   if (got) {
     const done = a.rung >= C.rungs;
-    await tg(
+    await tgProduct("ladder", 
       `🪜 ${done ? "<b>CYCLE COMPLETE</b>" : `<b>RUNG ${a.rung} IN</b>`} — ${b.pick} had ${b.hits} hit${b.hits === 1 ? "" : "s"}\n` +
       `${money(a.stake)} returns ${money(a.ret)}${a.price != null ? ` (at ${a.price > 0 ? "+" : ""}${Math.round(a.price)})` : ""}\n` +
       (done
@@ -1093,7 +1148,7 @@ async function ladderSettle(hitsById, finalByGk) {
       ladderRec(st) + `\n<i>Got a different price? Send /odds -300 (or /paid 72.77) and every amount updates.</i>`
     );
   } else {
-    await tg(
+    await tgProduct("ladder", 
       `🪜 <b>CYCLE BUSTED</b> on day ${a.rung} of ${C.rungs} — ${b.pick} went hitless\n` +
       `Cost: ${money(a.seed)}, the seed, which is all it was ever going to cost whichever day it landed.\n` +
       `Account ${money(st.account)}. Next cycle restarts ${Math.round(C.missGain * 100)}% bigger at <b>${money(st.base)}</b>.` +
@@ -1153,8 +1208,10 @@ async function main() {
   try { if (existsSync(STATE_FILE)) blob = JSON.parse(readFileSync(STATE_FILE, "utf8")) || {}; } catch (e) { console.log("State read failed:", e.message); }
   const D = blob.dd = blob.dd || {};
   ladderSaid = D.ladderSaid = D.ladderSaid || {};
+  clientQ = D.clientQueue = D.clientQueue || [];
   for (const k of Object.keys(ladderSaid)) if (k < M.ymd(new Date(Date.now() - 14 * 86400000))) delete ladderSaid[k];
   persistState = () => { try { writeFileSync(STATE_FILE, JSON.stringify(blob)); } catch (e) { console.log("State write failed:", e.message); } };
+  try { await flushClients(); } catch (e) { console.log("client send failed:", e.message); }
   // Your fills first — every amount below is worked out with them — then any
   // /odds, /paid, /dub or /bets you have sent the bot since the last pass.
   stateRows = Array.isArray(D.ladderRows) ? D.ladderRows : [];
