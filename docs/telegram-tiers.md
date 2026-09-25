@@ -30,6 +30,15 @@ Nothing changes until a tier channel is set. A tier that isn't set is skipped.
    chat. It posts a test message to each channel and tells you which ones
    worked.
 
+## The free public channel
+
+Set the variable `TG_PUBLIC` to the public channel's username (for example
+`@theprop_shop`), with the bot added there as an admin that can post. It gets
+the same two daily posts you get as "For X": the sealed-picks post at lock
+(fingerprints only, never a pick) and the results post once the slate is
+graded. Saving and forwarding stay allowed there, so people can share them;
+only the tier channels are protected.
+
 ## Getting picks before clients (optional)
 
 Set the variable `TG_CLIENT_DELAY_MIN` to hold client copies back that many
