@@ -1,10 +1,27 @@
-name: ParlAIy Telegram Alerts
+name: Prop Shop alerts
+
+# The live alerter: Ladder, Dub and Robin, around the clock.
+#
+# The workflow lives in this public repo because GitHub's machines are free
+# to run here and MLB's API answers them reliably (it throttles our own
+# server hard). The CODE does not live here: each run checks the private
+# prop-shop-engine repo out with ENGINE_TOKEN, a token that can reach only
+# that repo, so the model exists on GitHub's temporary machine only while the
+# run lasts. Two checkouts:
+#
+#   public/   this repo: the sealed record the site reads (ladder, dub,
+#             robin, fills), pushed with this run's own token
+#   engine/   the models and the alerter; its private data (the calibration
+#             log, the doubles ledger) is pushed back there
+#
+# Logs of a public repo are public, so the alerter logs nothing here (see
+# parlaiy-alerts.mjs), and this file echoes nothing that names a pick.
+# The state (state.json, encrypted with PICKS_KEY) rides the Actions cache.
 
 on:
   schedule:
     # Weak fallback seed only — GitHub drops most scheduled runs during US peak
-    # hours. Real coverage comes from the 6h self-loop + re-arm below (and an
-    # external daily dispatch), not from this cron.
+    # hours; the six-hour loop below is what gives coverage.
     - cron: "*/30 * * * *"
   workflow_dispatch:
 
@@ -20,13 +37,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 355
     steps:
-      - name: Checkout
+      - name: Checkout the public record
         uses: actions/checkout@v4
-        # The newest main, not the commit this run was triggered on. A run can
-        # sit queued behind the six-hour loop for hours; on 2026-09-24 one
-        # started from a commit 3h stale and every publish failed to rebase.
         with:
           ref: main
+          path: public
+
+      - name: Checkout the engine (private)
+        uses: actions/checkout@v4
+        with:
+          repository: thedifference7717-sys/prop-shop-engine
+          token: ${{ secrets.ENGINE_TOKEN }}
+          ref: main
+          path: engine
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -41,69 +64,47 @@ jobs:
           restore-keys: |
             parlaiy-state-
 
-      # Self-loop for ~5h50m (just under GitHub's 6h job cap), checking every 60s.
-      # One run blankets the whole game window.
-      #
-      # It also refreshes its own code before every pass. This job holds the
-      # `parlaiy-alerts` concurrency group for the whole six hours, so any run
-      # carrying newer code is cancelled in the queue having executed nothing —
-      # a fix could sit unreachable for most of a day while this loop kept
-      # running the version it was checked out at. Pulling the alerter each
-      # pass means a change is live within a minute of landing on main.
-      #
-      # `git restore --worktree` deliberately leaves the index alone, so the
-      # calibration-publish step below still stages only its own data file.
       - name: Run alerts loop
         run: |
           END=$(( $(date +%s) + 350*60 ))
-          echo "starting on $(git rev-parse --short HEAD)"
-          git config user.name  "sportsai-bot"
-          git config user.email "noreply@users.noreply.github.com"
-          # Publish anything the alerter wrote to data/, right now rather than at
-          # day end. A pick is only verifiable if its commit predates first
-          # pitch, so the commit has to happen when the pick is sent.
-          # Commit anything new, THEN push whenever HEAD is ahead of origin —
-          # not only when this pass produced changes.
-          #
-          # The previous version returned at `git diff --cached --quiet` before
-          # reaching any push, so a commit whose push had failed was never
-          # retried: the "will retry next pass" it printed was false, and the
-          # row died with the runner. A ladder rung that was already announced
-          # on Telegram could therefore vanish from the record, and the next
-          # run — starting from a clean checkout with no data/ladder.json —
-          # would place and announce a second rung for the same day. Two
-          # alerts, one published pick.
-          publish() {
-            git add -A data 2>/dev/null || true
-            if ! git diff --cached --quiet -- data; then
-              git commit -q -m "SportsAI: publish picks and results" || true
-            fi
-            git fetch -q origin main 2>/dev/null || true
-            # Nothing of ours outstanding? Then there is genuinely nothing to do.
-            [ -z "$(git rev-list origin/main..HEAD 2>/dev/null)" ] && return 0
+          export PUBLIC_DIR="$GITHUB_WORKSPACE/public" STATE_FILE="$GITHUB_WORKSPACE/state.json"
+          for d in public engine; do
+            git -C "$d" config user.name  "sportsai-bot"
+            git -C "$d" config user.email "noreply@users.noreply.github.com"
+          done
+          # Commit and push one checkout's data/. A pick is only verifiable if
+          # its commit predates first pitch, so this runs every pass; it pushes
+          # whenever HEAD is ahead of origin (so a failed push is retried next
+          # pass), and never leaves a rebase half-done, which would block every
+          # later pass (2026-09-22).
+          push_data() {
+            local dir="$1" what="$2"
+            git -C "$dir" add -A data 2>/dev/null || true
+            git -C "$dir" diff --cached --quiet -- data || git -C "$dir" commit -q -m "SportsAI: publish picks and results" || true
+            git -C "$dir" fetch -q origin main 2>/dev/null || true
+            [ -z "$(git -C "$dir" rev-list origin/main..HEAD 2>/dev/null)" ] && return 0
             for k in 1 2 3; do
-              if git pull --rebase --autostash -q origin main >/tmp/pub.log 2>&1 \
-                && git push -q origin HEAD:main >>/tmp/pub.log 2>&1; then echo "published data/"; return 0; fi
-              # A rebase that stops on a conflict is left IN PROGRESS, and every
-              # later pull then fails with "rebase in progress" — which is how a
-              # whole day of pushes failed on 2026-09-22 with the same two
-              # commits stuck local. Abort it so the next attempt starts clean.
-              if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
-                echo "publish: rebase stopped on a conflict — aborting it"; git rebase --abort >/dev/null 2>&1 || true
+              if git -C "$dir" pull --rebase --autostash -q origin main >/tmp/pub.log 2>&1 \
+                && git -C "$dir" push -q origin HEAD:main >>/tmp/pub.log 2>&1; then echo "published $what"; return 0; fi
+              if [ -d "$dir/.git/rebase-merge" ] || [ -d "$dir/.git/rebase-apply" ]; then
+                echo "$what: rebase stopped on a conflict — aborting it"; git -C "$dir" rebase --abort >/dev/null 2>&1 || true
               fi
               sleep $((k*3))
             done
-            echo "could not push data/ this pass — $(git rev-list --count origin/main..HEAD) commit(s) still local, will retry next pass"
-            sed 's/^/  git: /' /tmp/pub.log | tail -6
+            echo "could not push $what this pass, will retry next pass"
           }
+          cd engine
           while :; do
-            if git fetch --depth=1 -q origin main 2>/dev/null; then
-              git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js hairdwood-model.js gridiron-model.js ladder-select.js dub-stake.js fills.js 2>/dev/null || true
+            # Newest engine code each pass, so a fix is live within a minute.
+            if git fetch -q origin main 2>/dev/null; then
+              git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js hairdwood-model.js gridiron-model.js ladder-select.js dub-stake.js fills.js ladder-math.js 2>/dev/null || true
               LIVE=$(git rev-parse --short FETCH_HEAD || echo unknown)
-              if [ "$LIVE" != "${LAST:-}" ]; then echo "alerter now at $LIVE"; LAST=$LIVE; fi
+              if [ "$LIVE" != "${LAST:-}" ]; then echo "engine now at $LIVE"; LAST=$LIVE; fi
             fi
-            node scripts/parlaiy-alerts.mjs || true
-            publish
+            git -C "$PUBLIC_DIR" fetch -q origin main 2>/dev/null || true
+            node scripts/parlaiy-alerts.mjs || echo "alerter pass failed"
+            push_data "$PUBLIC_DIR" "the public record"
+            push_data "." "private data"
             [ "$(date +%s)" -ge "$END" ] && break
             sleep 60
           done
@@ -111,57 +112,18 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           # Seals each Ladder, Dub and Robin pick until its game starts
-          # (scripts/seal.mjs). Unset = picks are published in the clear.
+          # (engine/scripts/seal.mjs), and encrypts the state.
           PICKS_KEY: ${{ secrets.PICKS_KEY }}
-          # Client channels by tier (scripts/tiers.mjs). Your own chat above gets
-          # everything first; these get their tier's picks and results.
+          # Client channels by tier (engine/scripts/tiers.mjs).
           TG_TIER1: ${{ vars.TG_TIER1 }}
           TG_TIER2: ${{ vars.TG_TIER2 }}
           TG_TIER3: ${{ vars.TG_TIER3 }}
           TG_CLIENT_DELAY_MIN: ${{ vars.TG_CLIENT_DELAY_MIN || '0' }}
-          # American odds the doubles are priced against, and the minimum
-          # modelled edge before one is alerted as a bet rather than tracked.
-          # Set DD_PRICE to whatever your book actually offers.
-          # -175 is the worst end of what the double is actually offered at
-          # (+100 to -175). Defaulting to the worst end keeps the board honest:
-          # a bet that clears at -175 clears at any better price, while the
-          # reverse is how you alert losers. The old '100' default here was
-          # silently overriding the script's own -175.
           DD_PRICE: ${{ vars.DD_PRICE || '-175' }}
           DD_MIN_EDGE: ${{ vars.DD_MIN_EDGE || '0.02' }}
-          # Dollars per SPOT point — stake scales with how soft the matchup is,
-          # which is also what decides whether the double is a bet at all.
           DD_PER_SPOT_PT: ${{ vars.DD_PER_SPOT_PT || vars.DD_PER_EDGE_PT || '2.50' }}
-          # The single "to record a hit" prop price the ladder is staked and
-          # compounded against. This one is an assumption until confirmed, and
-          # it decides both whether the rung is a bet and how fast it climbs.
           DD_LEG_PRICE: ${{ vars.DD_LEG_PRICE || '-275' }}
-          # How soft the opposing arm must be before a double is taken, as a
-          # fraction of hit probability: 0.049 is +4.9pts against a
-          # league-neutral leg. A second gate on top of DD_MIN_EDGE, not a
-          # replacement — a soft spot at a bad price is still a bad bet.
           DD_MIN_SOFT: ${{ vars.DD_MIN_SOFT || '0.049' }}
-
-      # The alerter grades every leg it published and folds the result into a
-      # calibration log. Because the eligible pool is the same faces night
-      # after night, that residual is worth real accuracy over a season — so
-      # publish it back to the repo for the dashboard to read on load. Written
-      # once a day, at settlement, so this is not a chatty commit.
-      - name: Publish calibration log
-        if: always()
-        continue-on-error: true
-        run: |
-          [ -f data/model-log.json ] || { echo "nothing to publish"; exit 0; }
-          git config user.name  "daily-double-bot"
-          git config user.email "noreply@users.noreply.github.com"
-          git add -A data
-          git diff --cached --quiet && { echo "calibration unchanged"; exit 0; }
-          git commit -m "SportsAI: publish picks and results (end of run)"
-          for i in 1 2 3 4; do
-            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
-            echo "push failed, retry $i"; sleep $((2**i))
-          done
-          echo "could not push calibration log"
 
       - name: Save alert state
         if: always()
@@ -170,17 +132,3 @@ jobs:
         with:
           path: state.json
           key: parlaiy-state-${{ github.run_id }}-${{ github.run_attempt }}
-
-      # Re-arm the next run so coverage never depends on GitHub's throttled
-      # scheduler. Uses DISPATCH_PAT (a token with repo + workflow scope) when
-      # present; if absent this fails quietly and the cron seed is the fallback.
-      - name: Re-arm next run
-        if: always()
-        continue-on-error: true
-        run: |
-          curl -sS -X POST \
-            -H "Authorization: Bearer ${{ secrets.DISPATCH_PAT }}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/parlaiy-alerts.yml/dispatches" \
-            -d '{"ref":"main"}'

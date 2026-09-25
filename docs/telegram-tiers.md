@@ -42,4 +42,4 @@ A membership service such as Whop or LaunchPass can take the Stripe payment
 and add or remove people in the matching channel. Point each plan at its tier's
 channel. Your own chat stays outside all of it.
 
-The code is in `scripts/tiers.mjs`, with tests in `scripts/tiers.test.mjs`.
+The code is in the private `prop-shop-engine` repo (`scripts/tiers.mjs`, with tests).
