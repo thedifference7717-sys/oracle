@@ -1,0 +1,36 @@
+name: Oracle Trendline backtest
+
+# Replays trendline/oracle-trendline.pine (Python port) on BTCUSDT 5m / 15m / 1h
+# from Binance's public kline dumps and writes the comparison to the job summary.
+# Runs where the network works (the sandbox can't reach exchanges; CI can).
+on:
+  workflow_dispatch:
+    inputs:
+      months:
+        description: 'Months of history to test'
+        default: '12'
+        required: false
+  push:
+    branches: [claude/zynalgo-trendline-indicator-fjt2mz]
+    paths:
+      - trendline/backtest.py
+      - .github/workflows/trendline-backtest.yml
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas numpy
+      - name: Run backtest
+        working-directory: trendline
+        run: |
+          python backtest.py ${{ inputs.months || '12' }} | tee out.txt
+          sed -n '1,/^{/p' out.txt | sed '$d' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trendline-backtest
+          path: trendline/backtest-results.json
