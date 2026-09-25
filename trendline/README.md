@@ -98,3 +98,42 @@ The workflow is [`trendline-tune`](../.github/workflows/trendline-tune.yml).
   in-sample t-stat is below 1, and 2,880 combinations were tried, so a result
   this good is likely to appear by luck. Treat it as a hypothesis, not a proven
   edge.
+
+## Round 2: new entry ideas → the tested preset
+
+[`explore.py`](./explore.py) tried pullback-high breakouts and Donchian
+breakouts. It combined them with ADX, daily-trend, confluence and trading-hours
+filters, and with trailing-stop and trend-flip exits, on 15m, 1H and 4H. The
+walk-forward split was the same as above.
+[`validate.py`](./validate.py) then checked the best idea's nearby settings,
+each year, each side and double fees.
+
+- **15m:** still nothing. 84% of combinations lost money in the test period.
+- **1H Donchian:** positive in the test period, but flat to negative in
+  2021–2023, with drawdowns above 30 R.
+- **4H Donchian + ADX:** the only robust result. Of 144 nearby settings
+  (lookback 20–55, ADX 20–30, 2–3 ATR stop, 2R/3R/4R/trailing exit), 90%
+  made money in both the tuning and the test period.
+
+**Preset "BTC 4H Breakout (tested)"** (the new default):
+
+- **Buy** on a 4H close above the previous 20-bar high while price is above the
+  SMA 200 and ADX(14) > 25. **Sell** is the mirror image.
+- **Stop** at 2.5 × ATR(14). **Target:** everything out at 3R. An opposite
+  signal reverses the position.
+
+| Period (fee 0.05%/side) | Trades | Win | PF | Net R | Max DD |
+|---|---|---|---|---|---|
+| Tuning 2020-09 → 2024-08 | 109 | 40% | 1.9 | +59.8 | ≈ 6 R |
+| **Test 2024-09 → 2026-08** | 54 | 39% | 1.45 | **+15.4** | 7.5 R |
+| All 2020-09 → 2026-08 | 163 | 40% | 1.78 | +75.1 | 7.5 R |
+| Test period at double fees (0.10%/side) | 54 | 35% | 1.38 | +13.6 | 8.5 R |
+
+- **By year:** 2020 +12.7, 2021 +8.2, 2022 +1.7, 2023 +25.6, 2024 +18.0,
+  2025 **−5.2**, 2026 to Aug +14.0 R.
+- **By side:** longs made most of the profit (+57 R in the tuning period,
+  +12 R in the test period). Shorts were roughly breakeven (+2.6 / +3.7 R).
+- **What to expect:** about +5 to +10 R a year, from roughly 25 trades a year,
+  with losing streaks of 7–8 R. That is a modest edge, not a money machine. At
+  1% risk per trade, that is roughly 5–10% a year with 7–8% drawdowns. Results
+  on one market over six years can still change. Paper-trade it first.

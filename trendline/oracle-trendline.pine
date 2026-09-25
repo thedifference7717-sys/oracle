@@ -10,6 +10,10 @@
 //   • Auto Entry / SL / TP1-TP3 (R:R based) with hit tracking + stats dashboard
 //   • Signals are evaluated on bar close and HTF data is offset one bar with
 //     lookahead_on, so nothing repaints once a bar has closed.
+//   • Preset "BTC 4H Breakout (tested)": Donchian-20 breakout on the side of
+//     the 200 base, ADX > 25, 2.5 ATR stop, all out at 3R. Walk-forward tested
+//     on BTCUSDT 2020-09 → 2026-08 (see trendline/README.md); the original
+//     pullback entry is still available under Preset = Custom.
 //
 // Not financial advice. It draws levels; it never places trades.
 
@@ -33,8 +37,13 @@ slopeMinBase = input.float(0.0, "Min slope, Trendline (% per bar)", minval = 0, 
 sepMin       = input.float(0.05, "Min MA separation (% of price)", minval = 0, step = 0.01, group = G_FLT)
 
 G_ENT = "Entries"
-confSel     = input.string("Type 1", "Confirmation line", options = ["Type 1", "Type 2"], group = G_ENT)
+preset      = input.string("BTC 4H Breakout (tested)", "Preset", options = ["BTC 4H Breakout (tested)", "Custom"], tooltip = "The tested preset overrides the entry, ADX, HTF, stop and exit settings below. Pick Custom to use your own.", group = G_ENT)
+entryMode   = input.string("Pullback", "Entry (Custom)", options = ["Pullback", "Donchian breakout"], group = G_ENT)
+confSel     = input.string("Type 1", "Confirmation line (Pullback)", options = ["Type 1", "Type 2"], group = G_ENT)
 confirmBars = input.int(3, "Re-confirm within (candles)", minval = 0, group = G_ENT)
+donLen      = input.int(20, "Breakout lookback (Donchian)", minval = 2, group = G_ENT)
+adxMin      = input.float(0, "Min ADX (0 = off)", minval = 0, step = 1, group = G_ENT)
+adxLen      = input.int(14, "ADX length", minval = 1, group = G_ENT)
 
 G_MTF = "Multi-timeframe confirmation"
 useMtf  = input.bool(true, "Require higher-timeframe confluence", group = G_MTF)
@@ -66,6 +75,18 @@ rr1        = input.float(1.0, "TP1 R:R", minval = 0.1, step = 0.1, inline = "rr"
 rr2        = input.float(2.0, "TP2", minval = 0.1, step = 0.1, inline = "rr", group = G_RISK)
 rr3        = input.float(3.0, "TP3", minval = 0.1, step = 0.1, inline = "rr", group = G_RISK)
 beAfterTp1 = input.bool(true, "Move stop to entry after TP1", group = G_RISK)
+exitPlan   = input.string("Scale out ⅓ at TP1 / TP2 / TP3", "Exit plan (Custom)", options = ["Scale out ⅓ at TP1 / TP2 / TP3", "All out at TP3"], group = G_RISK)
+
+// The tested preset pins every setting the walk-forward chose.
+isPreset  = preset != "Custom"
+entryE    = isPreset ? "Donchian breakout" : entryMode
+donLenE   = isPreset ? 20 : donLen
+adxMinE   = isPreset ? 25.0 : adxMin
+useMtfE   = isPreset ? false : useMtf
+slModeE   = isPreset ? "ATR" : slMode
+atrMultE  = isPreset ? 2.5 : atrMult
+rr3E      = isPreset ? 3.0 : rr3
+allOut    = isPreset or exitPlan == "All out at TP3"
 
 G_VIS = "Visuals"
 showMas    = input.bool(true, "Show MA lines", group = G_VIS)
@@ -159,22 +180,27 @@ for i = 0 to 7
         bearN += array.get(votes, i) == -1 ? 1 : 0
 
 need    = math.min(minConf, activeN)
-mtfBull = not useMtf or activeN == 0 or bullN >= need
-mtfBear = not useMtf or activeN == 0 or bearN >= need
+mtfBull = not useMtfE or activeN == 0 or bullN >= need
+mtfBear = not useMtfE or activeN == 0 or bearN >= need
 
 // ─────────────────────────── Trade state ───────────────────────────
 atr     = ta.atr(atrLen)
 swingLo = ta.lowest(low, swingLen)
 swingHi = ta.highest(high, swingLen)
+[diPlus, diMinus, adxVal] = ta.dmi(adxLen, adxLen)
+adxOk   = adxMinE <= 0 or adxVal > adxMinE
 
 var int   tDir   = 0
 var int   tBar   = na
 var float tEntry = na
 var float tSL    = na
+var float tRisk  = na
 var float tTP1   = na
 var float tTP2   = na
 var float tTP3   = na
 var int   tHits  = 0
+var float tGot   = 0.0   // R already banked on the open trade
+var float tRem   = 1.0   // fraction of the position still open
 
 var line  lE = na
 var line  lS = na
@@ -187,14 +213,19 @@ var label x1 = na
 var label x2 = na
 var label x3 = na
 
-var int nClosed = 0
-var int nTP1    = 0
-var int nTP2    = 0
-var int nTP3    = 0
-var int nSL     = 0
+var int   nClosed = 0
+var int   nTP1    = 0
+var int   nTP2    = 0
+var int   nTP3    = 0
+var int   nSL     = 0
+var int   nWin    = 0
+var float sumR    = 0.0
 
 lvl(float p) =>
     str.tostring(p, format.mintick)
+
+rtxt(float r) =>
+    (r >= 0 ? "+" : "") + str.tostring(r, "#.##") + "R"
 
 mkLine(float y, color c, string st) =>
     showLevels ? line.new(bar_index, y, bar_index + 1, y, color = c, style = st, width = 1) : na
@@ -213,24 +244,47 @@ endTrade() =>
     label.delete(x2)
     label.delete(x3)
 
+// Total R of the open trade if what is left of it is closed at px (before fees).
+closeR(float px) =>
+    tGot + tRem * tDir * (px - tEntry) / tRisk
+
+tag = syminfo.ticker + " [" + timeframe.period + "] "
+
 // 1) Manage the open trade on each closed bar (stop checked first — conservative).
 if barstate.isconfirmed and tDir != 0 and bar_index > tBar
     up      = tDir == 1
     stopped = up ? low <= tSL : high >= tSL
     if stopped
+        r = closeR(tSL)
         outcome = tHits == 0 ? "SL" : "BE"
+        sumR += r
+        nWin += r > 0 ? 1 : 0
         nSL += tHits == 0 ? 1 : 0
         nClosed += 1
-        hitMark(tSL, outcome, colBear, not up)
-        alert(syminfo.ticker + " [" + timeframe.period + "] " + (up ? "LONG" : "SHORT") + " closed at " + outcome + " " + lvl(tSL), alert.freq_once_per_bar_close)
+        hitMark(tSL, outcome + " " + rtxt(r), colBear, not up)
+        alert(tag + (up ? "LONG" : "SHORT") + " closed at " + outcome + " " + lvl(tSL) + " | " + rtxt(r), alert.freq_once_per_bar_close)
         endTrade()
         tDir := 0
+    else if allOut
+        if up ? high >= tTP3 : low <= tTP3
+            r = closeR(tTP3)
+            tHits := 3
+            nTP3 += 1
+            sumR += r
+            nWin += 1
+            nClosed += 1
+            hitMark(tTP3, "Target ✓ " + rtxt(r), colBull, up)
+            alert(tag + "target hit " + lvl(tTP3) + " | " + rtxt(r), alert.freq_once_per_bar_close)
+            endTrade()
+            tDir := 0
     else
         if tHits < 1 and (up ? high >= tTP1 : low <= tTP1)
             tHits := 1
             nTP1 += 1
+            tGot += rr1 / 3
+            tRem -= 1.0 / 3
             hitMark(tTP1, "TP1 ✓", colBull, up)
-            alert(syminfo.ticker + " [" + timeframe.period + "] TP1 hit " + lvl(tTP1), alert.freq_once_per_bar_close)
+            alert(tag + "TP1 hit " + lvl(tTP1), alert.freq_once_per_bar_close)
             if beAfterTp1
                 tSL := tEntry
                 line.set_y1(lS, tSL)
@@ -240,14 +294,20 @@ if barstate.isconfirmed and tDir != 0 and bar_index > tBar
         if tHits < 2 and (up ? high >= tTP2 : low <= tTP2)
             tHits := 2
             nTP2 += 1
+            tGot += rr2 / 3
+            tRem -= 1.0 / 3
             hitMark(tTP2, "TP2 ✓", colBull, up)
-            alert(syminfo.ticker + " [" + timeframe.period + "] TP2 hit " + lvl(tTP2), alert.freq_once_per_bar_close)
+            alert(tag + "TP2 hit " + lvl(tTP2), alert.freq_once_per_bar_close)
         if tHits < 3 and (up ? high >= tTP3 : low <= tTP3)
             tHits := 3
             nTP3 += 1
+            tGot += rr3E / 3
+            tRem := 0.0
+            sumR += tGot
+            nWin += 1
             nClosed += 1
-            hitMark(tTP3, "TP3 ✓", colBull, up)
-            alert(syminfo.ticker + " [" + timeframe.period + "] TP3 hit " + lvl(tTP3) + " — trade complete", alert.freq_once_per_bar_close)
+            hitMark(tTP3, "TP3 ✓ " + rtxt(tGot), colBull, up)
+            alert(tag + "TP3 hit " + lvl(tTP3) + " — trade complete | " + rtxt(tGot), alert.freq_once_per_bar_close)
             endTrade()
             tDir := 0
 
@@ -257,7 +317,8 @@ if tDir != 0
     for lb in array.from(xE, xS, x1, x2, x3)
         label.set_x(lb, bar_index + 1)
 
-// 2) Entry: touch of the confirmation line, then re-confirmation within N candles.
+// 2) Entry signals.
+// Pullback: touch of the confirmation line, then re-confirmation within N candles.
 confLine = confSel == "Type 1" ? fast : med
 
 var int bullTouch = na
@@ -272,30 +333,46 @@ if trend == -1 and high >= confLine
 
 freshBull = not na(bullTouch) and bar_index - bullTouch <= confirmBars and (na(lastBull) or bullTouch > lastBull)
 freshBear = not na(bearTouch) and bar_index - bearTouch <= confirmBars and (na(lastBear) or bearTouch > lastBear)
+pullBull  = trend == 1 and freshBull and close > confLine and close > open
+pullBear  = trend == -1 and freshBear and close < confLine and close < open
 
-bullSig = barstate.isconfirmed and trend == 1 and mtfBull and freshBull and close > confLine and close > open and tDir != 1
-bearSig = barstate.isconfirmed and trend == -1 and mtfBear and freshBear and close < confLine and close < open and tDir != -1
+// Donchian breakout: close beyond the prior N-bar extreme, on the same side of the 200 base.
+donHi    = ta.highest(high, donLenE)[1]
+donLo    = ta.lowest(low, donLenE)[1]
+brkBull  = close > donHi and close > base
+brkBear  = close < donLo and close < base
+isBrk    = entryE == "Donchian breakout"
 
-// 3) Open a new trade (an opposite signal closes the current one first).
+bullSig = barstate.isconfirmed and (isBrk ? brkBull : pullBull) and mtfBull and adxOk and tDir != 1
+bearSig = barstate.isconfirmed and (isBrk ? brkBear : pullBear) and mtfBear and adxOk and tDir != -1 and not bullSig
+
+// 3) Open a new trade (an opposite signal closes the current one at this close first).
 if bullSig or bearSig
     dir = bullSig ? 1 : -1
     if tDir != 0
+        r = closeR(close)
+        sumR += r
+        nWin += r > 0 ? 1 : 0
         nClosed += 1
+        hitMark(close, "Rev " + rtxt(r), color.gray, tDir == 1)
         endTrade()
-    rawSL = switch slMode
+    rawSL = switch slModeE
         "Swing" => dir == 1 ? swingLo - atr * atrBuf : swingHi + atr * atrBuf
-        "ATR"   => close - dir * atr * atrMult
+        "ATR"   => close - dir * atr * atrMultE
         => med - dir * atr * atrBuf
     risk = math.max(dir * (close - rawSL), atr * 0.25)
 
     tDir   := dir
     tBar   := bar_index
     tHits  := 0
+    tGot   := 0.0
+    tRem   := 1.0
+    tRisk  := risk
     tEntry := close
     tSL    := close - dir * risk
     tTP1   := close + dir * risk * rr1
     tTP2   := close + dir * risk * rr2
-    tTP3   := close + dir * risk * rr3
+    tTP3   := close + dir * risk * rr3E
     if dir == 1
         lastBull := bar_index
     else
@@ -303,16 +380,17 @@ if bullSig or bearSig
 
     lE := mkLine(tEntry, color.gray, line.style_solid)
     lS := mkLine(tSL, colBear, line.style_solid)
-    l1 := mkLine(tTP1, colBull, line.style_dashed)
-    l2 := mkLine(tTP2, colBull, line.style_dashed)
+    l1 := allOut ? line(na) : mkLine(tTP1, colBull, line.style_dashed)
+    l2 := allOut ? line(na) : mkLine(tTP2, colBull, line.style_dashed)
     l3 := mkLine(tTP3, colBull, line.style_dashed)
     xE := mkLabel(tEntry, "Entry " + lvl(tEntry), color.gray)
     xS := mkLabel(tSL, "SL " + lvl(tSL), colBear)
-    x1 := mkLabel(tTP1, "TP1 " + lvl(tTP1), colBull)
-    x2 := mkLabel(tTP2, "TP2 " + lvl(tTP2), colBull)
-    x3 := mkLabel(tTP3, "TP3 " + lvl(tTP3), colBull)
+    x1 := allOut ? label(na) : mkLabel(tTP1, "TP1 " + lvl(tTP1), colBull)
+    x2 := allOut ? label(na) : mkLabel(tTP2, "TP2 " + lvl(tTP2), colBull)
+    x3 := mkLabel(tTP3, (allOut ? "Target " : "TP3 ") + lvl(tTP3), colBull)
 
-    alert((dir == 1 ? "BUY " : "SELL ") + syminfo.ticker + " [" + timeframe.period + "] entry " + lvl(tEntry) + " | SL " + lvl(tSL) + " | TP1 " + lvl(tTP1) + " | TP2 " + lvl(tTP2) + " | TP3 " + lvl(tTP3) + " | HTF " + str.tostring(dir == 1 ? bullN : bearN) + "/" + str.tostring(activeN), alert.freq_once_per_bar_close)
+    levels = allOut ? " | Target " + lvl(tTP3) : " | TP1 " + lvl(tTP1) + " | TP2 " + lvl(tTP2) + " | TP3 " + lvl(tTP3)
+    alert((dir == 1 ? "BUY " : "SELL ") + tag + "entry " + lvl(tEntry) + " | SL " + lvl(tSL) + levels + (useMtfE ? " | HTF " + str.tostring(dir == 1 ? bullN : bearN) + "/" + str.tostring(activeN) : "") + (adxMinE > 0 ? " | ADX " + str.tostring(adxVal, "#.0") : ""), alert.freq_once_per_bar_close)
 
 // ───────────────────────────── Plots ─────────────────────────────
 trendCol = trend == 1 ? colBull : trend == -1 ? colBear : colSide
@@ -350,7 +428,7 @@ pos = switch dashPos
     "Bottom left"  => position.bottom_left
     => position.top_right
 
-var table dash = table.new(pos, 2, 20, bgcolor = color.new(#08081A, 10), border_color = color.new(#1A1A35, 0), border_width = 1, frame_color = color.new(#1A1A35, 0), frame_width = 1)
+var table dash = table.new(pos, 2, 26, bgcolor = color.new(#08081A, 10), border_color = color.new(#1A1A35, 0), border_width = 1, frame_color = color.new(#1A1A35, 0), frame_width = 1)
 
 cell(int c, int r, string txt, color fg) =>
     table.cell(dash, c, r, txt, text_color = fg, text_size = size.small, text_halign = c == 0 ? text.align_left : text.align_right)
@@ -362,19 +440,31 @@ if showDash and barstate.islast
     cell(0, r, "Oracle Trendline", fg)
     cell(1, r, timeframe.period, dim)
     r += 1
+    cell(0, r, "Mode", dim)
+    cell(1, r, isPreset ? "BTC 4H Breakout (tested)" : entryE, fg)
+    if isPreset and timeframe.period != "240"
+        r += 1
+        cell(0, r, "⚠ Preset", color.new(#FBBF24, 0))
+        cell(1, r, "tested on 4H only", color.new(#FBBF24, 0))
+    r += 1
     cell(0, r, "Trend (chart)", dim)
     cell(1, r, stateText(trend), stateCol(trend))
-    for i = 0 to 7
+    if adxMinE > 0
         r += 1
-        cell(0, r, array.get(tfNames, i), dim)
-        if array.get(actives, i)
-            v = array.get(votes, i)
-            cell(1, r, stateText(v), stateCol(v))
-        else
-            cell(1, r, "off", color.new(#8C95A4, 50))
-    r += 1
-    cell(0, r, "HTF confluence", dim)
-    cell(1, r, useMtf ? "▲" + str.tostring(bullN) + "  ▼" + str.tostring(bearN) + "  / " + str.tostring(activeN) + " (need " + str.tostring(need) + ")" : "off", fg)
+        cell(0, r, "ADX (min " + str.tostring(adxMinE, "#") + ")", dim)
+        cell(1, r, str.tostring(adxVal, "#.0"), adxOk ? colBull : dim)
+    if useMtfE
+        for i = 0 to 7
+            r += 1
+            cell(0, r, array.get(tfNames, i), dim)
+            if array.get(actives, i)
+                v = array.get(votes, i)
+                cell(1, r, stateText(v), stateCol(v))
+            else
+                cell(1, r, "off", color.new(#8C95A4, 50))
+        r += 1
+        cell(0, r, "HTF confluence", dim)
+        cell(1, r, "▲" + str.tostring(bullN) + "  ▼" + str.tostring(bearN) + "  / " + str.tostring(activeN) + " (need " + str.tostring(need) + ")", fg)
     r += 1
     cell(0, r, "Position", dim)
     cell(1, r, tDir == 1 ? "LONG" : tDir == -1 ? "SHORT" : "FLAT", tDir == 1 ? colBull : tDir == -1 ? colBear : dim)
@@ -383,20 +473,34 @@ if showDash and barstate.islast
         cell(0, r, "Entry / SL", dim)
         cell(1, r, lvl(tEntry) + " / " + lvl(tSL), fg)
         r += 1
-        cell(0, r, "TP1 · TP2 · TP3", dim)
-        cell(1, r, lvl(tTP1) + " · " + lvl(tTP2) + " · " + lvl(tTP3), fg)
+        cell(0, r, allOut ? "Target" : "TP1 · TP2 · TP3", dim)
+        cell(1, r, allOut ? lvl(tTP3) + " (" + str.tostring(rr3E) + "R)" : lvl(tTP1) + " · " + lvl(tTP2) + " · " + lvl(tTP3), fg)
+        r += 1
+        cell(0, r, "Open trade", dim)
+        cell(1, r, rtxt(closeR(close)), closeR(close) >= 0 ? colBull : colBear)
     // TP hits of the open trade are already counted, so include it in the base
     nTrades = nClosed + (tDir != 0 ? 1 : 0)
     r += 1
-    cell(0, r, "Trades", dim)
-    cell(1, r, str.tostring(nTrades), fg)
+    cell(0, r, "Closed trades", dim)
+    cell(1, r, str.tostring(nClosed), fg)
     r += 1
-    cell(0, r, "TP1 / TP2 / TP3 hit", dim)
-    cell(1, r, nTrades > 0 ? str.tostring(math.round(nTP1 * 100.0 / nTrades)) + "% / " + str.tostring(math.round(nTP2 * 100.0 / nTrades)) + "% / " + str.tostring(math.round(nTP3 * 100.0 / nTrades)) + "%" : "—", fg)
+    cell(0, r, "Win rate", dim)
+    cell(1, r, nClosed > 0 ? str.tostring(math.round(nWin * 100.0 / nClosed)) + "%" : "—", fg)
+    r += 1
+    if allOut
+        cell(0, r, "Target hit", dim)
+        cell(1, r, nTrades > 0 ? str.tostring(math.round(nTP3 * 100.0 / nTrades)) + "%" : "—", fg)
+    else
+        cell(0, r, "TP1 / TP2 / TP3 hit", dim)
+        cell(1, r, nTrades > 0 ? str.tostring(math.round(nTP1 * 100.0 / nTrades)) + "% / " + str.tostring(math.round(nTP2 * 100.0 / nTrades)) + "% / " + str.tostring(math.round(nTP3 * 100.0 / nTrades)) + "%" : "—", fg)
     r += 1
     cell(0, r, "Full stop-outs", dim)
     cell(1, r, str.tostring(nSL), nSL > 0 ? colBear : fg)
+    r += 1
+    cell(0, r, "Net R (before fees)", dim)
+    cell(1, r, rtxt(sumR), sumR >= 0 ? colBull : colBear)
     // blank any rows left over from a longer previous render
-    for k = r + 1 to 19
-        table.cell(dash, 0, k, "")
-        table.cell(dash, 1, k, "")
+    if r < 25
+        for k = r + 1 to 25
+            table.cell(dash, 0, k, "")
+            table.cell(dash, 1, k, "")
