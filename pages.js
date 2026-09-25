@@ -60,7 +60,55 @@
   // push, sometimes for a day. That is how the Dub and Robin pages showed no
   // bet on 2026-09-23 while the alerts had gone out: the frozen ladder.json
   // carried no lock for the day, so the pages never knew to look further.
-  P.load = async function (path) {
+  // ── Sealed picks (scripts/seal.mjs) ─────────────────────────────────────
+  // Before its game, a pick is published encrypted. A browser holding the key
+  // opens it; open any page once with #key=<the key> to store it on this
+  // device (#key= alone forgets it). Without the key a sealed leg shows as a
+  // locked placeholder, so every template still has a leg to draw.
+  try {
+    const m = /(?:^#|&)key=([^&]*)/.exec(location.hash || "");
+    if (m) {
+      const k = decodeURIComponent(m[1]);
+      try { if (k) localStorage.setItem("pg.key", k); else localStorage.removeItem("pg.key"); } catch (e) {}
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+  } catch (e) {}
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  let cryptoKey = null;
+  async function pickKey() {
+    if (cryptoKey) return cryptoKey;
+    let raw = null; try { raw = localStorage.getItem("pg.key"); } catch (e) {}
+    if (!raw || !(window.crypto && crypto.subtle)) return null;
+    try { cryptoKey = await crypto.subtle.importKey("raw", b64(raw), "AES-GCM", false, ["decrypt"]); } catch (e) { return null; }
+    return cryptoKey;
+  }
+  async function openOne(o, k) {
+    if (!o || !o.sealed || !k) return o;
+    try {
+      const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(o.sealed.iv) }, k, b64(o.sealed.ct));
+      const out = Object.assign({}, o, JSON.parse(new TextDecoder().decode(pt)).fields);
+      delete out.sealed; out.unlocked = true;
+      return out;
+    } catch (e) { return o; }
+  }
+  const SEALED_LEG = { player: "🔒 Sealed", need: "revealed when its game starts", sport: "" };
+  P.present = async function (j) {
+    if (!j || !Array.isArray(j.bets) || !j.bets.some(b => b && (b.sealed || (b.legs || []).some(l => l && l.sealed)))) return j;
+    const k = await pickKey();
+    const bets = await Promise.all(j.bets.map(async b => {
+      if (!b) return b;
+      const card = await openOne(b, k);
+      if (Array.isArray(b.legs)) card.legs = await Promise.all(b.legs.map(async l => {
+        const o = await openOne(l, k);
+        return o.sealed ? Object.assign({}, SEALED_LEG, o) : o;
+      }));
+      return card;
+    }));
+    return Object.assign({}, j, { bets });
+  };
+
+  P.load = async function (path) { return P.present(await loadRaw(path)); };
+  async function loadRaw(path) {
     const key = "pg.cache." + path;
     {
       try {
@@ -82,7 +130,7 @@
       if (r.ok) { const j = await r.json(); P.store.set(key, j); return j; }
     } catch (e) {}
     return P.store.get(key, null);
-  };
+  }
 
   // Today's lock, as the alerter published it with the ladder.
   P.lockOf = ladder => {
@@ -96,6 +144,10 @@
     return `${Math.floor(t / 3600)}:${p2(Math.floor(t / 60) % 60)}:${p2(t % 60)}`; };
 
   P.leg = (l, extra) => {
+    if (l.sealed) return `<div class="leg">
+      <div class="nm">${l.player}</div>
+      <div class="need" style="font-weight:400;color:var(--dim)">${l.need}</div>
+      ${extra || ""}</div>`;
     const res = l.result === "won" ? '<span class="tag ok">✓ WON</span>' : l.result === "lost" ? '<span class="tag bad">✗ LOST</span>'
               : l.result === "void" ? '<span class="tag dim">VOID</span>' : "";
     const when = l.start ? ` · ${P.etTime(Date.parse(l.start))} ET` : "";

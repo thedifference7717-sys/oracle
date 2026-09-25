@@ -112,7 +112,7 @@ function render(){
     </div>
     <div class="legs">${row.legs.map(l=>P.leg(l)).join("")}</div>
     <div class="nums txt">
-      <div><div class="v">${row.excludes?`${P.EMOJI[row.excludes.sport]||""} ${row.excludes.pick}`:"—"}</div><div class="l">the Ladder's bet — left out</div></div>
+      <div><div class="v">${row.excludes?`${P.EMOJI[row.excludes.sport]||""} ${row.excludes.pick}`:row.sealed?"🔒":"—"}</div><div class="l">the Ladder's bet — left out</div></div>
       <div><div class="v">${P.gamesLine(row.games)||"—"}</div><div class="l">chosen from</div></div>
       <div><div class="v">${row.published?P.etTime(Date.parse(row.published))+" ET":"—"}</div><div class="l">published</div></div>
     </div>
@@ -124,7 +124,8 @@ function render(){
         <input id="bk" type="text" inputmode="decimal" autocomplete="off" value="${bankroll}" oninput="setBankroll(this.value)"></div>
     </div>
     <div class="field" style="max-width:none"><div class="hint">${myOdds[today]!=null?"Your price, on this phone.":sentOdds(today)!=null?"The price you sent the bot.":"Kalshi prices multiplied. Got a different price? Send the bot <code>/dub +120</code> and this page and the alerts both update."}
-      <span id="stakeTxt">${P.money(stake)}</span> returns <b id="ret" data-px="${px}" data-base="${row.price}">${P.money(stake*P.dec(px))}</b> if both legs hit.
+      ${row.sealed&&P.odds(px)==="—"?`Bet <span id="stakeTxt">${P.money(stake)}</span>. 🔒 The legs and the parlay price are sealed until each game starts.`
+        :`<span id="stakeTxt">${P.money(stake)}</span> returns <b id="ret" data-px="${px}" data-base="${row.price}">${P.money(stake*P.dec(px))}</b> if both legs hit.`}
       The bet starts at 10% of your bankroll, goes to 10% of the new balance after a win, and up 12.5% after a loss. The bankroll is saved on this device; the alerts work from $100.</div></div>
   </div>`;
 }

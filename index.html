@@ -1215,10 +1215,13 @@ function renderLadderInner(){
   // shows a different name than the one on record is worth nothing to anyone
   // checking the record.
   const locked=pub&&pub.pick?pub:null;
+  // Published but sealed (scripts/seal.mjs): the pick is on the record,
+  // encrypted, and this browser has no key to open it.
+  const sealedPub=!locked&&pub&&pub.sealed?pub:null;
   const lk=lockInfo();
-  ldLockAt=lk&&!locked?lk.lockAt:null;
+  ldLockAt=lk&&!locked&&!sealedPub?lk.lockAt:null;
   if(ldLockAt==null)ldFired=false;
-  const waiting=!locked&&lk&&!lk.open;
+  const waiting=!locked&&!sealedPub&&lk&&!lk.open;
   // After the lock, with nothing published and nothing recorded by hand, the
   // card must NOT fall back to a live recompute. That is what made a pick that
   // had already been alerted and bet appear to change: the board was re-ranking
@@ -1234,7 +1237,7 @@ function renderLadderInner(){
   // bet gets placed. Until the rung publishes, the card says it is choosing.
   const pinned=pinnedPick[today]||null;
   // Only true before the board can produce any candidate at all.
-  const orphaned=!locked&&!pinned&&lk&&lk.open;
+  const orphaned=!locked&&!sealedPub&&!pinned&&lk&&lk.open;
   // Today's price: what the client typed, else what the rung was placed at on
   // Kalshi, else the base price they set. Nothing else — not yesterday's fill.
   const todayOdds=oddsAt(today)!=null?oddsAt(today)
@@ -1349,6 +1352,16 @@ function renderLadderInner(){
       </div>
     </div>`:"";
 
+  const sealedHtml=sealedPub?`
+    <div class="ld-pick">
+      <div class="nm">🔒 Sealed <span class="tag ok">LOCKED</span></div>
+      <div class="sub" style="margin-top:2px">Today's pick is on the record, encrypted, and is revealed when its game starts.</div>
+      <div class="sub" style="margin-top:7px;color:var(--green)">
+        Published ${sealedPub.published?etTime(Date.parse(sealedPub.published)):"—"} ET${sealedPub.games?` · chosen from ${gamesLine(sealedPub.games)}`:""}
+      </div>
+      <div class="sub" style="color:var(--dim);font-size:11px;word-break:break-all">Fingerprint ${sealedPub.sealed.hash}</div>
+    </div>`:"";
+
   const waitHtml=waiting?`
     <div class="ld-pick ld-wait">
       <div class="l">Pick locks in</div>
@@ -1442,7 +1455,7 @@ function renderLadderInner(){
         out.push({r,acc,run:Object.assign({},run)});}
       return out.slice().reverse().map(({r,acc,run})=>`<tr>
         <td class="c-date" style="color:var(--dim)">${new Date(r.date+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"})}</td>
-        <td class="c-pick">${(()=>{const b=published.find(x=>x.date===r.date)||{};return `${SPORT_EMOJI[b.sport||"MLB"]||""} ${r.pick||"—"}${b.need&&b.sport&&b.sport!=="MLB"?` <span style="color:var(--dim);font-size:12px">${b.need}</span>`:""}`;})()}</td>
+        <td class="c-pick">${(()=>{const b=published.find(x=>x.date===r.date)||{};if(b.sealed&&!b.pick)return "🔒 Sealed";return `${SPORT_EMOJI[b.sport||"MLB"]||""} ${r.pick||"—"}${b.need&&b.sport&&b.sport!=="MLB"?` <span style="color:var(--dim);font-size:12px">${b.need}</span>`:""}`;})()}</td>
         <td class="c-cd" style="color:var(--dim)">${r.cycle}·${r.rung}</td>
         <td class="c-stake">${money(r.stake)}</td>
         <td class="c-odds" data-label="Odds"><input class="ld-in" data-k="odds:${r.date}" type="text" inputmode="numbers-and-punctuation" autocomplete="off" value="${r.price!=null?fmtOdds(r.price):""}"
@@ -1464,7 +1477,7 @@ function renderLadderInner(){
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
       <div><div class="ld-stake">${money(stake)}<small>Today's bet</small></div>${oddsBox}</div>
-      ${locked?lockedHtml:pinned?myHtml:waiting?waitHtml:orphaned?orphanHtml:noSlateHtml}
+      ${locked?lockedHtml:sealedPub?sealedHtml:pinned?myHtml:waiting?waitHtml:orphaned?orphanHtml:noSlateHtml}
     </div>
     ${(waiting||orphaned)?"":nextBox}
     <div class="ld-steps">${steps}</div>
