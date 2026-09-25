@@ -868,7 +868,10 @@
      },
      "p": 0.7075,
      "pAdj": 0.6892,
-     "detail": "#1 · vs Alec Gamboa · lineup confirmed"
+     "detail": "#1 · vs Alec Gamboa · lineup confirmed",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit"
     },
     {
      "sport": "MLB",
@@ -956,7 +959,7 @@
    ]
   }
  ],
- "updated": "2026-09-25T16:05:38.674Z",
+ "updated": "2026-09-25T18:21:34.969Z",
  "record": {
   "w": 17,
   "l": 1,
