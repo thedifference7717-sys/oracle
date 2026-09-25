@@ -578,6 +578,11 @@ let stateRows = [];
 // sealed on the way out and opened on the way in, and nowhere else.
 const PICKS_KEY = keyFrom(process.env.PICKS_KEY);
 const SEAL = sealer(PICKS_KEY);
+// Actions logs of a PUBLIC repo are public. With picks sealed, the log must
+// not say what they are, so in this repo the alerter logs nothing at all.
+// (The private engine repo keeps its logs.) console.error still reaches the
+// log: errors carry URLs and messages, never a pick.
+if (SEAL.on && /\/oracle$/.test(process.env.GITHUB_REPOSITORY || "") && process.env.DRY_RUN !== "1") console.log = () => {};
 // state.json, encrypted with the same key when there is one (seal.mjs).
 const writeState = blob => writeFileSync(STATE_FILE, stateEncode(PICKS_KEY, blob));
 export const readState = () => existsSync(STATE_FILE) ? stateDecode(PICKS_KEY, readFileSync(STATE_FILE, "utf8")) : {};
