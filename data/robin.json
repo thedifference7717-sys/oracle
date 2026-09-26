@@ -1203,9 +1203,106 @@
     ],
     "ctx": "2026-09-25:robin"
    }
+  },
+  {
+   "id": "2026-09-26:robin",
+   "date": "2026-09-26",
+   "published": "2026-09-26T15:35:42.704Z",
+   "status": "open",
+   "games": {
+    "MLB": 13
+   },
+   "seal": 1,
+   "sizes": [
+    {
+     "m": 2,
+     "tickets": 15,
+     "avgPays": 2.034,
+     "expWin": 7.363,
+     "ev": -0.0027
+    },
+    {
+     "m": 3,
+     "tickets": 20,
+     "avgPays": 2.9,
+     "expWin": 6.877,
+     "ev": -0.0042
+    },
+    {
+     "m": 4,
+     "tickets": 15,
+     "avgPays": 4.135,
+     "expWin": 3.612,
+     "ev": -0.0056
+    },
+    {
+     "m": 5,
+     "tickets": 6,
+     "avgPays": 5.893,
+     "expWin": 1.012,
+     "ev": -0.0072
+    },
+    {
+     "m": 6,
+     "tickets": 1,
+     "avgPays": 8.397,
+     "expWin": 0.118,
+     "ev": -0.0087
+    }
+   ],
+   "legs": [
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "d03c6aad9f6564e5cdd4690a711a01149d6cb77a8071e33116cd29e9a60e2c83",
+      "iv": "cXb1y3KogZj5YYBi",
+      "ct": "yoHSRMUnjPeCmFdGgwokQDK47VkSyL5s3/6rSnr70o9zYC4dCy5foTVjQEOWWXmE0jz/HIGUDdmIdA4T6DlnNZVLZ7JZfopViadCkMqTUSOxZ5T2KbDc4nfRXPg23VncngdYuVRzrQsPN/CIF9CHXCF/cg6T2peA/SLxV7E7FRc84wZpcYIIFBpOXXVQnHfz9NA3yoIIMlQd56SZbwVwg5Bw8RoQ0w96e9u6j2SFypP2Ae4obaHvRTHsiW24fNFJY1TAr3I2wm3a2Ahntgvng3BzotaNb14/ReirtqhnMn+ACsEKRS02NnmzENX/u+ezqOJZuvrqe2ga7ZDYbmfoUONyt6PkwI08TrkymQgUv34etoMMPynBcNxo00ptip91D1ZbId52K5Efs+ghtdpyY1KV84phoBM37hO/Duj7FA8eTa8f+EWQwOyWPgG6Nm4VcJpI9fxDp2RVm33973ri3wrq2R61LhrOEe7JUpeJ4rbN7D4iqfviNTGGpZkOBd0Brv7jJ7GZC/Wo/o47fVGNhdlAhQ1JbN2pFzz4P2egUkVrwoDvBb5MUDZxtHeU9HKjaJ1ENzszFD7+sYPWXxh4yV2+j/Ucu2nlR8wNsSnNyffCTCqmPSwWe3f+zLiWFGNSo2YAqlDNeJprZySH7yulkXzsm5WIwzyAwxgOUQ/x"
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "76049b71ec865f6bc8fbc64f2c90f2f6dca884aa926852ca04509b4522facb42",
+      "iv": "n0fyCNfOxb77fr9S",
+      "ct": "thtagTYaCBK4CXDQfQmnCIGQGDuG/hls2om7iDhdXdIulZO1Sww8pkoGlmgR3aKt91vrQ5ccgVGzwyv/43uWYT4k11Nbe8Fh5/xWYtqTNs1YKq66kblKQdXA2SCfawITEFpUNtsdx2ZfrZ+QAi+OYBD4+8DWFnXcvJ8Qy9Ywlpx4ARyoe/RmuhRWdkdfWFkWWogVaD+LgnYn9MYwBw9A1z9uUVnymjJNeLWr5JzF76QRKjJiOqj0lM+hw0vAsygFrzhPw8I3nDifXwlOIXKytukCCZhSopXcc73sn5jPjl/J0LyfUjTW0sAKI1QN+jfMRjEanE+Bdp7ZS13iVJtxQqFp9OiAqqSfjB7O1R4OyXSpojt1Y1ili9aOolmjPWrvzvKmrYjWiPTpO5OQ16eafIDv+bg0DJ53Gb5CXNVDvvpJQLzM90Hdv2uixPE+H+F8HDBql17fKddZsGLjhA7ZWdublwpnhIgqf5JCJUMF4DUr9UJ8hbo1HtMyffRdrau0dhz7ow7ngB+2PiNpq6j6rDDI/7Ez0oOF7nSINSYS2OyHNgjLWdoirrerQEomtN2wBIz0Ejl+BEe4rObsnyUoc5Rw/VJeUK2KwmOoR2cPV143vJux4AT2OhbfpuhP5gATO0fh6jYrsbKjUc8oLGrOiYCT3kHM"
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "4a3be246f5fa328cbed0e2e7efcc4856a64d9bf4424b9b301bf55a85fdc3f1a6",
+      "iv": "RhWaX7V7sqGaammZ",
+      "ct": "7EYZAypWe5vrnCLgm4XDZvJufl/HYgAzWACGOcUtWoc9lXLogfA9kRKiy/tQq0FgVWZ72EAFdhBhf6rMF1DPtEppMpNnd2eGNmE7ryH5NQn84WJGWui+Y7PagHwofLuW94uc1u3Lqyd9r7OFj0cYU0xmca4ETl1DZlUjDhvmE2DzBwZDp1orM7a+ux8gqgdI0CFOJTdrLKtz8V2f2Qr5rljGpSX1AQ2UMH/smiVFu1wKSf9AdRf0eBXgKTqCEw5yFlZHDQvQP3Q05xfs80J6mh29gBJ87Ld7pNQAhTmpNTKSVpGu/Mmrnpbv5gaDH7ABlCR0dRvtDc1LG0M1LbrGi41t2l7FWAIaICSgaz9kffcylOmIcKmv1SvjHsrE1mjIr0OYvgmDS/993zywYDlgFx3My+xVO2AcJbaOZy9DOypLh4jQ5VyP6/iuRdL/eDRSKWmHU9oqF1MUmTEBYVm/Jsa8SYOEj0kF35ISgciPSvjlJaFKTXwC4pD5xpl0R+/5DPCH8hFH1gC3PjOpysQdv3vwtBDnNWw5ODQNnsHUz5FBrDNduAfPL/6sJ/xqaXSdcWuN46+gpOjNVWd4+YlN2RXbD8RjUGGwaRCoPVmy7pjkrwO2UOnYJ7BIN2ilfiyvYgGSML1FLcy840fOsMHHRbUzlHjfWqM1"
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "29db89223517b7495021109d5ff7fad08713613ba82a2b2969b7f4a8acd69166",
+      "iv": "WUkja8z19i5Opk/N",
+      "ct": "KkI/DJE1DMEOGo3f0yBQznGNGBgMsEyeQ5Z3VWjrg6cOvKgY3iQy3E/vFL1TivwFCfzMS58+hnLy/Ed8yQpwLxbUwQxlf8WB3oAaL4boSY15vbZDKl+cbSTrsJV344eLeCLYuBbJ78qdK+o/DQ3NuLdr9kE3WJSo2ZLfRb3ce2A3LY49QssN5J5eZ+sNsUKr+iWnpAO5cYzP1g9NNJJmmd4mtdep2QNzPIyXmTzjRPGSxtCgym7Qz2ImU4lx3hO4iu65vUttrHGx8saLmRwL+l3a+Snz7bEGHGyDP31fgghgE0GOTCIoOsIY+gWr9K/zlf6RbeJjkQzvOMb8dVWFdFRYb9QyK8ocH5qWxat5h+blaYffWamsAoVzwJSAWS4SQG5qYi3KDmKotb3b8Zjo/YsKmWkKpCsefA/ZvUDUIhb0ZIzdqlelOwa5mZ142tq+cmJTGCOUudmutBvMuZ7aoZOqdo7H5tC0ggIQzNW2tr+yXBz/caG7+t5ljtAxEWGxI+IIwea3agPwfrjrCFeDbVv/xl4p1vBG5XB+YAeRCAa2/Yotv2TIZWqT/rQnow0aRccNmvkbS9DFuFMCNd7hoIaySCz57jndMEC3t6rrJCaXiZMM55Yx+XBQ78zW5dQQl+/3p6k35rAOuUjTABtP5JB8Nj1yi7AaPl1LxCo7sA=="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "d91aac909ecd9d11ea788a8c14b11a6c9cc133c4ac471ed78a09e8409460afb0",
+      "iv": "azUBffxej23frmXG",
+      "ct": "BNT4qBaLEfYreXhOCKQKENT+ZSGEeYIrIv08dMilgSfFFIOkmzi9osH2P0+lRxkvZYGxPr9jZdplVXENsmsQGZWziXoR2cis7c/4MI9F15ddwQKF3eLdK6PdQ3cBb2Ewt5pfC2NATRpfL4Ih8MEhglKZxFXRWjaX2REFeBnES1wpDCvXm8OQY2st2WWaHF273UqOqRx3wE1ErJF+BLQ4uCJ9l/P7xoXDv/W4RLFYmTbc7bsblk46sCaZWYUjc6IYlftovFemSDm1O33sRqMj5UXEydfJFQrww7qIIDXfa4UP5Be+SXTLVAKwEYe2M2T+MI8SUsAgF6rRHyeVhIZqaDpcoUXKR6v3/HK4kjhgFtBK1NI5R6ZOfbIK18ws67Yq0ze7fkofQT4VdNfzHc75ap6seJuoEkcqcghZsI8J4kMYssfSbIlkGKtNH9GHtWHuawozBa59T/XeSF5Gb2uCVymguPiPC66p3mQuzLX6CAWoMhzgZ1wWzZJQt6wbn2qwVCTefpG1Bv6eRNiD1T4/N+p10U3/G8vMMucblUovgK6T9qpc4revnlkugfWDyo7S9AaEJYpZxA8LbxNka8f2sGzH3hfL8FOQofQiSncHcEm3rnW22BVeb2EQk5JeH/JmZhcxIi4FAt8gA4B62Q=="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "cf38ccd32ebd63713db1bd565ef1de4f209c22098fb8bbb77b7c55622963a3c2",
+      "iv": "cor/0zmLC7fpqlIK",
+      "ct": "Sy+PHrjnv7GjjuD2t5sdNlG8YXwxu1cXGlvfaX3BY8nOht/qOGYdI4NO8qIxN0FNCLKMacPrZ15hMjebD0MGGHNCOkC686x9+aPb54RO9mRXN0HaWJPo/h0fyk8rS4dlRbXGxR0hotKo2hWJwRABcAidbLZedsjRPWFfLfSW1uWvZ3ewFtatxJ9F+XTlj0USidujCZbGnafAsGC4QYtjza83tshjvjFHFevdapxKLVCFGHxEyvzAMPVgsTXZ6edZWnYZ1Q19czj6kERYOclBytL7ImpYj1zMoaEjepOGuKhYBFkOPWU0lVYDPAe1P4Vw7lqALSI6h76F6nrx/VMMOZslnhtnAJ/y29mxy6zx2YI4+rxBi9SrNkV5dI7EwsViDlcysNSecq7gVpHSpNk98b9tZsSy3u1vdkgQtg9CNzeJJMEKM5LC0EEZOUsLg1+NH7A5QBvgpqrC1xNAc73fmFoYt7JHg+zCFWTaaEaPKcLuEop1smRCqJh6K5yVTABoqkSOcke9LudoeI/9sbVho7siacKIgQauEHprKD/4Fh4P9mxDju/Gy7OlN7AbiYf/pVQBrXkegbGuhHWmzzc13Gmo1MSmK7sIiup6E2wvX+h+/OSNRsY4luVNBwx4uo/e3a9bNW3zG52aUkK9fJXAVpW051OO23zkPQ=="
+     }
+    }
+   ]
   }
  ],
- "updated": "2026-09-26T04:03:59.359Z",
+ "updated": "2026-09-26T15:35:43.457Z",
  "record": {
   "w": 21,
   "l": 3,
