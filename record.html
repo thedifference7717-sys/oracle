@@ -23,6 +23,12 @@
 .pf{font-size:12px;color:var(--muted);margin-top:3px}
 .pf .ok{color:var(--green)}
 .pf code{font-family:var(--num);font-size:11px;color:var(--dim)}
+#post pre{white-space:pre-wrap;font:14px/1.45 var(--sys);color:var(--text);background:var(--bg3);border-radius:12px;padding:12px 14px;margin:0}
+.pbtns{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.pbtns a,.pbtns button{font:600 14px var(--sys);padding:9px 16px;border-radius:980px;border:none;cursor:pointer;text-decoration:none}
+.pbtns a{background:var(--blue);color:#fff}
+.pbtns button{background:var(--bg3);color:var(--text)}
+.pbtns span{font-size:12px;color:var(--dim);margin-left:auto}
 </style>
 </head>
 <body>
@@ -49,6 +55,16 @@
 </div>
 
 <div class="prods" id="prods"></div>
+
+<div class="card" id="post" hidden>
+  <h3>📣 Today's post · <span id="postDay"></span></h3>
+  <pre id="postText"></pre>
+  <div class="pbtns">
+    <a id="postX" target="_blank" rel="noopener">Post on X</a>
+    <button type="button" id="postCopy">Copy</button>
+    <span id="postLen"></span>
+  </div>
+</div>
 
 <div class="section-h"><div class="sh-row"><h2>Every pick</h2><span class="sh-note" id="histNote"></span></div></div>
 <div class="card"><div class="hist" id="hist"></div></div>
@@ -160,8 +176,59 @@ function render() {
       <div class="who">${lines.join("<br>") || '<span style="color:var(--dim)">No play</span>'}</div>
     </div>`;
   }).join("") : `<div class="empty">No picks published yet.</div>`;
+  renderPost(L, D, R, days);
   document.getElementById("histNote").textContent = settled ? `${settled} slate${settled === 1 ? "" : "s"} graded` : "";
 }
+
+// The day's post for X: the latest graded slate plus the running record.
+const SITE = "https://thedifference7717-sys.github.io/oracle/record.html";
+const shortName = n => { const w = String(n || "").split(" ").filter(x => !/^(jr\.?|sr\.?|ii|iii|iv)$/i.test(x)); return w[w.length - 1] || n; };
+// X's weighted length: links count 23, most emoji and non-Latin text 2.
+const xLen = t => [...t.replace(/https?:\/\/\S+/g, "x".repeat(23))].reduce((n, c) => n + (c.codePointAt(0) > 0x10FF ? 2 : 1), 0);
+function postText(L, D, R, d, names) {
+  const at = list => list.find(b => b.date === d);
+  const l = at(L), du = at(D), r = at(R);
+  const nm = p => names === 2 ? p : names === 1 ? shortName(p) : "";
+  const lines = [`The Prop Shop · ${P.prettyDate(d)}`, ""];
+  if (l && DONE.has(l.status)) lines.push(`🪜 Ladder ${markOf(l.status)}${!l.sealed && names ? " " + nm(l.pick) : ""}`);
+  if (du && DONE.has(du.status)) lines.push(`✌️ Dub ${markOf(du.status)}` + (names ? " " + du.legs.map(g => `${nm(g.player)} ${markOf(g.result)}`).join(" + ") : ""));
+  if (r && r.graded && r.graded.sizes) {
+    const w = r.legs.filter(g => g.result === "won").length, x = r.legs.filter(g => g.result === "lost").length;
+    const pl = r.graded.sizes.reduce((n, z) => n + (z.pl || 0), 0);
+    lines.push(`🐦 Robin ${w}–${x} legs, ${sign(pl)}u`);
+  }
+  const lf = flat(L), df = flat(D), rf = robinFlat(R);
+  lines.push("", `Record: 🪜 ${lf.w}–${lf.l} · ✌️ ${df.w}–${df.l} · 🐦 ${rf.lw}–${rf.ll} legs`,
+    "Every pick committed before its game 👇", SITE);
+  return lines.join("\n");
+}
+function renderPost(L, D, R, days) {
+  const d = days.find(d => [L, D, R].some(list => { const b = list.find(b => b.date === d); return b && (DONE.has(b.status) || (b.graded && b.graded.sizes)); }));
+  const box = document.getElementById("post");
+  if (!d) { box.hidden = true; return; }
+  // Full names if they fit, then last names, then none.
+  let t = postText(L, D, R, d, 2);
+  if (xLen(t) > 280) t = postText(L, D, R, d, 1);
+  if (xLen(t) > 280) t = postText(L, D, R, d, 0);
+  box.hidden = false;
+  document.getElementById("postDay").textContent = P.prettyDate(d);
+  document.getElementById("postText").textContent = t;
+  document.getElementById("postX").href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(t);
+  document.getElementById("postLen").textContent = `${xLen(t)}/280`;
+}
+document.getElementById("postCopy").addEventListener("click", async e => {
+  const t = document.getElementById("postText").textContent, btn = e.currentTarget;
+  try { await navigator.clipboard.writeText(t); }
+  catch (err) {
+    const ta = document.createElement("textarea");
+    ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e2) {}
+    ta.remove();
+  }
+  btn.textContent = "Copied ✓";
+  setTimeout(() => { btn.textContent = "Copy"; }, 1600);
+});
 
 async function load() {
   [ladder, dub, robin] = await Promise.all(["data/ladder.json", "data/dub.json", "data/robin.json"].map(p => P.load(p)));
