@@ -447,7 +447,7 @@
   {
    "id": "2026-09-26:ladder",
    "date": "2026-09-26",
-   "status": "open",
+   "status": "won",
    "published": "2026-09-26T15:35:41.461Z",
    "cycle": 5,
    "rung": 3,
@@ -509,6 +509,8 @@
    "start": "2026-09-26T16:35:00Z",
    "startProb": 0.985,
    "teams": "NYM @ WSH",
+   "hits": 1,
+   "settled": "2026-09-26T17:31:37.588Z",
    "revealed": {
     "v": 1,
     "hash": "8a0f70c95bbcfc1de1f2dda50c59b1fabd7048c569a787c3df6e53d635e61548",
@@ -543,12 +545,12 @@
    }
   }
  ],
- "updated": "2026-09-26T16:35:07.508Z",
+ "updated": "2026-09-26T17:31:37.591Z",
  "state": {
   "account": 119.29,
   "base": 16.58,
-  "stake": 33.84,
-  "rung": 3,
+  "stake": 47.65,
+  "rung": 4,
   "cycle": 5,
   "pl": 19.29,
   "cycles": {
