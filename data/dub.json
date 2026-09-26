@@ -343,6 +343,9 @@
      "sport": "MLB",
      "start": "2026-09-26T17:10:00Z",
      "teams": "PIT @ DET",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "60062573060d39119dc0580deb02eca3dd4334ea6b635ab1a3fc906283ef9597",
@@ -371,7 +374,7 @@
    ]
   }
  ],
- "updated": "2026-09-26T17:10:40.352Z",
+ "updated": "2026-09-26T18:47:37.718Z",
  "record": {
   "w": 2,
   "l": 2
