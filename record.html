@@ -96,7 +96,7 @@ function lead(b, starts) {
   const m = Math.round((first - pub) / 60000);
   if (m <= 0) return `<div class="pf">published ${P.etTime(pub)} ET</div>`;
   const t = m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ""}` : `${m}m`;
-  return `<div class="pf"><span class="ok">✓</span> published ${P.etTime(pub)} ET, ${t} before first pitch</div>`;
+  return `<div class="pf"><span class="ok">✓</span> published ${P.etTime(pub)} ET, ${t} before the first game</div>`;
 }
 
 // The Ladder as it is played: each rung at the stake it was published with.

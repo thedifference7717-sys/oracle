@@ -1482,7 +1482,7 @@ function renderLadderInner(){
         <td class="c-acct" data-label="Account">${money(acc)}</td>
         <td class="c-run" data-label="Running">${r.status==="open"?"—":`${run.w}–${run.l} · cyc ${run.cd}–${run.cb}`}</td></tr>`).join("");})()}</tbody></table>
     <div class="ld-foot">Got a different price? Send the bot <code>/odds -300</code> or <code>/paid 72.77</code> — this page and the alerts both recalculate. Typing it here changes this phone only.</div></div>`
-    :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before first pitch — the same tamper-evident rule the record page runs on.</div>`;
+    :`<div class="ld-warn" style="background:#1A1230;border-color:#A78BFA55;color:var(--muted)">No ladder bet has settled yet. The first rung publishes to <code>data/ladder.json</code> the day it is placed, so every stake and result below is timestamped in the repo before the first game starts — the same tamper-evident rule the record page runs on.</div>`;
 
   el.innerHTML=`<div class="ld">
     <div class="ld-top">
