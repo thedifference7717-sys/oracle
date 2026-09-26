@@ -223,7 +223,7 @@
    "id": "2026-09-25:dub",
    "date": "2026-09-25",
    "published": "2026-09-25T16:05:38.102Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 17
    },
@@ -286,17 +286,21 @@
       "in": true,
       "slot": 1,
       "at": "2026-09-25T20:24:29.822Z"
-     }
+     },
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless"
     }
    ],
    "prob": 0.4937,
    "price": 107,
-   "fair": 103
+   "fair": 103,
+   "settled": "2026-09-26T00:14:12.607Z"
   }
  ],
- "updated": "2026-09-25T23:21:11.887Z",
+ "updated": "2026-09-26T00:14:12.835Z",
  "record": {
   "w": 2,
-  "l": 1
+  "l": 2
  }
 }
