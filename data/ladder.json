@@ -457,15 +457,93 @@
     "MLB": 13
    },
    "seal": 1,
-   "sealed": {
+   "detail": "#3 · vs Connelly Early · lineup confirmed",
+   "edge": 0.0233,
+   "eventId": "822678",
+   "firstPitch": "2026-09-26T16:35:00Z",
+   "fromProps": 82,
+   "gk": 822678,
+   "kalshi": {
+    "ask": 0.71,
+    "at": "2026-09-26T15:35:41.461Z",
+    "bid": 0.7,
+    "spread": 0.01,
+    "ticker": "KXMLBHIT-26SEP261235NYMWSH-NYMBBICHETTE19-1"
+   },
+   "line": 0.5,
+   "market": "hit",
+   "need": "to record a hit",
+   "p": 0.7334888641059486,
+   "pAdj": 0.719,
+   "pick": "Bo Bichette",
+   "playerId": 666182,
+   "posted": true,
+   "price": -245,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6953,
+     "pick": "Ryan O'Hearn",
+     "price": -213,
+     "sport": "MLB"
+    },
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6717,
+     "pick": "Junior Caminero",
+     "price": -203,
+     "sport": "MLB"
+    },
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6813,
+     "pick": "Carson Benge",
+     "price": -203,
+     "sport": "MLB"
+    }
+   ],
+   "slot": 3,
+   "sp": "Connelly Early",
+   "sport": "MLB",
+   "start": "2026-09-26T16:35:00Z",
+   "startProb": 0.985,
+   "teams": "NYM @ WSH",
+   "revealed": {
     "v": 1,
     "hash": "8a0f70c95bbcfc1de1f2dda50c59b1fabd7048c569a787c3df6e53d635e61548",
-    "iv": "3j3/NI79WdIsVbAN",
-    "ct": "PGZ2O6XJlEUCgq1sovvLw6LGR8y95o9e+6mLK/deb8Zh4X/VViOUfC3qFtJ6o/fD902dPaWyQgRgwmHPx3NCalQneS7dLBGBT1CQd7p5ONkTCEduM4HrwIWjY3GEEPwzm+lTOPp/ZclQ7375U2MG8HZARS+/gDnu/jNdUgd+2CjAiTNfmbvAf21OgioeAQP5ijaN7hnYCh29qz9NWfIsQacLp6lTm7SwpnJyzQqc+zsAxraLGgiD8GP/tROLTkXBldqht02H5l8XuDDnKql9G+md5UlhTChUSNLOnwb5uPxwebbVXATYInYUh8r1rCYSzOBU3RmaMyCBz7sM7l82ca7PYRtm4pxPh0YPkcVxs8JMyWlVqRtO3qd3mtzezGgEisZR9f7pCIoNYygZ/YBn/yP9ZEtCzLVlb6hMaEVMe4LOdEUg/9bYkzS9z5qTZBUy7cmVSbIZflK4MlAphIQEJpD6fdPeJkPi1qDLGVyriWJ0cG0COWK4TE8n+ZNuxvLJxmTdW/QEfk3oI4uQVfBsaGESaMiuOCiiRqdKC6QdDPGS7DSkveEySLSEFAadl5u3FC6k0CcQTgkTRDx+EP/IsNmmsRv5tv8lPnJwKyDPUtZ0MkWK5aKfks42PhrGjHbWlRbH3/N2Vg2cged3RMII8z0XFN4WVkjS5IHAoUC4m7szOoN5mhmruiTVSeRtc+kSbrARPbjyG4xs3Jjhg9HtZLSCrNB5Yk+2SdStbQaQ7JSjUm8ZczNOXhDJiPjno/MNzi7wYBKIhcRuBuLilCS5b3pDgpj/N6cazA8NkNZEMv1DOXtGzGLfne8H4vq3hnZcsgL1EuJUEHE0M8xD00wle60I7Hh1PNV/tCbHSxV15oGv/DkoBwGsokGD+dtn4HF3lf+bvXGt5VYeKEFCTCrz1yvkRE5w5h6852aYwDQ8yLTBvvMtwOG3oJj0bKxjdtD/PUTFhr612znTGCocZkDuaEuswlwR6pS2HZi+4tzGpiJjy767PVVWMrPLK8fFBXP0Mkk5n0156J3WsXsXbeXB7nScR50LUPlQGjfaFCFpmY9BgJL2Bq6l+roBCeZBhkPcGpRAqEHU/0r+pBSHnjRlAFL17bISb1AT4qsd+MCWAT9rRm+mF7mEvu7oGgW24uQ5+Km8dSiLucj/cXOXFipzcK/0ohLkpv9p0ZT3FaT+iG3osR99tInCbabS8VyDPcfzUmn/F4CEpRHbh2ZaXUZMANE0nJlci2rayt5wnzNUXo0fDU/+dZ0cUaSju6+9"
+    "salt": "e08a06f5f902c1782b48f96869acc882",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "firstPitch",
+     "fromProps",
+     "gk",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "posted",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "slot",
+     "sp",
+     "sport",
+     "start",
+     "startProb",
+     "teams"
+    ],
+    "ctx": "2026-09-26:ladder"
    }
   }
  ],
- "updated": "2026-09-26T15:35:41.463Z",
+ "updated": "2026-09-26T16:35:07.508Z",
  "state": {
   "account": 119.29,
   "base": 16.58,
