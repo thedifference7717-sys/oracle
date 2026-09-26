@@ -115,8 +115,9 @@ details[open] summary::after{content:' ▴'}
 </div>
 
 <div class="card">
-  <h2>Setup <span class="tag">type the .382 and .618 off your chart</span></h2>
+  <h2>Setup <span class="tag" id="setup-tag">type the .382 and .618 off your chart</span></h2>
   <div class="setup">
+    <div class="field key"><label>Token</label><input id="in-coin" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" placeholder="BTC" style="text-transform:uppercase"></div>
     <div class="field key"><label>0.382 price</label><input id="in-f382" type="number" step="any" inputmode="decimal" placeholder="118400"></div>
     <div class="field key"><label>0.618 price</label><input id="in-f618" type="number" step="any" inputmode="decimal" placeholder="114200"></div>
     <div class="field"><label>Margin $</label><input id="in-total" type="number" step="any" inputmode="decimal" placeholder="10000"></div>
@@ -167,7 +168,7 @@ const F_IN_LO = 0.382, F_IN_HI = 0.618;     // entry zone
 const F_STOP  = 0.886;                       // stop level
 const F_TP_LO = -0.618, F_TP_HI = -1.0;      // take-profit band (extensions)
 const D = {legs: 10, ratio: 2, total: 10000};
-const IN = ['f382','f618','total','lev','stop','legs','ratio'];
+const IN = ['coin','f382','f618','total','lev','stop','legs','ratio'];
 let pairReversed = true;    // default: leg 1 (first filled, smallest) runs to the −1.0,
                             // the deep legs bank first at the −0.618. false = the reverse.
 
@@ -188,6 +189,7 @@ const signed = (v,dp) => (v >= 0 ? '+' : '−') + usd(Math.abs(v),dp);
 const fib = f => (f < 0 ? '−' : '') + Math.abs(f).toFixed(3);
 
 /* ── inputs ───────────────────────────────────────────── */
+function coin(){ return ($('in-coin').value || '').trim().toUpperCase(); }
 function num(id){
   const raw = $('in-'+id).value.trim();
   if(raw === '') return null;
@@ -327,13 +329,16 @@ function render(){
     : null;
   st.className = warn ? 'warn' : '';
   st.textContent = warn ? '⚠ ' + warn
-    : n + ' ' + g.dir.toUpperCase() + ' entries · ' + usd(p382,2) + ' → ' + usd(p618,2) +
+    : (coin() ? coin() + ' · ' : '') +
+      n + ' ' + g.dir.toUpperCase() + ' entries · ' + usd(p382,2) + ' → ' + usd(p618,2) +
       ' · leg ' + n + ' is ' + nf(ratio,2) + '× leg 1' +
       (lev > 1 ? ' · ' + nf(lev,2) + '× on ' + usd(margin,2) + ' = ' + usd(total,2) + ' notional.' : '.');
 
   // ── summary ──
   $('sum-card').style.display = '';
-  $('sum-tag').textContent = 'all ' + n + ' legs filled';
+  const C = coin();
+  $('sum-tag').textContent = (C ? C + ' · ' : '') + 'all ' + n + ' legs filled';
+  document.title = (C ? C + ' · ' : '') + 'Fib Ladder';
   $('stats').innerHTML =
     '<div class="kpi av"><div class="k">Average fill</div><div class="v num">' + usd(avg,2) + '</div>' +
       '<div class="s num">' + usd(total,2) + ' notional · <b>' + units(totalUnits) + '</b> units<br>' +
@@ -450,7 +455,7 @@ function ordersText(){
   const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
   const totalWin  = legs.reduce((a,l) => a + l.win, 0);
   const lines = [
-    g.dir.toUpperCase() + ' fib ladder · ' + n + ' entries · leg ' + n + ' = ' + nf(ratio,2) + 'x leg 1' +
+    (coin() ? coin() + ' ' : '') + g.dir.toUpperCase() + ' fib ladder · ' + n + ' entries · leg ' + n + ' = ' + nf(ratio,2) + 'x leg 1' +
       (lev > 1 ? ' · ' + nf(lev,2) + 'x leverage' : ''),
     'Implied leg ' + usd(g.origin,2) + ' -> ' + usd(g.anchor,2) + ' (range ' + usd(g.range,2) + ')',
     'Entries .382 ' + usd(p382,2) + ' -> .618 ' + usd(p618,2) + ' | stop ' + usd(stop,2) +
