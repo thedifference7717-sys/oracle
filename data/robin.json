@@ -1415,17 +1415,61 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#6 · vs Nathan Eovaldi · projected, 95% to start",
+     "eventId": "823653",
+     "gk": 823653,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.64,
+      "spread": 0.03,
+      "ticker": "KXMLBHIT-26SEP261610TEXMIN-MINBLEE22-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6601,
+     "pAdj": 0.6634,
+     "player": "Brooks Lee",
+     "playerId": 686797,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-26T20:10:00Z",
+     "teams": "MIN vs TEX",
+     "lineup": {
+      "in": true,
+      "slot": 2,
+      "at": "2026-09-26T20:10:58.017Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "cf38ccd32ebd63713db1bd565ef1de4f209c22098fb8bbb77b7c55622963a3c2",
-      "iv": "cor/0zmLC7fpqlIK",
-      "ct": "Sy+PHrjnv7GjjuD2t5sdNlG8YXwxu1cXGlvfaX3BY8nOht/qOGYdI4NO8qIxN0FNCLKMacPrZ15hMjebD0MGGHNCOkC686x9+aPb54RO9mRXN0HaWJPo/h0fyk8rS4dlRbXGxR0hotKo2hWJwRABcAidbLZedsjRPWFfLfSW1uWvZ3ewFtatxJ9F+XTlj0USidujCZbGnafAsGC4QYtjza83tshjvjFHFevdapxKLVCFGHxEyvzAMPVgsTXZ6edZWnYZ1Q19czj6kERYOclBytL7ImpYj1zMoaEjepOGuKhYBFkOPWU0lVYDPAe1P4Vw7lqALSI6h76F6nrx/VMMOZslnhtnAJ/y29mxy6zx2YI4+rxBi9SrNkV5dI7EwsViDlcysNSecq7gVpHSpNk98b9tZsSy3u1vdkgQtg9CNzeJJMEKM5LC0EEZOUsLg1+NH7A5QBvgpqrC1xNAc73fmFoYt7JHg+zCFWTaaEaPKcLuEop1smRCqJh6K5yVTABoqkSOcke9LudoeI/9sbVho7siacKIgQauEHprKD/4Fh4P9mxDju/Gy7OlN7AbiYf/pVQBrXkegbGuhHWmzzc13Gmo1MSmK7sIiup6E2wvX+h+/OSNRsY4luVNBwx4uo/e3a9bNW3zG52aUkK9fJXAVpW051OO23zkPQ=="
+      "salt": "48d4f4278c5be2ae3e00de3126faa78d",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-26:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-09-26T19:07:41.716Z",
+ "updated": "2026-09-26T20:10:58.017Z",
  "record": {
   "w": 21,
   "l": 3,
