@@ -1360,11 +1360,50 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#3 · vs Rhett Lowder · lineup confirmed",
+     "eventId": "822759",
+     "gk": 822759,
+     "kalshi": {
+      "ask": 0.71,
+      "bid": 0.7,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26SEP261507CINTOR-TORVGUERRERO27-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7067,
+     "pAdj": 0.7065,
+     "player": "Vladimir Guerrero Jr.",
+     "playerId": 665489,
+     "price": -245,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-26T19:07:00Z",
+     "teams": "TOR vs CIN",
+     "revealed": {
       "v": 1,
       "hash": "29db89223517b7495021109d5ff7fad08713613ba82a2b2969b7f4a8acd69166",
-      "iv": "WUkja8z19i5Opk/N",
-      "ct": "KkI/DJE1DMEOGo3f0yBQznGNGBgMsEyeQ5Z3VWjrg6cOvKgY3iQy3E/vFL1TivwFCfzMS58+hnLy/Ed8yQpwLxbUwQxlf8WB3oAaL4boSY15vbZDKl+cbSTrsJV344eLeCLYuBbJ78qdK+o/DQ3NuLdr9kE3WJSo2ZLfRb3ce2A3LY49QssN5J5eZ+sNsUKr+iWnpAO5cYzP1g9NNJJmmd4mtdep2QNzPIyXmTzjRPGSxtCgym7Qz2ImU4lx3hO4iu65vUttrHGx8saLmRwL+l3a+Snz7bEGHGyDP31fgghgE0GOTCIoOsIY+gWr9K/zlf6RbeJjkQzvOMb8dVWFdFRYb9QyK8ocH5qWxat5h+blaYffWamsAoVzwJSAWS4SQG5qYi3KDmKotb3b8Zjo/YsKmWkKpCsefA/ZvUDUIhb0ZIzdqlelOwa5mZ142tq+cmJTGCOUudmutBvMuZ7aoZOqdo7H5tC0ggIQzNW2tr+yXBz/caG7+t5ljtAxEWGxI+IIwea3agPwfrjrCFeDbVv/xl4p1vBG5XB+YAeRCAa2/Yotv2TIZWqT/rQnow0aRccNmvkbS9DFuFMCNd7hoIaySCz57jndMEC3t6rrJCaXiZMM55Yx+XBQ78zW5dQQl+/3p6k35rAOuUjTABtP5JB8Nj1yi7AaPl1LxCo7sA=="
+      "salt": "65502b9e7dbf67b43ae0bc19e7574359",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-26:robin#3"
      }
     },
     {
@@ -1386,7 +1425,7 @@
    ]
   }
  ],
- "updated": "2026-09-26T18:47:38.373Z",
+ "updated": "2026-09-26T19:07:41.716Z",
  "record": {
   "w": 21,
   "l": 3,
