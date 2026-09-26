@@ -322,17 +322,56 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Justin Verlander · lineup confirmed",
+     "eventId": "824219",
+     "gk": 824219,
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26SEP261310PITDET-PITROHEARN29-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7166,
+     "pAdj": 0.6953,
+     "player": "Ryan O'Hearn",
+     "playerId": 656811,
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-26T17:10:00Z",
+     "teams": "PIT @ DET",
+     "revealed": {
       "v": 1,
       "hash": "60062573060d39119dc0580deb02eca3dd4334ea6b635ab1a3fc906283ef9597",
-      "iv": "iKfURKAXcKxiIOTP",
-      "ct": "a48XGFevtZtYJz0DMTIECeHXY7iMjSpUNNDEtcWsSGlnLMCygGFVJ3xuntKmkDngBM8U7sI0taR/5K1t92nP9bwBFJQ/qdCiRJnOgSa3Yc6dO3JZuouDeMiU33DGWzh34onXMCHsQXz+qb81J264MW2PZ0LvEJ//gyIFG9xFqEtb7IQ7IC0qmMeGNhPbQtZMWC8qkrEjDRIbGRY8Z/5tQwkkzOJDZ4lF7LJgU5pr5pqxjejaPa0S8c2ayNuo2nIK/uauJYzd6c9qnVgkmJa5P+w+ZZ95mYMHTQzdyG7yex/ok+ancQ5ePMZDxg76ok0Xb2kSGmCqxeOrZAXinb+ps3YnZus8s9JCDV4FpYM4iT4kL4y+xO3qm8Efa9rR+WjHe3NiQ32xxochAz/yHcd9BNotKQVa7RJyIftUPuV3mOKq60SYke0+acMLiLVuo5pGjBUEHU5KXoD98XQzmo9eeVoVurkclXe18ElR5B+oOOj0Yp4XrSTBXm3BqImpk7uE+KGIZPmuB8yAumBB48OQXKojIVs5jDT17Q/JlFs8W6A+xJbEtzbAcY/nW7xdWO6Roq6Z2v9yz3iF41L9qRskxNu56nKQXeOcFpAVd4dHA0P0gHE/srCevfSV9XAjHGl0Y57jWxztx5oWh1Oqt+gyLc6XNMSOmQ=="
+      "salt": "9dde9e8969bd3c0438d3641c607daf60",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-26:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-09-26T15:35:42.705Z",
+ "updated": "2026-09-26T17:10:40.352Z",
  "record": {
   "w": 2,
   "l": 2

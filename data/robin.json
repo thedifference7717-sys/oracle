@@ -1307,11 +1307,50 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Justin Verlander · lineup confirmed",
+     "eventId": "824219",
+     "gk": 824219,
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26SEP261310PITDET-PITROHEARN29-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7166,
+     "pAdj": 0.6953,
+     "player": "Ryan O'Hearn",
+     "playerId": 656811,
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-26T17:10:00Z",
+     "teams": "PIT @ DET",
+     "revealed": {
       "v": 1,
       "hash": "4a3be246f5fa328cbed0e2e7efcc4856a64d9bf4424b9b301bf55a85fdc3f1a6",
-      "iv": "RhWaX7V7sqGaammZ",
-      "ct": "7EYZAypWe5vrnCLgm4XDZvJufl/HYgAzWACGOcUtWoc9lXLogfA9kRKiy/tQq0FgVWZ72EAFdhBhf6rMF1DPtEppMpNnd2eGNmE7ryH5NQn84WJGWui+Y7PagHwofLuW94uc1u3Lqyd9r7OFj0cYU0xmca4ETl1DZlUjDhvmE2DzBwZDp1orM7a+ux8gqgdI0CFOJTdrLKtz8V2f2Qr5rljGpSX1AQ2UMH/smiVFu1wKSf9AdRf0eBXgKTqCEw5yFlZHDQvQP3Q05xfs80J6mh29gBJ87Ld7pNQAhTmpNTKSVpGu/Mmrnpbv5gaDH7ABlCR0dRvtDc1LG0M1LbrGi41t2l7FWAIaICSgaz9kffcylOmIcKmv1SvjHsrE1mjIr0OYvgmDS/993zywYDlgFx3My+xVO2AcJbaOZy9DOypLh4jQ5VyP6/iuRdL/eDRSKWmHU9oqF1MUmTEBYVm/Jsa8SYOEj0kF35ISgciPSvjlJaFKTXwC4pD5xpl0R+/5DPCH8hFH1gC3PjOpysQdv3vwtBDnNWw5ODQNnsHUz5FBrDNduAfPL/6sJ/xqaXSdcWuN46+gpOjNVWd4+YlN2RXbD8RjUGGwaRCoPVmy7pjkrwO2UOnYJ7BIN2ilfiyvYgGSML1FLcy840fOsMHHRbUzlHjfWqM1"
+      "salt": "8fc3f53b03193613d21f314ec45d7f74",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-26:robin#2"
      }
     },
     {
@@ -1341,7 +1380,7 @@
    ]
   }
  ],
- "updated": "2026-09-26T16:35:07.528Z",
+ "updated": "2026-09-26T17:10:40.367Z",
  "record": {
   "w": 21,
   "l": 3,
