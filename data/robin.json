@@ -1410,11 +1410,55 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#4 · vs SP TBD · projected, 94% to start",
+     "eventId": "823407",
+     "gk": 823407,
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.67,
+      "spread": 0.03,
+      "ticker": "KXMLBHIT-26SEP261915TBPHI-TBYDIAZ2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6942,
+     "pAdj": 0.6951,
+     "player": "Yandy Díaz",
+     "playerId": 650490,
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-26T23:15:00Z",
+     "teams": "TB @ PHI",
+     "lineup": {
+      "in": true,
+      "slot": 1,
+      "at": "2026-09-26T23:15:17.263Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "d91aac909ecd9d11ea788a8c14b11a6c9cc133c4ac471ed78a09e8409460afb0",
-      "iv": "azUBffxej23frmXG",
-      "ct": "BNT4qBaLEfYreXhOCKQKENT+ZSGEeYIrIv08dMilgSfFFIOkmzi9osH2P0+lRxkvZYGxPr9jZdplVXENsmsQGZWziXoR2cis7c/4MI9F15ddwQKF3eLdK6PdQ3cBb2Ewt5pfC2NATRpfL4Ih8MEhglKZxFXRWjaX2REFeBnES1wpDCvXm8OQY2st2WWaHF273UqOqRx3wE1ErJF+BLQ4uCJ9l/P7xoXDv/W4RLFYmTbc7bsblk46sCaZWYUjc6IYlftovFemSDm1O33sRqMj5UXEydfJFQrww7qIIDXfa4UP5Be+SXTLVAKwEYe2M2T+MI8SUsAgF6rRHyeVhIZqaDpcoUXKR6v3/HK4kjhgFtBK1NI5R6ZOfbIK18ws67Yq0ze7fkofQT4VdNfzHc75ap6seJuoEkcqcghZsI8J4kMYssfSbIlkGKtNH9GHtWHuawozBa59T/XeSF5Gb2uCVymguPiPC66p3mQuzLX6CAWoMhzgZ1wWzZJQt6wbn2qwVCTefpG1Bv6eRNiD1T4/N+p10U3/G8vMMucblUovgK6T9qpc4revnlkugfWDyo7S9AaEJYpZxA8LbxNka8f2sGzH3hfL8FOQofQiSncHcEm3rnW22BVeb2EQk5JeH/JmZhcxIi4FAt8gA4B62Q=="
+      "salt": "46af262f61b4da048d30986f70e11107",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-26:robin#4"
      }
     },
     {
@@ -1475,7 +1519,7 @@
    ]
   }
  ],
- "updated": "2026-09-26T23:05:44.757Z",
+ "updated": "2026-09-26T23:15:17.264Z",
  "record": {
   "w": 21,
   "l": 3,
