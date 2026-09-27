@@ -1679,6 +1679,9 @@
      "sport": "NFL",
      "start": "2026-09-27T17:00Z",
      "teams": "JAX vs NE",
+     "result": "lost",
+     "actual": 8,
+     "note": "8 receiving yards against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "22fcd68b06d2adc6d72ead781575eeeb79afd94b209f2f263c8a8b80c34310ff",
@@ -1863,7 +1866,7 @@
    ]
   }
  ],
- "updated": "2026-09-27T19:59:54.110Z",
+ "updated": "2026-09-27T20:04:06.842Z",
  "record": {
   "w": 26,
   "l": 4,

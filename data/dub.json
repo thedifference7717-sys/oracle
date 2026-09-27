@@ -439,7 +439,7 @@
    "id": "2026-09-27:dub",
    "date": "2026-09-27",
    "published": "2026-09-27T16:01:02.386Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 15,
     "NFL": 14
@@ -467,6 +467,9 @@
      "sport": "NFL",
      "start": "2026-09-27T17:00Z",
      "teams": "JAX vs NE",
+     "result": "lost",
+     "actual": 8,
+     "note": "8 receiving yards against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "746ed6a6a2183058c445ea0e3af1efdac35058db26c1c921a052036570cf0dba",
@@ -548,6 +551,7 @@
    "fair": -146,
    "price": -146,
    "prob": 0.5931,
+   "settled": "2026-09-27T20:04:05.555Z",
    "revealed": {
     "v": 1,
     "hash": "7ade3e8728a3c376ec23c89d6f114d522820b17df2a366b5d87608ea2c876ebf",
@@ -562,9 +566,9 @@
    }
   }
  ],
- "updated": "2026-09-27T19:59:53.810Z",
+ "updated": "2026-09-27T20:04:06.574Z",
  "record": {
   "w": 3,
-  "l": 2
+  "l": 3
  }
 }
