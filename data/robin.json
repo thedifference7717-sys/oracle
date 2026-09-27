@@ -1724,6 +1724,9 @@
      "sport": "NFL",
      "start": "2026-09-27T17:00Z",
      "teams": "LAC @ BUF",
+     "result": "won",
+     "actual": 223,
+     "note": "223 passing yards against a 174.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "0cf5257434f049a4eab3325937c0d802b7b14b67689dbe11998b097ab86959a3",
@@ -1860,7 +1863,7 @@
    ]
   }
  ],
- "updated": "2026-09-27T19:58:49.771Z",
+ "updated": "2026-09-27T19:59:54.110Z",
  "record": {
   "w": 26,
   "l": 4,
