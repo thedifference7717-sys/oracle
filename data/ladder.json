@@ -547,7 +547,7 @@
   {
    "id": "2026-09-27:ladder",
    "date": "2026-09-27",
-   "status": "open",
+   "status": "won",
    "published": "2026-09-27T16:01:00.795Z",
    "cycle": 5,
    "rung": 4,
@@ -604,6 +604,9 @@
    "sport": "NFL",
    "start": "2026-09-27T17:00Z",
    "teams": "NE @ JAX",
+   "actual": 199,
+   "result": "199 passing yards against a 174.5 line (graded early, 20+ clear)",
+   "settled": "2026-09-27T19:33:38.616Z",
    "revealed": {
     "v": 1,
     "hash": "d18e254b8a573de5d21f42c08cdd281e339a4ebc51a87510f1ed42f533ed4215",
@@ -632,12 +635,12 @@
    }
   }
  ],
- "updated": "2026-09-27T17:00:42.564Z",
+ "updated": "2026-09-27T19:33:38.618Z",
  "state": {
   "account": 119.29,
   "base": 16.58,
-  "stake": 47.65,
-  "rung": 4,
+  "stake": 61.87,
+  "rung": 5,
   "cycle": 5,
   "pl": 19.29,
   "cycles": {
