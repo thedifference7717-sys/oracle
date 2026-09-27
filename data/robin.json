@@ -1252,11 +1252,55 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "#4 · vs Jack Perkins · projected, 95% to start",
+     "eventId": "824949",
+     "gk": 824949,
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.71,
+      "spread": 0.03,
+      "ticker": "KXMLBHIT-26SEP262140HOUATH-HOUYALVAREZ44-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7116,
+     "pAdj": 0.7249,
+     "player": "Yordan Alvarez",
+     "playerId": 670541,
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-27T01:40:00Z",
+     "teams": "HOU @ ATH",
+     "lineup": {
+      "in": true,
+      "slot": 2,
+      "at": "2026-09-27T01:40:40.201Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "d03c6aad9f6564e5cdd4690a711a01149d6cb77a8071e33116cd29e9a60e2c83",
-      "iv": "cXb1y3KogZj5YYBi",
-      "ct": "yoHSRMUnjPeCmFdGgwokQDK47VkSyL5s3/6rSnr70o9zYC4dCy5foTVjQEOWWXmE0jz/HIGUDdmIdA4T6DlnNZVLZ7JZfopViadCkMqTUSOxZ5T2KbDc4nfRXPg23VncngdYuVRzrQsPN/CIF9CHXCF/cg6T2peA/SLxV7E7FRc84wZpcYIIFBpOXXVQnHfz9NA3yoIIMlQd56SZbwVwg5Bw8RoQ0w96e9u6j2SFypP2Ae4obaHvRTHsiW24fNFJY1TAr3I2wm3a2Ahntgvng3BzotaNb14/ReirtqhnMn+ACsEKRS02NnmzENX/u+ezqOJZuvrqe2ga7ZDYbmfoUONyt6PkwI08TrkymQgUv34etoMMPynBcNxo00ptip91D1ZbId52K5Efs+ghtdpyY1KV84phoBM37hO/Duj7FA8eTa8f+EWQwOyWPgG6Nm4VcJpI9fxDp2RVm33973ri3wrq2R61LhrOEe7JUpeJ4rbN7D4iqfviNTGGpZkOBd0Brv7jJ7GZC/Wo/o47fVGNhdlAhQ1JbN2pFzz4P2egUkVrwoDvBb5MUDZxtHeU9HKjaJ1ENzszFD7+sYPWXxh4yV2+j/Ucu2nlR8wNsSnNyffCTCqmPSwWe3f+zLiWFGNSo2YAqlDNeJprZySH7yulkXzsm5WIwzyAwxgOUQ/x"
+      "salt": "b9f990c3cfd428f42b761e1ae85285fa",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-26:robin#0"
      }
     },
     {
@@ -1522,7 +1566,7 @@
    ]
   }
  ],
- "updated": "2026-09-26T23:53:08.267Z",
+ "updated": "2026-09-27T01:40:40.201Z",
  "record": {
   "w": 21,
   "l": 3,
