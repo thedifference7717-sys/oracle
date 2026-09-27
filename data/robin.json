@@ -1775,6 +1775,9 @@
      "sport": "NFL",
      "start": "2026-09-27T17:00Z",
      "teams": "SEA @ WSH",
+     "result": "won",
+     "actual": 84,
+     "note": "84 receiving yards against a 59.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "42e698120ff5a6192f0346178bd93be5bde2aa4c038cd0c1a90fcb03585ea3c4",
@@ -1903,7 +1906,7 @@
    ]
   }
  ],
- "updated": "2026-09-27T20:05:10.429Z",
+ "updated": "2026-09-27T20:07:17.478Z",
  "record": {
   "w": 26,
   "l": 4,
