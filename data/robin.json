@@ -1851,11 +1851,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "WR · sim median 78 receiving yards",
+     "eventId": "401872960",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.73,
+      "spread": 0.03,
+      "ticker": "KXNFLRECYDS-26SEP27BALDAL-DALGPICKENS3-40"
+     },
+     "line": 39.5,
+     "market": "recYds",
+     "need": "40+ receiving yards",
+     "p": 0.7627,
+     "pAdj": 0.7602,
+     "player": "George Pickens",
+     "playerId": "4426354",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-09-27T20:25Z",
+     "teams": "DAL vs BAL",
+     "revealed": {
       "v": 1,
       "hash": "f271abb64e51b29f493295bfec2f93922b3a1c8da15f56e74bc3c57394121ac4",
-      "iv": "kjDsE/rYsfP2ZP3o",
-      "ct": "zw3wwj4N9Oyg5yAJv82osZyUu8m+OI0iHo6DE8eHYV3Fdth0M+mlu2hhvpM9JKcLz3afTyBScAaWP5EKYiDfkK8fswJ7FWGz+NFc5wSjCoZvkhYToIT0KalLu3XD54h+adKLnF/a3jpCGV3oUA5VvNeylrhX9Gfx2OVqryJkWk8uxtTquiw5agchAXE+QSl3vrxSHXbKd4xUyhu1YsPVXTtbCAboIP8tEkrIqgFBJuwQAE0uGptvXmFnpkudAdYGWng2WBinRIonuidQ3ISFBSo7iLP1hlEph+JgWRec6IgstnSUXWyLRIHxBGqbjQR8J+3U1XxCptbJjZ4FFIUKE/Af1C9E1yw355op+EBUfCE/rQzJ1AJyYdE+Bjfhi9gsMDX54T1FFi6VSUPPC3JwgzGm8OgXjeIKMLbrczHdNzElKTboWjORCsYaAtxZb5yktvqfPHfYTW+pfrspqA8QF80NbjwOrWg49qo2vghsp7i5xeyrTGHXkLKIesNUxurRm7Gipz8Gr2ME6o7JdkMr8kyxRv9m78O9LO/v4GC7bbROZUsPpkR/Vh30kh73F1q5sDNuGuchLAOZvsif/8uiIF9SnatV5DscFqp51UMWRp0BXsavTDu3be6NQ+d/UIT2t3vv4wnjy++O4oAVJnluhQ=="
+      "salt": "30532ce4428cfbabe03f062fa310dd24",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-27:robin#4"
      }
     },
     {
@@ -1906,7 +1943,7 @@
    ]
   }
  ],
- "updated": "2026-09-27T20:07:17.478Z",
+ "updated": "2026-09-27T20:25:01.341Z",
  "record": {
   "w": 26,
   "l": 4,
