@@ -1814,6 +1814,9 @@
      "sport": "NFL",
      "start": "2026-09-27T17:00Z",
      "teams": "DET vs NYJ",
+     "result": "lost",
+     "actual": 19,
+     "note": "19 receiving yards against a 49.5 line",
      "revealed": {
       "v": 1,
       "hash": "77dd650636750fc31fb311a67a3cd6fcb73b7f8664c294fcd90e07f643ddce31",
@@ -1857,7 +1860,7 @@
    ]
   }
  ],
- "updated": "2026-09-27T17:00:42.581Z",
+ "updated": "2026-09-27T19:58:49.771Z",
  "record": {
   "w": 26,
   "l": 4,
