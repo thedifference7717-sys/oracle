@@ -1659,35 +1659,183 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "WR · sim median 36 receiving yards",
+     "eventId": "401872957",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26SEP27NEJAC-JACBTHOMAS7-15"
+     },
+     "line": 14.5,
+     "market": "recYds",
+     "need": "15+ receiving yards",
+     "p": 0.7688,
+     "pAdj": 0.7701,
+     "player": "Brian Thomas Jr.",
+     "playerId": "4432773",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-09-27T17:00Z",
+     "teams": "JAX vs NE",
+     "revealed": {
       "v": 1,
       "hash": "22fcd68b06d2adc6d72ead781575eeeb79afd94b209f2f263c8a8b80c34310ff",
-      "iv": "2r6VLc2nedatBM8t",
-      "ct": "EtwMHZVsHMOQHCZwCGy/iwi6qc+GUWfo7tmqqUisrM5jTnDyUDODNiwhEqK31IYTDyMbqIgZHOBXTM4kjOJEQWcLLuvvLo/cHCcgHN+4w38HolKL7DZJBRVAgMPkC9DnlCxVaXTYl70bUeYxPOFc2U6jcf+Ytcwe4ZTunTuMxa0u/IhIjrE4XpNWZQePwKoVJfnt4AiorJnUMlQXx8B+XyhY2yWu0XC4k1HcqqDiIbDV+c59k1J7Rx3VsudOeRto90rvpWm7JNTGNcimZZTM5D2AQAdQL9qQ4vocG+X3+N689CJ3e/syv8nsSAOikJ+kAZwGFTUIuzdCclJXdBPPd51DZHivL+vfl0Vk0h8l6DP+XPCIT7qmChjQ7MXOHaBl2jT7j2Jw0JWQzkMTEcbdeISx/wetl3qXRlsLypdlv3ulnHSRitRRa+0aYt0wL4brcRiMgZdWj16mK6W76K1wyOa8ZjyqY+xUKvIbGjMXiJ5nWTbyeNjITlugmWWHwSvTlq2rKJRjtHvjNrnROz4dDkmedlfcOtDO7P9010M/fT+O9hF9oJ/sJvu+zBVfVCK8diVWJjzviDPCXQhiyTQ7E5AWkK9ykVT0OBslVfuJPFrdKHmlSESpEPAuCiZ8Jwmboh5Ruw1PBAMeUmZrF91V"
+      "salt": "efc2507e43e278f7d13c5dd11cca7d44",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-27:robin#0"
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 222 passing yards",
+     "eventId": "401872953",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26SEP27LACBUF-LACJHERBERT10-175"
+     },
+     "line": 174.5,
+     "market": "passYds",
+     "need": "175+ passing yards",
+     "p": 0.7531,
+     "pAdj": 0.7701,
+     "player": "Justin Herbert",
+     "playerId": "4038941",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-09-27T17:00Z",
+     "teams": "LAC @ BUF",
+     "revealed": {
       "v": 1,
       "hash": "0cf5257434f049a4eab3325937c0d802b7b14b67689dbe11998b097ab86959a3",
-      "iv": "gk9EJf0z2cwZ6YRY",
-      "ct": "KTh/UDPE8V4Fm+ZzQZhXW/3u+aWy51XGk25UQOOi6Xt7ec1dl1tV4DPl0Q5DYxshBLCHgv+Rh0mR/TgAnAeX9+3YkKALcF6+0qeHWb5Nvxd+Uj2YQynoAp7mhPEM6tRXuqa2QwTvSlVs7pSXbb/ZmmAcEdk+3Pn/wat/Eg7qq3QxpcftV0Rr+y/H4GdKVsQaGxZcRPyltZNybtCl6jXHKQ3wR2JL2wrJ0POzZ1rMSp+o7WfGBZesWc9Pw3FfEHyEVhvetJCy4mstzNGVptH/d+1v5o1rYhCcTHPB2EJsgqENS5D7CXUul+Fi69a+lmAfZvldu8gOJhSw0ulbKJd37BpR+f3wAZBpS5AhtqxK9O24tCFTwYbXZUXNiDBjb63D0fDw9hQYAQQeM+RC1Litfx1MZdYC3iiBvEKZn0trCfBs8wpzEiQqpjtZK/g4UlGyPPPatTyId57YMQ4Qll+X1lldhLMoZLZeC5+9raoUCQqyvZQKHNsvd3tUc6NzClVemph8FXx6jOE9756TkBFtgkhtQpCS8YWsS7EN6JR3eP1yxle2eI7h1S5chqNOJf6hPXHMkdByDX3Xet0uA5x+eslmQFOxubdO6SDMH3lZ0TpzmwcfXS3++bwPox0Syfyqvo2yRfNNFTikvFqSuYXdeAje"
+      "salt": "0a1c066f8578937ca3902092c857b249",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-27:robin#1"
      }
     },
     {
-     "sealed": {
+     "detail": "WR · sim median 95 receiving yards",
+     "eventId": "401872955",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26SEP27SEAWAS-SEAJSMITHNJIGBA11-60"
+     },
+     "line": 59.5,
+     "market": "recYds",
+     "need": "60+ receiving yards",
+     "p": 0.7494,
+     "pAdj": 0.7701,
+     "player": "Jaxon Smith-Njigba",
+     "playerId": "4430878",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-09-27T17:00Z",
+     "teams": "SEA @ WSH",
+     "revealed": {
       "v": 1,
       "hash": "42e698120ff5a6192f0346178bd93be5bde2aa4c038cd0c1a90fcb03585ea3c4",
-      "iv": "Ai2+IlQ+OJGYAQ2E",
-      "ct": "+ON/Yel/MiYdV/zfJvyBcbQPaBM07LiATPHK2HiCitpjtHmYM/LZi8VOJR1LaqpBKl0Bdq3tZyBNl0c7IvUWkUuDMx81oM2VEqb/4a8f591YQOkuu0RMWZrYoSEThulIZ3yldtBdg5S/pv5lhcSQTfm29xSUtTgrkeXsel0G2Ln4fLCzzZhoS2oR/u9Ba1N6Gc3ld5UsFWb8d8cg7g/mmjCC5uSJRuWLOO8lLi/bb6daPqg9PTr9oRmJXzg8to7A0MHWFVkLll1DiMxMsPijeeWJiQffjmJjTDPm9b+XkiT81wWp5DqEtsOEElgATuBQr2CZL9RVubGwecvUm25fBWtMUCL6BgnKna5rDOkY5nZbxTJMDTZVN9ndpAAnsG041KJV6V+kE+wfDNv8cQhEEx86kdDtmfey4O1MlObOMGHGDAZf9+hVT0taR+4smI0yRUHPU8EfqjBIbVMy6VTYcyEY5dYV+zzzoh6DKs5g2d2KyZ46S302XxdutpIH2p31Ag/WhRrIY6Zem2s/Kafj+pPS2oI4Q22a+hLzQU9Duih3qNSdzIFFe+wc4BSMXD/zwWGRO4InSgIVT/zoKegN7NN99XAg2B4RPyxPKlSakLnJLXwsZ32HK1MN+1nRtb6nfENem7BhxTh8twY9t4eMSG5QFZvYuCDv"
+      "salt": "1990069210dba3be14c74d5286fce1c1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-27:robin#2"
      }
     },
     {
-     "sealed": {
+     "detail": "WR · sim median 79 receiving yards",
+     "eventId": "401872954",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26SEP27NYJDET-DETASTBROWN14-50"
+     },
+     "line": 49.5,
+     "market": "recYds",
+     "need": "50+ receiving yards",
+     "p": 0.7459,
+     "pAdj": 0.7602,
+     "player": "Amon-Ra St. Brown",
+     "playerId": "4374302",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-09-27T17:00Z",
+     "teams": "DET vs NYJ",
+     "revealed": {
       "v": 1,
       "hash": "77dd650636750fc31fb311a67a3cd6fcb73b7f8664c294fcd90e07f643ddce31",
-      "iv": "wRCDAIw25NpoTygB",
-      "ct": "Uc8Io96MMmC3Tk4lIpSewn8XZg3Gnu5lGrwfcW77N5G7onaVIJSYuMErTocY19rCwax8cP03M6qOZhMIYFG1MRSLKxxFpr8V/oq15sZjZts6KrB9wmmCTVqV5EZnP8apTpccequQsOHASMnEiA6ub57wsTi0o3Z0UwCB+HTRZDXjrlkYYTVDATnS6Lw+OE3x9aI1O9WvWiL5sZd/re+taWkFZdUs2SUGidSUOIBWtLUT4mR8p2rPSI5MH14MGUosBvURVGlHRI1SUMdZXUWu1xDd6X7jWvW79r2moqH7ReKMVXWmWkQ6URCN3mDFH1XG+9abyrmX/BvvYOKH8L0uU//vmmD55xvL6q7VoGpdS/++RUrAF3WcjgdkyCIrFj6oA7iMD/dhAZGbD3vnUWIc6abm6+QdDDgh68D88iyAwMIwv9Fn/zfeKZfCKoao3Bc/nWLXa9yvdJaGApDQ3rQdjlAppm/kLMBjdffPejt0pTuYe9U8XKqvJh62CEA2i3E9+ZPkHaKoKmkR1G3znZBUp0ZjbWR1EsjYxz80GIjCuzqsqRyv0oEgcoSZOYx30T4OTPljv1QU/murnTiwBx4r9EzeSWqfMNgrAjxn9MzHZ9fNMang/HWuESHNj4s+y4MLHvxXwhHRkcK2iRF/pau62h8VFQo="
+      "salt": "580ea7a1b55030be0ed7de88ee848afd",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-27:robin#3"
      }
     },
     {
@@ -1709,7 +1857,7 @@
    ]
   }
  ],
- "updated": "2026-09-27T16:01:03.198Z",
+ "updated": "2026-09-27T17:00:42.581Z",
  "record": {
   "w": 26,
   "l": 4,
