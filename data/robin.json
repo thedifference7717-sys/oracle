@@ -1208,7 +1208,7 @@
    "id": "2026-09-26:robin",
    "date": "2026-09-26",
    "published": "2026-09-26T15:35:42.704Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 13
    },
@@ -1278,6 +1278,9 @@
       "slot": 2,
       "at": "2026-09-27T01:40:40.201Z"
      },
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "d03c6aad9f6564e5cdd4690a711a01149d6cb77a8071e33116cd29e9a60e2c83",
@@ -1563,21 +1566,63 @@
       "ctx": "2026-09-26:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 20.445,
+      "pl": 5.445
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 29.22,
+      "pl": 9.22
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 20.874,
+      "pl": 5.874
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 5.963,
+      "pl": -0.037
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-09-27T02:52:38.728Z"
   }
  ],
- "updated": "2026-09-27T01:40:40.201Z",
+ "updated": "2026-09-27T02:52:39.258Z",
  "record": {
-  "w": 21,
-  "l": 3,
+  "w": 26,
+  "l": 4,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 151,
-   "l": 77
+   "w": 177,
+   "l": 108
   },
   "days": {
-   "w": 3,
+   "w": 4,
    "l": 1
   }
  }
