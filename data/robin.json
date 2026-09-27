@@ -1871,6 +1871,9 @@
      "sport": "NFL",
      "start": "2026-09-27T20:25Z",
      "teams": "DAL vs BAL",
+     "result": "won",
+     "actual": 66,
+     "note": "66 receiving yards against a 39.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "f271abb64e51b29f493295bfec2f93922b3a1c8da15f56e74bc3c57394121ac4",
@@ -1943,7 +1946,7 @@
    ]
   }
  ],
- "updated": "2026-09-27T20:25:01.341Z",
+ "updated": "2026-09-27T22:39:27.506Z",
  "record": {
   "w": 26,
   "l": 4,
