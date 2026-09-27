@@ -1856,17 +1856,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 209 passing yards",
+     "eventId": "401872959",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.74,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26SEP27MINTB-TBBMAYFIELD6-175"
+     },
+     "line": 174.5,
+     "market": "passYds",
+     "need": "175+ passing yards",
+     "p": 0.7217,
+     "pAdj": 0.75,
+     "player": "Baker Mayfield",
+     "playerId": "3052587",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-09-27T20:05Z",
+     "teams": "TB vs MIN",
+     "revealed": {
       "v": 1,
       "hash": "fbc7d7cdf41a8350b60cb372db29297dde7984fd2b3149ff11c71ca16426a57d",
-      "iv": "O/7TGn01Am/uTcbx",
-      "ct": "whCgpUY/1FGjczcZSuKTScyHOCIHGXW6cGA1BKY6lD90hRrTd+fr0esadwAkEWRTvMzvWPAIk6yD3loDr7NUveTNQZ/ImwaWwsfsD/d8Aaw/VZ3qfk+pBLCqaYcEFrDln/wYVfAUroSEmQCfWErb+Mqdea90rC0Ye3s0bHAWYa2y34FrDiidYxP6sTqQ8HCIeJMujsUeGalfrho9uIKBcwQDc4S7ND4XKreB75bTi3GO3HyqNxZbwbLhud2SSQ3Mq/ircIN8hUGyYekB0JLyGlF7ZiqE/ypexgLRwduqOtGuBxT0sCZp6w/gpv4MSM/6syU5rBciNWBMIA6dCMR1vYryvrhpHPnIpK4seoR79U4hrbhoymF6oqVpwNbdo1KonGJGxm+h1l6/3cnowvqxDgIYMSMebfxDsQHdwT63eeb0t03aZbfdfaKzbDlRJtqAaC9TAryorXFjH9rF0JDMdUNQTElp6jsPUn/+yxzyfv33x1wAk/ezLojAiYY3cy1tjV6Um6gFOvEtxuKa2qL4eVNHsTUUTM4mwExpF/dmEXsxoliquzG6ARjvRE3qN94Th/GY6BvgrhW3oLN/Bt6k9MYuB8lbIk0bIimSsrELaue8dQwQEkeVg8Jiz+9uQGgSl4NsErVCU+E3WjFhXB0="
+      "salt": "9f193688f810435d0732808714a643f2",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-27:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-09-27T20:04:06.842Z",
+ "updated": "2026-09-27T20:05:10.429Z",
  "record": {
   "w": 26,
   "l": 4,
