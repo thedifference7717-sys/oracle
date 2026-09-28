@@ -633,9 +633,29 @@
     ],
     "ctx": "2026-09-27:ladder"
    }
+  },
+  {
+   "id": "2026-09-28:ladder",
+   "date": "2026-09-28",
+   "status": "open",
+   "published": "2026-09-28T23:16:01.582Z",
+   "cycle": 5,
+   "rung": 5,
+   "seed": 16.58,
+   "stake": 61.87,
+   "games": {
+    "NFL": 1
+   },
+   "seal": 1,
+   "sealed": {
+    "v": 1,
+    "hash": "67c1c792ae65e460b510644ad2d9ee424894c92a4afc03155e643ab4be174559",
+    "iv": "Yam/GkidYK14Cc8l",
+    "ct": "ari7sReuq7U4jqgT9wEYvgrONKWjr1GrOSap47cU5ppRiPwLlFaQT1rp5uN+jOeVtyLI1IZxvQDyywtqorUyn2RPD8D8GQQJhV4iJhyhSfBSg5OHzu12/15WyvFH6s376zZlZuj7rT2lFv0qh+N3D4mL9Y6qv6R1StwTMC+sGccjdEI22eydm6T8egGLbj+U9vsyyJKe1AG6hnNTw0XJITHDZUfRpaKnbjuv73pQjiPweC3l2BtdX7bsWYVWSVSjTPK6mFvB2+n8yL3HtpBLLawMtq1+xn+HQH7cSCOrfcFz1yUqzRGvwy/G2YGEtN+GMunzOpiOyN6bcrmtMBzRZLd0P5GUyr9xKHAGmrYY9aHGChqmFcYnM6GVJJWPtQZTNbJ6e5oQOf76wMPsQpvFe2O/LKbmgylUX5lesE+63923RN3/HfN163jui1s6VRQmp7fy6RWgqjXjjvSYrhEu+Zjm0oNXSimDxblDoXQrep7+NScYVSYwXqtPaaNWXhgn5MF3K5TBNdQqRAFBQB6cFXppsPFWPObXQOI1/kQ02yWIuJJy/XsKTSKSRDNOrtYlOX3cMh5fEf6+yBXnUlqpUFc2BYliMcdMfdJEwPAYXCRiiDwZXuuQmn7khMpgX53BGHjKk4sAz9yEIzeoR1vC0Ay7ybkeehu1ZovCsYsDorBWkyFYE99ef+7iQX8R2wE60Chu14ZaImJoNJLG+15vJeK25L6u1Jpac/N66TvLxXrZm9RgE7z9EDsxKFvi8IP04hc="
+   }
   }
  ],
- "updated": "2026-09-28T10:00:17.881Z",
+ "updated": "2026-09-28T23:16:01.584Z",
  "state": {
   "account": 119.29,
   "base": 16.58,

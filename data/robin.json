@@ -1989,9 +1989,19 @@
     ]
    },
    "settled": "2026-09-27T22:51:58.141Z"
+  },
+  {
+   "id": "2026-09-28:robin",
+   "date": "2026-09-28",
+   "published": "2026-09-28T23:16:02.987Z",
+   "status": "noplay",
+   "games": {
+    "NFL": 1
+   },
+   "reason": "only 1 game on the slate"
   }
  ],
- "updated": "2026-09-27T22:51:58.888Z",
+ "updated": "2026-09-28T23:16:02.990Z",
  "record": {
   "w": 30,
   "l": 6,
