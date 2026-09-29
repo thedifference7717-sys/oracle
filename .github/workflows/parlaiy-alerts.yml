@@ -97,7 +97,7 @@ jobs:
           while :; do
             # Newest engine code each pass, so a fix is live within a minute.
             if git fetch -q origin main 2>/dev/null; then
-              git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js hairdwood-model.js gridiron-model.js ladder-select.js dub-stake.js fills.js ladder-math.js 2>/dev/null || true
+              git restore --source=FETCH_HEAD --worktree -- scripts dd-model.js hairdwood-model.js gridiron-model.js nhl-model.js ladder-select.js dub-stake.js fills.js ladder-math.js 2>/dev/null || true
               LIVE=$(git rev-parse --short FETCH_HEAD || echo unknown)
               if [ "$LIVE" != "${LAST:-}" ]; then echo "engine now at $LIVE"; LAST=$LIVE; fi
             fi
