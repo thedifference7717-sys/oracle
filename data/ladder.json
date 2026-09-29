@@ -637,7 +637,7 @@
   {
    "id": "2026-09-28:ladder",
    "date": "2026-09-28",
-   "status": "open",
+   "status": "won",
    "published": "2026-09-28T23:16:01.582Z",
    "cycle": 5,
    "rung": 5,
@@ -671,6 +671,9 @@
    "sport": "NFL",
    "start": "2026-09-29T00:15Z",
    "teams": "CHI vs PHI",
+   "actual": 37,
+   "result": "37 receiving yards against a 14.5 line (graded early, 20+ clear)",
+   "settled": "2026-09-29T01:21:01.537Z",
    "revealed": {
     "v": 1,
     "hash": "67c1c792ae65e460b510644ad2d9ee424894c92a4afc03155e643ab4be174559",
@@ -699,16 +702,16 @@
    }
   }
  ],
- "updated": "2026-09-29T00:15:51.383Z",
+ "updated": "2026-09-29T01:21:01.539Z",
  "state": {
-  "account": 119.29,
-  "base": 16.58,
-  "stake": 61.87,
-  "rung": 5,
-  "cycle": 5,
-  "pl": 19.29,
+  "account": 192.32,
+  "base": 19.23,
+  "stake": 19.23,
+  "rung": 1,
+  "cycle": 6,
+  "pl": 92.32,
   "cycles": {
-   "done": 1,
+   "done": 2,
    "busted": 3
   },
   "canFund": true
