@@ -576,17 +576,11 @@
    "id": "2026-09-29:dub",
    "date": "2026-09-29",
    "published": "2026-09-29T17:00:29.499Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 4
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "e4e4ee59a8688d76fbaf4818f5e0021bea9d56cd92faf1731ad6890c1b719c99",
-    "iv": "7UAT7Hle71V3wccB",
-    "ct": "PdSKHNyJrcFuEx07ngtbLzCHdtzJqKsOsO4oRjZbj0SrVycV5oe6CH/+myQYY3ircwXGlg2Pc+v0L87AyD27to8P5VmSOacrFbX3u8/MrpIWbGdbFDMjHSdX0KaFuh6mv8uE8+/OqvcJS6YAYRiBaf/+cy/mkG5q3T/DHPk9nnsxEF0tJuxEFKElb2JfprZUNLRY9/mbNal8NdjzXMYhKsWW1QoDE1b1PU1OOV2K2fD7KAD8pwA7h7jVvk9dFTHz5Y65ubtY2Pqjj6nx0A5qgdTqWsQ="
-   },
    "legs": [
     {
      "detail": "#1 · vs Jesús Luzardo · lineup confirmed",
@@ -610,6 +604,9 @@
      "sport": "MLB",
      "start": "2026-09-29T18:00:00Z",
      "teams": "ATL vs PHI",
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "6ed6fa16a115f63493d64f417988347d94abdd2c355cc331c7a142739e6040a4",
@@ -636,19 +633,79 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Hagen Smith · lineup confirmed",
+     "eventId": "849849",
+     "gk": 849849,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.65,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26SEP291700CWSHOU-HOUJPENA3-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6612,
+     "pAdj": 0.665,
+     "player": "Jeremy Peña",
+     "playerId": 665161,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-29T21:00:00Z",
+     "teams": "HOU vs CWS",
+     "revealed": {
       "v": 1,
       "hash": "ec370a8e35c88ed732c85867696e202a84f9d68ddf2761a05f930366d653aacd",
-      "iv": "LlERQFwiYdKGt7Rw",
-      "ct": "ulxaQx3JzqPwzT8rkTGpeGmOjWZFbDHve6j2JhRuCy0InnjkLtbns3FDbWeucjEKM5EhUfWNOBz35XYgR0Ucw7FODbhjeMURpQVn03bEGDA9oh0ImhdkO3/3LOGjWWuO8N42qtyxNq/eIxWinoYOqTtTw/nKJ7fejQ4Zz3jYSlL6Qqxap+CGZX1Q59tKqdVS/t6KWvRElWYSVzIbqdx/lsC0SBO/Z4Y/vkRJxnNQO8IEcOcalOGzdExI5HwPNzwOp1l9JdO2nPfX1fsOHwD/stmy70xzMGVL7lcAzQxC5phbkB8sAMP1H4sRSOJiLS2aLp3ec/l3mrVAN+Qq9i7H1mBze7WXeCPVQvQHgvpfEcmrzdrlJ6yvQPVBdn2WeZRWaG1gAOw2PurQnRteoHHcymrVfxx2+yxUIU5pO0A0Lf6FxhmOoy/mBqdwYlZ/aeRsZyQdCJwO+LNEDEmxL82csjmWXg7K7MqGItsXiDnBLUFkt5d6eDDI5dm0prFjOLWamQqLaZvMVSakvV4R5o7oKxDMOnNRwyDxkKT/UQzto9q1P33nFqHGJNV75hOK7gFrtEfOYkLPIHOwCRgY/FGw9RxEazQwzBm98J2uj1G0sjwKYd7BaRYtbYetpjOj4m8iQV7cO0v5WhDeMcDwmuM="
+      "salt": "0de48053db4b47bd55e98086b13e633d",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-29:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Mauricio Dubón",
+    "sport": "MLB",
+    "start": "2026-09-29T18:00:00Z"
+   },
+   "fair": 124,
+   "price": 119,
+   "prob": 0.446,
+   "settled": "2026-09-29T20:44:52.737Z",
+   "revealed": {
+    "v": 1,
+    "hash": "e4e4ee59a8688d76fbaf4818f5e0021bea9d56cd92faf1731ad6890c1b719c99",
+    "salt": "26513984ddc49cf93ecb4872dce1fb33",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-09-29:dub"
+   }
   }
  ],
- "updated": "2026-09-29T18:00:21.534Z",
+ "updated": "2026-09-29T20:44:53.927Z",
  "record": {
   "w": 3,
-  "l": 3
+  "l": 4
  }
 }
