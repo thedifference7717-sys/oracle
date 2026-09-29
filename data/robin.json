@@ -1999,9 +1999,19 @@
     "NFL": 1
    },
    "reason": "only 1 game on the slate"
+  },
+  {
+   "id": "2026-09-29:robin",
+   "date": "2026-09-29",
+   "published": "2026-09-29T17:00:29.499Z",
+   "status": "noplay",
+   "games": {
+    "MLB": 4
+   },
+   "reason": "fewer than three qualifying props in different games"
   }
  ],
- "updated": "2026-09-28T23:16:02.990Z",
+ "updated": "2026-09-29T17:00:30.387Z",
  "record": {
   "w": 30,
   "l": 6,
