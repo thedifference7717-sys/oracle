@@ -782,7 +782,7 @@
   {
    "id": "2026-09-30:ladder",
    "date": "2026-09-30",
-   "status": "open",
+   "status": "won",
    "published": "2026-09-30T17:00:33.158Z",
    "cycle": 6,
    "rung": 2,
@@ -830,6 +830,8 @@
    "start": "2026-09-30T18:00:00Z",
    "startProb": 0.985,
    "teams": "ATL vs PHI",
+   "hits": 1,
+   "settled": "2026-09-30T19:56:59.067Z",
    "revealed": {
     "v": 1,
     "hash": "8b879d7b267623e52df4618edc628bccb5e75b8d55e23a7c0e52a9e78da019e7",
@@ -864,12 +866,12 @@
    }
   }
  ],
- "updated": "2026-09-30T18:00:09.637Z",
+ "updated": "2026-09-30T19:56:59.068Z",
  "state": {
   "account": 192.32,
   "base": 19.23,
-  "stake": 28.7,
-  "rung": 2,
+  "stake": 42.17,
+  "rung": 3,
   "cycle": 6,
   "pl": 92.32,
   "cycles": {
