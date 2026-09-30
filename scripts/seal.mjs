@@ -37,10 +37,10 @@ export const canon = v => Array.isArray(v) ? "[" + v.map(x => canon(x === undefi
 // future can never leak by default.
 export const RULES = {
   ladder: {
-    pub: ["id", "date", "status", "published", "cycle", "rung", "seed", "stake", "games", "seal", "reason", "account"],
+    pub: ["id", "date", "status", "published", "cycle", "rung", "seed", "stake", "games", "seal", "reason", "account", "rev"],
     priv: ["sport", "start", "firstPitch", "price", "priceSource", "kalshi", "p", "pAdj", "edge", "pick", "playerId",
            "market", "line", "need", "eventId", "teams", "detail", "fromProps", "runnersUp", "gk", "slot", "posted",
-           "startProb", "sp"]
+           "startProb", "sp", "swapped"]
   },
   dub: { pub: ["id", "date", "published", "status", "games", "seal", "reason"], priv: ["prob", "price", "fair", "excludes"] },
   robin: { pub: ["id", "date", "published", "status", "games", "seal", "reason", "sizes", "rev"], priv: ["revised"] },
