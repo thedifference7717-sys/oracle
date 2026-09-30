@@ -186,7 +186,7 @@ async function renderSports() {
   document.getElementById("sportNote").textContent = d ? "yours only · coming soon for everyone else" : "coming soon";
   document.getElementById("sports").innerHTML = SPORTS.map(([s, e, name]) => {
     if (!d) return `<div class="card"><h3>${e} ${name}</h3><div class="why">One pick a day, ${s} only, on the Ladder's rules.</div><div class="roi" style="color:var(--yellow)">Coming soon</div></div>`;
-    const bets = (d.bets && d.bets[s]) || [];
+    const bets = ((d.rows || d.bets || {})[s]) || [];
     const lp = ladderPlayed(bets), f = flat(bets);
     return card(e, name, `${f.w}–${f.l}`, "one pick a day", lp.pl, lp.staked, `${s} only · since ${bets.length ? P.prettyDate(bets[0].date) : "—"}`,
       lp.staked ? `${lp.pl >= 0 ? "+" : "−"}${P.money(Math.abs(lp.pl))} on ${P.money(lp.staked)} · ${lp.pl >= 0 ? "+" : "−"}${Math.abs(lp.pl / lp.staked * 100).toFixed(1)}% ROI` : "No rungs settled yet");
