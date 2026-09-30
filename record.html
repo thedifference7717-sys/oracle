@@ -50,6 +50,9 @@
 
 <div class="prods" id="prods"></div>
 
+<div class="section-h"><div class="sh-row"><h2>🏆 Sport ladders</h2><span class="sh-note" id="sportNote">coming soon</span></div></div>
+<div class="prods" id="sports"></div>
+
 <div class="section-h"><div class="sh-row"><h2>Every pick</h2><span class="sh-note" id="histNote"></span></div></div>
 <div class="card"><div class="hist" id="hist"></div></div>
 <p class="fine">Past results don't guarantee future ones. Model estimates, not betting advice. Bet only what you can afford to lose.</p>
@@ -163,7 +166,25 @@ function render() {
   document.getElementById("histNote").textContent = settled ? `${settled} slate${settled === 1 ? "" : "s"} graded` : "";
 }
 
+// The sport ladders: the owner's alone for now. Their record is sealed whole
+// (data/sport-ladders.json); with the key on this device it shows in full,
+// without it each is a coming-soon card.
+const SPORTS = [["MLB", "⚾", "Strike Zone"], ["NFL", "🏈", "End Zone"], ["NBA", "🏀", "Buzzer Beater"], ["NHL", "🏒", "Top Shelf"]];
+async function renderSports() {
+  let d = null;
+  try { d = await P.openBlob(await P.load("data/sport-ladders.json")); } catch (e) {}
+  document.getElementById("sportNote").textContent = d ? "yours only · coming soon for everyone else" : "coming soon";
+  document.getElementById("sports").innerHTML = SPORTS.map(([s, e, name]) => {
+    if (!d) return `<div class="card"><h3>${e} ${name}</h3><div class="why">One pick a day, ${s} only, on the Ladder's rules.</div><div class="roi" style="color:var(--yellow)">Coming soon</div></div>`;
+    const bets = (d.bets && d.bets[s]) || [];
+    const lp = ladderPlayed(bets), f = flat(bets);
+    return card(e, name, `${f.w}–${f.l}`, "one pick a day", lp.pl, lp.staked, `${s} only · since ${bets.length ? P.prettyDate(bets[0].date) : "—"}`,
+      lp.staked ? `${lp.pl >= 0 ? "+" : "−"}${P.money(Math.abs(lp.pl))} on ${P.money(lp.staked)} · ${lp.pl >= 0 ? "+" : "−"}${Math.abs(lp.pl / lp.staked * 100).toFixed(1)}% ROI` : "No rungs settled yet");
+  }).join("");
+}
+
 async function load() {
+  renderSports();
   [ladder, dub, robin] = await Promise.all(["data/ladder.json", "data/dub.json", "data/robin.json"].map(p => P.load(p)));
   render();
   const up = [ladder, dub, robin].map(j => j && j.updated).filter(Boolean).sort().pop();
