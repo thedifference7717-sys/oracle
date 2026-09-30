@@ -42,7 +42,7 @@ export const RULES = {
            "market", "line", "need", "eventId", "teams", "detail", "fromProps", "runnersUp", "gk", "slot", "posted",
            "startProb", "sp", "swapped"]
   },
-  dub: { pub: ["id", "date", "published", "status", "games", "seal", "reason"], priv: ["prob", "price", "fair", "excludes"] },
+  dub: { pub: ["id", "date", "published", "status", "games", "seal", "reason", "rev"], priv: ["prob", "price", "fair", "excludes", "swapped"] },
   robin: { pub: ["id", "date", "published", "status", "games", "seal", "reason", "sizes", "rev"], priv: ["revised"] },
   leg: { pub: [], priv: ["sport", "player", "playerId", "market", "line", "need", "eventId", "gk", "teams", "start",
                          "price", "priceSource", "kalshi", "p", "pAdj", "detail", "published"] }
