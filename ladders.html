@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>The Prop Shop · Sport Ladders</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="The Prop Shop">
+<link rel="icon" type="image/svg+xml" href="propshop.svg">
+<link rel="apple-touch-icon" href="propshop-180.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="pages.css">
+<style>
+.grid{display:grid;gap:12px;margin:0 var(--pad) 12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid .card{margin:0}
+.soon{color:var(--yellow);font-weight:700;font-size:13px;margin-top:10px}
+.blurb{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
+.now{background:var(--bg3);border-radius:12px;padding:11px 12px;margin-top:12px}
+.now .who{font-weight:700}
+.now .s{font-size:12px;color:var(--muted);margin-top:2px}
+.mini{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div>
+    <div class="brand">THE</div>
+    <div class="logo">Prop Shop</div>
+    <div class="logo-sub">
+      The Ladder · The Dub · The Robin ·
+      <!-- stamped by the deploy; keep on its own line -->
+      <span id="buildsha">e31f6c7</span>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Sections">
+    <a class="navlink" href="index.html">🪜 The Ladder</a>
+    <a class="navlink" href="dub.html">✌️ The Dub</a>
+    <a class="navlink" href="robin.html">🐦 The Robin</a>
+    <a class="navlink on" href="ladders.html" aria-current="page">🏆 Sport Ladders</a>
+    <a class="navlink" href="record.html">📈 Record</a>
+  </nav>
+</div>
+<div id="status"></div>
+
+<div class="section-h">
+  <div class="sh-row"><h1>🏆 Sport Ladders</h1><span class="sh-note" id="note"></span></div>
+  <details class="disc"><summary>How the sport ladders work</summary><div class="disc-b">
+    <p>Four more ladders, one sport each, run on the Ladder's rules: one pick a day from that sport alone, priced between −200 and −350, only when our model rates it at or above its price, and a pass on any day nothing qualifies. Each locks an hour before its own sport's first game.</p>
+    <p>A win rolls the whole return into the next day's pick, five days to a cycle. A miss starts a new cycle from the seed.</p>
+  </div></details>
+</div>
+
+<div class="grid" id="grid"></div>
+<p class="fine">Model estimates, not betting advice. Bet only what you can afford to lose.</p>
+
+<script src="build-check.js"></script>
+<script src="pages.js"></script>
+<script>
+const P = window.Pages;
+const LADDERS = [
+  { sport: "MLB", name: "Strike Zone", emoji: "⚾", blurb: "The single likeliest baseball prop of the day." },
+  { sport: "NFL", name: "End Zone", emoji: "🏈", blurb: "The single likeliest football prop, game days only." },
+  { sport: "NBA", name: "Buzzer Beater", emoji: "🏀", blurb: "The single likeliest basketball prop of the night." },
+  { sport: "NHL", name: "Top Shelf", emoji: "🏒", blurb: "The single likeliest hockey prop of the night." }
+];
+const mark = s => s === "won" ? "✅" : s === "lost" ? "❌" : s === "void" ? "➖" : s === "open" ? "⏳" : "·";
+
+function soon() {
+  document.getElementById("note").textContent = "coming soon";
+  document.getElementById("grid").innerHTML = LADDERS.map(l => `<div class="card">
+    <h3>${l.emoji} ${l.name}</h3>
+    <div class="blurb">${l.blurb}</div>
+    <div class="soon">Coming soon</div>
+  </div>`).join("") + (P.hasKey() ? "" : `<div style="grid-column:1/-1;text-align:center">${P.unlockButton()}</div>`);
+}
+
+function render(d) {
+  const today = P.slateDay();
+  document.getElementById("note").textContent = "yours only · coming soon for everyone else";
+  document.getElementById("grid").innerHTML = LADDERS.map(l => {
+    const bets = (d.bets && d.bets[l.sport]) || [];
+    const played = bets.filter(b => b.status === "won" || b.status === "lost");
+    const w = played.filter(b => b.status === "won").length, lo = played.length - w;
+    const pl = played.reduce((a, b) => a + (b.status === "won" ? b.stake * (P.dec(b.price) - 1) : -b.stake), 0);
+    const t = bets.find(b => b.date === today);
+    const open = bets.find(b => b.status === "open");
+    const cur = open || t;
+    const now = cur && cur.pick
+      ? `<div class="now"><div class="who">${mark(cur.status)} ${cur.pick} <span style="font-weight:400;color:var(--muted)">${cur.need}</span></div>
+           <div class="s">${cur.teams || ""} · ${cur.start ? P.etTime(Date.parse(cur.start)) + " ET" : ""} · ${P.odds(cur.price)} · ${P.money(cur.stake)} · cycle ${cur.cycle}, day ${cur.rung}</div></div>`
+      : `<div class="now"><div class="s">${t && t.status === "noplay" ? "No pick today: " + (t.reason || "nothing qualified") : "Waiting for today's lock."}</div></div>`;
+    const recent = bets.filter(b => b.pick && b !== cur).slice(-6).reverse()
+      .map(b => `${mark(b.status)} ${P.prettyDate(b.date)} · ${b.pick} ${P.odds(b.price)}`).join("<br>");
+    return `<div class="card">
+      <h3>${l.emoji} ${l.name}</h3>
+      <div class="big">${w}–${lo}<small>${played.length ? `${pl >= 0 ? "+" : "−"}${P.money(Math.abs(pl))} as played` : "no rungs settled yet"}</small></div>
+      ${now}
+      ${recent ? `<div class="mini">${recent}</div>` : ""}
+    </div>`;
+  }).join("");
+  const up = d.updated ? new Date(d.updated).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " ET" : "";
+  document.getElementById("status").textContent = up ? `Updated ${up}` : "";
+}
+
+async function load() {
+  let d = null;
+  try { d = await P.openBlob(await P.load("data/sport-ladders.json")); } catch (e) {}
+  if (d) render(d); else soon();
+  setTimeout(load, 120000);
+}
+soon();
+load();
+</script>
+</body>
+</html>

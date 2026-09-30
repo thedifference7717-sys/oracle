@@ -135,6 +135,10 @@ export function sealer(key, { now = () => Date.now() } = {}) {
       return publish(b, RULES.ladder, b.id, b.status === "open" && now() < t(b.start));
     },
     ladderIn: b => (b && b.seal === 1 ? open(b) : b),
+    // A whole object sealed for the owner alone and never revealed: the sport
+    // ladders. The site opens it with the owner's key (Pages.openBlob).
+    blobOut: (ctx, data) => (on ? { v: 1, sealed: sealFields(key, ctx, { data }).sealed } : null),
+    blobIn: o => { if (!on || !o || !o.sealed) return null; try { return openSeal(key, o.sealed).data; } catch (e) { return null; } },
     cardOut(b, kind) {
       if (!on || !b || b.seal !== 1 || !Array.isArray(b.legs)) return b;
       const legs = b.legs.map((l, i) => l.sealed ? l : publish(l, RULES.leg, `${b.id}#${i}`, legHidden(b, l)));

@@ -120,6 +120,16 @@
     return Object.assign({}, j, { bets });
   };
 
+  // A file sealed whole for the owner (the sport ladders): its contents with
+  // the key on this device, null without it.
+  P.openBlob = async function (o) {
+    if (!o || !o.sealed) return null;
+    const k = await pickKey(); if (!k) return null;
+    const r = await openOne(o, k);
+    return r && !r.sealed ? r.data : null;
+  };
+  P.hasKey = () => { try { return !!localStorage.getItem("pg.key"); } catch (e) { return false; } };
+
   P.load = async function (path) { return P.present(await loadRaw(path)); };
   async function loadRaw(path) {
     const key = "pg.cache." + path;
