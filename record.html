@@ -36,6 +36,15 @@
       <span id="buildsha">8c35d77</span>
     </div>
   </div>
+  <!-- The tabs show on the owner's device only (the picks key is stored):
+       visitors from the channel and X get the record on its own. -->
+  <nav class="tabs" aria-label="Sections" id="ownerTabs" style="display:none">
+    <a class="navlink" href="index.html">🪜 The Ladder</a>
+    <a class="navlink" href="dub.html">✌️ The Dub</a>
+    <a class="navlink" href="robin.html">🐦 The Robin</a>
+    <a class="navlink" href="ladders.html">🏆 Sport Ladders</a>
+    <a class="navlink on" href="record.html" aria-current="page">📈 Record</a>
+  </nav>
 </div>
 <div id="status"></div>
 
@@ -61,6 +70,7 @@
 <script src="pages.js"></script>
 <script>
 const P = window.Pages;
+if (P.hasKey()) document.getElementById("ownerTabs").style.display = "";
 let ladder = null, dub = null, robin = null;
 
 const DONE = new Set(["won", "lost"]);
