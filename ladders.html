@@ -101,7 +101,7 @@ function render(d) {
   const today = P.slateDay();
   document.getElementById("note").textContent = "yours only · coming soon for everyone else";
   document.getElementById("grid").innerHTML = LADDERS.map(l => {
-    const bets = (d.bets && d.bets[l.sport]) || [];
+    const bets = ((d.rows || d.bets || {})[l.sport]) || [];
     const account = bankOf(l.sport);
     const cur = bets.find(b => b.status === "open") || bets.find(b => b.date === today && b.pick);
     // The state before today's rung: its stage and stake. After it: the balance.
