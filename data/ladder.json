@@ -778,9 +778,29 @@
     ],
     "ctx": "2026-09-29:ladder"
    }
+  },
+  {
+   "id": "2026-09-30:ladder",
+   "date": "2026-09-30",
+   "status": "open",
+   "published": "2026-09-30T17:00:33.158Z",
+   "cycle": 6,
+   "rung": 2,
+   "seed": 19.23,
+   "stake": 28.7,
+   "games": {
+    "MLB": 4
+   },
+   "seal": 1,
+   "sealed": {
+    "v": 1,
+    "hash": "8b879d7b267623e52df4618edc628bccb5e75b8d55e23a7c0e52a9e78da019e7",
+    "iv": "spAli/r7f89TnxAU",
+    "ct": "L5THf+cmw7BaMj9dpbXpEeeeCW9Sb9iuQNRhKEmPDP31K2aEYWaVRhCrrHACvfQk5COnfT/WHgJth3uoTUQermU7Dp+Jw/HRpWCkv/fNQPE9A1cqj0M8DumqPBoAQqRRtzUDactd984EaFbpbM7QfDznLv7pi6czNiF/CCqi0uy3L4bPLUj1OBBTlsLDg2eCBnyVyte4Y0mggGqmm6ZJq4+qn6eXKaH0UiJMKM4YBqmukxQw7u9IZxuejwluanpPvdEzmjpDAU5u6jZ5IZEpDcNKBn4jBottMc5X5InSrGbn+a15Qp7geQutsyvy79qABKIbrxlaP/VOHGGXUwR/evU8A2GlLyuevLD2zdetfTKmukq5zyJCEYkb4ZDUcRxD/SPKh9k2Bh3V4ddhQFSK1lA3czOJEEtx78gqXfGTky8ccHEclqZLt3A5X7AUNbsQlxROhb95slcHoJ9bspwgP1kJt1MNBreFDt6wF8GVPurOEzYeiFVk3jQ2Nw2189fZPloWeppd+uKa9JOcT/HMs0iYGGt10fZ2Y+H5MCZGT/O+hOGgVeFoSENlvIqbAF9ZTgXfo+svcYxK/RmzvEMheSFoHtdjNyndeSip33rQav4cNyEw9apds+NU8qUgkLlIyBzIfrWbd/uEzHveGck4HgiLu8vmi9+Hfw4XnfwzljjvTT7W2GDF63QkCcbME17vp4mpWkegI22yGv0zPWd4vP8ZxzfplYjjv2EWn7L78mcYsofQy6lx+ojWF6x6uIBXcU2QPAuB/aWBXVSvMzI/+w1MjsIvTiO9cLqx1z3Es+GKY6Y8IA9azlu8YGuPehHRi9zo7PP2E83cY9oilxcv49p23McnX4MHj3ECB7oIwx0/9B5WS+ubKAIFN+UHY/thCXOdueldzqVC+WAQLz34A1LwtFiH9D3o/bYznZlvngCkfcuDZTSv8DYtkyG9RYL9wyN1uHnLPIgxibhVzZmZSQDgn4vQfM1m2rjUNpfNkGK88ZnmrCmG5jvJNGLbReJrj5J1Yary+WLrXEMnxDCp4Vr6NLFDBe+s"
+   }
   }
  ],
- "updated": "2026-09-30T10:00:38.141Z",
+ "updated": "2026-09-30T17:00:33.159Z",
  "state": {
   "account": 192.32,
   "base": 19.23,
