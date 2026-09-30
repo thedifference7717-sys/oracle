@@ -719,11 +719,50 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "#1 · vs Cristopher Sánchez · lineup confirmed",
+     "eventId": "849841",
+     "gk": 849841,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26SEP301400PHIATL-ATLRACUNA13-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6976,
+     "pAdj": 0.6824,
+     "player": "Ronald Acuña Jr.",
+     "playerId": 660670,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-09-30T18:00:00Z",
+     "teams": "ATL vs PHI",
+     "revealed": {
       "v": 1,
       "hash": "289f1bb81e45d6ab43ecf7bd82179b877e73aedbe0849a9e19e8903573f6bcff",
-      "iv": "YHDRrj9THO/4ruSi",
-      "ct": "RtFPj8MKWBx+84bC0OGJYgJqUh+1UpWSy0z5eapKjx2AEuVc06JiLg78OtgkpHHWsct/lKex6pOvrlzwlcRRSk0/hEZpVII4wxZctDLNZHCfG2ZsZOuiQinP7MBj9hKhRvIyjb9cy6DbjbtwIdyN+Yp24LrK+sblhnkCOLuI6CqLab2uqH3HegYtdtiPtg8KIBE0eEqMIzP4BpBjt1m2OyILSpzpTY3RrTVLnJ5J/pgoDvVQ6WKqHL0Z/FP87Z3vGwt97WNABfn9qjtgC4bfHPFrFk1lBSCIOuTYz9v1SlEK7JmWRqgN5KU3IVKCyWnLvpv5eUr0ALyOXpq4oy/dd/BdpyAiMSy/OYxoKxlvIs1ZKE4NI44TCnlcari5qZvAEkAt2eY3JP3ymylpRXxbXaFlSzjk5PxSSvj9N/tbEbFVM58qFqle0V8pBrzd8L5fWcbOaWhLTwN2eXSEU6Mm1fQBm7UHYVcJyLGJFMzwYRoWCo5kxJ8vQOr9+jT1HzqULrr0qs8Z62iS3W0rk/RI6KoRAbIZ52meFgvvKuTuUqkZD9VbBjoqJtCA0Tuh2uYcOVR7bPtgbc9Lycmk351vfJa0gz+bw2gokXQg3HxNKRhb3JLM28yCncoLpxgoPM7EkUZJLbiyka40Wb00spqs/GQZUYopoVtDVsvjRKIC"
+      "salt": "a7d1f8c347b27a5029e44196c919120d",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-09-30:dub#0"
      }
     },
     {
@@ -737,7 +776,7 @@
    ]
   }
  ],
- "updated": "2026-09-30T17:00:34.910Z",
+ "updated": "2026-09-30T18:00:09.647Z",
  "record": {
   "w": 3,
   "l": 4
