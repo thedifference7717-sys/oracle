@@ -22,6 +22,13 @@
 .now .who{font-weight:700}
 .now .s{font-size:12px;color:var(--muted);margin-top:2px}
 .mini{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7}
+.stake{font:700 30px var(--num);color:var(--yellow);margin-top:12px}
+.stake small{display:block;font:500 12px var(--sys);color:var(--dim);margin-top:4px}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.kv>div{flex:1 1 90px;background:var(--bg3);border-radius:10px;padding:8px 10px}
+.kv .v{font:700 15px var(--num)}
+.kv .l{font-size:11px;color:var(--dim);margin-top:1px}
+.bk{cursor:pointer}
 </style>
 </head>
 <body>
@@ -58,6 +65,7 @@
 
 <script src="build-check.js"></script>
 <script src="pages.js"></script>
+<script src="ladder-math.js?v=1"></script>
 <script>
 const P = window.Pages;
 const LADDERS = [
@@ -77,27 +85,58 @@ function soon() {
   </div>`).join("") + (P.hasKey() ? "" : `<div style="grid-column:1/-1;text-align:center">${P.unlockButton()}</div>`);
 }
 
+// Each ladder's bankroll is yours, set on this device (like the Ladder's):
+// every stake below is worked out from it with the same arithmetic
+// (ladder-math.js). The engine's own numbers are on a $100 reference.
+const LM = window.LadderMath;
+const bankOf = s => +P.store.get("sport.bankroll." + s, 100) || 100;
+function setBank(s) {
+  const v = parseFloat(window.prompt("Bankroll for this ladder ($):", bankOf(s)));
+  if (v > 0) { P.store.set("sport.bankroll." + s, +v.toFixed(2)); if (last) render(last); }
+}
+let last = null;
+
 function render(d) {
+  last = d;
   const today = P.slateDay();
   document.getElementById("note").textContent = "yours only · coming soon for everyone else";
   document.getElementById("grid").innerHTML = LADDERS.map(l => {
     const bets = (d.bets && d.bets[l.sport]) || [];
+    const account = bankOf(l.sport);
+    const cur = bets.find(b => b.status === "open") || bets.find(b => b.date === today && b.pick);
+    // The state before today's rung: its stage and stake. After it: the balance.
+    const before = LM.ladder(bets.filter(b => b !== cur), { account });
+    const after = LM.ladder(bets, { account });
     const played = bets.filter(b => b.status === "won" || b.status === "lost");
     const w = played.filter(b => b.status === "won").length, lo = played.length - w;
-    const pl = played.reduce((a, b) => a + (b.status === "won" ? b.stake * (P.dec(b.price) - 1) : -b.stake), 0);
     const t = bets.find(b => b.date === today);
-    const open = bets.find(b => b.status === "open");
-    const cur = open || t;
-    const now = cur && cur.pick
-      ? `<div class="now"><div class="who">${mark(cur.status)} ${cur.pick} <span style="font-weight:400;color:var(--muted)">${cur.need}</span></div>
-           <div class="s">${cur.teams || ""} · ${cur.start ? P.etTime(Date.parse(cur.start)) + " ET" : ""} · ${P.odds(cur.price)} · ${P.money(cur.stake)} · cycle ${cur.cycle}, day ${cur.rung}</div></div>`
-      : `<div class="now"><div class="s">${t && t.status === "noplay" ? "No pick today: " + (t.reason || "nothing qualified") : "Waiting for today's lock."}</div></div>`;
-    const recent = bets.filter(b => b.pick && b !== cur).slice(-6).reverse()
+    let body;
+    if (cur && cur.pick) {
+      const stake = cur.status === "open" ? before.stake : (after.rows.find(r => r.date === cur.date) || {}).stake || before.stake;
+      const dec = LM.decFromAmerican(cur.price) || 1;
+      const risk = LM.ladderRisk(cur.pAdj || cur.p, cur.price, before);
+      body = `<div class="stake">${P.money(stake)}<small>${cur.status === "open" ? "today's bet" : cur.status === "won" ? "✅ won today" : cur.status === "lost" ? "❌ lost today" : "today"} · cycle ${before.cycle}, day ${before.rung} of ${LM.LADDER.rungs}</small></div>
+        <div class="now"><div class="who">${mark(cur.status)} ${cur.pick} <span style="font-weight:400;color:var(--muted)">${cur.need}</span></div>
+          <div class="s">${cur.teams || ""} · ${cur.start ? P.etTime(Date.parse(cur.start)) + " ET" : ""} · ${P.odds(cur.price)} · ${P.pct(cur.pAdj || cur.p)} to win</div></div>
+        <div class="kv">
+          <div><div class="v">${P.money(before.atRisk)}</div><div class="l">your money at risk (the seed)</div></div>
+          <div><div class="v">${P.money(Math.max(0, stake - before.atRisk))}</div><div class="l">riding from earlier days</div></div>
+          <div><div class="v" style="color:var(--green)">${P.money(stake * dec)}</div><div class="l">comes back if it hits${before.rung < LM.LADDER.rungs ? " · tomorrow's bet" : " · cycle complete"}</div></div>
+        </div>
+        ${risk ? `<div class="mini">Five straight at this price completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${P.money(risk.cycleProfit)}.</div>` : ""}`;
+    } else {
+      body = `<div class="stake">${P.money(after.stake)}<small>next bet · cycle ${after.cycle}, day ${after.rung} of ${LM.LADDER.rungs}</small></div>
+        <div class="now"><div class="s">${t && t.status === "noplay" ? "No pick today: " + (t.reason || "nothing qualified") : "Waiting for today's lock."}</div></div>`;
+    }
+    const recent = bets.filter(b => b.pick && b !== cur).slice(-5).reverse()
       .map(b => `${mark(b.status)} ${P.prettyDate(b.date)} · ${b.pick} ${P.odds(b.price)}`).join("<br>");
     return `<div class="card">
-      <h3>${l.emoji} ${l.name}</h3>
-      <div class="big">${w}–${lo}<small>${played.length ? `${pl >= 0 ? "+" : "−"}${P.money(Math.abs(pl))} as played` : "no rungs settled yet"}</small></div>
-      ${now}
+      <h3>${l.emoji} ${l.name} · ${w}–${lo}</h3>
+      ${body}
+      <div class="kv">
+        <div class="bk" onclick="setBank('${l.sport}')"><div class="v" style="color:var(--blue)">${P.money(account)}</div><div class="l">bankroll · tap to change</div></div>
+        <div><div class="v" style="color:${after.pl >= 0 ? "var(--green)" : "var(--red)"}">${after.pl >= 0 ? "+" : "−"}${P.money(Math.abs(after.pl))}</div><div class="l">balance ${P.money(after.account)}</div></div>
+      </div>
       ${recent ? `<div class="mini">${recent}</div>` : ""}
     </div>`;
   }).join("");
