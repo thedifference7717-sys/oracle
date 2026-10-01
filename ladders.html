@@ -96,6 +96,22 @@ function setBank(s) {
 }
 let last = null;
 
+// Results in units, never dollars: one unit is a cycle's first bet, each rung
+// counted at what rode on it. Cycles: five straight – missed.
+function unitsOf(rows) {
+  let u = 0, cw = 0, cl = 0;
+  const seed = {};
+  for (const r of rows) if (r.rung === 1 && r.stake > 0 && seed[r.cycle] == null) seed[r.cycle] = r.stake;
+  for (const r of rows) {
+    if (!(r.stake > 0) || (r.status !== "won" && r.status !== "lost")) continue;
+    const s = seed[r.cycle] || r.stake;
+    u += (r.status === "won" ? (r.ret != null ? r.ret : r.stake * (LM.decFromAmerican(r.price) || 1)) - r.stake : -r.stake) / s;
+    if (r.status === "lost") cl++; else if (r.rung >= LM.LADDER.rungs) cw++;
+  }
+  return { u, cw, cl };
+}
+const uTxt = u => `${u > 0 ? "+" : u < 0 ? "−" : ""}${Math.abs(u).toFixed(2)}u`;
+
 function render(d) {
   last = d;
   const today = P.slateDay();
@@ -123,11 +139,12 @@ function render(d) {
           <div><div class="v">${P.money(Math.max(0, stake - before.atRisk))}</div><div class="l">riding from earlier days</div></div>
           <div><div class="v" style="color:var(--green)">${P.money(stake * dec)}</div><div class="l">comes back if it hits${before.rung < LM.LADDER.rungs ? " · tomorrow's bet" : " · cycle complete"}</div></div>
         </div>
-        ${risk ? `<div class="mini">Five straight at this price completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${P.money(risk.cycleProfit)}.</div>` : ""}`;
+        ${risk ? `<div class="mini">Five straight at this price completes ${(risk.cycleWin * 100).toFixed(1)}% of the time for ${uTxt(before.atRisk > 0 ? risk.cycleProfit / before.atRisk : 0)}.</div>` : ""}`;
     } else {
       body = `<div class="stake">${P.money(after.stake)}<small>next bet · cycle ${after.cycle}, day ${after.rung} of ${LM.LADDER.rungs}</small></div>
         <div class="now"><div class="s">${t && t.status === "noplay" ? "No pick today: " + (t.reason || "nothing qualified") : "Waiting for today's lock."}</div></div>`;
     }
+    const un = unitsOf(after.rows || []);
     const recent = bets.filter(b => b.pick && b !== cur).slice(-5).reverse()
       .map(b => `${mark(b.status)} ${P.prettyDate(b.date)} · ${b.pick} ${P.odds(b.price)}`).join("<br>");
     return `<div class="card">
@@ -135,7 +152,7 @@ function render(d) {
       ${body}
       <div class="kv">
         <div class="bk" onclick="setBank('${l.sport}')"><div class="v" style="color:var(--blue)">${P.money(account)}</div><div class="l">bankroll · tap to change</div></div>
-        <div><div class="v" style="color:${after.pl >= 0 ? "var(--green)" : "var(--red)"}">${after.pl >= 0 ? "+" : "−"}${P.money(Math.abs(after.pl))}</div><div class="l">balance ${P.money(after.account)}</div></div>
+        <div><div class="v" style="color:${un.u >= 0 ? "var(--green)" : "var(--red)"}">${uTxt(un.u)}</div><div class="l">cycles ${un.cw}–${un.cl}</div></div>
       </div>
       ${recent ? `<div class="mini">${recent}</div>` : ""}
     </div>`;

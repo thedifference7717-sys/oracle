@@ -53,7 +53,7 @@
   <details class="disc"><summary>How this record is kept</summary><div class="disc-b">
     <p>Every pick is <b>committed to this site's public repository before its game starts</b>, with the time it was published. Nothing is added, edited or removed afterwards: a pick that loses stays on the record.</p>
     <p>Each pick is now published <b>sealed</b> at lock: encrypted, next to a fingerprint of it. When its game starts, it is revealed in the clear. Anyone can re-run the fingerprint and find the commit that carried it sealed, which has to be earlier than the game. <a href="https://github.com/thedifference7717-sys/oracle/blob/main/docs/sealed-picks.md" style="color:var(--blue)">How to check it yourself</a>.</p>
-    <p><b>ROI</b> is at the price each pick was published at (the live Kalshi ask). The Ladder is counted as it is played: each rung at the stake it was published with. The Dub is one unit on each parlay, and the Robin one unit on every ticket of each round robin. Voids and pushes are left out.</p>
+    <p><b>ROI</b> is at the price each pick was published at (the live Kalshi ask). The Ladder is counted in <b>units</b>, as it is played: one unit is a cycle's first bet, and each rung counts at its stake, so a cycle that misses costs 1u. Its <b>cycles</b> are five straight wins – cycles that missed. The Dub is one unit on each parlay, and the Robin one unit on every ticket of each round robin. Voids and pushes are left out.</p>
   </div></details>
 </div>
 
@@ -112,16 +112,27 @@ function lead(b, starts) {
   return `<div class="pf"><span class="ok">✓</span> published ${P.etTime(pub)} ET, ${t} before the first game</div>`;
 }
 
-// The Ladder as it is played: each rung at the stake it was published with.
-function ladderPlayed(bets) {
-  let pl = 0, staked = 0;
+// The Ladder in units, as it is played: one unit is a cycle's seed (its
+// first bet), and each rung counts at the stake it was published with, so a
+// cycle that busts costs exactly 1u and one that runs five straight shows
+// what the seed grew to. Cycles: completed (five straight) – busted.
+const RUNGS = 5;
+function ladderUnits(bets) {
+  let u = 0, cw = 0, cl = 0;
+  const seedOf = {};
+  for (const b of bets) if (b.rung === 1 && b.stake > 0 && seedOf[b.cycle] == null) seedOf[b.cycle] = b.stake;
+  let last = null;                               // a backfilled row carries no seed: it rode the cycle before it
   for (const b of bets) {
     if (!(b.stake > 0) || !DONE.has(b.status)) continue;
-    staked += b.stake;
-    pl += b.status === "won" ? b.stake * (P.dec(b.price) - 1) : -b.stake;
+    const seed = b.seed > 0 ? b.seed : seedOf[b.cycle] || last || b.stake;
+    last = seed;
+    u += (b.status === "won" ? b.stake * (P.dec(b.price) - 1) : -b.stake) / seed;
+    if (b.status === "lost") cl++;
+    else if (b.rung >= RUNGS) cw++;
   }
-  return { pl, staked };
+  return { u, cw, cl, n: bets.filter(b => b.stake > 0 && DONE.has(b.status)).length };
 }
+const unitsTxt = x => `${sign(x.u)}u · cycles ${x.cw}–${x.cl}`;
 
 function card(emoji, name, big, sub, pl, staked, why, roi) {
   return `<div class="card">
@@ -136,13 +147,13 @@ function render() {
   const L = (ladder && ladder.bets || []).filter(b => b && b.date);
   const D = (dub && dub.bets || []).filter(b => b && Array.isArray(b.legs));
   const R = (robin && robin.bets || []).filter(b => b && Array.isArray(b.legs));
-  const lf = flat(L), df = flat(D), rf = robinFlat(R), lp = ladderPlayed(L);
+  const lf = flat(L), df = flat(D), rf = robinFlat(R), lu = ladderUnits(L);
   const since = [L[0], D[0], R[0]].filter(Boolean).map(b => b.date).sort()[0];
   document.getElementById("note").textContent = since ? `since ${P.prettyDate(since)}` : "";
 
   document.getElementById("prods").innerHTML =
-    card("🪜", "The Ladder", `${lf.w}–${lf.l}`, "one pick a day", lp.pl, lp.staked, "The single likeliest prop on the slate, played up the ladder at each rung's published stake.",
-      lp.staked ? `${lp.pl >= 0 ? "+" : "−"}${P.money(Math.abs(lp.pl))} on ${P.money(lp.staked)} · ${lp.pl >= 0 ? "+" : "−"}${Math.abs(lp.pl / lp.staked * 100).toFixed(1)}% ROI` : "—") +
+    card("🪜", "The Ladder", `${lf.w}–${lf.l}`, "one pick a day", lu.u, lu.n, "The single likeliest prop on the slate, played up the ladder. Cycles: five straight – busted.",
+      lu.n ? unitsTxt(lu) : "—") +
     card("✌️", "The Dub", `${df.w}–${df.l}`, "two-leg parlays", df.pl, df.staked, "The best two-leg parlay, from two different games.") +
     card("🐦", "The Robin", `${rf.lw}–${rf.ll}`, `legs · ${rf.days} round robin${rf.days === 1 ? "" : "s"}`, rf.pl, rf.staked, "Six props, every 2- to 6-leg ticket between them.");
 
@@ -187,9 +198,9 @@ async function renderSports() {
   document.getElementById("sports").innerHTML = SPORTS.map(([s, e, name]) => {
     if (!d) return `<div class="card"><h3>${e} ${name}</h3><div class="why">One pick a day, ${s} only, on the Ladder's rules.</div><div class="roi" style="color:var(--yellow)">Coming soon</div></div>`;
     const bets = ((d.rows || d.bets || {})[s]) || [];
-    const lp = ladderPlayed(bets), f = flat(bets);
-    return card(e, name, `${f.w}–${f.l}`, "one pick a day", lp.pl, lp.staked, `${s} only · since ${bets.length ? P.prettyDate(bets[0].date) : "—"}`,
-      lp.staked ? `${lp.pl >= 0 ? "+" : "−"}${P.money(Math.abs(lp.pl))} on ${P.money(lp.staked)} · ${lp.pl >= 0 ? "+" : "−"}${Math.abs(lp.pl / lp.staked * 100).toFixed(1)}% ROI` : "No rungs settled yet");
+    const lu = ladderUnits(bets), f = flat(bets);
+    return card(e, name, `${f.w}–${f.l}`, "one pick a day", lu.u, lu.n, `${s} only · since ${bets.length ? P.prettyDate(bets[0].date) : "—"}`,
+      lu.n ? unitsTxt(lu) : "No rungs settled yet");
   }).join("");
 }
 
