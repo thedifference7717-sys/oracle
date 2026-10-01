@@ -2019,9 +2019,20 @@
     "MLB": 4
    },
    "reason": "fewer than three qualifying props in different games"
+  },
+  {
+   "id": "2026-10-01:robin",
+   "date": "2026-10-01",
+   "published": "2026-10-01T23:00:19.656Z",
+   "status": "noplay",
+   "games": {
+    "MLB": 1,
+    "NFL": 1
+   },
+   "reason": "only 2 games on the slate"
   }
  ],
- "updated": "2026-09-30T17:00:35.762Z",
+ "updated": "2026-10-01T23:00:19.658Z",
  "record": {
   "w": 30,
   "l": 6,

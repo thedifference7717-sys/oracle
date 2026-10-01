@@ -836,9 +836,16 @@
     ],
     "ctx": "2026-09-30:dub"
    }
+  },
+  {
+   "id": "2026-10-01:dub",
+   "date": "2026-10-01",
+   "published": "2026-10-01T23:00:19.656Z",
+   "status": "noplay",
+   "reason": "fewer than two qualifying props in different games"
   }
  ],
- "updated": "2026-09-30T21:20:53.408Z",
+ "updated": "2026-10-01T23:00:19.656Z",
  "record": {
   "w": 3,
   "l": 5
