@@ -70,7 +70,23 @@ function ladder(history, cfg) {
   let cashIn = seed0;
   let peak = account, maxDD = 0, staked = 0, cycles = { done: 0, busted: 0 };
   const rows = [];
+  // Money taken out (negative) or put in (positive), each { date, amount },
+  // applied after that day's rung. Taken between cycles — after one completed,
+  // before the next has bet — the next seed is re-sized to the account that is
+  // left; mid-cycle, or after a bust (whose seed escalates on its own), the
+  // stakes already in play are not touched.
+  const moves = (C.moves || []).filter(m => m && m.date && isFinite(+m.amount) && +m.amount !== 0)
+    .slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  let mi = 0, moved = 0, lastClose = null;
+  const applyMoves = before => {
+    while (mi < moves.length && (before == null || String(moves[mi].date) < String(before))) {
+      const amt = +moves[mi].amount; mi++;
+      account = round2(account + amt); moved = round2(moved + amt);
+      if (rung === 1 && lastClose !== "busted") { base = round2(Math.max(0, account) * C.basePct); stake = base; cashIn = base; }
+    }
+  };
   for (const b of history || []) {
+    applyMoves(b.date);
     // A missing price used to fall through `decFromAmerican(null) || 1` to
     // EVEN MONEY, so a winning rung returned exactly its stake and the ladder
     // quietly stopped compounding on it — a wrong number, not a cosmetic one.
@@ -133,7 +149,7 @@ function ladder(history, cfg) {
       }
       row.ret = ret;
       if (rung >= C.rungs) {                                 // cycle complete
-        row.pl = round2(ret - cashIn); row.closed = "complete";
+        row.pl = round2(ret - cashIn); row.closed = "complete"; lastClose = "complete";
         account = round2(account + row.pl); staked += cashIn; cycles.done++;
         cycle++; rung = 1; base = round2(Math.max(0, account) * C.basePct); stake = base; cashIn = base;
       } else {                                               // let it ride
@@ -141,7 +157,7 @@ function ladder(history, cfg) {
       }
     } else if (b.status === "lost") {
       // Everything put in this cycle is gone, not just the seed.
-      row.pl = round2(-cashIn); row.closed = "busted";
+      row.pl = round2(-cashIn); row.closed = "busted"; lastClose = "busted";
       account = round2(account - cashIn); staked += cashIn; cycles.busted++;
       cycle++; rung = 1; base = round2(base * (1 + C.missGain)); stake = base; cashIn = base;
     } else { rows.push(row); continue; }                     // open — state is frozen here
@@ -149,11 +165,12 @@ function ladder(history, cfg) {
     maxDD = Math.max(maxDD, peak - account);
     rows.push(row);
   }
+  applyMoves(null);
   const open = (history || []).some(b => b.status === "open");
   return { cfg: C, rows, account, base, stake: round2(stake), rung, cycle, open,
            cashIn: round2(cashIn), toppedUp: round2(cashIn - base),
            atRisk: round2(cashIn), onTable: round2(Math.max(0, stake - cashIn)),
-           staked: round2(staked), pl: round2(account - C.account), peak, maxDD: round2(maxDD),
+           staked: round2(staked), pl: round2(account - C.account - moved), moved, peak, maxDD: round2(maxDD),
            cycles, canFund: stake <= account + 1e-9 };
 }
 

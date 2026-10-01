@@ -406,7 +406,7 @@ td.num{text-align:right}
 <script src="pages.js"></script>
 <!-- The ladder's arithmetic only (ladder-math.js). The model that picks the
      bets is not published, so this page no longer builds a live board. -->
-<script src="ladder-math.js?v=1"></script>
+<script src="ladder-math.js?v=2"></script>
 <script>
 // The engine lives in a separate file as of BUILD 3. If it fails to load,
 // say so in the status bar rather than throwing at parse time and leaving the
@@ -567,6 +567,28 @@ function setLadderAccount(v){
   ladderAccount=n;
   try{localStorage.setItem("dd.ladderAccount",String(n));}catch(e){}
   renderLadder({force:true});
+}
+// Money taken out of the ladder's account (or put back in), this device only:
+// [{date, amount}], negative for a withdrawal. Ladder-math applies each after
+// that day's rung; taken between cycles, the next seed is sized off what's left.
+let ladderMoves=[], ladderHistLast=[];
+const ladderHistForMoves=()=>ladderHistLast;
+try{ladderMoves=JSON.parse(localStorage.getItem("dd.ladderMoves")||"[]")||[];}catch(e){ladderMoves=[];}
+function saveLadderMoves(){try{localStorage.setItem("dd.ladderMoves",JSON.stringify(ladderMoves));}catch(e){}}
+function withdrawLadder(){
+  const st=M.ladder(ladderHistForMoves(),{account:ladderAccount||M.LADDER.account,price:setting("legPrice"),moves:ladderMoves});
+  const v=window.prompt(`How much did you withdraw? Your ladder account is ${money(st.account)}.`,"");
+  if(v==null)return;
+  const n=parseFloat(String(v).replace(/[$,\s]/g,""));
+  if(!isFinite(n)||n<=0){alert("Enter an amount above $0.");return;}
+  if(n>st.account){alert(`That is more than the ${money(st.account)} in the account.`);return;}
+  ladderMoves.push({date:M.slateYmd(),amount:-Math.round(n*100)/100});
+  saveLadderMoves(); renderLadder({force:true});
+}
+function undoLadderMove(){
+  const m=ladderMoves[ladderMoves.length-1]; if(!m)return;
+  if(!window.confirm(`Undo the ${money(Math.abs(m.amount))} withdrawal on ${m.date}?`))return;
+  ladderMoves.pop(); saveLadderMoves(); renderLadder({force:true});
 }
 function clearLadderAccount(){
   ladderAccount=null;
@@ -1184,7 +1206,8 @@ function renderLadderInner(){
   // "the most recent price in the history" instead, which turned one unusually
   // good fill (-191 on 9/21) into the default for every day after it and
   // overstated today's return. The base is the stated assumption; use it.
-  const st=M.ladder(hist,{account:ladderAccount||M.LADDER.account,price:setting("legPrice")});
+  ladderHistLast=hist;
+  const st=M.ladder(hist,{account:ladderAccount||M.LADDER.account,price:setting("legPrice"),moves:ladderMoves});
   const C=st.cfg, pick=null;
 
   if(ladderAccount==null){
@@ -1461,7 +1484,10 @@ function renderLadderInner(){
   const histHtml=st.rows.length?`<div class="table-wrap"><table class="ld-hist">
     <thead><tr><th>DATE</th><th>PICK</th><th>C·D</th><th>STAKE</th><th>ODDS TAKEN</th><th>PAID BACK</th><th>RESULT</th><th>P&amp;L</th><th>Account</th><th>RUNNING</th></tr></thead>
     <tbody>${(()=>{let acc=C.account;const out=[];const run={w:0,l:0,cd:0,cb:0};
-      for(const r of st.rows){acc=+(acc+r.pl).toFixed(2);
+      // Withdrawals land after their day's rung, as ladder-math applies them.
+      const mv=ladderMoves.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));let mi=0;
+      for(const r of st.rows){while(mi<mv.length&&String(mv[mi].date)<String(r.date)){acc=+(acc+(+mv[mi].amount)).toFixed(2);mi++;}
+        acc=+(acc+r.pl).toFixed(2);
         if(r.status==="won"){run.w++;if(r.closed==="complete")run.cd++;}else if(r.status==="lost"){run.l++;run.cb++;}
         out.push({r,acc,run:Object.assign({},run)});}
       return out.slice().reverse().map(({r,acc,run})=>`<tr>
@@ -1495,6 +1521,7 @@ function renderLadderInner(){
     <div class="ld-strip">
       <div class="ld-box"><div class="v" style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</div><div class="l">Account · ${st.pl>=0?"+":""}${money(st.pl)}</div></div>
       <div class="ld-box"><div class="v">${st.cycles.done}–${st.cycles.busted}</div><div class="l">Cycles done–bust</div></div>
+      <div class="ld-box ld-acct" onclick="withdrawLadder()" title="Record money you took out of the ladder's account"><div class="v" style="color:var(--yellow)">${st.moved?money(-st.moved):"$0.00"}</div><div class="l">Withdrawn · tap to withdraw${ladderMoves.length?` · <a href="#" onclick="event.stopPropagation();event.preventDefault();undoLadderMove()" style="color:var(--dim)">undo last</a>`:""}</div></div>
       <div class="ld-box ld-acct" onclick="clearLadderAccount()" title="Change your bankroll"><div class="v" style="color:var(--blue)">${money(ladderAccount)}</div><div class="l">Bankroll · tap to change</div></div>
     </div>
     ${st.canFund?"":`<div class="ld-warn"><b>The account cannot fund this rung.</b> ${money(stake)} is more than the ${money(st.account)} left. That is where the escalation ends — the ladder has no next move that is not a deposit.</div>`}
@@ -1506,7 +1533,7 @@ function renderLadderInner(){
   if(rec)rec.innerHTML=histHtml;
   if(recNote){
     const won=st.rows.filter(r=>r.status==="won").length, lost=st.rows.filter(r=>r.status==="lost").length;
-    recNote.innerHTML=`<b>${won}–${lost}</b> rungs · cycles <b>${st.cycles.done}–${st.cycles.busted}</b> · ${money(C.account)} → <b style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</b>`;
+    recNote.innerHTML=`<b>${won}–${lost}</b> rungs · cycles <b>${st.cycles.done}–${st.cycles.busted}</b> · ${money(C.account)} → <b style="color:${st.pl>=0?"var(--green)":"var(--red)"}">${money(st.account)}</b>${st.moved?` · ${money(-st.moved)} withdrawn`:""}`;
   }
   tickLadderClock();
   if(orphaned){refreshLadderFast();setTimeout(()=>{if(!ladderBusy())refreshLadderFast();},60000);}
