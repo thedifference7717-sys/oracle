@@ -868,7 +868,7 @@
   {
    "id": "2026-10-01:ladder",
    "date": "2026-10-01",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-01T23:00:17.791Z",
    "cycle": 6,
    "rung": 3,
@@ -925,6 +925,9 @@
    "sport": "NFL",
    "start": "2026-10-02T00:15Z",
    "teams": "CLE vs PIT",
+   "actual": 175,
+   "result": "175 passing yards against a 149.5 line (graded early, 20+ clear)",
+   "settled": "2026-10-02T01:33:29.897Z",
    "revealed": {
     "v": 1,
     "hash": "03fd76a7cbd9e061a3af6865313fd0d44bb3a079a3dc1c73c5157147768e19b5",
@@ -953,12 +956,12 @@
    }
   }
  ],
- "updated": "2026-10-02T00:15:06.897Z",
+ "updated": "2026-10-02T01:33:29.899Z",
  "state": {
   "account": 192.32,
   "base": 19.23,
-  "stake": 42.17,
-  "rung": 3,
+  "stake": 57.79,
+  "rung": 4,
   "cycle": 6,
   "pl": 92.32,
   "cycles": {
