@@ -2082,11 +2082,50 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#3 · vs Parker Messick · lineup confirmed",
+     "eventId": "849829",
+     "gk": 849829,
+     "kalshi": {
+      "ask": 0.59,
+      "bid": 0.58,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT031300CWSCLE-CWSMVARGAS20-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6379,
+     "pAdj": 0.6122,
+     "player": "Miguel Vargas",
+     "playerId": 678246,
+     "price": -144,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-03T17:00:00Z",
+     "teams": "CWS @ CLE",
+     "revealed": {
       "v": 1,
       "hash": "fe8d9036096b6aba072e52f4cc9e16da030df0eec66cc488a79d78cfa8368027",
-      "iv": "AcEn+cBXR7KVQzNW",
-      "ct": "KIOJtEhANfzD0OQGwRC8QYbZbXU1PfdtAhF3JZ5X9hY7lYStvzwF9xlWaZQ2vTUlPJEDUMUnVYwf9Mu2g3p0IXNDYf2HK+AoLrJRKcR04CmrgIX3gJF9vtkvCR5nCOYJwS6jKwF8oSO4dQs8VW9eNVET2fIM58RwzBNwqg2Ai5TL8j9gkJF9IRNaO3zdyj5ghmVWidUOmmjvt19+EcV4c7i9SyuQ/1UWbe/gzE35e48dSaKPU0KfuBV8TNifokBKiTeXXSnrOSXMiS3TC/QDc7wlTiycUT5ECqmGVNGj1vvYDFieyumJk5kpUruqR4Q4Wf31bkK7gDHc2XNT5ts4m2Qxs9zQmcWMVepwj7ndFE/laVR7ksa2DcSIJAscwLla9sSnKjgConC1L52E5RO8pflw0H9D4JcRzhBdsy9thTWracKTDUgGl26Chc/K4XtiS0XUZRRBKsN4LY/5QuTmRu35WCjw7l8G2WDyW1PawSZj8HR5m3k9GCkz3E61Al+6uzgKrF9N0C+erCakG3GWhbhEgok/6DwwI7s475YC+EYApV2YmrIZrGU+WwjwFKRp1hyfkQPrVI/ZynZoDfDGJLi9TDElqPzDIE9Vb+3iU6l9zFPhYH8fBdAwGUIJZpCLNkAQBlk1hWFKeQ/fwFik4Ql4uuqCEQ4="
+      "salt": "1bfddbb7892a1ed254d17be757e4b322",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-03:robin#2"
      }
     },
     {
@@ -2100,7 +2139,7 @@
    ]
   }
  ],
- "updated": "2026-10-03T16:01:08.199Z",
+ "updated": "2026-10-03T17:00:45.267Z",
  "record": {
   "w": 30,
   "l": 6,

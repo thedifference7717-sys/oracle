@@ -969,15 +969,93 @@
     "NBA": 1
    },
    "seal": 1,
-   "sealed": {
+   "detail": "#2 · vs Parker Messick · lineup confirmed",
+   "edge": 0.0905,
+   "eventId": "849829",
+   "firstPitch": "2026-10-03T17:00:00Z",
+   "fromProps": 31,
+   "gk": 849829,
+   "kalshi": {
+    "ask": 0.62,
+    "at": "2026-10-03T16:11:55.222Z",
+    "bid": 0.6,
+    "spread": 0.02,
+    "ticker": "KXMLBHIT-26OCT031300CWSCLE-CWSRGRICHUK34-1"
+   },
+   "line": 0.5,
+   "market": "hit",
+   "need": "to record a hit",
+   "p": 0.7103,
+   "pAdj": 0.6624,
+   "pick": "Randal Grichuk",
+   "playerId": 545341,
+   "posted": true,
+   "price": -163,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6738,
+     "pick": "Chase Meidroth",
+     "price": -194,
+     "sport": "MLB"
+    },
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6723,
+     "pick": "Steven Kwan",
+     "price": -213,
+     "sport": "MLB"
+    },
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6115,
+     "pick": "Andy Pages",
+     "price": -138,
+     "sport": "MLB"
+    }
+   ],
+   "slot": 2,
+   "sp": "Parker Messick",
+   "sport": "MLB",
+   "start": "2026-10-03T17:00:00Z",
+   "startProb": 0.985,
+   "teams": "CWS @ CLE",
+   "revealed": {
     "v": 1,
     "hash": "418071fa6e7ae9c61547e76e585b13522fca71c07d0efcf16503239888e8f8af",
-    "iv": "OY01MzZSBdwX4Dku",
-    "ct": "5tUaoJBnhRfOLwCjBVgUB0CJDn+xyHPWCkpELrGUbgeIcSsFoGVRnz5r5ihMxvgY4gunnMTZ8qKpuVHZKWA5Y9InIeCVQSiOLUDlgf4MVixB9xLiXyzetvNPWWG5lYtfIfaqC0g5ctup6EDvrWwm3PokBnoHax7J9fXWRUtVVQzVEs1Ih2QoUDL1aVKMajs/2/Wr5GrPlJI8mZ1MQkRbgVDutB5CwzAYBUZNvEs5Lr/ept9GFCBSpcgrCUoTn81AjRsKG71rcP5b9gRM9msAj2s2D+XfBtGI4CRsxDybqJvqiICJdb6Lf6Eh95kdcpK3cFK0tRpaVaceOPAjsjLZzj+oc9Yix5y+Qpc9pJ0r7+k0uIbFObIyOnUmI9RZN+TRhEZqfiB3Y2NZZLsIy5sdljUiqKtQ2xgSzI/Y8uqchI8fADhJ06npv0I3xwVKiE82s4Qq3RLat+cehftixChYi1gsr5rwokHAU4ih+FKhOzThpQI+ezTwRJ2C0gzw+zvZTA+cpeLRL/iW2ImVSnIzkjW+APFL+7O0CMOcRYeUNECta7kaWBfLN0zjooPhBQ23r+iTP1w1z3Y2mFSAk1iR0IKKO8dFBTGBOGIgv1stY/SIyEFkHOmvM54tXhckeywv6N+YQ5EmwDOlpsnG5aANVIM5M+xr/NI2UrxwNbV4UI3lgkL2QHEPlR9inIYwUX4ivjnH37CUHrdYZhVmFdc3mGkAF9TUPKme5AvkwzMX6wKMCD1T5rvTr2pTPVgVGTWMS5XOqK4FuxFnjXgm1Ccnm1dVhEuD7QEXig6ksxvdfxTs7yjUx6cp7A7kQrxroHrzVeJeVAX5EuT9wWEsInxXaikRgzaSzvGES8tkmOnR7kwTt5+aqYv+zv9UXWhn7pu2wIydPZ17IZ0rWy7BrhNQ6SCeP/K30FMCok1DVdE5NqyBiQFitO9+KjdMjIWVLv/1YgJCK5wKngzmqPN3XaiWp6lTRkJwum9guiUzhXFyfMQ/YlSKNYyoqq+9ATpxUe4Wy20DHo7gzOl3uZ1dymJeA359qtE5wpPIRSfiN4yCJrqlyNrh4J64Ne3Zl0XwbzrfOhoOUI1kCDG/iEEURwdlXr6n+jrD2D6JOiDsTvm3oz0j9wjQ83Rh7U4+q0n34Gtl+c05la0bCKZ00HAj41CDWvyxi1HbaJ91rhSPln5ftJ5jdOwrwkqnVjgSPviQWlFYAm358YHlI71c+T6VBolkaFL5fWvjpg+FBLdWmuatHFs="
+    "salt": "f83a331b5c885ff9ab03ce3152b4cbc5",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "firstPitch",
+     "fromProps",
+     "gk",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "posted",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "slot",
+     "sp",
+     "sport",
+     "start",
+     "startProb",
+     "teams"
+    ],
+    "ctx": "2026-10-03:ladder"
    }
   }
  ],
- "updated": "2026-10-03T16:11:55.224Z",
+ "updated": "2026-10-03T17:00:45.241Z",
  "state": {
   "account": 192.32,
   "base": 19.23,
