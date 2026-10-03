@@ -344,6 +344,12 @@ td.num{text-align:right}
 .legend b{color:var(--text);font-weight:600}
 .spin{display:inline-block;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .empty{padding:40px var(--pad);text-align:center;color:var(--dim);font-size:13px}
+.fold>summary{list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary h2::after{content:"";display:inline-block;width:9px;height:9px;margin-left:10px;border-right:2.5px solid var(--dim,#8a8f98);border-bottom:2.5px solid var(--dim,#8a8f98);transform:translateY(-4px) rotate(-45deg);transition:transform .2s}
+.fold[open]>summary h2::after{transform:translateY(-6px) rotate(45deg)}
+.fold>summary .sh-tap{font-size:12px;color:var(--dim,#8a8f98)}
+.fold[open]>summary .sh-tap{display:none}
 </style>
 </head>
 <body>
@@ -384,8 +390,10 @@ td.num{text-align:right}
 </div>
 <div id="ladder"></div>
 
-<div class="section-h"><div class="sh-row"><h2>Record</h2><span class="sh-note" id="ldRecNote"></span></div></div>
+<details class="fold" data-k="ldHist">
+<summary class="section-h"><div class="sh-row"><h2>Record</h2><span class="sh-note" id="ldRecNote"></span><span class="sh-tap">tap to show</span></div></summary>
 <div id="ldRecord" class="ld"></div>
+</details>
 
 
 <details class="disc" style="margin:14px var(--pad) 0"><summary>⚙️ Base price</summary>
@@ -1659,6 +1667,13 @@ setInterval(load,180000); // refresh every 3 min
 setInterval(checkBuild,30000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkBuild();});
 window.addEventListener("pageshow",e=>{if(e.persisted)checkBuild();});
+</script>
+<script>
+// Collapsible history sections: closed by default, remembered per device.
+document.querySelectorAll("details.fold[data-k]").forEach(d=>{
+  try{if(localStorage.getItem("fold."+d.dataset.k)==="1")d.open=true;}catch(e){}
+  d.addEventListener("toggle",()=>{try{localStorage.setItem("fold."+d.dataset.k,d.open?"1":"0");}catch(e){}});
+});
 </script>
 </body>
 </html>
