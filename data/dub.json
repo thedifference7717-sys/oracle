@@ -854,12 +854,6 @@
     "NBA": 1
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "434725e9c4d70d4af7a095e380fc62787809cf4baa44cadeea99c81232bd932d",
-    "iv": "kt+ZApv3m11bWuaR",
-    "ct": "WkwMc8g1WnX9HVobNCanvdkDJ6GxKHP0w5DD+MRCvFJ7jsQvNJfCDvGMdfQa7qj8zp65W60j5AQXu1Uoe1IvK1lQWefX+t2FO9fgAA7rDnNtEqjA/jNr3Bg7NzMKKRSMi+1sOjCR+66Xjlf+EJ4wdsvphDgPKEjIjGcnJ2Vj4uXxvmrX3cLQPA6XMv2Fr/Z9SV8="
-   },
    "legs": [
     {
      "detail": "#5 · vs SP TBD · projected, 93% to start",
@@ -917,17 +911,77 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#4 · vs Gerrit Cole · projected, 95% to start",
+     "eventId": "849835",
+     "gk": 849835,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.65,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT031830NYYTB-TBJCAMINERO13-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6403,
+     "pAdj": 0.655,
+     "player": "Junior Caminero",
+     "playerId": 691406,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-03T22:30:00Z",
+     "teams": "TB vs NYY",
+     "lineup": {
+      "in": true,
+      "slot": 3,
+      "at": "2026-10-03T22:30:41.847Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "2e71edd426014150cfcc75bf51f86e775cfdb82b6f2f6a481f2e08e888fd3acf",
-      "iv": "Y29dtEiVHcaFP65N",
-      "ct": "YL78qlSxFbg/ctcsIn9RVNuRo5cI5ZNke1cib0nSelljOe+7bsFCfFILU+yuEqGUUATsM/NHu0Mdi5oQbdTProR4inOyZD0X3E39lo48gtq4Qq/ILvPwBVoCDVjXYHiM+jN4rzljx48eKXOaOr669woiWedjCNkmS4sfid4TegcgjDMV49AQ/+JBxKtQmkDLykLvf2j7gsWWCdzAwCI+pqpL5ZljNaGa7IxcKqPKk8nOIMS8yEUYWG8iPF9JfrPVVjIWpxZeOlzTV4ewYQtMvrG1ep+or/D3uqMdEQ+rnbwSPaJimtVJOdo9H2Z5EG646N+XmqqTpKNptaXo7HA6A+NaGt/1lz5f3ADjwLuh1oN6Q8l1dpyxnwPCqD0L5kH7l4EIFp8X8oDWW9uLGlaFCphGlYjZOOWSNEhDaoegJhLbkhhGYwAj8WBeKl8r/qSQFA0RGdOtV6D7wPAy8MMARln6NrcLQe/nqqC+gDFmgUg9ihiJCL6Yf3j5fPNNF686TOY6D0pgfaew2FGcfugYq+B+4asZyfQJ0QAcY8O74NY5EyWuCYuKv/WvfGsFVSwho1wZ2SBI1xHIn4DNdMUGI05MwteYoLDpAJYV8JIm35qRO4tvT6V7FfnZaY3Lf4IqdkHti/np3mxjDdXK9jkEkZwuoXnIMDkH/H8="
+      "salt": "3c8ef86d2d16b579388b2b8f3ef07f9d",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-03:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": null,
+   "fair": 132,
+   "price": 123,
+   "prob": 0.4305,
+   "revealed": {
+    "v": 1,
+    "hash": "434725e9c4d70d4af7a095e380fc62787809cf4baa44cadeea99c81232bd932d",
+    "salt": "fe16d0969f105a682404fd162af961fd",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-03:dub"
+   }
   }
  ],
- "updated": "2026-10-03T22:20:42.858Z",
+ "updated": "2026-10-03T22:30:41.847Z",
  "record": {
   "w": 3,
   "l": 5

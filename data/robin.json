@@ -2118,11 +2118,55 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#4 · vs Gerrit Cole · projected, 95% to start",
+     "eventId": "849835",
+     "gk": 849835,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.65,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT031830NYYTB-TBJCAMINERO13-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6403,
+     "pAdj": 0.655,
+     "player": "Junior Caminero",
+     "playerId": 691406,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-03T22:30:00Z",
+     "teams": "TB vs NYY",
+     "lineup": {
+      "in": true,
+      "slot": 3,
+      "at": "2026-10-03T22:30:41.852Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "699e4badad88d81cf95d6e30d319628b718ace1b677000d3bc7845fb22080457",
-      "iv": "EycRMarPWp7Sn1ke",
-      "ct": "M/VZ3o/lTdY1j4K+u2FKSby9iax0TAbDVeC6Hc5D4HhVpJpx5t+F4nwP0F1kLY6XkFsxJ5k00Vzdh0Dk0Y7U+7AAFFBxWmnFed2QQa4wtg0dsDwAUBwlOHOjwi/Itd1/UpQTNjaqtXq3HP+iq/vxNSWpTaGyqYS+aWq1mOAc9g4YlMHeoB4/zjCzvziSAOv/KCwt8bAYRD2yLSV4fR7wkLTHNr6HoZhpUJz+yUuYG6PlSL9Ct3DEyitm35WCjdcxbk9MRaqG2XKFF1j89+ec1yLh1pOiKV/1ugPkU1ucNx4R2mNItNBpBGFdGHHYLYsnDdCn9cF7nG3PzwgpQXMDCvha6eAbg1SzyREwG7dOto3/hkbIPSAOUEsxsjJpb1U8wPEfE8HnWgZzCZs5WtGbHsa0NNFFpwYkG6s9DPn1FZhHPQR0F4hJMw++lLdEENArJP/TIqxDcH1TjPpjszPT+/be5QOjXebFAuLsL3gExNnhxW1um/DdBDCWiVEAzVQyPlfZI2Mikgk9qFZpKG/3C8Ibaw0GK39VtAu4vQQAOA4Wehz/u0gF+/uHbwcjJ9h/Gkvts0vv3bjQhZyu/s69GTlKhZzqDv1aohmYx+k9Xd7xMVV4w1Vg6UP+NMlY6R1SY5jad7TqHJKIpBmw3vKwvHqMGJ7sZ1M1gaX5Xg=="
+      "salt": "a4e63498afe0a97c4c33ef8ada107475",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-03:robin#1"
      }
     },
     {
@@ -2186,7 +2230,7 @@
    ]
   }
  ],
- "updated": "2026-10-03T20:00:47.593Z",
+ "updated": "2026-10-03T22:30:41.852Z",
  "record": {
   "w": 30,
   "l": 6,
