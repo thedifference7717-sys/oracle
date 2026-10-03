@@ -862,11 +862,55 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "#5 · vs SP TBD · projected, 93% to start",
+     "eventId": "849828",
+     "gk": 849828,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT031600ATLLAD-LADFFREEMAN5-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6453,
+     "pAdj": 0.6574,
+     "player": "Freddie Freeman",
+     "playerId": 518692,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-03T20:00:00Z",
+     "teams": "LAD vs ATL",
+     "lineup": {
+      "in": true,
+      "slot": 4,
+      "at": "2026-10-03T20:00:47.586Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "aaf57d92063731b26a7ce0f8a2d3a664f4d58f50663ee490d2a267d81fc4fed9",
-      "iv": "/aPZPtp3Zcyem4Ne",
-      "ct": "S+W1RAtON4eoPUjQ5EUoGzQ8UiGV8XZMZgYxX8AiuqqeOJNYaBvIO44fknjMSh4NeFkfSPWeTViyRvrg7C/uXpCYXgAqUcRGi3IVepDPTia0jxv5XLpPPfyltdabxCFaoBQLd9t9dR8/jsQ0duHS+PVpiXiM5jCOTXZPs1TUt0v7Qb6YrNUvtvrqSNTKzh66VPD6IwQOOkvWsFITHkpj3rBL9O6KWW4GDZmFQC5QKaYzH8sjeDat492ZmvMtrSDNFVWRIB710g/IkZmGqhDK6y8aUpaqiY2N/ThMiDSNh1o8bob/tWu+GlsJ2/X5qbgB21saHAbE8cKy9jXahi5Rmo6dKiIrMDgfMkrgWHbKng3J3JmhmvyTfhIF4R8L/qKTinUXRFkgw1kEuEdcUdobSB5LosZ29ZVJhzjHR/wwFfbhktHWONWYgdz3GxR5XVv3Ro2/J+nq/RtR8Kbx4oRSbLNOcMeXa9ECZA5oJqUfPtawKXH5nS6O5IUpo6QP5W9vxg5Y92AUIiUw5KXj8UIVpFJBzXXLIJTH77+7gMXrvqDBzQmV24ImLjhDbIZ5+Phk/iVbCXOHyJCkeOmg/p24gpd3PIdcMfbJliB5sCwtJMHGVv8AGyXNMK1vRFQK9lvceM7iuRP8gHTnW/7Oy7VVNNTP+q11Y7M="
+      "salt": "8ba4757fd71755c14ba170cd41698996",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-03:dub#0"
      }
     },
     {
@@ -880,7 +924,7 @@
    ]
   }
  ],
- "updated": "2026-10-03T16:01:07.110Z",
+ "updated": "2026-10-03T20:00:47.586Z",
  "record": {
   "w": 3,
   "l": 5

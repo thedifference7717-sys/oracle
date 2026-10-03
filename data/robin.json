@@ -2066,11 +2066,55 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "#5 · vs SP TBD · projected, 82% to start",
+     "eventId": "849828",
+     "gk": 849828,
+     "kalshi": {
+      "ask": 0.58,
+      "bid": 0.56,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT031600ATLLAD-LADAPAGES44-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6475,
+     "pAdj": 0.6115,
+     "player": "Andy Pages",
+     "playerId": 681624,
+     "price": -138,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-03T20:00:00Z",
+     "teams": "LAD vs ATL",
+     "lineup": {
+      "in": true,
+      "slot": 7,
+      "at": "2026-10-03T20:00:47.593Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "3dddbdbceaa45a3728cddc8e0d6d565ab68e804bdc968223f43482d20f20b166",
-      "iv": "f9XOqkbX/DMz4Nys",
-      "ct": "Agj755oWKNLhRmOGw++h1uRHPWysFsHt1dg2OM2CfKzmyLhyAGIWp3URQoMK5bQwFPrgUxvL3ScG27BSUOfjeqJiQgeE2KE4pYrrGvkIs+w1/5niSO6UlmKz+uJJ/ldd9fzU7cmXDdZEknE3DjJBEJzYg5yDiOJBhncKsUc4NCAQVALTddfKl7CueLlawPM/UKAMhuByzXV8cNOvUpd64fc75efCL1+w3xXga8+t1gT3zLSo8sABkQIiNwY4xlEHB8tABXpA550p2In7E8HXtUcJXRwRrIQp1Uu0MClOw6D+dM/f6fikucgOuMiy/3nJgox942igAQHabY7AaQdhYAkx69mTDy8ymIPkewCu2/u4GwiXBUZCYRVJvjaJWwWRXJbWRPGKPLU9TsDO7SAjc08R1dXT4oCOeMi4Wh10o/nYQO6maIUg5SYlfc/R4PE8EM1/jGc+gUslzdvqYPtZ2z3ZpoaYAe7fwA4h3tl3cN2LQkccClGp7/1JX/v9FaVRH1VjBVTlZTntDVWDHcAlRPjQkJpWRWkdVq5S2TOjZ6KLteFOCuGVmwU1aLoywaEJamwvON/bIQquTYJw3VVeNKpoHI67QsDm3/YyIGWG2ZIFSN7pp2JsDh5Cn/K26Ib77KPN6HH9YrtP/lIVlE9KyPNJ0Q=="
+      "salt": "8960814f8f80c49d25d69f89a5dd80e9",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-03:robin#0"
      }
     },
     {
@@ -2142,7 +2186,7 @@
    ]
   }
  ],
- "updated": "2026-10-03T18:06:55.042Z",
+ "updated": "2026-10-03T20:00:47.593Z",
  "record": {
   "w": 30,
   "l": 6,
