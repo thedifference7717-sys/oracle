@@ -958,7 +958,7 @@
   {
    "id": "2026-10-03:ladder",
    "date": "2026-10-03",
-   "status": "open",
+   "status": "lost",
    "published": "2026-10-03T16:11:55.222Z",
    "cycle": 6,
    "rung": 4,
@@ -1021,6 +1021,8 @@
    "start": "2026-10-03T17:00:00Z",
    "startProb": 0.985,
    "teams": "CWS @ CLE",
+   "hits": 0,
+   "settled": "2026-10-03T19:58:37.923Z",
    "revealed": {
     "v": 1,
     "hash": "418071fa6e7ae9c61547e76e585b13522fca71c07d0efcf16503239888e8f8af",
@@ -1055,17 +1057,17 @@
    }
   }
  ],
- "updated": "2026-10-03T17:00:45.241Z",
+ "updated": "2026-10-03T19:58:37.925Z",
  "state": {
-  "account": 192.32,
-  "base": 19.23,
-  "stake": 57.79,
-  "rung": 4,
-  "cycle": 6,
-  "pl": 92.32,
+  "account": 173.09,
+  "base": 24.04,
+  "stake": 24.04,
+  "rung": 1,
+  "cycle": 7,
+  "pl": 73.09,
   "cycles": {
    "done": 2,
-   "busted": 3
+   "busted": 4
   },
   "canFund": true
  },
