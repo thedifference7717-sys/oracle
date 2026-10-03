@@ -2030,9 +2030,77 @@
     "NFL": 1
    },
    "reason": "only 2 games on the slate"
+  },
+  {
+   "id": "2026-10-03:robin",
+   "date": "2026-10-03",
+   "published": "2026-10-03T16:01:07.110Z",
+   "status": "open",
+   "games": {
+    "MLB": 4,
+    "NBA": 1
+   },
+   "seal": 1,
+   "sizes": [
+    {
+     "m": 2,
+     "tickets": 6,
+     "avgPays": 2.702,
+     "expWin": 2.329,
+     "ev": 0.0467
+    },
+    {
+     "m": 3,
+     "tickets": 4,
+     "avgPays": 4.434,
+     "expWin": 0.967,
+     "ev": 0.0704
+    },
+    {
+     "m": 4,
+     "tickets": 1,
+     "avgPays": 7.27,
+     "expWin": 0.151,
+     "ev": 0.0944
+    }
+   ],
+   "legs": [
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "3dddbdbceaa45a3728cddc8e0d6d565ab68e804bdc968223f43482d20f20b166",
+      "iv": "f9XOqkbX/DMz4Nys",
+      "ct": "Agj755oWKNLhRmOGw++h1uRHPWysFsHt1dg2OM2CfKzmyLhyAGIWp3URQoMK5bQwFPrgUxvL3ScG27BSUOfjeqJiQgeE2KE4pYrrGvkIs+w1/5niSO6UlmKz+uJJ/ldd9fzU7cmXDdZEknE3DjJBEJzYg5yDiOJBhncKsUc4NCAQVALTddfKl7CueLlawPM/UKAMhuByzXV8cNOvUpd64fc75efCL1+w3xXga8+t1gT3zLSo8sABkQIiNwY4xlEHB8tABXpA550p2In7E8HXtUcJXRwRrIQp1Uu0MClOw6D+dM/f6fikucgOuMiy/3nJgox942igAQHabY7AaQdhYAkx69mTDy8ymIPkewCu2/u4GwiXBUZCYRVJvjaJWwWRXJbWRPGKPLU9TsDO7SAjc08R1dXT4oCOeMi4Wh10o/nYQO6maIUg5SYlfc/R4PE8EM1/jGc+gUslzdvqYPtZ2z3ZpoaYAe7fwA4h3tl3cN2LQkccClGp7/1JX/v9FaVRH1VjBVTlZTntDVWDHcAlRPjQkJpWRWkdVq5S2TOjZ6KLteFOCuGVmwU1aLoywaEJamwvON/bIQquTYJw3VVeNKpoHI67QsDm3/YyIGWG2ZIFSN7pp2JsDh5Cn/K26Ib77KPN6HH9YrtP/lIVlE9KyPNJ0Q=="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "699e4badad88d81cf95d6e30d319628b718ace1b677000d3bc7845fb22080457",
+      "iv": "EycRMarPWp7Sn1ke",
+      "ct": "M/VZ3o/lTdY1j4K+u2FKSby9iax0TAbDVeC6Hc5D4HhVpJpx5t+F4nwP0F1kLY6XkFsxJ5k00Vzdh0Dk0Y7U+7AAFFBxWmnFed2QQa4wtg0dsDwAUBwlOHOjwi/Itd1/UpQTNjaqtXq3HP+iq/vxNSWpTaGyqYS+aWq1mOAc9g4YlMHeoB4/zjCzvziSAOv/KCwt8bAYRD2yLSV4fR7wkLTHNr6HoZhpUJz+yUuYG6PlSL9Ct3DEyitm35WCjdcxbk9MRaqG2XKFF1j89+ec1yLh1pOiKV/1ugPkU1ucNx4R2mNItNBpBGFdGHHYLYsnDdCn9cF7nG3PzwgpQXMDCvha6eAbg1SzyREwG7dOto3/hkbIPSAOUEsxsjJpb1U8wPEfE8HnWgZzCZs5WtGbHsa0NNFFpwYkG6s9DPn1FZhHPQR0F4hJMw++lLdEENArJP/TIqxDcH1TjPpjszPT+/be5QOjXebFAuLsL3gExNnhxW1um/DdBDCWiVEAzVQyPlfZI2Mikgk9qFZpKG/3C8Ibaw0GK39VtAu4vQQAOA4Wehz/u0gF+/uHbwcjJ9h/Gkvts0vv3bjQhZyu/s69GTlKhZzqDv1aohmYx+k9Xd7xMVV4w1Vg6UP+NMlY6R1SY5jad7TqHJKIpBmw3vKwvHqMGJ7sZ1M1gaX5Xg=="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "fe8d9036096b6aba072e52f4cc9e16da030df0eec66cc488a79d78cfa8368027",
+      "iv": "AcEn+cBXR7KVQzNW",
+      "ct": "KIOJtEhANfzD0OQGwRC8QYbZbXU1PfdtAhF3JZ5X9hY7lYStvzwF9xlWaZQ2vTUlPJEDUMUnVYwf9Mu2g3p0IXNDYf2HK+AoLrJRKcR04CmrgIX3gJF9vtkvCR5nCOYJwS6jKwF8oSO4dQs8VW9eNVET2fIM58RwzBNwqg2Ai5TL8j9gkJF9IRNaO3zdyj5ghmVWidUOmmjvt19+EcV4c7i9SyuQ/1UWbe/gzE35e48dSaKPU0KfuBV8TNifokBKiTeXXSnrOSXMiS3TC/QDc7wlTiycUT5ECqmGVNGj1vvYDFieyumJk5kpUruqR4Q4Wf31bkK7gDHc2XNT5ts4m2Qxs9zQmcWMVepwj7ndFE/laVR7ksa2DcSIJAscwLla9sSnKjgConC1L52E5RO8pflw0H9D4JcRzhBdsy9thTWracKTDUgGl26Chc/K4XtiS0XUZRRBKsN4LY/5QuTmRu35WCjw7l8G2WDyW1PawSZj8HR5m3k9GCkz3E61Al+6uzgKrF9N0C+erCakG3GWhbhEgok/6DwwI7s475YC+EYApV2YmrIZrGU+WwjwFKRp1hyfkQPrVI/ZynZoDfDGJLi9TDElqPzDIE9Vb+3iU6l9zFPhYH8fBdAwGUIJZpCLNkAQBlk1hWFKeQ/fwFik4Ql4uuqCEQ4="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "af6ab8c173ad3ce9fc7fd3cb8198e96f8dd6602e5338d52e24f59ec45b43c30d",
+      "iv": "bEiq/ObyPvZ0hvW/",
+      "ct": "gtHw18a7XMLj0egV4BcYBJB8YLdTstXnt1kvBHzCCnl/P1Br8RrTW8fbMkXCZrzV1IgdY75De3WZbnAKJEeGimM+jFe53ho2oeNIzhLR+F4LnZDfy6sEr8vvD8fpvAIYSxB5rwWYOU80xda2R6ICJworvKZ9HMr8H3/JRoZEnTOl2HAcxB8YYg1D/fOjz2lqZyOf5rLEPn9ZewvPbvAkXOd5wMOvOoouNjdkdrpeoHpUamdLB+XALOmu6v0z2cKcUMHlPPiC89jU1bHaGF4MaO8AQt8o6K1GHFxcJNn5KJoFdcssd4/iJOgPZKiLbHcqco56vYdl7IVo0mEWNJgDz/ptNVjJINR4WZvaVCx0kcRc9uz5SW9gRn6tsUH3pZ30c0VKcF5twp0VZdxmPY/pHP5FFhRQeIZ8OcMFViFBFnUjgDWgSbrEY9cdrdxosZz2FDevO0Mix0xa3jc9sVWXsAbx+gT3niCEYYNRIHYehWsVph8w4EtfafmLU8hPDJP/qW7i+I6NRflk0vdpWDDeHW5jdyvf7Cd31WSFw6veUY0Psy48wA1ixOZTnuwYbYbdiF6kNnE/kd03VHgsNQCj4LVDAd8LrYiNB2ViPUpcelgNWeS2PeNz4FTnIbcrWi9rk8TGdWEUJYNG2zjdmDqENiUEkx7i"
+     }
+    }
+   ]
   }
  ],
- "updated": "2026-10-01T23:00:19.658Z",
+ "updated": "2026-10-03T16:01:08.199Z",
  "record": {
   "w": 30,
   "l": 6,
