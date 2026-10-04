@@ -2532,6 +2532,9 @@
      "sport": "NFL",
      "start": "2026-10-04T17:00Z",
      "teams": "TB vs GB",
+     "result": "won",
+     "actual": 31,
+     "note": "31 receiving yards against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "130009862ef75ec949331fdca91a9d1b295927900c67797f27cd82ce83cc82e7",
@@ -2567,7 +2570,7 @@
    ]
   }
  ],
- "updated": "2026-10-04T19:35:14.470Z",
+ "updated": "2026-10-04T19:59:08.378Z",
  "record": {
   "w": 31,
   "l": 9,
