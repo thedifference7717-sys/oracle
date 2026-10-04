@@ -2380,6 +2380,9 @@
      "sport": "NFL",
      "start": "2026-10-04T17:00Z",
      "teams": "CHI vs NYJ",
+     "result": "won",
+     "actual": 65,
+     "note": "65 receiving yards against a 14.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "465ce61b0f98300fa1211f6424d5fe7e7d92543faa2adb85ce8cab3c573168a7",
@@ -2561,7 +2564,7 @@
    ]
   }
  ],
- "updated": "2026-10-04T18:22:46.710Z",
+ "updated": "2026-10-04T18:24:55.000Z",
  "record": {
   "w": 31,
   "l": 9,

@@ -1059,7 +1059,7 @@
   {
    "id": "2026-10-04:ladder",
    "date": "2026-10-04",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-04T12:31:16.092Z",
    "cycle": 7,
    "rung": 1,
@@ -1117,6 +1117,9 @@
    "sport": "NFL",
    "start": "2026-10-04T17:00Z",
    "teams": "CHI vs NYJ",
+   "actual": 65,
+   "result": "65 receiving yards against a 14.5 line (graded early, 20+ clear)",
+   "settled": "2026-10-04T18:24:53.221Z",
    "revealed": {
     "v": 1,
     "hash": "dd1f315af3f688aefdf548a88ef868c01f800fdf746a072c462037ab72a04193",
@@ -1145,12 +1148,12 @@
    }
   }
  ],
- "updated": "2026-10-04T17:00:22.524Z",
+ "updated": "2026-10-04T18:24:53.222Z",
  "state": {
   "account": 173.09,
   "base": 24.04,
-  "stake": 24.04,
-  "rung": 1,
+  "stake": 31.62,
+  "rung": 2,
   "cycle": 7,
   "pl": 73.09,
   "cycles": {
