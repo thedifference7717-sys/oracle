@@ -1062,6 +1062,9 @@
      "sport": "NFL",
      "start": "2026-10-04T17:00Z",
      "teams": "BAL vs TEN",
+     "result": "won",
+     "actual": 198,
+     "note": "198 passing yards against a 174.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "d2ca7238a11e6f57a376c4adc6ad55a687f415003d30e690bcb8e2b288a41873",
@@ -1109,7 +1112,7 @@
    }
   }
  ],
- "updated": "2026-10-04T17:00:22.540Z",
+ "updated": "2026-10-04T18:22:46.094Z",
  "record": {
   "w": 3,
   "l": 6
