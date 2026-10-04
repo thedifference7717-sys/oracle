@@ -848,7 +848,7 @@
    "id": "2026-10-03:dub",
    "date": "2026-10-03",
    "published": "2026-10-03T16:01:07.110Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 4,
     "NBA": 1
@@ -937,6 +937,9 @@
       "slot": 3,
       "at": "2026-10-03T22:30:41.847Z"
      },
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "2e71edd426014150cfcc75bf51f86e775cfdb82b6f2f6a481f2e08e888fd3acf",
@@ -967,6 +970,7 @@
    "fair": 132,
    "price": 123,
    "prob": 0.4305,
+   "settled": "2026-10-04T01:09:36.208Z",
    "revealed": {
     "v": 1,
     "hash": "434725e9c4d70d4af7a095e380fc62787809cf4baa44cadeea99c81232bd932d",
@@ -981,9 +985,9 @@
    }
   }
  ],
- "updated": "2026-10-03T22:30:41.847Z",
+ "updated": "2026-10-04T01:09:37.502Z",
  "record": {
   "w": 3,
-  "l": 5
+  "l": 6
  }
 }
