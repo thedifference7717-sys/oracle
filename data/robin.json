@@ -2035,7 +2035,7 @@
    "id": "2026-10-03:robin",
    "date": "2026-10-03",
    "published": "2026-10-03T16:01:07.110Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 4,
     "NBA": 1
@@ -2252,6 +2252,9 @@
       "slot": 2,
       "at": "2026-10-04T00:30:36.600Z"
      },
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "af6ab8c173ad3ce9fc7fd3cb8198e96f8dd6602e5338d52e24f59ec45b43c30d",
@@ -2277,22 +2280,50 @@
       "ctx": "2026-10-03:robin#3"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 1,
+    "of": 4,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 3,
+      "tickets": 4,
+      "cashed": 0,
+      "back": 0,
+      "pl": -4
+     },
+     {
+      "m": 4,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-04T04:08:48.918Z"
   }
  ],
- "updated": "2026-10-04T01:09:37.871Z",
+ "updated": "2026-10-04T04:08:49.783Z",
  "record": {
-  "w": 30,
-  "l": 6,
+  "w": 31,
+  "l": 9,
   "void": 0,
   "unit": "bets",
   "tickets": {
    "w": 188,
-   "l": 154
+   "l": 165
   },
   "days": {
    "w": 4,
-   "l": 2
+   "l": 3
   }
  }
 }
