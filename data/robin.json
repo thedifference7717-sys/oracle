@@ -2560,17 +2560,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 266 passing yards",
+     "eventId": "401872977",
+     "kalshi": {
+      "ask": 0.71,
+      "bid": 0.7,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT04LACSEA-SEASDARNOLD14-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.78,
+     "pAdj": 0.7143,
+     "player": "Sam Darnold",
+     "playerId": "3912547",
+     "price": -245,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-04T20:25Z",
+     "teams": "SEA vs LAC",
+     "revealed": {
       "v": 1,
       "hash": "c18a9504600c61efb544b036a29c12c76d49d81017702b71da81acd4034d2688",
-      "iv": "SGijlND+MTuqvweK",
-      "ct": "Jf8b8OIneASrx0+WiWl3dkbwCg8mYn8K2i2PDu0nZ2wSEuiLyWAPYlVGIqBDoQxoRYIKAxtrUus1xHVMKn8sL9Vp8TNC4feFcc4/tleMtG6mRwRffZmws12y/ugrePhBxn8prKauccUhkrrWWEViTjjmiwIoXN4cKy5bzqK96mMCF1VLb2iMzPSUPHHybZjaImfi37elmc5BkPS2H4MC7+W4oV9+TohsmxPTZmLgwtPWD1sNiAwyqigoCMbHD5JDu59D3NoagRTxrxAHgg6QNg3m0m2Y9rPgPRnhDIOibjvIh6H8whA43E5OAr2Vaa4mrxd8Uwqmf2Xxl6eY+t9oTFAjGVEObZdl7a1+D/JTXNMVaLwPvApUv2lTkCnogXrHWGX4/+u3j6qx9Xb8nuzVOhdeuc+t6RxAUgAEbRGcNriRjW2idn1F9K2JgTPmLWnc43m3hojPUzUDgJ4WltZZORm1P+EM1VIeGnCjOlLhTVBcvinMevJ07BjWEpseYYlIF+ZQXeDiDH/FVHFagcTdWhiR6CbnE1DRJdUW1Ei+hhajPniYJWk+Eu4CfDV9POF2i2Ha+fZ9MBl2t6MDU8LMysm8gq0JzCwKHLcTkJ3hSsVYIsxBSFvRVK5b6RIILl98J1rKurbG8UkMGTs8HA=="
+      "salt": "43cbb35d35d53bfd4355ba7c46f6feb5",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-04:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-04T19:59:08.378Z",
+ "updated": "2026-10-04T20:25:38.535Z",
  "record": {
   "w": 31,
   "l": 9,
