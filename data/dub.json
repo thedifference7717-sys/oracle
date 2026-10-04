@@ -988,7 +988,7 @@
    "id": "2026-10-04:dub",
    "date": "2026-10-04",
    "published": "2026-10-04T12:31:17.533Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 2,
     "NBA": 2,
@@ -1017,6 +1017,9 @@
      "sport": "NFL",
      "start": "2026-10-04T17:00Z",
      "teams": "HOU vs DAL",
+     "result": "won",
+     "actual": 236,
+     "note": "236 passing yards against a 199.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "850f2112e9a32d5dfb2cd309c62f063226bc680311b0a824d588f2ac0d27e174",
@@ -1098,6 +1101,7 @@
    "fair": -127,
    "price": -125,
    "prob": 0.5601,
+   "settled": "2026-10-04T19:35:13.099Z",
    "revealed": {
     "v": 1,
     "hash": "487a338cc12a89489698903c6a1aea827532918c0d9814828d1a787a889475f4",
@@ -1112,9 +1116,9 @@
    }
   }
  ],
- "updated": "2026-10-04T18:22:46.094Z",
+ "updated": "2026-10-04T19:35:14.274Z",
  "record": {
-  "w": 3,
+  "w": 4,
   "l": 6
  }
 }
