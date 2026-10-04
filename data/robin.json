@@ -2223,17 +2223,61 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#3 · vs Robbie Ray · projected, 92% to start",
+     "eventId": "849830",
+     "gk": 849830,
+     "kalshi": {
+      "ask": 0.6,
+      "bid": 0.59,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT032030SDMIL-MILBTURANG2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6308,
+     "pAdj": 0.614,
+     "player": "Brice Turang",
+     "playerId": 668930,
+     "price": -150,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-04T00:30:00Z",
+     "teams": "MIL vs SD",
+     "lineup": {
+      "in": true,
+      "slot": 2,
+      "at": "2026-10-04T00:30:36.600Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "af6ab8c173ad3ce9fc7fd3cb8198e96f8dd6602e5338d52e24f59ec45b43c30d",
-      "iv": "bEiq/ObyPvZ0hvW/",
-      "ct": "gtHw18a7XMLj0egV4BcYBJB8YLdTstXnt1kvBHzCCnl/P1Br8RrTW8fbMkXCZrzV1IgdY75De3WZbnAKJEeGimM+jFe53ho2oeNIzhLR+F4LnZDfy6sEr8vvD8fpvAIYSxB5rwWYOU80xda2R6ICJworvKZ9HMr8H3/JRoZEnTOl2HAcxB8YYg1D/fOjz2lqZyOf5rLEPn9ZewvPbvAkXOd5wMOvOoouNjdkdrpeoHpUamdLB+XALOmu6v0z2cKcUMHlPPiC89jU1bHaGF4MaO8AQt8o6K1GHFxcJNn5KJoFdcssd4/iJOgPZKiLbHcqco56vYdl7IVo0mEWNJgDz/ptNVjJINR4WZvaVCx0kcRc9uz5SW9gRn6tsUH3pZ30c0VKcF5twp0VZdxmPY/pHP5FFhRQeIZ8OcMFViFBFnUjgDWgSbrEY9cdrdxosZz2FDevO0Mix0xa3jc9sVWXsAbx+gT3niCEYYNRIHYehWsVph8w4EtfafmLU8hPDJP/qW7i+I6NRflk0vdpWDDeHW5jdyvf7Cd31WSFw6veUY0Psy48wA1ixOZTnuwYbYbdiF6kNnE/kd03VHgsNQCj4LVDAd8LrYiNB2ViPUpcelgNWeS2PeNz4FTnIbcrWi9rk8TGdWEUJYNG2zjdmDqENiUEkx7i"
+      "salt": "31ba90a54be353a7129c58a4819296a2",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-03:robin#3"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-03T22:54:50.053Z",
+ "updated": "2026-10-04T00:30:36.600Z",
  "record": {
   "w": 30,
   "l": 6,
