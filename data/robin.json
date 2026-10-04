@@ -2580,6 +2580,9 @@
      "sport": "NFL",
      "start": "2026-10-04T20:25Z",
      "teams": "SEA vs LAC",
+     "result": "lost",
+     "actual": 168,
+     "note": "168 passing yards against a 199.5 line",
      "revealed": {
       "v": 1,
       "hash": "c18a9504600c61efb544b036a29c12c76d49d81017702b71da81acd4034d2688",
@@ -2607,7 +2610,7 @@
    ]
   }
  ],
- "updated": "2026-10-04T20:25:38.535Z",
+ "updated": "2026-10-04T23:45:37.638Z",
  "record": {
   "w": 31,
   "l": 9,
