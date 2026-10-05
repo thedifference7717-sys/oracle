@@ -1142,17 +1142,56 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Anthony Kay · lineup confirmed",
+     "eventId": "849834",
+     "gk": 849834,
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.63,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT051700CWSCLE-CLESKWAN38-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7131,
+     "pAdj": 0.6796,
+     "player": "Steven Kwan",
+     "playerId": 680757,
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-05T21:00:00Z",
+     "teams": "CLE vs CWS",
+     "revealed": {
       "v": 1,
       "hash": "a36a9c1cad0534a3d91ad85e71fb8196b457173146bc7f20a97e78f77d8cd151",
-      "iv": "cHJhVpfO+OVhltFO",
-      "ct": "bOh2BzkpZJH8+M78xfShmAD0uDRwlFBib3PVjuoVdl2UWz6lOGtUzHs55P0/ux/plBjDF/+cS33tUoK7q8/SVIIjWCdGs8jE4E0/2ZbrsDwvdNPxQdCsM8H5a7f5FKRKkQa6hcd1EAb7kCwO0hyAoM5J/V+ZLw9q31oRGquziKZf8FGYnVuxxBkQ/KjkWEY2+Qx/7j8qyDwOY1oVvvACXWD8e3NIXdv1hC2ZFt3PKrt0lY10xGX88UbdqusGLxCh2eqwobrKXiI6JW3hLXy33mQTSMGuHAaBZ8oGk5Wjl9Iahl8UeJ0qZ0F33yOlL3pxwp4MQYUpYc4TgHRXskMtQMGSQO2ePqmVr3ts2uJSxo2go2FEzZe+llDmEBPy7uQmcSxUd6qtzj1YvICSgUhY9zyj03huZwqbnvA6MepnRkZ/vjeJL84qIsCpUouK1Bm9LEYyUY5Ye0ZtUBtQenjLtsdxUIvX1FZeAtvx2AGvFgn0o79JbrgIQxiD2Ps2y7aShnj6JOekcZuUYyBOEJfFVN22NQoZRAvq3OP3ujwrX6Ivj4HKIi5mI1acjvlgG4wm6Rsscq2wbbkWnI1Uy4U0n3pWg+4ME7u1e9Dgj2DYWklZCKmOwmMtMk+DhTqEvJo6OAiBWFDZHLCEmg+roal6"
+      "salt": "db9b2309eeeb924ddd0dfed32d1be0de",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-05:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-05T20:01:12.389Z",
+ "updated": "2026-10-05T21:00:18.587Z",
  "record": {
   "w": 4,
   "l": 6
