@@ -2690,9 +2690,63 @@
     ]
    },
    "settled": "2026-10-05T02:15:46.650Z"
+  },
+  {
+   "id": "2026-10-05:robin",
+   "date": "2026-10-05",
+   "published": "2026-10-05T20:01:12.389Z",
+   "status": "open",
+   "games": {
+    "MLB": 2,
+    "NBA": 5,
+    "NFL": 1
+   },
+   "seal": 1,
+   "sizes": [
+    {
+     "m": 2,
+     "tickets": 3,
+     "avgPays": 2.185,
+     "expWin": 1.445,
+     "ev": 0.0463
+    },
+    {
+     "m": 3,
+     "tickets": 1,
+     "avgPays": 3.213,
+     "expWin": 0.333,
+     "ev": 0.07
+    }
+   ],
+   "legs": [
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "6f6812b04ce98f4fa16b058e2cf1b72ab32caeaa50a43728ce46f5a2a788c8fb",
+      "iv": "XSu/wrwQPDoOt8RI",
+      "ct": "YykRgdiRJ4K6R9ZblD3WTE00JjAIvf6n/h7V1N14v+qZ0Vv7j9Gi/w6HPLnj6bDNBk2buH5riDPho6Vq04xmV4yc1xvJoRNTUR7oMn/TvOmdarbaG+Gks6zinz8+5dgW9WidDyX1kjgq0bAV90bE3ckglpmRUcpwsDN6bcjdWgveYBhQAKDaDPe/eP81sTY86dlpZ3AByfRHSdiTADZ5XvoxzPteeQvWXi8jkiV/TSAnSvOswD1/O1iEL3fbKfUJ1F8jg7yADx8bAz+nnXVLLvMmBtZNT7eRPoLYC1HqeUHvxV0gOpiL5AbLRreiQYy6E0EuQVPi3stKkQsyOVgAohwE6Lnau3A/1Nb3BichYM3BhlamQdzgXqWmLXS4CzvePtWco4kVvIHh48+iN4Nhtq0PpBPW4eTBDddefPU1csgfBAKKce6a6z2fatEdcnkzbdxw2aGYfYzbOxVbptH+VnIcNklV1Vpql+55VcBH4/jhAwyBt93kg6D9iCO4yO2aqrhX8KahMDAYAXE2PqOCVJmKxfmcj7+wMPLNxzI3C4OHipn8KGAYkv4P8qPZWWEPR+pc2idSTQh7sW9JzJIOag12ObvPF4gV10qLsqFV2RFZxnKeid8/dtlX9YQ6I7J9db/KFxvloF5MJSo="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "7d1dc4963a71ef6a0ea61427747b2b94b3a4ec72b3991599b35d2b67b211dde1",
+      "iv": "jjSNVAYaGjqneGM1",
+      "ct": "A81wVjrPRq0kTAugcyw9Wer+77L2CaySVQDU6Vdj7VpKgAshjgJmLAE06Q6lVy9MTGZ/Xta3GWf+FRQIk9RyPKKw5VEZ1IlbZLQ2Q2FlpigBskKSliHqw9plJc6p6JrG8WwxH7spuwNiBXqgFtv8wS32YezmWfqoVHy0x2V99F+ZYOuUJ54upsw+LFWf6dA08eoWznTFPWIWuASBwsHP011deWJT1Um3Zqp18PzSV7q2Rb7LsiWySh4jbQ5L/686z+Jg0Sx6ja0oFkNwNwKbIOEXHGr+IuqbvRmjZo2b3s3JhnD0LJuC7f9AqoiJ+6VkHcZx2jqdJwUZX0Vx6lPCdGM6uO10g6G7ptxQBZxpm+pOOQd65ZvFRmEbPqCA7WNPoBivGUYtGQMhENCjih2SctV0VyhSFLlnYdx2moNN281cDlv2vXjgVxIDk7L1HxJr/rTidC1+S6hrfbq4BeGYVn1aPEEPzlwwLI9TceeaWHf17zQfLaAvLGS1EBwVRgalY9p6RvknCX5JFktIeYdu7ZHc0nquqIi/tVjfFGi3d6N6S2pyGEiK3pZER73OdIQDj0noFkxrcSRSZr98GduOIwr/2KW/nc0G0Q7TOqHYRP5o1jRNynzplOcZKO8g2l2Jby2ceEmvAGJ3x8jyU2AZQ9s="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "4d7f2f628911e3a59615918ef6e7e9481e5e4b53c564c26dcb7dadf07271da05",
+      "iv": "nOt4S6TfAj/yzPJa",
+      "ct": "GSw15lIxPQ4Mm18wkSe/KBtKOw4e8nF0hCo4+cPD4zOGDMt2iqeV3DpCMebhQlz5w1rT57TMvzeONAcbW0hRq83T6TxsYc1PX+TLn9lBaWhe+WF2ARRhovX58cyEp+tQ/LzKmPwsu0nn7/EnN/rIF/Sb9CHFZkMlsUtg2Q0+0HcqVzr+zLWAagaOEXSLq5asfceKU963gbjQ5ZwwN030lopTOkGIaBrQTkj7QRJ1L3l0J+gWo/FcK70RXyUHJuj9Mw10yH3Z+Z1DDa2SWRZTHHbg0FNoVTtLst9PihuH012ZWlWckGnRb7J9LUECW/g50BjPj9AX43g98TggEGC/3Zq7Hxa/D8+K7ll22J4Yrm6DY8B3pdePeWH9iXKxqgBTrQW5ax1Q1h8n/CxPIziHfXFsu+BTr0PymvZ0dmOBgRLskP9rQT7ejMMtNMTMdvgXHZWe7nf/ROg4nvm6xCxEZs9m+4k0bvHC68EvuZ2YPBPDZxdUxcuvmBF4q8c2g+LUqVSn/PcJwjYh3kMunAZaCaY+OUPEZYyGs5LRy+VUogfSUc7frnLRh8Eh2y/YjiVYkp2wUuIhbEPuol/2o0F/oIDwpD5aefVYQjCz/th7yWdpo9u4aNsdyoh09VuDlaOpuFNuhwGNbaPUN17gRE5RKHioeGdvEwsSDHtUKqbjY4o="
+     }
+    }
+   ]
   }
  ],
- "updated": "2026-10-05T02:15:47.554Z",
+ "updated": "2026-10-05T20:01:13.344Z",
  "record": {
   "w": 36,
   "l": 10,
