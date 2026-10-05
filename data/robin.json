@@ -2749,6 +2749,9 @@
      "sport": "MLB",
      "start": "2026-10-05T21:00:00Z",
      "teams": "CLE vs CWS",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "7d1dc4963a71ef6a0ea61427747b2b94b3a4ec72b3991599b35d2b67b211dde1",
@@ -2785,7 +2788,7 @@
    ]
   }
  ],
- "updated": "2026-10-05T21:00:18.608Z",
+ "updated": "2026-10-05T21:15:23.419Z",
  "record": {
   "w": 36,
   "l": 10,
