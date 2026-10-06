@@ -1240,7 +1240,7 @@
   {
    "id": "2026-10-06:ladder",
    "date": "2026-10-06",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-06T21:00:51.873Z",
    "cycle": 7,
    "rung": 3,
@@ -1303,6 +1303,8 @@
    "start": "2026-10-06T22:00:00Z",
    "startProb": 0.985,
    "teams": "LAD @ ATL",
+   "hits": 1,
+   "settled": "2026-10-06T22:14:28.714Z",
    "revealed": {
     "v": 1,
     "hash": "cf3ef56e08409b3f368c6d57ae850040e36d3616676d4f4d8ecbd71d60582c5d",
@@ -1337,12 +1339,12 @@
    }
   }
  ],
- "updated": "2026-10-06T22:00:59.289Z",
+ "updated": "2026-10-06T22:14:28.716Z",
  "state": {
   "account": 173.09,
   "base": 24.04,
-  "stake": 41.59,
-  "rung": 3,
+  "stake": 64.96,
+  "rung": 4,
   "cycle": 7,
   "pl": 73.09,
   "cycles": {
