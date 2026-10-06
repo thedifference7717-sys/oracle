@@ -1150,7 +1150,7 @@
   {
    "id": "2026-10-05:ladder",
    "date": "2026-10-05",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-06T00:08:33.093Z",
    "cycle": 7,
    "rung": 2,
@@ -1207,6 +1207,9 @@
    "sport": "NFL",
    "start": "2026-10-06T00:15Z",
    "teams": "ATL @ NO",
+   "actual": 47,
+   "result": "47 receiving yards against a 14.5 line (graded early, 20+ clear)",
+   "settled": "2026-10-06T02:57:26.567Z",
    "revealed": {
     "v": 1,
     "hash": "95231116a6f40df2a65f53aa36ddcb57029fbabd52e22c7ef26defcf637de142",
@@ -1235,12 +1238,12 @@
    }
   }
  ],
- "updated": "2026-10-06T00:15:00.484Z",
+ "updated": "2026-10-06T02:57:26.570Z",
  "state": {
   "account": 173.09,
   "base": 24.04,
-  "stake": 31.62,
-  "rung": 2,
+  "stake": 41.59,
+  "rung": 3,
   "cycle": 7,
   "pl": 73.09,
   "cycles": {

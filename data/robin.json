@@ -2695,7 +2695,7 @@
    "id": "2026-10-05:robin",
    "date": "2026-10-05",
    "published": "2026-10-05T20:01:12.389Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 2,
     "NBA": 5,
@@ -2740,6 +2740,9 @@
      "sport": "NFL",
      "start": "2026-10-06T00:15Z",
      "teams": "ATL @ NO",
+     "result": "won",
+     "actual": 47,
+     "note": "47 receiving yards against a 14.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "6f6812b04ce98f4fa16b058e2cf1b72ab32caeaa50a43728ce46f5a2a788c8fb",
@@ -2869,21 +2872,42 @@
       "ctx": "2026-10-05:robin#2"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 3,
+    "of": 3,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 3,
+      "cashed": 3,
+      "back": 6.554,
+      "pl": 3.554
+     },
+     {
+      "m": 3,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 3.213,
+      "pl": 2.213
+     }
+    ]
+   },
+   "settled": "2026-10-06T02:57:27.821Z"
   }
  ],
- "updated": "2026-10-06T01:19:42.316Z",
+ "updated": "2026-10-06T02:57:28.319Z",
  "record": {
-  "w": 36,
+  "w": 39,
   "l": 10,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 214,
+   "w": 218,
    "l": 196
   },
   "days": {
-   "w": 5,
+   "w": 6,
    "l": 3
   }
  }
