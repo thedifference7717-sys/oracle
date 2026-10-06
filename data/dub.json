@@ -1119,7 +1119,7 @@
    "id": "2026-10-05:dub",
    "date": "2026-10-05",
    "published": "2026-10-05T20:01:12.389Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 2,
     "NBA": 5,
@@ -1148,6 +1148,9 @@
      "sport": "NFL",
      "start": "2026-10-06T00:15Z",
      "teams": "NO vs ATL",
+     "result": "won",
+     "actual": 272,
+     "note": "272 passing yards against a 224.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "2b603854f1979ce1f0e2fd3ce395f48c0c313d9e24bcf6c6fc45c17cebf028de",
@@ -1227,6 +1230,7 @@
    "fair": 109,
    "price": 120,
    "prob": 0.4792,
+   "settled": "2026-10-06T03:21:09.950Z",
    "revealed": {
     "v": 1,
     "hash": "16da8d178ad9536db713c4e27326934962d0e562490078491797165cf922f056",
@@ -1241,9 +1245,9 @@
    }
   }
  ],
- "updated": "2026-10-06T00:15:00.499Z",
+ "updated": "2026-10-06T03:21:10.883Z",
  "record": {
-  "w": 4,
+  "w": 5,
   "l": 6
  }
 }
