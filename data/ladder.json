@@ -1236,9 +1236,30 @@
     ],
     "ctx": "2026-10-05:ladder"
    }
+  },
+  {
+   "id": "2026-10-06:ladder",
+   "date": "2026-10-06",
+   "status": "open",
+   "published": "2026-10-06T21:00:51.873Z",
+   "cycle": 7,
+   "rung": 3,
+   "seed": 24.04,
+   "stake": 41.59,
+   "games": {
+    "MLB": 2,
+    "NBA": 4
+   },
+   "seal": 1,
+   "sealed": {
+    "v": 1,
+    "hash": "cf3ef56e08409b3f368c6d57ae850040e36d3616676d4f4d8ecbd71d60582c5d",
+    "iv": "ZemcPzkPLkeBP9sj",
+    "ct": "fK4rvfFhBqDfGoWLroXYucQBLrwAPXRJY83/2+/TPUE4tNRRILgCFLjiRvYnTGMwvladpGQ40wLz8WEU4OthGzMC+lqMaeVCA+by+DJHyA4kPINDp1qC/BzSn/YNk6soOoq82Y8XNN6QMfMvvJ3/q7YWLE5/R+bROcfmZmKc+CUWP5sMzMSFwc1ZdDCLQNuU7KdbLi1nG3zUF/+ruYLrFy8nr3El+JAdlC6x7fmCsJ1TjGPWQVOHcJfsV2KTxpcfjXSYhFzpguAxJsNUTiZwZ6ZYpAWOL61P3753alVlGguH0K+8wS2iiNxkTOLf7ZaXLMi6BdSNUwS7xv2CH8jDY1OMU0N5RssVHJw96RvAD9D4kOBw2CgumtVNmSPimsXLZgTExxTXmDbHu9Di2rquBKooz1yWNHO32Ixv/3zKOMx8utAVbGY06HKUL3yAt1bor10r3FL4rCgThQVDYI/KQG+iu3sLU26b/YfFJm4kBKRAMbgLTDbaGoVWfVXc+yTOUPcdHoNGsx1okUVZwORrjXHv2sT2OhWg/X19wHSqkQGlSDnF5dbsn6NEelaTcdvP9plInP0JAnl4iw3ZksjBRH3FBLjCgvC4qPddDhQbUpxI5b4f8lZpzJQiKeBRvs/XchYDLuQhBnXPK0b1twWn9NMDiwZNcsH/LDZFQkbexk2Cu2gRLEWr6k/XaRVT/Au75DbDAW7w2Ju7jc3T0p9ikJUo0EnvgPIZh0BgyR6rvKno8JsZhrgAZ3NxCJETZ81PjGMrzITAaHJY0vBk2u3bUEIKqIK8TGXxvYwt31aDo6S9o9QLUKVTLXCtVnYDILt2LcXh6/Nb3XHf+rEQy5zpUUnysiV3EkguXOIFj+eBdNVqM2Y6z0dKvN/GyKhJbBwD+r5iBLgY5sbB4EeIJgVFgFwxOVEgoeev97nEGbmrq1UN9RVA4QfJfSjJjrZfWaAA+Lht6mIfh+Vgnxm3epMvPWy6vNQjltajcTYyilhRGQt+BZaggvWMKjC5OwAFAUZBX9yn5pM6/IxqO/Hps0xUPVEguz7D51UPAltu0490KjtgDMwVp170ecb2U6FPvq3863MtZpWevVhEgsqxfbotXMxbqHIQcukRWMi0sjr8H/37TGpTTmbOlvM+lhZm7qxtisaHyp9sOBvuzjXGfDmlpUBRoMuLnadct6xisG1Fug2zD/LERfDplw40GrxYISV17et6G+u0/tlnU+Gv6rZG/v/OkRtOk+XLg2MizBhGeQ=="
+   }
   }
  ],
- "updated": "2026-10-06T10:00:23.497Z",
+ "updated": "2026-10-06T21:00:51.876Z",
  "state": {
   "account": 173.09,
   "base": 24.04,

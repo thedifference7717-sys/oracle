@@ -2894,9 +2894,20 @@
     ]
    },
    "settled": "2026-10-06T02:57:27.821Z"
+  },
+  {
+   "id": "2026-10-06:robin",
+   "date": "2026-10-06",
+   "published": "2026-10-06T21:00:53.648Z",
+   "status": "noplay",
+   "games": {
+    "MLB": 2,
+    "NBA": 4
+   },
+   "reason": "fewer than three qualifying props in different games"
   }
  ],
- "updated": "2026-10-06T02:57:28.319Z",
+ "updated": "2026-10-06T21:00:54.652Z",
  "record": {
   "w": 39,
   "l": 10,
