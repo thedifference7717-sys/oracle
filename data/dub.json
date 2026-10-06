@@ -1126,19 +1126,50 @@
     "NFL": 1
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "16da8d178ad9536db713c4e27326934962d0e562490078491797165cf922f056",
-    "iv": "kW+ek3EKuwEi+/m1",
-    "ct": "zFoWETirGqGQCgsaSzjZXoubPp+LLhT2/YubNMsfFpNqETkvOqwI9FxAx8bJoP153Ytz8Hz//R0R41kVAFw3h5nLPGobSV4YdUax6cXG+Rh1P9mrrOMO81/ZwLEaStPeFhJjdkk7Cgw3aBK31PEDWA0PCeFXzj3tuFwCWWEE3nfCIiMkggDwGAZXo60z5mTi7nQ="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 254 passing yards",
+     "eventId": "401872979",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT05ATLNO-NOTSHOUGH6-225"
+     },
+     "line": 224.5,
+     "market": "passYds",
+     "need": "225+ passing yards",
+     "p": 0.7421,
+     "pAdj": 0.7051,
+     "player": "Tyler Shough",
+     "playerId": "4360689",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-06T00:15Z",
+     "teams": "NO vs ATL",
+     "revealed": {
       "v": 1,
       "hash": "2b603854f1979ce1f0e2fd3ce395f48c0c313d9e24bcf6c6fc45c17cebf028de",
-      "iv": "hfnIxySTNz1eTx0n",
-      "ct": "a17QRY6oMuGvPbKfSvScatMrdVYvVt0foseOY/HngInqs72y7tL8c7dyGeScgUuVdCryuwS6gUoXPI6Q40PxIM4AoCz7VQ6fyWeFZ4nRGAf5PYzqKlKQ5kz6jEqkUs8S/ZrQB4AFO0oyCI5GH7P6jts70QWWGMDsFuaxIw3tXhJ80rXtGaEypmmhmTha1bZOwmGdCeLC/BlIUGLljnMLGt3lOyjtVJR9qk0jWxFlyYza6KbhjRi2rNz20lEiRTqb7OCW4gTbFra+U7Odm8mgcwNyfQghi5u9ycmU6cDfhQzsIgdBKLocz8uFAkJm5JW2JwD0fRFwP2QQ64i/jYV4HUkZNoH7shtUzaIRaY+b/+gLCb6WzvJaENvp7ZjESMOrsiyPMl724G4xsGvhIDEYgyd5GT0LThQz/A9jrd8dQ5iPXxRpR/GwJjqpWMgNe68HktSAqrR822l01B6DLIKDDzQmRtnxke6liCr4KfGH0vWKRMUZ2pEB+kSZ6Aohp/WybsiETt5TefxP4s48cC4ieshy33ltLzRRfzlKQKvrTM63gWBTvDZeGla5fOZ6ucqrGY6cDNsLMJnz3VoEa98OmPt7FVblvwApdjEDlu9QnK4lXKHOmtaoO2a8hWDbtV8kGW0YolyuwGpZ"
+      "salt": "fc02b8716d429c9fb08e702d1c017f62",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-05:dub#0"
      }
     },
     {
@@ -1191,10 +1222,26 @@
       "ctx": "2026-10-05:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": null,
+   "fair": 109,
+   "price": 120,
+   "prob": 0.4792,
+   "revealed": {
+    "v": 1,
+    "hash": "16da8d178ad9536db713c4e27326934962d0e562490078491797165cf922f056",
+    "salt": "c07218922107d357c20f092aae11411b",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-05:dub"
+   }
   }
  ],
- "updated": "2026-10-05T21:15:23.184Z",
+ "updated": "2026-10-06T00:15:00.499Z",
  "record": {
   "w": 4,
   "l": 6

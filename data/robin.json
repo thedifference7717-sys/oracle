@@ -2720,11 +2720,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "TE · sim median 23 receiving yards",
+     "eventId": "401872979",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26OCT05ATLNO-ATLKPITTS8-15"
+     },
+     "line": 14.5,
+     "market": "recYds",
+     "need": "15+ receiving yards",
+     "p": 0.7642,
+     "pAdj": 0.7647,
+     "player": "Kyle Pitts Sr.",
+     "playerId": "4360248",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-06T00:15Z",
+     "teams": "ATL @ NO",
+     "revealed": {
       "v": 1,
       "hash": "6f6812b04ce98f4fa16b058e2cf1b72ab32caeaa50a43728ce46f5a2a788c8fb",
-      "iv": "XSu/wrwQPDoOt8RI",
-      "ct": "YykRgdiRJ4K6R9ZblD3WTE00JjAIvf6n/h7V1N14v+qZ0Vv7j9Gi/w6HPLnj6bDNBk2buH5riDPho6Vq04xmV4yc1xvJoRNTUR7oMn/TvOmdarbaG+Gks6zinz8+5dgW9WidDyX1kjgq0bAV90bE3ckglpmRUcpwsDN6bcjdWgveYBhQAKDaDPe/eP81sTY86dlpZ3AByfRHSdiTADZ5XvoxzPteeQvWXi8jkiV/TSAnSvOswD1/O1iEL3fbKfUJ1F8jg7yADx8bAz+nnXVLLvMmBtZNT7eRPoLYC1HqeUHvxV0gOpiL5AbLRreiQYy6E0EuQVPi3stKkQsyOVgAohwE6Lnau3A/1Nb3BichYM3BhlamQdzgXqWmLXS4CzvePtWco4kVvIHh48+iN4Nhtq0PpBPW4eTBDddefPU1csgfBAKKce6a6z2fatEdcnkzbdxw2aGYfYzbOxVbptH+VnIcNklV1Vpql+55VcBH4/jhAwyBt93kg6D9iCO4yO2aqrhX8KahMDAYAXE2PqOCVJmKxfmcj7+wMPLNxzI3C4OHipn8KGAYkv4P8qPZWWEPR+pc2idSTQh7sW9JzJIOag12ObvPF4gV10qLsqFV2RFZxnKeid8/dtlX9YQ6I7J9db/KFxvloF5MJSo="
+      "salt": "3e9253f679e608b584b06faac71a062a",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-05:robin#0"
      }
     },
     {
@@ -2832,7 +2869,7 @@
    ]
   }
  ],
- "updated": "2026-10-06T00:01:06.106Z",
+ "updated": "2026-10-06T00:15:00.515Z",
  "record": {
   "w": 36,
   "l": 10,
