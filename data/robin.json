@@ -2778,17 +2778,61 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#5 · vs Freddy Peralta · projected, 80% to start",
+     "eventId": "849839",
+     "gk": 849839,
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.61,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT052000NYYTB-NYYCBELLINGER35-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6548,
+     "pAdj": 0.6409,
+     "player": "Cody Bellinger",
+     "playerId": 641355,
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-06T00:00:00Z",
+     "teams": "NYY @ TB",
+     "lineup": {
+      "in": true,
+      "slot": 2,
+      "at": "2026-10-06T00:01:06.106Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "4d7f2f628911e3a59615918ef6e7e9481e5e4b53c564c26dcb7dadf07271da05",
-      "iv": "nOt4S6TfAj/yzPJa",
-      "ct": "GSw15lIxPQ4Mm18wkSe/KBtKOw4e8nF0hCo4+cPD4zOGDMt2iqeV3DpCMebhQlz5w1rT57TMvzeONAcbW0hRq83T6TxsYc1PX+TLn9lBaWhe+WF2ARRhovX58cyEp+tQ/LzKmPwsu0nn7/EnN/rIF/Sb9CHFZkMlsUtg2Q0+0HcqVzr+zLWAagaOEXSLq5asfceKU963gbjQ5ZwwN030lopTOkGIaBrQTkj7QRJ1L3l0J+gWo/FcK70RXyUHJuj9Mw10yH3Z+Z1DDa2SWRZTHHbg0FNoVTtLst9PihuH012ZWlWckGnRb7J9LUECW/g50BjPj9AX43g98TggEGC/3Zq7Hxa/D8+K7ll22J4Yrm6DY8B3pdePeWH9iXKxqgBTrQW5ax1Q1h8n/CxPIziHfXFsu+BTr0PymvZ0dmOBgRLskP9rQT7ejMMtNMTMdvgXHZWe7nf/ROg4nvm6xCxEZs9m+4k0bvHC68EvuZ2YPBPDZxdUxcuvmBF4q8c2g+LUqVSn/PcJwjYh3kMunAZaCaY+OUPEZYyGs5LRy+VUogfSUc7frnLRh8Eh2y/YjiVYkp2wUuIhbEPuol/2o0F/oIDwpD5aefVYQjCz/th7yWdpo9u4aNsdyoh09VuDlaOpuFNuhwGNbaPUN17gRE5RKHioeGdvEwsSDHtUKqbjY4o="
+      "salt": "84b9820c23bf480a7c9a3920528a628b",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-05:robin#2"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-05T21:15:23.419Z",
+ "updated": "2026-10-06T00:01:06.106Z",
  "record": {
   "w": 36,
   "l": 10,
