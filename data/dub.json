@@ -1270,17 +1270,56 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Yoshinobu Yamamoto · lineup confirmed",
+     "eventId": "849819",
+     "gk": 849819,
+     "kalshi": {
+      "ask": 0.64,
+      "bid": 0.63,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT061800LADATL-ATLDBALDWIN30-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6696,
+     "pAdj": 0.6535,
+     "player": "Drake Baldwin",
+     "playerId": 686948,
+     "price": -178,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-06T22:00:00Z",
+     "teams": "ATL vs LAD",
+     "revealed": {
       "v": 1,
       "hash": "48e29808974d07c848660ae4c956089bb3fcac70ea31dbd1771a4d92998c037b",
-      "iv": "o7fmZqgu2+EY3+aa",
-      "ct": "5Sbqv15b3oDNs31jkCKJjhhtiOefHM8tsuvAqB9/U527dIIZIQa7uVp82NjJH78VBZPzhGtGmGRdSwfnPaElmkoelgC65aBGiHFHpSH2FG0Zx1HuNpwwyJxTCoPrmRuJoOiZGmWGgsAE4xHPmCbJJExqxtHS6z0WRy0gnPR/xfiV1YWZVeJD2i6pmqri86xQPb8w3OL2sSUivmnCvjv3k0f9mwfqNa7R2ILUJLWtbQBpMWYZB+5+49dMK36FkkRCvplqsTw1G6G2EtxFczG5SwbFAW/vKLRY6eMlcd0ewTXt8ntC79BXs02AUSwz7XJtG2o7nDwkpMf1oHQLUL+V5Y7OjvU3Tizg8/OM1QT8Ia12iCxBtsfacuYH+I9DEP/0YJCyc+WuJhN1TX9/0NufpjirdQqLM3uiAlM3TdvpSbq9IRCKVxmBQDZ/lW7GyHVnGZoXlNflE2I7DwHFr6XKf9hXd0Ea2MRbRvkmio2gVIq6Fcz+bOrv1C7PT/se2r1CM0tzsLrUl3cntaksJyRFM4O8fzORkEX+yPM7X5Iwi5CxNX6j/i7hikQYD6VzK/KsU0TTiIrt8L56aHLKCsg0nkrC5c4aLXeSmCQ6+8pA0lXDjpaP7oZ8SwjZ2F6vmbefGOjCxAYYMQ0tcD2vJEC1Tb0+G5epwhQExu5F"
+      "salt": "feeb3ed7286b4abb5d463c5fcb93bb97",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-06:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-06T21:00:53.648Z",
+ "updated": "2026-10-06T22:00:59.301Z",
  "record": {
   "w": 5,
   "l": 6
