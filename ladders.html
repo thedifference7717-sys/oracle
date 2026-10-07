@@ -145,7 +145,7 @@ function render(d) {
         <div class="now"><div class="s">${t && t.status === "noplay" ? "No pick today: " + (t.reason || "nothing qualified") : "Waiting for today's lock."}</div></div>`;
     }
     const un = unitsOf(after.rows || []);
-    const recent = bets.filter(b => b.pick && b !== cur).slice(-5).reverse()
+    const recent = bets.filter(b => b.pick && b !== cur).reverse()
       .map(b => `${mark(b.status)} ${P.prettyDate(b.date)} · ${b.pick} ${P.odds(b.price)}`).join("<br>");
     return `<div class="card">
       <h3>${l.emoji} ${l.name} · ${w}–${lo}</h3>
@@ -154,7 +154,7 @@ function render(d) {
         <div class="bk" onclick="setBank('${l.sport}')"><div class="v" style="color:var(--blue)">${P.money(account)}</div><div class="l">bankroll · tap to change</div></div>
         <div><div class="v" style="color:${un.u >= 0 ? "var(--green)" : "var(--red)"}">${uTxt(un.u)}</div><div class="l">cycles ${un.cw}–${un.cl}</div></div>
       </div>
-      ${recent ? `<div class="mini">${recent}</div>` : ""}
+      ${recent ? `<details class="fold mini-fold" data-k="sl-${l.sport}"${P.foldOpen("sl-" + l.sport) ? " open" : ""}><summary><span class="fh">Record · ${w}–${lo}</span></summary><div class="mini">${recent}</div></details>` : ""}
     </div>`;
   }).join("");
   const up = d.updated ? new Date(d.updated).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " ET" : "";

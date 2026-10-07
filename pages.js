@@ -191,5 +191,13 @@
   P.flashSaved = id => { const el = document.getElementById(id); if (!el) return; el.textContent = "✓ Saved"; el.classList.add("on");
     clearTimeout(flashT); flashT = setTimeout(() => el.classList.remove("on"), 1400); };
 
+  // Collapsible sections: <details class="fold" data-k="…">, closed by default
+  // and remembered per device. P.foldOpen(k) gives the saved state, for
+  // sections a page draws after load.
+  P.foldOpen = k => { try { return localStorage.getItem("fold." + k) === "1"; } catch (e) { return false; } };
+  const foldInit = () => document.querySelectorAll("details.fold[data-k]").forEach(d => { if (P.foldOpen(d.dataset.k)) d.open = true; });
+  document.addEventListener("toggle", e => { const d = e.target; if (d && d.matches && d.matches("details.fold[data-k]")) { try { localStorage.setItem("fold." + d.dataset.k, d.open ? "1" : "0"); } catch (x) {} } }, true);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", foldInit); else foldInit();
+
   window.Pages = P;
 })();
