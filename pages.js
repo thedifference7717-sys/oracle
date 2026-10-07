@@ -4,7 +4,7 @@
 // the repo commit before the first game is the record.
 (function () {
   const P = {};
-  P.EMOJI = { MLB: "⚾", NBA: "🏀", NFL: "🏈" };
+  P.EMOJI = { MLB: "⚾", NBA: "🏀", NFL: "🏈", NHL: "🏒" };
   P.money = v => (v < 0 ? "-$" : "$") + Math.abs(+v || 0).toFixed(2);
   P.pct = v => v == null ? "—" : Math.round(v * 100) + "%";
   P.odds = a => { a = +a; if (!isFinite(a) || !a) return "—"; const r = Math.round(a); return (r > 0 ? "+" : "") + r; };
