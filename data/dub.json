@@ -1402,17 +1402,56 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Sean Newcomb · lineup confirmed",
+     "eventId": "849833",
+     "gk": 849833,
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT071600CLECWS-CLESKWAN38-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7089,
+     "pAdj": 0.6933,
+     "player": "Steven Kwan",
+     "playerId": 680757,
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-07T20:00:00Z",
+     "teams": "CLE @ CWS",
+     "revealed": {
       "v": 1,
       "hash": "d4d6b0b7dc8f7aca74d87760e09dd976b7fd668a6118a0faeca0aab6180bb14b",
-      "iv": "0IL8qqD1Q0+Jabyb",
-      "ct": "pZ2LzDfoRR7dYq6rslAUDFNz37Fw2LhOWBmdsUl/I5Ro/rQy+eQVCR+91ohH5uKs0UOsC2QYemi1Ar5RJYJY0+91BemA7RhuDqngmiS7a4ESq7c6jRu9smhop/syOOkV3Xs60mW9y/kHJoIYo0tFHa8H4IsRgJdvnGOcz8R65BMZO0BFjp7BG7e3SR8W6jAR3pF/7jLOANTZBp5WZMhs78vCfqWfpLEnYZa34vfR+hcz0Yu5PUyzox4FMHpmJg337ABDvYeWaDXiG/hAqQ8d9uirkDBC6I57FfrUUKt6IotZVny1FM7L4Fu3Cc9HWsWPy4I6qFZjWYc21FVRBvwpEZ6NprvM9PLgJXdUBVyKf80nz+kuwfv02ut49BRdWWwiSuQmNE01wj6sGiiYZw7m9CGmZC1C4JeV+Qma2qDZ0WETZ0X2BXxwY+0QSFXG0+t40DTZJRpIwOQrXHNdQk1FTY1pCvB87zaGlh09VIeUI/kmntnqjthczMiTNb2gGXf+IFJeOGgLKmKOd3C6AyAGnY1QJdE1L0P83T1AaQobfbdC9WwiR11jIh3B7mEhXj+icH07P/fQbcKBEsel2mVzBH8Q51M0yIbus8G23kpuQitOQTIjYGTz1oJC/srrdlffJFU6OJ52jlMmg9udyAm1"
+      "salt": "5d0e8931f6777ab9f6c9c5c3bbf33e84",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-07:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-07T19:00:27.409Z",
+ "updated": "2026-10-07T20:00:17.450Z",
  "record": {
   "w": 5,
   "l": 7
