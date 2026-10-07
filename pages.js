@@ -191,6 +191,20 @@
   P.flashSaved = id => { const el = document.getElementById(id); if (!el) return; el.textContent = "✓ Saved"; el.classList.add("on");
     clearTimeout(flashT); flashT = setTimeout(() => el.classList.remove("on"), 1400); };
 
+  // Every bet of a ladder, newest first: date, pick, the bet, odds, result and
+  // how it graded; days with no pick say why. Used for the sport ladders.
+  P.betList = bets => {
+    const mk = st => st === "won" ? "✅" : st === "lost" ? "❌" : st === "void" ? "➖" : st === "open" ? "⏳" : "·";
+    const rows = (bets || []).filter(b => b && b.date).slice().reverse().map(b => {
+      if (!b.pick) return `<div class="bl np"><span class="d">${P.prettyDate(b.date)}</span> No pick — ${b.reason || b.status || "nothing qualified"}</div>`;
+      const res = b.status === "open" ? "open" : b.note || b.result || b.status;
+      const was = (b.swapped || []).map(x => `<div class="sw">🔁 moved off ${x.pick} (${x.reason})</div>`).join("");
+      return `<div class="bl ${b.status || ""}"><span class="d">${P.prettyDate(b.date)}</span> ${mk(b.status)} <b>${b.pick}</b> ${b.need || ""}
+        <div class="s">${b.teams || ""}${b.price != null ? ` · ${P.odds(b.price)}` : ""}${b.stake ? ` · cycle ${b.cycle || "—"}, day ${b.rung || "—"}` : ""} · ${res}</div>${was}</div>`;
+    });
+    return rows.length ? `<div class="bls">${rows.join("")}</div>` : `<div class="bls"><div class="bl np">No picks yet.</div></div>`;
+  };
+
   // Collapsible sections: <details class="fold" data-k="…">, closed by default
   // and remembered per device. P.foldOpen(k) gives the saved state, for
   // sections a page draws after load.

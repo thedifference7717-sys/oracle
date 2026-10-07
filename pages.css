@@ -118,3 +118,11 @@ b,strong{font-weight:600}
 .fold.mini-fold>summary{font-size:13px;font-weight:700;color:var(--muted,#a3abb6);padding:4px 0}
 .fold.mini-fold>summary .fh::after{width:7px;height:7px;border-width:2px;margin-left:8px;transform:translateY(-3px) rotate(-45deg)}
 .fold.mini-fold[open]>summary .fh::after{transform:translateY(-4px) rotate(45deg)}
+
+/* A ladder's full list of bets (Pages.betList). */
+.bls{margin-top:8px;border-top:.5px solid var(--hair,#ffffff1a)}
+.bl{font-size:13px;line-height:1.45;padding:8px 0;border-bottom:.5px solid var(--hair,#ffffff1a);color:var(--text,#fff)}
+.bl .d{display:inline-block;min-width:46px;color:var(--dim,#8a8f98);font-weight:600}
+.bl .s{font-size:12px;color:var(--muted,#a3abb6);margin:2px 0 0 50px}
+.bl .sw{font-size:12px;color:var(--yellow,#FFD60A);margin:2px 0 0 50px}
+.bl.np{color:var(--dim,#8a8f98)}
