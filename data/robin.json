@@ -2956,11 +2956,50 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "#1 · vs Tyler Mahle · lineup confirmed",
+     "eventId": "849822",
+     "gk": 849822,
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT071800LADATL-LADMBETTS50-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7109,
+     "pAdj": 0.7043,
+     "player": "Mookie Betts",
+     "playerId": 605141,
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-07T22:00:00Z",
+     "teams": "LAD @ ATL",
+     "revealed": {
       "v": 1,
       "hash": "05e5d6cc35dccbe85af2fd11fab697ca04e09d259c4e12e2a08c83952bff1c6b",
-      "iv": "tPDsQLqvaoTItJ01",
-      "ct": "q9sllu8c03kev3EO/FUsJaXPcDtscOzMqslvZkZC6ejPXFRF7GnC0c885HdgA0nU22xoJmFAuywQ6oA4f0+24h38FqBccS8Xn3+86EE80DnNhMQmvEBnXCednLG6KWXiEJ91fihakjIeS5kArJXRy4Oa9yXsx3stcI9nSHSf4J6QVRn7R/YzKlNyO2auMP/o3IvHQNLdHn4Hfi/DKa5pH7oRbYYK5KI5oZ8I8Nd2x/bCyFzLEBBTzezAoIoAJaBUhSSMetYsc5J+3VCXJt40mOrpZzVCW/hAVtnFsm+WlXhqzTmQWFZDQ0yxN4HQ/bG8NeFOzyQocX31qXxnHuXd0PAYXVRLbtDhMSyIou9O98+N9rClWtJlH1tGDptye7l0FFPXxR/6eg4tqZW5n43dOz4/hqc/OGRD+5E+xGbuvQYdMJidbR0MHgS8pGyuKGo65x6BynBWzEFukRcpAmQpHdc2lUWwMlRj2nQ2ECDzDxHlYLwccNfdndpY40GDjlF/ChFqQ6dlhhvSvSAFRXXLf/C8TKnyPjz9VTHkbQTV0Phx/nNvurJhktGQVVgKFCDJ+yiM0PRmYMyizDuF45m2eb1oDeWaROvSg4fWrADGuJdgZyqHBWG38N0Kvrg0v3x5RvdogZd/idq6yV+fFAm/9AE="
+      "salt": "1503bf3b67a7aa198336397172edd3b5",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-07:robin#0"
      }
     },
     {
@@ -3048,7 +3087,7 @@
    ]
   }
  ],
- "updated": "2026-10-07T20:51:59.340Z",
+ "updated": "2026-10-07T22:00:24.470Z",
  "record": {
   "w": 39,
   "l": 10,
