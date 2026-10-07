@@ -1248,25 +1248,58 @@
    "id": "2026-10-06:dub",
    "date": "2026-10-06",
    "published": "2026-10-06T21:00:53.648Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 2,
     "NBA": 4
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "67aaa42cb69d24f28ca619f8775332222d4e5c4122a8bf20ef941c5a094799a9",
-    "iv": "YtaG7h95ZGskEXew",
-    "ct": "+s7nJuINJQ0RdJ3ZWe+WB1cdLKVxW9dFJYsdR5wTE7vokJM20eCv87oIyWFJkofohm+ip9yoy3D4MEEdVS6J/+SWpQ2keu7ojgzIdNRLjmu4x1ELvEpofq/SEn2TE2zNunMlxNhoEVW1iAY0OZgiY8N8nliHRRUWMBOrRrTpYsliR1f09MosIvIc+BJ6UU4ZrbAUeu4nJSG/KwTpQNK1tXQQ1KJtmTNSrvI9kJr5LZmFaZiS3bLT51l8Ek1RbDFyue42XUMngq6+E6yE1CGAOafL"
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "#1 · vs Dustin May · lineup confirmed",
+     "eventId": "849826",
+     "gk": 849826,
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT062130MILSD-SDFTATIS23-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6903,
+     "pAdj": 0.6944,
+     "player": "Fernando Tatis Jr.",
+     "playerId": 665487,
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-07T01:30:00Z",
+     "teams": "SD vs MIL",
+     "revealed": {
       "v": 1,
       "hash": "8b1df8a628d29ea95475d2dc6507ae30a29ca034029cdb0c069791876b0ac114",
-      "iv": "xq8CRkQMKXNxd9Eu",
-      "ct": "JYb2TX4yD0glnXIHOj8WauAjEB8IjEIssdcnXCgMUMPzHLCT7bDvej+jku9OpTnu36T4zxca0J+OEQaG8R33faAhV0JMyYFjo5sQvyYE6OSM0mgzvRpMrvkyWpOX42YuA0UOoP69HvGkMT9eTPsKdO6SBGOvCZAVxKZgE1XRlhRxgB5TS0yqfOw7SIx6NDqLAPoI4U9wMWtERniD6f8qzwy6sCxxkxUzaZlM9ztU7hlvSqO7wSGWtXuL/VJaxFG5G8jpA/uVFVDxMwgI2sEgZQkVYfUAyCm8lZO/eOA5bQPEscqxP82gYuBqj3NF4lVADV9YvxteEU5BimuYmqxIG05ta/2tgq+mFYqvCwY2nBi+F5PiummgeGfN37jwjnO/S3+7UpLycjOLoHzhaxYYa2PC8EGgL/BCSEmObnCMhnQmfdhnLK4yIdZoaXgLhCbQaWPylfieCfu6SoQt0DBD8aXB29/8y/DIfPXupIXjQvV4wwuNn2Wba6jD6CHZ2xfxk42PQiLw2TbXZnfBr8/QnMV84pFyyKdK7n8cIqpFw12+Esvny08HKvz7z+iju8qqn6V8Zj4nxWPrqB5BNModyLJCaf7cDQsjX5XPvtb6NlQAuVJm/QCJ4JFYdhk7t5H3/5CW3xyPbF1zpafHjBLQqHy0"
+      "salt": "bc2ee66b9e0225d2dc7b8d52f2b1612b",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-06:dub#0"
      }
     },
     {
@@ -1291,6 +1324,9 @@
      "sport": "MLB",
      "start": "2026-10-06T22:00:00Z",
      "teams": "ATL vs LAD",
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "48e29808974d07c848660ae4c956089bb3fcac70ea31dbd1771a4d92998c037b",
@@ -1316,12 +1352,33 @@
       "ctx": "2026-10-06:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Mookie Betts",
+    "sport": "MLB",
+    "start": "2026-10-06T22:00:00Z"
+   },
+   "fair": 120,
+   "price": 123,
+   "prob": 0.4538,
+   "settled": "2026-10-07T01:08:53.556Z",
+   "revealed": {
+    "v": 1,
+    "hash": "67aaa42cb69d24f28ca619f8775332222d4e5c4122a8bf20ef941c5a094799a9",
+    "salt": "1c3f51491f5479a7b1e7d2e01ba55158",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-06:dub"
+   }
   }
  ],
- "updated": "2026-10-06T22:00:59.301Z",
+ "updated": "2026-10-07T01:08:54.766Z",
  "record": {
   "w": 5,
-  "l": 6
+  "l": 7
  }
 }
