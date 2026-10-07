@@ -203,8 +203,11 @@ async function renderSports() {
     if (!d) return `<div class="card"><h3>${e} ${name}</h3><div class="why">One pick a day, ${s} only, on the Ladder's rules.</div><div class="roi" style="color:var(--yellow)">Coming soon</div></div>`;
     const bets = ((d.rows || d.bets || {})[s]) || [];
     const lu = ladderUnits(bets), f = flat(bets);
-    return card(e, name, `${f.w}–${f.l}`, "one pick a day", lu.u, lu.n, `${s} only · since ${bets.length ? P.prettyDate(bets[0].date) : "—"}`,
+    const html = card(e, name, `${f.w}–${f.l}`, "one pick a day", lu.u, lu.n, `${s} only · since ${bets.length ? P.prettyDate(bets[0].date) : "—"}`,
       lu.n ? unitsTxt(lu) : "No rungs settled yet");
+    const n = bets.filter(b => b.pick).length;
+    const list = `<details class="fold mini-fold" data-k="rs-${s}"${P.foldOpen("rs-" + s) ? " open" : ""}><summary><span class="fh">All ${n} bet${n === 1 ? "" : "s"}</span></summary>${P.betList(bets)}</details>`;
+    return html.replace(/<\/div>\s*$/, list + "</div>");
   }).join("");
 }
 
