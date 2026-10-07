@@ -3061,11 +3061,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.24 · 1.67 pts/gm this season (3) · a point in 2 of his last 3",
+     "eventId": "2026020054",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.61,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT07COLWPG-WPGKCONNOR81-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6827,
+     "pAdj": 0.6296,
+     "player": "Kyle Connor",
+     "playerId": "8478398",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-07T23:30:00Z",
+     "teams": "WPG vs COL",
+     "revealed": {
       "v": 1,
       "hash": "89a2fd5a6bc464c9de50fdeeb6c80c5aeb049a355c82e32c9f2b485c67ee627f",
-      "iv": "PjorMsjdTRRvcahc",
-      "ct": "kwTQ81H3jEamunDtBvTss707VPYbo92B36eLFfYqqP1idDZxaIhZlmA6uWaWeNF21OAPnoZ3oOJLoOsB+vpJ0JmHd9wF7pDZN60ba7/sDZaIIRnI0I/FqdOgc/g6f27L/2pjbyYahgzh9G5jBbbLM/cFDqLZhmxjp4KnGJKuXgh3viD8UglEhkMim/1A8wg26JgTcl9jhZ7stgOnSXdnuAP1c4y7hUWE0I11MYOVC1p7lqfhcVWT+c+C8e0Ru0uClgtunNxRBQcV/Y1MZVzstnbAK9z9fJAULG/VjG3oLQvIa9K2D0AWUCk55EZh9/skvL45uVsTnfd9AUcadqAwTEbTXAYjNMxEQ2y92G/zLJ4Bt2LE7D56NSwKwoLe5ceOZtZybIBH9q3jlC3Jcg6wjuQFduXlSoWXBcrr0nqrfI9QMcSEiS78iDHXLVENT29uRgpAlaRheJAz1WhiVou4bebp4ic0F8+EaUYRC1CLXwV8yPicaDl4As6IJUwKP8Vrt9aaviAmj6046D9W825Wa+jOXqXhpmfonFrX6Jb7aLm0nBmGWeGYPP7ifC2S0KWlFndOlOW0SVzMkVs93Y/IfqCSu9fC2D0+HmSIGDozc4TXlC/MBqYWwq4RmAg7cEfqdGHVWYC4K58x38E/YcpBP7QpaTcu+JZdBeFqFQ2rq1EAFCUJqBHtZA=="
+      "salt": "691d301239c47c1794d808cdfb656b36",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-07:robin#3"
      }
     },
     {
@@ -3077,17 +3114,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.043 · 1.33 pts/gm this season (3) · a point in 2 of his last 3",
+     "eventId": "2026020053",
+     "kalshi": {
+      "ask": 0.51,
+      "bid": 0.5,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT07PITWSH-PITEMALKIN71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6359,
+     "pAdj": 0.5098,
+     "player": "Evgeni Malkin",
+     "playerId": "8471215",
+     "price": -104,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-07T23:30:00Z",
+     "teams": "PIT @ WSH",
+     "revealed": {
       "v": 1,
       "hash": "f6763e87eb44fc303939efd77b5da1b6ec9e44b5864d32458b34e351135dce65",
-      "iv": "s+hgMYH+0BP9tThd",
-      "ct": "gI9M4kPzYTJZ6BEC9HrdCaPKSrUQoMINAO/qktYLAIv8phJU40iY7OZhh6I3HvZBjQacjc+5Ck9eznKnzT2AjfGjrCe37qhizyCzH+rqG+5oetzBziv+Q6yL8147bTEsWMi4F1v8IAR6HmDV0us+ZJd18H52Imbc9seIGtO3etxNHrCq/hiA7adEcS7AfQTrf2calcRbQ8Y9JtsGcoGev2u4MX8d2kdAzLfaNrWYewbHIylmed0BjqwX0d2oe4nkj8HmMQUcWOfkzdOYzYbp1mEldt/SyUNKguXb6Bi5tdEtKtDEyH9Nit15Q8Q5DybcQFyra1m6qYpmZB0w6dnnMGlsPplLFE9VUTNq45nNjvHe5lRuaFpuDGQeb+O9+hc45sDHdza8ERzpghPQBPDaJYzvAJMNXJxaLyACazCrqz3SX4XofOi1U1nYL9sxm4U2z/3p+PIfG6JNLtO6NxzhLoS9GOLBSHEC9OlyCiZd/xJfAxDeEAs5LJCxRM0i8KOmHxvRmZCT/2hS8Hfq/pjHGEXyqsscPQ5i2sICY7o+/o0jWbLAC2253Ykqez9sjIYfPzsmVaeZfWjh+WTEa05Ctir0uGid3uXtNi+6HbYiNo97MHb8xp33w9S3YTNS9auYap0z0FtjEw6k+WyTzZfG36vBJEhOXnKEv3Fa3FZ5QBxR9TRRBSgAwOk="
+      "salt": "47d71c1d57aa2524bb0a3555d9e19e87",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-07:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-07T22:00:24.470Z",
+ "updated": "2026-10-07T23:30:13.414Z",
  "record": {
   "w": 39,
   "l": 10,
