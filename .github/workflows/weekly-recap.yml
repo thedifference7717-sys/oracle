@@ -1,0 +1,53 @@
+name: Weekly recap
+
+# Monday mornings: last week's and the all-time record as one image
+# (engine/scripts/weekly-recap.mjs), to the owner's chat to post on X and to
+# the free public channel. Built from the public record only — settled,
+# revealed picks — so nothing sealed is read and nothing private is logged.
+
+on:
+  schedule:
+    - cron: "52 13 * * 1"     # Mondays ~9:52 AM ET
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout the public record
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: public
+
+      - name: Checkout the engine (private)
+        uses: actions/checkout@v4
+        with:
+          repository: thedifference7717-sys/prop-shop-engine
+          token: ${{ secrets.ENGINE_TOKEN }}
+          ref: main
+          path: engine
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install a browser to draw the card
+        working-directory: engine
+        run: |
+          npm install --no-save --no-package-lock --silent playwright@1.48.2
+          npx playwright install --with-deps chromium
+
+      - name: Draw and send
+        working-directory: engine
+        run: node scripts/weekly-recap.mjs
+        env:
+          PUBLIC_DIR: ${{ github.workspace }}/public
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TG_PUBLIC: ${{ vars.TG_PUBLIC }}
