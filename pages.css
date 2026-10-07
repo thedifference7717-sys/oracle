@@ -106,3 +106,15 @@ b,strong{font-weight:600}
 .hrow .who{font-size:13px;margin-top:4px;line-height:1.5}
 .empty{padding:30px var(--pad);text-align:center;color:var(--dim);font-size:13px}
 .fine{font-size:12px;color:var(--dim);line-height:1.5;padding:4px var(--pad) 20px}
+
+/* Collapsible sections (details.fold): closed by default, remembered per device. */
+.fold>summary{list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary h2::after,.fold>summary .fh::after{content:"";display:inline-block;width:9px;height:9px;margin-left:10px;border-right:2.5px solid var(--dim,#8a8f98);border-bottom:2.5px solid var(--dim,#8a8f98);transform:translateY(-4px) rotate(-45deg);transition:transform .2s}
+.fold[open]>summary h2::after,.fold[open]>summary .fh::after{transform:translateY(-6px) rotate(45deg)}
+.fold>summary .sh-tap{font-size:12px;color:var(--dim,#8a8f98)}
+.fold[open]>summary .sh-tap{display:none}
+.fold.mini-fold{margin-top:12px}
+.fold.mini-fold>summary{font-size:13px;font-weight:700;color:var(--muted,#a3abb6);padding:4px 0}
+.fold.mini-fold>summary .fh::after{width:7px;height:7px;border-width:2px;margin-left:8px;transform:translateY(-3px) rotate(-45deg)}
+.fold.mini-fold[open]>summary .fh::after{transform:translateY(-4px) rotate(45deg)}

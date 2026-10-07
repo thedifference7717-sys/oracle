@@ -23,12 +23,6 @@
 .pf{font-size:12px;color:var(--muted);margin-top:3px}
 .pf .ok{color:var(--green)}
 .pf code{font-family:var(--num);font-size:11px;color:var(--dim)}
-.fold>summary{list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.fold>summary::-webkit-details-marker{display:none}
-.fold>summary h2::after{content:"";display:inline-block;width:9px;height:9px;margin-left:10px;border-right:2.5px solid var(--dim,#8a8f98);border-bottom:2.5px solid var(--dim,#8a8f98);transform:translateY(-4px) rotate(-45deg);transition:transform .2s}
-.fold[open]>summary h2::after{transform:translateY(-6px) rotate(45deg)}
-.fold>summary .sh-tap{font-size:12px;color:var(--dim,#8a8f98)}
-.fold[open]>summary .sh-tap{display:none}
 </style>
 </head>
 <body>
@@ -65,8 +59,10 @@
 
 <div class="prods" id="prods"></div>
 
-<div class="section-h"><div class="sh-row"><h2>🏆 Sport ladders</h2><span class="sh-note" id="sportNote">coming soon</span></div></div>
+<details class="fold" data-k="recSports">
+<summary class="section-h"><div class="sh-row"><h2>🏆 Sport ladders</h2><span class="sh-note" id="sportNote">coming soon</span><span class="sh-tap">tap to show</span></div></summary>
 <div class="prods" id="sports"></div>
+</details>
 
 <details class="fold" data-k="recHist">
 <summary class="section-h"><div class="sh-row"><h2>Every pick</h2><span class="sh-note" id="histNote"></span><span class="sh-tap">tap to show</span></div></summary>
@@ -222,13 +218,6 @@ async function load() {
   setTimeout(load, live ? 60000 : 600000);
 }
 load();
-</script>
-<script>
-// Collapsible history sections: closed by default, remembered per device.
-document.querySelectorAll("details.fold[data-k]").forEach(d=>{
-  try{if(localStorage.getItem("fold."+d.dataset.k)==="1")d.open=true;}catch(e){}
-  d.addEventListener("toggle",()=>{try{localStorage.setItem("fold."+d.dataset.k,d.open?"1":"0");}catch(e){}});
-});
 </script>
 </body>
 </html>
