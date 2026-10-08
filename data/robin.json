@@ -3128,6 +3128,9 @@
      "sport": "NHL",
      "start": "2026-10-07T23:30:00Z",
      "teams": "WPG vs COL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "89a2fd5a6bc464c9de50fdeeb6c80c5aeb049a355c82e32c9f2b485c67ee627f",
@@ -3208,7 +3211,7 @@
    ]
   }
  ],
- "updated": "2026-10-08T00:10:21.482Z",
+ "updated": "2026-10-08T00:53:42.395Z",
  "record": {
   "w": 39,
   "l": 10,
