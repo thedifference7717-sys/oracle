@@ -3224,6 +3224,9 @@
      "sport": "NHL",
      "start": "2026-10-07T23:30:00Z",
      "teams": "PIT @ WSH",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "f6763e87eb44fc303939efd77b5da1b6ec9e44b5864d32458b34e351135dce65",
@@ -3251,7 +3254,7 @@
    ]
   }
  ],
- "updated": "2026-10-08T02:00:56.054Z",
+ "updated": "2026-10-08T02:13:20.043Z",
  "record": {
   "w": 39,
   "l": 10,
