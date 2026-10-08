@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#070B14">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>The Prop Shop · Sport Ladders</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -30,8 +30,11 @@
 .kv .l{font-size:11px;color:var(--dim);margin-top:1px}
 .bk{cursor:pointer}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
+<div id="psTicker"></div>
 <div id="topbar">
   <div>
     <div class="brand">THE</div>
@@ -43,7 +46,7 @@
     </div>
   </div>
   <nav class="tabs" aria-label="Sections">
-    <a class="navlink" href="index.html">🪜 The Ladder</a>
+    <a class="navlink" href="dashboard.html">🪜 The Ladder</a>
     <a class="navlink" href="dub.html">✌️ The Dub</a>
     <a class="navlink" href="robin.html">🐦 The Robin</a>
     <a class="navlink on" href="ladders.html" aria-current="page">🏆 Sport Ladders</a>
@@ -169,5 +172,6 @@ async function load() {
 soon();
 load();
 </script>
+<script src="ticker.js" defer></script>
 </body>
 </html>

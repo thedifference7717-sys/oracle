@@ -79,11 +79,17 @@
   async function loadPicks() {
     const day = etDay(), out = [];
     const [L, D, R] = await Promise.all(["ladder", "dub", "robin"].map(f => getJ(RAW + f + ".json")));
-    const add = (prod, x, res) => { if (!x || !x.pick && !x.player) return;
-      out.push({ prod, sport: x.sport || "MLB", who: x.pick || x.player, need: x.need || "", teams: x.teams || "", res }); };
+    const add = (prod, x, res, extra) => { if (!x || !x.pick && !x.player) return;
+      out.push(Object.assign({ prod, sport: x.sport || "MLB", who: x.pick || x.player, need: x.need || "", teams: x.teams || "", res,
+                               note: x.note || (typeof x.result === "string" && !/^(won|lost|open|void)$/.test(x.result) ? x.result : "") }, extra || {})); };
     for (const b of (L && L.bets) || []) if (b.date === day && b.pick) add("Ladder", b, b.status);
-    for (const b of (D && D.bets) || []) if (b.date === day) for (const l of b.legs || []) if (l && l.player) add("Dub", l, l.result || "open");
-    for (const b of (R && R.bets) || []) if (b.date === day) for (const l of b.legs || []) if (l && l.player) add("Robin", l, l.result || "open");
+    // Every leg of every bet, and the bet itself once it cashes.
+    for (const [prod, J] of [["Dub", D], ["Robin", R]]) for (const b of (J && J.bets) || []) {
+      if (b.date !== day) continue;
+      const legs = (b.legs || []).filter(l => l && l.player), n = legs.length;
+      for (const l of legs) add(prod, l, l.result || "open", { of: n, hits: legs.filter(x => x.result === "won").length });
+      if (prod === "Dub" && b.status === "won" && n) out.push({ prod, cashed: true, who: legs.map(l => l.player).join(" + "), need: "", sport: legs[0].sport, teams: "", res: "won" });
+    }
     return out;
   }
 
@@ -93,7 +99,7 @@
   function draw() {
     if (!root) return;
     const byGame = new Map();
-    for (const p of picks) { const g = pickGame(p); if (g) (byGame.get(g) || byGame.set(g, []).get(g)).push(p); }
+    for (const p of picks) { if (p.cashed) continue; const g = pickGame(p); if (g) (byGame.get(g) || byGame.set(g, []).get(g)).push(p); }
     const items = games.map(g => {
       const ps = byGame.get(g) || [], hit = ps.some(p => p.res === "won");
       const sc = g.state === "pre" ? "" : ` <b>${g.as ?? ""}</b>–<b>${g.hs ?? ""}</b>`;
@@ -110,7 +116,10 @@
   function breaking(p) {
     let el = document.getElementById("psBreaking");
     if (!el) { el = document.createElement("div"); el.id = "psBreaking"; document.body.appendChild(el); }
-    el.innerHTML = `<span class="k">🚨 HIT</span><span class="m"><b>${p.who}</b> ${p.need} — the ${p.prod} cashes ✅</span><span class="x" aria-label="close">×</span>`;
+    const what = p.cashed ? `<b>THE DUB CASHES</b> — ${p.who} ✅✅`
+      : p.prod === "Ladder" ? `<b>${p.who}</b> ${p.need}${p.note ? ` (${p.note})` : ""} — the Ladder rung is in ✅`
+      : `<b>${p.who}</b> ${p.need}${p.note ? ` (${p.note})` : ""} — ${p.prod} leg hits ✅ ${p.hits} of ${p.of}`;
+    el.innerHTML = `<span class="k">🚨 ${p.cashed ? "CASHED" : "HIT"}</span><span class="m">${what}</span><span class="x" aria-label="close">×</span>`;
     el.querySelector(".x").onclick = () => el.classList.remove("on");
     requestAnimationFrame(() => el.classList.add("on"));
     clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("on"), 12000);
@@ -120,8 +129,9 @@
     const [g, p] = await Promise.all([loadGames(), loadPicks()]);
     games = g; picks = p; draw();
     const day = etDay();
-    const fresh = picks.filter(x => x.res === "won" && !seen[`${day}:${x.prod}:${x.who}`]);
-    fresh.forEach(x => { seen[`${day}:${x.prod}:${x.who}`] = 1; });
+    const key = x => `${day}:${x.prod}:${x.cashed ? "cashed" : x.who}`;
+    const fresh = picks.filter(x => x.res === "won" && !seen[key(x)]);
+    fresh.forEach(x => { seen[key(x)] = 1; });
     if (fresh.length) remember();
     if (!first || fresh.length) { const show = first ? fresh.slice(-1) : fresh; show.forEach((x, i) => setTimeout(() => breaking(x), i * 13000)); }
     first = false;

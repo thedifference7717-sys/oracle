@@ -21,7 +21,7 @@ jobs:
       - name: What the CDN is serving
         run: |
           BASE="https://thedifference7717-sys.github.io/oracle"
-          for path in "data/ladder.json" "build.json" "index.html" "dub.html" "robin.html" "data/dub.json" "data/robin.json" "pages.css" "pages.js"; do
+          for path in "data/ladder.json" "build.json" "index.html" "dashboard.html" "dub.html" "robin.html" "data/dub.json" "data/robin.json" "pages.css" "pages.js"; do
             for q in "" "?t=$(date +%s%N)"; do
               echo "=== ${path}${q:+ (cache-busted)} ==="
               curl -s -D /tmp/h -o /tmp/b "$BASE/$path$q"
