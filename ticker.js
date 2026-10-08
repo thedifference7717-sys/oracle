@@ -1,6 +1,6 @@
 // The live ticker across the top of a page: today's games in all four sports
 // (ESPN's public scoreboards, refreshed every minute), our revealed picks
-// marked on their games, and a breaking-news banner when one of them hits.
+// marked on their games, and a breaking-news pop-up when one of them hits.
 //
 // Nothing sealed is ever shown: a pick appears only once its game has
 // started and the record carries it in the clear. Include with
@@ -33,13 +33,20 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
 @keyframes psRun{to{transform:translateX(-50%)}}
 @keyframes psBlink{50%{opacity:.25}}
 @media(prefers-reduced-motion:reduce){#psTicker .run{animation:none}}
-#psBreaking{position:fixed;left:50%;top:calc(48px + env(safe-area-inset-top,0px));transform:translate(-50%,-140%);z-index:60;max-width:min(680px,calc(100vw - 24px));width:max-content;
-  background:linear-gradient(90deg,#F7931A,#FFB04D);color:#120A00;border-radius:14px;padding:12px 18px 12px 14px;display:flex;align-items:center;gap:12px;
-  box-shadow:0 20px 50px rgba(247,147,26,.45),0 0 0 4px rgba(247,147,26,.18);font:700 15px Inter,system-ui,sans-serif;transition:transform .45s cubic-bezier(.2,.9,.3,1.2)}
-#psBreaking.on{transform:translate(-50%,0)}
-#psBreaking .k{flex:none;background:#120A00;color:#F7931A;font-weight:900;font-size:11px;letter-spacing:1.6px;border-radius:8px;padding:6px 9px}
-#psBreaking .m b{font-weight:900}
-#psBreaking .x{flex:none;margin-left:6px;cursor:pointer;opacity:.6;font-size:18px;line-height:1}`;
+#psBreaking{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(5,8,16,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+#psBreaking.on{opacity:1;pointer-events:auto}
+#psBreaking .card{position:relative;width:min(420px,100%);box-sizing:border-box;text-align:center;background:linear-gradient(160deg,#FFB04D 0%,#F7931A 55%,#E2780A 100%);color:#120A00;border-radius:24px;padding:30px 24px 22px;font-family:Inter,system-ui,-apple-system,sans-serif;
+  box-shadow:0 30px 80px rgba(247,147,26,.5),0 0 0 6px rgba(247,147,26,.22);transform:scale(.6);transition:transform .45s cubic-bezier(.2,1.2,.3,1)}
+#psBreaking.on .card{transform:scale(1);animation:psGlow 1.6s ease-in-out .45s infinite}
+#psBreaking .k{display:inline-block;background:#120A00;color:#F7931A;font-weight:900;font-size:12px;letter-spacing:2px;border-radius:999px;padding:7px 14px}
+#psBreaking .big{font-size:56px;line-height:1;margin:16px 0 6px}
+#psBreaking .who{font-size:28px;font-weight:900;letter-spacing:-.5px;line-height:1.15}
+#psBreaking .need{font-size:17px;font-weight:700;margin-top:6px;opacity:.85}
+#psBreaking .prod{font-size:15px;font-weight:800;margin-top:14px;background:rgba(18,10,0,.12);border-radius:12px;padding:9px 12px}
+#psBreaking .ok{margin-top:18px;width:100%;border:0;border-radius:14px;padding:14px;background:#120A00;color:#F7931A;font:900 16px Inter,system-ui,sans-serif;letter-spacing:.5px;cursor:pointer}
+#psBreaking .x{position:absolute;top:12px;right:16px;cursor:pointer;opacity:.55;font-size:24px;line-height:1;font-weight:700}
+@keyframes psGlow{50%{box-shadow:0 30px 90px rgba(247,147,26,.75),0 0 0 12px rgba(247,147,26,.28)}}
+@media(prefers-reduced-motion:reduce){#psBreaking .card{transition:none}#psBreaking.on .card{animation:none}}`;
 
   let root, games = [], picks = [], first = true;
   const seen = (() => { try { return JSON.parse(localStorage.getItem("ps.hits") || "{}"); } catch (e) { return {}; } })();
@@ -117,13 +124,20 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
   function breaking(p) {
     let el = document.getElementById("psBreaking");
     if (!el) { el = document.createElement("div"); el.id = "psBreaking"; document.body.appendChild(el); }
-    const what = p.cashed ? `<b>THE DUB CASHES</b> — ${p.who} ✅✅`
-      : p.prod === "Ladder" ? `<b>${p.who}</b> ${p.need}${p.note ? ` (${p.note})` : ""} — the Ladder rung is in ✅`
-      : `<b>${p.who}</b> ${p.need}${p.note ? ` (${p.note})` : ""} — ${p.prod} leg hits ✅ ${p.hits} of ${p.of}`;
-    el.innerHTML = `<span class="k">🚨 ${p.cashed ? "CASHED" : "HIT"}</span><span class="m">${what}</span><span class="x" aria-label="close">×</span>`;
-    el.querySelector(".x").onclick = () => el.classList.remove("on");
+    const need = `${p.need || ""}${p.note ? ` (${p.note})` : ""}`;
+    const prod = p.cashed ? "The Dub cashes ✅✅"
+      : p.prod === "Ladder" ? "The Ladder rung is in ✅"
+      : `${p.prod} leg hits ✅ ${p.hits} of ${p.of}`;
+    el.innerHTML = `<div class="card" role="alertdialog" aria-label="Breaking news"><span class="x" aria-label="close">×</span>
+      <span class="k">🚨 BREAKING · ${p.cashed ? "CASHED" : "HIT"}</span>
+      <div class="big">${p.cashed ? "💰" : "🎯"}</div>
+      <div class="who">${p.who}</div>${p.cashed || !need ? "" : `<div class="need">${need}</div>`}
+      <div class="prod">${prod}</div>
+      <button class="ok">LET'S GO ✅</button></div>`;
+    const close = () => el.classList.remove("on");
+    el.onclick = e => { if (e.target === el || e.target.closest(".x,.ok")) close(); };
     requestAnimationFrame(() => el.classList.add("on"));
-    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("on"), 12000);
+    clearTimeout(el._t); el._t = setTimeout(close, 12000);
   }
 
   async function tick() {
