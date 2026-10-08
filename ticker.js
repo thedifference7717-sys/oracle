@@ -13,7 +13,7 @@
   const etDay = (t = Date.now()) => new Date(t).toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
   const css = `
-#psTicker{position:sticky;top:0;z-index:40;height:36px;background:#050810;border-bottom:1px solid #1E2A44;overflow:hidden;font:600 13px Inter,system-ui,-apple-system,sans-serif;color:#C9D3E6}
+#psTicker{position:sticky;top:0;z-index:40;height:calc(36px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;background:#050810;border-bottom:1px solid #1E2A44;overflow:hidden;font:600 13px Inter,system-ui,-apple-system,sans-serif;color:#C9D3E6}
 #psTicker .tk{display:flex;align-items:center;height:36px}
 #psTicker .tag{flex:none;height:36px;display:flex;align-items:center;gap:7px;padding:0 14px;background:#F7931A;color:#120A00;font-weight:900;letter-spacing:1.5px;font-size:11px;z-index:2}
 #psTicker .tag i{width:7px;height:7px;border-radius:50%;background:#120A00;animation:psBlink 1.2s infinite}
@@ -29,10 +29,11 @@
 #psTicker .psg .pk{color:#6FA6FF;font-weight:800}
 #psTicker .psg.hit{background:rgba(247,147,26,.16);box-shadow:inset 0 -2px 0 #F7931A}
 #psTicker .psg.hit .pk{color:#F7931A}
+body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset-top,0px))}
 @keyframes psRun{to{transform:translateX(-50%)}}
 @keyframes psBlink{50%{opacity:.25}}
 @media(prefers-reduced-motion:reduce){#psTicker .run{animation:none}}
-#psBreaking{position:fixed;left:50%;top:48px;transform:translate(-50%,-140%);z-index:60;max-width:min(680px,calc(100vw - 24px));width:max-content;
+#psBreaking{position:fixed;left:50%;top:calc(48px + env(safe-area-inset-top,0px));transform:translate(-50%,-140%);z-index:60;max-width:min(680px,calc(100vw - 24px));width:max-content;
   background:linear-gradient(90deg,#F7931A,#FFB04D);color:#120A00;border-radius:14px;padding:12px 18px 12px 14px;display:flex;align-items:center;gap:12px;
   box-shadow:0 20px 50px rgba(247,147,26,.45),0 0 0 4px rgba(247,147,26,.18);font:700 15px Inter,system-ui,sans-serif;transition:transform .45s cubic-bezier(.2,.9,.3,1.2)}
 #psBreaking.on{transform:translate(-50%,0)}
