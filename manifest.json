@@ -2,12 +2,12 @@
   "name": "The Prop Shop",
   "short_name": "Prop Shop",
   "description": "The Prop Shop: the Ladder, the Dub and the Robin. Daily player props across baseball, basketball and football, every pick sealed before its game.",
-  "start_url": "./",
+  "start_url": "./dashboard.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#070B14",
+  "theme_color": "#070B14",
   "icons": [
     {
       "src": "propshop-180.png",
