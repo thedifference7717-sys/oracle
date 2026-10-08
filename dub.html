@@ -12,7 +12,7 @@
 <link rel="icon" type="image/svg+xml" href="propshop.svg?v=2">
 <link rel="apple-touch-icon" href="propshop-180.png?v=2">
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="pages.css">
+<link rel="stylesheet" href="pages.css?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -56,7 +56,7 @@
 <p class="fine">Every Dub is committed to the repo before its first game, so it cannot be improved afterwards. Model estimate — not betting advice. Bet only what you can afford to lose.</p>
 
 <script src="build-check.js"></script>
-<script src="pages.js"></script>
+<script src="pages.js?v=3"></script>
 <script src="dub-stake.js"></script>
 <script>
 const P = window.Pages;
@@ -169,6 +169,6 @@ function schedule(live){ isLive=live; clearTimeout(liveT); liveT=setTimeout(()=>
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden)load(isLive); });
 load();
 </script>
-<script src="ticker.js" defer></script>
+<script src="ticker.js?v=3" defer></script>
 </body>
 </html>
