@@ -3357,11 +3357,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.715 · 1.33 pts/gm this season (3) · a point in 3 of his last 3",
+     "eventId": "2026020060",
+     "kalshi": {
+      "ask": 0.78,
+      "bid": 0.76,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT08MINTB-TBNKUCHEROV86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7706,
+     "pAdj": 0.7802,
+     "player": "Nikita Kucherov",
+     "playerId": "8476453",
+     "price": -355,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-08T23:00:00Z",
+     "teams": "TBL vs MIN",
+     "revealed": {
       "v": 1,
       "hash": "615a3bf8db2a55771bdea9ae9405bc33edf7ba1a0cec78c0accd30b69ad98f34",
-      "iv": "UBum3aOlHZ9o7yHU",
-      "ct": "/xiZiv8XrzMInDyzbQ7ueQzN5/ef6UN290/a4lN3Y8zncHfHOG5znzK+zVQO1n5rd0jEs32xaFVTSD1hcdKevn1mMqBEx7mziORLmL5O5dI1YtmaPeqEfMjtzOsznCA6slU9Ufh9js2sKzlGMyvAT2e1S0LBXX82WOZySm4a2BEf2l9xMp/6oWCH9RsvCTKZy5xOTZ7SJkuJ9Sw/4CDEiGiab6JvrqiUHwH/K/A4T6z2GggxEK8MnUQlR7FrxM6UHQGkitqT2a+B0+tEWbaIoLAd2uEvaiDvdQLHnNzQAS6Ex1WRRVtCcta/6cOa7nGYNlMDiLxG2VYYMYoVEkganNBBHUvcMT4F3cvyeoHFtFcvs6XO9OwRWkV4/q/sdqrQxV5BA8vpXWdk32ItzWSkBbJD4DTSj8Ypb56UXJbno385iI1J96slZqKJsjW+JflC8pG9dW+IBtJ2XNfOTk79BJbdxO8QhNVt/7C1cZD0lnZQzZ5xAyEBBJDvwdshJ96rR30Ofdm9HKGAgcneoaAN83SezKWKcrYHJXHTMNpjihW0V/xmphhj8YVQoxllYLx8fhyx4dP9jLMYx3Bm5gUtQT+9ry9OgZs5g/9nefC8csll7hBsnvaNqTrApCgZV+1QmpvYuFIc0RGsQNxXXpZZoFdqpzb/l8nC442JPF3g419MVEbZRBdtRLoHiJbz"
+      "salt": "6c0c687247f043d0fa4fa57086b48267",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-08:robin#1"
      }
     },
     {
@@ -3381,25 +3418,99 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.388 · 2 pts/gm this season (3) · a point in 2 of his last 3",
+     "eventId": "2026020058",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT08NSHMTL-MTLNSUZUKI14-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7136,
+     "pAdj": 0.6998,
+     "player": "Nick Suzuki",
+     "playerId": "8480018",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-08T23:00:00Z",
+     "teams": "MTL vs NSH",
+     "revealed": {
       "v": 1,
       "hash": "559ff254de62be60e9632ecbb7fa66ffa4ad0af82e05e545ad9f2a8cda52bf6b",
-      "iv": "tBzRQOlqGWpP1lnn",
-      "ct": "4qRBKL8zdZ3N6aYhEOBhYNDij2u4972X0Ck/hTvxhaeFUZQROxlRY7Y0FcBmb4SQGyjmACeW+s7hwT38pWv9ukLE3prwej6CtviJsOIwbt91T5EBRhF6EDT3swqO13EnsgMOPB8e51ePt+sU58+90w6cHJGKBHQB9lVe0AUoNyPATwgVNz4x88QUY7xHEgX9erWSn1tztbT9LP6+Biolw729jrbfVmvvaF6HpvXf8/4H5HJ5JE/Sg1y34a4DgaV6EEQpuHVANiSVKtlynsalSQK/0dITWXl9lvf8OM3+bZV8zjxq0Iy5lxXKZ5Zm+3IsxNlambKCWFJDEhTkhhlEdVkjIrRkcgEBV1Uc3Tr8ygFStSUaATwaNkqWI8x7ZKkphkWPcDaLNet0DNLDeEIcc44d14vrC6iFTzEF7BzCs3byYo+mlIeSP8A89TiZpok1CQGQ7WHCgUGQ6R+a7aIcTFknanPmteGnUrSz0hSctoNObdgBxrc5UZwQLxjB6haN/ix9QYlrJ1QcVl4ZTd5VsioEl5XlIpolqfAYnGKbkaE3hSMlIPtQApBE1TDoEgQOI43+J+IzsxbfQdgd3/ciHruhQM0fKEXE6x3MoR+sw7xi09RDUvUdlIFJA59CPHIDY+cGHa0ujYhvuwpJCxKrFXUQgHr5WxzC4gkYbMImAzAUuLCfUg=="
+      "salt": "e8939c49029b6f58bb966914a2df3f67",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-08:robin#4"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.243 · 2 pts/gm this season (3) · a point in 3 of his last 3",
+     "eventId": "2026020059",
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.64,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT08PHIOTT-OTTTSTUTZLE18-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6835,
+     "pAdj": 0.66,
+     "player": "Tim Stützle",
+     "playerId": "8482116",
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-08T23:00:00Z",
+     "teams": "OTT vs PHI",
+     "revealed": {
       "v": 1,
       "hash": "db97191634a6f6922459cd7958b416e9c638623d6c56c37b8ac0ffe4d3f7ff8f",
-      "iv": "635xSf0zrQRxBSW1",
-      "ct": "04KXcnt+WqYpblkWFvT+FMXpCjdlFMKaOmEftDGF7Ug+46ALdszGkJQR9TIMblajZSsWaolH7x7lBHpT6mP+TvVnb7j6yZkhcrE7NXnu7A6KZPy8ZO12woH233kXSwpf8H1Ls19+bAe/NF3mjd2XoLiaDTaHDEXidL5fRdzECIsbQKXviCkJc3ie7iKHEFOoaDSXYs0I0ILi0WgEZSWjvJQTxW++WxPwS/Jsuvg+PaPTSCbzOyc4MM4dUEjwtAMNTot75mTi6UHqBX0NL/gHY27aI/ot6kRErZM0N9cm4AiojGT/POaJCVWPSep4MlUzveF3pXrhmRhxrythTTd4coZsScVDNFEkCoZMRtJyVM5nkOGKLKQF32NPSTrFCjVcaH0OLtkompJK2MGHpK0GWAIGW1amMClGC2z1bVtpGmwub7kkXAhQ3zqLNIJ8/3Q3K7ZGrpeK1xv/dcJiDagUkUXOoGPu+qONKcKgly5JQ5gAHTYpN82Ke68PbbWqBK1WTs0bi8m0UeQxXpSXd8YGgVwwf/gh2DXr8WpLZKGEPq/918cgah28Cq/+gZzw1eQ6KGs/ky6/K4j7gVd7xXUbdvBKePRQiZi0q8G2rFnZcU6VUxDwcd3kuFp6+a7V7+hC7UE2aDnp3qZMa2hREYQgOLx4tUeHWrGt/0QImNe9KIHOHmnvJnA="
+      "salt": "0617a50a3fa687aa8d2a2153080b9f6d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-08:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-08T22:01:35.866Z",
+ "updated": "2026-10-08T23:00:40.889Z",
  "record": {
   "w": 43,
   "l": 12,

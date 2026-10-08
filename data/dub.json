@@ -1538,17 +1538,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.715 · 1.33 pts/gm this season (3) · a point in 3 of his last 3",
+     "eventId": "2026020060",
+     "kalshi": {
+      "ask": 0.78,
+      "bid": 0.76,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT08MINTB-TBNKUCHEROV86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7706,
+     "pAdj": 0.7802,
+     "player": "Nikita Kucherov",
+     "playerId": "8476453",
+     "price": -355,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-08T23:00:00Z",
+     "teams": "TBL vs MIN",
+     "revealed": {
       "v": 1,
       "hash": "5eb55467ff9f99cc117e4ac71ffb7c38013e1231ebd5eff1e94284ee6d502ea4",
-      "iv": "weJyJQ6PDQITZIUU",
-      "ct": "V9R7GAFNG6V3Wh/QSVc9yDRO5iH/0V97+nrJvVixCeHcJmCv8fae6xwBijlcpxTo0c1V6g8cKt8nkA1rcakCPL1iHqb6Y/p4Yze4k4jZ/2sbQPaAZLPF/d7b2OiQNAsTQnZ+0jg43MyXUlVxUBtLCvpwEeDH+g38ZnwMf+SquoPaoTx7AyivtffNF7JX3LhxBdhiTLymykbsveeJBZnbIdzRgiwS6tFkpQWHA1y8TkfL+6sX92nXLQau8gMrIktxTGC0rLPXLy2gS+3Gp1jtDlKmAjoPkzMfrrgMW1eEduS+j++ymd44cL7H31ettgYNGNUPjOf7eP4NzR4TtqMSOBa5V3x202wahncLgWFUV76xcGvsacqIu/I5LZx3mXR9Gkmixy36qQgJFA8JicSwEXOiSpTefiAKxpE9mrpMD3k14Ov5cK9os8VG3CHfKqcZnZN2fpzc4Hqsx8Df0vnVGjgWFiTqisRHEVnB5OLZSzuQfmXozgAwMg7lirxTY6Ijs+F7nU4LMRPRfpaz6fQoqHS1jUgc3hWGNtpIM7NcuCPC0Loz1G8Yx1Dvt7e1ak9nEeu347D7NjGrHcZpmwPFxn1fm/C6yw6+bhSMIR8YZsy7VZr1F/dBO4iHkTaaumZemI098ohGNHaoHMnikQe/uBPmUSvams8bdT5uKxomLZX2QTaMDYDZMIN6hA=="
+      "salt": "5e13397fd0edca99c8879acc35e7eab4",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-08:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-08T22:01:34.942Z",
+ "updated": "2026-10-08T23:00:40.867Z",
  "record": {
   "w": 5,
   "l": 8
