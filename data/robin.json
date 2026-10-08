@@ -3159,11 +3159,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.234 · 2.67 pts/gm this season (3) · a point in 2 of his last 3",
+     "eventId": "2026020055",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT07EDMANA-EDMEBOUCHARD2-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6815,
+     "pAdj": 0.6805,
+     "player": "Evan Bouchard",
+     "playerId": "8480803",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-08T02:00:00Z",
+     "teams": "EDM @ ANA",
+     "revealed": {
       "v": 1,
       "hash": "bcb3a4596fb9177a41453740660419e8682a0f439c95c3c71a18d2b88448e1da",
-      "iv": "2zoMimZnr6nL3TlI",
-      "ct": "AHGnA231gMP0S1CV9UoLGAaIPZDiWh0Jc3BXmBzrUyiK1VUPHNZv+v2kwKBRE5R+h9Y7Ix9fk7oZ59FSfkgIg+gcyPveiTBzWtnMkKywJk6stmqIdJIY5U9tEW2MM6u7cetFi/ZRdHbc5hjd25uUHp0BVkaS8vBTbYTH/8+LgVSmC8TtuzHe/4kwlFgdjKOe8BHvxobghnrJUw1KvNrpZrb4FbXSJRw0oIM/FPQjjfQr9KC+2obWZyPgO4rfkH47WNUPrxcL/p+7byiEYBFDDJMbHKspZyLX2fgSwU1U8E3N/i77I7TUHmL4RII1kzQmULQgugkQ84zpc6XFMVnTOQU1bxEXAqxtL3N+3nq3g3j1oyqM6F3bvMvYy4E4eOXlSX8c3AEfhILOrhCudl24guAaP3S2agw3XSoAIx94kMNaouMjYoCVcwlwoRtI7GwVcl5mCBedQ9Egp5qS5E4S90x4X5QFc0p9FU4r/ALRGHy5OqYu75aFYcKoNzl3+/KzSu4884h85iUNPSLZMFTYNZpMa0axoi6LSg4JluBoOk+K/60ZMa4ij0Gw3AAHCHrxg97HNsIj27hi1M2IpVmoZSX4MKcMom2K2MdTevPRHluf2WUQ7MjDyAMPcPgeeqpOh7hHoANL7uriYaN4D2MQ7BsKn9WxCnB6R6EH7Xc1se1A2Q6Td15nHDIBBQ=="
+      "salt": "a07fec9b61498e046180a11678440209",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-07:robin#4"
      }
     },
     {
@@ -3214,7 +3251,7 @@
    ]
   }
  ],
- "updated": "2026-10-08T01:04:28.727Z",
+ "updated": "2026-10-08T02:00:56.054Z",
  "record": {
   "w": 39,
   "l": 10,

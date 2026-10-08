@@ -1353,15 +1353,81 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
+   "detail": "λ 1.412 · 1.67 pts/gm this season (3) · a point in 3 of his last 3",
+   "edge": -0.0518,
+   "eventId": "2026020055",
+   "fromProps": 63,
+   "kalshi": {
+    "ask": 0.77,
+    "at": "2026-10-07T19:00:25.677Z",
+    "bid": 0.74,
+    "spread": 0.03,
+    "ticker": "KXNHLPTS-26OCT07EDMANA-EDMLDRAISAITL29-1"
+   },
+   "line": 0.5,
+   "market": "pts",
+   "need": "to record a point",
+   "p": 0.7183,
+   "pAdj": 0.7701,
+   "pick": "Leon Draisaitl",
+   "playerId": "8477934",
+   "price": -335,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "to record a hit",
+     "pAdj": 0.7043,
+     "pick": "Mookie Betts",
+     "price": -233,
+     "sport": "MLB"
+    },
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6933,
+     "pick": "Steven Kwan",
+     "price": -213,
+     "sport": "MLB"
+    },
+    {
+     "need": "to record a hit",
+     "pAdj": 0.6714,
+     "pick": "Sam Antonacci",
+     "price": -178,
+     "sport": "MLB"
+    }
+   ],
+   "sport": "NHL",
+   "start": "2026-10-08T02:00:00Z",
+   "teams": "EDM @ ANA",
+   "revealed": {
     "v": 1,
     "hash": "6836c618b2545640ef0225b4be23917351e9c502e511c26efd00fd356091fbd2",
-    "iv": "V3eOS9gAGrTz6OaG",
-    "ct": "z73Gchah/0lp9/CKzq9O7xuVu0q/DgxsGlI+rZhBdZUs/j15MizyoF4Qd46KwgIjqqNhzh3S7R92cZoUljZaJ3/nPAhky9Pr1wE2eW0VbS3AGy77sxTGde9vDuo1vapqn3buOt0vgP7UUxPIhCadwT+F0mEH59klAG0eX8F16hKE3/Gj/GDuQEEIIy/2LJcSoh9gSGC0bkfN3H7QNW9PlW802tA9ROsLBIS7tLnS3XuOmiQhf62Bsmdy46f7+546xAY5t0lTn/u2tMswGQ6ea6CTNcg7+7dL4DzMWbyx9JfuADhRDtguxdj5NIu7LkyQ2RxLf8M1hCRVAkRIz+xSkR4bV9f/udbdPOKNqSznKWa5/7pbcUvjOKOuPEKGWHtuj6jVMyn/q5tPTOhQObePxU+yXzT/Zti8TojYFCN+pvdlGZL92tFzHbJLqEIUHeoDa0N/OOu4lYCyIRZJF6tIYmpRHZ+l3gmriGq5ekps5pZANdRTtrwMlNjvE/NFg6HbSPgxwsd4d5+sR9pOOQ1HK1DAIUxKYvgLo8RE4s63qpvIewWg6+VDS+meEq8oJHulPZEUsLLfzQaR/5kiYcrMpw2DU75JoI+qoSyiAfnFnXToFuyUJ3VeK7Gm0Mm86v3Ic3dqNjPWjuf7Zf4WxkI5V9DtkDUiVDciUzZ/hdIDBbxXJW5A3/oRGEWd7eC/bryKdjqbU+v33kBG9xZMCXzTCzve7RxUIIhqsKjLCmsQ5i3C6gZrFdTLQmuMWWaRJjreB2SNK84MgJksG2/02hHplYmkmqOApa9w7O0+7vP5hMKKYiv05kHl6LcGPJoPHC+RnpSGksQJLSrxai5UyipehZ6908jUAKeRPbt7wWlyVxOdV13yU1tiAlegGmUzUBFV50pWRnxNAQi/g55jz0AN3dfh6uHHs/oTRZed5QnXqMayh6kHfi9C5likOmr8N0+I2bxh7qwZxpaIxkHAiPneiJFYix+KO6juuwflqs1tfdDKn4phAWkKkwj9Qi2kGtqvT6C1++tqDRRKDkMcwxFCOKkbh4XaWI562AkQ3OhblYMkEoeUUz+PEu0RqYiv86KdF79hiL+7aSqWayb3dn0ttKnyR8NUwJEWP9ysHEHIasd1xHGpo91VS4idq4UkL36MoFS2v3w="
+    "salt": "a4bfab92afd412c58cc4921a9e96f919",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "fromProps",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "sport",
+     "start",
+     "teams"
+    ],
+    "ctx": "2026-10-07:ladder"
    }
   }
  ],
- "updated": "2026-10-07T19:00:25.679Z",
+ "updated": "2026-10-08T02:00:56.022Z",
  "state": {
   "account": 173.09,
   "base": 24.04,
