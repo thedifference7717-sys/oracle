@@ -2977,6 +2977,9 @@
      "sport": "MLB",
      "start": "2026-10-07T22:00:00Z",
      "teams": "LAD @ ATL",
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "05e5d6cc35dccbe85af2fd11fab697ca04e09d259c4e12e2a08c83952bff1c6b",
@@ -3211,7 +3214,7 @@
    ]
   }
  ],
- "updated": "2026-10-08T00:53:42.395Z",
+ "updated": "2026-10-08T01:04:28.727Z",
  "record": {
   "w": 39,
   "l": 10,

@@ -1379,19 +1379,13 @@
    "id": "2026-10-07:dub",
    "date": "2026-10-07",
    "published": "2026-10-07T19:00:27.408Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 4,
     "NBA": 5,
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "4ab5669a53cc81876ad1f57896a110e861fefd429fe8ae41cf624efc23ef45ba",
-    "iv": "Cqjom8k9Q42Dj9X9",
-    "ct": "ocfmKis+5A9DrGBYRnBEfZwakus/CKY9H3TVUNB+P10MZEioO75RwOCYaRyxhp34KkDPQT3obpnb5OckK0QlW0+GIoCqqexE6eCT/v6o5gSgfVTLghYKb6ICoj6tUeZ+NFr0EJtz174PKsVjXTE/QWtSjQE9q5QLu1IZ2TNJvRfXQj3hQUUqb76nzpAJMw4gpV2Lve9bKItEw4VC6x5ks3vLWPq5nyPcHzU2q/6pqnwpfJyBNyyS0F/bQ2Jao9FShYLmHS9s6ioIvwWNg97yP+eCz0o="
-   },
    "legs": [
     {
      "detail": "#1 · vs Tyler Mahle · lineup confirmed",
@@ -1415,6 +1409,9 @@
      "sport": "MLB",
      "start": "2026-10-07T22:00:00Z",
      "teams": "LAD @ ATL",
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "08b683b4a89f37b0f614f06042daa43ce339b46ee485791afc1dc1e1c7e0c2ef",
@@ -1490,12 +1487,33 @@
       "ctx": "2026-10-07:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Leon Draisaitl",
+    "sport": "NHL",
+    "start": "2026-10-08T02:00:00Z"
+   },
+   "fair": -102,
+   "price": 110,
+   "prob": 0.504,
+   "settled": "2026-10-08T01:04:27.430Z",
+   "revealed": {
+    "v": 1,
+    "hash": "4ab5669a53cc81876ad1f57896a110e861fefd429fe8ae41cf624efc23ef45ba",
+    "salt": "ac1a789baf1c468aa8e70ea544d48281",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-07:dub"
+   }
   }
  ],
- "updated": "2026-10-07T22:00:24.448Z",
+ "updated": "2026-10-08T01:04:28.620Z",
  "record": {
   "w": 5,
-  "l": 7
+  "l": 8
  }
 }
