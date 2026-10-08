@@ -35,7 +35,7 @@ a{color:inherit;text-decoration:none}
 .btn.blue{background:var(--blue);color:#fff;box-shadow:0 10px 30px rgba(43,123,255,.35)}
 
 /* nav */
-nav{position:sticky;top:0;z-index:20;background:rgba(7,11,20,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav{position:sticky;top:36px;z-index:20;background:rgba(7,11,20,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;gap:22px;height:66px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.3px;font-size:18px}
 .logo i{width:34px;height:34px;border-radius:9px;background:var(--orange);display:flex;align-items:center;justify-content:center;box-shadow:0 0 22px rgba(247,147,26,.45)}
@@ -165,7 +165,7 @@ footer a{color:var(--muted)} footer a:hover{color:var(--text)}
 </style>
 </head>
 <body>
-
+<div id="psTicker"></div>
 <nav><div class="wrap">
   <a class="logo" href="#"><i><svg viewBox="0 0 24 24" fill="none" stroke="#120A00" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></i><span><small>THE</small>PROP SHOP</span></a>
   <div class="links"><a href="#products">Picks</a><a href="#sealed">How it works</a><a href="record.html">Record</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></div>
@@ -346,5 +346,6 @@ async function j(p) { try { const r = await fetch(p, { cache: "no-store" }); ret
   if (recent.length) document.getElementById("track").innerHTML = recent.concat(recent).map(card).join("");
 })();
 </script>
+<script src="ticker.js" defer></script>
 </body>
 </html>
