@@ -3053,11 +3053,55 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#4 · vs Max Fried · projected, 94% to start",
+     "eventId": "849838",
+     "gk": 849838,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT072000TBNYY-TBYDIAZ2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6885,
+     "pAdj": 0.6781,
+     "player": "Yandy Díaz",
+     "playerId": 650490,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-08T00:00:00Z",
+     "teams": "TB @ NYY",
+     "lineup": {
+      "in": true,
+      "slot": 1,
+      "at": "2026-10-08T00:00:33.075Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "92dc0a74797610f20f8915a5de5f36de573d0e3eb7d81431dd6159be18928692",
-      "iv": "9MkICWYr2+y8xICm",
-      "ct": "+HlVgTzxNEy0Lv2eftv0F4+LruZbcqCBkshuGeqpSmw5qsbYHnEm0ifLQVUpP5EKmCt/x5pXeKBOwfwKEVN3ChsWhtm3uSrts+GLzujP/M+htxyYdAAWs2lfqXKSGnph5tqbGU9nev4xkSCfGtjxCXNPlefAmJ1PuOlFNoPDwRqaRKV2zdwy5TtTbvpXvUrWtwOEoye/hdWarWTaeY86Q6NOB9kygShP9jml4aHRCaBGfqPyHvDLzCyccqpOEiNeXenbGYQMU1DEFKqgfsmbUFtLsmRN2LTjHkO0zfwwT7WDWq4jGC7Hz5tDVHUysjpHMJ2NgV+8Ovci0QDjEevU1o0MlwxN8q0gRHmlSNXNuKvESikBHydI0Pawm1rq5hmn44U+F/3p6GODJO1EcEo0QMAkQCTmWHe89XjKB/HLKmHuZ+XUdBaMUHgHoMHkyaux1hpmChMLNes+XP8cF7cWB0SlUW06uSEbXEIrI9EKrw/EjjK7EqDpLMdx0BxG6rST6KxTUDlvPotcOprt1ltOJv22vweM8EK7qYyxmAWskXxdh+fdYlenJzOz+6kjxZc1igmdBHR38f368PaeCkqBKfB0cd/coW7n/B8W8MqBOxrheTTLrEb448eys7NHFU2XDszgpQzU0iG0EAwdmYxUVEI="
+      "salt": "4670e6417cf8e98f04d902ce98d44897",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-07:robin#2"
      }
     },
     {
@@ -3161,7 +3205,7 @@
    ]
   }
  ],
- "updated": "2026-10-07T23:30:13.414Z",
+ "updated": "2026-10-08T00:00:33.075Z",
  "record": {
   "w": 39,
   "l": 10,
