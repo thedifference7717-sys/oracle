@@ -13,7 +13,7 @@
 <link rel="icon" type="image/svg+xml" href="propshop.svg?v=2">
 <link rel="apple-touch-icon" href="propshop-180.png?v=2">
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="pages.css">
+<link rel="stylesheet" href="pages.css?v=3">
 <style>
 .prods{display:grid;gap:12px;margin:0 var(--pad) 12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
 .prods .card{margin:0}
@@ -74,7 +74,7 @@
 <p class="fine">Past results don't guarantee future ones. Model estimates, not betting advice. Bet only what you can afford to lose.</p>
 
 <script src="build-check.js"></script>
-<script src="pages.js"></script>
+<script src="pages.js?v=3"></script>
 <script>
 const P = window.Pages;
 if (P.hasKey()) document.getElementById("ownerTabs").style.display = "";
@@ -225,6 +225,6 @@ async function load() {
 }
 load();
 </script>
-<script src="ticker.js" defer></script>
+<script src="ticker.js?v=3" defer></script>
 </body>
 </html>
