@@ -1341,7 +1341,7 @@
   {
    "id": "2026-10-07:ladder",
    "date": "2026-10-07",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-07T19:00:25.677Z",
    "cycle": 7,
    "rung": 4,
@@ -1399,6 +1399,9 @@
    "sport": "NHL",
    "start": "2026-10-08T02:00:00Z",
    "teams": "EDM @ ANA",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-10-08T03:05:54.539Z",
    "revealed": {
     "v": 1,
     "hash": "6836c618b2545640ef0225b4be23917351e9c502e511c26efd00fd356091fbd2",
@@ -1427,12 +1430,12 @@
    }
   }
  ],
- "updated": "2026-10-08T02:00:56.022Z",
+ "updated": "2026-10-08T03:05:54.540Z",
  "state": {
   "account": 173.09,
   "base": 24.04,
-  "stake": 64.96,
-  "rung": 4,
+  "stake": 84.35,
+  "rung": 5,
   "cycle": 7,
   "pl": 73.09,
   "cycles": {
