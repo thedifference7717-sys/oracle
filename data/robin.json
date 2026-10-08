@@ -3377,6 +3377,9 @@
      "sport": "NHL",
      "start": "2026-10-08T23:00:00Z",
      "teams": "TBL vs MIN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "615a3bf8db2a55771bdea9ae9405bc33edf7ba1a0cec78c0accd30b69ad98f34",
@@ -3510,7 +3513,7 @@
    ]
   }
  ],
- "updated": "2026-10-08T23:00:40.889Z",
+ "updated": "2026-10-08T23:20:20.120Z",
  "record": {
   "w": 43,
   "l": 12,
