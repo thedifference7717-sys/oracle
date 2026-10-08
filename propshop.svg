@@ -1,9 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" fill="#000"/>
-  <rect x="96" y="96" width="320" height="320" rx="72" fill="#30D158"/>
-  <g fill="none" stroke="#000" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M206 236v-38a50 50 0 0 1 100 0v38"/>
-    <rect x="178" y="236" width="156" height="112" rx="26"/>
-    <path d="M256 274v36"/>
+  <defs><radialGradient id="g" cx="50%" cy="32%" r="75%"><stop offset="0" stop-color="#FFB04D"/><stop offset=".45" stop-color="#F7931A"/><stop offset="1" stop-color="#C86A00"/></radialGradient></defs>
+  <rect width="512" height="512" fill="url(#g)"/>
+  <rect x="116" y="116" width="280" height="280" rx="66" fill="#0A1226"/>
+  <g fill="none" stroke="#F7931A" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M214 240v-34a42 42 0 0 1 84 0v34"/>
+    <rect x="190" y="240" width="132" height="96" rx="22"/>
+    <path d="M256 272v32"/>
   </g>
 </svg>
