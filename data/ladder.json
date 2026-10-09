@@ -1520,16 +1520,9 @@
     ],
     "ctx": "2026-10-08:ladder"
    }
-  },
-  {
-   "date": "2026-10-09",
-   "status": "noplay",
-   "reason": "no priced props on the slate",
-   "closest": null,
-   "published": "2026-10-09T11:00:56.242Z"
   }
  ],
- "updated": "2026-10-09T11:00:56.244Z",
+ "updated": "2026-10-09T11:08:15.517Z",
  "state": {
   "account": 269.6,
   "base": 26.96,
@@ -1545,10 +1538,9 @@
  },
  "next": {
   "date": "2026-10-09",
-  "first": "2026-10-09T12:00:00.000Z",
-  "lockAt": "2026-10-09T11:00:00.000Z",
+  "first": "2026-10-09T23:00:00.000Z",
+  "lockAt": "2026-10-09T22:00:00.000Z",
   "games": {
-   "NBA": 2,
    "NHL": 4
   }
  }
