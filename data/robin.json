@@ -3487,11 +3487,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.461 · 2.5 pts/gm this season (4) · a point in 4 of his last 4",
+     "eventId": "2026020065",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT08TORVGK-VGKJEICHEL9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7274,
+     "pAdj": 0.6998,
+     "player": "Jack Eichel",
+     "playerId": "8478403",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-09T02:00:00Z",
+     "teams": "VGK vs TOR",
+     "revealed": {
       "v": 1,
       "hash": "34d24b24cdb84c386a2013bbf2c0311e25580984d64a663b234b3fc4ca9559cd",
-      "iv": "zZRYK4S2Y73DALWo",
-      "ct": "AU07F1VrI70BEvmDSEnSRLrhtMr4VN2YxECSg+RorFfZP4vdQ5LgU3/S6eehmErCbU9cvgRTu20crGt4EheKb83wLQA80J+ibwW0/SoY1fQA4ILuZoQ9Jr1yX/G+pjpcNMCckcsyDHnfshN+V5DbfJSuNU7516+NT1SsLPHGvyc/b0qR7LLRbVShYzLROpDRU1FP02qU8lNplq61Ow7QHZdWGbhM/7SfOAVnTpkTL43d0w2YjlYAZMFkk7YCowsoMkczmdWzSAZBNs88pSTkXkAWhjQYwXqnVK7cNUy3pDOpBSQRzLAjqWNSRfDn5VcX1+mWVjBeCTSR5J6bCpPyVW/s6Kee2m9JrjIt1vaO6GWbzauM6W1e4e9EoQo6iVJrsH7d+KOhqggoK9uwdbguJ/3fO+z6KtoF0wUo0m5K33x8q/5LDdiVaHLPKz84fRHnqeuYytPmjVXsGSKmj1CQvOzAAIb4kfPXyg6IM3j2EpU+SbxrMOBRi9Ky+6w/CH14Lj0cpHUhI0nYe8hOSkKsbhLQADNcxUvCkVCJlVWQVWVF+jmwoyy0p3SmFQtwNtFTBw8/vtsh9and3O3t4Pr21BWRIah6BAPMGZ9yJTFG2n4wR3oF8ptJQvZpkB04qr86rlNaa6ud6TolYTElJ+dLGyZ/zanahRT5q/7XyZd3mOUWv9Tq6i0="
+      "salt": "134a5cc4dedde94ce25e3c92eaed0368",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-08:robin#3"
      }
     },
     {
@@ -3593,7 +3630,7 @@
    ]
   }
  ],
- "updated": "2026-10-09T01:42:38.150Z",
+ "updated": "2026-10-09T02:00:39.543Z",
  "record": {
   "w": 43,
   "l": 12,
