@@ -1520,9 +1520,16 @@
     ],
     "ctx": "2026-10-08:ladder"
    }
+  },
+  {
+   "date": "2026-10-09",
+   "status": "noplay",
+   "reason": "no priced props on the slate",
+   "closest": null,
+   "published": "2026-10-09T11:00:56.242Z"
   }
  ],
- "updated": "2026-10-09T10:00:34.275Z",
+ "updated": "2026-10-09T11:00:56.244Z",
  "state": {
   "account": 269.6,
   "base": 26.96,
