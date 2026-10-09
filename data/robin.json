@@ -3441,6 +3441,9 @@
      "sport": "NHL",
      "start": "2026-10-08T23:00:00Z",
      "teams": "MTL vs NSH",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "559ff254de62be60e9632ecbb7fa66ffa4ad0af82e05e545ad9f2a8cda52bf6b",
@@ -3513,7 +3516,7 @@
    ]
   }
  ],
- "updated": "2026-10-08T23:20:20.120Z",
+ "updated": "2026-10-09T00:12:32.440Z",
  "record": {
   "w": 43,
   "l": 12,
