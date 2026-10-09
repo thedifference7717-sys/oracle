@@ -1514,7 +1514,7 @@
    "id": "2026-10-08:dub",
    "date": "2026-10-08",
    "published": "2026-10-08T22:01:34.942Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 1,
     "NBA": 6,
@@ -1544,6 +1544,9 @@
      "sport": "NFL",
      "start": "2026-10-09T00:15Z",
      "teams": "TB @ DAL",
+     "result": "won",
+     "actual": 25,
+     "note": "25 receiving yards against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "8ece085ef709f08b684dbd6dcd6e8252d21e3efd359a3e051c554d6ad9a9dd4e",
@@ -1625,6 +1628,7 @@
    "fair": -141,
    "price": -146,
    "prob": 0.5846,
+   "settled": "2026-10-09T03:20:00.110Z",
    "revealed": {
     "v": 1,
     "hash": "7830a3dd81c4adc307466f8588a0031b2c8d53bc6561d2cc99161c050904901f",
@@ -1639,9 +1643,9 @@
    }
   }
  ],
- "updated": "2026-10-09T00:15:41.419Z",
+ "updated": "2026-10-09T03:20:01.147Z",
  "record": {
-  "w": 5,
+  "w": 6,
   "l": 8
  }
 }
