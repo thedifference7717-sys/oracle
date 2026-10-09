@@ -3563,6 +3563,9 @@
      "sport": "NHL",
      "start": "2026-10-08T23:00:00Z",
      "teams": "OTT vs PHI",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "db97191634a6f6922459cd7958b416e9c638623d6c56c37b8ac0ffe4d3f7ff8f",
@@ -3590,7 +3593,7 @@
    ]
   }
  ],
- "updated": "2026-10-09T01:00:47.378Z",
+ "updated": "2026-10-09T01:42:38.150Z",
  "record": {
   "w": 43,
   "l": 12,
