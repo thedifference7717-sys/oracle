@@ -1522,19 +1522,50 @@
     "NHL": 10
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "7830a3dd81c4adc307466f8588a0031b2c8d53bc6561d2cc99161c050904901f",
-    "iv": "F3wKuTFaNabi/DAJ",
-    "ct": "WOVqcsEUAjZMHQwUfeTPevp/pJVPI972VlzYvOS9IMnGcWCsiCo4PNoPRAgy8CEZeCn5lSQGCc77Be0n+XZ6OutXCoYxhvESB2yRIjmM1gAEj/jLRr2NXl374MlPbWad8IHB/U+SRywbUg8JJy0dO+qU5gQVFJvpDKnko9TvixJ9i8dI4CT0BAbS1FdF08pJVZqnYE2GEoGKmgxKYOG0k390IK6CLSTJ6WENn5JymzrhReXGwaJrGyLVOyDUnVTRsvVjZ30JvDFlbrdYRVPduqrF"
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "TE · sim median 33 receiving yards",
+     "eventId": "401872980",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26OCT08TBDAL-TBCOTTON88-15"
+     },
+     "line": 14.5,
+     "market": "recYds",
+     "need": "15+ receiving yards",
+     "p": 0.7587,
+     "pAdj": 0.7603,
+     "player": "Cade Otton",
+     "playerId": "4243331",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-09T00:15Z",
+     "teams": "TB @ DAL",
+     "revealed": {
       "v": 1,
       "hash": "8ece085ef709f08b684dbd6dcd6e8252d21e3efd359a3e051c554d6ad9a9dd4e",
-      "iv": "zP5i//YxGNeM7ILx",
-      "ct": "36HQZfntFEQHG8e6L3g8R0vGP97HvLv4iZ5Cq8QP3CB52cfREdT20dIGzPiropZtTSr7asSjW0g+47ybY7Te4zs01LAfd3tw8oc9AGHyjk6ZxfRex42QRPnsqevg3vQdAevbxBUTSgKWQo6pB7kTTVTWr//8uUlabCPwxXHbfLAOMNqHYUA07P8OBmvoUVCQioCDuUFqRttjbtBQIkLD1UBUwuy2z9STa7etIUQnkXefBSZlTesQlDM8xl+d1CaHo8HK2NNMEguOB5ZWEmCZcteet4ywt8AoV9PZk93bpQKX+CAOJ+WFZDsL1f2KfKT2YqCEWiMFlUJ4RiaJPcpEC47DLgHJCvPzTDpAy1xm0knVsnuP4pV38q+br6st5XWk6HuxNzH6Pg6StBa7G/CPztisaO97C/4i43lQg/b/IyeLt+/MpBD+SykCnQ0gYete9vumRS+FeFUD6vpyk7dI8rSQbdpW8tKzZtoytip+nXMGcebuCXgUOBe1/rlMh9eVwid4J38M1KD1Tjkf7ogTK1u9D4Lcx+m9RuYR/QAM2/5KC1PdbFOiOCaHKGebeoN7vSLEYB98Pe0kfUBdDePKUyjoU/8KMEcjhTMlezG5TmlknTiZlsTV0he2K1S2474pTw4hDvk="
+      "salt": "ceea587df378c3551930c7f9749c3b59",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-08:dub#0"
      }
     },
     {
@@ -1585,10 +1616,30 @@
       "ctx": "2026-10-08:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Jalon Daniels",
+    "sport": "NFL",
+    "start": "2026-10-09T00:15Z"
+   },
+   "fair": -141,
+   "price": -146,
+   "prob": 0.5846,
+   "revealed": {
+    "v": 1,
+    "hash": "7830a3dd81c4adc307466f8588a0031b2c8d53bc6561d2cc99161c050904901f",
+    "salt": "55dadfe263ee11ac10f6583667ec20bd",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-08:dub"
+   }
   }
  ],
- "updated": "2026-10-08T23:20:19.671Z",
+ "updated": "2026-10-09T00:15:41.419Z",
  "record": {
   "w": 5,
   "l": 8

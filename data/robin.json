@@ -3349,11 +3349,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 252 passing yards",
+     "eventId": "401872980",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT08TBDAL-TBJDANIELS10-150"
+     },
+     "line": 149.5,
+     "market": "passYds",
+     "need": "150+ passing yards",
+     "p": 0.8966,
+     "pAdj": 0.7046,
+     "player": "Jalon Daniels",
+     "playerId": "4596472",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-09T00:15Z",
+     "teams": "TB @ DAL",
+     "revealed": {
       "v": 1,
       "hash": "20fabc96f929f6e5b730c5a2107ec8d45f342af3cc4ac2c8ba000ad871690ffe",
-      "iv": "koitKdNBllQcqarZ",
-      "ct": "6yMHjyGK3P8m0m1Af5gFbjt7Tt33LfoJul47UXcG3Y1uNu8jFUj/hla1RFLULf+PcHnc7D98RlngASxdv0aqZMT45gdnypuyH+eIMcxk72EjtHBbAo4ZZzwtF9S0qzo5rW2oY9h091PhsCO+Agnt7PIbWcF0Ik65lTU1Pn4S7WTGsKZM79VKsKN9p6GgA9fhM3fJX9JipIZ+/VBKzzSuet6U2eR/2pKR5JmREsY/3D1XzKFzV0/QRYSCY4umabICXplCZ9adnlaTYO5US1R2S9Pnrvj++cGLu2+i100pH3Ud070BF+eQiNtd6fOUYsnPlTKYNDEIEz5uGQJ2dHVq3ln235euKZKI4PvEovJznTmvX8Q9ha/rWe4Msn83iGPvMkSwZue5g1ILzMYPd6QzxD8xuZIZ6NQ9OtUGOEu59cd5w+lfkvUs2gAP8w8YgYHYxXHnWQnrC8bgt7ff1nl6KDeX5GpA0fVYm8xdMzdUDlNdRF7FxBogaDtqkeDopN4ovQw9/8n4haTnDM8LErcwkmoAXqN4tINuBHifOLP/Y9Ogf/3GOYCPbM2RJPgKGm2icMNHsyAyKHUQOyHKL9wr7IRR6qcdqtMIR1NCqz97J6GNfp/KlaUlnRdpzEXPPXHF7Ht/4FSS8TunciZKKQ=="
+      "salt": "137554894179b0423747babeabe14f08",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-08:robin#0"
      }
     },
     {
@@ -3516,7 +3553,7 @@
    ]
   }
  ],
- "updated": "2026-10-09T00:12:32.440Z",
+ "updated": "2026-10-09T00:15:41.442Z",
  "record": {
   "w": 43,
   "l": 12,
