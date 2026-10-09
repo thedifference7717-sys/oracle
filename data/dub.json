@@ -1667,17 +1667,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.142 · 1 pts/gm this season (2) · a point in 1 of his last 2",
+     "eventId": "2026020068",
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.63,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT09PITCBJ-CBJZWERENSKI8-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6604,
+     "pAdj": 0.6504,
+     "player": "Zach Werenski",
+     "playerId": "8478460",
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-09T23:00:00Z",
+     "teams": "CBJ vs PIT",
+     "revealed": {
       "v": 1,
       "hash": "32203f22a791045b0b7e408a2f8603f2808f04fa334829d56a2c02b77f38760a",
-      "iv": "QaDGWOQbMBVrml9t",
-      "ct": "L1D5Q1x3DvoVm2hXvnHbpCIcC2FW2+c/QDEkMh6lL/3lZrrlicbX+9bHWfnn0CA2v/LgdkcdIGxiK5Ou8yDpLp5qVtPGgfr5vVDpGl/06PbHMaOIUWzxsA+tDLb2UUa31UmoKcrl+TB/JMpb0lUgoL9Z4WDcvFdULcIPUVxdngkvEqJtDFfQwa5n0hJxndfFebpfGgqjadxt9pKto1inqQTewEVSPUAIGK4ncogpWtxeKY+yBCtJcFzOaDisoxPxxu18GBPT6aInlSZLyzP0Lp2rs+hHT9sq7vuLe0/J6NSlIXikrBmxBM4hJf341E0F9gHlQT7b9BAFeLcfF5n0JFYyGGW/y/Mp27SHP5qpm/uSxs2S2EcKjuMEx0vbaVe8dGX9+cBPesLozMoPbGjIjrGiT9/iSzu6wMej9qEWv/FUhoYbstjVAbvvqYPFWSlFfXOcxSYScoJqAkxtGlyuY7ev4is3BSjUngI55ElnEcDxB/5B2U7q+83LGDahGSrCwH93gkpn+Sjh3frUg+Ag69S07P7YwcRCUXn8P4on3OZEjGN7hkhu6MhVDTpr8mbg4oYpL1yoibbOoIKgYw/UICfw6JrwHy7aErvGLVZqmQbh0+Ga5CnjhvpnSxr3NFgmOk7sHcdIBM8LVVnR9QGxhSxwfOfSQhYjJ6rCwzI4X//szhAGdDte"
+      "salt": "15d737a3494b62a5ace5cebb70c3a950",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-09:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-09T22:00:38.117Z",
+ "updated": "2026-10-09T23:00:56.817Z",
  "record": {
   "w": 6,
   "l": 8
