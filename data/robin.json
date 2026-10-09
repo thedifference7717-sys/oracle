@@ -3465,6 +3465,9 @@
      "sport": "NHL",
      "start": "2026-10-09T01:00:00Z",
      "teams": "COL @ CGY",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "3eb08c686e35ada7021e32629519344ea2be8b64459ec4ad794d18780202cec1",
@@ -3633,7 +3636,7 @@
    ]
   }
  ],
- "updated": "2026-10-09T02:19:41.570Z",
+ "updated": "2026-10-09T02:20:45.629Z",
  "record": {
   "w": 43,
   "l": 12,
