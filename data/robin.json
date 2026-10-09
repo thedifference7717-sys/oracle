@@ -3369,6 +3369,9 @@
      "sport": "NFL",
      "start": "2026-10-09T00:15Z",
      "teams": "TB @ DAL",
+     "result": "won",
+     "actual": 176,
+     "note": "176 passing yards against a 149.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "20fabc96f929f6e5b730c5a2107ec8d45f342af3cc4ac2c8ba000ad871690ffe",
@@ -3630,7 +3633,7 @@
    ]
   }
  ],
- "updated": "2026-10-09T02:00:39.543Z",
+ "updated": "2026-10-09T02:19:41.570Z",
  "record": {
   "w": 43,
   "l": 12,

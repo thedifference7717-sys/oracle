@@ -1432,7 +1432,7 @@
   {
    "id": "2026-10-08:ladder",
    "date": "2026-10-08",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-08T22:01:33.007Z",
    "cycle": 7,
    "rung": 5,
@@ -1491,6 +1491,9 @@
    "sport": "NFL",
    "start": "2026-10-09T00:15Z",
    "teams": "TB @ DAL",
+   "actual": 176,
+   "result": "176 passing yards against a 149.5 line (graded early, 20+ clear)",
+   "settled": "2026-10-09T02:19:40.045Z",
    "revealed": {
     "v": 1,
     "hash": "0bc8b273f204a01d3ee3761cdf55516407d59c520b7adc64c1522896b6545513",
@@ -1519,16 +1522,16 @@
    }
   }
  ],
- "updated": "2026-10-09T00:15:41.400Z",
+ "updated": "2026-10-09T02:19:40.047Z",
  "state": {
-  "account": 173.09,
-  "base": 24.04,
-  "stake": 84.35,
-  "rung": 5,
-  "cycle": 7,
-  "pl": 73.09,
+  "account": 269.6,
+  "base": 26.96,
+  "stake": 26.96,
+  "rung": 1,
+  "cycle": 8,
+  "pl": 169.6,
   "cycles": {
-   "done": 2,
+   "done": 3,
    "busted": 4
   },
   "canFund": true
