@@ -1687,6 +1687,9 @@
      "sport": "NHL",
      "start": "2026-10-09T23:00:00Z",
      "teams": "CBJ vs PIT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "32203f22a791045b0b7e408a2f8603f2808f04fa334829d56a2c02b77f38760a",
@@ -1714,7 +1717,7 @@
    ]
   }
  ],
- "updated": "2026-10-09T23:00:56.817Z",
+ "updated": "2026-10-09T23:28:00.240Z",
  "record": {
   "w": 6,
   "l": 8
