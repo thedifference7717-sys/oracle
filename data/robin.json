@@ -4020,6 +4020,9 @@
      "sport": "NHL",
      "start": "2026-10-10T17:00:00Z",
      "teams": "BOS vs PHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "6760ba8d1cd3704a5ca60e29586bd0448cf17171f97fa395da65d85eec1a4333",
@@ -4071,7 +4074,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T17:00:26.347Z",
+ "updated": "2026-10-10T17:28:33.891Z",
  "record": {
   "w": 52,
   "l": 13,
