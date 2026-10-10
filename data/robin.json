@@ -3875,6 +3875,9 @@
      "sport": "NHL",
      "start": "2026-10-09T23:00:00Z",
      "teams": "WSH vs NYR",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "d486e224a1b4c7a35b8e6145c838cf213f7465c92c23669f8bbd31670925825a",
@@ -3902,7 +3905,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T00:13:00.355Z",
+ "updated": "2026-10-10T01:39:37.981Z",
  "record": {
   "w": 48,
   "l": 13,
