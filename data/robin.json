@@ -4201,6 +4201,9 @@
      "sport": "NHL",
      "start": "2026-10-10T23:00:00Z",
      "teams": "TOR @ COL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "8df5d9821ba510f5ab3ce48bdf2fd980c79319c1cc934e038a7af8c0be1fa20a",
@@ -4228,7 +4231,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T23:01:00.931Z",
+ "updated": "2026-10-10T23:21:45.599Z",
  "record": {
   "w": 52,
   "l": 13,
