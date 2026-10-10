@@ -1775,18 +1775,12 @@
    "id": "2026-10-10:dub",
    "date": "2026-10-10",
    "published": "2026-10-10T16:28:53.384Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 1,
     "NHL": 14
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "38f0452fd2d48e4ed8b3bb219cc07ba4a9391b8b1ff0fad903b27bbc032dbd7c",
-    "iv": "QrQH8T0XteO0jhV7",
-    "ct": "iEjjCqwhm1mfHBZd1MPDEvQ6b8sbFMEFviRfBGd8MFiIQE9TdzLqemjQMXJDVWIyVN3rZpSozEX7GqzRjo6iERkouVq3DLJmV06mLle5LmqwGfhvFJW6/ZF/ykHdiAscLx6p+kWGr9Txf78aR9NmjMJWbWoibmk26ZYVDaUCZkoMnbR1b/WAw/20SBwElyF7grrMsKUdDPrtcQjP4nwkNyB5+Dhq30/JYKc9PymlcEu2hHBD1XVySmur1MUpb9oW9vUuyCCf8BVPMIuzZ8YKKqLF4ujLSw=="
-   },
    "legs": [
     {
      "detail": "λ 1.52 · 2.25 pts/gm this season (4) · a point in 4 of his last 4",
@@ -1809,6 +1803,9 @@
      "sport": "NHL",
      "start": "2026-10-10T20:00:00Z",
      "teams": "EDM @ SJS",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "2d5339020fdb911eb5c4120ee89820d87e1a5d675e98ad65bda4362e70b2b121",
@@ -1834,19 +1831,77 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.394 · 1.75 pts/gm this season (4) · a point in 3 of his last 4",
+     "eventId": "2026020075",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.72,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT10DETMTL-MTLNSUZUKI14-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7147,
+     "pAdj": 0.7296,
+     "player": "Nick Suzuki",
+     "playerId": "8480018",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-10T23:00:00Z",
+     "teams": "MTL vs DET",
+     "revealed": {
       "v": 1,
       "hash": "6ba7a796aecfa0945ef5eeb0bf5163565263112137e3cd2ecd816a3e06aa5476",
-      "iv": "zLNi9Vq1AgpJIpC2",
-      "ct": "E77xC/j24YV3lqFfOwyd86DKH4cQqaaDOrwOo74VF7FJ4b2lbNFhnVBUddy5twD8rxknrZf/2C4GBZ8nRShIevlW7nc2453gP/kgtjK7vqnvh935024zfIq2HMV7i8vIFFRwEUeQOUn/ctwHuxe/bTJHCCWmb5XUG9slbcdUcKAgOIWs2oOnsWG55t3DgOmr0m2vgwjk4LasJCi+pXUvWcDk+PPDP4i+EQz4RBoeSZuGnpmFnSrOLLkOaYjGqat1xb6eKWHm8JAotiTWBsS35sAro67To9hvJrIPT8WtOEcH/vl8w0JmAQgtFWASsYD9eu+QyvprvDh/10UcecPgLzz0k+R+AePjZLNtsc05N09IHDd8QRfljiqWXhVKuNLeydKuqUrSeTzRpUQ5HDPw1MvzHepIoqQLVFo9wGPH2hjoayfaQDhafUpuwARwYKFfI+McKm1pIPPKfj0FWoUwl4+WmIsYTW65tk/1Cy4lt7mzil6Ev1M9uNr64AichniMntVOnV1Y/xprSuWjV/6kx2oMXHi5PIoker+R8EJQb6gaWLR7l9p5bVmBiNSRJr1kYP0vL1ixG/S59gF4L3rZJsGpBoMlUXGuuunPCV2bFVTytsl5HZtMBeM7AM/xY0FtkRkdKHLgkDMMjyOZllPgaU9wMQNogPt7UfqqR5CUHFH4KPXTcl+M"
+      "salt": "3a17be7c94d30c545cc40ca8f3367651",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-10:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Connor McDavid",
+    "sport": "NHL",
+    "start": "2026-10-10T20:00:00Z"
+   },
+   "fair": -112,
+   "price": -136,
+   "prob": 0.5277,
+   "settled": "2026-10-10T22:36:55.341Z",
+   "revealed": {
+    "v": 1,
+    "hash": "38f0452fd2d48e4ed8b3bb219cc07ba4a9391b8b1ff0fad903b27bbc032dbd7c",
+    "salt": "566abc59fcecf41f7f265713d4ad335d",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-10:dub"
+   }
   }
  ],
- "updated": "2026-10-10T20:00:50.262Z",
+ "updated": "2026-10-10T22:36:56.304Z",
  "record": {
   "w": 7,
-  "l": 8
+  "l": 9
  }
 }
