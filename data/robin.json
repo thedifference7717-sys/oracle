@@ -4048,11 +4048,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.343 · 0.67 pts/gm this season (3) · a point in 2 of his last 3",
+     "eventId": "2026020071",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.73,
+      "spread": 0.06,
+      "ticker": "KXNHLPTS-26OCT10VANNJ-NJJHUGHES86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7046,
+     "pAdj": 0.7891,
+     "player": "Jack Hughes",
+     "playerId": "8481559",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-10T19:30:00Z",
+     "teams": "NJD vs VAN",
+     "revealed": {
       "v": 1,
       "hash": "6d8f5e2adfb23264aa572cd013f6d844aa24359b6ab5d0f7557be3703fa0f1c4",
-      "iv": "LQRFfVwFalADaG5g",
-      "ct": "6djMgtDCeQlVx4uYfbTKDSYo/5cSEv9KqMmLK6ZyjlLdy1ZPN+SJSHP73r+hb1jDM6nrW5hN6o/thspsN4CnSp9CJrL4ODyHDT66lu6uECpJA14im9bIHGpS5/W55H6R7jwnXp+p/jIUA1rc8zUN9wSoR7tS1SFrUAIQ2A8NnGmlmQrY3mmiI1MQmPpF0Q56Ic2fY6MGtcty6wSpsfI4smuOlvItotTyFSMoxvn2+GoiZVz7k7z83yPKgMYIDt4b4kRpEtTCS21wduIVD80ETwdoLUDX+Xzx5gXJP+hLYjVT4MAdhHsIjV93knWZmby7HrHzN8+Hu9OalevRDyrVrtqyUERh1tTbhKQgTvbnlI0HG6SkHHUdIgA8serk/bMYMxUyuR5m3K2W5vN6PHuL/X4EvyAuWf4MGwUtFpEztNlEyFCJafRihMxXDaMvv253XtKPiNl4NDM/5pzxUV3Ql7+v2svoFwDJ4pGpDfIHz9ifX9+Uy/J3wFhvUUnh/9y0E67eqF18lNpMKyn/dOoLznwLuPo6uEOpGaZkU84Utj582OEQu43dNfcWLEgVQ41v+yYe+5JhoC1cIgcm1JME/lhdvsZGSA0KkjUSBPpIza8HhuROLtty21+G0AKpJmH7iCump19rFuxNQ4ygd2m8f9g3A14yVYfnABSkMNP6jy0F4wcFw7Fz"
+      "salt": "e9b687a93f3aa598bf07da407803a0f1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-10:robin#3"
      }
     },
     {
@@ -4074,7 +4111,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T17:28:33.891Z",
+ "updated": "2026-10-10T19:30:39.304Z",
  "record": {
   "w": 52,
   "l": 13,
