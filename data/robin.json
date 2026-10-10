@@ -4105,6 +4105,9 @@
      "sport": "NHL",
      "start": "2026-10-10T19:30:00Z",
      "teams": "NJD vs VAN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "6d8f5e2adfb23264aa572cd013f6d844aa24359b6ab5d0f7557be3703fa0f1c4",
@@ -4148,7 +4151,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T20:00:50.286Z",
+ "updated": "2026-10-10T20:40:02.783Z",
  "record": {
   "w": 52,
   "l": 13,
