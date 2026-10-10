@@ -27,6 +27,7 @@ on:
 
 permissions:
   contents: write
+  actions: write     # to queue the next run (below)
 
 concurrency:
   group: parlaiy-alerts
@@ -63,6 +64,20 @@ jobs:
           key: parlaiy-state-${{ github.run_id }}
           restore-keys: |
             parlaiy-state-
+
+      # Coverage without gaps: queue the next run now. The concurrency group
+      # holds it until this one ends (state saved), then it starts within a
+      # minute. Left to the schedule, the hand-off waited on GitHub dropping
+      # or delaying cron runs: 10/10 had nothing running from 12:00 to 12:49
+      # UTC, and a lock in that window would have gone out late or not at all.
+      # Queued only once setup has worked, so a broken run can't chain itself.
+      - name: Queue the next run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl -fsS -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/parlaiy-alerts.yml/dispatches" \
+            -d '{"ref":"main"}' && echo "next run queued" || echo "could not queue the next run; the schedule is the fallback"
 
       - name: Run alerts loop
         run: |
