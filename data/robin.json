@@ -3827,6 +3827,9 @@
      "sport": "NHL",
      "start": "2026-10-09T23:00:00Z",
      "teams": "DET vs SEA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "028b92bd769f0b57fe271047d1723aed1c21ee0f985632c5c7052762c38407d7",
@@ -3899,7 +3902,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T00:00:13.553Z",
+ "updated": "2026-10-10T00:13:00.355Z",
  "record": {
   "w": 48,
   "l": 13,
