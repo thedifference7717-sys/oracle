@@ -3684,7 +3684,7 @@
    "id": "2026-10-09:robin",
    "date": "2026-10-09",
    "published": "2026-10-09T22:00:38.117Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NHL": 4
    },
@@ -3734,6 +3734,9 @@
      "sport": "NHL",
      "start": "2026-10-10T00:00:00Z",
      "teams": "WPG vs ANA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "19528bd12939ee0d9357419fd8d1a91b3b1b6fbe70494fc0eba43695048a69b8",
@@ -3902,21 +3905,49 @@
       "ctx": "2026-10-09:robin#3"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 4,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 6,
+      "cashed": 6,
+      "back": 15.422,
+      "pl": 9.422
+     },
+     {
+      "m": 3,
+      "tickets": 4,
+      "cashed": 4,
+      "back": 16.38,
+      "pl": 12.38
+     },
+     {
+      "m": 4,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 6.5,
+      "pl": 5.5
+     }
+    ]
+   },
+   "settled": "2026-10-10T02:17:13.881Z"
   }
  ],
- "updated": "2026-10-10T01:39:37.981Z",
+ "updated": "2026-10-10T02:17:14.514Z",
  "record": {
-  "w": 48,
+  "w": 52,
   "l": 13,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 255,
+   "w": 266,
    "l": 273
   },
   "days": {
-   "w": 7,
+   "w": 8,
    "l": 4
   }
  }

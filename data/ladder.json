@@ -1524,7 +1524,7 @@
   {
    "id": "2026-10-09:ladder",
    "date": "2026-10-09",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-09T22:00:36.560Z",
    "cycle": 8,
    "rung": 1,
@@ -1580,6 +1580,9 @@
    "sport": "NHL",
    "start": "2026-10-10T00:00:00Z",
    "teams": "WPG vs ANA",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-10-10T02:17:11.342Z",
    "revealed": {
     "v": 1,
     "hash": "1a4ff78c92d2c11836ace30dfe8156c4dcf11bf30c4284378af9415722efefb2",
@@ -1608,12 +1611,12 @@
    }
   }
  ],
- "updated": "2026-10-10T00:00:13.512Z",
+ "updated": "2026-10-10T02:17:11.344Z",
  "state": {
   "account": 269.6,
   "base": 26.96,
-  "stake": 26.96,
-  "rung": 1,
+  "stake": 39.05,
+  "rung": 2,
   "cycle": 8,
   "pl": 169.6,
   "cycles": {

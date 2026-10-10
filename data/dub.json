@@ -1646,7 +1646,7 @@
    "id": "2026-10-09:dub",
    "date": "2026-10-09",
    "published": "2026-10-09T22:00:38.117Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NHL": 4
    },
@@ -1673,6 +1673,9 @@
      "sport": "NHL",
      "start": "2026-10-10T00:00:00Z",
      "teams": "WPG vs ANA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "6dc3550857ee9a2e0fa7074a02e3867740299450e2fcd971fd1beb6b0f9632b2",
@@ -1754,6 +1757,7 @@
    "fair": 123,
    "price": 126,
    "prob": 0.4489,
+   "settled": "2026-10-10T02:17:12.984Z",
    "revealed": {
     "v": 1,
     "hash": "d341361dc53e27bce6fd1f628ebbdf9e3972e5fdbdcb7ca62a98a6a2326eac6d",
@@ -1768,9 +1772,9 @@
    }
   }
  ],
- "updated": "2026-10-10T00:00:13.531Z",
+ "updated": "2026-10-10T02:17:13.846Z",
  "record": {
-  "w": 6,
+  "w": 7,
   "l": 8
  }
 }
