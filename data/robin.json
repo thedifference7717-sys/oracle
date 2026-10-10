@@ -3984,11 +3984,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.775 · 3 pts/gm this season (4) · a point in 4 of his last 4",
+     "eventId": "2026020072",
+     "kalshi": {
+      "ask": 0.82,
+      "bid": 0.8,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT10EDMSJ-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7798,
+     "pAdj": 0.8198,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -456,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-10T20:00:00Z",
+     "teams": "EDM @ SJS",
+     "revealed": {
       "v": 1,
       "hash": "c3d56dd162aec8c600d8c4daac2962ca1e0dcbac8779f84a65931224f2616ffb",
-      "iv": "n0s2qXy4BTdSwnd0",
-      "ct": "fU6GztNqP7JGWSeQJpdGadtxoKscbzZUqTL74iEatMRWMTI8VkeWa0sNQdQMQuJJDPPJfNz9Xwo8fKVO1CujbjwAyp6OeeYn/y3ARI0USQACVRNMQxdpfTcXihGg2YQO3mKfK8oOaFZTbL4gucBXqcrA8s+ATXlLaNxt2EILyOA57t9fJBOxIfKmtixnjNghY6q9/xMWGkXQIpKRbc6uyKuS55fEQblpdW7HrUhIo4WaMQkfDHkZoCj5kCKjfg+3Y+H4AnOvJjVBVfZFl6+sPhKgZkgDgKg49bdx1pC/3KBkbRkdu2g7anPBoK1bteB20TYxuKWvwTwMLHlrNzOjCMpc4ENo06RHS4YLdZP2X2ZRiTzIkza2ogwpZE2AU7Xmxbh2NaFx8DBiYG38V2WRjwji7/IWZsb/ZWLYRL+q9sp/nCjw2pHKFlGkqd58XrN7xMIi9DQsVhG9IRoZzVqljg5pUdrxsAy0YH/dYKTl02Ok1YbuPWxOm0NXnwiLTJDISxI+w2RoCcIyWN3axh8L3z0ysmyB1p+lntl/4pWb4W9A4YhxiBenqPiWcnQs5hh8pOfTEJONm5k7Jgupi5oREhds+DBYFEcaS0eqVD4290QjNtc4A4Trt9JBd/HV5Lyx8vAf0puYu3iY+7Ocw3L9szC1a8ReFNc2kb+AjTf91fSS4kVvJLoo"
+      "salt": "e7d7456d5a2e475fdecf4ba8a06d11f8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-10:robin#0"
      }
     },
     {
@@ -4111,7 +4148,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T19:30:39.304Z",
+ "updated": "2026-10-10T20:00:50.286Z",
  "record": {
   "w": 52,
   "l": 13,

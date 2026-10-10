@@ -1789,11 +1789,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.52 · 2.25 pts/gm this season (4) · a point in 4 of his last 4",
+     "eventId": "2026020072",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.74,
+      "spread": 0.05,
+      "ticker": "KXNHLPTS-26OCT10EDMSJ-EDMLDRAISAITL29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7383,
+     "pAdj": 0.7894,
+     "player": "Leon Draisaitl",
+     "playerId": "8477934",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-10T20:00:00Z",
+     "teams": "EDM @ SJS",
+     "revealed": {
       "v": 1,
       "hash": "2d5339020fdb911eb5c4120ee89820d87e1a5d675e98ad65bda4362e70b2b121",
-      "iv": "Ll2u4z1AFhuq8yUi",
-      "ct": "zsVMpz+DOZWXBmCyroCCp/3L459A9DG8e3mJRWYbWVWeikvtxDnmXR25YLzNhBdj01Ky0xqAZ3te9yUHdKIw2EsB0XbpWHKrNjPlSLrfXlY1LxwNdnx/G21sPKp+evX9eatRUkxjdcmuiU4ZsWOKCvQBv9M1URMTfgrUq2KSlztxTGcuj7VaKFDgDa9x/wFfHNw5EMJ05v6al2UV14avWJPLHUxzogqiErUXTA9wS+s0npFxNRKAEeT8p2at4Rsa3mx1+XXPpGVpet960qbb6hGOxGBJOZSLkDel3u6brd+FofkO5MFDjodyDK36Qd2ggl8OarQSLjQW2Z1NmKueqvG3FIKP7DKNt2kfiOMTYPEMBKorgfHREuBiDEhyu9lKDhCjZbzhO3XArptS4AqLQIZQWXvHHSsTmvv2Ep5eQ0Rx2Yfd6430+6+f6zAkoZzUGENh8UQ7tbdM+OIQ6D7stEu3IOx/sppcZm9pCkdzTzHWtZEgygZBJcGhFPSyn0a9FWgSgJAplNhgikp+CmYx8WMeIS+Oexu0CrnhVF/eHYFf2y3wEV1gL0pLEueYAX7mhO6120Qpi+R0ZBAEQrg580PrkFCHpZPY0DHkanDl4fjYHqGISmeYZuad52gby5CiY7NJUqwwtkEwiOUjLO69vQForVtmcRHo/syascteu2fIWMcp/kXs7xCC"
+      "salt": "1ff9fc39b45d9fb5e0ad7223bbe80d92",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-10:dub#0"
      }
     },
     {
@@ -1807,7 +1844,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T16:28:53.384Z",
+ "updated": "2026-10-10T20:00:50.262Z",
  "record": {
   "w": 7,
   "l": 8
