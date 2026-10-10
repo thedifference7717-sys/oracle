@@ -1613,7 +1613,7 @@
   {
    "id": "2026-10-10:ladder",
    "date": "2026-10-10",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-10T16:27:15.044Z",
    "cycle": 8,
    "rung": 2,
@@ -1670,6 +1670,9 @@
    "sport": "NHL",
    "start": "2026-10-10T20:00:00Z",
    "teams": "EDM @ SJS",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-10-10T22:01:14.157Z",
    "revealed": {
     "v": 1,
     "hash": "567649ab1c80636b9c476e0b64c998721fa7e8f495c7bfabc67d68711af1c240",
@@ -1698,12 +1701,12 @@
    }
   }
  ],
- "updated": "2026-10-10T20:00:50.246Z",
+ "updated": "2026-10-10T22:01:14.159Z",
  "state": {
   "account": 269.6,
   "base": 26.96,
-  "stake": 39.05,
-  "rung": 2,
+  "stake": 47.61,
+  "rung": 3,
   "cycle": 8,
   "pl": 169.6,
   "cycles": {

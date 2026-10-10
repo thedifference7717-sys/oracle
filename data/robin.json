@@ -4004,6 +4004,9 @@
      "sport": "NHL",
      "start": "2026-10-10T20:00:00Z",
      "teams": "EDM @ SJS",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "c3d56dd162aec8c600d8c4daac2962ca1e0dcbac8779f84a65931224f2616ffb",
@@ -4151,7 +4154,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T20:40:02.783Z",
+ "updated": "2026-10-10T22:01:15.825Z",
  "record": {
   "w": 52,
   "l": 13,
