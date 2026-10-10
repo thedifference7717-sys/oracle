@@ -4000,11 +4000,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.378 · 1.2 pts/gm this season (5) · a point in 2 of his last 5",
+     "eventId": "2026020070",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.68,
+      "spread": 0.05,
+      "ticker": "KXNHLPTS-26OCT10PHIBOS-BOSDPASTRNAK88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7116,
+     "pAdj": 0.7296,
+     "player": "David Pastrnak",
+     "playerId": "8477956",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-10T17:00:00Z",
+     "teams": "BOS vs PHI",
+     "revealed": {
       "v": 1,
       "hash": "6760ba8d1cd3704a5ca60e29586bd0448cf17171f97fa395da65d85eec1a4333",
-      "iv": "c5NSrSPsXzh2lrFd",
-      "ct": "q4m/WrqRfTSHrZGFF7elAnfhm+1b8rTvAQ6EtiFu669sFeP1Cc041UGrsNPJTgaQ01GIbsJfzrz+zjLo/DBwvJOvO4Ta2NpNpcBHJ6kTldpjA5JWgl9nw0BQsIwz/IrvC7uAuin0yskj0Ksjts4S/ZNIpqrewZl4QEqfqBxqI7uV/7jlUN7groqbTwSiUDDU3BGoRuNREcRz2YJfYveOhxU3/NiMetZrkGc8ZzwRCh5IxfdN/kJ6nwRzqxhLGxcbv4GMr9umXX6pddlfw4JMqk1ujFKqR7vqxVFWSxEEJXjdz9TnjzcgS4j93PrcWWqULGiSh/se2iGNj8jB7yn+LimeANxI5cp7AV2kc6WL1MoYeX92cBaZyxCMXtF0oTPfafWdzJoaolrQhI6LkA/N0yNeffGveYuvenJp1sVt9RjbNNG8iXV4gsqvvpAg2g1cg6VYCpHj1hgk0PgzijSQg/fSL5tmZGAqxOoCrcdIE3rS8SiJO1X8gHN6ai5a8mHOW75KTSI6RIkCMmgVVgiDG1zQiXe6lqf0gviYTzWLi7LEotUZo5whMt/sZl0UC955yoWD5YqoSjCw8xQaX+z07x44uQeuz8uZdRQi3XPDh2VfgDotMOhZPypTBV+lvIUWlG/Pzz/zn/H/bHuvLZM6zqGd8e765gUoOQhDZM288BLTIPv95jDZDMPIlnv5"
+      "salt": "2209ef4311f82e86e0cb095509a47ba3",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-10:robin#2"
      }
     },
     {
@@ -4034,7 +4071,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T16:28:54.982Z",
+ "updated": "2026-10-10T17:00:26.347Z",
  "record": {
   "w": 52,
   "l": 13,
