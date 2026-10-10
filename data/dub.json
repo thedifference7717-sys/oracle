@@ -1651,19 +1651,50 @@
     "NHL": 4
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "d341361dc53e27bce6fd1f628ebbdf9e3972e5fdbdcb7ca62a98a6a2326eac6d",
-    "iv": "Ng4Vxo3tPPfHqYvu",
-    "ct": "ot2XVN537mNhI06KpYbAwrL+7iE1ZdS3XvqrUWr4E0+qtiGGUA2F4x+6C7aT5LggGehjk/pjjYwQE9F6j8o91wH7w/X1YPxUO3K/8LOAyePRexMhK4uMi9B23iivUWl/5D5saqTid4CMxcTTeUYQsp4JkgIU0mPKvTJCd16bMRAfW5JSaweMIqQq3oz2GOeZcIlEKtjn2/xUbkHsGJ0xblOPCkJghz6izdvbmx91EU28AA3UrLTpMOMwvDgX3mTHe82fD8cCE6tTm1Ty4Mq/2+I="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.226 · 0.5 pts/gm this season (4) · a point in 1 of his last 4",
+     "eventId": "2026020069",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT09ANAWPG-WPGMSCHEIFELE55-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6797,
+     "pAdj": 0.6805,
+     "player": "Mark Scheifele",
+     "playerId": "8476460",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-10T00:00:00Z",
+     "teams": "WPG vs ANA",
+     "revealed": {
       "v": 1,
       "hash": "6dc3550857ee9a2e0fa7074a02e3867740299450e2fcd971fd1beb6b0f9632b2",
-      "iv": "OYNrXk6MUN/UQkSG",
-      "ct": "lGfQKgve1mCP9Afyp/CQGs1mctK76Z31ajHtookco6pXr+bvvflvb8o4GKV3gSKyCe4Hmr06S/o0DrTJYaUwUiDS9zciwtgU60fPuHX6CKh353z340kz3MonXRb2odQmjPCWk3/5yWYhvFlFBBWVk6hXqcPFTU4LL7xmdHbS4VA5NP83RlHjUdmguezo1uePOt6jrFJpiWGSgwpAJ4C4uv9UkhQP+9zXcMOCK4j6hxNUdJQsif5TG5kkNM+mTSXErMGUCqZJMzr0vHP3lq+SZKgIr/VlIffOlKDMSREeGrkXpAzO4IonuNHc+Ik8/y/AMN0nePuPxBFDFkKWh9ZhSokfjF51Kk6aTiiZLt1KI32dpl+aVNBpv17o3eCIwb6LQuIG31d06UA6RXBqAIimZuCjfg8DjF1WIKwIgBgt0ThDAKXW1XgVe7J14zqWwUwVCeP0b57/R5FZn5XmA6R7LIxLK4cMJPBXOPTnk98tSmNT/koD5DowdPpAg5YryQIukznF1FiHAhwwd14mZhuDB/ugPtb3y1pwKwSFlHO7LkFehOF1SXRpAZcQ3jBTXtIj5jPKB2Ey5dunicBAAWzR0J3bUALFjWu2TKXZ9P+oDON6S/KoKIXDiXJlsJAntKvgwKQeqpZD1prvEMbmsE5jHY3ByL2lQt+3ChjWUPMXOGMCshSpRUyWOhRG7lk="
+      "salt": "85ce7a49403931aa8bc6ca7e92eb9e3d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-09:dub#0"
      }
     },
     {
@@ -1714,10 +1745,30 @@
       "ctx": "2026-10-09:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Kyle Connor",
+    "sport": "NHL",
+    "start": "2026-10-10T00:00:00Z"
+   },
+   "fair": 123,
+   "price": 126,
+   "prob": 0.4489,
+   "revealed": {
+    "v": 1,
+    "hash": "d341361dc53e27bce6fd1f628ebbdf9e3972e5fdbdcb7ca62a98a6a2326eac6d",
+    "salt": "f949901872e52a8d32383878b49fcd5f",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-09:dub"
+   }
   }
  ],
- "updated": "2026-10-09T23:28:00.240Z",
+ "updated": "2026-10-10T00:00:13.531Z",
  "record": {
   "w": 6,
   "l": 8

@@ -3714,11 +3714,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.286 · 1.75 pts/gm this season (4) · a point in 3 of his last 4",
+     "eventId": "2026020069",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.66,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT09ANAWPG-WPGKCONNOR81-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6928,
+     "pAdj": 0.6904,
+     "player": "Kyle Connor",
+     "playerId": "8478398",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-10T00:00:00Z",
+     "teams": "WPG vs ANA",
+     "revealed": {
       "v": 1,
       "hash": "19528bd12939ee0d9357419fd8d1a91b3b1b6fbe70494fc0eba43695048a69b8",
-      "iv": "EEFtu6/d6NOtpe+Q",
-      "ct": "f20/s3xbVpwX6TPx0GWltJHq71wHTajsD3aDyGGPESX7jg7EIanFPPayODj8y+XPXd0dwmWFt8gMc2hT4/3/laDPHN7FCHS/eT+yext11TuLQpfamAwvntQICvY1IrE/q6AbJwff4Tqoxzhvg9A129/nbfzUOU/tAaehoZejeMyQZ918Qa2NwweWX/mpnzZyOP97eihzorA4gLIg4HK/stSgDv45mhWmSyaZjkpboID711xZDqrNDHYT1XRFjNoJGysdv4ethEMQT9O/KpZ6wEmsS/TGZElGYpJvg9cZ7GiQeqaFljjo+4poeRD5ti9R1iQ8gt+LKZqvm6B5yZiYSZfRVykGE7nWHCiySx0ZWUorbJn5/MnF+YFuM+mof0DjvuKA3dzS5LEqd2jNQ5QTYLudYHAEBxujTbf5C7oqveyLch/7Uk0AscCP3MRuyswBDq1NWOq+0jjnI2JaUG60prfy7g38OuqTcSytr1DFK81sJTQqutZrI+vUM06Qoi3BN3eYATrS52qzYznRtC1mJMLoWkKck6/jL96oeifwcO1WUtiYudknYGMsDRkX14Im4ZqAk7ea3s/SbB4sawNN7iNW3YArqPiKmRP5xxlb365bwQd7jUWx4LNr5g5MMkb7ehTroFJNwDC3Z5k9kwuhsyakFyZTV4zPvtsRaCC5aF26YmKkj3bm+IY="
+      "salt": "4e4f20abfe764e40f4e234a59af30b14",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-09:robin#0"
      }
     },
     {
@@ -3862,7 +3899,7 @@
    ]
   }
  ],
- "updated": "2026-10-09T23:28:00.399Z",
+ "updated": "2026-10-10T00:00:13.553Z",
  "record": {
   "w": 48,
   "l": 13,
