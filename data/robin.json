@@ -4568,6 +4568,9 @@
      "sport": "NFL",
      "start": "2026-10-11T17:00Z",
      "teams": "NO vs MIN",
+     "result": "lost",
+     "actual": 96,
+     "note": "96 passing yards against a 199.5 line",
      "revealed": {
       "v": 1,
       "hash": "c20f9c9acdd070a6413dc0609b068e33737eebaab341c80d5e476c4be66db655",
@@ -4603,7 +4606,7 @@
    ]
   }
  ],
- "updated": "2026-10-11T18:51:09.939Z",
+ "updated": "2026-10-11T19:53:59.474Z",
  "record": {
   "w": 57,
   "l": 14,
