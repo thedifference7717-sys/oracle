@@ -4478,6 +4478,9 @@
      "sport": "NFL",
      "start": "2026-10-11T17:00Z",
      "teams": "LV @ NE",
+     "result": "lost",
+     "actual": 2,
+     "note": "2 receiving yards against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "5c7d39b341e0c3b2986eff3f48678d104bcf014f83941bdf8ca01b4c926515ba",
@@ -4606,7 +4609,7 @@
    ]
   }
  ],
- "updated": "2026-10-11T19:53:59.474Z",
+ "updated": "2026-10-11T20:07:46.312Z",
  "record": {
   "w": 57,
   "l": 14,

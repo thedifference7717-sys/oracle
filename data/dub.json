@@ -1902,7 +1902,7 @@
    "id": "2026-10-11:dub",
    "date": "2026-10-11",
    "published": "2026-10-11T12:30:34.336Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 1,
     "NFL": 13,
@@ -1979,6 +1979,9 @@
      "sport": "NFL",
      "start": "2026-10-11T17:00Z",
      "teams": "LV @ NE",
+     "result": "lost",
+     "actual": 2,
+     "note": "2 receiving yards against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "b903eca6126abde0086a7bfda3d622e47fb825f891f0e7c00ae26d6066952da0",
@@ -2012,6 +2015,7 @@
    "fair": -239,
    "price": -125,
    "prob": 0.7047,
+   "settled": "2026-10-11T20:07:44.895Z",
    "revealed": {
     "v": 1,
     "hash": "01282c7aebf140a026b4f018c3b3b5c9932d7cb56a109ee3729ca262aba04b4e",
@@ -2026,9 +2030,9 @@
    }
   }
  ],
- "updated": "2026-10-11T18:51:09.775Z",
+ "updated": "2026-10-11T20:07:46.124Z",
  "record": {
   "w": 7,
-  "l": 9
+  "l": 10
  }
 }
