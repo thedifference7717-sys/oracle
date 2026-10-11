@@ -4173,11 +4173,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.279 · 1 pts/gm this season (5) · a point in 4 of his last 5",
+     "eventId": "2026020083",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.62,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT10LAVGK-VGKMSTONE61-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6912,
+     "pAdj": 0.6303,
+     "player": "Mark Stone",
+     "playerId": "8475913",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-11T02:00:00Z",
+     "teams": "VGK vs LAK",
+     "revealed": {
       "v": 1,
       "hash": "a0a030a8ec9f927b28272933ba1784f20db15ea8b1e59b2d3979eaf3822f4b3d",
-      "iv": "Iy5efQiyh2ouCWJr",
-      "ct": "oFqNennszwBvxAqJMClccxl2gsMg+ifSmpxzouydGes+xPRWF/9+S46hxKrLK1zQXmUUztY7A5uXGwyFC5Qjyk+FkeTX1chr5T/sk4r4nSBoibEyY305KHCyxaV/fJOE89Tl6VSSe9toGUcJCTTXJkOQ7aN8pAVRZxmv506pASIu1MW2Aemo/AUK+03jnN7M5/511RP56endzhDBGIZ0eIBP7gE4dHi3xeC6JA+gSiSDZl/t+RXXDWiXvmrXqGiEZiAxKwobfaQJKXXcyDkM9BlhPkCDP2unm4j/QHfODQV8qaw/WWpyQm67tr9aCeILlYgT/eMOmLRtwXsgDi2cxGkAOkijYSIsMbIj84tSxajAAn/DpjBusZDuo3nHSNMom92+2XTAfi27fh27xEjXt+RKtGQfiIM4hSyPQ5uqJEzj0pBYKNVl7HWAqTXpwbmCcFSZAnSZaqLDydDb1/LvRxvDNzXiA1nkOBRO9WJpUAesPGcad/WNTSrgLfkeiNFLv4mwpnqrz5qwJgpjN3RlQl7LYEUEoQ8+uWWzlirCxAeqrT6CRqQ3RSkrvH9nQ4m7AhmhTQYdBwuKROseP8jD4BUW1AL2WdT06/r8+x7+iqD17AQ3sSCVgbmxIUuZn08ZEfuuksj6SA28+uOPM3V2Az7EiGnmk4V7JwW7zGqW/glVpb0="
+      "salt": "5137d286b93dfec02fae20677d089773",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-10:robin#4"
      }
     },
     {
@@ -4231,7 +4268,7 @@
    ]
   }
  ],
- "updated": "2026-10-10T23:21:45.599Z",
+ "updated": "2026-10-11T02:00:17.775Z",
  "record": {
   "w": 52,
   "l": 13,
