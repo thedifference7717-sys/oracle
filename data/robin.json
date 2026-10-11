@@ -4385,6 +4385,9 @@
      "sport": "NFL",
      "start": "2026-10-11T17:00Z",
      "teams": "CIN @ MIA",
+     "result": "lost",
+     "actual": 190,
+     "note": "190 passing yards against a 199.5 line",
      "revealed": {
       "v": 1,
       "hash": "3ccfb983312a6efb16f739f094b123b69ca5642ece4ad956aac38371044b7641",
@@ -4612,7 +4615,7 @@
    ]
   }
  ],
- "updated": "2026-10-11T20:08:50.390Z",
+ "updated": "2026-10-11T20:14:14.830Z",
  "record": {
   "w": 57,
   "l": 14,

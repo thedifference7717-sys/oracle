@@ -1703,7 +1703,7 @@
   {
    "id": "2026-10-11:ladder",
    "date": "2026-10-11",
-   "status": "open",
+   "status": "lost",
    "published": "2026-10-11T12:30:32.520Z",
    "cycle": 8,
    "rung": 3,
@@ -1761,6 +1761,9 @@
    "sport": "NFL",
    "start": "2026-10-11T17:00Z",
    "teams": "CIN @ MIA",
+   "actual": 190,
+   "result": "190 passing yards against a 199.5 line",
+   "settled": "2026-10-11T20:14:13.158Z",
    "revealed": {
     "v": 1,
     "hash": "44aa2a013877675b40ca3d269caf9176d36581f53f251b337a5ae82ffee23db2",
@@ -1789,17 +1792,17 @@
    }
   }
  ],
- "updated": "2026-10-11T17:00:34.274Z",
+ "updated": "2026-10-11T20:14:13.160Z",
  "state": {
-  "account": 269.6,
-  "base": 26.96,
-  "stake": 47.61,
-  "rung": 3,
-  "cycle": 8,
-  "pl": 169.6,
+  "account": 242.64,
+  "base": 33.7,
+  "stake": 33.7,
+  "rung": 1,
+  "cycle": 9,
+  "pl": 142.64,
   "cycles": {
    "done": 3,
-   "busted": 4
+   "busted": 5
   },
   "canFund": true
  },
