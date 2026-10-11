@@ -1931,6 +1931,9 @@
      "sport": "NFL",
      "start": "2026-10-11T17:00Z",
      "teams": "HOU @ TEN",
+     "result": "won",
+     "actual": 232,
+     "note": "232 passing yards against a 199.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "850087d5c6b651184157c0465b36be7ab43d69f202a0aea4e598f33f505d8803",
@@ -2023,7 +2026,7 @@
    }
   }
  ],
- "updated": "2026-10-11T17:00:34.290Z",
+ "updated": "2026-10-11T18:51:09.775Z",
  "record": {
   "w": 7,
   "l": 9
