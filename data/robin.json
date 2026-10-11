@@ -4526,6 +4526,9 @@
      "sport": "NFL",
      "start": "2026-10-11T17:00Z",
      "teams": "CHI @ GB",
+     "result": "lost",
+     "actual": 6,
+     "note": "6 receiving yards against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "247674997f3dead0ec772bfdbd3135ab0f6bbea9527cc7d6f61cc99309297945",
@@ -4609,7 +4612,7 @@
    ]
   }
  ],
- "updated": "2026-10-11T20:07:46.312Z",
+ "updated": "2026-10-11T20:08:50.390Z",
  "record": {
   "w": 57,
   "l": 14,
