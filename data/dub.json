@@ -1909,33 +1909,121 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "01282c7aebf140a026b4f018c3b3b5c9932d7cb56a109ee3729ca262aba04b4e",
-    "iv": "5RjkYhuFOUTmdKM1",
-    "ct": "3QwL376l8h427G8887SH9qUqdDZMg/BziGruqMuF4YTg65e70j/oGNHylLoYVBUFFCazc/xjd/4OwPbHKF6BSh+OXdh9rmW/V28ZZ4lFR/7VDFPPmwVATdQ1AANmawpQ/vgojBdvziHRpmxwbs3QDpc1s0xg4Gkgzu01jTyK0ZSNkZIGH8QeoeHhiGiu3Jit3dk8wpHjxWZ76nrXw1Fb25KnQzxbeDj8Zo+zLjHlA8p4i6EzVOrM7+4dlj6ukgPMZSIV7LGhxX8UFA1QfSRw"
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 307 passing yards",
+     "eventId": "401872984",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.72,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT11HOUTEN-HOUCSTROUD7-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.8806,
+     "pAdj": 0.7343,
+     "player": "C.J. Stroud",
+     "playerId": "4432577",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-11T17:00Z",
+     "teams": "HOU @ TEN",
+     "revealed": {
       "v": 1,
       "hash": "850087d5c6b651184157c0465b36be7ab43d69f202a0aea4e598f33f505d8803",
-      "iv": "vnC8zvFWKILRhe+9",
-      "ct": "JnUm0y7SEpoN6n6UngkY3sDcB5wC2QEmDrrqPau8rREE2d6Q/EXPgC6w9tdD1GmHBMqXgvQYlrgGD8FMeWJGTmybYaK/YsaHbyP7iP8Iv72feduE7I5NLAsdBmLtvADFjk6YsHzWJ0XwhD25tD//5j3ecIkpgOxMc5yvXa8HCV4nJgttsoc50jXmtvU6FSFCSk7ZA7RlZbVrVr7eatmKGsoDslFfyOSHqBzItiu+5yId/EYHPeLHGaVGm/TlKOYJDgvbYgFLAzkmGU791c3NJvWdsJEnU1FWZiUgFH/Z9ivTY34GEBbSMzkfhxd2CY2m59gbMuCuBl5dBUbbCkEPkF0WIFSA+l1C5oo97d9BmC1e2hj/8FE4ThR4gzFzz+WEacUgpIgdIRy4eGtK+rMHxW3EPzzJHR01oY7Scwm6fXitNw4Cn7/nGyg5DbIXBry0CZU4FyCjoKhiPfWNPO/1diaoCnBz0RbHZAIG6uU2GX8XyfDAeiTllCmkjWzJp76rsoX01W705/R9E/A+2n6fA+O9juBl8jEmSaiPje/8U8rDgplIytUXu2XgcQ1G+saLaCBuqJAiVeMr8hfE6RPS1mtZ3pDRjOON0OODyH6PG9YJcid2pj2JrGW6MG0p7xnZmPUfNhLY9227yec="
+      "salt": "3acb23f5c83f1f2a6aa44b5d7fc3d474",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-11:dub#0"
      }
     },
     {
-     "sealed": {
+     "detail": "TE · sim median 32 receiving yards",
+     "eventId": "401872986",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26OCT11LVNE-LVMMAYER87-15"
+     },
+     "line": 14.5,
+     "market": "recYds",
+     "need": "15+ receiving yards",
+     "p": 0.8002,
+     "pAdj": 0.7615,
+     "player": "Michael Mayer",
+     "playerId": "4429086",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-11T17:00Z",
+     "teams": "LV @ NE",
+     "revealed": {
       "v": 1,
       "hash": "b903eca6126abde0086a7bfda3d622e47fb825f891f0e7c00ae26d6066952da0",
-      "iv": "cqZdBBZOfdzP1Y3d",
-      "ct": "01YOP3qjsS7vPf9TXLOZ1iZBHLYb4JvLtYTcWDdBjEdZR5CLHmNT3L2tu8HZwl4tavSgDkvYood6TI24QWaGl7dp71OhT73WLw4ogqk0wdW7Ww+0d+i3pFzz7rotODVhtd2AMXPWPIpLmIhpBJ14CBDLbC1OYGTRpD9XdlWj15c1bAOrKah9yvyVEu/LZVjkvDmUxDMAYNV6DIrTQyWdbZVWJYTFVgNns4AywlVSi9/joU28h+NcUS4v/JOKuvbLVT2JHXskHtd8U2/KJeT0g5nxpdjPJCjGQgEixI4EUPM2WnFPJTySv2d994u1pTCCag15Gjz3CDKuPzPISJYEBVXHSQ1qqoKYOKO6FohEJ9ODFs3+zar/7zfoWrNctN0+HXdD/CUw0x5iGshCLWQzPcQh6l4hKsox7EWB7LRIlThaa7VGD3s/sb+RMd1VJF4gHYrkbqm9tJsA47UWJOFSXhVB4+HV6zRRuN2ayZurzHB7fT6cOQAQcWMG3Gaiz/p2yfvFClXfSruUKgO7WzZAgtaA5IwcjbRMN6Z6XntHMADy5LRkQtEKpIni/sMNBOVkZfKSeaSSLEruu42ukf7474SdaD6n4kwa35OzFFDVSHE0MfGFTzszUo+9Q/J/OS09Vs9HwGji"
+      "salt": "5b674aba0687b63f82c3945445e13989",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-11:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Joe Burrow",
+    "sport": "NFL",
+    "start": "2026-10-11T17:00Z"
+   },
+   "fair": -239,
+   "price": -125,
+   "prob": 0.7047,
+   "revealed": {
+    "v": 1,
+    "hash": "01282c7aebf140a026b4f018c3b3b5c9932d7cb56a109ee3729ca262aba04b4e",
+    "salt": "462caef61681962815826e5be7d5903c",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-11:dub"
+   }
   }
  ],
- "updated": "2026-10-11T12:30:34.337Z",
+ "updated": "2026-10-11T17:00:34.290Z",
  "record": {
   "w": 7,
   "l": 9

@@ -1715,15 +1715,81 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
+   "detail": "QB · sim median 344 passing yards",
+   "edge": 0.1624,
+   "eventId": "401872982",
+   "fromProps": 1076,
+   "kalshi": {
+    "ask": 0.77,
+    "at": "2026-10-11T12:30:32.520Z",
+    "bid": 0.76,
+    "spread": 0.01,
+    "ticker": "KXNFLPASSYDS-26OCT11CINMIA-CINJBURROW9-200"
+   },
+   "line": 199.5,
+   "market": "passYds",
+   "need": "200+ passing yards",
+   "p": 0.9325602631678117,
+   "pAdj": 0.775,
+   "pick": "Joe Burrow",
+   "playerId": "3915511",
+   "price": -335,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "225+ passing yards",
+     "pAdj": 0.6667,
+     "pick": "Joe Burrow",
+     "price": -194,
+     "sport": "NFL"
+    },
+    {
+     "need": "200+ passing yards",
+     "pAdj": 0.7343,
+     "pick": "C.J. Stroud",
+     "price": -270,
+     "sport": "NFL"
+    },
+    {
+     "need": "225+ passing yards",
+     "pAdj": 0.597,
+     "pick": "C.J. Stroud",
+     "price": -144,
+     "sport": "NFL"
+    }
+   ],
+   "sport": "NFL",
+   "start": "2026-10-11T17:00Z",
+   "teams": "CIN @ MIA",
+   "revealed": {
     "v": 1,
     "hash": "44aa2a013877675b40ca3d269caf9176d36581f53f251b337a5ae82ffee23db2",
-    "iv": "kuJ8VaktfnBUNfDT",
-    "ct": "4pJzkagfFfr3Z+Sqtxm+pGIL0rwbVRUPlZTUXF1ZqyP0SD3Qa/83z42+Fdf59WdcrIm4lv6izndwCpMbDqA3vbXnAeiMAc2bWZYhxqHx/RtKDq0lSDTNe0cngnXQsmxVNgBur+mFZHwaMYJoE782veTSEowj6nUSGIQKkrBnqyPaiaHzENl39GfgjXu0jQkl1NDLRai/Zh+okm2qu4ZxuOY85sCu7vGKwuKgQHDWgpRmq3fHNBzQ1vXA6h3FnoZEcuqvPDBnAhU7u3pRhjGvncBtl5Hlkdh66Bu0n3IMRLi3/Pcb6o1zwN5OAvsv7p7U2/FojtPzCbTZDZHnATJ/nS0w4G2kZ7+UkmI084aPOfwrmQuETfyFXT9eCmEGJYfn5arjbV9OhMndBzP7A/eXLeG59Gk/f5DCPDKgH/P3qaf1AMGR5Cz/DIL/uKVMoUO/JJmQvhFfwbAmyaBrBdEVl3l+gbnC0lY+atoQ6pGzY1qFdqxs5wS8xHnSoQdPY70J+pb6G3Ucmvu6UWgOvlci1yHHa5GpJnlMkLLfIgggVnsua4WsGZzdMHuO9C4a9tIp1Ku8LGf7oQbKJrDhohySSfha+8e3dwbAZcQF5QYV8IiDa2IkoGJQx3kpdgRFvf2vSBOTi3KNpLsoSWd23nyQDkTVryPay7z+kRHZqCw2nZWnxuT7O//XUggGKicFH948PsvRRQuDQ+oqhFlwjGlYwWoushZvrkOXVqbFucAK5IXsTTu/xCnaJDbwZphXmiyk6ZWONmEBwiYXDjmwWE2XmuGOYHvyhQkM1H2MNjecfTCdrsdjpkFTAVZ0F4waQkqbhYa0qyXM6HEXJnsJCMXdhhzmmPi0iyTeQQrnZQhrPUvAwvHsqK2eCq9C41k6XtdfRLrWZrGhVhDDI+W1cUoIC4DL1tcMSGr64869xkR7mhj3v0Ak7/G4gJroMK8Zwyw4Tjz6+ylINsr+h1POcwQ4thFDeXD7mg79Fg5/1WxJhGqeib+PYSp4nEOGdsIFIVlxf5pxVliYHvlmyXzU5pJhodTiuJrNQdGu9VtYGMZrTmfp6+Iz5IxQVhUd9GNipW6QEYIDmhElvW5DM7td68qmS6AGleJdPXBNcvfjF1wzKY0ylL8="
+    "salt": "91af93394eba4f5661db00c659deb9ef",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "fromProps",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "sport",
+     "start",
+     "teams"
+    ],
+    "ctx": "2026-10-11:ladder"
    }
   }
  ],
- "updated": "2026-10-11T12:30:32.522Z",
+ "updated": "2026-10-11T17:00:34.274Z",
  "state": {
   "account": 269.6,
   "base": 26.96,
