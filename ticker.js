@@ -1,6 +1,7 @@
 // The live ticker across the top of a page: today's games in all four sports
 // (ESPN's public scoreboards, refreshed every minute), our revealed picks
-// marked on their games, and a breaking-news pop-up when one of them hits.
+// marked on their games, and a breaking-news pop-up the moment one of them
+// hits (read off ESPN's live box score, not the end-of-game grade).
 //
 // Nothing sealed is ever shown: a pick appears only once its game has
 // started and the record carries it in the clear. Include with
@@ -72,7 +73,7 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
         const team = side => (c.competitors || []).find(x => x.homeAway === side) || {};
         const h = team("home"), a = team("away");
         const pre = st.state === "pre";
-        out.push({ sport, em, t: Date.parse(ev.date), state: st.state,
+        out.push({ sport, em, id: ev.id, path, t: Date.parse(ev.date), state: st.state,
                    detail: pre ? new Date(ev.date).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : (st.shortDetail || st.detail || ""),
                    away: (a.team || {}).abbreviation || "", home: (h.team || {}).abbreviation || "",
                    as: a.score, hs: h.score, names: [a.team, h.team].filter(Boolean).flatMap(t => [t.abbreviation, t.shortDisplayName, t.displayName, t.name].filter(Boolean)) });
@@ -89,14 +90,15 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     const [L, D, R] = await Promise.all(["ladder", "dub", "robin"].map(f => getJ(RAW + f + ".json")));
     const add = (prod, x, res, extra) => { if (!x || !x.pick && !x.player) return;
       out.push(Object.assign({ prod, sport: x.sport || "MLB", who: x.pick || x.player, need: x.need || "", teams: x.teams || "", res,
+                               market: x.market || (x.sport === "NHL" ? "pts" : (x.sport || "MLB") === "MLB" ? "hit" : ""), line: x.line != null ? +x.line : 0.5,
                                note: x.note || (typeof x.result === "string" && !/^(won|lost|open|void)$/.test(x.result) ? x.result : "") }, extra || {})); };
     for (const b of (L && L.bets) || []) if (b.date === day && b.pick) add("Ladder", b, b.status);
     // Every leg of every bet, and the bet itself once it cashes.
     for (const [prod, J] of [["Dub", D], ["Robin", R]]) for (const b of (J && J.bets) || []) {
       if (b.date !== day) continue;
       const legs = (b.legs || []).filter(l => l && l.player), n = legs.length;
-      for (const l of legs) add(prod, l, l.result || "open", { of: n, hits: legs.filter(x => x.result === "won").length });
-      if (prod === "Dub" && b.status === "won" && n) out.push({ prod, cashed: true, who: legs.map(l => l.player).join(" + "), need: "", sport: legs[0].sport, teams: "", res: "won" });
+      for (const l of legs) add(prod, l, l.result || "open", { of: n, grp: `${prod}:${b.date}` });
+      if (prod === "Dub" && n) out.push({ prod, cashed: true, grp: `${prod}:${b.date}`, who: legs.map(l => l.player).join(" + "), need: "", sport: legs[0].sport, teams: "", res: b.status === "won" ? "won" : "open" });
     }
     return out;
   }
@@ -140,9 +142,62 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     clearTimeout(el._t); el._t = setTimeout(close, 12000);
   }
 
+  // Live: the record grades a pick once its game is final, which for "to
+  // record a point" can be two hours after the point. So read ESPN's live box
+  // score for each game with an ungraded pick in it and call the hit the
+  // moment the stat is there. The record's own grade still follows, and the
+  // pop-up's seen-key is the same, so nothing announces twice.
+  const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\b(jr|sr|ii|iii|iv)\b/g, "").replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+  const STAT = { hit: ["hits"], pts: ["points"], reb: ["rebounds"], ast: ["assists"], tpm: ["threePointFieldGoalsMade"],
+                 passYds: ["passingYards"], recYds: ["receivingYards"], rushYds: ["rushingYards"], rec: ["receptions"] };
+  function statOf(sum, sport, market, who) {
+    const want = norm(who), last = want.split(" ").slice(-1)[0];
+    let found = null;
+    for (const t of ((sum && sum.boxscore && sum.boxscore.players) || [])) for (const grp of t.statistics || []) {
+      const keys = grp.keys || grp.names || [];
+      for (const a of grp.athletes || []) {
+        const nm = norm(a.athlete && (a.athlete.displayName || a.athlete.shortName));
+        if (nm !== want && !(nm.endsWith(" " + last) && nm[0] === want[0])) continue;
+        const v = k => { const i = keys.findIndex(x => x === k || x.split("-")[0] === k); return i < 0 ? null : parseFloat(String(a.stats[i]).split("-")[0]); };
+        let n = null;
+        if (sport === "NHL" && market === "pts") { const g = v("goals"), as = v("assists"); n = g == null && as == null ? null : (g || 0) + (as || 0); }
+        else for (const k of STAT[market] || []) { const x = v(k); if (x != null && !isNaN(x)) { n = x; break; } }
+        if (n != null) found = Math.max(found || 0, n);
+      }
+    }
+    return found;
+  }
+  const UNIT = { hit: ["hit", "hits"], pts: ["point", "points"], reb: ["rebound", "rebounds"], ast: ["assist", "assists"], tpm: ["three", "threes"],
+                 passYds: ["passing yard", "passing yards"], recYds: ["receiving yard", "receiving yards"], rushYds: ["rushing yard", "rushing yards"], rec: ["catch", "catches"] };
+  async function liveHits() {
+    const todo = new Map();
+    for (const p of picks) {
+      if (p.cashed || p.res !== "open" || !p.market) continue;
+      const g = pickGame(p); if (!g || !g.id || g.state === "pre") continue;
+      (todo.get(g) || todo.set(g, []).get(g)).push(p);
+    }
+    await Promise.all([...todo].map(async ([g, ps]) => {
+      const sum = await getJ(`${ESPN}${g.path}/summary?event=${g.id}`);
+      for (const p of ps) {
+        const n = statOf(sum, p.sport, p.market, p.who), need = Math.floor(+p.line) + 1;
+        if (n != null && n >= need) { const u = UNIT[p.market] || [p.market, p.market]; p.res = "won"; p.live = true; p.note = p.note || `${n} ${u[n === 1 ? 0 : 1]}`; }
+      }
+    }));
+    // Hits so far on each Dub and Robin, and a Dub whose legs all hit has cashed.
+    const byGrp = {};
+    for (const p of picks) if (p.grp && !p.cashed) (byGrp[p.grp] = byGrp[p.grp] || []).push(p);
+    for (const p of picks) {
+      const legs = byGrp[p.grp]; if (!legs) continue;
+      if (p.cashed) { if (legs.length && legs.every(l => l.res === "won")) p.res = "won"; }
+      else p.hits = legs.filter(l => l.res === "won").length;
+    }
+  }
+
   async function tick() {
     const [g, p] = await Promise.all([loadGames(), loadPicks()]);
-    games = g; picks = p; draw();
+    games = g; picks = p;
+    await liveHits().catch(() => {});
+    draw();
     const day = etDay();
     const key = x => `${day}:${x.prod}:${x.cashed ? "cashed" : x.who}`;
     const fresh = picks.filter(x => x.res === "won" && !seen[key(x)]);
