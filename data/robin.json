@@ -4778,11 +4778,55 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#2 · vs Logan Henderson · projected, 93% to start",
+     "eventId": "849812",
+     "gk": 849812,
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.62,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT121700LADMIL-LADFFREEMAN5-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6872,
+     "pAdj": 0.6568,
+     "player": "Freddie Freeman",
+     "playerId": 518692,
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-12T21:00:00Z",
+     "teams": "LAD @ MIL",
+     "lineup": {
+      "in": true,
+      "slot": 2,
+      "at": "2026-10-12T21:00:10.711Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "ec8f0e8b5579b11aa5481c0b86133384f82caf1aa47d74957832aa9db40e6623",
-      "iv": "hjFa/4zPsTSc4dJ2",
-      "ct": "i2djuCjEGZOWGpCMKMVniqv6Vrxr46yNBaPctnLjBm21dTi6ehv9f8hcxLUg7U/Voy2zut96/2XQK1tIbAtuPzodGtirAViVTQBOmRqowgpw5mq6ukhmjMjZuTWZC8zGcsCBj4/dxVX48NHVG9GAA1ZzWF5YynzMfVDraOf2o6FbyupTvVPVJRC3tNoSEw+mVnqXir0uPHOKGrg6Hbaca9EOIGryPDy2DGguJmUiP9eFRPS1jkuMNDVQB50HYsakVWVOWKb5DxJNDzovkHKdYVwmaomz2lypPvNSzY54uBMy4KkKsyABoUIL2T2FLGrqpIFJkPNzB9YMi+B2WMxds1ZAfhW/fpeZ5ugxhzZqcVUlzvAbZjMPhi5uIB7sJk/nT5CgrqFeOncXdNPRwNrwp+SPlHFEJDpQfYjhNuzHTcwjSk6Vv64AI+9X+AqVhlWZZYoo9qaprcCWP2Dv635f5g9o+irHXP+g6OCJtilPfpkjYXVhT+xPHIaA4nwVDbbpjzhwyMBGEEbIGmoYlLMaHwoRJVuOpUBjC0rK8tLieEeofOz+CsYfGoUdpQ9xuwbafoL7UlG0BXrGaVbhJ/Lwmtm2NowVbe348gpH5m2tvIbSSY3ySlCGEv3CUuW+0FzgM/ibKUb/dip7lOk/Gyg+QuDKq26CjsizhfhiiWvC1CPf"
+      "salt": "09df20b92d16ccd52c6bd6b5f3580677",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-12:robin#4"
      }
     },
     {
@@ -4836,7 +4880,7 @@
    ]
   }
  ],
- "updated": "2026-10-12T18:17:21.920Z",
+ "updated": "2026-10-12T21:00:10.711Z",
  "record": {
   "w": 58,
   "l": 19,
