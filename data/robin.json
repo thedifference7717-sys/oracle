@@ -4770,11 +4770,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.262 · 1 pts/gm this season (4) · a point in 3 of his last 4",
+     "eventId": "2026020088",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.65,
+      "spread": 0.07,
+      "ticker": "KXNHLPTS-26OCT12OTTNJ-NJJHUGHES86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6877,
+     "pAdj": 0.7195,
+     "player": "Jack Hughes",
+     "playerId": "8481559",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-12T23:00:00Z",
+     "teams": "NJD vs OTT",
+     "revealed": {
       "v": 1,
       "hash": "4a97c94e649d5189662627b1ddfb058e60b4663c64b71b489e1870e10cae20e3",
-      "iv": "KesHvTQUiE0H+aPZ",
-      "ct": "mmMCGzvCVMi1S/JlndjLHD+9q6lD0JT3ii0jERTDsMgBdi6XQZP+8VSGaCZ58wUbUpWG1gyGlfJC2SG9Vpm7KA+yRT/+B/hDERS9C4glk1hnKi8/iCan7VJsKHP8ZrFLY/Vzztv7qyk9OSYGkV2C4rhgiBjirbonDIld0m9IlOabS7fuL8tmPlMglYYvTTLir5xv9o8cFlyS1rpfuV43GSP7/fqMt/49XiDzFvour/K0wbqUMmyvfmOPP2m3Z7bgOVgHQc+c92mfEST/cETQWyFiF67d+DCQrmPk+yuLN7QzfhUxq8ncSOnrGGO5KYycrIS4GaSqLVicuCE2GnThbrqtjXz69aRnVrzwJ/HV07zmRzY3UDRHNbWARp0Z8gSsVq1FAsjH+kQrlQT1y1CVXg9q8uGo4Qup5GSGkGAph631/7iBQpUgtm9P7pjnRYI3aVRT2Rb7Di4POBOtpx5iQhUyHDFfxkag9ZiZIfv7A3Qo3IvT4NuYz0ffJ7DvLYbR0LpDAfxE0bA0s3C99yfxcqJbpm57hVILZsDvfye4Z86KGpbh9G8AxKgm4PE2LyhOZrMcLpZdUvR+giFokkyDIOlpIgp6G93V1dlGZFO5c6lDM2wN7jvWp5YTOZnIA9LH+Pvk0HfPBUPsB4uy49DvPNKIciRyCLZdWrmVztUwuMyROfPI"
+      "salt": "64125b04dc9a05fa7c4b160ca7169c3e",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-12:robin#3"
      }
     },
     {
@@ -4880,7 +4917,7 @@
    ]
   }
  ],
- "updated": "2026-10-12T21:00:10.711Z",
+ "updated": "2026-10-12T23:00:42.580Z",
  "record": {
   "w": 58,
   "l": 19,
