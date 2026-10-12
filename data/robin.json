@@ -4806,6 +4806,9 @@
      "sport": "NHL",
      "start": "2026-10-12T17:00:00Z",
      "teams": "FLA @ BUF",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "3b08ea7bfe3b5781b3be31082b66b8ee8b05a4356f6cb4cde45920c0545ef697",
@@ -4833,7 +4836,7 @@
    ]
   }
  ],
- "updated": "2026-10-12T17:00:55.659Z",
+ "updated": "2026-10-12T18:17:21.920Z",
  "record": {
   "w": 58,
   "l": 19,
