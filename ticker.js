@@ -123,7 +123,7 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
 
   // Breaking news: a pick that hit, announced once per device. On first load
   // the latest one not yet seen here flashes; after that, every new one.
-  function breaking(p) {
+  function breaking(p, done) {
     let el = document.getElementById("psBreaking");
     if (!el) { el = document.createElement("div"); el.id = "psBreaking"; document.body.appendChild(el); }
     const need = `${p.need || ""}${p.note ? ` (${p.note})` : ""}`;
@@ -136,11 +136,27 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
       <div class="ps-who">${p.who}</div>${p.cashed || !need ? "" : `<div class="ps-need">${need}</div>`}
       <div class="ps-prod">${prod}</div>
       <button class="ps-ok">LET'S GO ✅</button></div>`;
-    const close = () => el.classList.remove("on");
+    // Up until it's tapped: one that closed itself while nobody was looking
+    // was already marked seen and never came back.
+    const close = () => { el.classList.remove("on"); el.onclick = null; if (done) setTimeout(done, 450); };
     el.onclick = e => { if (e.target === el || e.target.closest(".ps-x,.ps-ok")) close(); };
     requestAnimationFrame(() => el.classList.add("on"));
-    clearTimeout(el._t); el._t = setTimeout(close, 12000);
   }
+
+  // Hits wait in a queue and show one at a time, only while the page is on
+  // screen; a hit counts as seen when it is shown, not when it is found. (A
+  // home-screen app in the background still ran its timers on resume and
+  // "showed" hits to nobody.)
+  const queue = [], queued = new Set();
+  let showing = false;
+  function pump() {
+    if (showing || document.hidden || !queue.length) return;
+    const x = queue.shift();
+    seen[x._key] = 1; remember();
+    showing = true;
+    breaking(x, () => { showing = false; queued.delete(x._key); pump(); });
+  }
+  document.addEventListener("visibilitychange", pump);
 
   // Live: the record grades a pick once its game is final, which for "to
   // record a point" can be two hours after the point. So read ESPN's live box
@@ -200,10 +216,12 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     draw();
     const day = etDay();
     const key = x => `${day}:${x.prod}:${x.cashed ? "cashed" : x.who}`;
-    const fresh = picks.filter(x => x.res === "won" && !seen[key(x)]);
-    fresh.forEach(x => { seen[key(x)] = 1; });
-    if (fresh.length) remember();
-    if (!first || fresh.length) { const show = first ? fresh.slice(-1) : fresh; show.forEach((x, i) => setTimeout(() => breaking(x), i * 13000)); }
+    const fresh = picks.filter(x => x.res === "won" && !seen[key(x)] && !queued.has(key(x)));
+    // A first visit shows the latest unseen hit, not the whole day's.
+    let show = fresh;
+    if (first && fresh.length > 1) { fresh.slice(0, -1).forEach(x => { seen[key(x)] = 1; }); remember(); show = fresh.slice(-1); }
+    for (const x of show) { x._key = key(x); queued.add(x._key); queue.push(x); }
+    pump();
     first = false;
   }
 
