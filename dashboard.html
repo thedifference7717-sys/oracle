@@ -1535,7 +1535,7 @@ function renderLadderInner(){
       <div class="ld-box ld-acct" onclick="withdrawLadder()" title="Record money you took out of the ladder's account"><div class="v" style="color:var(--yellow)">${st.moved?money(-st.moved):"$0.00"}</div><div class="l">Withdrawn · tap to withdraw${ladderMoves.length?` · <a href="#" onclick="event.stopPropagation();event.preventDefault();undoLadderMove()" style="color:var(--dim)">undo last</a>`:""}</div></div>
       <div class="ld-box ld-acct" onclick="clearLadderAccount()" title="Change your bankroll"><div class="v" style="color:var(--blue)">${money(ladderAccount)}</div><div class="l">Bankroll · tap to change</div></div>
     </div>
-    ${st.canFund?"":`<div class="ld-warn"><b>The account cannot fund this cycle.</b> Its ${money(st.cashIn)} seed is more than the ${money(st.account)} left. That is where the escalation ends — the ladder has no next move that is not a deposit.</div>`}
+    ${st.canFund?"":`<div class="ld-warn"><b>This cycle's seed is more than the account.</b> Its ${money(st.cashIn)} seed is more than the ${money(st.account)} left. The picks keep coming; size the stake to what you have.</div>`}
     ${warn}
   </div>`;
   // The running record lives in its own section under the card — every rung
