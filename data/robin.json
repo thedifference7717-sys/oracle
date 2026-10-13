@@ -4911,6 +4911,9 @@
      "sport": "NHL",
      "start": "2026-10-12T23:00:00Z",
      "teams": "NJD vs OTT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "4a97c94e649d5189662627b1ddfb058e60b4663c64b71b489e1870e10cae20e3",
@@ -5041,7 +5044,7 @@
    ]
   }
  ],
- "updated": "2026-10-13T00:26:27.106Z",
+ "updated": "2026-10-13T01:32:13.388Z",
  "record": {
   "w": 58,
   "l": 19,
