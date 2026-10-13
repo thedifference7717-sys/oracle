@@ -4700,7 +4700,7 @@
    "id": "2026-10-12:robin",
    "date": "2026-10-12",
    "published": "2026-10-12T16:01:00.545Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 2,
     "NFL": 1,
@@ -4766,6 +4766,9 @@
      "sport": "NFL",
      "start": "2026-10-13T00:15Z",
      "teams": "LAR vs BUF",
+     "result": "won",
+     "actual": 274,
+     "note": "274 passing yards against a 249.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "8efd3bb2e27a5ff7fef0934436e1e3057114742c046d39b34c73177f5d43ea2f",
@@ -5044,21 +5047,63 @@
       "ctx": "2026-10-12:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 21.571,
+      "pl": 6.571
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 31.658,
+      "pl": 11.658
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 23.219,
+      "pl": 8.219
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 6.809,
+      "pl": 0.809
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-13T02:58:54.442Z"
   }
  ],
- "updated": "2026-10-13T02:41:09.402Z",
+ "updated": "2026-10-13T02:58:55.084Z",
  "record": {
-  "w": 58,
-  "l": 19,
+  "w": 63,
+  "l": 20,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 292,
-   "l": 361
+   "w": 318,
+   "l": 392
   },
   "days": {
-   "w": 9,
+   "w": 10,
    "l": 5
   }
  }
