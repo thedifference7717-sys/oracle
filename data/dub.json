@@ -2033,7 +2033,7 @@
    "id": "2026-10-12:dub",
    "date": "2026-10-12",
    "published": "2026-10-12T16:01:00.545Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 2,
     "NFL": 1,
@@ -2117,6 +2117,9 @@
      "sport": "NHL",
      "start": "2026-10-13T00:00:00Z",
      "teams": "MIN vs VGK",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "30b31be57d06eca897d49e576e274eadde070af0067ad9e8ffdf9e1769a65213",
@@ -2150,6 +2153,7 @@
    "fair": -106,
    "price": 110,
    "prob": 0.5157,
+   "settled": "2026-10-13T02:41:08.165Z",
    "revealed": {
     "v": 1,
     "hash": "ef1e30e84a66efdeb23e02bc0e52413935a806020840ead726c08f6b9d85a0fc",
@@ -2164,9 +2168,9 @@
    }
   }
  ],
- "updated": "2026-10-13T00:21:10.829Z",
+ "updated": "2026-10-13T02:41:09.319Z",
  "record": {
-  "w": 7,
+  "w": 8,
   "l": 10
  }
 }

@@ -4866,6 +4866,9 @@
      "sport": "NHL",
      "start": "2026-10-13T00:00:00Z",
      "teams": "MIN vs VGK",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "8e607d829aeb9a83fa078737c4bf08ef12f74086df335ff4640e4772475ee8af",
@@ -5044,7 +5047,7 @@
    ]
   }
  ],
- "updated": "2026-10-13T01:32:13.388Z",
+ "updated": "2026-10-13T02:41:09.402Z",
  "record": {
   "w": 58,
   "l": 19,
