@@ -2068,6 +2068,9 @@
       "slot": 1,
       "at": "2026-10-13T00:00:00.748Z"
      },
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "313ebb9b17fefcdaa8d2cdff9ea7035ecebe2f63237822e0279b26019b6e85c8",
@@ -2161,7 +2164,7 @@
    }
   }
  ],
- "updated": "2026-10-13T00:15:52.182Z",
+ "updated": "2026-10-13T00:21:10.829Z",
  "record": {
   "w": 7,
   "l": 10
