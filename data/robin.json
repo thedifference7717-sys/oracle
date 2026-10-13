@@ -5172,11 +5172,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.379 · 1.4 pts/gm this season (5) · a point in 3 of his last 5",
+     "eventId": "2026020092",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.7,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT13BUFMTL-MTLNSUZUKI14-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7119,
+     "pAdj": 0.7198,
+     "player": "Nick Suzuki",
+     "playerId": "8480018",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-13T22:30:00Z",
+     "teams": "MTL vs BUF",
+     "revealed": {
       "v": 1,
       "hash": "90781762c6a598a1c17d66c2c9eddfeae6857f47301ebf713312ceca669d1b9b",
-      "iv": "BzBbPTYBeDDfclWE",
-      "ct": "uWdluKxuM9vETL9Vgmh6RF8UJ0OdLcVqnIDZ0VV6z5/fl+zYR/G1oQiosLej0nA0v0c9BcUYpg4sHw+z5ezA0+os5xJuxxaRe32JIU1sezqXMDSlDXIw7ZgRU3RPmDGeSgyHEq67k30m/MEHoLO5Yf15CHiq5ki1SN6ASlNssiYmpIX1ux38jwItsaU/o8CroTO3UAFxnXkNMjcl5U0SPC3ZWRrlo+wa3T5Cbnc2h2Jpbm7W/0eYTa9X8SP9g3syeHiFD8JN1BCHZk28d2lz2nZAeLPkQzaO+WFoXyByj9SBab9AS6a1kG0dkWm9CkYGbMXuc7Vjrod+ukU81DMFjDAfsOLlJ5tNJv6ECc/HwcKmgXIxHkPQJDUk42pKkAG2XguUXgpHOiiUeZQ120aLzPjAy/C8iF+cQkXsF7DfplsEivWGumz02+eA1kFJbvu/sBAIkUV6L0A3NvYC5tXTv7rRf3Yr1IkhyRz2392767aPj/lE+9dABEGFzchq+PUXs9+kfALF9HyprYlyEahWRsbN9y4nCdaMhZrU99A4Qc9RjHQRkm1axq1/MyoIO+gD5hNTFrn8C31pauxicWy3HxG8LR1DHpp5PByTOLPONCxLTR4Xh35CXQv9yFN36fA1tY4TyRaR6syrB1tJfM1E/6Txm5snoNdlgWUgGaGKSLuWnLzORDk2"
+      "salt": "f231c25aae218db49c7e34f57367bc52",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-13:robin#4"
      }
     },
     {
@@ -5190,7 +5227,7 @@
    ]
   }
  ],
- "updated": "2026-10-13T21:00:52.707Z",
+ "updated": "2026-10-13T22:30:54.939Z",
  "record": {
   "w": 63,
   "l": 20,
