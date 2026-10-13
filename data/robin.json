@@ -4754,19 +4754,100 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Foster Griffin · projected, 94% to start",
+     "eventId": "849820",
+     "gk": 849820,
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT122000CLETB-TBYDIAZ2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7426,
+     "pAdj": 0.7199,
+     "player": "Yandy Díaz",
+     "playerId": 650490,
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-13T00:00:00Z",
+     "teams": "TB vs CLE",
+     "lineup": {
+      "in": true,
+      "slot": 1,
+      "at": "2026-10-13T00:00:00.755Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "f8e32b19b28917e2a092a74eb87f7e0c985527ca1fe2b52f06d2399c89c25e7a",
-      "iv": "l4JE81uPHH+jyn2/",
-      "ct": "qD4SrePkvpN1mTfK2vMt28TbhbsMEQhxNFw8W90wxCqW+wzrAFG7in+1J3MOLYnMmiAvVuEMmhGIeIGyXZqJa8Pgk5dysuCZKK1fiMGG9DhIVZJBXUMQRgyQjLTzfGmdpDTXdhJrEWUFRkrR/TbI4FJDCxqnnatAYt6WMwhGoTxI0L6yQkaUZ3ufGq7YkjRRbDMrSTsUY3CZWRv7SMZ4bLqD9+Az+q7QhhuTRd30KiEDK11XPmipuc9CMn2JuDPEsELDeNdJLIvc0scQWVTyoAWOXuFqONkzAkQs33eSDu33cGxIfQ6jesCKZHQ9N2hu5i0msTjOTH8QHTI7LxNuxjxsZnQlwvwbMGTcShTya9h2LX0cApE94AlENp/WfLlSgqR0ygDYiBRHUA+jTkKJShyi3DKoHCZJkfV3NSuYYeIANP7i+iuVAPpqKqNJ7t735/WcxguQsHILlOwLLz4eoLgMkIEjm8iWfLJpFUeTLNJhOULJVQ1dYcOhQu+fbzH6FJl99PjFMFatINvCPmPjAIUEUaF1zP6hc9Q8uMrgxEzaOPBrV2CiqxF5HzwWrXFa29YmjHzBs1jiYzNHwXW4yGuwGgKW0pjOIxFcWiLQ00/mKikCOekeuG8ntxYe3zkcyicfVKCHA4eiH3qppoHou3F9MTv+JQ=="
+      "salt": "7f1472a0d29227d68606966fe557982f",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-12:robin#1"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.294 · 1.6 pts/gm this season (5) · a point in 4 of his last 5",
+     "eventId": "2026020089",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.67,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT12VGKMIN-MINKKAPRIZOV97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6944,
+     "pAdj": 0.6808,
+     "player": "Kirill Kaprizov",
+     "playerId": "8478864",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-13T00:00:00Z",
+     "teams": "MIN vs VGK",
+     "revealed": {
       "v": 1,
       "hash": "8e607d829aeb9a83fa078737c4bf08ef12f74086df335ff4640e4772475ee8af",
-      "iv": "iRMwPUHXES2OmMLM",
-      "ct": "PWLX9mIkxY2Z8r8jWYysSQfApwbjtGBgt/SuIh1N6BNrwtlgl3CMlvmYe0GBvQkr6WL/RrCxEYfvSJrgVeK/cGMQyZCuSN1cK9bSvsKeHIxugILOx/xYVyuuyMzpl++J/qHBf++S+HetEQcHIsHfkI8jSbEMMUQIgAq+PuEZETO5T0vvIL978qDVoToZIVQ6023LAdEhl/kWqgJ6jqcE+diPtwrozwBJVX6zAcscoZ3TbfUT8eHJeMWvvf2/xwQLeypP5kKzUwzJP6qSp4krgnuKG6IYvrUIe6n9n0t3AD39olEKe5bJg+W1vJvi4DFP5xjZVDXwtZYFdwoKJo5+OhQynKG7eqA8bzMaX8G2RvM+jM8Vv0WlOYBUFm2ZehwMxyQgxZxpm5wyXTBJlMvjUZYHALRK5whEemhQ+HjYZhaf5KExYSEzZ1THqMOl7zygJhKkNZQUF06ADvV01qFz4YuZtM7pimiHAkZfQorJAhkB22PDI4pK+v4RNBaMOlVk8GvhkoIcOOS9LOJzR+7ga7TZ/MeERKYYSHKwxrt4EOUW1wy29S4G8T6Woopm0bVnn4dJfGOgAsxYr00QrdnODen7fmdKbY6WCjmW7HKb8Ohn5u3I2bMaqT9Bq6EYtS+pwz6CesFbWEuWqd9I6lKTN0zab3lkB2zHBQn+iLiYyVil+BTTkU7froiVnUDlNw=="
+      "salt": "5855fec64de7e91ae1b6bf1ed057cc38",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-12:robin#2"
      }
     },
     {
@@ -4917,7 +4998,7 @@
    ]
   }
  ],
- "updated": "2026-10-12T23:00:42.580Z",
+ "updated": "2026-10-13T00:00:00.755Z",
  "record": {
   "w": 58,
   "l": 19,
