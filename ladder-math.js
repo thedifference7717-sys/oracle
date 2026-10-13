@@ -171,7 +171,12 @@ function ladder(history, cfg) {
            cashIn: round2(cashIn), toppedUp: round2(cashIn - base),
            atRisk: round2(cashIn), onTable: round2(Math.max(0, stake - cashIn)),
            staked: round2(staked), pl: round2(account - C.account - moved), moved, peak, maxDD: round2(maxDD),
-           cycles, canFund: stake <= account + 1e-9 };
+           // What the account must cover is what the cycle has taken from it
+           // (the seed, plus any top-up), not the whole riding stake: from
+           // rung 2 on that is the cycle's own winnings. Comparing the stake
+           // stopped Strike Zone at rung 4 on 10/13 ($70.37 riding on a $61.87
+           // account, of which the cycle had taken about $17).
+           cycles, canFund: cashIn <= account + 1e-9 };
 }
 
 function ladderRisk(p, american, state) {
