@@ -2040,12 +2040,6 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "ef1e30e84a66efdeb23e02bc0e52413935a806020840ead726c08f6b9d85a0fc",
-    "iv": "y66eXAyumk9xHjOz",
-    "ct": "XtYhvyTMh0syu++kes7ht/xWEFAD8G+MSokgWWtukgxoZHkxBpai1dG1/eT0Wj8iNVgZfM+du+Zx4Xq6JM6iY5dc6UoUK8s0WkFXxx4vk2e0eZnIJx39GEJTXk+yA6SRtItjJbncezhIy2HAsGc8SoMDS+QemSNg4lGYWiqcy1ZFT95BTnrscPp65B/gNVvqWSSLyyYhBujSnwlYOcrv0dDxxaSbrC8KJB7PeG0YsCwD+0jrUNrlRYxrVJX5YZNMqMjotk7CcpzX8zp9fIK5m2WUC60="
-   },
    "legs": [
     {
      "detail": "#1 · vs Foster Griffin · projected, 94% to start",
@@ -2144,10 +2138,30 @@
       "ctx": "2026-10-12:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Matthew Stafford",
+    "sport": "NFL",
+    "start": "2026-10-13T00:15Z"
+   },
+   "fair": -106,
+   "price": 110,
+   "prob": 0.5157,
+   "revealed": {
+    "v": 1,
+    "hash": "ef1e30e84a66efdeb23e02bc0e52413935a806020840ead726c08f6b9d85a0fc",
+    "salt": "efb3b946b84e6883541ffaf7d350c03f",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-12:dub"
+   }
   }
  ],
- "updated": "2026-10-13T00:00:00.748Z",
+ "updated": "2026-10-13T00:15:52.182Z",
  "record": {
   "w": 7,
   "l": 10

@@ -4746,11 +4746,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 322 passing yards",
+     "eventId": "401872994",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.67,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT12BUFLAR-LARMSTAFFORD9-250"
+     },
+     "line": 249.5,
+     "market": "passYds",
+     "need": "250+ passing yards",
+     "p": 0.7603,
+     "pAdj": 0.6833,
+     "player": "Matthew Stafford",
+     "playerId": "12483",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-13T00:15Z",
+     "teams": "LAR vs BUF",
+     "revealed": {
       "v": 1,
       "hash": "8efd3bb2e27a5ff7fef0934436e1e3057114742c046d39b34c73177f5d43ea2f",
-      "iv": "IeVRvYUHEIT9Ky98",
-      "ct": "4Rb4SY7KANT2Yv+0ypyTSxSbeqczbUpzFnaxjjVVK5MfVhn4urEqmllC2IuysJlXHT9bMPvIbliMdXFUVCsUJlnOnW853bMbNMjgbgmWR6g0SMWfhkStUv+1UZQgmMWZ3LVjtu2pEbhQMC8MeK45mUrzbx6ONm3OdyiF+Rik+Qs2RUwpZkAyN7PjiK7DAq99ab58CICLK2eCaT+MRIqlFXEBjHfSowsCVUfeWoM/AEvnXEayc/wP8H53MHz7zTpUkFy9OfIWjF8T2A37vnA/aT6f1dyNuPOazapa6PoRJGv2tpg40bTIhehPLOGg7f1pVuK4ZHI0hF+8gp7Czg+oGyqw1kzbOqUiBFFsKf7MQT/CdOCS8FjBRtwx3sBydgYYZqoevNyEadwB3MuCwagCHIVyxvfK0+zCogFfTrlnbQBQBb8h7ob5y1bosDhWE4Jr98r3ROVGyYqZVZH/0MiowRatK7Xcecjntc5E7gIwvAf9oIKEknTRTBF6nffBsjQ+4NUgz4cwNaWSZtnIewsKEtK7s69Bmrubv5dKse2K/QL13v7k1EXr0w487ZC6nqoJa+1nRYZePc1MKeec48Y2UjqPhYLNxePk0ADiPJHAMwkQl2pggly9NHupjdKlM8BiEEE6fiVl3DmIRdQtzHDH1xzFvQ=="
+      "salt": "26bc3dca8152eeab44b660e33854f27d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-12:robin#0"
      }
     },
     {
@@ -4998,7 +5035,7 @@
    ]
   }
  ],
- "updated": "2026-10-13T00:00:00.755Z",
+ "updated": "2026-10-13T00:15:52.193Z",
  "record": {
   "w": 58,
   "l": 19,
