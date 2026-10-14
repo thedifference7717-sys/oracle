@@ -5216,6 +5216,9 @@
      "sport": "NHL",
      "start": "2026-10-13T23:15:00Z",
      "teams": "TBL @ NYR",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "dbc725d51d4d909186d86cf9af68fd6821f6631fa3cd09f8aeaa68dd815ffe19",
@@ -5349,7 +5352,7 @@
    ]
   }
  ],
- "updated": "2026-10-14T01:09:38.310Z",
+ "updated": "2026-10-14T01:56:22.956Z",
  "record": {
   "w": 63,
   "l": 20,
