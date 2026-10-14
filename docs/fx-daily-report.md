@@ -1,6 +1,6 @@
 # FX Daily 2:1 — tuning report
 
-Generated 2026-10-14 03:06 UTC by `scripts/fx-daily-tune.mjs`.
+Generated 2026-10-14 20:11 UTC by `scripts/fx-daily-tune.mjs`.
 One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, never two open). Target 2× the stop: **risk $500 to make $1000**, every trade settled within 24 hours (closed at market if neither hits). "Any profit" counts time exits that closed up; "full wins" are the +$1000 target. Break-even ≈ 33% before spread; spread is charged on every trade.
 4856 setups tried. Picked on **2019-01-01 → 2024-07-01** only (≥ 150 trades, then most profitable years, least-bad worst year, most R); checked on **2024-07-01 → 2026-10-09**, unseen.
 
