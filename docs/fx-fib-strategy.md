@@ -1,55 +1,38 @@
-# FX Fib strategy — EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY
+# FX Fib Ladder — EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY
 
-The crypto desk's setup (`btc.html`, `btc-alerts/`) carried over to five majors.
-Live page: [`forex.html`](../forex.html), the **FX** tab of the Fib Ladder.
+The crypto Fib Ladder (`ladder.html`) applied to five majors. Live page:
+[`forex.html`](../forex.html), the **FX** tab of the Fib Ladder. The levels, legs
+and targets are identical; only the sizing changes (lots, by stop-loss budget).
 
-## Core (same as crypto)
+## Levels — from the two prices you type
 
-1. **Leg** — latest confirmed 4h swing high and low (3 bars each side). Newest
-   extreme a high → long only; a low → short only.
-2. **Step 1 (arm)** — price trades into the 50% retracement ± 3% of the leg.
-3. **Step 2 (enter)** — after the touch, a 15m candle closes beyond the latest
-   15m swing (high for longs, low for shorts) as the 3rd consecutive candle in the
-   trade direction. Enter at that close.
-4. **Stop** — the 0.886 retracement.
+The 0.382 and 0.618 of the impulse leg pin everything: they sit 23.6% of the leg
+apart, so `range = |.382 − .618| ÷ 0.236`. A .382 above the .618 is a long
+(up-leg pulling back); below is a short.
 
-## FX additions
-
-| Rule | Why |
+| | Level |
 |---|---|
-| Minimum leg: EURUSD 40, GBPUSD 50, AUDUSD 30, USDCHF 35, USDJPY 50 pips | A thin leg puts the 0.886 inside spread and noise |
-| Stop = 0.886 **+ 2-pip buffer** | Spread / stop-hunt wicks |
-| Step 2 only in session: London 07–16, NY 12–20 UTC; AUDUSD & USDJPY also Asia 23–07 | Off-session breaks are thin and fake out |
-| No new entries after Fri 18:00 UTC | Weekend gap |
-| Step 2 close must be at or deeper than the 0.382 | Later than that TP1 is under ~0.75R — don't chase |
-| Stop hit before Step 2 → setup dead; price back past the swing extreme → missed | One trade per leg |
-| A higher low inside an up-leg (lower high inside a down-leg) keeps the leg | The bounce off the 50% is the pullback, not a new leg |
-| Avoid ±30 min around high-impact news | Not visible to the page — check the calendar |
-| EURUSD/GBPUSD/USDCHF moving together = one USD bet | Halve risk on each or take the cleaner one |
+| Entries | 10 limits evenly spaced 0.382 → 0.618 |
+| Stop | 0.886 (override in Tune) |
+| Targets | one per leg, evenly spaced −0.618 → −1.0 extension |
 
-## Exits
+## Size ramp
 
-Thirds: TP1 at the swing extreme (0.0) and stop to break-even, TP2 at −0.272,
-TP3 at −0.618. From a 50% entry that is ≈1.3R / 2R / 2.9R.
+`weight = 1 + (ratio − 1)·(i − 1)/(n − 1)` — leg 10 is 2× leg 1 by default, so the
+deep legs (closer to the stop) carry the most size.
 
-## Size
+Default TP pairing: leg 1 (first filled, smallest) runs to the −1.0; the big deep
+legs bank first at the −0.618. The TP button swaps it.
 
-One stop-loss budget shared by the five pairs: **$2,000 total on $100,000, split
-five ways = $400 per trade** (2% if every pair stops out). Each trade:
+## FX sizing
 
-`lots = risk $ ÷ (|entry − stop| × 100,000 ÷ quote rate)`, rounded **down** to
-0.01. $10/pip/lot on the USD-quoted pairs; USDCHF and USDJPY convert at the stop.
+One stop-loss budget shared by the pairs: **$2,000 total ÷ 5 = $400 per pair's
+ladder** (2% of $100,000 if every pair stops out). The weights are scaled so the
+whole ladder filled loses that $400 at the stop, then rounded to 0.01 lot without
+going over. $10/pip/lot on EURUSD, GBPUSD, AUDUSD; USDCHF and USDJPY pip value
+(10 CHF / 1,000 JPY per lot) is converted to USD at the exit price.
 
-## Ladder alternative
+## Notes
 
-Resting limits 0.382 → 0.618, sizes ramping deeper, stop 0.886 + buffer, targets
-spread −0.618 → −1.0 — the crypto Fib Ladder, sized so the full ladder loses that
-pair's $400 at the stop.
-
-## Data
-
-Kraken FX spot (no key) by default; a free Twelve Data key in **Tune** switches to
-interbank-composite candles, rationed to the free tier (selected pair every
-4 min, the rest every 20). Candles are UTC-aligned; broker charts on New York
-close (OANDA's MT5 / TradingView) may show slightly different 4h swings — type
-OANDA's swing high/low into the overrides; that's the chart your stop fills on.
+- Take the .382 and .618 from the OANDA chart — that is where the stop fills.
+- Each pair keeps its own levels; switching pairs doesn't lose them.
