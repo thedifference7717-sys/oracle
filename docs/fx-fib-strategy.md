@@ -1,5 +1,12 @@
 # FX Fib Ladder — EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY
 
+> **Tuning result (Oct 14):** no FX edge found. The crypto rules lost on FX in
+> both 2019 → mid-2024 (−9.9R) and since (−6.4R), after spread. Of 3,240
+> variations, the ones that looked best on 2019 → mid-2024 lost on the unseen
+> period after it. The page keeps the crypto rules and says so. Full numbers:
+> [`fx-tune-report.md`](fx-tune-report.md). Re-run: the **Tune the FX Fib
+> Ladder** workflow; it only publishes settings that also profit unseen.
+
 The crypto Fib Ladder's tuned rules ("Best found by tuning (Oct 5)") run on five
 FX majors. Live page: [`forex.html`](../forex.html), the **FX** tab of the Fib
 Ladder. The page finds the setups and lists the orders; you place them on OANDA.

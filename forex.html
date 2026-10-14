@@ -362,14 +362,15 @@ function render(){
   document.title = sym + ' · FX Fib Ladder';
   $('sig-t').textContent = sym;
   const ok = SYMS.filter(s => RES[s] && RES[s].S).length, bad = SYMS.filter(s => RES[s] && RES[s].err);
-  st.className = A.err ? 'err' : (RES.U ? '' : 'warn');
+  st.className = A.err ? 'err' : (RES.U && !(TUNED && !TUNED.params) ? '' : 'warn');
   st.textContent = A.err ? 'Data error on ' + sym + ': ' + A.err + ' — retrying on the next cycle.'
     : !A.S ? 'Loading ' + sym + '…'
     : 'Live · ' + ok + '/5 pairs via ' + A.src + (bad.length ? ' · failed: ' + bad.join(', ') : '') +
       (A.note ? ' · Twelve Data failed (' + A.note + ')' : '') +
       ' · ' + RULES.name + ' · ' + (cfg.align === 'utc' ? 'UTC' : 'OANDA') + ' ' + tfName(RULES.tf) + ' · next close ' + when(nextCheck()).slice(-9) +
       ' · updated ' + (lastOk ? lastOk.toLocaleTimeString() : '—') +
-      (RES.U ? '' : ' · ⚠ USD structure needs all five pairs, so nothing passes the filter yet');
+      (RES.U ? '' : ' · ⚠ USD structure needs all five pairs, so nothing passes the filter yet') +
+      (TUNED && !TUNED.params ? ' · ⚠ No FX tuning held up on unseen data — these crypto rules lost on FX too (see the strategy notes).' : '');
   $('sig-tag').textContent = A.S ? A.S.bars.length + ' × ' + tfName(RULES.tf) + ' loaded' : '';
   if(!A.S){
     $('sig-meta').innerHTML = ''; $('checks').innerHTML = '';
