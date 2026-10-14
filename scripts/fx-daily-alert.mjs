@@ -110,7 +110,9 @@ if (!tested) lines.push(`⚠️ <i>Untested — it did not make money on the uns
 lines.push("");
 if (rules.entry === "ny9") {
   const t = T.trade || T.next;
-  if (!t) lines.push(`No trade today — no pair has a clear direction (${why(rules.bias)}).`);
+  if (!t) lines.push(clk.h >= 2 && clk.h <= 9
+    ? `No trade today — no pair has a clear direction (${why(rules.bias)}).`
+    : `Today's trade is set at 9:00 am ET — the levels come from the prices just before. (This run is at ${clk.h}:${String(clk.m).padStart(2, "0")} ET.)`);
   else {
     const L = lotsFor(t.sym, t);
     lines.push(`${arrow(t.dir)} <b>${t.sym}</b> at market ${T.trade ? "(on since 9:00)" : "at 9:00 ET"} ~${fmt(t.sym, t.entry)} · <b>${L.lots.toFixed(2)} lots</b>`);
