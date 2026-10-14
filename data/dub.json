@@ -2205,6 +2205,9 @@
      "sport": "NHL",
      "start": "2026-10-14T02:30:00Z",
      "teams": "EDM @ LAK",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "b538ffba623ad931a6fd24ec8b8a0145cad904cd236890462c6dbc5b1592b6c5",
@@ -2240,7 +2243,7 @@
    ]
   }
  ],
- "updated": "2026-10-14T02:30:59.682Z",
+ "updated": "2026-10-14T02:54:00.784Z",
  "record": {
   "w": 8,
   "l": 10

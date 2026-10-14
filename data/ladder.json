@@ -1885,7 +1885,7 @@
   {
    "id": "2026-10-13:ladder",
    "date": "2026-10-13",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-13T21:00:50.315Z",
    "cycle": 9,
    "rung": 2,
@@ -1942,6 +1942,9 @@
    "sport": "NHL",
    "start": "2026-10-14T02:30:00Z",
    "teams": "EDM @ LAK",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-10-14T02:53:59.272Z",
    "revealed": {
     "v": 1,
     "hash": "85a79ea8ca38340fd190d187b53f51f35870b3fb833a09693bc4fb0d3e6db10a",
@@ -1970,12 +1973,12 @@
    }
   }
  ],
- "updated": "2026-10-14T02:30:59.671Z",
+ "updated": "2026-10-14T02:53:59.273Z",
  "state": {
   "account": 242.64,
   "base": 33.7,
-  "stake": 49.52,
-  "rung": 2,
+  "stake": 62.69,
+  "rung": 3,
   "cycle": 9,
   "pl": 142.64,
   "cycles": {
