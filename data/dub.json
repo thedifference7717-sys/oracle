@@ -2185,11 +2185,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.429 · 2.4 pts/gm this season (5) · a point in 4 of his last 5",
+     "eventId": "2026020104",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.65,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT13EDMLA-EDMEBOUCHARD2-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7214,
+     "pAdj": 0.6708,
+     "player": "Evan Bouchard",
+     "playerId": "8480803",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-14T02:30:00Z",
+     "teams": "EDM @ LAK",
+     "revealed": {
       "v": 1,
       "hash": "b538ffba623ad931a6fd24ec8b8a0145cad904cd236890462c6dbc5b1592b6c5",
-      "iv": "bqWAdAG02erFjYWR",
-      "ct": "E0bdkAaEYc72wl6D4Gxfo5gPve/aTdkMNU2etHHUHVYDrJFM3wJ3ULJ/OhpKnOLlBM59uXub5c1EFZpRmWT6v0LpABHsJ/HRtmWcSbh3VFkChcmSfe8yFgLGRV6q8WR7SPJdUvLgIhGSQenmM7m0SR9BdMNh82oRGrDqouQJdMV7113BtS0PWy89W861u1rQJI6Az6QWGl7OyelHHF0D5nv493CRv+ZaHHkTa+fT139Givh6zsEw9b2FjrunbwyC0pfzB1pxSXCXhWJ1TqbTiw5OT1OW3IhTKkx/DUXuxetdAQ+cFURGh2VPMT8SRKRsd3niPpbSqmKZ/kA81b+nyS383/6bDpRVBZdhy5JnM7YQHJ0Sr0BrA/bHfAf3FtppXieBrXF2VYt/2+ME3wHbzcNX0BS4cYcneImtk+B0vAB+38t0IU6/hrhOspRBJRCNlApJeSUteLzNfc2bxyvqpOlDYo/XE28D52yvuDFHUKjVhQYz7p7TUtmIDhPIvI4MdGlWXgFirxgoqo4ew7Bg4dXJb13E7Hbe7vpqR2qcipNNxFSZHnI57rh6T9DEQjQsrOz0QgL4XP713Z1bckwwE+xeSAGccTzOl0WvpOXoOnkZRMomRxYtqtKgU5W16Boe4irMjV2IGLxpRy6S3QmyOyRLZSS0sl5L0PQnV5hizllk6WpOzGfZ"
+      "salt": "79979fdc11a8a5c78b982971b507d022",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-13:dub#0"
      }
     },
     {
@@ -2203,7 +2240,7 @@
    ]
   }
  ],
- "updated": "2026-10-13T21:00:51.891Z",
+ "updated": "2026-10-14T02:30:59.682Z",
  "record": {
   "w": 8,
   "l": 10
