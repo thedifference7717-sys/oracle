@@ -1,0 +1,33 @@
+name: FX daily 2:1 alert (9 am New York)
+
+# Telegram at 9:00 am New York on weekdays: today's Daily 2:1 orders to place
+# (scripts/fx-daily-alert.mjs). Two UTC times so one of them is 9 am in both
+# summer (EDT) and winter (EST); the script sends only from the one that is.
+# GitHub can start scheduled runs late, so both fire at :45 and the script
+# accepts 8:45–9:45 New York. Scheduled workflows run only on the default
+# branch (main); use "Run workflow" to send one now from any branch.
+on:
+  schedule:
+    - cron: '45 12 * * 1-5'   # 8:45 EDT
+    - cron: '45 13 * * 1-5'   # 8:45 EST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Send today's trade
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TWELVE_DATA_KEY: ${{ secrets.TWELVE_DATA_KEY }}
+          DAILY_RISK: ${{ vars.DAILY_RISK || '500' }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+        run: node scripts/fx-daily-alert.mjs
