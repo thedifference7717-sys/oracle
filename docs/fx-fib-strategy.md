@@ -1,43 +1,56 @@
 # FX Fib Ladder — EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY
 
-The crypto Fib Ladder (`ladder.html`) applied to five majors. Live page:
-[`forex.html`](../forex.html), the **FX** tab of the Fib Ladder. The levels, legs
-and targets are identical; only the sizing changes (lots, by stop-loss budget).
+The crypto Fib Ladder's tuned rules ("Best found by tuning (Oct 5)") run on five
+FX majors. Live page: [`forex.html`](../forex.html), the **FX** tab of the Fib
+Ladder. The page finds the setups and lists the orders; you place them on OANDA.
 
-## Levels — from the two prices you type
+## When it looks for a trade
 
-The 0.382 and 0.618 of the impulse leg pin everything: they sit 23.6% of the leg
-apart, so `range = |.382 − .618| ÷ 0.236`. A .382 above the .618 is a long
-(up-leg pulling back); below is a short.
+- 4h candles, checked as each closes (6 a day). Default timing is OANDA's
+  New York close (bars open 17:00 New York); UTC is an option.
+- Swing high/low = 20 candles each side (LuxAlgo Market Structure Breakers, length 20).
+- Triggers: any close through the latest unbroken swing — **MSS** (against the
+  prior trend) or **MSB** (with it), long or short.
+- Fib on the move that made the break: long → swing high = 0, swing low = 1
+  (the lowest low since the broken swing high); shorts mirrored.
+- While price extends and nothing has filled, the ladder moves to each new
+  high/low. A newer break replaces an unfilled ladder.
+- Skipped if the break candle closed already past the .5.
 
-| | Level |
-|---|---|
-| Entries | 10 limits evenly spaced 0.382 → 0.618 |
-| Stop | 0.886 (override in Tune) |
-| Targets | one per leg, evenly spaced −0.618 → −1.0 extension |
+## Entries
 
-## Size ramp
+- 10 limits evenly from the **.236 to the .5**, ramping so the deepest is 2× the
+  first; orders price has already passed are left out. Full fill averages ≈ .38.
 
-`weight = 1 + (ratio − 1)·(i − 1)/(n − 1)` — leg 10 is 2× leg 1 by default, so the
-deep legs (closer to the stop) carry the most size.
+## Exits
 
-Default TP pairing: leg 1 (first filled, smallest) runs to the −1.0; the big deep
-legs bank first at the −0.618. The TP button swaps it.
+- Every leg's target is the **0** (swing high for longs, low for shorts).
+- One stop for the whole position at the **1.272**.
+- When the target fills, cancel the unfilled entries. (Targets share one price,
+  so they fill together; any leg left goes to break-even and trails.)
+- No recovery trades. An opposite break never closes a filled trade; it can only
+  replace an unfilled ladder.
 
-## FX sizing — hard $400 cap per trade
+## Filters (all must pass)
 
-**SL $ per trade = $400** (5 pairs × $400 = $2,000, 2% of $100,000). Each pair's
-whole ladder is sized so that if every leg fills and the stop hits, it loses
-**no more than $400**: weights are scaled to $400, rounded to 0.01 lot, and
-leftover 0.01s handed back only while the total stays ≤ $400. If the 0.01-lot
-minimum on every leg would push past $400 (a very wide leg), legs are dropped
-until it fits; if even two can't fit, no ladder is shown. A stop override is
-sized the same way, so the cap always holds.
+1. **USD 8h structure** (FX stand-in for BTC 8h): an equal-weight dollar index
+   from the five pairs; trade only the side that agrees with its latest 8h break
+   (USD down → long EURUSD/GBPUSD/AUDUSD, short USDCHF/USDJPY; USD up → reverse).
+2. **Trend strength:** the pair's 4h ADX(14) ≥ 20.
+3. Funding and 4. top traders: crypto-only (perp funding, Hyperliquid
+   leaderboard) — no FX equivalent, not applied.
 
-$10/pip/lot on EURUSD, GBPUSD, AUDUSD; USDCHF and USDJPY pip value
-(10 CHF / 1,000 JPY per lot) is converted to USD at the exit price.
+## Size — $400 max SL per trade
 
-## Notes
+Instead of $250 notional, each ladder is sized so the orders on it, all filled,
+lose no more than **$400** at the 1.272 (5 pairs × $400 = $2,000, 2% of
+$100,000). Lots round to 0.01 without going over; if the 0.01 minimum would
+overshoot, the shallowest orders are dropped. The stop is far and the target
+near, so a full-fill win is ≈ 0.4R; the edge is the hit rate (break-even ≈ 70%).
 
-- Take the .382 and .618 from the OANDA chart — that is where the stop fills.
-- Each pair keeps its own levels; switching pairs doesn't lose them.
+## Data and replay
+
+Kraken FX spot with no key (1h candles ≈ 30 days with OANDA timing, 4h ≈ 4 months
+with UTC), or a free Twelve Data key (≈ 7 months). The page replays the rules
+over what it loaded: limits fill at their price, the stop wins when a candle
+spans both, spread and swap are ignored — a sanity check, not a backtest.

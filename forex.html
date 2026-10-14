@@ -102,22 +102,47 @@ details[open] summary::after{content:' ▴'}
 .note p{margin-top:11px}.note p:first-child{margin-top:0}
 .note b{color:var(--txt)}.note .hl{color:var(--txt);font-weight:700}
 .ft{text-align:center;color:var(--faint);font-size:11px;margin:8px 0 2px;font-weight:600;line-height:1.6}
-/* pair picker */
-.pairs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:13px}
-.pr{background:var(--bg2);border:1px solid var(--line2);border-radius:11px;padding:9px 4px;color:var(--txt);font:800 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:.2px;cursor:pointer;text-align:center;min-height:44px}
-.pr .d{display:block;font-size:9.5px;font-weight:800;letter-spacing:.5px;margin-top:3px;color:var(--faint)}
-.pr.on{border-color:rgba(79,140,255,.6);background:rgba(79,140,255,.1);box-shadow:0 0 0 3px rgba(79,140,255,.12)}
-@media(max-width:420px){.pr{font-size:11px}}
+/* FX additions */
 .seg{display:inline-flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden;background:var(--card)}
 .seg a{display:inline-flex;align-items:center;padding:8px 13px;font-size:11.5px;font-weight:800;letter-spacing:.4px;color:var(--dim);text-decoration:none}
 .seg a.on{color:var(--grn);background:rgba(46,189,133,.12)}
 @media(pointer:coarse){.seg a{min-height:44px}}
+.field select{background:var(--bg2);border:1px solid var(--line2);border-radius:11px;padding:11px 12px;color:var(--txt);font:700 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;outline:none;width:100%;-webkit-appearance:none;appearance:none}
+.field.wide{grid-column:1/-1}
+.field.wide input{font-size:14px;font-weight:600}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(116px,1fr));gap:8px;margin-bottom:12px}
+.chip{text-align:left;background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:13px;padding:10px 12px;color:var(--txt);cursor:pointer;font-family:inherit;min-height:44px}
+.chip.sel{border-color:rgba(79,140,255,.6);box-shadow:0 0 0 3px rgba(79,140,255,.12)}
+.chip .sym{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:13.5px;font-weight:800}
+.chip .dir{font-size:10px;font-weight:800;letter-spacing:.5px}
+.chip .st{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;color:var(--dim);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex-shrink:0}
+.st-live .dot{background:var(--blu);box-shadow:0 0 7px var(--blu)}.st-live .st{color:var(--blu)}
+.st-pos .dot{background:var(--grn);box-shadow:0 0 7px var(--grn)}.st-pos .st{color:var(--grn)}
+.st-err .dot{background:var(--red)}.st-err .st{color:var(--red)}
+.checks{display:flex;flex-direction:column;gap:7px}
+.ck{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--dim);background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:9px 12px;font-weight:600;line-height:1.4}
+.ck .txt{flex:1;min-width:0}.ck .txt b{color:var(--txt)}
+.ck .badge{font-size:9.5px;padding:3px 8px;border-radius:6px;font-weight:800;letter-spacing:.6px;white-space:nowrap;border:1px solid var(--line2)}
+.ck.ok{border-color:rgba(46,189,133,.3)}.ck.ok .dot{background:var(--grn)}.ck.ok .badge{color:var(--grn);border-color:rgba(46,189,133,.4);background:rgba(46,189,133,.1)}
+.ck.no{border-color:rgba(246,70,93,.3)}.ck.no .dot{background:var(--red)}.ck.no .badge{color:var(--red);border-color:rgba(246,70,93,.4);background:rgba(246,70,93,.1)}
+.ck.na{opacity:.6}
+.rail .nowline{position:absolute;left:0;right:112px;height:0;border-top:1px solid rgba(240,184,76,.8)}
+.rail .lab.now .p{color:var(--amb)}
+.rail .rung.done{background:linear-gradient(90deg,#2ebd85,#6fe0b2)}
+.rail .rung.off{opacity:.25}
+.lrow .st{font-size:9.5px;font-weight:800;letter-spacing:.5px}
+.hist{display:flex;flex-direction:column}
+.hr{display:grid;grid-template-columns:1.3fr .8fr .7fr .9fr;gap:8px;padding:8px 2px;border-top:1px solid var(--line);font-size:12px;font-weight:600;color:var(--dim);font-variant-numeric:tabular-nums}
+.hr:first-child{border-top:none}
+.hr b{color:var(--txt)}
+@media(max-width:600px){.rail .nowline{right:100px}}
 </style></head><body>
 
 <div class="hdr">
   <div>
     <div class="brand"><span class="mark">Φ</span>Fib Ladder</div>
-    <div class="sublbl">FX scale-in planner</div>
+    <div class="sublbl">FX · 4h structure ladder</div>
   </div>
   <div class="acts">
     <nav class="seg" aria-label="Market"><a href="ladder.html">Crypto</a><a class="on" href="forex.html" aria-current="page">FX</a></nav>
@@ -126,25 +151,31 @@ details[open] summary::after{content:' ▴'}
 </div>
 
 <div class="card">
-  <h2>Setup <span class="tag" id="setup-tag">type the .382 and .618 off your chart</span></h2>
-  <div class="pairs" id="pairs"></div>
+  <h2>Account <span class="tag" id="acct-tag">sizes in standard lots (100k)</span></h2>
   <div class="setup">
-    <div class="field key"><label id="l382">0.382 price</label><input id="in-f382" type="number" step="any" inputmode="decimal" placeholder="1.08400"></div>
-    <div class="field key"><label id="l618">0.618 price</label><input id="in-f618" type="number" step="any" inputmode="decimal" placeholder="1.07900"></div>
-    <div class="field"><label>SL $ per trade</label><input id="in-risk" type="number" step="any" inputmode="decimal" placeholder="400"></div>
+    <div class="field key"><label>SL $ per trade</label><input id="in-risk" type="number" step="any" inputmode="decimal" placeholder="400"></div>
+    <div class="field"><label>Account $</label><input id="in-acct" type="number" step="any" inputmode="decimal" placeholder="100000"></div>
   </div>
   <div class="setup" id="tune">
-    <div class="field"><label>Stop override</label><input id="in-stop" type="number" step="any" inputmode="decimal" placeholder="auto .886"></div>
-    <div class="field"><label>Legs</label><input id="in-legs" type="number" step="1" min="2" max="50" inputmode="numeric" placeholder="10"></div>
+    <div class="field"><label>Legs</label><input id="in-legs" type="number" step="1" min="2" max="20" inputmode="numeric" placeholder="10"></div>
     <div class="field"><label>Last ÷ first</label><input id="in-ratio" type="number" step="0.1" min="1" inputmode="decimal" placeholder="2"></div>
-    <div class="field"><label>Account $</label><input id="in-acct" type="number" step="any" inputmode="decimal" placeholder="100000"></div>
+    <div class="field"><label>4h candles</label><select id="in-align"><option value="oanda">OANDA (NY close)</option><option value="utc">UTC</option></select></div>
+    <div class="field wide"><label>Twelve Data API key (optional, free — longer history)</label><input id="in-tdkey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="blank = Kraken FX spot, no key"></div>
   </div>
 </div>
 
-<div id="status">Enter the 0.382 and 0.618 prices to build the ladder.</div>
+<div id="status">Loading FX candles…</div>
+
+<div class="chips" id="chips"></div>
+
+<div class="card" id="sig-card">
+  <h2><span id="sig-t">Signal</span> <span class="acts"><span class="tag" id="sig-tag"></span><button id="refresh" class="btn">Refresh</button></span></h2>
+  <div class="meta" style="margin-top:0;margin-bottom:12px" id="sig-meta"></div>
+  <div class="checks" id="checks"></div>
+</div>
 
 <div class="card" id="sum-card" style="display:none">
-  <h2>The plan <span class="tag" id="sum-tag"></span></h2>
+  <h2><span id="sum-t">The ladder</span> <span class="tag" id="sum-tag"></span></h2>
   <div class="kpis" id="stats"></div>
   <div class="meta" id="meta"></div>
 </div>
@@ -154,409 +185,593 @@ details[open] summary::after{content:' ▴'}
   <div class="rail" id="rail"></div>
 </div>
 
-<div class="card">
-  <h2><span id="legs-t">The 10 trades</span>
-    <span class="acts">
-      <button id="pairing" class="btn">TP: 1→−.618</button>
-      <button id="copy" class="btn">Copy</button>
-      <button id="reset" class="btn">Reset</button>
-    </span></h2>
-  <div id="legs"><div class="dim" style="font-size:13px;padding:2px">Waiting on the two Fib prices…</div></div>
+<div class="card" id="legs-card" style="display:none">
+  <h2><span id="legs-t">The orders</span>
+    <span class="acts"><button id="copy" class="btn">Copy</button></span></h2>
+  <div id="legs"></div>
 </div>
 
-<details id="how"><summary>How this is built</summary><div class="note" id="note"></div></details>
+<div class="card" id="hist-card" style="display:none">
+  <h2>Replay <span class="tag" id="hist-tag"></span></h2>
+  <div class="kpis" id="hist-stats"></div>
+  <div class="hist" id="hist" style="margin-top:12px"></div>
+</div>
 
-<div class="ft">The crypto Fib Ladder for EURUSD, GBPUSD, AUDUSD, USDCHF and USDJPY — same levels, same legs,
-sized in lots so no trade can lose more than your SL $ at the stop.<br><br>
-Planning aid only — it places no orders. Every level is derived from the two prices you type,
-so check the implied swing against your chart before trusting the stop and targets.</div>
+<details id="how"><summary>The strategy, rule by rule</summary><div class="note">
+  <p><b>Best found by tuning (Oct 5)</b> — the crypto Fib Ladder's rules, run on five FX majors.</p>
+  <p><b>When it looks for a trade.</b> 4-hour candles, checked as each one closes (6 times a day). A swing high or
+  low needs <span class="hl">20 candles on each side</span> (LuxAlgo Market Structure Breakers, length 20). Both
+  kinds of break trigger, long or short: an <span class="hl">MSS</span> (a shift against the prior trend) and an
+  <span class="hl">MSB</span> (a break with it). The fib is drawn on the move that made the break — for a long the
+  swing high is 0 and the swing low is 1; shorts are mirrored. While price keeps extending and nothing has filled,
+  the ladder moves to each new high (or low); a newer break replaces an unfilled ladder. Skipped if price has
+  already pulled back past the .5.</p>
+  <p><b>Entries.</b> 10 limit orders evenly from the <span class="hl">.236 to the .5</span>, sizes ramping so the deepest
+  is 2× the first; orders price has already passed are left out. Everything filled averages about the .38.</p>
+  <p><b>Exits.</b> Every leg takes profit at the <span class="hl">0</span> (the swing high for longs, low for shorts).
+  One stop for the whole position at the <span class="hl">1.272</span>, just beyond where the swing started. When the
+  target fills the unfilled entries are cancelled — the targets share one price, so they fill together (on the
+  engine the stop then goes to break-even and trails for any leg left). No recovery trades. A break the other way
+  does not close a filled trade; it can only replace a ladder that has not filled.</p>
+  <p><b>Filters — all must pass.</b></p>
+  <ol>
+    <li><b>USD 8h structure</b> (in place of BTC 8h). An equal-weight dollar index built from the five pairs; only
+    trade the side that agrees with its latest 8h break — USD breaking down means longs on EURUSD, GBPUSD, AUDUSD and
+    shorts on USDCHF, USDJPY, and the reverse.</li>
+    <li><b>Trend strength.</b> The pair's 4h ADX(14) is 20 or higher at the break.</li>
+    <li><b>Funding</b> and <b>top traders</b> — crypto-only (perp funding, Hyperliquid leaderboard). FX has no free
+    equivalent, so they are not applied.</li>
+  </ol>
+  <p><b>Size.</b> Instead of $250 notional, each ladder is sized so the orders on it, all filled, lose no more than your
+  <span class="hl">SL $ per trade</span> at the 1.272 ($400 by default; 5 pairs × $400 = $2,000). Lots round to 0.01
+  without going over; if the 0.01-lot minimum would overshoot, the shallowest orders are dropped. Because the stop is
+  far (the 1.272) and the target near (the 0), each win is small next to the risk — about 0.4R for a full fill — and
+  the edge is the hit rate.</p>
+  <p><b>Placing it on OANDA.</b> The page does not trade. When a ladder goes live, place the listed limits with the
+  shared stop and target; when the ladder moves, move your orders; when the target fills, cancel the rest. Close by
+  hand in OANDA. 4h candles default to OANDA's New York-close timing (bars open 17:00 New York) so the swings match
+  your OANDA chart.</p>
+  <p><b>Replay.</b> The record card replays these rules over the candles loaded (≈30 days on Kraken with OANDA timing,
+  ≈4 months on UTC timing, ≈7 months with a Twelve Data key). It fills limits at their price, takes the stop first when
+  a candle spans both, and ignores spread and swap — treat it as a sanity check, not a backtest.</p>
+</div></details>
+
+<div class="ft">Planning aid only — it places no orders. Confirm every level on your OANDA chart and follow your prop-firm rules.</div>
 
 <script>
 const $ = id => document.getElementById(id);
-const STORE = 'fxladder.v1';
+const STORE = 'fxladder.v2';
 const LOT = 100000;
-// Quote currency (sets the pip value), pip size, and price decimals per pair.
 const PAIRS = {
-  EURUSD: {q:'USD', pip:1e-4, dp:5},
-  GBPUSD: {q:'USD', pip:1e-4, dp:5},
-  AUDUSD: {q:'USD', pip:1e-4, dp:5},
-  USDCHF: {q:'CHF', pip:1e-4, dp:5},
-  USDJPY: {q:'JPY', pip:1e-2, dp:3},
+  EURUSD: {q:'USD', pip:1e-4, dp:5, usd:-1, kr:'EURUSD', td:'EUR/USD'},
+  GBPUSD: {q:'USD', pip:1e-4, dp:5, usd:-1, kr:'GBPUSD', td:'GBP/USD'},
+  AUDUSD: {q:'USD', pip:1e-4, dp:5, usd:-1, kr:'AUDUSD', td:'AUD/USD'},
+  USDCHF: {q:'CHF', pip:1e-4, dp:5, usd: 1, kr:'USDCHF', td:'USD/CHF'},
+  USDJPY: {q:'JPY', pip:1e-2, dp:3, usd: 1, kr:'USDJPY', td:'USD/JPY'},
 };
 const SYMS = Object.keys(PAIRS);
-const F_IN_LO = 0.382, F_IN_HI = 0.618;     // entry zone
-const F_STOP  = 0.886;                       // stop level
-const F_TP_LO = -0.618, F_TP_HI = -1.0;      // take-profit band (extensions)
-const D = {legs: 10, ratio: 2, risk: 400, acct: 100000};
-const PER_PAIR = ['f382','f618','stop'];     // each pair keeps its own levels
-const SHARED = ['risk','legs','ratio','acct'];
-let sel = 'EURUSD';
-let pairReversed = true;    // default: leg 1 (first filled, smallest) runs to the −1.0,
-                            // the deep legs bank first at the −0.618. false = the reverse.
-let book = {};              // per-pair inputs: {EURUSD: {f382, f618, stop}, …}
+const H4 = 14400, H8 = 28800;
+const LEN = 20;                               // swing = 20 candles each side
+const ADX_N = 14, ADX_MIN = 20;
+const F_IN_LO = 0.236, F_IN_HI = 0.5;         // entry zone
+const F_STOP = 1.272, F_TP = 0;               // one stop, one target
+const D = {risk: 400, acct: 100000, legs: 10, ratio: 2};
+
+/* ── config ───────────────────────────────────────────── */
+let cfg = {sel:'EURUSD', align:'oanda', tdkey:'', tune:false};
+function load(){
+  try{ Object.assign(cfg, JSON.parse(localStorage.getItem(STORE) || '{}')); }catch(e){}
+  if(!PAIRS[cfg.sel]) cfg.sel = 'EURUSD';
+  ['risk','acct','legs','ratio'].forEach(k => { if(cfg[k] != null) $('in-'+k).value = cfg[k]; });
+  $('in-align').value = cfg.align === 'utc' ? 'utc' : 'oanda';
+  $('in-tdkey').value = cfg.tdkey || '';
+  if(cfg.tune){ $('tune').classList.add('show'); $('tune-btn').classList.add('on'); }
+}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(cfg)); }catch(e){} }
+function val(k){ const v = parseFloat(cfg[k]); return isFinite(v) && v > 0 ? v : D[k]; }
 
 /* ── formatting ───────────────────────────────────────── */
 const nf = (v,dp) => v.toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp});
-const usd = (v,dp=2) => !isFinite(v) ? '—' : '$' + nf(v,dp);
-const signed = (v,dp) => (v >= 0 ? '+' : '−') + usd(Math.abs(v),dp);
-const px = (v,sym) => !isFinite(v) ? '—' : v.toFixed(PAIRS[sym || sel].dp);
-const pips = (d,sym) => nf(Math.abs(d) / PAIRS[sym || sel].pip, 1);
+const usd = (v,dp=2) => (v == null || !isFinite(v)) ? '—' : '$' + nf(v,dp);
+const signed = (v,dp=2) => (v >= 0 ? '+' : '−') + usd(Math.abs(v),dp);
+const px = (v,sym) => (v == null || !isFinite(v)) ? '—' : v.toFixed(PAIRS[sym].dp);
+const pips = (d,sym) => nf(Math.abs(d) / PAIRS[sym].pip, 1);
 const lots = v => nf(v,2);
-const fib = f => (f < 0 ? '−' : '') + Math.abs(f).toFixed(3);
-// USD per unit of base for a price move `d`, converted at price `at`: a USD-quoted
-// pair pays in USD; USDCHF and USDJPY pay in CHF / JPY, so divide by the rate.
-const usdPer = (d, at, sym) => PAIRS[sym || sel].q === 'USD' ? d : d / at;
+const fib = f => f.toFixed(3).replace(/^0\./,'.');
+const when = t => { const d = new Date(t*1000); return d.toUTCString().slice(0,11) + ' ' +
+  String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0') + ' UTC'; };
+// USD per unit of base for a price move `d`, converted at price `at`.
+const usdPer = (sym, d, at) => PAIRS[sym].q === 'USD' ? d : d / at;
 
-/* ── inputs ───────────────────────────────────────────── */
-function num(id){
-  const raw = $('in-'+id).value.trim();
-  if(raw === '') return null;
-  const v = parseFloat(raw);
-  return isFinite(v) ? v : null;
+/* ── candles ──────────────────────────────────────────── */
+// OANDA's candles are anchored on the New York close (17:00 New York), so a 4h
+// bar opens at 21:00/01:00/… UTC in summer and 22:00/02:00/… in winter.
+const NYF = new Intl.DateTimeFormat('en-US', {timeZone:'America/New_York', hour:'numeric', hourCycle:'h23'});
+const nyCache = new Map();
+function nyLag(t){                            // hours New York is behind UTC (4 or 5)
+  const day = Math.floor(t / 86400);
+  if(!nyCache.has(day)){
+    const s = day * 86400 + 12 * 3600;
+    nyCache.set(day, (12 - (+NYF.format(new Date(s*1000))) + 24) % 24);
+  }
+  return nyCache.get(day);
 }
-function stash(){
-  const o = book[sel] = {};
-  PER_PAIR.forEach(k => { const v = $('in-'+k).value.trim(); if(v !== '') o[k] = v; });
+function bucket(t, P){
+  if(cfg.align === 'utc') return Math.floor(t / P) * P;
+  const off = ((17 + nyLag(t)) * 3600) % P;
+  return Math.floor((t - off) / P) * P + off;
 }
-function save(){
-  stash();
-  const o = {sel, pairReversed, book, tune: $('tune').classList.contains('show')};
-  SHARED.forEach(k => o[k] = $('in-'+k).value);
-  try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
+function aggregate(c, P){
+  const m = new Map();
+  for(const x of c){
+    const k = bucket(x.t, P), b = m.get(k);
+    if(!b) m.set(k, {t:k, o:x.o, h:x.h, l:x.l, c:x.c});
+    else { b.h = Math.max(b.h, x.h); b.l = Math.min(b.l, x.l); b.c = x.c; }
+  }
+  return [...m.values()].sort((a,b) => a.t - b.t);
 }
-function load(){
-  let o = null;
-  try{ o = JSON.parse(localStorage.getItem(STORE) || 'null'); }catch(e){}
-  o = o || {};
-  if(PAIRS[o.sel]) sel = o.sel;
-  if(o.book && typeof o.book === 'object') book = o.book;
-  SHARED.forEach(k => { if(o[k] != null) $('in-'+k).value = o[k]; });
-  if(o.pairReversed != null) pairReversed = !!o.pairReversed;
-  if(o.tune){ $('tune').classList.add('show'); $('tune-btn').classList.add('on'); }
-  fill();
+async function fetchJSON(url){
+  const r = await fetch(url, {cache:'no-store'});
+  if(!r.ok) throw new Error(url.split('/')[2] + ' ' + r.status);
+  return r.json();
 }
-function fill(){
-  const b = book[sel] || {};
-  PER_PAIR.forEach(k => $('in-'+k).value = b[k] != null ? b[k] : '');
-  const dp = PAIRS[sel].dp;
-  $('in-f382').placeholder = sel === 'USDJPY' ? '151.200' : (1.08400).toFixed(dp);
-  $('in-f618').placeholder = sel === 'USDJPY' ? '150.400' : (1.07900).toFixed(dp);
+async function kraken(sym, iv){
+  const j = await fetchJSON('https://api.kraken.com/0/public/OHLC?pair=' + PAIRS[sym].kr + '&interval=' + iv);
+  if(j.error && j.error.length) throw new Error('kraken ' + j.error[0]);
+  const key = Object.keys(j.result).find(k => k !== 'last');
+  return j.result[key].map(x => ({t:+x[0], o:+x[1], h:+x[2], l:+x[3], c:+x[4]})).sort((a,b) => a.t - b.t);
+}
+async function twelve(sym, key){
+  const j = await fetchJSON('https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(PAIRS[sym].td) +
+    '&interval=1h&outputsize=5000&timezone=UTC&apikey=' + encodeURIComponent(key));
+  if(j.status === 'error' || !j.values) throw new Error('Twelve Data: ' + (j.message || 'no data'));
+  return j.values.map(v => ({t: Date.parse(v.datetime.replace(' ','T') + 'Z')/1000, o:+v.open, h:+v.high, l:+v.low, c:+v.close}))
+    .filter(x => isFinite(x.t) && x.c > 0).sort((a,b) => a.t - b.t);
+}
+// Raw candles per pair: 1h (aggregated to the chosen 4h timing) or, on Kraken
+// with UTC timing, native 4h for the longer history.
+async function getRaw(sym){
+  let tdErr = null;
+  if(cfg.tdkey){
+    try{ const c = await twelve(sym, cfg.tdkey); if(c.length > 300) return {c, iv:3600, src:'Twelve Data'}; throw new Error('Twelve Data: too few candles'); }
+    catch(e){ tdErr = e.message; }
+  }
+  try{
+    const iv = cfg.align === 'utc' ? H4 : 3600;
+    const c = await kraken(sym, iv / 60);
+    if(c.length < 100) throw new Error('kraken: too few candles');
+    return {c, iv, src:'Kraken', note: tdErr};
+  }catch(e){ throw new Error((tdErr ? tdErr + ' · ' : '') + e.message); }
+}
+// → {bars: closed 4h bars, forming: the open 4h bar or null, price}
+function to4h(raw){
+  const now = Date.now() / 1000;
+  const all = raw.iv === H4 ? raw.c.map(x => Object.assign({}, x)) : aggregate(raw.c, H4);
+  const bars = all.filter(b => b.t + H4 <= now);
+  const forming = all.length && all[all.length-1].t + H4 > now ? all[all.length-1] : null;
+  return {bars, forming, price: raw.c[raw.c.length-1].c, lastT: raw.c[raw.c.length-1].t};
 }
 
-/* ── geometry ─────────────────────────────────────────── */
-// The 0.382 and 0.618 prices pin the whole impulse leg: they sit 23.6% of the
-// leg's range apart, so range = |p382 − p618| / (0.618 − 0.382).
-//   LONG  (up-impulse, retraces down): .382 ABOVE .618, anchor = swing high.
-//   SHORT (down-impulse, retraces up): .382 BELOW .618, anchor = swing low.
-// price(f) = anchor − s·f·range, so negative f runs past the anchor into the
-// extension — the take-profit band.
-function geometry(p382, p618){
-  const isLong = p382 > p618;
-  const range = Math.abs(p382 - p618) / (F_IN_HI - F_IN_LO);
-  const s = isLong ? 1 : -1;
-  const anchor = p382 + s * F_IN_LO * range;
-  const at = f => anchor - s * f * range;
-  return {isLong, dir: isLong ? 'long' : 'short', range, anchor, px: at,
-          origin: at(1), stop: at(F_STOP)};
+/* ── indicators ───────────────────────────────────────── */
+function pivots(c, len){
+  const H = new Array(c.length).fill(false), L = new Array(c.length).fill(false);
+  for(let i = len; i < c.length - len; i++){
+    let isH = true, isL = true;
+    for(let j = i-len; j < i && (isH || isL); j++){ if(!(c[i].h > c[j].h)) isH = false; if(!(c[i].l < c[j].l)) isL = false; }
+    for(let j = i+1; j <= i+len && (isH || isL); j++){ if(!(c[i].h >= c[j].h)) isH = false; if(!(c[i].l <= c[j].l)) isL = false; }
+    H[i] = isH; L[i] = isL;
+  }
+  return {H, L};
+}
+// Market-structure breaks: a close through the latest unbroken confirmed swing.
+// MSS = against the trend so far, MSB = with it. events[k] = break at bar k's close.
+function structure(c, len){
+  const {H, L} = pivots(c, len);
+  const events = new Array(c.length).fill(null);
+  let actH = null, actL = null, trend = 0;
+  for(let k = 0; k < c.length; k++){
+    if(actH && c[k].c > actH.p){ events[k] = {k, dir:'long', type: trend === -1 ? 'MSS' : 'MSB', level: actH.p, piv: actH.i}; trend = 1; actH = null; }
+    else if(actL && c[k].c < actL.p){ events[k] = {k, dir:'short', type: trend === 1 ? 'MSS' : 'MSB', level: actL.p, piv: actL.i}; trend = -1; actL = null; }
+    const i = k - len;                        // pivot i is confirmed once bar i+len closes
+    if(i >= len){ if(H[i]) actH = {i, p: c[i].h}; if(L[i]) actL = {i, p: c[i].l}; }
+  }
+  return events;
+}
+function adx(c, n){
+  const out = new Array(c.length).fill(null);
+  let tr = 0, pdm = 0, ndm = 0, sum = 0, a = null;
+  for(let i = 1; i < c.length; i++){
+    const up = c[i].h - c[i-1].h, dn = c[i-1].l - c[i].l;
+    const p = up > dn && up > 0 ? up : 0, m = dn > up && dn > 0 ? dn : 0;
+    const t = Math.max(c[i].h - c[i].l, Math.abs(c[i].h - c[i-1].c), Math.abs(c[i].l - c[i-1].c));
+    if(i <= n){ tr += t; pdm += p; ndm += m; }
+    else { tr += t - tr/n; pdm += p - pdm/n; ndm += m - ndm/n; }
+    if(i < n || tr <= 0) continue;
+    const pdi = 100 * pdm / tr, ndi = 100 * ndm / tr;
+    const dx = pdi + ndi > 0 ? 100 * Math.abs(pdi - ndi) / (pdi + ndi) : 0;
+    if(i < 2*n - 1) sum += dx;
+    else if(i === 2*n - 1){ a = (sum + dx) / n; out[i] = a; }
+    else { a = (a * (n - 1) + dx) / n; out[i] = a; }
+  }
+  return out;
+}
+
+/* ── USD 8h structure (the BTC-8h filter's stand-in) ──── */
+// Equal-weight dollar index from the five pairs' 4h bars (log prices, the
+// XXXUSD pairs inverted), rolled up to 8h; its latest 8h break is the USD side.
+function usdStructure(series){
+  const maps = SYMS.map(s => series[s] ? new Map(series[s].bars.map(b => [b.t, b])) : null);
+  if(maps.some(m => !m)) return null;
+  const ts = [...maps[0].keys()].filter(t => maps.every(m => m.has(t))).sort((a,b) => a - b);
+  const idx = ts.map(t => {
+    let o = 0, h = 0, l = 0, c = 0;
+    SYMS.forEach((s, j) => {
+      const b = maps[j].get(t), sg = PAIRS[s].usd;
+      o += sg * Math.log(b.o); c += sg * Math.log(b.c);
+      h += sg > 0 ? Math.log(b.h) : -Math.log(b.l);
+      l += sg > 0 ? Math.log(b.l) : -Math.log(b.h);
+    });
+    return {t, o: o/5, h: h/5, l: l/5, c: c/5};
+  });
+  if(!idx.length) return null;
+  const b8 = aggregate(idx, H8).filter(b => b.t + H8 <= idx[idx.length-1].t + H4);   // completed 8h bars only
+  const ev = structure(b8, LEN);
+  const breaks = ev.filter(Boolean).map(e => ({dir: e.dir, type: e.type, closeT: b8[e.k].t + H8}));
+  return {breaks, bars: b8.length};
+}
+function usdDirAt(U, T){
+  if(!U) return null;
+  let d = null;
+  for(const b of U.breaks){ if(b.closeT <= T) d = b; else break; }
+  return d;
 }
 
 /* ── the ladder ───────────────────────────────────────── */
-// n entries walking .382 → .618, sizes ramping linearly so leg n is `ratio`×
-// leg 1:   weight_i = 1 + (ratio − 1)·(i−1)/(n−1)
-// Each leg also gets its own take-profit, evenly spaced across −0.618 → −1.0.
-// FX sizes by the stop, not by margin: the weights are scaled so the whole
-// ladder filled loses `risk` dollars at the stop, then each leg rounds DOWN to
-// 0.01 lot (never below the 0.01 minimum) and the leftovers are handed back,
-// so the real risk lands at or just under the budget.
-function buildLadder(sym, g, risk, n, ratio, stop, reversed){
-  const legs = [];
+function fibOf(dir, hi, lo){
+  const r = hi - lo;
+  return dir === 'long' ? f => hi - f * r : f => lo + f * r;
+}
+// n limits across .236 → .5, weights 1 → ratio (deepest = ratio × first), the
+// ones price has already passed left out, sized so all of them filled lose no
+// more than `risk` at the 1.272. Lots round to 0.01 without going over; if the
+// 0.01 minimum still overshoots, the shallowest legs go.
+function buildLegs(sym, dir, hi, lo, close, risk, n, ratio){
+  const L = dir === 'long', at = fibOf(dir, hi, lo), stop = at(F_STOP), tp = at(F_TP);
+  let legs = [];
   for(let i = 0; i < n; i++){
-    const t = n === 1 ? 0 : i / (n - 1);
-    const w = 1 + (ratio - 1) * t;
-    const fIn = F_IN_LO + (F_IN_HI - F_IN_LO) * t;
-    const fTp = F_TP_LO + (F_TP_HI - F_TP_LO) * (reversed ? 1 - t : t);
-    const price = g.px(fIn), tp = g.px(fTp);
-    const riskPer = g.isLong ? price - stop : stop - price;
-    const winPer  = g.isLong ? tp - price   : price - tp;
-    legs.push({i: i+1, fIn, fTp, price, tp, weight: w, riskPer, winPer,
-               rpu: usdPer(riskPer, stop, sym), wpu: usdPer(winPer, tp, sym)});
+    const t = i / (n - 1), f = F_IN_LO + (F_IN_HI - F_IN_LO) * t, price = at(f);
+    legs.push({i: i+1, f, price, w: 1 + (ratio - 1) * t,
+               passed: L ? price > close : price < close,
+               rpu: usdPer(sym, Math.abs(price - stop), stop), wpu: usdPer(sym, Math.abs(tp - price), tp)});
   }
-  const unitRisk = legs.reduce((a,l) => a + l.weight * l.rpu, 0);
-  const K = unitRisk > 0 ? risk / unitRisk : 0;           // units per unit of weight
-  legs.forEach(l => {
-    l.raw = l.weight * K / LOT;
-    l.floored = l.raw < 0.01;
-    l.lots = Math.max(0.01, Math.floor(l.raw * 100 + 1e-9) / 100);
-  });
-  // Rounding down leaves budget unspent; hand 0.01 lot back to the legs that
-  // lost the most to rounding, as long as the ladder stays within `risk`.
-  let spent = legs.reduce((a,l) => a + l.lots * LOT * l.rpu, 0);
-  for(const l of legs.slice().sort((a,b) => (b.raw - b.lots) - (a.raw - a.lots))){
-    const add = 0.01 * LOT * l.rpu;
-    if(l.raw > l.lots && spent + add <= risk + 1e-9){ l.lots = Math.round((l.lots + 0.01) * 100) / 100; spent += add; }
-  }
-  let cumLots = 0, cumPx = 0;
-  legs.forEach(l => {
-    const u = l.lots * LOT;
-    l.units = u; l.risk = u * l.rpu; l.win = u * l.wpu;
-    l.R = l.riskPer > 0 ? l.winPer / l.riskPer : null;
-    cumLots += l.lots; cumPx += l.lots * l.price;
-    l.cumLots = cumLots; l.avg = cumPx / cumLots;
-  });
-  const tot = legs.reduce((a,l) => a + l.lots, 0);
-  legs.forEach(l => l.pct = 100 * l.lots / tot);
-  return legs;
+  const size = live => {
+    const K = risk / live.reduce((a,l) => a + l.w * l.rpu, 0);
+    live.forEach(l => { l.raw = l.w * K / LOT; l.lots = Math.max(0.01, Math.floor(l.raw * 100 + 1e-9) / 100); });
+    let spent = live.reduce((a,l) => a + l.lots * LOT * l.rpu, 0);
+    for(const l of live.slice().sort((a,b) => (b.raw - b.lots) - (a.raw - a.lots))){
+      const add = 0.01 * LOT * l.rpu;
+      if(l.raw > l.lots && spent + add <= risk + 1e-9){ l.lots = Math.round((l.lots + 0.01) * 100) / 100; spent += add; }
+    }
+    return spent;
+  };
+  let live = legs.filter(l => !l.passed);
+  while(live.length && size(live) > risk + 1e-9){ live[0].dropped = true; live = live.slice(1); }
+  legs.forEach(l => { if(l.passed || l.dropped){ l.lots = 0; l.off = true; } });
+  legs.forEach(l => { l.risk = l.lots * LOT * l.rpu; l.win = l.lots * LOT * l.wpu; });
+  return {dir, hi, lo, at, stop, tp, legs, live: legs.filter(l => !l.off).length};
 }
 
-function readFor(sym, b){
-  const get = k => { const v = parseFloat(b[k]); return isFinite(v) ? v : null; };
-  const p382 = get('f382'), p618 = get('f618');
-  const risk = num('risk') != null ? num('risk') : D.risk;
-  const acct = num('acct') != null ? num('acct') : D.acct;
-  let n = Math.round(num('legs') != null ? num('legs') : D.legs);
-  let ratio = num('ratio') != null ? num('ratio') : D.ratio;
-  if(p382 == null || p618 == null) return {err:'Enter the 0.382 and 0.618 prices to build the ladder.'};
-  if(p382 <= 0 || p618 <= 0) return {err:'Fib prices must be positive.'};
-  if(p382 === p618) return {err:'The 0.382 and 0.618 prices must differ — that spread sets the whole leg.'};
-  if(!(risk > 0)) return {err:'SL $ per trade must be greater than zero.'};
-  if(!(ratio >= 1)) return {err:'Last ÷ first must be at least 1 (1 = flat sizing, 2 = last leg double the first).'};
-  if(!(n >= 2)) n = 2;
-  if(n > 50) n = 50;
-  if(ratio > 20) ratio = 20;
-  const g = geometry(p382, p618);
-  const stopOv = get('stop');
-  const stop = stopOv != null ? stopOv : g.stop;
-  // Hard cap: the ladder may never lose more than `risk` at the stop. Every leg
-  // needs at least 0.01 lot, so on a wide leg the minimums alone can overshoot —
-  // then drop legs until it fits rather than let the stop cost more.
-  const asked = n;
-  let legs = buildLadder(sym, g, risk, n, ratio, stop, pairReversed);
-  const over = L => L.reduce((a,l) => a + l.risk, 0) > risk + 1e-9;
-  while(over(legs) && n > 2){ n--; legs = buildLadder(sym, g, risk, n, ratio, stop, pairReversed); }
-  if(over(legs))
-    return {err:'A ' + usd(risk,0) + ' stop cannot hold even two 0.01-lot orders this far from the stop — the leg is too wide for that SL.'};
-  return {p382, p618, risk, acct, n, asked, ratio, g, stop, stopOverridden: stopOv != null, legs};
+/* ── replay: the rules, bar by bar ────────────────────── */
+// Orders placed at a bar's close work during the next bar. During a bar: limits
+// fill at their price; a filled position stops out at the 1.272 or exits at the
+// 0 (the stop wins when one bar spans both; no target on a bar that also filled).
+// At the close: an unfilled ladder follows a new extreme, and a break (passing
+// the filters) replaces any unfilled ladder.
+function simulate(sym, S, U, risk, n, ratio){
+  const c = S.bars, ev = structure(c, LEN), ad = adx(c, ADX_N);
+  let lad = null, last = null;
+  const trades = [];
+  const filled = l => l.legs.filter(x => x.fill);
+  const pnl = (l, exit) => filled(l).reduce((a,x) => a + x.lots * LOT * usdPer(sym, (l.dir === 'long' ? exit - x.price : x.price - exit), exit), 0);
+  const close = (l, exit, k, how) => {
+    const f = filled(l), r = f.reduce((a,x) => a + x.risk, 0), p = pnl(l, exit);
+    if(l.rec) l.rec.outcome = (how === 'target' ? 'hit the target ' : 'stopped out ') + signed(p, 0) + ' (' + when(c[k] ? c[k].t + H4 : Date.now()/1000) + ')';
+    trades.push({dir: l.dir, type: l.type, t0: l.fillT, t1: c[k] ? c[k].t + H4 : null, legs: f.length, lots: f.reduce((a,x) => a + x.lots, 0),
+                 avg: f.reduce((a,x) => a + x.lots * x.price, 0) / f.reduce((a,x) => a + x.lots, 0), exit, how, pnl: p, R: r > 0 ? p / r : 0});
+  };
+  const during = (b, k) => {
+    if(!lad) return;
+    const L = lad.dir === 'long', had = filled(lad).length > 0;
+    let fresh = false;
+    lad.legs.forEach(x => { if(!x.off && !x.fill && (L ? b.l <= x.price : b.h >= x.price)){ x.fill = true; fresh = true; } });
+    if(fresh && !had) lad.fillT = b.t;
+    if(!filled(lad).length) return;
+    if(L ? b.l <= lad.stop : b.h >= lad.stop){ close(lad, lad.stop, k, 'stop'); lad = null; return; }
+    if(!fresh && (L ? b.h >= lad.tp : b.l <= lad.tp)){ close(lad, lad.tp, k, 'target'); lad = null; }
+  };
+  for(let k = 0; k < c.length; k++){
+    const b = c[k];
+    during(b, k);
+    // at the close
+    if(lad && !filled(lad).length && (lad.dir === 'long' ? b.h > lad.hi : b.l < lad.lo)){
+      const hi = lad.dir === 'long' ? b.h : lad.hi, lo = lad.dir === 'long' ? lad.lo : b.l;
+      const moved = buildLegs(sym, lad.dir, hi, lo, b.c, risk, n, ratio);
+      if(!moved.live && lad.rec) lad.rec.outcome = 'was cancelled — no orders left after the move';
+      lad = moved.live ? Object.assign(moved, {type: lad.type, k0: lad.k0, moves: (lad.moves || 0) + 1, rec: lad.rec}) : null;
+    }
+    const e = ev[k];
+    if(!e) continue;
+    // the move that made the break: from the far extreme since the broken swing to here
+    let hi, lo;
+    if(e.dir === 'long'){
+      let li = e.piv; for(let j = e.piv; j <= k; j++) if(c[j].l < c[li].l) li = j;
+      lo = c[li].l; hi = -Infinity; for(let j = li; j <= k; j++) hi = Math.max(hi, c[j].h);
+    } else {
+      let hj = e.piv; for(let j = e.piv; j <= k; j++) if(c[j].h > c[hj].h) hj = j;
+      hi = c[hj].h; lo = Infinity; for(let j = hj; j <= k; j++) lo = Math.min(lo, c[j].l);
+    }
+    const T = b.t + H4, U8 = usdDirAt(U, T);
+    const wantUsd = PAIRS[sym].usd > 0 ? e.dir : (e.dir === 'long' ? 'short' : 'long');
+    const at = fibOf(e.dir, hi, lo), half = at(F_IN_HI);
+    const rec = {e, t: T, hi, lo, close: b.c, adx: ad[k], usd: U8, wantUsd,
+                 usdOk: !!U8 && U8.dir === wantUsd, adxOk: ad[k] != null && ad[k] >= ADX_MIN,
+                 pastHalf: e.dir === 'long' ? b.c < half : b.c > half,
+                 heldBy: lad && filled(lad).length ? 'filled' : null};
+    rec.ok = rec.usdOk && rec.adxOk && !rec.pastHalf && !rec.heldBy;
+    if(rec.ok){
+      const nl = buildLegs(sym, e.dir, hi, lo, b.c, risk, n, ratio);
+      if(nl.live){
+        if(lad && lad.rec) lad.rec.outcome = 'was replaced by a newer break';
+        lad = Object.assign(nl, {type: e.type, k0: k, moves: 0, rec}); rec.placed = true;
+      }
+      else rec.noLegs = true;
+    }
+    last = rec;
+  }
+  if(S.forming) during(S.forming, c.length);
+  return {lad, last, trades, adxNow: ad[ad.length-1], events: ev.filter(Boolean).length};
 }
-function readInputs(){ stash(); return readFor(sel, book[sel] || {}); }
+
+/* ── state & fetching ─────────────────────────────────── */
+const RAW = {}, ERR = {}, LAST = {};
+let busy = false, lastOk = null, RES = {};
+async function tick(force){
+  if(busy || (document.hidden && !force)) return;
+  const every = cfg.tdkey ? 15 * 60e3 : 5 * 60e3;   // Twelve Data: 5 credits a pass, ~480 a day
+  if(!force && SYMS.every(s => Date.now() - (LAST[s] || 0) < every)) return;
+  busy = true; $('refresh').disabled = true;
+  try{
+    for(const s of [cfg.sel].concat(SYMS.filter(x => x !== cfg.sel))){
+      LAST[s] = Date.now();
+      try{ RAW[s] = await getRaw(s); ERR[s] = null; lastOk = new Date(); }
+      catch(e){ ERR[s] = e.message; }
+    }
+    compute();
+  } finally { busy = false; $('refresh').disabled = false; }
+}
+function compute(){
+  const S = {};
+  SYMS.forEach(s => { if(RAW[s]) S[s] = to4h(RAW[s]); });
+  const U = usdStructure(S);
+  const risk = val('risk'), n = Math.min(20, Math.max(2, Math.round(val('legs'))));
+  let ratio = parseFloat(cfg.ratio); ratio = isFinite(ratio) && ratio >= 1 ? Math.min(ratio, 20) : D.ratio;
+  RES = {U, n, ratio, risk};
+  SYMS.forEach(s => {
+    if(!S[s]) return RES[s] = {err: ERR[s] || null};
+    RES[s] = Object.assign({S: S[s], src: RAW[s].src, note: RAW[s].note}, simulate(s, S[s], U, risk, n, ratio));
+  });
+  render();
+}
 
 /* ── render ───────────────────────────────────────────── */
-const cell = (lbl, val, cls, right) =>
-  '<div class="c' + (right ? ' r' : '') + '"><div class="l">' + lbl + '</div>' +
-  '<div class="v ' + (cls || '') + '">' + val + '</div></div>';
+const cell = (lbl, v, cls, right) =>
+  '<div class="c' + (right ? ' r' : '') + '"><div class="l">' + lbl + '</div><div class="v ' + (cls || '') + '">' + v + '</div></div>';
+const check = (k, txt, badge) => '<div class="ck ' + k + '"><span class="dot"></span><span class="txt">' + txt + '</span><span class="badge">' + badge + '</span></div>';
 
-function renderPairs(){
-  $('pairs').innerHTML = SYMS.map(s => {
-    const S = readFor(s, book[s] || {});
-    const d = S.err ? '<span class="d">—</span>'
-      : '<span class="d ' + (S.g.isLong ? 'g' : 'b') + '">' + (S.g.isLong ? '▲ LONG' : '▼ SHORT') + '</span>';
-    return '<button class="pr' + (s === sel ? ' on' : '') + '" data-sym="' + s + '">' + s + d + '</button>';
-  }).join('');
+function chip(s){
+  const A = RES[s] || {};
+  if(A.err) return {k:'err', t:'data error'};
+  if(!A.S) return {k:'', t:'loading…'};
+  if(A.lad){
+    const f = A.lad.legs.filter(x => x.fill).length;
+    return f ? {k:'pos', t: f + '/' + A.lad.live + ' filled', dir: A.lad.dir} : {k:'live', t:'ladder live · ' + A.lad.live, dir: A.lad.dir};
+  }
+  if(A.last && !A.last.ok) return {k:'', t:'last break blocked'};
+  return {k:'', t:'waiting for a break'};
+}
+
+function nextCheck(){
+  const now = Date.now()/1000, b = bucket(now, H4);
+  return b + H4;
 }
 
 function render(){
-  save();
-  renderPairs();
-  const st = $('status');
-  const S = readInputs();
-  $('pairing').textContent = pairReversed ? 'TP: 1→−1.0' : 'TP: 1→−.618';
-  document.title = sel + ' · FX Fib Ladder';
-  if(S.err){
-    st.className = 'err'; st.textContent = sel + ' · ' + S.err;
-    $('sum-card').style.display = 'none'; $('rail-card').style.display = 'none';
-    $('note').innerHTML = '';
-    $('legs').innerHTML = '<div class="dim" style="font-size:13px;padding:2px">Waiting on valid inputs…</div>';
+  // chips
+  $('chips').innerHTML = SYMS.map(s => {
+    const st = chip(s);
+    const dir = st.dir ? '<span class="dir ' + (st.dir === 'long' ? 'g' : 'b') + '">' + (st.dir === 'long' ? '▲ LONG' : '▼ SHORT') + '</span>' : '';
+    return '<button class="chip st-' + st.k + (s === cfg.sel ? ' sel' : '') + '" data-sym="' + s + '"><div class="sym">' + s + dir +
+      '</div><div class="st"><span class="dot"></span>' + st.t + '</div></button>';
+  }).join('');
+  const risk = val('risk'), acct = val('acct');
+  $('acct-tag').textContent = usd(risk,0) + ' max per trade · 5 pairs = ' + usd(5*risk,0) + ' (' + nf(500*risk/acct,2) + '%)';
+
+  const sym = cfg.sel, A = RES[sym] || {}, st = $('status');
+  document.title = sym + ' · FX Fib Ladder';
+  $('sig-t').textContent = sym;
+  const ok = SYMS.filter(s => RES[s] && RES[s].S).length, bad = SYMS.filter(s => RES[s] && RES[s].err);
+  st.className = A.err ? 'err' : (RES.U ? '' : 'warn');
+  st.textContent = A.err ? 'Data error on ' + sym + ': ' + A.err + ' — retrying on the next cycle.'
+    : !A.S ? 'Loading ' + sym + '…'
+    : 'Live · ' + ok + '/5 pairs via ' + A.src + (bad.length ? ' · failed: ' + bad.join(', ') : '') +
+      (A.note ? ' · Twelve Data failed (' + A.note + ')' : '') +
+      ' · ' + (cfg.align === 'utc' ? 'UTC' : 'OANDA') + ' 4h · next close ' + when(nextCheck()).slice(-9) +
+      ' · updated ' + (lastOk ? lastOk.toLocaleTimeString() : '—') +
+      (RES.U ? '' : ' · ⚠ USD structure needs all five pairs, so nothing passes the filter yet');
+  $('sig-tag').textContent = A.S ? A.S.bars.length + ' × 4h loaded' : '';
+  if(!A.S){
+    $('sig-meta').innerHTML = ''; $('checks').innerHTML = '';
+    ['sum-card','rail-card','legs-card','hist-card'].forEach(id => $(id).style.display = 'none');
     return;
   }
-  const {p382, p618, risk, acct, n, asked, ratio, g, stop, stopOverridden, legs} = S;
-  const first = legs[0], last = legs[n-1];
-  const totalLots = last.cumLots, avg = last.avg;
-  const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
-  const totalWin  = legs.reduce((a,l) => a + l.win, 0);
-  const blendedR  = totalRisk > 0 ? totalWin / totalRisk : null;
-  const tpNear = g.px(F_TP_LO), tpFar = g.px(F_TP_HI);
-  const pipUsd = LOT * usdPer(PAIRS[sel].pip, avg);
-
-  const warn = stopOverridden && (g.isLong ? stop >= p618 : stop <= p618)
-    ? 'Stop override sits inside the entry zone — the deepest legs would never fill before it triggers.'
-    : n < asked
-    ? usd(risk,0) + ' cannot cover ' + asked + ' legs at the 0.01-lot minimum on this leg, so the ladder is cut to ' + n + ' to keep the stop at ' + usd(risk,0) + '.'
-    : null;
-  st.className = warn ? 'warn' : '';
-  st.textContent = warn ? '⚠ ' + warn
-    : sel + ' · ' + n + ' ' + g.dir.toUpperCase() + ' entries · ' + px(p382) + ' → ' + px(p618) +
-      ' · leg ' + n + ' is ' + nf(ratio,2) + '× leg 1 · max ' + usd(risk,0) + ' at the stop.';
-
-  // ── summary ──
-  $('sum-card').style.display = '';
-  $('sum-tag').textContent = sel + ' · all ' + n + ' legs filled';
-  $('stats').innerHTML =
-    '<div class="kpi av"><div class="k">Average fill</div><div class="v num">' + px(avg) + '</div>' +
-      '<div class="s num"><b>' + lots(totalLots) + '</b> lots · ' + usd(pipUsd * totalLots) + '/pip<br>' +
-      'leg 1 ' + lots(first.lots) + ' → leg ' + n + ' ' + lots(last.lots) + ' lots</div></div>' +
-    '<div class="kpi sl"><div class="k">Risk at ' + (stopOverridden ? 'stop' : '0.886') + '</div><div class="v num b">' + signed(-Math.abs(totalRisk),2) + '</div>' +
-      '<div class="s num">Stop <b>' + px(stop) + '</b>' + (stopOverridden ? ' <span class="amb">(override)</span>' : '') + '<br>' +
-      'cap ' + usd(risk,0) + ' · ' + nf(100*Math.abs(totalRisk)/acct,2) + '% of account</div></div>' +
-    '<div class="kpi tp"><div class="k">P/L, all TPs hit</div><div class="v num ' + (totalWin >= 0 ? 'g' : 'b') + '">' + signed(totalWin,2) + '</div>' +
-      '<div class="s num">' + px(tpNear) + ' → ' + px(tpFar) + '<br>blended R <b>' + (blendedR != null ? nf(blendedR,2) : '—') + '</b></div></div>';
-  $('meta').innerHTML =
-    '<span class="pill ' + g.dir + '">' + g.dir.toUpperCase() + '</span>' +
-    '<span class="num">Implied leg <b>' + px(g.origin) + '</b> → <b>' + px(g.anchor) + '</b> · range <b>' + pips(g.range) + '</b> pips · step <b>' + pips((p618-p382)/(n-1)) + '</b> pips</span>' +
-    '<span class="num">All 5 pairs stopped: <b class="b">' + signed(-5*risk,0) + '</b> (' + nf(500*risk/acct,2) + '%)</span>';
-
-  // ── price map ──
-  const hi = Math.max(stop, tpFar, tpNear, p382, p618), lo = Math.min(stop, tpFar, tpNear, p382, p618);
-  const pad = (hi - lo) * 0.06, top = hi + pad, bot = lo - pad;
-  const y = p => 100 * (top - p) / (top - bot);          // % from the top
-  const band = (a,b) => ({top: Math.min(y(a),y(b)), h: Math.abs(y(a)-y(b))});
-  const tpB = band(tpNear, tpFar), enB = band(p382, p618);
-  const maxLots = Math.max.apply(null, legs.map(l => l.lots));
-  const rungs = legs.map(l =>
-    '<div class="rung" style="top:' + y(l.price).toFixed(2) + '%;width:' + (18 + 40*l.lots/maxLots).toFixed(1) + '%"></div>').join('');
-  const ticks = legs.map(l => '<div class="tick" style="top:' + y(l.tp).toFixed(2) + '%"></div>').join('');
-  // Labels carry two lines each, so nudge them apart when two levels sit close
-  // together (a tight entry zone would otherwise stack .382 on top of .618).
-  const GAP = 12;   // minimum separation, % of rail height
-  const labels = [
-    {p: tpFar,  k: 'tp',    f: fib(F_TP_HI), tag: 'last TP'},
-    {p: tpNear, k: 'tp',    f: fib(F_TP_LO), tag: 'first TP'},
-    {p: p382,   k: 'entry', f: '0.382',      tag: 'leg 1'},
-    {p: p618,   k: 'entry', f: '0.618',      tag: 'leg ' + n},
-    {p: stop,   k: 'stop',  f: stopOverridden ? 'stop' : '0.886', tag: 'stop'}
-  ].map(o => ({p: o.p, k: o.k, f: o.f, tag: o.tag, y: y(o.p)}))
-   .sort((a, b) => a.y - b.y);
-  for(let i = 1; i < labels.length; i++)
-    labels[i].y = Math.max(labels[i].y, labels[i-1].y + GAP);
-  const over = labels[labels.length-1].y - 97;
-  if(over > 0){
-    labels.forEach(l => l.y -= over);
-    for(let i = labels.length - 2; i >= 0; i--)
-      labels[i].y = Math.min(labels[i].y, labels[i+1].y - GAP);
+  const P = A.S.price, last = A.last, lad = A.lad;
+  $('sig-meta').innerHTML = '<span class="num">Price <b>' + px(P, sym) + '</b> · 4h ADX <b>' + (A.adxNow != null ? nf(A.adxNow,1) : '—') + '</b></span>' +
+    (last ? '<span class="pill ' + last.e.dir + '">' + last.e.type + ' ' + (last.e.dir === 'long' ? '▲' : '▼') + '</span>' +
+      '<span class="num">last break ' + when(last.t) + ' through <b>' + px(last.e.level, sym) + '</b></span>'
+          : '<span>No 4h break in the loaded history yet.</span>');
+  const C = [];
+  if(last){
+    const U8 = last.usd;
+    C.push(check(last.usdOk ? 'ok' : 'no', 'USD 8h structure ' + (U8 ? '<b>' + (U8.dir === 'long' ? 'up' : 'down') + '</b> (' + U8.type + ', ' + when(U8.closeT) + ')' : '<b>unknown</b>') +
+      ' · a ' + last.e.dir + ' here needs USD ' + (last.wantUsd === 'long' ? 'up' : 'down'), last.usdOk ? 'PASS' : 'FAIL'));
+    C.push(check(last.adxOk ? 'ok' : 'no', '4h ADX(14) at the break <b>' + (last.adx != null ? nf(last.adx,1) : '—') + '</b> · needs ' + ADX_MIN + '+', last.adxOk ? 'PASS' : 'FAIL'));
+    C.push(check(last.pastHalf ? 'no' : 'ok', 'Close ' + px(last.close, sym) + (last.pastHalf ? ' already past' : ' not past') + ' the .5 of the move', last.pastHalf ? 'SKIP' : 'PASS'));
+    if(last.heldBy) C.push(check('no', 'A filled trade was open, so the break could not replace it', 'HELD'));
+    C.push(check('na', 'Funding and top-trader filters are crypto-only — not applied to FX', 'N/A'));
   }
-  const labHtml = labels.map(l =>
-    '<div class="lab ' + l.k + '" style="top:' + l.y.toFixed(2) + '%"><span class="f">' + l.f + ' · ' + l.tag + '</span>' +
-    '<span class="p">' + px(l.p) + '</span></div>').join('');
-  $('rail-card').style.display = '';
-  $('rail-tag').textContent = g.dir + ' leg ' + px(g.origin) + ' → ' + px(g.anchor);
-  $('rail').innerHTML =
-    '<div class="zone tp" style="top:' + tpB.top.toFixed(2) + '%;height:' + tpB.h.toFixed(2) + '%"></div>' +
-    '<div class="zone entry" style="top:' + enB.top.toFixed(2) + '%;height:' + enB.h.toFixed(2) + '%"></div>' +
-    '<div class="line" style="top:' + y(stop).toFixed(2) + '%"></div>' + ticks + rungs + labHtml;
+  const nc = nextCheck();
+  C.push(check(lad ? 'ok' : 'na', lad
+    ? (lad.legs.some(x => x.fill) ? 'In a trade — target ' + px(lad.tp, sym) + ', stop ' + px(lad.stop, sym)
+                                   : 'Ladder live since ' + when(A.S.bars[lad.k0].t + H4) + (lad.moves ? ', moved ' + lad.moves + '× with new extremes' : ''))
+    : (last && last.placed && last.outcome ? 'The ladder from this break ' + last.outcome + '. ' : '') +
+      (last && last.noLegs ? 'Every order was already passed or too small for the cap. ' : '') +
+      'No ladder now. Next check at the 4h close, ' + when(nc), lad ? 'LIVE' : 'WAIT'));
+  $('checks').innerHTML = C.join('');
 
-  // ── legs ──
-  $('legs-t').textContent = 'The ' + n + ' trades';
-  $('legs').innerHTML = legs.map(l =>
-    '<div class="lrow">' +
-      '<div class="lno">' + l.i + '</div>' +
-      cell('Entry ' + fib(l.fIn), px(l.price)) +
-      cell('Lots ' + nf(l.pct,1) + '%', lots(l.lots)) +
-      cell('TP ' + fib(l.fTp), px(l.tp)) +
-      cell('R', l.R != null ? nf(l.R,2) : '—', '', true) +
-      cell('Risk ' + pips(l.riskPer) + 'p', signed(-Math.abs(l.risk),2), 'b', true) +
-      cell('P/L ' + pips(l.winPer) + 'p', signed(l.win,2), l.win >= 0 ? 'g' : 'b', true) +
-    '</div>').join('') +
-    '<div class="lrow tot">' +
-      '<div class="lno">ALL</div>' +
-      cell('Avg fill', px(avg)) +
-      cell('Lots', lots(totalLots)) +
-      cell('Stop', px(stop)) +
-      cell('R', blendedR != null ? nf(blendedR,2) : '—', '', true) +
-      cell('Risk', signed(-Math.abs(totalRisk),2), 'b', true) +
-      cell('P/L', signed(totalWin,2), totalWin >= 0 ? 'g' : 'b', true) +
-    '</div>';
-
-  // ── explainer ──
-  $('note').innerHTML =
-    '<p><b>The two prices pin everything.</b> The 0.382 and 0.618 sit 23.6% of the impulse leg apart, so the range is ' +
-    '<span class="hl">' + pips(p382-p618) + ' pips ÷ 0.236 = ' + pips(g.range) + ' pips</span> and the leg runs ' +
-    '<span class="hl">' + px(g.origin) + ' → ' + px(g.anchor) + '</span>. The stop is the <span class="hl">0.886</span> at ' +
-    px(g.stop) + (stopOverridden ? ' (overridden to ' + px(stop) + ')' : '') + '; the targets are the ' +
-    '<span class="hl">−0.618</span> (' + px(tpNear) + ') to <span class="hl">−1.0</span> (' + px(tpFar) + ') extensions.</p>' +
-    '<p><b>Entries.</b> ' + n + ' rungs evenly spaced across the zone, size ramping linearly — ' +
-    '<span class="hl">weight = 1 + (' + nf(ratio,2) + ' − 1)·(i−1)/' + (n-1) + '</span> — so leg ' + n + ' is ' +
-    '<span class="hl">' + nf(ratio,2) + '×</span> leg 1 (to the nearest 0.01 lot). The deep legs are bigger and ' +
-    'closer to the stop, so they buy more size for less risk: leg 1 risks <span class="hl">' + pips(first.riskPer) + ' pips</span>, ' +
-    'leg ' + n + ' only <span class="hl">' + pips(last.riskPer) + '</span>.</p>' +
-    '<p><b>Size.</b> Each trade is capped at <span class="hl">' + usd(risk,0) + '</span> at the stop: if every leg fills and the stop hits, ' +
-    'this ladder loses no more than that. ' +
-    'The weights are scaled to that and rounded to 0.01 lot without going over, so the real risk is ' +
-    '<span class="hl">' + usd(Math.abs(totalRisk),2) + '</span>. ' +
-    (PAIRS[sel].q === 'USD' ? 'On ' + sel + ' a pip is $10 a lot.'
-      : 'On ' + sel + ' a pip is ' + (sel === 'USDJPY' ? '1,000 JPY' : '10 CHF') + ' a lot, converted to dollars at the exit price — about ' + usd(pipUsd) + ' here.') +
-    (n < asked ? ' The 0.01-lot minimum on ' + asked + ' legs would have gone over, so it is cut to ' + n + ' legs.' : '') +
-    ' All five pairs stopping out at once costs ' + usd(5*risk,0) + ', ' + nf(500*risk/acct,2) + '% of the account.</p>' +
-    '<p><b>Exits.</b> ' + n + ' targets evenly spaced across −0.618 → −1.0, one per leg — currently ' +
-    '<span class="hl">leg 1 at ' + fib(first.fTp) + '</span> and <span class="hl">leg ' + n + ' at ' + fib(last.fTp) + '</span>' +
-    (pairReversed ? ' — the first order placed rides furthest while the big deep legs bank at the −0.618, which they reach first on the way back.'
-                  : ' — size comes off gradually and the biggest legs run all the way to the −1.0.') +
-    ' Tap the TP button to swap. Full ladder, every target hit: <span class="hl">' + signed(totalWin,2) + '</span> against ' +
-    '<span class="hl">' + usd(Math.abs(totalRisk),2) + '</span> of risk (blended R ' + (blendedR != null ? nf(blendedR,2) : '—') + ').</p>' +
-    '<p><b>Your chart is the source.</b> Take the 0.382 and 0.618 off the chart your broker fills on (OANDA), so the ' +
-    'stop and targets are the prices it will actually trade. The page uses no live feed.</p>';
+  if(lad) renderLadder(sym, A, lad); else ['sum-card','rail-card','legs-card'].forEach(id => $(id).style.display = 'none');
+  renderHist(sym, A);
 }
 
-/* ── copy ─────────────────────────────────────────────── */
+function renderLadder(sym, A, lad){
+  const f = x => px(x, sym), P = A.S.price, L = lad.dir === 'long';
+  const live = lad.legs.filter(x => !x.off), fl = live.filter(x => x.fill);
+  const totLots = live.reduce((a,x) => a + x.lots, 0);
+  const avg = live.reduce((a,x) => a + x.lots * x.price, 0) / totLots;
+  const totRisk = live.reduce((a,x) => a + x.risk, 0), totWin = live.reduce((a,x) => a + x.win, 0);
+  const fLots = fl.reduce((a,x) => a + x.lots, 0);
+  const unreal = fl.reduce((a,x) => a + x.lots * LOT * usdPer(sym, L ? P - x.price : x.price - P, P), 0);
+  $('sum-card').style.display = '';
+  $('sum-t').textContent = fl.length ? 'The trade' : 'The ladder';
+  $('sum-tag').textContent = sym + ' · ' + lad.type + ' ' + lad.dir + ' · ' + live.length + ' of ' + lad.legs.length + ' orders';
+  $('stats').innerHTML =
+    '<div class="kpi av"><div class="k">' + (fl.length ? 'Filled' : 'Average fill') + '</div><div class="v num">' +
+      (fl.length ? lots(fLots) + ' lots' : f(avg)) + '</div>' +
+      '<div class="s num">' + (fl.length ? fl.length + ' of ' + live.length + ' legs · now <b class="' + (unreal >= 0 ? 'g' : 'b') + '">' + signed(unreal) + '</b>'
+        : '<b>' + lots(totLots) + '</b> lots if all fill') + '</div></div>' +
+    '<div class="kpi sl"><div class="k">Risk at 1.272</div><div class="v num b">' + signed(-totRisk) + '</div>' +
+      '<div class="s num">Stop <b>' + f(lad.stop) + '</b> · ' + pips(avg - lad.stop, sym) + 'p from avg<br>cap ' + usd(val('risk'),0) + '</div></div>' +
+    '<div class="kpi tp"><div class="k">P/L at the 0</div><div class="v num g">' + signed(totWin) + '</div>' +
+      '<div class="s num">Target <b>' + f(lad.tp) + '</b><br>' + nf(totWin / totRisk, 2) + 'R if all fill</div></div>';
+  $('meta').innerHTML = '<span class="pill ' + lad.dir + '">' + lad.dir.toUpperCase() + '</span>' +
+    '<span class="num">Move <b>' + f(L ? lad.lo : lad.hi) + '</b> → <b>' + f(L ? lad.hi : lad.lo) + '</b> · ' + pips(lad.hi - lad.lo, sym) + ' pips' +
+    (live.length < lad.legs.length ? ' · ' + (lad.legs.length - live.length) + ' order' + (lad.legs.length - live.length > 1 ? 's' : '') + ' left out' : '') + '</span>';
+
+  // price map
+  const p236 = lad.at(F_IN_LO), p50 = lad.at(F_IN_HI);
+  const pts = [lad.stop, lad.tp, p236, p50, P];
+  const hi = Math.max(...pts), lo = Math.min(...pts), pad = (hi - lo) * 0.06, top = hi + pad, bot = lo - pad;
+  const y = p => 100 * (top - p) / (top - bot);
+  const maxL = Math.max(...live.map(x => x.lots));
+  const rungs = lad.legs.map(x => '<div class="rung' + (x.fill ? ' done' : x.off ? ' off' : '') + '" style="top:' + y(x.price).toFixed(2) +
+    '%;width:' + (x.off ? 18 : 18 + 40 * x.lots / maxL).toFixed(1) + '%"></div>').join('');
+  const GAP = 12;
+  const labels = [
+    {p: lad.tp, k:'tp', f:'0 · target'}, {p: p236, k:'entry', f:'.236 · leg 1'}, {p: p50, k:'entry', f:'.5 · leg ' + lad.legs.length},
+    {p: lad.stop, k:'stop', f:'1.272 · stop'}, {p: P, k:'now', f:'price now'}
+  ].map(o => Object.assign(o, {y: y(o.p)})).sort((a,b) => a.y - b.y);
+  for(let i = 1; i < labels.length; i++) labels[i].y = Math.max(labels[i].y, labels[i-1].y + GAP);
+  const over = labels[labels.length-1].y - 97;
+  if(over > 0){ labels.forEach(l => l.y -= over); for(let i = labels.length-2; i >= 0; i--) labels[i].y = Math.min(labels[i].y, labels[i+1].y - GAP); }
+  const tpY = y(lad.tp), enTop = Math.min(y(p236), y(p50)), enH = Math.abs(y(p236) - y(p50));
+  $('rail-card').style.display = '';
+  $('rail-tag').textContent = lad.dir + ' · target ' + f(lad.tp);
+  $('rail').innerHTML =
+    '<div class="zone tp" style="top:' + (tpY - 1).toFixed(2) + '%;height:2%"></div>' +
+    '<div class="zone entry" style="top:' + enTop.toFixed(2) + '%;height:' + enH.toFixed(2) + '%"></div>' +
+    '<div class="line" style="top:' + y(lad.stop).toFixed(2) + '%"></div>' +
+    '<div class="nowline" style="top:' + y(P).toFixed(2) + '%"></div>' + rungs +
+    labels.map(l => '<div class="lab ' + l.k + '" style="top:' + l.y.toFixed(2) + '%"><span class="f">' + l.f + '</span><span class="p">' + f(l.p) + '</span></div>').join('');
+
+  // orders
+  $('legs-card').style.display = '';
+  $('legs-t').textContent = 'The ' + live.length + ' orders';
+  $('legs').innerHTML = lad.legs.map(x =>
+    '<div class="lrow"' + (x.off ? ' style="opacity:.4"' : '') + '><div class="lno">' + x.i + '</div>' +
+      cell('Limit ' + fib(x.f), f(x.price)) +
+      cell('Lots', x.off ? '—' : lots(x.lots)) +
+      cell('Status', '<span class="st ' + (x.fill ? 'g' : x.off ? 'dim' : '') + '">' + (x.fill ? 'FILLED' : x.passed ? 'PASSED' : x.dropped ? 'DROPPED' : 'WORKING') + '</span>') +
+      cell('Stop', f(lad.stop), '', true) +
+      cell('Risk ' + pips(x.price - lad.stop, sym) + 'p', x.off ? '—' : signed(-x.risk), 'b', true) +
+      cell('P/L ' + pips(lad.tp - x.price, sym) + 'p', x.off ? '—' : signed(x.win), 'g', true) +
+    '</div>').join('') +
+    '<div class="lrow tot"><div class="lno">ALL</div>' +
+      cell('Avg fill', f(avg)) + cell('Lots', lots(totLots)) + cell('Target', f(lad.tp)) +
+      cell('R', nf(totWin / totRisk, 2), '', true) + cell('Risk', signed(-totRisk), 'b', true) + cell('P/L', signed(totWin), 'g', true) +
+    '</div>';
+  COPY = {sym, lad, live, totLots, totRisk, totWin, avg};
+}
+let COPY = null;
+
+function renderHist(sym, A){
+  const T = A.trades || [];
+  $('hist-card').style.display = '';
+  const first = A.S.bars.length ? when(A.S.bars[0].t).slice(0, 11) : '—';
+  $('hist-tag').textContent = 'these rules over ' + A.S.bars.length + ' 4h candles since ' + first;
+  const w = T.filter(t => t.pnl > 0).length, net = T.reduce((a,t) => a + t.pnl, 0), sumR = T.reduce((a,t) => a + t.R, 0);
+  $('hist-stats').innerHTML =
+    '<div class="kpi"><div class="k">Trades</div><div class="v num">' + T.length + '</div><div class="s">' + w + ' won · ' + (T.length - w) + ' lost</div></div>' +
+    '<div class="kpi"><div class="k">Hit rate</div><div class="v num">' + (T.length ? nf(100 * w / T.length, 0) + '%' : '—') + '</div><div class="s">break-even ≈ 70% at ~0.4R wins</div></div>' +
+    '<div class="kpi ' + (net >= 0 ? 'tp' : 'sl') + '"><div class="k">Net</div><div class="v num ' + (net >= 0 ? 'g' : 'b') + '">' + signed(net, 0) + '</div><div class="s num">' + (sumR >= 0 ? '+' : '−') + nf(Math.abs(sumR), 2) + 'R · before spread</div></div>';
+  $('hist').innerHTML = T.length ? T.slice(-12).reverse().map(t =>
+    '<div class="hr"><span>' + (t.t0 ? when(t.t0).slice(5, 11) : '—') + ' · <b class="' + (t.dir === 'long' ? 'g' : 'b') + '">' + (t.dir === 'long' ? '▲' : '▼') + ' ' + t.type + '</b></span>' +
+    '<span>' + t.legs + ' legs · ' + lots(t.lots) + '</span><span>' + t.how + '</span>' +
+    '<span style="text-align:right"><b class="' + (t.pnl >= 0 ? 'g' : 'b') + '">' + signed(t.pnl, 0) + '</b></span></div>').join('')
+    : '<div class="dim" style="font-size:12.5px">No completed trades in the loaded history.' + (cfg.tdkey ? '' : ' A Twelve Data key loads about seven months.') + '</div>';
+}
+
 function ordersText(){
-  const S = readInputs();
-  if(S.err) return null;
-  const {p382, p618, risk, n, ratio, g, stop, legs} = S;
-  const last = legs[n-1];
-  const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
-  const totalWin  = legs.reduce((a,l) => a + l.win, 0);
-  const side = g.isLong ? 'BUY LIMIT ' : 'SELL LIMIT';
-  const lines = [
-    sel + ' ' + g.dir.toUpperCase() + ' fib ladder · ' + n + ' entries · leg ' + n + ' = ' + nf(ratio,2) + 'x leg 1',
-    'Implied leg ' + px(g.origin) + ' -> ' + px(g.anchor) + ' (' + pips(g.range) + ' pips)',
-    'Entries .382 ' + px(p382) + ' -> .618 ' + px(p618) + ' | stop ' + px(stop) +
-      ' | TPs ' + px(g.px(F_TP_LO)) + ' -> ' + px(g.px(F_TP_HI)),
-    ''
-  ];
-  legs.forEach(l => lines.push(
-    String(l.i).padStart(2) + '. ' + side + ' ' + px(l.price) + '  ' + lots(l.lots).padStart(5) + ' lots' +
-    '  SL ' + px(stop) + '  TP ' + fib(l.fTp) + ' ' + px(l.tp) + '  R ' + (l.R != null ? nf(l.R,2) : '—')));
+  if(!COPY) return null;
+  const {sym, lad, live, totLots, totRisk, totWin, avg} = COPY, f = x => px(x, sym);
+  const side = lad.dir === 'long' ? 'BUY LIMIT ' : 'SELL LIMIT';
+  const lines = [sym + ' ' + lad.dir.toUpperCase() + ' fib ladder (' + lad.type + ') · ' + live.length + ' orders .236 -> .5',
+    'Move ' + f(lad.dir === 'long' ? lad.lo : lad.hi) + ' -> ' + f(lad.dir === 'long' ? lad.hi : lad.lo) + ' | SL ' + f(lad.stop) + ' (1.272) | TP ' + f(lad.tp) + ' (0)', ''];
+  live.forEach(x => lines.push(String(x.i).padStart(2) + '. ' + side + ' ' + f(x.price) + '  ' + lots(x.lots).padStart(5) + ' lots  SL ' + f(lad.stop) + '  TP ' + f(lad.tp) + (x.fill ? '  (filled)' : '')));
   lines.push('');
-  lines.push(lots(last.cumLots) + ' lots · avg fill ' + px(last.avg));
-  lines.push('Stop ' + px(stop) + ' · risk ' + usd(Math.abs(totalRisk)) + ' if fully filled (cap ' + usd(risk,0) + ')');
-  lines.push('All TPs hit · P/L ' + signed(totalWin,2) + ' · blended R ' + (totalRisk > 0 ? nf(totalWin/totalRisk,2) : '—'));
+  lines.push(lots(totLots) + ' lots · avg ' + f(avg) + ' · risk ' + usd(totRisk) + ' · at target ' + signed(totWin));
+  lines.push('When the target fills, cancel the rest. If price makes a new ' + (lad.dir === 'long' ? 'high' : 'low') + ' before any fill, the ladder moves — recheck here.');
   return lines.join('\n');
 }
 
 /* ── wiring ───────────────────────────────────────────── */
-PER_PAIR.concat(SHARED).forEach(k => $('in-'+k).addEventListener('input', render));
-$('pairs').addEventListener('click', e => {
-  const b = e.target.closest('.pr');
-  if(!b || b.dataset.sym === sel) return;
-  stash(); sel = b.dataset.sym; fill(); render();
-});
-$('tune-btn').addEventListener('click', () => {
-  const open = $('tune').classList.toggle('show');
-  $('tune-btn').classList.toggle('on', open);
-  save();
-});
-$('pairing').addEventListener('click', () => { pairReversed = !pairReversed; render(); });
+['risk','acct','legs','ratio'].forEach(k => $('in-'+k).addEventListener('input', () => { cfg[k] = $('in-'+k).value.trim(); save(); compute(); }));
+$('in-align').addEventListener('change', () => { cfg.align = $('in-align').value; save(); tick(true); });
+$('in-tdkey').addEventListener('change', () => { cfg.tdkey = $('in-tdkey').value.trim(); save(); tick(true); });
+$('tune-btn').addEventListener('click', () => { cfg.tune = $('tune').classList.toggle('show'); $('tune-btn').classList.toggle('on', cfg.tune); save(); });
+$('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if(!b) return; cfg.sel = b.dataset.sym; save(); render(); });
+$('refresh').addEventListener('click', () => tick(true));
 $('copy').addEventListener('click', async () => {
-  const txt = ordersText();
-  if(!txt) return;
+  const txt = ordersText(); if(!txt) return;
   const btn = $('copy');
-  try{
-    await navigator.clipboard.writeText(txt);
-  }catch(e){
-    const ta = document.createElement('textarea');
-    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try{ document.execCommand('copy'); }catch(e2){}
-    ta.remove();
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(e2){} ta.remove();
   }
   btn.textContent = 'Copied ✓'; btn.classList.add('ok');
   setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1600);
 });
-// Reset clears this pair's levels only; the budget and the other pairs stay.
-$('reset').addEventListener('click', () => {
-  PER_PAIR.forEach(k => $('in-'+k).value = '');
-  delete book[sel];
-  render();
-});
+document.addEventListener('visibilitychange', () => { if(!document.hidden) tick(); });
+
+// Re-check just after each 4h close, and on the regular refresh in between.
+let lastBucket = bucket(Date.now()/1000, H4);
+setInterval(() => {
+  const b = bucket(Date.now()/1000, H4);
+  if(b !== lastBucket){ lastBucket = b; setTimeout(() => tick(true), 60e3); }
+  tick();
+}, 30e3);
 
 load();
 render();
+tick(true);
 </script>
 </body></html>
