@@ -76,10 +76,10 @@ function prepAll(raw, cot) {
 /* ── scoring ──────────────────────────────────────────── */
 let splitT = Date.parse(SPLIT + "T00:00:00Z") / 1000;
 function stats(T) {
-  let r = 0, peak = 0, dd = 0, w = 0;
-  for (const t of T) { r += t.R; if (t.R > 0) w++; peak = Math.max(peak, r); dd = Math.max(dd, peak - r); }
+  let r = 0, peak = 0, dd = 0, w = 0, tg = 0;
+  for (const t of T) { r += t.R; if (t.R > 0) w++; if (t.how === "target") tg++; peak = Math.max(peak, r); dd = Math.max(dd, peak - r); }
   const yrs = T.length ? (T[T.length - 1].fillT - T[0].fillT) / (365.25 * 86400) : 0;
-  return { n: T.length, hit: T.length ? w / T.length : 0, R: r, avgR: T.length ? r / T.length : 0, maxDD: dd, perYear: yrs > 0.5 ? T.length / yrs : T.length };
+  return { n: T.length, hit: T.length ? w / T.length : 0, tgt: T.length ? tg / T.length : 0, R: r, avgR: T.length ? r / T.length : 0, maxDD: dd, perYear: yrs > 0.5 ? T.length / yrs : T.length };
 }
 function evaluate(preps, cfg, detail) {
   const { trades, perPair } = F.simulate(preps, cfg);
@@ -130,15 +130,15 @@ if (!isMainThread) {
   const d = t => new Date(t * 1000).toISOString().slice(0, 10);
   const isLabel = `${d(first)} → ${split}`, oosLabel = `${split} → ${d(last)}`;
   const usd$ = R => (R >= 0 ? "+$" : "−$") + Math.round(Math.abs(R) * RISK).toLocaleString("en-US");
-  const fmt = s => `${s.n} | ${s.perYear.toFixed(0)} | ${(100 * s.hit).toFixed(0)}% | ${s.R >= 0 ? "+" : ""}${s.R.toFixed(1)}R | ${usd$(s.R)} | ${s.maxDD.toFixed(1)}R`;
+  const fmt = s => `${s.n} | ${s.perYear.toFixed(0)} | ${(100 * s.tgt).toFixed(0)}% | ${(100 * s.hit).toFixed(0)}% | ${s.R >= 0 ? "+" : ""}${s.R.toFixed(1)}R | ${usd$(s.R)} | ${s.maxDD.toFixed(1)}R`;
   const byBias = BIAS.map(b => ranked.find(r => r.cfg.bias === b)).filter(Boolean);
   const share = results.filter(r => r.is.n >= MIN_IS_TRADES);
   const lines = [
     `# FX Daily 2:1 — tuning report`, ``,
     `Generated ${new Date().toISOString().slice(0, 16).replace("T", " ")} UTC by \`scripts/fx-daily-tune.mjs\`${synth ? " — **SYNTHETIC DATA, plumbing test only**" : ""}.`,
-    `One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, never two open). Target 2× the stop: **risk $${RISK} to make $${2 * RISK}**, every trade settled within 24 hours (closed at market if neither hits). Break-even ≈ 33% before spread; spread is charged on every trade.`,
+    `One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, never two open). Target 2× the stop: **risk $${RISK} to make $${2 * RISK}**, every trade settled within 24 hours (closed at market if neither hits). "Any profit" counts time exits that closed up; "full wins" are the +$${2 * RISK} target. Break-even ≈ 33% before spread; spread is charged on every trade.`,
     `${cfgs.length} setups tried. Picked on **${isLabel}** only (≥ ${MIN_IS_TRADES} trades, then most profitable years, least-bad worst year, most R); checked on **${oosLabel}**, unseen.`, ``,
-    `| | trades | per year | hit | total | at $${RISK}/trade | worst run |`, `|---|---|---|---|---|---|---|`,
+    `| | trades | per year | full +$${2 * RISK} wins | any profit | total | at $${RISK}/trade | worst run |`, `|---|---|---|---|---|---|---|---|`,
     `| **Picked** · tuning | ${fmt(best.is)} |`, `| **Picked** · unseen | ${fmt(best.oos)} |`, ``,
     `**Picked:** \`${key(best.cfg)}\` — profitable in ${ranked[0].upYears} of ${ranked[0].nYears} tuning years.`, ``,
     `**Published:** ${held ? "yes — it also made money unseen, so forex.html shows its trade each day." : "**no** — it did not make money on the unseen period."}`, ``,
@@ -153,7 +153,7 @@ if (!isMainThread) {
     `Every setup with at least 200 trades over the whole history, ranked by hit rate on **${isLabel}**. A 2:1 setup needs ~34% to break even; the question is whether a high past hit rate carries on into the unseen period.`, ``,
     `| settings | tuning: tr · hit · R | unseen: tr · hit · R |`, `|---|---|---|`,
     ...results.filter(r => r.is.n + r.oos.n >= 200).sort((a, b) => b.is.hit - a.is.hit).slice(0, 15)
-      .map(r => `| \`${key(r.cfg)}\` | ${r.is.n} · **${(100 * r.is.hit).toFixed(0)}%** · ${r.is.R.toFixed(1)} | ${r.oos.n} · **${(100 * r.oos.hit).toFixed(0)}%** · ${r.oos.R.toFixed(1)} |`), ``,
+      .map(r => `| \`${key(r.cfg)}\` | ${r.is.n} · **${(100 * r.is.hit).toFixed(0)}%** (${(100 * r.is.tgt).toFixed(0)}% full) · ${r.is.R.toFixed(1)} | ${r.oos.n} · **${(100 * r.oos.hit).toFixed(0)}%** (${(100 * r.oos.tgt).toFixed(0)}% full) · ${r.oos.R.toFixed(1)} |`), ``,
     `Setups that won ≥ 50% of trades in the tuning period: **${results.filter(r => r.is.n >= MIN_IS_TRADES && r.is.hit >= 0.5).length}**; of those, still ≥ 50% unseen: **${results.filter(r => r.is.n >= MIN_IS_TRADES && r.is.hit >= 0.5 && r.oos.hit >= 0.5 && r.oos.n >= 20).length}**.`, ``,
     `## Picked, if each pair traded alone`, ``, `| pair | tuning | unseen |`, `|---|---|---|`,
     ...E.SYMS.map(s => `| ${s} | ${best.pairs[s].is.n} tr · ${(100 * best.pairs[s].is.hit).toFixed(0)}% · ${best.pairs[s].is.R.toFixed(1)}R | ${best.pairs[s].oos.n} tr · ${(100 * best.pairs[s].oos.hit).toFixed(0)}% · ${best.pairs[s].oos.R.toFixed(1)}R |`), ``,
