@@ -566,8 +566,9 @@ function dLots(sym, o, risk){
   const lots = Math.floor(risk / perLot * 100 + 1e-9) / 100;
   return {lots, loss: lots * perLot, win: lots * LOT * usdPer(sym, Math.abs(o.tp - o.entry), o.tp)};
 }
-const BIAS_NAME = {none:'either way', prevday:'yesterday\'s candle', d1s3:'daily structure (3)', d1s5:'daily structure (5)',
+const BIAS_NAME0 = {none:'either way', prevday:'yesterday\'s candle', d1s3:'daily structure (3)', d1s5:'daily structure (5)',
   h4s10:'4h structure (10)', usd:'USD structure', ema50:'4h vs EMA 50', cot:'hedge funds (CFTC)'};
+const BIAS_NAME = new Proxy(BIAS_NAME0, {get: (o, k) => typeof k === 'string' && k.includes('+') ? k.split('+').map(x => o[x] || x).join(' and ') + ' agreeing' : (o[k] || k)});
 function chartSvg(sym, bars, o){
   const W = 640, Hh = 260, padR = 70, n = bars.length;
   const lv = [o.entry, o.stop, o.tp, o.hi, o.lo].filter(v => v != null && isFinite(v));
@@ -610,15 +611,16 @@ function renderDaily(){
     const L = dLots(pick.sym, pick, risk), done = pick.how, R = pick.R;
     $('day-head').innerHTML = '<span class="pill ' + pick.dir + '">' + pick.sym + ' ' + (pick.dir === 'long' ? '▲ LONG' : '▼ SHORT') + '</span>' +
       '<span>' + (done ? (pick.how === 'target' ? '<b class="g">Target hit</b>' : pick.how === 'stop' ? '<b class="b">Stopped</b>' : 'Closed at time') + ' · ' + signed(R * risk, 0)
-                       : '<b>In the trade</b> since ' + when(pick.fillT) + ' · now ' + signed(R * risk, 0)) + '</span>';
+                       : '<b>In the trade</b> since ' + when(pick.fillT) + ' · now ' + signed(R * risk, 0) + ' · close at market by ' + when(pick.closeBy)) + '</span>';
     $('day-kpis').innerHTML = dk(pick.sym, pick, L);
     $('day-chart').innerHTML = chartSvg(pick.sym, Dd.h1[pick.sym].slice(-72), pick);
   } else if(pick){
     const o = pick.both ? pick.both[0] : pick;
     const L = dLots(pick.sym, o, risk);
     $('day-head').innerHTML = '<span class="pill ' + o.dir + '">' + pick.sym + ' ' + (o.dir === 'long' ? '▲ LONG' : '▼ SHORT') + '</span>' +
-      '<span><b>Order working</b> — ' + (o.kind === 'stop' ? (o.dir === 'long' ? 'buy stop ' : 'sell stop ') : (o.dir === 'long' ? 'buy limit ' : 'sell limit ')) + f(pick.sym, o.entry) +
-      (pick.both && pick.both.length > 1 ? ' (and the opposite side, whichever trades first)' : '') + '</span>';
+      '<span><b>' + (o.kind === 'market' ? 'Signal now' : 'Order working') + '</b> — ' + (o.kind === 'market' ? (o.dir === 'long' ? 'buy at market ~' : 'sell at market ~') : o.kind === 'stop' ? (o.dir === 'long' ? 'buy stop ' : 'sell stop ') : (o.dir === 'long' ? 'buy limit ' : 'sell limit ')) + f(pick.sym, o.entry) +
+      (pick.both && pick.both.length > 1 ? ' (and the opposite side, whichever trades first)' : '') +
+      ' · once filled, close at market ' + (Pm.exit === 'eod' ? 'at the New York close' : '24 hours later') + ' if neither the stop nor the target hits</span>';
     $('day-kpis').innerHTML = dk(pick.sym, o, L);
     $('day-chart').innerHTML = chartSvg(pick.sym, Dd.h1[pick.sym].slice(-72), Object.assign({}, o, {dir: o.dir, hi: pick.hi != null ? pick.hi : o.hi, lo: pick.lo != null ? pick.lo : o.lo}));
   } else {
@@ -637,15 +639,17 @@ function renderDaily(){
   $('day-note').innerHTML = '<p><b>' + (ok ? 'The setup' : 'Untested setup — no daily 2:1 setup held up') + '.</b> ' + DAILY.summary + '</p>' +
     '<p><b>Rules:</b> direction from ' + BIAS_NAME[Pm.bias] + '; ' +
     (Pm.entry === 'asia' ? 'at 07:00 UTC, stop orders at the Asian-session high and low (00–07 UTC), stop at the ' + (Pm.asiaStop === 'mid' ? 'middle of the range' : 'other side') :
+     Pm.entry === 'pdh' ? 'stop orders at yesterday\'s high and low, stop at ' + (Pm.pdStop === 'q' ? 'a quarter of yesterday\'s range back inside' : 'yesterday\'s midpoint') + ' (a level already broken at the open is skipped)' :
+     Pm.entry === 'sweep' ? 'when an hourly candle pokes past the Asian-session high (low) and closes back inside, sell (buy) at that close, stop just beyond the poke' :
       'after a 1h structure break (swings of ' + Pm.len + '), a limit at the ' + Pm.lim + ' of the breaking move, stop at the ' + Pm.stop) +
-    '; target twice the stop; armed ' + Pm.win[0] + ':00–' + Pm.win[1] + ':00 UTC; ' + (Pm.exit === 'eod' ? 'flat at the New York close' : 'held until target or stop (3 days max)') +
+    '; target twice the stop; armed ' + Pm.win[0] + ':00–' + Pm.win[1] + ':00 UTC; ' + (Pm.exit === 'eod' ? 'closed at market at the New York close if neither hits' : 'closed at market 24 hours after the fill if neither hits') +
     '; stops under ' + Pm.minStop + ' pips skipped. The first fill across the five pairs is the day\'s trade; cancel the others.</p>' +
     (T ? '<p>Tuning ' + DAILY.split.isLabel + ': ' + T.is.n + ' trades, ' + nf(100*T.is.hit,0) + '% hit, ' + rTxt2(T.is.R) + '. Unseen ' + DAILY.split.oosLabel + ': ' +
       T.oos.n + ' trades, ' + nf(100*T.oos.hit,0) + '% hit, ' + rTxt2(T.oos.R) + ' (' + signed(T.oos.R * risk, 0) + ' at ' + usd(risk,0) + ' a trade). Break-even is about 34%.</p>' : '');
 }
 const rTxt2 = r => (r >= 0 ? '+' : '−') + nf(Math.abs(r), 1) + 'R';
 function dk(sym, o, L){
-  return '<div class="kpi av"><div class="k">Entry · ' + (o.kind === 'stop' ? 'stop order' : 'limit') + '</div><div class="v num">' + px(o.entry, sym) + '</div>' +
+  return '<div class="kpi av"><div class="k">Entry · ' + (o.kind === 'stop' ? 'stop order' : o.kind === 'market' ? 'at market' : 'limit') + '</div><div class="v num">' + px(o.entry, sym) + '</div>' +
       '<div class="s num"><b>' + lots(L.lots) + '</b> lots · ' + pips(o.dist, sym) + 'p stop</div></div>' +
     '<div class="kpi sl"><div class="k">Stop</div><div class="v num b">' + px(o.stop, sym) + '</div><div class="s num">loses <b>' + usd(L.loss, 0) + '</b></div></div>' +
     '<div class="kpi tp"><div class="k">Target · 2 : 1</div><div class="v num g">' + px(o.tp, sym) + '</div><div class="s num">makes <b>' + usd(L.win, 0) + '</b></div></div>';
