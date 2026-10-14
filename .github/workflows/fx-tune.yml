@@ -6,12 +6,16 @@ name: Tune the FX Fib Ladder
 # docs/fx-tune-report.md. Runs here because the sandbox can't reach FX data.
 on:
   workflow_dispatch:
+  # Weekly, after the CFTC's Friday report (runs once this is on main).
+  schedule:
+    - cron: '17 3 * * 6'
   push:
     branches: [claude/forex-fibonacci-strategy-hkbph8]
     paths:
       - fx-engine.js
       - scripts/fx-tune.mjs
       - scripts/fx-fetch-histdata.py
+      - scripts/fx-fetch-cot.py
       - .github/workflows/fx-tune.yml
 
 permissions:
@@ -48,6 +52,9 @@ jobs:
           pip install requests==2.32.3
           python scripts/fx-fetch-histdata.py 2019
 
+      - name: Fetch hedge-fund positioning (CFTC)
+        run: python scripts/fx-fetch-cot.py 2018
+
       - name: Install the Dukascopy client
         run: npm install --no-save --no-package-lock dukascopy-node@1.50.0
 
@@ -58,8 +65,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/fx-tuned.json docs/fx-tune-report.md
+          git add data/fx-tuned.json data/fx-cot.json docs/fx-tune-report.md
           if git diff --cached --quiet; then echo "No change."; exit 0; fi
-          git commit -m "FX Fib Ladder: tuned rules $(date -u +%F)"
+          git commit -m "FX Fib Ladder: tuned rules and CFTC positioning $(date -u +%F)"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"

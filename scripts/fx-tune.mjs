@@ -33,22 +33,37 @@ const GRID = {
   tp: [-0.272, 0, 0.236],
   adxMin: [0, 20, 25],
   usd: ["off", "x2", "24h"],          // dollar filter: none, 2× the setup candle, daily
+  cot: ["off", "lev", "am", "levchg"], // CFTC positioning: none, hedge funds, asset managers, hedge funds' weekly change
 };
-const BASELINE = { tf: E.H4, len: 20, inLo: 0.236, inHi: 0.5, stop: 1.272, tp: 0, adxMin: 20, usdFilter: true, usdTf: E.H8, usdLen: 20 };
+const BASELINE = { tf: E.H4, len: 20, inLo: 0.236, inHi: 0.5, stop: 1.272, tp: 0, adxMin: 20, usdFilter: true, usdTf: E.H8, usdLen: 20, cot: "off" };
+// CFTC positioning (scripts/fx-fetch-cot.py), when present.
+let COT = existsSync("data/fx-cot.json") ? JSON.parse(readFileSync("data/fx-cot.json", "utf8")).pairs : null;
+function syntheticCot(raw) {                       // plumbing test only: random weekly positioning
+  let seed = 11; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const out = {};
+  for (const s of E.SYMS) {
+    let lev = 0, am = 0; out[s] = [];
+    for (let t = raw[s][0].t; t < raw[s][raw[s].length - 1].t; t += 7 * 86400) {
+      lev += (rnd() - 0.5) * 20000; am += (rnd() - 0.5) * 10000;
+      out[s].push({ t, date: new Date(t * 1000).toISOString().slice(0, 10), lev: Math.round(lev), am: Math.round(am) });
+    }
+  }
+  return out;
+}
 
 function configs() {
   const out = [];
   for (const tf of GRID.tf) for (const len of GRID.len) for (const [inLo, inHi] of GRID.zone)
-    for (const stop of GRID.stop) for (const tp of GRID.tp) for (const adxMin of GRID.adxMin) for (const usd of GRID.usd) {
+    for (const stop of GRID.stop) for (const tp of GRID.tp) for (const adxMin of GRID.adxMin) for (const usd of GRID.usd) for (const cot of COT ? GRID.cot : ["off"]) {
       if (tp > inLo - 0.1) continue;                       // the target must sit clear of the first limit
       const usdTf = usd === "x2" ? tf * 2 : 86400;
       if (usd === "24h" && usdTf <= tf) continue;
-      out.push({ tf, len, inLo, inHi, stop, tp, adxMin, usdFilter: usd !== "off", usdTf, usdLen: 20 });
+      out.push({ tf, len, inLo, inHi, stop, tp, adxMin, usdFilter: usd !== "off", usdTf, usdLen: 20, cot });
     }
   return out;
 }
 const key = c => [c.tf / 3600 + "h", "len" + c.len, c.inLo + "-" + c.inHi, "sl" + c.stop, "tp" + c.tp,
-  "adx" + c.adxMin, c.usdFilter ? "usd" + c.usdTf / 3600 + "h" : "nousd"].join(" ");
+  "adx" + c.adxMin, c.usdFilter ? "usd" + c.usdTf / 3600 + "h" : "nousd", "cot-" + (c.cot || "off")].join(" ");
 
 /* ── data ─────────────────────────────────────────────── */
 let dukaDown = false, dataSource = null;
@@ -166,7 +181,7 @@ function evaluate(P, cfg) {
   for (const s of E.SYMS) {
     const ev = prep.ev[s][cfg.len] || E.structure(prep.bars[s], cfg.len);
     const r = E.simulate(s, prep.bars[s], { params: Object.assign({}, cfg, { legs: 10, ratio: 2 }), risk: RISK,
-      U: cfg.usdFilter ? prep.U[cfg.usdTf] : null, align: ALIGN, costPips: SPREAD[s], ev, ad: prep.ad[s] });
+      U: cfg.usdFilter ? prep.U[cfg.usdTf] : null, cot: COT, align: ALIGN, costPips: SPREAD[s], ev, ad: prep.ad[s] });
     perPair[s] = r.trades;
     all.push(...r.trades);
   }
@@ -183,7 +198,7 @@ function evaluate(P, cfg) {
 
 /* ── workers ──────────────────────────────────────────── */
 if (!isMainThread) {
-  splitT = workerData.splitT;
+  splitT = workerData.splitT; COT = workerData.cot;
   const P = prepare(workerData.raw);
   const out = workerData.cfgs.map(c => { const r = evaluate(P, c); delete r.pairs; return r; });
   parentPort.postMessage(out);
@@ -191,6 +206,8 @@ if (!isMainThread) {
   const synth = process.argv.includes("--synthetic");
   const raw = synth ? synthetic() : {};
   if (!synth) for (const s of E.SYMS) raw[s] = await fetchPair(s);      // sequential: be gentle with the feed
+  if (synth) COT = syntheticCot(raw);
+  console.log(COT ? "CFTC positioning loaded — testing the hedge-fund filter" : "no data/fx-cot.json — positioning filter not tested");
   {
     const first = Math.max(...E.SYMS.map(s => raw[s][0].t)), last = Math.min(...E.SYMS.map(s => raw[s][raw[s].length - 1].t));
     if (Date.parse(SPLIT + "T00:00:00Z") / 1000 < first + (last - first) / 2)
@@ -203,7 +220,7 @@ if (!isMainThread) {
   const t0 = Date.now();
   const chunks = Array.from({ length: nW }, (_, i) => cfgs.filter((_, j) => j % nW === i));
   const results = (await Promise.all(chunks.map(ch => new Promise((res, rej) => {
-    const w = new Worker(new URL(import.meta.url), { workerData: { raw, cfgs: ch, splitT } });
+    const w = new Worker(new URL(import.meta.url), { workerData: { raw, cfgs: ch, splitT, cot: COT } });
     w.on("message", res); w.on("error", rej);
   })))).flat();
   console.log(`done in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
@@ -217,6 +234,11 @@ if (!isMainThread) {
   const byR = pool.slice().sort((a, b) => b.is.R - a.is.R)[0];
   const P = prepare(raw);
   const best = evaluate(P, ranked[0].cfg), base = evaluate(P, BASELINE), maxR = evaluate(P, byR.cfg);
+  // The question the positioning filter answers: does trading with the big money help?
+  const cotModes = COT ? GRID.cot : ["off"];
+  const COT_NAME = { off: "no positioning filter", lev: "with hedge funds (net)", am: "with asset managers (net)", levchg: "with hedge funds' weekly change" };
+  const baseCot = cotModes.map(m => ({ m, r: evaluate(P, Object.assign({}, BASELINE, { cot: m })) }));
+  const bestCot = cotModes.map(m => { const r = ranked.find(x => (x.cfg.cot || "off") === m); return r ? { m, r, rank: ranked.indexOf(r) + 1 } : null; }).filter(Boolean);
   const fmt = s => `${s.n} | ${(100 * s.hit).toFixed(0)}% | ${s.R >= 0 ? "+" : ""}${s.R.toFixed(1)}R | ${s.avgR.toFixed(3)} | ${s.maxDD.toFixed(1)}R | $${Math.round(s.net).toLocaleString("en-US")}`;
   const first = new Date(Math.min(...E.SYMS.map(s => raw[s][0].t)) * 1000).toISOString().slice(0, 10);
   const last = new Date(Math.max(...E.SYMS.map(s => raw[s][raw[s].length - 1].t)) * 1000).toISOString().slice(0, 10);
@@ -234,6 +256,18 @@ if (!isMainThread) {
     `| Most R on tuning · tuning | ${fmt(maxR.is)} |`, `| Most R on tuning · unseen | ${fmt(maxR.oos)} |`, ``,
     `**Picked:** \`${key(best.cfg)}\` — made money in ${ranked[0].upYears} of ${ranked[0].nYears} tuning years, worst year ${ranked[0].worstYear.toFixed(1)}R.`, ``,
     `**Published:** ${best.oos.net > 0 ? "yes — it also made money on the unseen period, so forex.html runs it." : "**no** — it lost on the unseen period, so forex.html keeps the crypto rules and says no FX tuning held up."}`, ``,
+    ...(COT ? [
+      `## The hedge-fund (positioning) filter`, ``,
+      `CFTC Traders in Financial Futures: skip a trade unless the group is on its side (net), or — "weekly change" — added to its side in the latest report public at the break.`, ``,
+      `**The crypto rules, with each filter:**`, ``,
+      `| filter | tuning: tr · hit · R | unseen: tr · hit · R |`, `|---|---|---|`,
+      ...baseCot.map(({ m, r }) => `| ${COT_NAME[m]} | ${r.is.n} · ${(100 * r.is.hit).toFixed(0)}% · ${r.is.R.toFixed(1)} | ${r.oos.n} · ${(100 * r.oos.hit).toFixed(0)}% · ${r.oos.R.toFixed(1)} |`), ``,
+      `**The best-ranked setting under each filter** (ranked on the tuning period only):`, ``,
+      `| filter | rank | settings | tuning: tr · hit · R | unseen: tr · hit · R |`, `|---|---|---|---|---|`,
+      ...bestCot.map(({ m, r, rank }) => `| ${COT_NAME[m]} | ${rank} | \`${key(r.cfg)}\` | ${r.is.n} · ${(100 * r.is.hit).toFixed(0)}% · ${r.is.R.toFixed(1)} | ${r.oos.n} · ${(100 * r.oos.hit).toFixed(0)}% · ${r.oos.R.toFixed(1)} |`), ``,
+      `Of all ${cfgs.length} settings, share that made money unseen, by filter: ` +
+        cotModes.map(m => { const xs = results.filter(r => (r.cfg.cot || "off") === m && r.is.n >= MIN_IS_TRADES); return `${COT_NAME[m]} ${xs.length ? (100 * xs.filter(r => r.oos.net > 0).length / xs.length).toFixed(0) : "—"}%`; }).join(" · ") + ".", ``,
+    ] : []),
     `## Picked, per pair`, ``, `| pair | tuning | unseen |`, `|---|---|---|`,
     ...E.SYMS.map(s => `| ${s} | ${best.pairs[s].is.n} tr · ${(100 * best.pairs[s].is.hit).toFixed(0)}% · ${best.pairs[s].is.R.toFixed(1)}R | ${best.pairs[s].oos.n} tr · ${(100 * best.pairs[s].oos.hit).toFixed(0)}% · ${best.pairs[s].oos.R.toFixed(1)}R |`), ``,
     `## Top 25 on the tuning period (with how each did unseen)`, ``,
@@ -250,6 +284,7 @@ if (!isMainThread) {
     candidate: Object.assign({ adxN: 14, legs: 10, ratio: 2 }, best.cfg),
     split: { isLabel, oosLabel },
     best: { is: best.is, oos: best.oos }, baseline: { is: base.is, oos: base.oos },
+    cotTested: !!COT,
     summary: oosUp
       ? `Picked from ${cfgs.length} settings on ${isLabel} for consistency year to year, then run on ${oosLabel} unseen: ` +
         `${best.oos.n} trades, ${(100 * best.oos.hit).toFixed(0)}% hit, ${best.oos.R >= 0 ? "+" : ""}${best.oos.R.toFixed(1)}R after spread.`

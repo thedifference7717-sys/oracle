@@ -214,7 +214,7 @@ E.SYMS.forEach(s => PAIRS[s] = Object.assign({kr: s, td: s.slice(0,3) + '/' + s.
 const SYMS = E.SYMS;
 // The rules: the tuned set from data/fx-tuned.json when it loads, else the
 // crypto ladder's (Oct 5) as the engine's defaults.
-let RULES = Object.assign({}, E.DEFAULTS), TUNED = null;
+let RULES = Object.assign({}, E.DEFAULTS), TUNED = null, COT = null;
 const D = {risk: 400, acct: 100000};
 
 /* ── config ───────────────────────────────────────────── */
@@ -288,6 +288,7 @@ function toBars(raw){
 }
 
 async function loadRules(){
+  try{ const c = await fetchJSON('data/fx-cot.json?t=' + Date.now()); if(c && c.pairs) COT = c; }catch(e){}
   try{
     const j = await fetchJSON('data/fx-tuned.json?t=' + Date.now());
     if(j){ TUNED = j; if(j.params) RULES = Object.assign({}, E.DEFAULTS, j.params); }
@@ -320,7 +321,7 @@ function compute(){
   SYMS.forEach(s => {
     if(!S[s]) return RES[s] = {err: ERR[s] || null};
     RES[s] = Object.assign({S: S[s], src: RAW[s].src, note: RAW[s].note},
-      E.simulate(s, S[s].bars, {params: RULES, risk, U, align: cfg.align, forming: S[s].forming, costPips: E.PAIRS[s].spread}));
+      E.simulate(s, S[s].bars, {params: RULES, risk, U, cot: COT && COT.pairs, align: cfg.align, forming: S[s].forming, costPips: E.PAIRS[s].spread}));
   });
   render();
 }
@@ -390,9 +391,19 @@ function render(){
       ' · a ' + last.e.dir + ' here needs USD ' + (last.wantUsd === 'long' ? 'up' : 'down'), last.usdOk ? 'PASS' : 'FAIL'));
     C.push(!(RULES.adxMin > 0) ? check('na', 'ADX filter — off in these rules', 'OFF')
       : check(last.adxOk ? 'ok' : 'no', tfName(RULES.tf) + ' ADX(' + RULES.adxN + ') at the break <b>' + (last.adx != null ? nf(last.adx,1) : '—') + '</b> · needs ' + RULES.adxMin + '+', last.adxOk ? 'PASS' : 'FAIL'));
+    const cv = last.cot || {}, cotWho = {lev:'Hedge funds', am:'Asset managers', levchg:'Hedge funds\' weekly change'}[RULES.cot];
+    if(RULES.cot && RULES.cot !== 'off')
+      C.push(check(last.cotOk ? 'ok' : 'no', cotWho + ' (CFTC' + (cv.row ? ', week of ' + cv.row.date : ', no report') + ')' +
+        (cv.row ? ' <b>' + (cv.value >= 0 ? '+' : '−') + nf(Math.abs(cv.value),0) + '</b> contracts ' + (cv.value >= 0 ? 'long' : 'short') + ' ' + sym : '') +
+        ' · a ' + last.e.dir + ' needs them ' + (last.e.dir === 'long' ? 'long' : 'short'), last.cotOk ? 'PASS' : 'FAIL'));
     C.push(check(last.pastHalf ? 'no' : 'ok', 'Close ' + px(last.close, sym) + (last.pastHalf ? ' already past' : ' not past') + ' the ' + lvl(RULES.inHi) + ' of the move', last.pastHalf ? 'SKIP' : 'PASS'));
     if(last.heldBy) C.push(check('no', 'A filled trade was open, so the break could not replace it', 'HELD'));
-    C.push(check('na', 'Funding and top-trader filters are crypto-only — not applied to FX', 'N/A'));
+    if(!RULES.cot || RULES.cot === 'off'){
+      const rows = COT && COT.pairs[sym], r = rows && rows[rows.length-1];
+      C.push(check('na', r ? 'Hedge funds (CFTC, week of ' + r.date + ') <b>' + (r.lev >= 0 ? '+' : '−') + nf(Math.abs(r.lev),0) + '</b> contracts ' +
+        (r.lev >= 0 ? 'long ' : 'short ') + sym + ' · asset managers ' + (r.am >= 0 ? '+' : '−') + nf(Math.abs(r.am),0) + ' — shown only, the positioning filter is off in these rules'
+        : 'Positioning filter (CFTC hedge funds) — off in these rules', 'INFO'));
+    }
   }
   const nc = nextCheck();
   C.push(check(lad ? 'ok' : 'na', lad
@@ -514,7 +525,9 @@ function renderRules(){
     '<li><b>Exits.</b> Every leg\'s target is the <span class="hl">' + lvl(R.tp) + '</span>; one stop for the whole position at the <span class="hl">' + lvl(R.stop) + '</span>. ' +
       'When the target fills, cancel the unfilled entries. No recovery trades; an opposite break never closes a filled trade.</li>' +
     '<li><b>Filters.</b> ' + (R.usdFilter ? 'USD ' + tfName(R.usdTf) + ' structure (a dollar index from the five pairs, swings of ' + R.usdLen + ') — trade only the side that agrees with the dollar\'s latest break. ' : 'No USD structure filter. ') +
-      (R.adxMin > 0 ? tfName(R.tf) + ' ADX(' + R.adxN + ') ≥ ' + R.adxMin + '.' : 'No ADX filter.') + ' Funding and top-trader filters are crypto-only.</li>' +
+      (R.adxMin > 0 ? tfName(R.tf) + ' ADX(' + R.adxN + ') ≥ ' + R.adxMin + '. ' : 'No ADX filter. ') +
+      (R.cot && R.cot !== 'off' ? 'Positioning: skip unless ' + {lev:'hedge funds are net', am:'asset managers are net', levchg:'hedge funds added'}[R.cot] + ' on the trade\'s side in the latest CFTC report (the FX stand-in for the top-trader filter). '
+                                : 'No positioning filter. ') + 'Funding is crypto-only.</li>' +
     '<li><b>Size.</b> Each ladder, all filled, loses no more than your <span class="hl">SL $ per trade</span> at the stop; lots round to 0.01 without going over.</li>' +
     '</ol>' +
     (T ? (T.params ? table('How these rules did', T.best) : table('The best FX candidate (not used — it lost unseen)', T.best)) +

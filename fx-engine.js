@@ -42,6 +42,7 @@ const DEFAULTS = {
   usdFilter: true, // trade only with the dollar's latest break
   usdTf: H8,
   usdLen: 20,
+  cot: "off",      // hedge-fund positioning filter (CFTC): off | lev | am | levchg
   legs: 10,
   ratio: 2,        // deepest leg = ratio × first
 };
@@ -156,6 +157,27 @@ function usdDirAt(U, T) {
   return d;
 }
 
+/* ── positioning (the crypto ladder's top-trader filter, for FX) ─ */
+// rows: one pair's weekly CFTC rows {t: when it was public, date, lev, am},
+// oriented to the pair (positive = net long the pair). Modes:
+//   lev    — leveraged funds (hedge funds/CTAs) net on the trade's side
+//   am     — asset managers net on the trade's side
+//   levchg — leveraged funds added to the trade's side that week
+// No report yet → the check fails, like an unknown USD structure.
+function cotCheck(mode, rows, T, dir) {
+  if (!mode || mode === "off") return { ok: true, off: true };
+  if (!rows || !rows.length) return { ok: false };
+  let i = -1;
+  for (let lo = 0, hi = rows.length - 1; lo <= hi;) {       // last row public by T
+    const m = (lo + hi) >> 1;
+    if (rows[m].t <= T) { i = m; lo = m + 1; } else hi = m - 1;
+  }
+  if (i < 0) return { ok: false };
+  const r = rows[i], s = dir === "long" ? 1 : -1;
+  const v = mode === "am" ? r.am : mode === "lev" ? r.lev : (i > 0 ? r.lev - rows[i - 1].lev : 0);
+  return { ok: s * v > 0, row: r, value: v, mode };
+}
+
 /* ── the ladder ───────────────────────────────────────── */
 // Long: swing high = 0, swing low = 1. Short mirrored.
 function fibOf(dir, hi, lo) {
@@ -200,7 +222,8 @@ function buildLegs(sym, dir, hi, lo, close, risk, params) {
 // filled). At the close: an unfilled ladder follows a new extreme, and a break
 // that passes the filters replaces any unfilled ladder.
 //
-// ctx: {params, risk, U, align, costPips, forming, ev, ad} — ev/ad optional
+// ctx: {params, risk, U, cot, align, costPips, forming, ev, ad} — cot is
+// {SYM: weekly CFTC rows} (data/fx-cot.json's pairs); ev/ad optional
 // precomputed structure()/adx() for these bars (the tuner reuses them).
 function simulate(sym, bars, ctx) {
   const p = Object.assign({}, DEFAULTS, ctx.params);
@@ -252,12 +275,14 @@ function simulate(sym, bars, ctx) {
     const U8 = p.usdFilter ? usdDirAt(ctx.U, T) : null;
     const wantUsd = PAIRS[sym].usd > 0 ? e.dir : (e.dir === "long" ? "short" : "long");
     const deep = fibOf(e.dir, hi, lo)(p.inHi);
+    const cot = cotCheck(p.cot, ctx.cot && ctx.cot[sym], T, e.dir);
     const rec = { e, t: T, hi, lo, close: b.c, adx: ad ? ad[k] : null, usd: U8, wantUsd,
                   usdOk: !p.usdFilter || (!!U8 && U8.dir === wantUsd),
                   adxOk: !(p.adxMin > 0) || (ad[k] != null && ad[k] >= p.adxMin),
+                  cot, cotOk: cot.ok,
                   pastHalf: e.dir === "long" ? b.c < deep : b.c > deep,
                   heldBy: lad && lad.legs.some(x => x.fill) ? "filled" : null };
-    rec.ok = rec.usdOk && rec.adxOk && !rec.pastHalf && !rec.heldBy;
+    rec.ok = rec.usdOk && rec.adxOk && rec.cotOk && !rec.pastHalf && !rec.heldBy;
     if (rec.ok) {
       const nl = buildLegs(sym, e.dir, hi, lo, b.c, risk, p);
       if (nl.live) {
@@ -283,5 +308,5 @@ function stats(trades, cap) {
 }
 
 return { LOT, H1, H4, H8, PAIRS, SYMS, DEFAULTS, usdPer, nyLag, bucket, aggregate, pivots, structure, adx,
-         usdStructure, usdDirAt, fibOf, buildLegs, simulate, stats };
+         usdStructure, usdDirAt, cotCheck, fibOf, buildLegs, simulate, stats };
 });
