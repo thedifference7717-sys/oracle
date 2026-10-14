@@ -656,7 +656,7 @@ function renderDaily(){
 const rTxt2 = r => (r >= 0 ? '+' : '−') + nf(Math.abs(r), 1) + 'R';
 function dk(sym, o, L){
   return '<div class="kpi av"><div class="k">Entry · ' + (o.kind === 'stop' ? 'stop order' : o.kind === 'market' ? 'at market' : 'limit') + '</div><div class="v num">' + px(o.entry, sym) + '</div>' +
-      '<div class="s num"><b>' + lots(L.lots) + '</b> lots · ' + pips(o.dist, sym) + 'p stop</div></div>' +
+      '<div class="s num"><b>' + lots(L.lots) + '</b> lots · ' + pips(o.dist, sym) + 'p stop<br>' + usd(LOT * usdPer(sym, PAIRS[sym].pip, o.entry)) + '/pip per lot</div></div>' +
     '<div class="kpi sl"><div class="k">Stop</div><div class="v num b">' + px(o.stop, sym) + '</div><div class="s num">loses <b>' + usd(L.loss, 0) + '</b></div></div>' +
     '<div class="kpi tp"><div class="k">Target · 2 : 1</div><div class="v num g">' + px(o.tp, sym) + '</div><div class="s num">makes <b>' + usd(L.win, 0) + '</b></div></div>';
 }

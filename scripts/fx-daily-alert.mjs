@@ -91,6 +91,10 @@ const lotsFor = (s, o) => {
   return { lots, loss: lots * perLot, win: lots * E.LOT * E.usdPer(s, Math.abs(o.tp - o.entry), o.tp) };
 };
 const $ = v => "$" + Math.round(v).toLocaleString("en-US");
+// 1 lot = 100,000 units = $10 a pip on EURUSD/GBPUSD/AUDUSD; USDCHF/USDJPY pay
+// in CHF/JPY, so their dollar pip value moves with the rate.
+const pipUsd = (s, at) => E.LOT * E.usdPer(s, E.PAIRS[s].pip, at);
+const pipsOf = (s, d) => (d / E.PAIRS[s].pip).toFixed(1);
 const nyTime = t => new Date(t * 1000).toLocaleString("en-US", { timeZone: "America/New_York", weekday: "short", hour: "numeric", minute: "2-digit" }) + " ET";
 const arrow = d => d === "long" ? "🟢 BUY" : "🔴 SELL";
 const orderLine = (s, o) => {
@@ -111,6 +115,7 @@ if (rules.entry === "ny9") {
     const L = lotsFor(t.sym, t);
     lines.push(`${arrow(t.dir)} <b>${t.sym}</b> at market ${T.trade ? "(on since 9:00)" : "at 9:00 ET"} ~${fmt(t.sym, t.entry)} · <b>${L.lots.toFixed(2)} lots</b>`);
     lines.push(`   SL ${fmt(t.sym, t.stop)} (−${$(L.loss)}) · TP ${fmt(t.sym, t.tp)} (+${$(L.win)})`);
+    lines.push(`   ${pipsOf(t.sym, t.dist)} pip stop × ${pipUsd(t.sym, t.entry).toFixed(2)} $/pip per lot × ${L.lots.toFixed(2)} lots`);
     lines.push(`⏱ If neither hits, close at market by ${rules.exit === "eod" ? "5:00 pm ET today" : T.trade ? nyTime(t.closeBy) : "9:00 am ET tomorrow"}.`);
     if (T.trade && t.how) lines.push(`It has closed: ${t.how} (${t.R >= 0 ? "+" : "−"}${$(Math.abs(t.R) * RISK)}).`);
     lines.push(`Why: ${why(rules.bias)} points ${t.dir === "long" ? "up" : "down"}${rules.pick === "adx" ? `; strongest 4h trend of the five (ADX ${Math.round(t.score || 0)})` : ""}.`);
