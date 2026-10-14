@@ -5168,6 +5168,9 @@
      "sport": "NHL",
      "start": "2026-10-14T00:30:00Z",
      "teams": "COL @ DAL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "b24bb7cad7518d2d2e6c75be35ff0f39704ce7be120c50c5a44e56d9cffc0962",
@@ -5346,7 +5349,7 @@
    ]
   }
  ],
- "updated": "2026-10-14T00:30:18.819Z",
+ "updated": "2026-10-14T01:09:38.310Z",
  "record": {
   "w": 63,
   "l": 20,
