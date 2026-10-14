@@ -24,12 +24,17 @@ deep legs (closer to the stop) carry the most size.
 Default TP pairing: leg 1 (first filled, smallest) runs to the −1.0; the big deep
 legs bank first at the −0.618. The TP button swaps it.
 
-## FX sizing
+## FX sizing — hard $400 cap per trade
 
-One stop-loss budget shared by the pairs: **$2,000 total ÷ 5 = $400 per pair's
-ladder** (2% of $100,000 if every pair stops out). The weights are scaled so the
-whole ladder filled loses that $400 at the stop, then rounded to 0.01 lot without
-going over. $10/pip/lot on EURUSD, GBPUSD, AUDUSD; USDCHF and USDJPY pip value
+**SL $ per trade = $400** (5 pairs × $400 = $2,000, 2% of $100,000). Each pair's
+whole ladder is sized so that if every leg fills and the stop hits, it loses
+**no more than $400**: weights are scaled to $400, rounded to 0.01 lot, and
+leftover 0.01s handed back only while the total stays ≤ $400. If the 0.01-lot
+minimum on every leg would push past $400 (a very wide leg), legs are dropped
+until it fits; if even two can't fit, no ladder is shown. A stop override is
+sized the same way, so the cap always holds.
+
+$10/pip/lot on EURUSD, GBPUSD, AUDUSD; USDCHF and USDJPY pip value
 (10 CHF / 1,000 JPY per lot) is converted to USD at the exit price.
 
 ## Notes

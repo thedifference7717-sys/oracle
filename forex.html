@@ -131,8 +131,7 @@ details[open] summary::after{content:' ▴'}
   <div class="setup">
     <div class="field key"><label id="l382">0.382 price</label><input id="in-f382" type="number" step="any" inputmode="decimal" placeholder="1.08400"></div>
     <div class="field key"><label id="l618">0.618 price</label><input id="in-f618" type="number" step="any" inputmode="decimal" placeholder="1.07900"></div>
-    <div class="field"><label>Total SL $</label><input id="in-sl" type="number" step="any" inputmode="decimal" placeholder="2000"></div>
-    <div class="field"><label>Split across</label><input id="in-split" type="number" step="1" min="1" max="5" inputmode="numeric" placeholder="5"></div>
+    <div class="field"><label>SL $ per trade</label><input id="in-risk" type="number" step="any" inputmode="decimal" placeholder="400"></div>
   </div>
   <div class="setup" id="tune">
     <div class="field"><label>Stop override</label><input id="in-stop" type="number" step="any" inputmode="decimal" placeholder="auto .886"></div>
@@ -168,7 +167,7 @@ details[open] summary::after{content:' ▴'}
 <details id="how"><summary>How this is built</summary><div class="note" id="note"></div></details>
 
 <div class="ft">The crypto Fib Ladder for EURUSD, GBPUSD, AUDUSD, USDCHF and USDJPY — same levels, same legs,
-sized in lots so each pair's ladder loses its share of your stop-loss budget at the stop.<br><br>
+sized in lots so no trade can lose more than your SL $ at the stop.<br><br>
 Planning aid only — it places no orders. Every level is derived from the two prices you type,
 so check the implied swing against your chart before trusting the stop and targets.</div>
 
@@ -188,9 +187,9 @@ const SYMS = Object.keys(PAIRS);
 const F_IN_LO = 0.382, F_IN_HI = 0.618;     // entry zone
 const F_STOP  = 0.886;                       // stop level
 const F_TP_LO = -0.618, F_TP_HI = -1.0;      // take-profit band (extensions)
-const D = {legs: 10, ratio: 2, sl: 2000, split: 5, acct: 100000};
+const D = {legs: 10, ratio: 2, risk: 400, acct: 100000};
 const PER_PAIR = ['f382','f618','stop'];     // each pair keeps its own levels
-const SHARED = ['sl','split','legs','ratio','acct'];
+const SHARED = ['risk','legs','ratio','acct'];
 let sel = 'EURUSD';
 let pairReversed = true;    // default: leg 1 (first filled, smallest) runs to the −1.0,
                             // the deep legs bank first at the −0.618. false = the reverse.
@@ -312,27 +311,31 @@ function buildLadder(sym, g, risk, n, ratio, stop, reversed){
 function readFor(sym, b){
   const get = k => { const v = parseFloat(b[k]); return isFinite(v) ? v : null; };
   const p382 = get('f382'), p618 = get('f618');
-  const sl = num('sl') != null ? num('sl') : D.sl;
-  let split = Math.round(num('split') != null ? num('split') : D.split);
+  const risk = num('risk') != null ? num('risk') : D.risk;
   const acct = num('acct') != null ? num('acct') : D.acct;
   let n = Math.round(num('legs') != null ? num('legs') : D.legs);
   let ratio = num('ratio') != null ? num('ratio') : D.ratio;
   if(p382 == null || p618 == null) return {err:'Enter the 0.382 and 0.618 prices to build the ladder.'};
   if(p382 <= 0 || p618 <= 0) return {err:'Fib prices must be positive.'};
   if(p382 === p618) return {err:'The 0.382 and 0.618 prices must differ — that spread sets the whole leg.'};
-  if(!(sl > 0)) return {err:'Total SL must be greater than zero.'};
-  if(!(split >= 1)) split = 1;
-  if(split > 5) split = 5;
+  if(!(risk > 0)) return {err:'SL $ per trade must be greater than zero.'};
   if(!(ratio >= 1)) return {err:'Last ÷ first must be at least 1 (1 = flat sizing, 2 = last leg double the first).'};
   if(!(n >= 2)) n = 2;
   if(n > 50) n = 50;
   if(ratio > 20) ratio = 20;
-  const risk = sl / split;
   const g = geometry(p382, p618);
   const stopOv = get('stop');
   const stop = stopOv != null ? stopOv : g.stop;
-  const legs = buildLadder(sym, g, risk, n, ratio, stop, pairReversed);
-  return {p382, p618, sl, split, risk, acct, n, ratio, g, stop, stopOverridden: stopOv != null, legs};
+  // Hard cap: the ladder may never lose more than `risk` at the stop. Every leg
+  // needs at least 0.01 lot, so on a wide leg the minimums alone can overshoot —
+  // then drop legs until it fits rather than let the stop cost more.
+  const asked = n;
+  let legs = buildLadder(sym, g, risk, n, ratio, stop, pairReversed);
+  const over = L => L.reduce((a,l) => a + l.risk, 0) > risk + 1e-9;
+  while(over(legs) && n > 2){ n--; legs = buildLadder(sym, g, risk, n, ratio, stop, pairReversed); }
+  if(over(legs))
+    return {err:'A ' + usd(risk,0) + ' stop cannot hold even two 0.01-lot orders this far from the stop — the leg is too wide for that SL.'};
+  return {p382, p618, risk, acct, n, asked, ratio, g, stop, stopOverridden: stopOv != null, legs};
 }
 function readInputs(){ stash(); return readFor(sel, book[sel] || {}); }
 
@@ -364,25 +367,24 @@ function render(){
     $('legs').innerHTML = '<div class="dim" style="font-size:13px;padding:2px">Waiting on valid inputs…</div>';
     return;
   }
-  const {p382, p618, sl, split, risk, acct, n, ratio, g, stop, stopOverridden, legs} = S;
+  const {p382, p618, risk, acct, n, asked, ratio, g, stop, stopOverridden, legs} = S;
   const first = legs[0], last = legs[n-1];
   const totalLots = last.cumLots, avg = last.avg;
   const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
   const totalWin  = legs.reduce((a,l) => a + l.win, 0);
   const blendedR  = totalRisk > 0 ? totalWin / totalRisk : null;
   const tpNear = g.px(F_TP_LO), tpFar = g.px(F_TP_HI);
-  const floored = legs.some(l => l.floored);
   const pipUsd = LOT * usdPer(PAIRS[sel].pip, avg);
 
   const warn = stopOverridden && (g.isLong ? stop >= p618 : stop <= p618)
     ? 'Stop override sits inside the entry zone — the deepest legs would never fill before it triggers.'
-    : floored
-    ?  usd(risk,0) + ' is too small to split ' + n + ' ways on this leg — the first legs sit at the 0.01-lot minimum, so the risk runs over. Fewer legs fixes it.'
+    : n < asked
+    ? usd(risk,0) + ' cannot cover ' + asked + ' legs at the 0.01-lot minimum on this leg, so the ladder is cut to ' + n + ' to keep the stop at ' + usd(risk,0) + '.'
     : null;
   st.className = warn ? 'warn' : '';
   st.textContent = warn ? '⚠ ' + warn
     : sel + ' · ' + n + ' ' + g.dir.toUpperCase() + ' entries · ' + px(p382) + ' → ' + px(p618) +
-      ' · leg ' + n + ' is ' + nf(ratio,2) + '× leg 1 · ' + usd(risk,0) + ' at the stop (' + usd(sl,0) + ' ÷ ' + split + ').';
+      ' · leg ' + n + ' is ' + nf(ratio,2) + '× leg 1 · max ' + usd(risk,0) + ' at the stop.';
 
   // ── summary ──
   $('sum-card').style.display = '';
@@ -393,13 +395,13 @@ function render(){
       'leg 1 ' + lots(first.lots) + ' → leg ' + n + ' ' + lots(last.lots) + ' lots</div></div>' +
     '<div class="kpi sl"><div class="k">Risk at ' + (stopOverridden ? 'stop' : '0.886') + '</div><div class="v num b">' + signed(-Math.abs(totalRisk),2) + '</div>' +
       '<div class="s num">Stop <b>' + px(stop) + '</b>' + (stopOverridden ? ' <span class="amb">(override)</span>' : '') + '<br>' +
-      'budget ' + usd(risk,0) + ' · ' + nf(100*Math.abs(totalRisk)/acct,2) + '% of account</div></div>' +
+      'cap ' + usd(risk,0) + ' · ' + nf(100*Math.abs(totalRisk)/acct,2) + '% of account</div></div>' +
     '<div class="kpi tp"><div class="k">P/L, all TPs hit</div><div class="v num ' + (totalWin >= 0 ? 'g' : 'b') + '">' + signed(totalWin,2) + '</div>' +
       '<div class="s num">' + px(tpNear) + ' → ' + px(tpFar) + '<br>blended R <b>' + (blendedR != null ? nf(blendedR,2) : '—') + '</b></div></div>';
   $('meta').innerHTML =
     '<span class="pill ' + g.dir + '">' + g.dir.toUpperCase() + '</span>' +
     '<span class="num">Implied leg <b>' + px(g.origin) + '</b> → <b>' + px(g.anchor) + '</b> · range <b>' + pips(g.range) + '</b> pips · step <b>' + pips((p618-p382)/(n-1)) + '</b> pips</span>' +
-    '<span class="num">All ' + split + ' pairs stopped: <b class="b">' + signed(-sl,0) + '</b> (' + nf(100*sl/acct,2) + '%)</span>';
+    '<span class="num">All 5 pairs stopped: <b class="b">' + signed(-5*risk,0) + '</b> (' + nf(500*risk/acct,2) + '%)</span>';
 
   // ── price map ──
   const hi = Math.max(stop, tpFar, tpNear, p382, p618), lo = Math.min(stop, tpFar, tpNear, p382, p618);
@@ -474,13 +476,14 @@ function render(){
     '<span class="hl">' + nf(ratio,2) + '×</span> leg 1 (to the nearest 0.01 lot). The deep legs are bigger and ' +
     'closer to the stop, so they buy more size for less risk: leg 1 risks <span class="hl">' + pips(first.riskPer) + ' pips</span>, ' +
     'leg ' + n + ' only <span class="hl">' + pips(last.riskPer) + '</span>.</p>' +
-    '<p><b>Size.</b> Your <span class="hl">' + usd(sl,0) + '</span> stop-loss budget is split across ' + split +
-    ' pair' + (split > 1 ? 's' : '') + ', so this ladder may lose <span class="hl">' + usd(risk,0) + '</span> if every leg fills and the stop hits. ' +
+    '<p><b>Size.</b> Each trade is capped at <span class="hl">' + usd(risk,0) + '</span> at the stop: if every leg fills and the stop hits, ' +
+    'this ladder loses no more than that. ' +
     'The weights are scaled to that and rounded to 0.01 lot without going over, so the real risk is ' +
     '<span class="hl">' + usd(Math.abs(totalRisk),2) + '</span>. ' +
     (PAIRS[sel].q === 'USD' ? 'On ' + sel + ' a pip is $10 a lot.'
       : 'On ' + sel + ' a pip is ' + (sel === 'USDJPY' ? '1,000 JPY' : '10 CHF') + ' a lot, converted to dollars at the exit price — about ' + usd(pipUsd) + ' here.') +
-    ' Every pair stopping out at once costs ' + usd(sl,0) + ', ' + nf(100*sl/acct,2) + '% of the account.</p>' +
+    (n < asked ? ' The 0.01-lot minimum on ' + asked + ' legs would have gone over, so it is cut to ' + n + ' legs.' : '') +
+    ' All five pairs stopping out at once costs ' + usd(5*risk,0) + ', ' + nf(500*risk/acct,2) + '% of the account.</p>' +
     '<p><b>Exits.</b> ' + n + ' targets evenly spaced across −0.618 → −1.0, one per leg — currently ' +
     '<span class="hl">leg 1 at ' + fib(first.fTp) + '</span> and <span class="hl">leg ' + n + ' at ' + fib(last.fTp) + '</span>' +
     (pairReversed ? ' — the first order placed rides furthest while the big deep legs bank at the −0.618, which they reach first on the way back.'
@@ -495,7 +498,7 @@ function render(){
 function ordersText(){
   const S = readInputs();
   if(S.err) return null;
-  const {p382, p618, sl, split, risk, n, ratio, g, stop, legs} = S;
+  const {p382, p618, risk, n, ratio, g, stop, legs} = S;
   const last = legs[n-1];
   const totalRisk = legs.reduce((a,l) => a + l.risk, 0);
   const totalWin  = legs.reduce((a,l) => a + l.win, 0);
@@ -512,7 +515,7 @@ function ordersText(){
     '  SL ' + px(stop) + '  TP ' + fib(l.fTp) + ' ' + px(l.tp) + '  R ' + (l.R != null ? nf(l.R,2) : '—')));
   lines.push('');
   lines.push(lots(last.cumLots) + ' lots · avg fill ' + px(last.avg));
-  lines.push('Stop ' + px(stop) + ' · risk ' + usd(Math.abs(totalRisk)) + ' if fully filled (budget ' + usd(risk,0) + ' = ' + usd(sl,0) + ' / ' + split + ')');
+  lines.push('Stop ' + px(stop) + ' · risk ' + usd(Math.abs(totalRisk)) + ' if fully filled (cap ' + usd(risk,0) + ')');
   lines.push('All TPs hit · P/L ' + signed(totalWin,2) + ' · blended R ' + (totalRisk > 0 ? nf(totalWin/totalRisk,2) : '—'));
   return lines.join('\n');
 }
