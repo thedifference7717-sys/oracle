@@ -204,8 +204,10 @@ if (!isMainThread) {
       "Replays fill limits at their price, take the stop first when a candle spans both, and charge a typical OANDA spread; swap and slippage are not included.",
     top: ranked.slice(0, 25).map(r => ({ key: key(r.cfg), is: r.is, oos: r.oos })),
   };
-  mkdirSync("data", { recursive: true });
-  writeFileSync("data/fx-tuned.json", JSON.stringify(out, null, 1) + "\n");
-  writeFileSync("docs/fx-tune-report.md", lines.join("\n"));
+  // A synthetic run is a plumbing test: keep it away from the files the page reads.
+  const dir = synth ? ".cache/fx-synthetic" : null;
+  if (dir) mkdirSync(dir, { recursive: true }); else mkdirSync("data", { recursive: true });
+  writeFileSync(dir ? dir + "/fx-tuned.json" : "data/fx-tuned.json", JSON.stringify(out, null, 1) + "\n");
+  writeFileSync(dir ? dir + "/fx-tune-report.md" : "docs/fx-tune-report.md", lines.join("\n"));
   console.log(lines.join("\n"));
 }
