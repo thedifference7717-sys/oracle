@@ -1,0 +1,55 @@
+name: Tune the FX Fib Ladder
+
+# Replays fx-engine.js (the rules forex.html runs) over years of hourly FX
+# candles from Dukascopy, picks the best settings on the older data, checks them
+# on the recent data, and commits data/fx-tuned.json (which the page loads) and
+# docs/fx-tune-report.md. Runs here because the sandbox can't reach FX data.
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/forex-fibonacci-strategy-hkbph8]
+    paths:
+      - fx-engine.js
+      - scripts/fx-tune.mjs
+      - .github/workflows/fx-tune.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fx-tune
+  cancel-in-progress: true
+
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cached FX candles
+        uses: actions/cache@v4
+        with:
+          path: .cache/fx
+          key: fx-h1-${{ github.run_id }}
+          restore-keys: fx-h1-
+
+      - name: Install the Dukascopy client
+        run: npm install --no-save --no-package-lock dukascopy-node@1.50.0
+
+      - name: Tune
+        run: node scripts/fx-tune.mjs
+
+      - name: Commit the tuned rules
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/fx-tuned.json docs/fx-tune-report.md
+          if git diff --cached --quiet; then echo "No change."; exit 0; fi
+          git commit -m "FX Fib Ladder: tuned rules $(date -u +%F)"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
