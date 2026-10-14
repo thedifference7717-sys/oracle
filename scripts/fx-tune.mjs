@@ -19,7 +19,8 @@ import os from "os";
 const require = createRequire(import.meta.url);
 const E = require("../fx-engine.js");
 
-const FROM = "2019-01-01", SPLIT = "2024-07-01";          // in-sample before, out-of-sample after
+const FROM = "2019-01-01";
+let SPLIT = "2024-07-01";      // in-sample before, out-of-sample after (moved to ⅔ of the data if it is shorter)
 const SPREAD = Object.fromEntries(E.SYMS.map(s => [s, E.PAIRS[s].spread]));
 const RISK = 400, ALIGN = "oanda";
 const MIN_IS_TRADES = 60;
@@ -50,18 +51,31 @@ const key = c => [c.tf / 3600 + "h", "len" + c.len, c.inLo + "-" + c.inHi, "sl" 
   "adx" + c.adxMin, c.usdFilter ? "usd" + c.usdTf / 3600 + "h" : "nousd"].join(" ");
 
 /* ── data ─────────────────────────────────────────────── */
+let dukaDown = false;
 async function fetchPair(sym) {
   const file = `.cache/fx/${sym}.json`;
   if (existsSync(file)) {
     const c = JSON.parse(readFileSync(file, "utf8"));
     if (c.length && Date.now() / 1000 - c[c.length - 1].t < 7 * 86400) return c;   // re-fetch once a week stale
   }
+  let c = null;
+  if (!dukaDown) {
+    try { c = await dukascopy(sym); }
+    catch (e) { console.log(`  Dukascopy failed (${e.message}) — using Yahoo Finance from here on`); dukaDown = true; }
+  }
+  if (!c) c = await yahoo(sym);
+  c = c.filter(x => x.c > 0 && x.h >= x.l).sort((a, b) => a.t - b.t).filter((x, i, a) => !i || x.t !== a[i - 1].t);
+  mkdirSync(".cache/fx", { recursive: true });
+  writeFileSync(file, JSON.stringify(c));
+  console.log(`  ${sym}: ${c.length} candles, ${new Date(c[0].t * 1000).toISOString().slice(0, 10)} → ${new Date(c[c.length - 1].t * 1000).toISOString().slice(0, 10)}`);
+  return c;
+}
+// Dukascopy hourly bid since FROM — one year at a time, gently. It answers 202
+// ("try again") to some networks; three of those and we give up on it.
+async function dukascopy(sym) {
   const { getHistoricalRates } = require("dukascopy-node");
   console.log(`fetching ${sym} h1 ${FROM} → now from Dukascopy…`);
-  // One year at a time, one pair at a time: Dukascopy answers 202 (try again)
-  // when hit with many requests at once, so go gently and retry with backoff.
-  const rows = [];
-  const end = new Date();
+  const rows = [], end = new Date();
   for (let y = +FROM.slice(0, 4); y <= end.getUTCFullYear(); y++) {
     const from = new Date(Date.UTC(y, 0, 1)), to = y === end.getUTCFullYear() ? end : new Date(Date.UTC(y + 1, 0, 1));
     for (let attempt = 1; ; attempt++) {
@@ -69,25 +83,40 @@ async function fetchPair(sym) {
         const part = await getHistoricalRates({
           instrument: sym.toLowerCase(), dates: { from, to },
           timeframe: "h1", priceType: "bid", format: "json", volumes: false, ignoreFlats: true,
-          batchSize: 2, pauseBetweenBatchesMs: 1500, retryCount: 5, pauseBetweenRetriesMs: 5000,
+          batchSize: 2, pauseBetweenBatchesMs: 1500, retryCount: 2, pauseBetweenRetriesMs: 3000,
         });
         rows.push(...part);
         console.log(`  ${sym} ${y}: ${part.length}`);
         break;
       } catch (e) {
-        if (attempt >= 6) throw e;
-        const wait = 15000 * attempt;
-        console.log(`  ${sym} ${y}: ${e.message} — retrying in ${wait / 1000}s`);
-        await new Promise(r => setTimeout(r, wait));
+        if (attempt >= 3) throw e;
+        await new Promise(r => setTimeout(r, 10000 * attempt));
       }
     }
   }
-  const c = rows.map(r => ({ t: Math.floor(r.timestamp / 1000), o: r.open, h: r.high, l: r.low, c: r.close }))
-    .filter(x => x.c > 0).sort((a, b) => a.t - b.t).filter((x, i, a) => !i || x.t !== a[i - 1].t);
-  mkdirSync(".cache/fx", { recursive: true });
-  writeFileSync(file, JSON.stringify(c));
-  console.log(`  ${sym}: ${c.length} candles, ${new Date(c[0].t * 1000).toISOString().slice(0, 10)} → ${new Date(c[c.length - 1].t * 1000).toISOString().slice(0, 10)}`);
-  return c;
+  return rows.map(r => ({ t: Math.floor(r.timestamp / 1000), o: r.open, h: r.high, l: r.low, c: r.close }));
+}
+// Yahoo Finance hourly FX: the last ~2 years (its limit for 60m candles).
+async function yahoo(sym) {
+  console.log(`fetching ${sym} 60m (last 729 days) from Yahoo Finance…`);
+  const now = Math.floor(Date.now() / 1000), from = now - 729 * 86400;
+  let lastErr;
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    for (const host of ["query1", "query2"]) {
+      try {
+        const r = await fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${sym}=X?interval=60m&period1=${from}&period2=${now}`,
+          { headers: { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36", "Accept": "application/json" } });
+        if (!r.ok) throw new Error(`yahoo ${host} ${r.status}`);
+        const j = await r.json(), res = j.chart && j.chart.result && j.chart.result[0];
+        if (!res || !res.timestamp) throw new Error("yahoo: no data " + JSON.stringify(j.chart && j.chart.error));
+        const q = res.indicators.quote[0];
+        return res.timestamp.map((t, i) => ({ t, o: q.open[i], h: q.high[i], l: q.low[i], c: q.close[i] }))
+          .filter(x => [x.o, x.h, x.l, x.c].every(v => v != null && isFinite(v)));
+      } catch (e) { lastErr = e; console.log(`  ${e.message}`); }
+    }
+    await new Promise(r => setTimeout(r, 5000 * attempt));
+  }
+  throw lastErr;
 }
 function synthetic() {
   let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
@@ -127,7 +156,7 @@ function prepare(raw) {
   }
   return P;
 }
-const splitT = Date.parse(SPLIT + "T00:00:00Z") / 1000;
+let splitT = Date.parse(SPLIT + "T00:00:00Z") / 1000;
 function evaluate(P, cfg) {
   const prep = P[cfg.tf], all = [];
   const perPair = {};
@@ -146,6 +175,7 @@ function evaluate(P, cfg) {
 
 /* ── workers ──────────────────────────────────────────── */
 if (!isMainThread) {
+  splitT = workerData.splitT;
   const P = prepare(workerData.raw);
   const out = workerData.cfgs.map(c => { const r = evaluate(P, c); delete r.pairs; return r; });
   parentPort.postMessage(out);
@@ -153,13 +183,19 @@ if (!isMainThread) {
   const synth = process.argv.includes("--synthetic");
   const raw = synth ? synthetic() : {};
   if (!synth) for (const s of E.SYMS) raw[s] = await fetchPair(s);      // sequential: be gentle with the feed
+  {
+    const first = Math.max(...E.SYMS.map(s => raw[s][0].t)), last = Math.min(...E.SYMS.map(s => raw[s][raw[s].length - 1].t));
+    if (Date.parse(SPLIT + "T00:00:00Z") / 1000 < first + (last - first) / 2)
+      SPLIT = new Date((first + (last - first) * 2 / 3) * 1000).toISOString().slice(0, 10);
+    splitT = Date.parse(SPLIT + "T00:00:00Z") / 1000;
+  }
   const cfgs = configs();
   const nW = Math.max(1, Math.min(os.cpus().length, 8));
   console.log(`${cfgs.length} configurations × 5 pairs on ${nW} workers…`);
   const t0 = Date.now();
   const chunks = Array.from({ length: nW }, (_, i) => cfgs.filter((_, j) => j % nW === i));
   const results = (await Promise.all(chunks.map(ch => new Promise((res, rej) => {
-    const w = new Worker(new URL(import.meta.url), { workerData: { raw, cfgs: ch } });
+    const w = new Worker(new URL(import.meta.url), { workerData: { raw, cfgs: ch, splitT } });
     w.on("message", res); w.on("error", rej);
   })))).flat();
   console.log(`done in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
@@ -177,7 +213,7 @@ if (!isMainThread) {
   const lines = [
     `# FX Fib Ladder — tuning report`, ``,
     `Generated ${new Date().toISOString().slice(0, 16).replace("T", " ")} UTC by \`scripts/fx-tune.mjs\`${synth ? " — **SYNTHETIC DATA, plumbing test only**" : ""}.`,
-    `Data: Dukascopy hourly bid, ${first} → ${last}, OANDA (New York close) candle timing.`,
+    `Data: ${dukaDown ? "Yahoo Finance hourly" : "Dukascopy hourly bid"}, ${first} → ${last}, OANDA (New York close) candle timing.`,
     `Costs: round-trip spread per lot (${Object.entries(SPREAD).map(([s, v]) => s + " " + v).join(", ")} pips). No swap or slippage.`,
     `Sizing: $${RISK} max at the stop per trade; R = net $ ÷ $${RISK}. ${cfgs.length} settings tried; picked on **${isLabel}** only (≥ ${MIN_IS_TRADES} trades, positive on ≥ 3 of 5 pairs, most net), then checked on **${oosLabel}**, which the pick never saw.`, ``,
     `| | trades | hit | total | R/trade | worst run | net $ |`, `|---|---|---|---|---|---|---|`,
