@@ -24,7 +24,7 @@ const DEFAULTS = {
   stop: 1.0,         // fib: stop at this retracement (beyond the limit)
   asiaStop: "opp",   // asia: stop at the opposite side of the range, or its middle
   win: [7, 16],      // UTC hours a setup may be armed in (London open → NY afternoon)
-  exit: "hold",      // hold (until target/stop, max 3 days) | eod (flat at the NY close)
+  exit: "h24",       // every trade settles within 24h: h24 (target/stop, else closed 24h after the fill) | eod (flat at the NY close)
   minStop: 10,       // skip setups whose stop is closer than this many pips
   rr: 2,             // target = rr × stop distance
 };
@@ -150,20 +150,21 @@ function pairDay(P, dayT, i0, i1, p, bias, live) {
   return null;
 }
 // From the fill bar on: stop or target (stop first if one bar spans both; the
-// fill bar can only stop out), or the time exit.
+// fill bar can only stop out), or the time exit — never more than 24 hours, so
+// each day's trade is settled before the next day's.
 function finish(P, o, i, p, cost) {
   const h1 = P.h1, L = o.dir === "long";
   const fillT = h1[i].t;
-  const end = p.exit === "eod" ? dayOf(fillT) + D1 : fillT + 3 * D1;
+  const end = p.exit === "eod" ? dayOf(fillT) + D1 : fillT + D1;
   const R = x => ((L ? x - o.entry : o.entry - x) - cost) / o.dist;
-  const out = (exit, t, how) => Object.assign({ sym: P.sym, fillT, exitT: t, exit, how, R: R(exit) }, o);
+  const out = (exit, t, how) => Object.assign({ sym: P.sym, fillT, closeBy: end, exitT: t, exit, how, R: R(exit) }, o);
   for (let j = i; j < h1.length; j++) {
     const x = h1[j];
     if (x.t >= end) return out(h1[j - 1].c, h1[j - 1].t + H1, "time");
     if (L ? x.l <= o.stop : x.h >= o.stop) return out(o.stop, x.t + H1, "stop");
     if (j > i && (L ? x.h >= o.tp : x.l <= o.tp)) return out(o.tp, x.t + H1, "target");
   }
-  return Object.assign({ sym: P.sym, fillT, open: true, R: R(h1[h1.length - 1].c) }, o);
+  return Object.assign({ sym: P.sym, fillT, closeBy: end, open: true, R: R(h1[h1.length - 1].c) }, o);
 }
 
 // All pairs, every day: the first fill of the day is the trade. Returns trades

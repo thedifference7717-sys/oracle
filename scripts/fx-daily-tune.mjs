@@ -1,7 +1,7 @@
 // Tune the FX Daily 2:1 trade (fx-daily.js) on real FX history.
 //
 // One trade a day across the five pairs, target 2× the stop: risk $500 to make
-// $1,000. Break-even is a 33% hit rate before spread. Tries every combination
+// $1,000, every trade settled within 24 hours (closed at market if neither hits). Break-even is a 33% hit rate before spread. Tries every combination
 // of direction filter × entry × exit below, picks on the older data for
 // consistency year to year, and checks the pick on the recent data it never
 // saw. Publishes data/fx-daily.json (the page runs it) only if the pick also
@@ -24,9 +24,9 @@ function configs() {
   const out = [];
   for (const bias of BIAS) {
     for (const len of [3, 5, 10]) for (const [lim, stop] of FIBS) for (const win of [[7, 16], [0, 24]])
-      for (const exit of ["hold", "eod"]) for (const minStop of [10, 20])
+      for (const exit of ["h24", "eod"]) for (const minStop of [10, 20])
         out.push({ bias, entry: "fib", len, lim, stop, win, exit, minStop });
-    for (const asiaStop of ["opp", "mid"]) for (const win of [[7, 12], [7, 16]]) for (const exit of ["hold", "eod"]) for (const minStop of [10, 20])
+    for (const asiaStop of ["opp", "mid"]) for (const win of [[7, 12], [7, 16]]) for (const exit of ["h24", "eod"]) for (const minStop of [10, 20])
       out.push({ bias, entry: "asia", asiaStop, win, exit, minStop });
   }
   return out;
@@ -131,7 +131,7 @@ if (!isMainThread) {
   const lines = [
     `# FX Daily 2:1 — tuning report`, ``,
     `Generated ${new Date().toISOString().slice(0, 16).replace("T", " ")} UTC by \`scripts/fx-daily-tune.mjs\`${synth ? " — **SYNTHETIC DATA, plumbing test only**" : ""}.`,
-    `One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, never two open). Target 2× the stop: **risk $${RISK} to make $${2 * RISK}**. Break-even ≈ 33% before spread; spread is charged on every trade.`,
+    `One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, never two open). Target 2× the stop: **risk $${RISK} to make $${2 * RISK}**, every trade settled within 24 hours (closed at market if neither hits). Break-even ≈ 33% before spread; spread is charged on every trade.`,
     `${cfgs.length} setups tried. Picked on **${isLabel}** only (≥ ${MIN_IS_TRADES} trades, then most profitable years, least-bad worst year, most R); checked on **${oosLabel}**, unseen.`, ``,
     `| | trades | per year | hit | total | at $${RISK}/trade | worst run |`, `|---|---|---|---|---|---|---|`,
     `| **Picked** · tuning | ${fmt(best.is)} |`, `| **Picked** · unseen | ${fmt(best.oos)} |`, ``,

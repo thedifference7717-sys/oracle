@@ -88,6 +88,7 @@ const lotsFor = (s, o) => {
   return { lots, loss: lots * perLot, win: lots * E.LOT * E.usdPer(s, Math.abs(o.tp - o.entry), o.tp) };
 };
 const $ = v => "$" + Math.round(v).toLocaleString("en-US");
+const nyTime = t => new Date(t * 1000).toLocaleString("en-US", { timeZone: "America/New_York", weekday: "short", hour: "numeric", minute: "2-digit" }) + " ET";
 const arrow = d => d === "long" ? "🟢 BUY" : "🔴 SELL";
 const orderLine = (s, o) => {
   const L = lotsFor(s, o), kind = o.kind === "stop" ? "STOP" : "LIMIT";
@@ -102,12 +103,14 @@ if (T.trade) {
   const t = T.trade, L = lotsFor(t.sym, t);
   lines.push(`✅ <b>Today's trade is already on</b> (filled ${new Date(t.fillT * 1000).toISOString().slice(11, 16)} UTC):`);
   lines.push(orderLine(t.sym, t));
-  lines.push(t.how ? `It has closed: ${t.how} (${t.R >= 0 ? "+" : "−"}${$(Math.abs(t.R) * RISK)}).` : `Cancel any other orders for today.`);
+  lines.push(t.how ? `It has closed: ${t.how} (${t.R >= 0 ? "+" : "−"}${$(Math.abs(t.R) * RISK)}).`
+                    : `Cancel any other orders for today. <b>If neither SL nor TP hits, close it at market by ${nyTime(t.closeBy)}.</b>`);
 } else {
   const working = E.SYMS.map(s => [s, T.pairs[s] && T.pairs[s].trade]).filter(([, t]) => t && t.pending && !t.forming);
   if (!working.length) lines.push(`No setup yet today. Orders arm ${rules.win[0]}:00–${rules.win[1]}:00 UTC — check the page later.`);
   else {
-    lines.push(`<b>Place these orders</b> — the first one to fill is the day's trade; cancel the rest when it does:`);
+    lines.push(`<b>Place these orders</b> — the first one to fill is the day's trade; cancel the rest when it does.`);
+    lines.push(`⏱ Settle within 24h: if neither SL nor TP hits, close at market ${rules.exit === "eod" ? "at the New York close (5 pm ET)" : "24 hours after it fills"}.`);
     for (const [s, t] of working) for (const o of (t.both || [t])) lines.push(orderLine(s, o));
   }
 }
