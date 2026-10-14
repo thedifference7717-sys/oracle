@@ -91,7 +91,7 @@ const $ = v => "$" + Math.round(v).toLocaleString("en-US");
 const nyTime = t => new Date(t * 1000).toLocaleString("en-US", { timeZone: "America/New_York", weekday: "short", hour: "numeric", minute: "2-digit" }) + " ET";
 const arrow = d => d === "long" ? "🟢 BUY" : "🔴 SELL";
 const orderLine = (s, o) => {
-  const L = lotsFor(s, o), kind = o.kind === "stop" ? "STOP" : "LIMIT";
+  const L = lotsFor(s, o), kind = o.kind === "stop" ? "STOP" : o.kind === "market" ? "AT MARKET ~" : "LIMIT";
   return `${arrow(o.dir)} ${kind} <b>${s}</b> ${fmt(s, o.entry)} · <b>${L.lots.toFixed(2)} lots</b>\n` +
          `   SL ${fmt(s, o.stop)} (−${$(L.loss)}) · TP ${fmt(s, o.tp)} (+${$(L.win)})`;
 };

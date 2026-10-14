@@ -19,10 +19,12 @@ const H1 = 3600, H4 = 14400, D1 = 86400;
 const DEFAULTS = {
   bias: "none",      // direction: none | prevday | d1s3 | d1s5 | h4s10 | usd | ema50 | cot
   entry: "fib",      // fib (pullback after a 1h break) | asia (London breakout of the Asian range)
+                     // | pdh (breakout of yesterday's high/low) | sweep (Asian high/low swept then reclaimed: trade back in)
   len: 5,            // fib: 1h swing length for the break
   lim: 0.5,          // fib: limit at this retracement of the breaking move
   stop: 1.0,         // fib: stop at this retracement (beyond the limit)
   asiaStop: "opp",   // asia: stop at the opposite side of the range, or its middle
+  pdStop: "mid",     // pdh: stop at yesterday's midpoint, or a quarter of its range back inside ("q")
   win: [7, 16],      // UTC hours a setup may be armed in (London open → NY afternoon)
   exit: "h24",       // every trade settles within 24h: h24 (target/stop, else closed 24h after the fill) | eod (flat at the NY close)
   minStop: 10,       // skip setups whose stop is closer than this many pips
@@ -70,6 +72,10 @@ function prepare(sym, h1, ctx) {
 }
 function biasAt(P, mode, T) {
   if (mode === "none") return "both";
+  if (mode.includes("+")) {                         // two filters that must agree
+    const [a, b] = mode.split("+").map(m => biasAt(P, m, T));
+    return a && a === b ? a : null;
+  }
   const list = P[mode];
   if (!list) return null;
   const r = lastAt(list, T, "T");
@@ -91,13 +97,29 @@ function pairDay(P, dayT, i0, i1, p, bias, live) {
     return { dir, entry, stop, tp: dir === "long" ? entry + p.rr * dist : entry - p.rr * dist, setupT, hi, lo, dist };
   };
   let asia = null;
-  if (p.entry === "asia") {
+  if (p.entry === "asia" || p.entry === "sweep") {
     let hi = -Infinity, lo = Infinity, n = 0;
     for (let i = i0; i <= i1; i++) { const h = utcH(h1[i].t); if (h < 7 && h1[i].t >= dayT) { hi = Math.max(hi, h1[i].h); lo = Math.min(lo, h1[i].l); n++; } }
     if (n >= 4) asia = { hi, lo };
   }
   let ev = null;
   if (p.entry === "fib") ev = P.ev[p.len] || (P.ev[p.len] = E.structure(h1, p.len));
+  let pd = null;
+  if (p.entry === "pdh") {                          // yesterday's (New York day) range
+    let k = P.d1.length - 1;
+    while (k >= 0 && P.d1[k].t >= dayT) k--;
+    if (k >= 0 && P.d1[k].t >= dayT - 4 * D1) pd = { hi: P.d1[k].h, lo: P.d1[k].l };
+  }
+  if (p.entry === "pdh" || p.entry === "asia") {
+    const lv = p.entry === "pdh" ? pd : asia;
+    if (!lv) return live && p.entry === "asia" && i1 === h1.length - 1 ? { sym: P.sym, pending: true, forming: true } : null;
+    const mid = (lv.hi + lv.lo) / 2, q = (lv.hi - lv.lo) / 4;
+    const stopL = p.entry === "pdh" ? (p.pdStop === "q" ? lv.hi - q : mid) : (p.asiaStop === "mid" ? mid : lv.lo);
+    const stopS = p.entry === "pdh" ? (p.pdStop === "q" ? lv.lo + q : mid) : (p.asiaStop === "mid" ? mid : lv.hi);
+    return twoSided(P, i0, i1, p, cost, live,
+      allow("long") ? mkOrder("long", lv.hi, stopL, dayT, lv.hi, lv.lo) : null,
+      allow("short") ? mkOrder("short", lv.lo, stopS, dayT, lv.hi, lv.lo) : null, lv);
+  }
   for (let i = i0; i <= i1; i++) {
     const b = h1[i], h = utcH(b.t);
     // 1) a working order fills during this bar
@@ -118,35 +140,57 @@ function pairDay(P, dayT, i0, i1, p, bias, live) {
       if (e.dir === "long" ? b.c <= entry : b.c >= entry) continue;     // already pulled back past the limit
       const o = mkOrder(e.dir, entry, stop, b.t + H1, hi, lo);
       if (o) { o.kind = "limit"; order = o; }
-    } else if (asia && !order && h + 1 >= 7) {
-      // both sides armed as stop orders at 07:00; the first to trade is the trade
-      const mid = (asia.hi + asia.lo) / 2;
-      const L = allow("long") ? mkOrder("long", asia.hi, p.asiaStop === "mid" ? mid : asia.lo, b.t + H1, asia.hi, asia.lo) : null;
-      const S = allow("short") ? mkOrder("short", asia.lo, p.asiaStop === "mid" ? mid : asia.hi, b.t + H1, asia.hi, asia.lo) : null;
-      if (L) L.kind = "stop"; if (S) S.kind = "stop";
-      if (!L && !S) return null;
-      // two-sided: watch both from the next bar
-      for (let j = i + 1; j <= i1; j++) {
-        const x = h1[j];
-        if (utcH(x.t) + 1 > p.win[1]) break;
-        const lh = L && x.h >= L.entry, sh = S && x.l <= S.entry;
-        // Both sides in one hour: whichever filled first was also run through its
-        // stop (the stop is the other side or the middle, both crossed) — a loss.
-        // Skipping these days would quietly drop guaranteed losers.
-        if (lh && sh) {
-          const o = L.dist <= S.dist ? L : S, cost = E.PAIRS[P.sym].spread * E.PAIRS[P.sym].pip;
-          return Object.assign({ sym: P.sym, fillT: x.t, exitT: x.t + H1, exit: o.stop, how: "stop", R: -1 - cost / o.dist }, o);
-        }
-        if (lh) return finish(P, L, j, p, cost);
-        if (sh) return finish(P, S, j, p, cost);
-      }
-      if (live && i1 === h1.length - 1 && utcH(h1[i1].t) + 1 < p.win[1])
-        return { sym: P.sym, pending: true, kind: "stop", both: [L, S].filter(Boolean), hi: asia.hi, lo: asia.lo };
-      return null;
+    } else if (p.entry === "sweep" && asia && h >= 7) {
+      // swept past the Asian high (low) and closed back inside: sell (buy) at the close,
+      // stop beyond the sweep's extreme
+      const up = b.h > asia.hi && b.c < asia.hi && allow("short"), dn = b.l < asia.lo && b.c > asia.lo && allow("long");
+      if (up === dn) continue;
+      const o = up ? mkOrder("short", b.c, b.h, b.t + H1, asia.hi, asia.lo) : mkOrder("long", b.c, b.l, b.t + H1, asia.hi, asia.lo);
+      if (!o) continue;
+      o.kind = "market";
+      if (i === h1.length - 1) return live ? Object.assign({ sym: P.sym, pending: true }, o) : null;
+      return finish(P, o, i + 1, p, cost);
     }
   }
   if (live && order && i1 === h1.length - 1) return Object.assign({ sym: P.sym, pending: true }, order);
-  if (live && p.entry === "asia" && i1 === h1.length - 1 && !asia) return { sym: P.sym, pending: true, forming: true };
+  if (live && p.entry === "sweep" && i1 === h1.length - 1 && !asia) return { sym: P.sym, pending: true, forming: true };
+  return null;
+}
+// Stop orders on both sides of a range from 07:00 UTC; the first to trade is the trade.
+function twoSided(P, i0, i1, p, cost, live, L, S, lv) {
+  const h1 = P.h1;
+  if (L) L.kind = "stop"; if (S) S.kind = "stop";
+  if (!L && !S) return null;
+  // The day opens at the New York close (21:00/22:00 UTC the evening before):
+  // the window runs from win[0] to win[1] UTC on the calendar day that follows.
+  const midnight = Math.floor((L || S).setupT / D1) * D1 + D1;
+  const from = midnight + Math.max(p.win[0], p.entry === "pdh" ? 0 : 7) * H1, to = midnight + p.win[1] * H1;
+  let first = true;
+  for (let j = i0; j <= i1; j++) {
+    const x = h1[j];
+    if (x.t < from) continue;
+    if (x.t + H1 > to) break;
+    if (first) {
+      // A level already broken when the window opens can't be bought/sold at
+      // the level any more — drop that side rather than fill at a stale price.
+      first = false;
+      if (L && x.o >= L.entry) L = null;
+      if (S && x.o <= S.entry) S = null;
+      if (!L && !S) return null;
+    }
+    const lh = L && x.h >= L.entry, sh = S && x.l <= S.entry;
+    // Both sides in one hour: whichever filled first was also run through its
+    // stop (the stop is the other side or inside the range, both crossed) — a
+    // loss. Skipping these days would quietly drop guaranteed losers.
+    if (lh && sh) {
+      const o = L.dist <= S.dist ? L : S;
+      return Object.assign({ sym: P.sym, fillT: x.t, closeBy: x.t + H1, exitT: x.t + H1, exit: o.stop, how: "stop", R: -1 - cost / o.dist }, o);
+    }
+    if (lh) return finish(P, L, j, p, cost);
+    if (sh) return finish(P, S, j, p, cost);
+  }
+  if (live && i1 === h1.length - 1 && h1[i1].t + H1 < to)
+    return { sym: P.sym, pending: true, kind: "stop", both: [L, S].filter(Boolean), hi: lv.hi, lo: lv.lo };
   return null;
 }
 // From the fill bar on: stop or target (stop first if one bar spans both; the

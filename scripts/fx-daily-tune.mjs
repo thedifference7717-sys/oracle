@@ -17,8 +17,9 @@ const require = createRequire(import.meta.url);
 const E = require("../fx-engine.js"), F = require("../fx-daily.js");
 
 const SPLIT = "2024-07-01", RISK = 500, MIN_IS_TRADES = 150;
-const BIAS = ["none", "prevday", "d1s3", "d1s5", "h4s10", "usd", "ema50", "cot"];
-const FIBS = [[0.382, 0.786], [0.382, 1], [0.5, 0.786], [0.5, 1], [0.5, 1.13], [0.618, 1], [0.618, 1.13], [0.705, 1.13]];
+const BIAS = ["none", "prevday", "d1s3", "d1s5", "h4s10", "usd", "ema50", "cot",
+              "d1s5+h4s10", "d1s5+cot", "d1s5+usd", "h4s10+cot", "ema50+cot", "d1s5+ema50"];      // "+" = both must agree
+const FIBS = [[0.382, 0.786], [0.382, 1], [0.5, 0.786], [0.5, 0.886], [0.5, 1], [0.5, 1.13], [0.618, 0.886], [0.618, 1], [0.618, 1.13], [0.705, 1.13]];
 
 function configs() {
   const out = [];
@@ -28,10 +29,14 @@ function configs() {
         out.push({ bias, entry: "fib", len, lim, stop, win, exit, minStop });
     for (const asiaStop of ["opp", "mid"]) for (const win of [[7, 12], [7, 16]]) for (const exit of ["h24", "eod"]) for (const minStop of [10, 20])
       out.push({ bias, entry: "asia", asiaStop, win, exit, minStop });
+    for (const pdStop of ["mid", "q"]) for (const win of [[7, 16], [0, 24]]) for (const exit of ["h24", "eod"]) for (const minStop of [10, 20])
+      out.push({ bias, entry: "pdh", pdStop, win, exit, minStop });
+    for (const win of [[7, 12], [7, 16]]) for (const exit of ["h24", "eod"]) for (const minStop of [5, 10])
+      out.push({ bias, entry: "sweep", win, exit, minStop });
   }
   return out;
 }
-const key = c => [c.bias, c.entry === "fib" ? `fib len${c.len} lim${c.lim} stop${c.stop}` : `asia stop-${c.asiaStop}`,
+const key = c => [c.bias, c.entry === "fib" ? `fib len${c.len} lim${c.lim} stop${c.stop}` : c.entry === "asia" ? `asia stop-${c.asiaStop}` : c.entry === "pdh" ? `pdh stop-${c.pdStop}` : "sweep",
   `${c.win[0]}-${c.win[1]}utc`, c.exit, `min${c.minStop}p`].join(" ");
 
 /* ── data ─────────────────────────────────────────────── */
@@ -144,6 +149,12 @@ if (!isMainThread) {
     `| settings | up yrs | tuning: tr · hit · R | unseen: tr · hit · R |`, `|---|---|---|---|`,
     ...ranked.slice(0, 25).map(r => `| \`${key(r.cfg)}\` | ${r.upYears}/${r.nYears} | ${r.is.n} · ${(100 * r.is.hit).toFixed(0)}% · ${r.is.R.toFixed(1)} | ${r.oos.n} · ${(100 * r.oos.hit).toFixed(0)}% · ${r.oos.R.toFixed(1)} |`), ``,
     `Top 25 still positive unseen: **${ranked.slice(0, 25).filter(r => r.oos.R > 0).length} / 25**. All setups with enough trades positive unseen: **${share.length ? (100 * share.filter(r => r.oos.R > 0).length / share.length).toFixed(0) : 0}%**.`, ``,
+    `## The past 50% winners — and what happened next`, ``,
+    `Every setup with at least 200 trades over the whole history, ranked by hit rate on **${isLabel}**. A 2:1 setup needs ~34% to break even; the question is whether a high past hit rate carries on into the unseen period.`, ``,
+    `| settings | tuning: tr · hit · R | unseen: tr · hit · R |`, `|---|---|---|`,
+    ...results.filter(r => r.is.n + r.oos.n >= 200).sort((a, b) => b.is.hit - a.is.hit).slice(0, 15)
+      .map(r => `| \`${key(r.cfg)}\` | ${r.is.n} · **${(100 * r.is.hit).toFixed(0)}%** · ${r.is.R.toFixed(1)} | ${r.oos.n} · **${(100 * r.oos.hit).toFixed(0)}%** · ${r.oos.R.toFixed(1)} |`), ``,
+    `Setups that won ≥ 50% of trades in the tuning period: **${results.filter(r => r.is.n >= MIN_IS_TRADES && r.is.hit >= 0.5).length}**; of those, still ≥ 50% unseen: **${results.filter(r => r.is.n >= MIN_IS_TRADES && r.is.hit >= 0.5 && r.oos.hit >= 0.5 && r.oos.n >= 20).length}**.`, ``,
     `## Picked, if each pair traded alone`, ``, `| pair | tuning | unseen |`, `|---|---|---|`,
     ...E.SYMS.map(s => `| ${s} | ${best.pairs[s].is.n} tr · ${(100 * best.pairs[s].is.hit).toFixed(0)}% · ${best.pairs[s].is.R.toFixed(1)}R | ${best.pairs[s].oos.n} tr · ${(100 * best.pairs[s].oos.hit).toFixed(0)}% · ${best.pairs[s].oos.R.toFixed(1)}R |`), ``,
   ];
