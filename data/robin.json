@@ -5278,6 +5278,9 @@
      "sport": "MLB",
      "start": "2026-10-14T00:00:00Z",
      "teams": "CLE @ TB",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "072721b8717f7aaf1f295847f947b95457c9305b9393b7fe6de76b0aeadd6a76",
@@ -5306,7 +5309,7 @@
    ]
   }
  ],
- "updated": "2026-10-14T00:00:49.149Z",
+ "updated": "2026-10-14T00:09:35.120Z",
  "record": {
   "w": 63,
   "l": 20,
