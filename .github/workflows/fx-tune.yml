@@ -16,6 +16,8 @@ on:
       - scripts/fx-tune.mjs
       - scripts/fx-fetch-histdata.py
       - scripts/fx-fetch-cot.py
+      - fx-daily.js
+      - scripts/fx-daily-tune.mjs
       - .github/workflows/fx-tune.yml
 
 permissions:
@@ -61,11 +63,14 @@ jobs:
       - name: Tune
         run: node scripts/fx-tune.mjs
 
+      - name: Tune the daily 2:1 trade
+        run: node scripts/fx-daily-tune.mjs
+
       - name: Commit the tuned rules
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/fx-tuned.json data/fx-cot.json docs/fx-tune-report.md
+          git add data/fx-tuned.json data/fx-cot.json docs/fx-tune-report.md data/fx-daily.json docs/fx-daily-report.md
           if git diff --cached --quiet; then echo "No change."; exit 0; fi
           git commit -m "FX Fib Ladder: tuned rules and CFTC positioning $(date -u +%F)"
           git pull --rebase origin "${GITHUB_REF_NAME}"
