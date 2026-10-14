@@ -32,7 +32,7 @@ jobs:
       # Pages serves HTML with a 10-minute max-age, and the no-cache <meta> tags
       # the pages carry are not honoured by browsers for the document itself.
       # A phone that already had the page open kept showing the previous build
-      # (it has bitten ladder.html and index.html both). Stamp the commit into
+      # (it has bitten index.html). Stamp the commit into
       # every page that asks for it and publish the same value alongside, so a
       # stale page can notice and pull itself forward instead of sitting there.
       - name: Stamp the build
