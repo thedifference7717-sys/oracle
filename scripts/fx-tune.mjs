@@ -172,7 +172,12 @@ function evaluate(P, cfg) {
   }
   const is = all.filter(t => t.t1 < splitT), oos = all.filter(t => t.t1 >= splitT);
   const pairsUp = E.SYMS.filter(s => E.stats(perPair[s].filter(t => t.t1 < splitT), RISK).R > 0).length;
+  // Year by year inside the tuning period: how many years made money, and the worst one.
+  const years = {};
+  for (const t of is) { const y = new Date(t.t1 * 1000).getUTCFullYear(); years[y] = (years[y] || 0) + t.pnl / RISK; }
+  const yr = Object.values(years);
   return { cfg, is: E.stats(is, RISK), oos: E.stats(oos, RISK), pairsUp,
+           upYears: yr.filter(v => v > 0).length, nYears: yr.length, worstYear: yr.length ? Math.min(...yr) : 0,
            pairs: Object.fromEntries(E.SYMS.map(s => [s, { is: E.stats(perPair[s].filter(t => t.t1 < splitT), RISK), oos: E.stats(perPair[s].filter(t => t.t1 >= splitT), RISK) }])) };
 }
 
@@ -203,11 +208,15 @@ if (!isMainThread) {
   })))).flat();
   console.log(`done in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
 
-  // Pick on in-sample only: enough trades, positive on most pairs, then most R.
+  // Pick on in-sample only. Most total R rewards one lucky stretch, so rank for
+  // consistency instead: enough trades, positive on most pairs, then the most
+  // money-making years, then the least-bad worst year, then total R.
   const eligible = results.filter(r => r.is.n >= MIN_IS_TRADES && r.pairsUp >= 3);
-  const ranked = (eligible.length ? eligible : results).sort((a, b) => b.is.R - a.is.R || a.is.maxDD - b.is.maxDD);
+  const pool = eligible.length ? eligible : results;
+  const ranked = pool.slice().sort((a, b) => b.upYears - a.upYears || b.worstYear - a.worstYear || b.is.R - a.is.R);
+  const byR = pool.slice().sort((a, b) => b.is.R - a.is.R)[0];
   const P = prepare(raw);
-  const best = evaluate(P, ranked[0].cfg), base = evaluate(P, BASELINE);
+  const best = evaluate(P, ranked[0].cfg), base = evaluate(P, BASELINE), maxR = evaluate(P, byR.cfg);
   const fmt = s => `${s.n} | ${(100 * s.hit).toFixed(0)}% | ${s.R >= 0 ? "+" : ""}${s.R.toFixed(1)}R | ${s.avgR.toFixed(3)} | ${s.maxDD.toFixed(1)}R | $${Math.round(s.net).toLocaleString("en-US")}`;
   const first = new Date(Math.min(...E.SYMS.map(s => raw[s][0].t)) * 1000).toISOString().slice(0, 10);
   const last = new Date(Math.max(...E.SYMS.map(s => raw[s][raw[s].length - 1].t)) * 1000).toISOString().slice(0, 10);
@@ -218,28 +227,35 @@ if (!isMainThread) {
     `Generated ${new Date().toISOString().slice(0, 16).replace("T", " ")} UTC by \`scripts/fx-tune.mjs\`${synth ? " — **SYNTHETIC DATA, plumbing test only**" : ""}.`,
     `Data: ${synth ? "synthetic" : dataSource}, ${first} → ${last}, OANDA (New York close) candle timing.`,
     `Costs: round-trip spread per lot (${Object.entries(SPREAD).map(([s, v]) => s + " " + v).join(", ")} pips). No swap or slippage.`,
-    `Sizing: $${RISK} max at the stop per trade; R = net $ ÷ $${RISK}. ${cfgs.length} settings tried; picked on **${isLabel}** only (≥ ${MIN_IS_TRADES} trades, positive on ≥ 3 of 5 pairs, most net), then checked on **${oosLabel}**, which the pick never saw.`, ``,
+    `Sizing: $${RISK} max at the stop per trade; R = net $ ÷ $${RISK}. ${cfgs.length} settings tried; picked on **${isLabel}** only (≥ ${MIN_IS_TRADES} trades, positive on ≥ 3 of 5 pairs, then the most profitable years, the least-bad worst year, the most R), then checked on **${oosLabel}**, which the pick never saw.`, ``,
     `| | trades | hit | total | R/trade | worst run | net $ |`, `|---|---|---|---|---|---|---|`,
     `| **Picked** · tuning | ${fmt(best.is)} |`, `| **Picked** · unseen | ${fmt(best.oos)} |`,
-    `| Crypto rules · tuning | ${fmt(base.is)} |`, `| Crypto rules · unseen | ${fmt(base.oos)} |`, ``,
-    `**Picked:** \`${key(best.cfg)}\``, ``,
+    `| Crypto rules · tuning | ${fmt(base.is)} |`, `| Crypto rules · unseen | ${fmt(base.oos)} |`,
+    `| Most R on tuning · tuning | ${fmt(maxR.is)} |`, `| Most R on tuning · unseen | ${fmt(maxR.oos)} |`, ``,
+    `**Picked:** \`${key(best.cfg)}\` — made money in ${ranked[0].upYears} of ${ranked[0].nYears} tuning years, worst year ${ranked[0].worstYear.toFixed(1)}R.`, ``,
+    `**Published:** ${best.oos.net > 0 ? "yes — it also made money on the unseen period, so forex.html runs it." : "**no** — it lost on the unseen period, so forex.html keeps the crypto rules and says no FX tuning held up."}`, ``,
     `## Picked, per pair`, ``, `| pair | tuning | unseen |`, `|---|---|---|`,
     ...E.SYMS.map(s => `| ${s} | ${best.pairs[s].is.n} tr · ${(100 * best.pairs[s].is.hit).toFixed(0)}% · ${best.pairs[s].is.R.toFixed(1)}R | ${best.pairs[s].oos.n} tr · ${(100 * best.pairs[s].oos.hit).toFixed(0)}% · ${best.pairs[s].oos.R.toFixed(1)}R |`), ``,
     `## Top 25 on the tuning period (with how each did unseen)`, ``,
-    `| settings | tuning: tr · hit · R · worst | unseen: tr · hit · R · worst |`, `|---|---|---|`,
-    ...ranked.slice(0, 25).map(r => `| \`${key(r.cfg)}\` | ${r.is.n} · ${(100 * r.is.hit).toFixed(0)}% · ${r.is.R.toFixed(1)} · ${r.is.maxDD.toFixed(1)} | ${r.oos.n} · ${(100 * r.oos.hit).toFixed(0)}% · ${r.oos.R.toFixed(1)} · ${r.oos.maxDD.toFixed(1)} |`), ``,
+    `| settings | up years | tuning: tr · hit · R · worst | unseen: tr · hit · R · worst |`, `|---|---|---|---|`,
+    ...ranked.slice(0, 25).map(r => `| \`${key(r.cfg)}\` | ${r.upYears}/${r.nYears} | ${r.is.n} · ${(100 * r.is.hit).toFixed(0)}% · ${r.is.R.toFixed(1)} · ${r.is.maxDD.toFixed(1)} | ${r.oos.n} · ${(100 * r.oos.hit).toFixed(0)}% · ${r.oos.R.toFixed(1)} · ${r.oos.maxDD.toFixed(1)} |`), ``,
     `How many of the top 25 stayed positive unseen: **${ranked.slice(0, 25).filter(r => r.oos.R > 0).length} / 25**.`, ``,
   ];
-  const oosUp = best.oos.R > 0;
+  const oosUp = best.oos.net > 0;
   const today = new Date().toISOString().slice(0, 10);
   const out = {
     generated: new Date().toISOString(), synthetic: synth,
-    params: Object.assign({ name: `FX tuned (${today})`, adxN: 14, legs: 10, ratio: 2 }, best.cfg),
+    // Published only if it also made money unseen; otherwise the page keeps the crypto rules.
+    params: oosUp ? Object.assign({ name: `FX tuned (${today})`, adxN: 14, legs: 10, ratio: 2 }, best.cfg) : null,
+    candidate: Object.assign({ adxN: 14, legs: 10, ratio: 2 }, best.cfg),
     split: { isLabel, oosLabel },
     best: { is: best.is, oos: best.oos }, baseline: { is: base.is, oos: base.oos },
-    summary: `Picked from ${cfgs.length} settings on ${isLabel}, then run on ${oosLabel} unseen: ` +
-      `${best.oos.n} trades, ${(100 * best.oos.hit).toFixed(0)}% hit, ${best.oos.R >= 0 ? "+" : ""}${best.oos.R.toFixed(1)}R after spread.`,
-    note: (oosUp ? "It held up on the period it was not tuned on. " : "It did NOT hold up on the period it was not tuned on — treat these rules with caution. ") +
+    summary: oosUp
+      ? `Picked from ${cfgs.length} settings on ${isLabel} for consistency year to year, then run on ${oosLabel} unseen: ` +
+        `${best.oos.n} trades, ${(100 * best.oos.hit).toFixed(0)}% hit, ${best.oos.R >= 0 ? "+" : ""}${best.oos.R.toFixed(1)}R after spread.`
+      : `No FX tuning held up. The most consistent of ${cfgs.length} settings on ${isLabel} lost ${best.oos.R.toFixed(1)}R on ${oosLabel}, ` +
+        `and the crypto rules lost on both periods (${base.is.R.toFixed(1)}R, ${base.oos.R.toFixed(1)}R) — these are the crypto rules, shown for reference, not a tested FX edge.`,
+    note: (oosUp ? "It held up on the period it was not tuned on. " : "Treat any ladder here with caution: nothing tried showed a reliable edge on these five pairs. ") +
       "Replays fill limits at their price, take the stop first when a candle spans both, and charge a typical OANDA spread; swap and slippage are not included.",
     top: ranked.slice(0, 25).map(r => ({ key: key(r.cfg), is: r.is, oos: r.oos })),
   };

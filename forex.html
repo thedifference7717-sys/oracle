@@ -290,7 +290,7 @@ function toBars(raw){
 async function loadRules(){
   try{
     const j = await fetchJSON('data/fx-tuned.json?t=' + Date.now());
-    if(j && j.params){ TUNED = j; RULES = Object.assign({}, E.DEFAULTS, j.params); }
+    if(j){ TUNED = j; if(j.params) RULES = Object.assign({}, E.DEFAULTS, j.params); }
   }catch(e){}
 }
 
@@ -516,7 +516,8 @@ function renderRules(){
       (R.adxMin > 0 ? tfName(R.tf) + ' ADX(' + R.adxN + ') ≥ ' + R.adxMin + '.' : 'No ADX filter.') + ' Funding and top-trader filters are crypto-only.</li>' +
     '<li><b>Size.</b> Each ladder, all filled, loses no more than your <span class="hl">SL $ per trade</span> at the stop; lots round to 0.01 without going over.</li>' +
     '</ol>' +
-    (T ? table('How these rules did', T.best) + (T.baseline ? table('The crypto rules on the same FX data, for comparison', T.baseline) : '') +
+    (T ? (T.params ? table('How these rules did', T.best) : table('The best FX candidate (not used — it lost unseen)', T.best)) +
+      (T.baseline ? table(T.params ? 'The crypto rules on the same FX data, for comparison' : 'These rules (crypto) on FX data', T.baseline) : '') +
       '<p>' + T.note + '</p>' : '') +
     '<p><b>On OANDA.</b> The page does not trade. When a ladder goes live, place the listed limits with the shared stop and target; ' +
     'when it moves, move your orders; when the target fills, cancel the rest. Candles default to OANDA\'s New York-close timing.</p>';
