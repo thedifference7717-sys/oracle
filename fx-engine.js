@@ -19,14 +19,24 @@ const H1 = 3600, H4 = 14400, H8 = 28800;
 // Typical OANDA round-trip spread (pips), quote currency (sets pip value), pip,
 // price decimals, and which way the pair moves with the dollar (+1: USD is the
 // base, −1: USD is the quote).
+// lot: units in one lot (100,000 for currencies; ounces for metals; coins for BTC).
 const PAIRS = {
-  EURUSD: { spread: 1.2, q: "USD", pip: 1e-4, dp: 5, usd: -1 },
-  GBPUSD: { spread: 1.8, q: "USD", pip: 1e-4, dp: 5, usd: -1 },
-  AUDUSD: { spread: 1.4, q: "USD", pip: 1e-4, dp: 5, usd: -1 },
-  USDCHF: { spread: 1.8, q: "CHF", pip: 1e-4, dp: 5, usd: 1 },
-  USDJPY: { spread: 1.4, q: "JPY", pip: 1e-2, dp: 3, usd: 1 },
+  EURUSD: { spread: 1.2, q: "USD", pip: 1e-4, dp: 5, usd: -1, lot: LOT },
+  GBPUSD: { spread: 1.8, q: "USD", pip: 1e-4, dp: 5, usd: -1, lot: LOT },
+  AUDUSD: { spread: 1.4, q: "USD", pip: 1e-4, dp: 5, usd: -1, lot: LOT },
+  USDCHF: { spread: 1.8, q: "CHF", pip: 1e-4, dp: 5, usd: 1, lot: LOT },
+  USDJPY: { spread: 1.4, q: "JPY", pip: 1e-2, dp: 3, usd: 1, lot: LOT },
+  // Daily 2:1 only (DAILY_SYMS). Pips as MT4/OANDA quote them: gold $0.01,
+  // silver $0.001, BTC $1; spreads are typical OANDA round trips in those pips.
+  XAUUSD: { spread: 35, q: "USD", pip: 1e-2, dp: 2, usd: -1, lot: 100 },
+  XAGUSD: { spread: 30, q: "USD", pip: 1e-3, dp: 3, usd: -1, lot: 5000 },
+  BTCUSD: { spread: 60, q: "USD", pip: 1, dp: 1, usd: -1, lot: 1 },
 };
-const SYMS = Object.keys(PAIRS);
+// The five majors: the FX Fib Ladder and its dollar index.
+const SYMS = ["EURUSD", "GBPUSD", "AUDUSD", "USDCHF", "USDJPY"];
+// What the 9 am Daily 2:1 alert trades.
+const DAILY_SYMS = ["BTCUSD", "XAUUSD", "XAGUSD", "EURUSD"];
+const lotOf = sym => PAIRS[sym].lot || LOT;
 
 // The crypto Fib Ladder's tuned rules ("Best found by tuning (Oct 5)").
 const DEFAULTS = {
@@ -307,6 +317,6 @@ function stats(trades, cap) {
   return { n: T.length, wins: w, hit: T.length ? w / T.length : 0, R: r, avgR: T.length ? r / T.length : 0, net, maxDD: dd };
 }
 
-return { LOT, H1, H4, H8, PAIRS, SYMS, DEFAULTS, usdPer, nyLag, bucket, aggregate, pivots, structure, adx,
+return { LOT, H1, H4, H8, PAIRS, SYMS, DAILY_SYMS, lotOf, DEFAULTS, usdPer, nyLag, bucket, aggregate, pivots, structure, adx,
          usdStructure, usdDirAt, cotCheck, fibOf, buildLegs, simulate, stats };
 });
