@@ -5472,9 +5472,20 @@
     ]
    },
    "settled": "2026-10-14T04:22:22.943Z"
+  },
+  {
+   "id": "2026-10-14:robin",
+   "date": "2026-10-14",
+   "published": "2026-10-14T22:30:47.635Z",
+   "status": "noplay",
+   "games": {
+    "MLB": 1,
+    "NHL": 2
+   },
+   "reason": "only 3 games on the slate"
   }
  ],
- "updated": "2026-10-14T04:22:23.493Z",
+ "updated": "2026-10-14T22:30:48.521Z",
  "record": {
   "w": 68,
   "l": 21,
