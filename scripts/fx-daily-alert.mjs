@@ -6,9 +6,10 @@
 // what to place: each pair's working order with entry, stop, target and lots
 // for DAILY_RISK (default $500, target 2x), or the trade already filled today.
 //
-// The workflow fires at two UTC times so one of them is 9 am New York in both
-// summer and winter; this script only sends when New York reads 8:45–9:45
-// (or always, with FORCE=1).
+// The workflow fires every 15 minutes from 8:45 to ~10:00 New York (in both
+// summer and winter time) so a late or skipped GitHub run is covered; this
+// script sends when New York reads 8:45–10:30 (or always, with FORCE=1), and
+// the workflow stops after the first send of the day (SENT_MARK).
 //
 //   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID   without them the message is printed
 //   FX_ALERT_BARS=file.json                 test with candles from a file
@@ -55,10 +56,12 @@ async function send(text) {
   });
   if (!r.ok) throw new Error("telegram " + r.status + " " + await r.text());
   console.log("sent");
+  // Tell the workflow today's alert is out, so the later retries stay quiet.
+  if (process.env.SENT_MARK) { const fs = await import("fs"); fs.mkdirSync(process.env.SENT_MARK, { recursive: true }); fs.writeFileSync(process.env.SENT_MARK + "/ok", new Date().toISOString()); }
 }
 
 const clk = nyClock();
-if (!process.env.FORCE && !((clk.h === 8 && clk.m >= 45) || (clk.h === 9 && clk.m < 45))) {
+if (!process.env.FORCE && !((clk.h === 8 && clk.m >= 45) || clk.h === 9 || (clk.h === 10 && clk.m < 30))) {
   console.log(`New York is ${clk.h}:${String(clk.m).padStart(2, "0")} — not the 9 am run, nothing to send.`);
   process.exit(0);
 }
@@ -77,7 +80,8 @@ for (const s of E.SYMS) {
   try { h1[s] = (fromFile ? fromFile[s] : await hourly(s)).filter(b => b.t + 3600 <= (fromFile ? Infinity : now)); }
   catch (e) { errs.push(`${s}: ${e.message}`); }
 }
-if (errs.length) { await send("⚠️ <b>FX daily 2:1</b>: could not load prices — " + errs.join("; ")); process.exit(1); }
+// No prices: fail the run — the workflow warns on Telegram and retries in 15 minutes.
+if (errs.length) { console.error("could not load prices — " + errs.join("; ")); process.exit(1); }
 
 const h4 = {};
 E.SYMS.forEach(s => h4[s] = E.aggregate(h1[s], E.H4, "oanda"));

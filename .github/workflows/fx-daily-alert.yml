@@ -1,33 +1,83 @@
 name: FX daily 2:1 alert (9 am New York)
 
-# Telegram at 9:00 am New York on weekdays: today's Daily 2:1 orders to place
-# (scripts/fx-daily-alert.mjs). Two UTC times so one of them is 9 am in both
-# summer (EDT) and winter (EST); the script sends only from the one that is.
-# GitHub can start scheduled runs late, so both fire at :45 and the script
-# accepts 8:45–9:45 New York. Scheduled workflows run only on the default
-# branch (main); use "Run workflow" to send one now from any branch.
+# Telegram at 9:00 am New York on weekdays: today's trade (scripts/fx-daily-alert.mjs).
+#
+# GitHub can start scheduled runs late, and now and then skips one, so this
+# fires every 15 minutes from 8:45 to about 10:00 New York (the UTC times cover
+# both summer and winter time). The first run that gets through sends the
+# alert and records it for the day in the Actions cache; every later run that
+# day sees the record and does nothing — one message a day. A run that fails
+# sends a Telegram warning instead of failing silently.
+#
+# "Run workflow" sends one now; tick "test" to send it outside the morning
+# without counting as the day's alert.
 on:
   schedule:
-    - cron: '45 12 * * 1-5'   # 8:45 EDT
-    - cron: '45 13 * * 1-5'   # 8:45 EST
+    - cron: '45 12 * * 1-5'
+    - cron: '0,15,30,45 13 * * 1-5'
+    - cron: '0,15,30,45 14 * * 1-5'
   workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test message (any time; does not count as the day''s alert)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
+
+concurrency:
+  group: fx-daily-alert
+  cancel-in-progress: false
 
 jobs:
   alert:
     runs-on: ubuntu-latest
     steps:
+      - name: Today (New York)
+        id: day
+        run: echo "d=$(TZ=America/New_York date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Already sent today?
+        id: sent
+        if: ${{ !inputs.test }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .sent
+          key: fx-alert-sent-${{ steps.day.outputs.d }}
+
       - uses: actions/checkout@v4
+        if: steps.sent.outputs.cache-hit != 'true'
+
       - uses: actions/setup-node@v4
+        if: steps.sent.outputs.cache-hit != 'true'
         with:
           node-version: '20'
+
       - name: Send today's trade
+        if: steps.sent.outputs.cache-hit != 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TWELVE_DATA_KEY: ${{ secrets.TWELVE_DATA_KEY }}
           DAILY_RISK: ${{ vars.DAILY_RISK || '500' }}
-          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+          FORCE: ${{ inputs.test && '1' || '' }}
+          SENT_MARK: ${{ !inputs.test && '.sent' || '' }}
         run: node scripts/fx-daily-alert.mjs
+
+      - name: Remember it went out
+        if: ${{ success() && !inputs.test && hashFiles('.sent/ok') != '' }}
+        uses: actions/cache/save@v4
+        with:
+          path: .sent
+          key: fx-alert-sent-${{ steps.day.outputs.d }}
+
+      - name: Warn on Telegram if this failed
+        if: failure()
+        env:
+          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT}" \
+            --data-urlencode "text=⚠️ FX 9 am alert failed — it will retry in 15 minutes until 10 am ET. ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" > /dev/null
