@@ -2177,12 +2177,6 @@
     "NHL": 16
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "0dc413ce3ba40a8021081a7796ea43d5d1fc94fc79193878f9182c76ed3048d9",
-    "iv": "TRTRc2VvGsb8j14V",
-    "ct": "l+y4jyZojri4ozRqwkmguwi6Cy5WBqtwOK9E7/x2iwhHkDkCiUH8W/YunE5yj3wAUhxkM9NYskLpE0XoVZ+5uaLD6//xXc5M108ty+Aq/Kr0o5iKNDSZheaGu+A3Wu448rLizMC5e9kbHu+umtUQPqh1WDqMuGbt/0stR28E5haU/xQTm98zN1UNOCC1nzSuq6giO2oGgl1xwlLCUgXpDga1c/Ehx02cbZ9j38ybSy01b3hYGckYTapWTV5Wju/jt1BtRThdcauLvBKB4Kb/FT0HDw=="
-   },
    "legs": [
     {
      "detail": "λ 1.429 · 2.4 pts/gm this season (5) · a point in 4 of his last 5",
@@ -2233,17 +2227,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.5 · 2 pts/gm this season (3) · a point in 3 of his last 3",
+     "eventId": "2026020105",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT13BOSSJ-SJMCELEBRINI71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7347,
+     "pAdj": 0.6911,
+     "player": "Macklin Celebrini",
+     "playerId": "8484801",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-14T03:00:00Z",
+     "teams": "SJS vs BOS",
+     "revealed": {
       "v": 1,
       "hash": "854c8cdad6e0c0a8551a4087fed863e6c775a1929eb119626056421f796c6d63",
-      "iv": "UmWXl6Gfnx0UdUSm",
-      "ct": "Hq6lFNvg3bau/ufqCcA51HwZvT1/SwgxEta5wZyffMC8iGWtwW6tvTx0VfN9SQjvyyq8jgkGs8VR3rFTr2bom8j+8oBnjy/ldEj7/hXy9WiFhtyZCdYjSsbLOynqkw4mRTrJLP+9uBJ/4Lw5t9BI8vZMD7Xge+QSVDKeW3b3VSHn6s2LYpXxSNRLipbriTGTp5eLG57Bv2XGF0uytq4q+NW0g5Nlx6Rkcq9SQU14FgjPqaeYCfvMXvQOhbbSLPgYIGeb4rIPNrgi7e1kUhB33CqJOjUil0iekwDF5WbZ3dE7v8wiaDsM6xtEUJFDdJ0FLzgS6d60FB517kIeBMBn4EPp3hFGhhEDV3z+0PD+pvNhtQaMJXsMh+ehchNCOq94tONHL1YCg0lZZ4pHdtubfs69+EwJzLA/H4/0CJokSwWV51UFdcRXe+cxkfS9iiz2PbdHJSoYU27NC7G0G69gVEmYehefKgeIvR8RgW/XRYgFClfzXbuoMCfgmd5GYvPaOk3co1pHaNNh0yPgzgh2JTJDBWe8CoepY/eSU3FIjLSi+frwIEHSFe6YVcg0hly+yKjNoHGnwd2fe+dfzTRycsP2cXDFXa4zeJZygI4+pbw9gVZGQsM7GwivonVJVjVIRH6ItXHwE1LGnmDdyKMMk5O3/lqtWxZd0DgQqYR1ppM/Fn4XeT2YGsg="
+      "salt": "b590e10762b3fb72097b8e2ee67c115d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-13:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Connor McDavid",
+    "sport": "NHL",
+    "start": "2026-10-14T02:30:00Z"
+   },
+   "fair": -113,
+   "price": 116,
+   "prob": 0.53,
+   "revealed": {
+    "v": 1,
+    "hash": "0dc413ce3ba40a8021081a7796ea43d5d1fc94fc79193878f9182c76ed3048d9",
+    "salt": "976b47d364d599e9ad43e7d3f876944d",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-13:dub"
+   }
   }
  ],
- "updated": "2026-10-14T02:54:00.784Z",
+ "updated": "2026-10-14T03:00:16.266Z",
  "record": {
   "w": 8,
   "l": 10

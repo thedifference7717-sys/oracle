@@ -5284,11 +5284,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.5 · 2 pts/gm this season (3) · a point in 3 of his last 3",
+     "eventId": "2026020105",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT13BOSSJ-SJMCELEBRINI71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7347,
+     "pAdj": 0.6911,
+     "player": "Macklin Celebrini",
+     "playerId": "8484801",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-14T03:00:00Z",
+     "teams": "SJS vs BOS",
+     "revealed": {
       "v": 1,
       "hash": "c31b9495c1d8b830da3d2914689ab374eb321da4a179137bef116b3e913e1f8a",
-      "iv": "ua2XlKxQ0gDj5BhW",
-      "ct": "ePonLReMTnS8dMJrpuqYcqL6nK6g9qw9h0gPUgz9WzcxVoBZGEuFGeWjAWFhyzPbPxPnbX/BIcNfxll1W5c1WkjFECpY8C8O1/aZbvYJ2uVkoZEj2rCFxXuW31bLO1xhYQYES3qg3yUGI5J1tlfC81OTnTX0RtvoY/O619ZWfM27rWOvfxWSrK3QsYt9pV1iTa2hj2vgkAdDGa/OrM+KVvbd/ydCE1fuzmDt6pZZjvYbIvCcRZuyapsNTRTZgZW5fjN8yOuTXO5DKqe3nWhEULWaX8A1Zkl2hwUOEDjQ0SGHn9Z+kaCMjOZ02xOsCmLYqI8OWCjgET8LCDp4CPF3EO1ElK1MH/69svVHvw5DRDF30YbzOy37O/J4fY8NsuuLprRqBTWsVb0GCW0v0YxrrYXPUxNPGTt8CTX1ucr2K5Cbaef3Va1O2p4DT2FfYuQVlW4At/S51xyJsi6kySVR/BM8TYst3IyZpdngLd9andQE8XDGRkUMEn0zRu7zppSSxHQ8bQn/xmKyY9efaCk6kAaTaB2jfBindiADtVMPQ1waG56CiMM6g1pc826vWfzyXySQzdsr/w/Dx6FKc5qMiFpuvQE/NTWPnkD0kxy1QEFMtculuphoSpJsAllrFk32zA17xKZLVNi5gZZ1DgpyDixLk9FUvHMt9Lmp6t66+CBtugu3oACFuBmVQg=="
+      "salt": "0031c2cfacdb98592654dd31abe33882",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-13:robin#3"
      }
     },
     {
@@ -5392,7 +5429,7 @@
    ]
   }
  ],
- "updated": "2026-10-14T02:54:00.839Z",
+ "updated": "2026-10-14T03:00:16.285Z",
  "record": {
   "w": 63,
   "l": 20,
