@@ -133,6 +133,8 @@ details[open] summary::after{content:' ▴'}
 .rail .rung.off{opacity:.25}
 .lrow .st{font-size:9.5px;font-weight:800;letter-spacing:.5px}
 .hist{display:flex;flex-direction:column}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{font:600 10px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums}
 .tt{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums;margin-top:6px}
 .tt th,.tt td{padding:6px 4px;text-align:right;border-top:1px solid var(--line)}
 .tt th{color:var(--faint);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-top:none}
@@ -159,6 +161,7 @@ details[open] summary::after{content:' ▴'}
   <div class="setup">
     <div class="field key"><label>SL $ per trade</label><input id="in-risk" type="number" step="any" inputmode="decimal" placeholder="400"></div>
     <div class="field"><label>Account $</label><input id="in-acct" type="number" step="any" inputmode="decimal" placeholder="100000"></div>
+    <div class="field key"><label>Daily trade risk $</label><input id="in-drisk" type="number" step="any" inputmode="decimal" placeholder="500"></div>
   </div>
   <div class="setup" id="tune">
     <div class="field"><label>4h candles</label><select id="in-align"><option value="oanda">OANDA (NY close)</option><option value="utc">UTC</option></select></div>
@@ -167,6 +170,15 @@ details[open] summary::after{content:' ▴'}
 </div>
 
 <div id="status">Loading FX candles…</div>
+
+<div class="card" id="day-card">
+  <h2><span>Today's trade · 1 a day, 2 : 1</span> <span class="tag" id="day-tag"></span></h2>
+  <div class="meta" style="margin-top:0;margin-bottom:12px" id="day-head">Loading…</div>
+  <div class="kpis" id="day-kpis"></div>
+  <div id="day-chart" style="margin-top:12px"></div>
+  <div class="checks" id="day-pairs" style="margin-top:12px"></div>
+  <div class="note" id="day-note" style="margin-top:12px;padding:0"></div>
+</div>
 
 <div class="chips" id="chips"></div>
 
@@ -204,6 +216,7 @@ details[open] summary::after{content:' ▴'}
 <div class="ft">Planning aid only — it places no orders. Confirm every level on your OANDA chart and follow your prop-firm rules.</div>
 
 <script src="fx-engine.js"></script>
+<script src="fx-daily.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const STORE = 'fxladder.v2';
@@ -214,15 +227,15 @@ E.SYMS.forEach(s => PAIRS[s] = Object.assign({kr: s, td: s.slice(0,3) + '/' + s.
 const SYMS = E.SYMS;
 // The rules: the tuned set from data/fx-tuned.json when it loads, else the
 // crypto ladder's (Oct 5) as the engine's defaults.
-let RULES = Object.assign({}, E.DEFAULTS), TUNED = null, COT = null;
-const D = {risk: 400, acct: 100000};
+let RULES = Object.assign({}, E.DEFAULTS), TUNED = null, COT = null, DAILY = null, DRULES = null;
+const D = {risk: 400, acct: 100000, drisk: 500};
 
 /* ── config ───────────────────────────────────────────── */
 let cfg = {sel:'EURUSD', align:'oanda', tdkey:'', tune:false};
 function load(){
   try{ Object.assign(cfg, JSON.parse(localStorage.getItem(STORE) || '{}')); }catch(e){}
   if(!PAIRS[cfg.sel]) cfg.sel = 'EURUSD';
-  ['risk','acct'].forEach(k => { if(cfg[k] != null) $('in-'+k).value = cfg[k]; });
+  ['risk','acct','drisk'].forEach(k => { if(cfg[k] != null) $('in-'+k).value = cfg[k]; });
   $('in-align').value = cfg.align === 'utc' ? 'utc' : 'oanda';
   $('in-tdkey').value = cfg.tdkey || '';
   if(cfg.tune){ $('tune').classList.add('show'); $('tune-btn').classList.add('on'); }
@@ -272,7 +285,7 @@ async function getRaw(sym){
     catch(e){ tdErr = e.message; }
   }
   try{
-    const iv = cfg.align === 'utc' && RULES.tf >= H4 ? H4 : H1;
+    const iv = H1;                                 // the daily trade needs hourly candles
     const c = await kraken(sym, iv / 60);
     if(c.length < 100) throw new Error('kraken: too few candles');
     return {c, iv, src:'Kraken', note: tdErr};
@@ -289,6 +302,7 @@ function toBars(raw){
 
 async function loadRules(){
   try{ const c = await fetchJSON('data/fx-cot.json?t=' + Date.now()); if(c && c.pairs) COT = c; }catch(e){}
+  try{ const d = await fetchJSON('data/fx-daily.json?t=' + Date.now()); if(d){ DAILY = d; DRULES = d.params || d.candidate || null; } }catch(e){}
   try{
     const j = await fetchJSON('data/fx-tuned.json?t=' + Date.now());
     if(j){ TUNED = j; if(j.params) RULES = Object.assign({}, E.DEFAULTS, j.params); }
@@ -318,6 +332,14 @@ function compute(){
   const U = RULES.usdFilter ? E.usdStructure(B, RULES, cfg.align) : null;
   const risk = val('risk');
   RES = {U, risk};
+  RES.daily = null;
+  if(DRULES && SYMS.every(s => RAW[s])){
+    const now = Date.now()/1000, h1 = {}, h4 = {};
+    SYMS.forEach(s => { h1[s] = RAW[s].c.filter(b => b.t + H1 <= now); h4[s] = E.aggregate(h1[s], H4, 'oanda'); });
+    const usd = E.usdStructure(h4, {tf: H4, usdTf: E.H8, usdLen: 20}, 'oanda');
+    const preps = SYMS.map(s => FxDaily.prepare(s, h1[s], {usd, cot: COT && COT.pairs[s]}));
+    RES.daily = Object.assign(FxDaily.today(preps, DRULES), {h1});
+  }
   SYMS.forEach(s => {
     if(!S[s]) return RES[s] = {err: ERR[s] || null};
     RES[s] = Object.assign({S: S[s], src: RAW[s].src, note: RAW[s].note},
@@ -415,6 +437,7 @@ function render(){
       'No ladder now. Next check at the ' + tfName(RULES.tf) + ' close, ' + when(nc), lad ? 'LIVE' : 'WAIT'));
   $('checks').innerHTML = C.join('');
 
+  try{ renderDaily(); }catch(e){ $('day-head').textContent = 'Daily trade error: ' + e.message; }
   if(lad) renderLadder(sym, A, lad); else ['sum-card','rail-card','legs-card'].forEach(id => $(id).style.display = 'none');
   renderHist(sym, A);
 }
@@ -537,6 +560,97 @@ function renderRules(){
     'when it moves, move your orders; when the target fills, cancel the rest. Candles default to OANDA\'s New York-close timing.</p>';
 }
 
+/* ── today's trade (Daily 2:1) ───────────────────────── */
+function dLots(sym, o, risk){
+  const perLot = LOT * usdPer(sym, o.dist, o.stop);
+  const lots = Math.floor(risk / perLot * 100 + 1e-9) / 100;
+  return {lots, loss: lots * perLot, win: lots * LOT * usdPer(sym, Math.abs(o.tp - o.entry), o.tp)};
+}
+const BIAS_NAME = {none:'either way', prevday:'yesterday\'s candle', d1s3:'daily structure (3)', d1s5:'daily structure (5)',
+  h4s10:'4h structure (10)', usd:'USD structure', ema50:'4h vs EMA 50', cot:'hedge funds (CFTC)'};
+function chartSvg(sym, bars, o){
+  const W = 640, Hh = 260, padR = 70, n = bars.length;
+  const lv = [o.entry, o.stop, o.tp, o.hi, o.lo].filter(v => v != null && isFinite(v));
+  let hi = Math.max(...bars.map(b => b.h), ...lv), lo = Math.min(...bars.map(b => b.l), ...lv);
+  const pad = (hi - lo) * 0.05; hi += pad; lo -= pad;
+  const y = v => (hi - v) / (hi - lo) * Hh, cw = (W - padR) / n;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const G = css('--grn'), Rd = css('--red'), B = css('--blu'), F = css('--faint'), Dm = css('--dim');
+  let g = '';
+  if(o.hi != null && o.lo != null && o.dir){
+    const at = E.fibOf(o.dir, o.hi, o.lo);
+    [0, 0.382, 0.5, 0.618, 0.786, 1].forEach(f => {
+      const yy = y(at(f));
+      g += '<line x1="0" x2="' + (W - padR) + '" y1="' + yy + '" y2="' + yy + '" stroke="' + F + '" stroke-dasharray="2 4"/>' +
+           '<text x="2" y="' + (yy - 3) + '" fill="' + F + '">' + (f === 0 ? '0' : f.toString().replace(/^0/,'')) + '</text>';
+    });
+  }
+  bars.forEach((b, i) => {
+    const x = i * cw + cw / 2, up = b.c >= b.o, col = up ? G : Rd;
+    g += '<line x1="' + x + '" x2="' + x + '" y1="' + y(b.h) + '" y2="' + y(b.l) + '" stroke="' + col + '"/>' +
+         '<rect x="' + (x - cw * 0.35) + '" y="' + y(Math.max(b.o, b.c)) + '" width="' + (cw * 0.7) + '" height="' + Math.max(1, Math.abs(y(b.o) - y(b.c))) + '" fill="' + col + '"/>';
+  });
+  const line = (v, col, lbl) => '<line x1="0" x2="' + (W - padR) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="' + col + '" stroke-width="1.5"/>' +
+    '<text x="' + (W - padR + 4) + '" y="' + (y(v) + 3) + '" fill="' + col + '">' + lbl + ' ' + v.toFixed(PAIRS[sym].dp) + '</text>';
+  if(o.tp != null) g += line(o.tp, G, 'TP');
+  if(o.entry != null) g += line(o.entry, B, 'IN');
+  if(o.stop != null) g += line(o.stop, Rd, 'SL');
+  return '<div class="chart"><svg viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="' + sym + ' hourly chart with the trade levels">' + g + '</svg></div>';
+}
+function renderDaily(){
+  const Dd = RES.daily, risk = val('drisk');
+  if(!DAILY){ $('day-head').textContent = 'The daily setup has not been tuned yet.'; return; }
+  const Pm = DRULES || {}, ok = !!DAILY.params;
+  $('day-tag').textContent = 'risk ' + usd(risk,0) + ' → target ' + usd(2*risk,0);
+  if(!Dd){ $('day-head').textContent = 'Waiting for all five pairs…'; return; }
+  const list = SYMS.map(s => Object.assign({sym: s}, Dd.pairs[s] || {}));
+  const pick = Dd.trade || list.map(x => x.trade).filter(t => t && t.pending && !t.forming)[0] || null;
+  const f = (sym, v) => px(v, sym);
+  if(pick && !pick.pending){
+    const L = dLots(pick.sym, pick, risk), done = pick.how, R = pick.R;
+    $('day-head').innerHTML = '<span class="pill ' + pick.dir + '">' + pick.sym + ' ' + (pick.dir === 'long' ? '▲ LONG' : '▼ SHORT') + '</span>' +
+      '<span>' + (done ? (pick.how === 'target' ? '<b class="g">Target hit</b>' : pick.how === 'stop' ? '<b class="b">Stopped</b>' : 'Closed at time') + ' · ' + signed(R * risk, 0)
+                       : '<b>In the trade</b> since ' + when(pick.fillT) + ' · now ' + signed(R * risk, 0)) + '</span>';
+    $('day-kpis').innerHTML = dk(pick.sym, pick, L);
+    $('day-chart').innerHTML = chartSvg(pick.sym, Dd.h1[pick.sym].slice(-72), pick);
+  } else if(pick){
+    const o = pick.both ? pick.both[0] : pick;
+    const L = dLots(pick.sym, o, risk);
+    $('day-head').innerHTML = '<span class="pill ' + o.dir + '">' + pick.sym + ' ' + (o.dir === 'long' ? '▲ LONG' : '▼ SHORT') + '</span>' +
+      '<span><b>Order working</b> — ' + (o.kind === 'stop' ? (o.dir === 'long' ? 'buy stop ' : 'sell stop ') : (o.dir === 'long' ? 'buy limit ' : 'sell limit ')) + f(pick.sym, o.entry) +
+      (pick.both && pick.both.length > 1 ? ' (and the opposite side, whichever trades first)' : '') + '</span>';
+    $('day-kpis').innerHTML = dk(pick.sym, o, L);
+    $('day-chart').innerHTML = chartSvg(pick.sym, Dd.h1[pick.sym].slice(-72), Object.assign({}, o, {dir: o.dir, hi: pick.hi != null ? pick.hi : o.hi, lo: pick.lo != null ? pick.lo : o.lo}));
+  } else {
+    $('day-head').innerHTML = '<span class="pill none">NO TRADE YET</span><span>No pair has a setup today. Orders arm between ' + Pm.win[0] + ':00 and ' + Pm.win[1] + ':00 UTC.</span>';
+    $('day-kpis').innerHTML = ''; $('day-chart').innerHTML = '';
+  }
+  $('day-pairs').innerHTML = list.map(x => {
+    const t = x.trade, b = x.bias;
+    const mine = t && Dd.trade && t === Dd.trade;
+    const st = !b ? 'no direction yet' : !t ? 'no setup' : t.pending ? (t.forming ? 'Asian range forming' : 'order working')
+      : !mine ? 'skip — not first' : t.how ? t.how + ' ' + rTxt2(t.R) : 'the trade';
+    return check(mine ? 'ok' : 'na', '<b>' + x.sym + '</b> · direction: ' + (b === 'both' ? 'either' : b ? (b === 'long' ? '<b class="g">long</b>' : '<b class="b">short</b>') : '—') +
+      ' (' + BIAS_NAME[Pm.bias] + ')', st.toUpperCase());
+  }).join('');
+  const T = DAILY.best;
+  $('day-note').innerHTML = '<p><b>' + (ok ? 'The setup' : 'Untested setup — no daily 2:1 setup held up') + '.</b> ' + DAILY.summary + '</p>' +
+    '<p><b>Rules:</b> direction from ' + BIAS_NAME[Pm.bias] + '; ' +
+    (Pm.entry === 'asia' ? 'at 07:00 UTC, stop orders at the Asian-session high and low (00–07 UTC), stop at the ' + (Pm.asiaStop === 'mid' ? 'middle of the range' : 'other side') :
+      'after a 1h structure break (swings of ' + Pm.len + '), a limit at the ' + Pm.lim + ' of the breaking move, stop at the ' + Pm.stop) +
+    '; target twice the stop; armed ' + Pm.win[0] + ':00–' + Pm.win[1] + ':00 UTC; ' + (Pm.exit === 'eod' ? 'flat at the New York close' : 'held until target or stop (3 days max)') +
+    '; stops under ' + Pm.minStop + ' pips skipped. The first fill across the five pairs is the day\'s trade; cancel the others.</p>' +
+    (T ? '<p>Tuning ' + DAILY.split.isLabel + ': ' + T.is.n + ' trades, ' + nf(100*T.is.hit,0) + '% hit, ' + rTxt2(T.is.R) + '. Unseen ' + DAILY.split.oosLabel + ': ' +
+      T.oos.n + ' trades, ' + nf(100*T.oos.hit,0) + '% hit, ' + rTxt2(T.oos.R) + ' (' + signed(T.oos.R * risk, 0) + ' at ' + usd(risk,0) + ' a trade). Break-even is about 34%.</p>' : '');
+}
+const rTxt2 = r => (r >= 0 ? '+' : '−') + nf(Math.abs(r), 1) + 'R';
+function dk(sym, o, L){
+  return '<div class="kpi av"><div class="k">Entry · ' + (o.kind === 'stop' ? 'stop order' : 'limit') + '</div><div class="v num">' + px(o.entry, sym) + '</div>' +
+      '<div class="s num"><b>' + lots(L.lots) + '</b> lots · ' + pips(o.dist, sym) + 'p stop</div></div>' +
+    '<div class="kpi sl"><div class="k">Stop</div><div class="v num b">' + px(o.stop, sym) + '</div><div class="s num">loses <b>' + usd(L.loss, 0) + '</b></div></div>' +
+    '<div class="kpi tp"><div class="k">Target · 2 : 1</div><div class="v num g">' + px(o.tp, sym) + '</div><div class="s num">makes <b>' + usd(L.win, 0) + '</b></div></div>';
+}
+
 function ordersText(){
   if(!COPY) return null;
   const {sym, lad, live, totLots, totRisk, totWin, avg} = COPY, f = x => px(x, sym);
@@ -551,7 +665,7 @@ function ordersText(){
 }
 
 /* ── wiring ───────────────────────────────────────────── */
-['risk','acct'].forEach(k => $('in-'+k).addEventListener('input', () => { cfg[k] = $('in-'+k).value.trim(); save(); compute(); }));
+['risk','acct','drisk'].forEach(k => $('in-'+k).addEventListener('input', () => { cfg[k] = $('in-'+k).value.trim(); save(); compute(); }));
 $('in-align').addEventListener('change', () => { cfg.align = $('in-align').value; save(); tick(true); });
 $('in-tdkey').addEventListener('change', () => { cfg.tdkey = $('in-tdkey').value.trim(); save(); tick(true); });
 $('tune-btn').addEventListener('click', () => { cfg.tune = $('tune').classList.toggle('show'); $('tune-btn').classList.toggle('on', cfg.tune); save(); });

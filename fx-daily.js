@@ -78,7 +78,9 @@ function biasAt(P, mode, T) {
 
 // One pair, one day: the order this pair would fill first, and how it ends.
 // Returns null (no trade) or {sym, dir, fillT, entry, stop, tp, exitT, exit, R, how, setupT, hi, lo}.
-function pairDay(P, dayT, i0, i1, p, bias) {
+// live: also return what is still working at the last bar ({pending: true, …}),
+// for the page.
+function pairDay(P, dayT, i0, i1, p, bias, live) {
   const h1 = P.h1, pip = E.PAIRS[P.sym].pip, cost = E.PAIRS[P.sym].spread * pip;
   const allow = d => bias === "both" || bias === d;
   if (!bias) return null;
@@ -122,6 +124,7 @@ function pairDay(P, dayT, i0, i1, p, bias) {
       const L = allow("long") ? mkOrder("long", asia.hi, p.asiaStop === "mid" ? mid : asia.lo, b.t + H1, asia.hi, asia.lo) : null;
       const S = allow("short") ? mkOrder("short", asia.lo, p.asiaStop === "mid" ? mid : asia.hi, b.t + H1, asia.hi, asia.lo) : null;
       if (L) L.kind = "stop"; if (S) S.kind = "stop";
+      if (!L && !S) return null;
       // two-sided: watch both from the next bar
       for (let j = i + 1; j <= i1; j++) {
         const x = h1[j];
@@ -137,9 +140,13 @@ function pairDay(P, dayT, i0, i1, p, bias) {
         if (lh) return finish(P, L, j, p, cost);
         if (sh) return finish(P, S, j, p, cost);
       }
+      if (live && i1 === h1.length - 1 && utcH(h1[i1].t) + 1 < p.win[1])
+        return { sym: P.sym, pending: true, kind: "stop", both: [L, S].filter(Boolean), hi: asia.hi, lo: asia.lo };
       return null;
     }
   }
+  if (live && order && i1 === h1.length - 1) return Object.assign({ sym: P.sym, pending: true }, order);
+  if (live && p.entry === "asia" && i1 === h1.length - 1 && !asia) return { sym: P.sym, pending: true, forming: true };
   return null;
 }
 // From the fill bar on: stop or target (stop first if one bar spans both; the
@@ -196,9 +203,9 @@ function today(preps, params) {
     if (!last) return;
     const [d, [i0, i1]] = last;
     const bias = biasAt(P, p.bias, d);
-    const t = pairDay(P, d, i0, i1, p, bias);
+    const t = pairDay(P, d, i0, i1, p, bias, true);
     out.pairs[P.sym] = { day: d, bias, trade: t };
-    if (t && (!out.trade || t.fillT < out.trade.fillT)) out.trade = t;
+    if (t && !t.pending && (!out.trade || t.fillT < out.trade.fillT)) out.trade = t;
   });
   return out;
 }
