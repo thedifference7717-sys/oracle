@@ -58,13 +58,32 @@ async function fetchPair(sym) {
   }
   const { getHistoricalRates } = require("dukascopy-node");
   console.log(`fetching ${sym} h1 ${FROM} → now from Dukascopy…`);
-  const rows = await getHistoricalRates({
-    instrument: sym.toLowerCase(), dates: { from: new Date(FROM), to: new Date() },
-    timeframe: "h1", priceType: "bid", format: "json", volumes: false, ignoreFlats: true,
-    batchSize: 10, pauseBetweenBatchesMs: 500, retryCount: 3, pauseBetweenRetriesMs: 2000,
-  });
+  // One year at a time, one pair at a time: Dukascopy answers 202 (try again)
+  // when hit with many requests at once, so go gently and retry with backoff.
+  const rows = [];
+  const end = new Date();
+  for (let y = +FROM.slice(0, 4); y <= end.getUTCFullYear(); y++) {
+    const from = new Date(Date.UTC(y, 0, 1)), to = y === end.getUTCFullYear() ? end : new Date(Date.UTC(y + 1, 0, 1));
+    for (let attempt = 1; ; attempt++) {
+      try {
+        const part = await getHistoricalRates({
+          instrument: sym.toLowerCase(), dates: { from, to },
+          timeframe: "h1", priceType: "bid", format: "json", volumes: false, ignoreFlats: true,
+          batchSize: 2, pauseBetweenBatchesMs: 1500, retryCount: 5, pauseBetweenRetriesMs: 5000,
+        });
+        rows.push(...part);
+        console.log(`  ${sym} ${y}: ${part.length}`);
+        break;
+      } catch (e) {
+        if (attempt >= 6) throw e;
+        const wait = 15000 * attempt;
+        console.log(`  ${sym} ${y}: ${e.message} — retrying in ${wait / 1000}s`);
+        await new Promise(r => setTimeout(r, wait));
+      }
+    }
+  }
   const c = rows.map(r => ({ t: Math.floor(r.timestamp / 1000), o: r.open, h: r.high, l: r.low, c: r.close }))
-    .filter(x => x.c > 0).sort((a, b) => a.t - b.t);
+    .filter(x => x.c > 0).sort((a, b) => a.t - b.t).filter((x, i, a) => !i || x.t !== a[i - 1].t);
   mkdirSync(".cache/fx", { recursive: true });
   writeFileSync(file, JSON.stringify(c));
   console.log(`  ${sym}: ${c.length} candles, ${new Date(c[0].t * 1000).toISOString().slice(0, 10)} → ${new Date(c[c.length - 1].t * 1000).toISOString().slice(0, 10)}`);
@@ -132,7 +151,8 @@ if (!isMainThread) {
   parentPort.postMessage(out);
 } else {
   const synth = process.argv.includes("--synthetic");
-  const raw = synth ? synthetic() : Object.fromEntries(await Promise.all(E.SYMS.map(async s => [s, await fetchPair(s)])));
+  const raw = synth ? synthetic() : {};
+  if (!synth) for (const s of E.SYMS) raw[s] = await fetchPair(s);      // sequential: be gentle with the feed
   const cfgs = configs();
   const nW = Math.max(1, Math.min(os.cpus().length, 8));
   console.log(`${cfgs.length} configurations × 5 pairs on ${nW} workers…`);
