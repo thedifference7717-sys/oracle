@@ -2171,7 +2171,7 @@
    "id": "2026-10-13:dub",
    "date": "2026-10-13",
    "published": "2026-10-13T21:00:51.891Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 1,
     "NHL": 16
@@ -2247,6 +2247,9 @@
      "sport": "NHL",
      "start": "2026-10-14T03:00:00Z",
      "teams": "SJS vs BOS",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "854c8cdad6e0c0a8551a4087fed863e6c775a1929eb119626056421f796c6d63",
@@ -2280,6 +2283,7 @@
    "fair": -113,
    "price": 116,
    "prob": 0.53,
+   "settled": "2026-10-14T04:22:21.831Z",
    "revealed": {
     "v": 1,
     "hash": "0dc413ce3ba40a8021081a7796ea43d5d1fc94fc79193878f9182c76ed3048d9",
@@ -2294,9 +2298,9 @@
    }
   }
  ],
- "updated": "2026-10-14T03:00:16.266Z",
+ "updated": "2026-10-14T04:22:22.921Z",
  "record": {
-  "w": 8,
+  "w": 9,
   "l": 10
  }
 }
