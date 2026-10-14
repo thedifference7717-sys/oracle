@@ -1,6 +1,6 @@
 # FX Fib Ladder — tuning report
 
-Generated 2026-10-14 02:17 UTC by `scripts/fx-tune.mjs`.
+Generated 2026-10-14 02:34 UTC by `scripts/fx-tune.mjs`.
 Data: histdata.com 1-minute, rolled up to hourly, 2019-01-01 → 2026-10-09, OANDA (New York close) candle timing.
 Costs: round-trip spread per lot (EURUSD 1.2, GBPUSD 1.8, AUDUSD 1.4, USDCHF 1.8, USDJPY 1.4 pips). No swap or slippage.
 Sizing: $400 max at the stop per trade; R = net $ ÷ $400. 12960 settings tried; picked on **2019-01-01 → 2024-07-01** only (≥ 60 trades, positive on ≥ 3 of 5 pairs, then the most profitable years, the least-bad worst year, the most R), then checked on **2024-07-01 → 2026-10-09**, which the pick never saw.
