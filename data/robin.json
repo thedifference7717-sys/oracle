@@ -5257,17 +5257,56 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Freddy Peralta · lineup confirmed",
+     "eventId": "849813",
+     "gk": 849813,
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.62,
+      "spread": 0.03,
+      "ticker": "KXMLBHIT-26OCT132000CLETB-CLESKWAN38-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7092,
+     "pAdj": 0.6782,
+     "player": "Steven Kwan",
+     "playerId": 680757,
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-14T00:00:00Z",
+     "teams": "CLE @ TB",
+     "revealed": {
       "v": 1,
       "hash": "072721b8717f7aaf1f295847f947b95457c9305b9393b7fe6de76b0aeadd6a76",
-      "iv": "f5My9joMTKniMVbJ",
-      "ct": "FVby9UyhPgiUqX2lZ8LMXU6pCPOgslrjZuzZZ5lsUT6c3NmVHFXGwhzGmmpvBMZ82uZYhuC2WMicCj+YCRW8XxUdkb2PRuhVzVxZDoluTGptbkAoPY6kTbwWlvKcWXM20c8EttV7/JZBlMMDgIHCDTHVo/7Fu6O6LCvKwsZ/skPXTxpjL6+KFnCRcgEMhVcqIq5KrNxzICwipcbFYtBORml9mbz8OfAtlHIq1hORWc9C6A6AVnqcXkJSCnJba7GLdl1vYW32rZ19qWjoTY9MfOHcjSCUKrOWIdkzVo0gTvxZGgN9taEPk49sZzpnJmDC3SvZ4xHkkgjdN5qC4E04JcNmXBynyjCapnYITyM9KJWPOln+1MHHQ9NECQ3/E7Pow197H2xdo6EzrXFpTauQ5L/Zg6v/NGbs6+NzhPlqbrhHcTYSCYzX1hPtrHtaW7jsPN76siQ0xz6W4NYs71vF6mdtgAExJC6AaOgR+G8vfRzytXX/EhWnqd9Hf7gRTQNlxilzDGYcnJXaRByNP6BCKOuV1W95LVVGm9x4bibVUzt3vl0kTzlgrPMy9AdaaRAB5Yii0MBvRui+gOkkmbLCexv9Ut7yoJ2TXFsQvpb1e8YdO6tWgrIGruZR/NjezJXXLNTJqbgp0zt9QD+1fvGHfJ4="
+      "salt": "1f020aac6b0714109b966f494529be0d",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-13:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-13T23:42:55.326Z",
+ "updated": "2026-10-14T00:00:49.149Z",
  "record": {
   "w": 63,
   "l": 20,
