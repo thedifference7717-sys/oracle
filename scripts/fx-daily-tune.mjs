@@ -16,7 +16,7 @@ import os from "os";
 const require = createRequire(import.meta.url);
 const E = require("../fx-engine.js"), F = require("../fx-daily.js");
 
-const SPLIT = "2024-07-01", RISK = 500, MIN_IS_TRADES = 150;
+const SPLIT = "2024-07-01", RISK = 500, MIN_IS_TRADES = 150;   // (every-day pool: ≥ 200 trades a year)
 const BIAS = ["none", "prevday", "d1s3", "d1s5", "h4s10", "usd", "ema50", "cot",
               "d1s5+h4s10", "d1s5+cot", "d1s5+usd", "h4s10+cot", "ema50+cot", "d1s5+ema50"];      // "+" = both must agree
 const FIBS = [[0.382, 0.786], [0.382, 1], [0.5, 0.786], [0.5, 0.886], [0.5, 1], [0.5, 1.13], [0.618, 0.886], [0.618, 1], [0.618, 1.13], [0.705, 1.13]];
@@ -33,10 +33,14 @@ function configs() {
       out.push({ bias, entry: "pdh", pdStop, win, exit, minStop });
     for (const win of [[7, 12], [7, 16]]) for (const exit of ["h24", "eod"]) for (const minStop of [5, 10])
       out.push({ bias, entry: "sweep", win, exit, minStop });
+    // Every day, no waiting for a setup: at market at 9:00 New York.
+    if (bias !== "none") for (const stopMode of EVERY_STOPS) for (const pick of ["adx", ...E.SYMS]) for (const exit of ["h24", "eod"])
+      out.push({ bias, entry: "ny9", stopMode, pick, exit, minStop: 10, win: [0, 24] });
   }
   return out;
 }
-const key = c => [c.bias, c.entry === "fib" ? `fib len${c.len} lim${c.lim} stop${c.stop}` : c.entry === "asia" ? `asia stop-${c.asiaStop}` : c.entry === "pdh" ? `pdh stop-${c.pdStop}` : "sweep",
+const EVERY_STOPS = ["atr1.5", "atr2", "atr3", "atr4", "swing6", "swing12"];
+const key = c => c.entry === "ny9" ? [c.bias, "9am-NY market", "stop-" + c.stopMode, "pair-" + c.pick, c.exit].join(" ") : [c.bias, c.entry === "fib" ? `fib len${c.len} lim${c.lim} stop${c.stop}` : c.entry === "asia" ? `asia stop-${c.asiaStop}` : c.entry === "pdh" ? `pdh stop-${c.pdStop}` : "sweep",
   `${c.win[0]}-${c.win[1]}utc`, c.exit, `min${c.minStop}p`].join(" ");
 
 /* ── data ─────────────────────────────────────────────── */
@@ -122,11 +126,20 @@ if (!isMainThread) {
 
   // Pick on the tuning period only: enough trades, then the most money-making
   // years, the least-bad worst year, the most R.
-  const pool = results.filter(r => r.is.n >= MIN_IS_TRADES);
-  const ranked = (pool.length ? pool : results).slice().sort((a, b) => b.upYears - a.upYears || b.worstYear - a.worstYear || b.is.R - a.is.R);
+  const rank = rs => rs.slice().sort((a, b) => b.upYears - a.upYears || b.worstYear - a.worstYear || b.is.R - a.is.R);
+  const setups = results.filter(r => r.cfg.entry !== "ny9"), every = results.filter(r => r.cfg.entry === "ny9");
+  const pool = setups.filter(r => r.is.n >= MIN_IS_TRADES);
+  const ranked = rank(pool.length ? pool : setups);
+  // The every-day trade: needs a trade on most weekdays (≥ 200 a year in the tuning period),
+  // and must actually be a +$1,000-or-−$500 trade — the full target hit at least 20% of
+  // the time — not mostly small closes at the 24-hour mark.
+  const everyPool = every.filter(r => r.is.perYear >= 200 && r.is.tgt >= 0.2);
+  const everyRanked = rank(everyPool.length ? everyPool : every);
   const preps = prepAll(raw, cot);
   const best = evaluate(preps, ranked[0].cfg, true);
   const held = best.oos.R > 0 && best.oos.n >= 20;
+  const ev = everyRanked.length ? evaluate(preps, everyRanked[0].cfg, true) : null;
+  const evHeld = !!ev && ev.oos.R > 0 && ev.oos.n >= 100;
   const d = t => new Date(t * 1000).toISOString().slice(0, 10);
   const isLabel = `${d(first)} → ${split}`, oosLabel = `${split} → ${d(last)}`;
   const usd$ = R => (R >= 0 ? "+$" : "−$") + Math.round(Math.abs(R) * RISK).toLocaleString("en-US");
@@ -142,6 +155,16 @@ if (!isMainThread) {
     `| **Picked** · tuning | ${fmt(best.is)} |`, `| **Picked** · unseen | ${fmt(best.oos)} |`, ``,
     `**Picked:** \`${key(best.cfg)}\` — profitable in ${ranked[0].upYears} of ${ranked[0].nYears} tuning years.`, ``,
     `**Published:** ${held ? "yes — it also made money unseen, so forex.html shows its trade each day." : "**no** — it did not make money on the unseen period."}`, ``,
+    ...(ev ? [
+      `## The every-day trade (at market, 9:00 am New York)`, ``,
+      `A trade every weekday — no waiting for a setup. ${every.length} variations: direction filter × stop (ATR or recent swing; never under 10 pips) × which pair (strongest 4h ADX, or a fixed one) × exit. Picked the same way, on the tuning period only, among those trading ≥ 200 days a year whose full +$${2 * RISK} target hit ≥ 20% of the time.`, ``,
+      `| | trades | per year | full +$${2 * RISK} wins | any profit | total | at $${RISK}/trade | worst run |`, `|---|---|---|---|---|---|---|---|`,
+      `| **Every day** · tuning | ${fmt(ev.is)} |`, `| **Every day** · unseen | ${fmt(ev.oos)} |`, ``,
+      `**Picked:** \`${key(ev.cfg)}\`. **Published:** ${evHeld ? "yes — it also made money unseen." : "**no** — it lost on the unseen period; the alert still sends it each day, marked untested."}`, ``,
+      `| top 10 every-day settings | up yrs | tuning: tr · full · any · R | unseen: tr · full · any · R |`, `|---|---|---|---|`,
+      ...everyRanked.slice(0, 10).map(r => `| \`${key(r.cfg)}\` | ${r.upYears}/${r.nYears} | ${r.is.n} · ${(100 * r.is.tgt).toFixed(0)}% · ${(100 * r.is.hit).toFixed(0)}% · ${r.is.R.toFixed(1)} | ${r.oos.n} · ${(100 * r.oos.tgt).toFixed(0)}% · ${(100 * r.oos.hit).toFixed(0)}% · ${r.oos.R.toFixed(1)} |`), ``,
+      `Every-day variations positive unseen: **${every.length ? (100 * every.filter(r => r.oos.R > 0).length / every.length).toFixed(0) : 0}%**.`, ``,
+    ] : []),
     `## Best by direction filter (ranked on the tuning period)`, ``,
     `| direction | settings | tuning: tr · hit · R | unseen: tr · hit · R |`, `|---|---|---|---|`,
     ...byBias.map(r => `| ${r.cfg.bias} | \`${key(r.cfg)}\` | ${r.is.n} · ${(100 * r.is.hit).toFixed(0)}% · ${r.is.R.toFixed(1)} | ${r.oos.n} · ${(100 * r.oos.hit).toFixed(0)}% · ${r.oos.R.toFixed(1)} |`), ``,
@@ -163,6 +186,12 @@ if (!isMainThread) {
     params: held ? Object.assign({ name: `Daily 2:1 (${new Date().toISOString().slice(0, 10)})` }, best.cfg) : null,
     candidate: best.cfg, key: key(best.cfg), split: { isLabel, oosLabel },
     best: { is: best.is, oos: best.oos }, last: best.last,
+    everyday: ev ? {
+      params: evHeld ? Object.assign({ name: `Every day 2:1 (${new Date().toISOString().slice(0, 10)})` }, ev.cfg) : null,
+      candidate: ev.cfg, key: key(ev.cfg), best: { is: ev.is, oos: ev.oos }, last: ev.last,
+      summary: `${evHeld ? "Held up" : "Untested — lost on the unseen period"}: picked from ${every.length} every-day variations on ${isLabel}; on ${oosLabel}, unseen: ` +
+        `${ev.oos.n} trades, ${(100 * ev.oos.tgt).toFixed(0)}% hit the +$${2 * RISK} target, ${ev.oos.R >= 0 ? "+" : ""}${ev.oos.R.toFixed(1)}R (${usd$(ev.oos.R)}) after spread.`,
+    } : null,
     summary: held
       ? `Picked from ${cfgs.length} one-a-day setups on ${isLabel}; on ${oosLabel}, unseen: ${best.oos.n} trades, ${(100 * best.oos.hit).toFixed(0)}% hit, ${best.oos.R >= 0 ? "+" : ""}${best.oos.R.toFixed(1)}R (${usd$(best.oos.R)} at $${RISK} a trade) after spread.`
       : `No one-a-day 2:1 setup held up: the most consistent of ${cfgs.length} on ${isLabel} made ${best.oos.R.toFixed(1)}R on ${oosLabel} unseen (${(100 * best.oos.hit).toFixed(0)}% hit, needs ~34%).`,

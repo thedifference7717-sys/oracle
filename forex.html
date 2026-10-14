@@ -302,7 +302,11 @@ function toBars(raw){
 
 async function loadRules(){
   try{ const c = await fetchJSON('data/fx-cot.json?t=' + Date.now()); if(c && c.pairs) COT = c; }catch(e){}
-  try{ const d = await fetchJSON('data/fx-daily.json?t=' + Date.now()); if(d){ DAILY = d; DRULES = d.params || d.candidate || null; } }catch(e){}
+  try{
+    const d = await fetchJSON('data/fx-daily.json?t=' + Date.now());
+    // The every-day trade (9:00 New York, at market) when there is one; else the setup-based orders.
+    if(d){ DAILY = d.everyday ? Object.assign({split: d.split}, d.everyday) : d; DRULES = DAILY.params || DAILY.candidate || null; }
+  }catch(e){}
   try{
     const j = await fetchJSON('data/fx-tuned.json?t=' + Date.now());
     if(j){ TUNED = j; if(j.params) RULES = Object.assign({}, E.DEFAULTS, j.params); }
@@ -605,7 +609,7 @@ function renderDaily(){
   $('day-tag').textContent = 'risk ' + usd(risk,0) + ' → target ' + usd(2*risk,0);
   if(!Dd){ $('day-head').textContent = 'Waiting for all five pairs…'; return; }
   const list = SYMS.map(s => Object.assign({sym: s}, Dd.pairs[s] || {}));
-  const pick = Dd.trade || list.map(x => x.trade).filter(t => t && t.pending && !t.forming)[0] || null;
+  const pick = Dd.trade || Dd.next || list.map(x => x.trade).filter(t => t && t.pending && !t.forming)[0] || null;
   const f = (sym, v) => px(v, sym);
   if(pick && !pick.pending){
     const L = dLots(pick.sym, pick, risk), done = pick.how, R = pick.R;
@@ -618,39 +622,41 @@ function renderDaily(){
     const o = pick.both ? pick.both[0] : pick;
     const L = dLots(pick.sym, o, risk);
     $('day-head').innerHTML = '<span class="pill ' + o.dir + '">' + pick.sym + ' ' + (o.dir === 'long' ? '▲ LONG' : '▼ SHORT') + '</span>' +
-      '<span><b>' + (o.kind === 'market' ? 'Signal now' : 'Order working') + '</b> — ' + (o.kind === 'market' ? (o.dir === 'long' ? 'buy at market ~' : 'sell at market ~') : o.kind === 'stop' ? (o.dir === 'long' ? 'buy stop ' : 'sell stop ') : (o.dir === 'long' ? 'buy limit ' : 'sell limit ')) + f(pick.sym, o.entry) +
+      '<span><b>' + (pick.at9 ? 'Today at 9:00 am ET' : o.kind === 'market' ? 'Signal now' : 'Order working') + '</b> — ' + (o.kind === 'market' ? (o.dir === 'long' ? 'buy at market ~' : 'sell at market ~') : o.kind === 'stop' ? (o.dir === 'long' ? 'buy stop ' : 'sell stop ') : (o.dir === 'long' ? 'buy limit ' : 'sell limit ')) + f(pick.sym, o.entry) +
       (pick.both && pick.both.length > 1 ? ' (and the opposite side, whichever trades first)' : '') +
       ' · once filled, close at market ' + (Pm.exit === 'eod' ? 'at the New York close' : '24 hours later') + ' if neither the stop nor the target hits</span>';
     $('day-kpis').innerHTML = dk(pick.sym, o, L);
     $('day-chart').innerHTML = chartSvg(pick.sym, Dd.h1[pick.sym].slice(-72), Object.assign({}, o, {dir: o.dir, hi: pick.hi != null ? pick.hi : o.hi, lo: pick.lo != null ? pick.lo : o.lo}));
   } else {
-    $('day-head').innerHTML = '<span class="pill none">NO TRADE YET</span><span>No pair has a setup today. Orders arm between ' + Pm.win[0] + ':00 and ' + Pm.win[1] + ':00 UTC.</span>';
+    $('day-head').innerHTML = '<span class="pill none">NO TRADE YET</span><span>' + (Pm.entry === 'ny9' ? 'Today\'s trade goes on at 9:00 am New York — it shows here from 2 am ET.' : 'No pair has a setup today. Orders arm between ' + Pm.win[0] + ':00 and ' + Pm.win[1] + ':00 UTC.') + '</span>';
     $('day-kpis').innerHTML = ''; $('day-chart').innerHTML = '';
   }
   $('day-pairs').innerHTML = list.map(x => {
     const t = x.trade, b = x.bias;
-    const mine = t && Dd.trade && t === Dd.trade;
+    const mine = t && ((Dd.trade && t === Dd.trade) || (Dd.next && t === Dd.next));
     const st = !b ? 'no direction yet' : !t ? 'no setup' : t.pending ? (t.forming ? 'Asian range forming' : 'order working')
-      : !mine ? 'skip — not first' : t.how ? t.how + ' ' + rTxt2(t.R) : 'the trade';
+      : !mine ? (Pm.entry === 'ny9' ? 'not picked' : 'skip — not first') : t.how ? t.how + ' ' + rTxt2(t.R) : 'the trade';
     return check(mine ? 'ok' : 'na', '<b>' + x.sym + '</b> · direction: ' + (b === 'both' ? 'either' : b ? (b === 'long' ? '<b class="g">long</b>' : '<b class="b">short</b>') : '—') +
       ' (' + BIAS_NAME[Pm.bias] + ')', st.toUpperCase());
   }).join('');
   const T = DAILY.best;
-  $('day-note').innerHTML = '<p><b>' + (ok ? 'The setup' : 'Untested setup — no daily 2:1 setup held up') + '.</b> ' + DAILY.summary + '</p>' +
+  $('day-note').innerHTML = '<p><b>' + (ok ? 'The setup' : 'Untested — it did not make money on the unseen test period') + '.</b> ' + DAILY.summary + '</p>' +
     '<p><b>Rules:</b> direction from ' + BIAS_NAME[Pm.bias] + '; ' +
-    (Pm.entry === 'asia' ? 'at 07:00 UTC, stop orders at the Asian-session high and low (00–07 UTC), stop at the ' + (Pm.asiaStop === 'mid' ? 'middle of the range' : 'other side') :
+    (Pm.entry === 'ny9' ? 'every weekday at 9:00 am New York, at market, in that direction on ' + (Pm.pick === 'adx' ? 'the pair with the strongest 4h trend (ADX)' : Pm.pick) +
+      ', stop ' + (Pm.stopMode.startsWith('atr') ? Pm.stopMode.slice(3) + '× the 1-hour ATR' : 'beyond the last ' + Pm.stopMode.slice(5) + ' hours\' low/high') + ' (at least ' + Pm.minStop + ' pips)' :
+     Pm.entry === 'asia' ? 'at 07:00 UTC, stop orders at the Asian-session high and low (00–07 UTC), stop at the ' + (Pm.asiaStop === 'mid' ? 'middle of the range' : 'other side') :
      Pm.entry === 'pdh' ? 'stop orders at yesterday\'s high and low, stop at ' + (Pm.pdStop === 'q' ? 'a quarter of yesterday\'s range back inside' : 'yesterday\'s midpoint') + ' (a level already broken at the open is skipped)' :
      Pm.entry === 'sweep' ? 'when an hourly candle pokes past the Asian-session high (low) and closes back inside, sell (buy) at that close, stop just beyond the poke' :
       'after a 1h structure break (swings of ' + Pm.len + '), a limit at the ' + Pm.lim + ' of the breaking move, stop at the ' + Pm.stop) +
-    '; target twice the stop; armed ' + Pm.win[0] + ':00–' + Pm.win[1] + ':00 UTC; ' + (Pm.exit === 'eod' ? 'closed at market at the New York close if neither hits' : 'closed at market 24 hours after the fill if neither hits') +
-    '; stops under ' + Pm.minStop + ' pips skipped. The first fill across the five pairs is the day\'s trade; cancel the others.</p>' +
+    '; target twice the stop; ' + (Pm.entry === 'ny9' ? '' : 'armed ' + Pm.win[0] + ':00–' + Pm.win[1] + ':00 UTC; ') + (Pm.exit === 'eod' ? 'closed at market at the New York close if neither hits' : 'closed at market 24 hours after the fill if neither hits') +
+    (Pm.entry === 'ny9' ? '. One trade a day.</p>' : '; stops under ' + Pm.minStop + ' pips skipped. The first fill across the five pairs is the day\'s trade; cancel the others.</p>') +
     (T ? '<p>Tuning ' + DAILY.split.isLabel + ': ' + T.is.n + ' trades, ' + nf(100*T.is.hit,0) + '% hit, ' + rTxt2(T.is.R) + '. Unseen ' + DAILY.split.oosLabel + ': ' +
-      T.oos.n + ' trades, ' + nf(100*T.oos.hit,0) + '% hit, ' + rTxt2(T.oos.R) + ' (' + signed(T.oos.R * risk, 0) + ' at ' + usd(risk,0) + ' a trade). Break-even is about 34%.</p>' : '');
+      T.oos.n + ' trades, ' + (T.oos.tgt != null ? nf(100*T.oos.tgt,0) + '% hit the full target, ' : nf(100*T.oos.hit,0) + '% hit, ') + rTxt2(T.oos.R) + ' (' + signed(T.oos.R * risk, 0) + ' at ' + usd(risk,0) + ' a trade). Break-even is about 34%.</p>' : '');
 }
 const rTxt2 = r => (r >= 0 ? '+' : '−') + nf(Math.abs(r), 1) + 'R';
 function dk(sym, o, L){
   return '<div class="kpi av"><div class="k">Entry · ' + (o.kind === 'stop' ? 'stop order' : o.kind === 'market' ? 'at market' : 'limit') + '</div><div class="v num">' + px(o.entry, sym) + '</div>' +
-      '<div class="s num"><b>' + lots(L.lots) + '</b> lots · ' + pips(o.dist, sym) + 'p stop</div></div>' +
+      '<div class="s num"><b>' + lots(L.lots) + '</b> lots · ' + pips(o.dist, sym) + 'p stop<br>' + usd(LOT * usdPer(sym, PAIRS[sym].pip, o.entry)) + '/pip per lot</div></div>' +
     '<div class="kpi sl"><div class="k">Stop</div><div class="v num b">' + px(o.stop, sym) + '</div><div class="s num">loses <b>' + usd(L.loss, 0) + '</b></div></div>' +
     '<div class="kpi tp"><div class="k">Target · 2 : 1</div><div class="v num g">' + px(o.tp, sym) + '</div><div class="s num">makes <b>' + usd(L.win, 0) + '</b></div></div>';
 }

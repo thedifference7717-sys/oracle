@@ -20,6 +20,9 @@ const DEFAULTS = {
   bias: "none",      // direction: none | prevday | d1s3 | d1s5 | h4s10 | usd | ema50 | cot
   entry: "fib",      // fib (pullback after a 1h break) | asia (London breakout of the Asian range)
                      // | pdh (breakout of yesterday's high/low) | sweep (Asian high/low swept then reclaimed: trade back in)
+                     // | ny9 (every day: at market at 9:00 New York in the direction filter's way)
+  stopMode: "atr2",  // ny9: stop k × the 1h ATR(14) ("atr2"), or beyond the last N hours' low/high ("swing12")
+  pick: "adx",       // ny9: which pair — the strongest 4h ADX(14) among those with a direction, or a fixed pair
   len: 5,            // fib: 1h swing length for the break
   lim: 0.5,          // fib: limit at this retracement of the breaking move
   stop: 1.0,         // fib: stop at this retracement (beyond the limit)
@@ -34,6 +37,17 @@ const DEFAULTS = {
 // Trading day of time t = the New York-close day it falls in (opens 17:00 NY).
 const dayOf = t => E.bucket(t, D1, "oanda");
 const utcH = t => new Date(t * 1000).getUTCHours();
+const nyH = t => (utcH(t) - E.nyLag(t) + 24) % 24;
+function atr(c, n) {
+  const out = new Array(c.length).fill(null);
+  let a = null;
+  for (let i = 1; i < c.length; i++) {
+    const tr = Math.max(c[i].h - c[i].l, Math.abs(c[i].h - c[i - 1].c), Math.abs(c[i].l - c[i - 1].c));
+    a = a == null ? tr : (a * (n - 1) + tr) / n;
+    if (i >= n) out[i] = a;
+  }
+  return out;
+}
 
 function ema(vals, n) {
   const out = new Array(vals.length).fill(null), k = 2 / (n + 1);
@@ -59,8 +73,10 @@ function prepare(sym, h1, ctx) {
   const d1 = E.aggregate(h1, D1, "oanda"), h4 = E.aggregate(h1, H4, "oanda");
   const days = new Map();                           // day start → [first, last] 1h index
   h1.forEach((b, i) => { const d = dayOf(b.t); const r = days.get(d); if (!r) days.set(d, [i, i]); else r[1] = i; });
-  const e50 = ema(h4.map(b => b.c), 50);
+  const e50 = ema(h4.map(b => b.c), 50), ad4 = E.adx(h4, 14);
   return {
+    atr1: atr(h1, 14),
+    adx4: h4.map((b, i) => ({ T: b.t + H4, v: ad4[i] })).filter(x => x.v != null),
     sym, h1, d1, h4, days: [...days.entries()].sort((a, b) => a[0] - b[0]),
     d1s3: breakDirs(d1, D1, 3), d1s5: breakDirs(d1, D1, 5), h4s10: breakDirs(h4, H4, 10),
     ema50: h4.map((b, i) => ({ T: b.t + H4, dir: e50[i] == null ? null : (b.c > e50[i] ? "long" : "short") })),
@@ -96,6 +112,35 @@ function pairDay(P, dayT, i0, i1, p, bias, live) {
     if (dist < p.minStop * pip) return null;
     return { dir, entry, stop, tp: dir === "long" ? entry + p.rr * dist : entry - p.rr * dist, setupT, hi, lo, dist };
   };
+  if (p.entry === "ny9") {
+    // Every day: at market at 9:00 New York, the way the direction filter points.
+    if (bias !== "long" && bias !== "short") return null;
+    let at = -1;
+    for (let i = i0; i <= i1; i++) if (nyH(h1[i].t) === 9) { at = i; break; }
+    const waiting = at < 0 && live && i1 === h1.length - 1 && nyH(h1[i1].t + H1) <= 9 && nyH(h1[i1].t + H1) >= 2;
+    if (at < 0 && !waiting) return null;
+    const r = at >= 0 ? at - 1 : i1, entry = at >= 0 ? h1[at].o : h1[i1].c;
+    if (r < 24) return null;
+    let dist;
+    if (p.stopMode.startsWith("atr")) dist = +p.stopMode.slice(3) * (P.atr1[r] || 0);
+    else {
+      const n = +p.stopMode.slice(5);
+      let ext = bias === "long" ? Infinity : -Infinity;
+      for (let j = r - n + 1; j <= r; j++) ext = bias === "long" ? Math.min(ext, h1[j].l) : Math.max(ext, h1[j].h);
+      dist = bias === "long" ? entry - ext : ext - entry;
+    }
+    if (!(dist > 0)) return null;
+    dist = Math.max(dist, p.minStop * E.PAIRS[P.sym].pip);   // every day: widen a too-tight stop rather than skip the day
+    let hi = -Infinity, lo = Infinity;
+    for (let j = r - 23; j <= r; j++) { hi = Math.max(hi, h1[j].h); lo = Math.min(lo, h1[j].l); }
+    const o = mkOrder(bias, entry, bias === "long" ? entry - dist : entry + dist, h1[r].t + H1, hi, lo);
+    if (!o) return null;
+    o.kind = "market";
+    const a = lastAt(P.adx4, h1[r].t + H1, "T");
+    o.score = a ? a.v : 0;
+    if (at < 0) return Object.assign({ sym: P.sym, pending: true, at9: true }, o);
+    return Object.assign(finish(P, o, at, p, cost), { score: o.score });
+  }
   let asia = null;
   if (p.entry === "asia" || p.entry === "sweep") {
     let hi = -Infinity, lo = Infinity, n = 0;
@@ -231,18 +276,28 @@ function simulate(preps, params) {
       const t = pairDay(P, d, r[0], r[1], p, bias);
       if (!t) return;
       perPair[P.sym].push(t);
-      if (t.fillT >= busyUntil && (!best || t.fillT < best.fillT)) best = t;
+      if (t.fillT >= busyUntil && better(p, t, best)) best = t;
     });
     if (best) { trades.push(best); busyUntil = best.open ? Infinity : best.exitT; }   // never two at once
   }
   return { trades, perPair };
 }
 
+// Which of two candidate trades is the day's: for ny9 the chosen pair or the
+// strongest 4h ADX; otherwise the first to fill.
+function better(p, t, best) {
+  if (p.entry === "ny9" && p.pick !== "adx") return t.sym === p.pick;
+  if (!best) return true;
+  if (p.entry === "ny9") return t.score > best.score;
+  return t.fillT < best.fillT;
+}
+
 // Today's state for the page: per pair, the order working now or the trade it
-// took today; plus the day's trade (the first fill).
+// took today; plus the day's trade (the first fill) or, for ny9, the one about
+// to go on at 9:00 (next).
 function today(preps, params) {
   const p = Object.assign({}, DEFAULTS, params);
-  const out = { pairs: {}, trade: null };
+  const out = { pairs: {}, trade: null, next: null };
   preps.forEach(P => {
     const last = P.days[P.days.length - 1];
     if (!last) return;
@@ -250,7 +305,8 @@ function today(preps, params) {
     const bias = biasAt(P, p.bias, d);
     const t = pairDay(P, d, i0, i1, p, bias, true);
     out.pairs[P.sym] = { day: d, bias, trade: t };
-    if (t && !t.pending && (!out.trade || t.fillT < out.trade.fillT)) out.trade = t;
+    if (t && !t.pending && better(p, t, out.trade)) out.trade = t;
+    if (t && t.pending && t.at9 && better(p, t, out.next)) out.next = t;
   });
   return out;
 }
