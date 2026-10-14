@@ -51,12 +51,14 @@ const key = c => [c.tf / 3600 + "h", "len" + c.len, c.inLo + "-" + c.inHi, "sl" 
   "adx" + c.adxMin, c.usdFilter ? "usd" + c.usdTf / 3600 + "h" : "nousd"].join(" ");
 
 /* ── data ─────────────────────────────────────────────── */
-let dukaDown = false;
+let dukaDown = false, dataSource = null;
 async function fetchPair(sym) {
   const file = `.cache/fx/${sym}.json`;
+  // scripts/fx-fetch-histdata.py fills the cache first in CI; fall back to
+  // fetching here only when it found nothing.
   if (existsSync(file)) {
     const c = JSON.parse(readFileSync(file, "utf8"));
-    if (c.length && Date.now() / 1000 - c[c.length - 1].t < 7 * 86400) return c;   // re-fetch once a week stale
+    if (c.length > 1000) { console.log(`${sym}: ${c.length} cached hourly candles`); dataSource = dataSource || "histdata.com 1-minute, rolled up to hourly"; return c; }
   }
   let c = null;
   if (!dukaDown) {
@@ -64,6 +66,7 @@ async function fetchPair(sym) {
     catch (e) { console.log(`  Dukascopy failed (${e.message}) — using Yahoo Finance from here on`); dukaDown = true; }
   }
   if (!c) c = await yahoo(sym);
+  dataSource = dataSource || (dukaDown ? "Yahoo Finance hourly" : "Dukascopy hourly bid");
   c = c.filter(x => x.c > 0 && x.h >= x.l).sort((a, b) => a.t - b.t).filter((x, i, a) => !i || x.t !== a[i - 1].t);
   mkdirSync(".cache/fx", { recursive: true });
   writeFileSync(file, JSON.stringify(c));
@@ -213,7 +216,7 @@ if (!isMainThread) {
   const lines = [
     `# FX Fib Ladder — tuning report`, ``,
     `Generated ${new Date().toISOString().slice(0, 16).replace("T", " ")} UTC by \`scripts/fx-tune.mjs\`${synth ? " — **SYNTHETIC DATA, plumbing test only**" : ""}.`,
-    `Data: ${dukaDown ? "Yahoo Finance hourly" : "Dukascopy hourly bid"}, ${first} → ${last}, OANDA (New York close) candle timing.`,
+    `Data: ${synth ? "synthetic" : dataSource}, ${first} → ${last}, OANDA (New York close) candle timing.`,
     `Costs: round-trip spread per lot (${Object.entries(SPREAD).map(([s, v]) => s + " " + v).join(", ")} pips). No swap or slippage.`,
     `Sizing: $${RISK} max at the stop per trade; R = net $ ÷ $${RISK}. ${cfgs.length} settings tried; picked on **${isLabel}** only (≥ ${MIN_IS_TRADES} trades, positive on ≥ 3 of 5 pairs, most net), then checked on **${oosLabel}**, which the pick never saw.`, ``,
     `| | trades | hit | total | R/trade | worst run | net $ |`, `|---|---|---|---|---|---|---|`,

@@ -1,7 +1,7 @@
 name: Tune the FX Fib Ladder
 
 # Replays fx-engine.js (the rules forex.html runs) over years of hourly FX
-# candles from Dukascopy, picks the best settings on the older data, checks them
+# candles (histdata.com, else Dukascopy / Yahoo), picks the best settings on the older data, checks them
 # on the recent data, and commits data/fx-tuned.json (which the page loads) and
 # docs/fx-tune-report.md. Runs here because the sandbox can't reach FX data.
 on:
@@ -11,6 +11,7 @@ on:
     paths:
       - fx-engine.js
       - scripts/fx-tune.mjs
+      - scripts/fx-fetch-histdata.py
       - .github/workflows/fx-tune.yml
 
 permissions:
@@ -37,6 +38,15 @@ jobs:
           path: .cache/fx
           key: fx-h1-${{ github.run_id }}
           restore-keys: fx-h1-
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch FX history (histdata.com)
+        run: |
+          pip install requests==2.32.3
+          python scripts/fx-fetch-histdata.py 2019
 
       - name: Install the Dukascopy client
         run: npm install --no-save --no-package-lock dukascopy-node@1.50.0
