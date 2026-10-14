@@ -5148,11 +5148,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.516 · 2 pts/gm this season (5) · a point in 4 of his last 5",
+     "eventId": "2026020100",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.71,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT13COLDAL-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7376,
+     "pAdj": 0.7202,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-14T00:30:00Z",
+     "teams": "COL @ DAL",
+     "revealed": {
       "v": 1,
       "hash": "b24bb7cad7518d2d2e6c75be35ff0f39704ce7be120c50c5a44e56d9cffc0962",
-      "iv": "tkaEj0PGtbDm0Jg+",
-      "ct": "st9a+7wO8rA9HM0Kggt2Q+BRjI4xC48+w8RXDsRm++w8JDJAWpGjn2h8+wxtEWgzV9BW5fF/oxayfOiebMFiD+7hT99MZE8Y49qIf11pZDGGf9wYyeuY1dn/Aqd2/efKRjjCjqP2miKdXEEeNRjDqJq45asGEH9h6Z6vJKojSqFh+wr2M7YnLlWu9tpK3u9iGksXIy+KZJaN0QZBK1Gn+WAkZkstxSDdoMtNaaJ09lGyOl/4C3xYx5/0u23v1ErQ+zyabroAr2MYACb8QlgwEbUPgiut/PK4dSH4ivgRz6bYN1TL0k80LGO8Xa8dOm986ZZ+OPWZ+ZT909rP+21ERj3IaooYsS0q3a19GEcPFBCPmZBnfK7JJjK6prnPk0bCVEfcd+W986zcaS5AwjpGddKS09/7d1I+slxi69kS29F+Fg/26OPxNWW+1qlgQkGTUf+bhzDZ1V3XQLdtnZbE+ETy0qJhrAV6rKJp9x8+mGnwUMlflXtfFQFyol27Uj9xwPH0bSlxoLBGbVSikQzw2sobOQZdOpx5Nai5Wgwmb9b9SE7pbnwD5ZmDDgwA5/AeZD9sjMwJ0kGuG36wyqMZSLfkPGU/6B902GlrqebUc3p1H3kYGuNlZcrbkzjl0CnCPiSyXXipmhgqMynd8eB4JnqYRjlqK5ebGEM7pBgd+xj3zGjeQt8E4pGr3p9V"
+      "salt": "4aee7a73a686875a632c8fc5d99bc2b9",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-13:robin#1"
      }
     },
     {
@@ -5309,7 +5346,7 @@
    ]
   }
  ],
- "updated": "2026-10-14T00:09:35.120Z",
+ "updated": "2026-10-14T00:30:18.819Z",
  "record": {
   "w": 63,
   "l": 20,
