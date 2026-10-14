@@ -168,10 +168,11 @@ details[open] summary::after{content:' ▴'}
 </div>
 
 <div class="card">
-  <h2>Account <span class="tag">USD account · sizes in standard lots (100k)</span></h2>
+  <h2>Account <span class="tag" id="budget-tag">USD account · sizes in standard lots (100k)</span></h2>
   <div class="setup">
     <div class="field key"><label>Account $</label><input id="in-acct" type="number" step="any" inputmode="decimal" placeholder="100000"></div>
-    <div class="field key"><label>Risk % / trade</label><input id="in-risk" type="number" step="any" inputmode="decimal" placeholder="1"></div>
+    <div class="field key"><label>Total SL $</label><input id="in-sl" type="number" step="any" inputmode="decimal" placeholder="2000"></div>
+    <div class="field key"><label>Split across</label><input id="in-split" type="number" step="1" min="1" max="5" inputmode="numeric" placeholder="5"></div>
     <div class="field"><label>Stop buffer pips</label><input id="in-buf" type="number" step="any" inputmode="decimal" placeholder="2"></div>
   </div>
   <div class="setup" id="tune">
@@ -254,7 +255,9 @@ details[open] summary::after{content:' ▴'}
     <li><b>Targets.</b> Close a third at the <span class="hl">swing extreme</span> (the 0.0) and move the stop to
     break-even; a third at the <span class="hl">−0.272</span>; let the last third run to the
     <span class="hl">−0.618</span>. From the 50% that is roughly 1.3R / 2R / 2.9R before the buffer.</li>
-    <li><b>Size.</b> Risk a fixed percent of the account to the stop:
+    <li><b>Size.</b> One stop-loss budget shared by the five pairs — $2,000 on a $100,000 account split five
+    ways is <span class="hl">$400 a trade</span>, so all five stopping out together costs 2%. Each trade is sized so
+    its stop loses exactly its share:
     <span class="hl">lots = risk $ ÷ (stop distance × 100,000 ÷ quote rate)</span>. That is $10 a pip per lot on
     EURUSD, GBPUSD and AUDUSD; on USDCHF and USDJPY a pip is worth 10 CHF / 1,000 JPY per lot, converted at
     the stop price. Lots round <i>down</i> to 0.01 so you never exceed the risk.</li>
@@ -262,18 +265,20 @@ details[open] summary::after{content:' ▴'}
     lower high inside a down-leg) is that leg's pullback and does not. If price runs back past the swing extreme
     without a valid Step 2, it is a miss — do not chase.</li>
     <li><b>Correlation.</b> EURUSD and GBPUSD (and USDCHF, inverted) often trigger together — they are mostly the
-    same USD bet. Two USD setups the same way at once: halve the risk on each, or take only the cleaner one.</li>
+    same USD bet. The split already caps that at the total budget; if three of them line up the same way, taking
+    only the cleanest one or two keeps you from losing 1.2% on what is one idea.</li>
   </ol>
   <p><b>The ladder is the alternative entry.</b> Instead of waiting for the 15m confirmation, rest limit orders
   from the 0.382 to the 0.618 with sizes ramping deeper, stop at the 0.886, targets spread across the
-  −0.618 → −1.0 — exactly the crypto Fib Ladder, but sized so the whole ladder filled loses your risk
-  percent at the stop, not by margin. It fills more often and earns more per win, and it is wrong more often
+  −0.618 → −1.0 — exactly the crypto Fib Ladder, but sized so the whole ladder filled loses that
+  pair's share of the budget at the stop, not by margin. It fills more often and earns more per win, and it is wrong more often
   because nothing has confirmed the turn.</p>
   <p><b>Data.</b> With no key the page reads Kraken's FX spot books (no sign-up, live while Kraken quotes).
   Add a free <span class="hl">Twelve Data</span> key in Tune for interbank-composite candles; the page then
-  rations calls to stay inside the free daily allowance. Candles are UTC-aligned, so a broker whose 4h bars
-  open on New York close (GMT+2/+3) will show slightly different swings — type yours into the overrides when they
-  disagree. Session hours are fixed UTC and drift an hour with daylight saving.</p>
+  rations calls to stay inside the free daily allowance. Candles are UTC-aligned. OANDA's platforms (MT5 and
+  its TradingView feed on New York-close time) can open 4h bars an hour or so differently, so their swings may
+  differ slightly — when the page's 4h high/low disagrees with your OANDA chart, type OANDA's into the overrides;
+  your chart is the one the stop gets filled on. Session hours are fixed UTC and drift an hour with daylight saving.</p>
 </div></details>
 
 <div class="ft">Planning aid only — it places no orders and cannot see the news calendar or your broker's spread.
@@ -297,7 +302,7 @@ const PIVOT_4H = 3, PIVOT_15M = 2, CONSEC = 3, ZONE_BAND = 0.03;
 const F_IN_LO = 0.382, F_IN_HI = 0.618, F_STOP = 0.886;
 const F_TP_LO = -0.618, F_TP_HI = -1.0;                 // ladder take-profit band
 const TARGETS = [0, -0.272, -0.618];                    // confirmed entry: thirds
-const D = {acct: 100000, risk: 1, buf: 2, legs: 6, ratio: 2};
+const D = {acct: 100000, sl: 2000, split: 5, buf: 2, legs: 6, ratio: 2};
 
 /* ── config ───────────────────────────────────────────── */
 let cfg = {sel: 'EURUSD', tune: false, pairRev: true, tdkey: '', ov: {}};
@@ -305,7 +310,7 @@ function load(){
   try{ Object.assign(cfg, JSON.parse(localStorage.getItem(STORE) || '{}')); }catch(e){}
   if(!PAIRS[cfg.sel]) cfg.sel = 'EURUSD';
   if(!cfg.ov || typeof cfg.ov !== 'object') cfg.ov = {};
-  ['acct','risk','buf','legs','ratio'].forEach(k => { if(cfg[k] != null) $('in-'+k).value = cfg[k]; });
+  ['acct','sl','split','buf','legs','ratio'].forEach(k => { if(cfg[k] != null) $('in-'+k).value = cfg[k]; });
   $('in-tdkey').value = cfg.tdkey || '';
   if(cfg.tune){ $('tune').classList.add('show'); $('tune-btn').classList.add('on'); }
   loadOverrides();
@@ -323,6 +328,9 @@ function val(k){
   const v = parseFloat(cfg[k]);
   return isFinite(v) && (v > 0 || (k === 'buf' && v === 0)) ? v : D[k];
 }
+const split = () => Math.min(5, Math.max(1, Math.round(val('split'))));
+// The stop-loss budget is shared: each pair's trade (or ladder) risks its slice.
+const perTrade = () => val('sl') / split();
 function ovNum(sym, k){
   const o = cfg.ov[sym] || {};
   const v = parseFloat(o[k]);
@@ -658,6 +666,8 @@ function renderChips(R){
 }
 
 function renderAll(){
+  $('budget-tag').textContent = usd(val('sl'),0) + ' ÷ ' + split() + ' = ' + usd(perTrade(),0) + ' a trade · ' +
+    nf(100 * val('sl') / val('acct'), 2) + '% if all stop';
   const R = {};
   SYMS.forEach(s => R[s] = analyze(s));
   renderChips(R);
@@ -741,7 +751,7 @@ function render(A){
   $('steps').innerHTML = S.join('');
 
   // ── the confirmed-entry trade ──
-  const riskUsd = val('acct') * val('risk') / 100;
+  const riskUsd = perTrade();
   const entered = A.entry != null;
   const entry = entered ? A.entry : A.lvl50;
   const sz = sizeLots(sym, entry, A.stop, riskUsd);
@@ -755,7 +765,7 @@ function render(A){
       '<b>' + lotsTxt(sz.lots) + '</b> lots · ' + nf(sz.lots * LOT, 0) + ' units</div></div>' +
     '<div class="kpi sl"><div class="k">Stop · 0.886 + ' + nf(val('buf'),1) + 'p</div><div class="v num b">' + f(A.stop) + '</div>' +
       '<div class="s num"><b>' + nf(stopPips,1) + '</b> pips · risk <b>' + usd(sz.risk) + '</b><br>' +
-      nf(val('risk'),2) + '% of ' + usd(val('acct'),0) + (sz.lots === 0 ? ' · <span class="amb">below 0.01 lot</span>' : '') + '</div></div>' +
+      'share of ' + usd(val('sl'),0) + ' ÷ ' + split() + (sz.lots === 0 ? ' · <span class="amb">below 0.01 lot</span>' : '') + '</div></div>' +
     '<div class="kpi tp"><div class="k">Targets · ⅓ each</div><div class="v num g">' + f(A.tps[2]) + '</div>' +
       '<div class="s num">' + A.tps.map((t,i) => 'TP' + (i+1) + ' <b>' + f(t) + '</b> ' + nf(tpR[i],1) + 'R').join('<br>') + '</div></div>';
   const perLotPip = LOT * usdPerUnit(sym, P.pip, entry);
@@ -949,7 +959,7 @@ function smc(closed, strength, tol){
 }
 
 /* ── wiring ───────────────────────────────────────────── */
-['acct','risk','buf','legs','ratio'].forEach(k => $('in-'+k).addEventListener('input', () => {
+['acct','sl','split','buf','legs','ratio'].forEach(k => $('in-'+k).addEventListener('input', () => {
   cfg[k] = $('in-'+k).value.trim(); save(); renderAll();
 }));
 ['hi','lo','min'].forEach(k => $('in-'+k).addEventListener('input', () => {

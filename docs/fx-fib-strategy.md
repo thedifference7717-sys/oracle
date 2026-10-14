@@ -34,18 +34,22 @@ TP3 at −0.618. From a 50% entry that is ≈1.3R / 2R / 2.9R.
 
 ## Size
 
+One stop-loss budget shared by the five pairs: **$2,000 total on $100,000, split
+five ways = $400 per trade** (2% if every pair stops out). Each trade:
+
 `lots = risk $ ÷ (|entry − stop| × 100,000 ÷ quote rate)`, rounded **down** to
 0.01. $10/pip/lot on the USD-quoted pairs; USDCHF and USDJPY convert at the stop.
 
 ## Ladder alternative
 
 Resting limits 0.382 → 0.618, sizes ramping deeper, stop 0.886 + buffer, targets
-spread −0.618 → −1.0 — the crypto Fib Ladder, sized so the full ladder loses the
-risk % at the stop.
+spread −0.618 → −1.0 — the crypto Fib Ladder, sized so the full ladder loses that
+pair's $400 at the stop.
 
 ## Data
 
 Kraken FX spot (no key) by default; a free Twelve Data key in **Tune** switches to
 interbank-composite candles, rationed to the free tier (selected pair every
 4 min, the rest every 20). Candles are UTC-aligned; broker charts on New York
-close may show slightly different 4h swings — use the overrides.
+close (OANDA's MT5 / TradingView) may show slightly different 4h swings — type
+OANDA's swing high/low into the overrides; that's the chart your stop fills on.
