@@ -64,7 +64,10 @@ if (!process.env.FORCE && !((clk.h === 8 && clk.m >= 45) || (clk.h === 9 && clk.
 }
 
 const daily = existsSync("data/fx-daily.json") ? JSON.parse(readFileSync("data/fx-daily.json", "utf8")) : null;
-const rules = daily && (daily.params || daily.candidate);
+// The every-day trade (9:00 New York, at market) when the tuner has one; else the setup-based orders.
+const every = daily && daily.everyday;
+const rules = every ? (every.params || every.candidate) : daily && (daily.params || daily.candidate);
+const tested = every ? !!every.params : !!(daily && daily.params);
 if (!rules) { await send("⚠️ <b>FX daily 2:1</b>: no tuned settings yet (data/fx-daily.json)."); process.exit(0); }
 const cot = existsSync("data/fx-cot.json") ? JSON.parse(readFileSync("data/fx-cot.json", "utf8")).pairs : null;
 
@@ -96,8 +99,31 @@ const orderLine = (s, o) => {
          `   SL ${fmt(s, o.stop)} (−${$(L.loss)}) · TP ${fmt(s, o.tp)} (+${$(L.win)})`;
 };
 
-const lines = [`📈 <b>FX daily 2:1 — ${clk.wd} ${clk.h}:${String(clk.m).padStart(2, "0")} ET</b>`, `Risk ${$(RISK)} to make ${$(2 * RISK)} · one trade a day`];
-if (!daily.params) lines.push(`⚠️ <i>Untested — no daily setup held up on unseen data. Treat as information, not a signal.</i>`);
+const BIAS = { prevday: "yesterday's candle", d1s3: "daily structure", d1s5: "daily structure", h4s10: "4h structure", usd: "USD trend", ema50: "4h EMA 50", cot: "hedge funds (CFTC)" };
+const why = b => b.split("+").map(x => BIAS[x] || x).join(" + ");
+const lines = [`📈 <b>FX — today's trade · ${clk.wd} ${clk.h}:${String(clk.m).padStart(2, "0")} ET</b>`, `Risk ${$(RISK)} to make ${$(2 * RISK)} · settles within 24h`];
+if (!tested) lines.push(`⚠️ <i>Untested — it did not make money on the unseen test period. Information, not a signal.</i>`);
+lines.push("");
+if (rules.entry === "ny9") {
+  const t = T.trade || T.next;
+  if (!t) lines.push(`No trade today — no pair has a clear direction (${why(rules.bias)}).`);
+  else {
+    const L = lotsFor(t.sym, t);
+    lines.push(`${arrow(t.dir)} <b>${t.sym}</b> at market ${T.trade ? "(on since 9:00)" : "at 9:00 ET"} ~${fmt(t.sym, t.entry)} · <b>${L.lots.toFixed(2)} lots</b>`);
+    lines.push(`   SL ${fmt(t.sym, t.stop)} (−${$(L.loss)}) · TP ${fmt(t.sym, t.tp)} (+${$(L.win)})`);
+    lines.push(`⏱ If neither hits, close at market by ${rules.exit === "eod" ? "5:00 pm ET today" : T.trade ? nyTime(t.closeBy) : "9:00 am ET tomorrow"}.`);
+    if (T.trade && t.how) lines.push(`It has closed: ${t.how} (${t.R >= 0 ? "+" : "−"}${$(Math.abs(t.R) * RISK)}).`);
+    lines.push(`Why: ${why(rules.bias)} points ${t.dir === "long" ? "up" : "down"}${rules.pick === "adx" ? `; strongest 4h trend of the five (ADX ${Math.round(t.score || 0)})` : ""}.`);
+  }
+  const rec = every.best && every.best.oos;
+  if (rec) lines.push("", `Record, unseen ${daily.split.oosLabel}: ${rec.n} trades, ${Math.round(100 * rec.tgt)}% hit the full target, ${rec.R >= 0 ? "+" : ""}${rec.R.toFixed(1)}R (${rec.R >= 0 ? "+" : "−"}${$(Math.abs(rec.R) * RISK)}).`);
+  lines.push(`<a href="${PAGE}">Chart and levels</a> · confirm on your OANDA chart first.`);
+  await send(lines.join("\n"));
+  process.exit(0);
+}
+lines.length = 0;
+lines.push(`📈 <b>FX daily 2:1 — ${clk.wd} ${clk.h}:${String(clk.m).padStart(2, "0")} ET</b>`, `Risk ${$(RISK)} to make ${$(2 * RISK)} · one trade a day`);
+if (!tested) lines.push(`⚠️ <i>Untested — no daily setup held up on unseen data. Treat as information, not a signal.</i>`);
 lines.push("");
 if (T.trade) {
   const t = T.trade, L = lotsFor(t.sym, t);
