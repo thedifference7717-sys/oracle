@@ -1,8 +1,8 @@
 # FX Daily 2:1 — tuning report
 
-Generated 2026-10-14 02:48 UTC by `scripts/fx-daily-tune.mjs`.
+Generated 2026-10-14 03:06 UTC by `scripts/fx-daily-tune.mjs`.
 One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, never two open). Target 2× the stop: **risk $500 to make $1000**, every trade settled within 24 hours (closed at market if neither hits). "Any profit" counts time exits that closed up; "full wins" are the +$1000 target. Break-even ≈ 33% before spread; spread is charged on every trade.
-3920 setups tried. Picked on **2019-01-01 → 2024-07-01** only (≥ 150 trades, then most profitable years, least-bad worst year, most R); checked on **2024-07-01 → 2026-10-09**, unseen.
+4856 setups tried. Picked on **2019-01-01 → 2024-07-01** only (≥ 150 trades, then most profitable years, least-bad worst year, most R); checked on **2024-07-01 → 2026-10-09**, unseen.
 
 | | trades | per year | full +$1000 wins | any profit | total | at $500/trade | worst run |
 |---|---|---|---|---|---|---|---|
@@ -12,6 +12,32 @@ One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, 
 **Picked:** `d1s3 fib len3 lim0.5 stop0.786 7-16utc h24 min20p` — profitable in 5 of 6 tuning years.
 
 **Published:** **no** — it did not make money on the unseen period.
+
+## The every-day trade (at market, 9:00 am New York)
+
+A trade every weekday — no waiting for a setup. 936 variations: direction filter × stop (ATR or recent swing; never under 10 pips) × which pair (strongest 4h ADX, or a fixed one) × exit. Picked the same way, on the tuning period only, among those trading ≥ 200 days a year whose full +$1000 target hit ≥ 20% of the time.
+
+| | trades | per year | full +$1000 wins | any profit | total | at $500/trade | worst run |
+|---|---|---|---|---|---|---|---|
+| **Every day** · tuning | 1365 | 250 | 27% | 40% | +15.0R | +$7,509 | 32.6R |
+| **Every day** · unseen | 589 | 260 | 26% | 36% | -46.7R | −$23,363 | 77.2R |
+
+**Picked:** `ema50 9am-NY market stop-atr1.5 pair-GBPUSD h24`. **Published:** **no** — it lost on the unseen period; the alert still sends it each day, marked untested.
+
+| top 10 every-day settings | up yrs | tuning: tr · full · any · R | unseen: tr · full · any · R |
+|---|---|---|---|
+| `ema50 9am-NY market stop-atr1.5 pair-GBPUSD h24` | 4/6 | 1365 · 27% · 40% · 15.0 | 589 · 26% · 36% · -46.7 |
+| `h4s10 9am-NY market stop-atr1.5 pair-GBPUSD h24` | 3/6 | 1366 · 27% · 40% · 16.4 | 589 · 26% · 37% · -52.6 |
+| `d1s5 9am-NY market stop-atr1.5 pair-GBPUSD h24` | 3/6 | 1334 · 26% · 39% · -31.5 | 589 · 25% · 37% · -51.5 |
+| `prevday 9am-NY market stop-atr1.5 pair-EURUSD h24` | 3/6 | 1345 · 28% · 38% · -25.3 | 580 · 27% · 39% · -2.9 |
+| `ema50 9am-NY market stop-swing12 pair-GBPUSD h24` | 2/6 | 1109 · 20% · 41% · -25.6 | 472 · 17% · 38% · -53.7 |
+| `d1s3 9am-NY market stop-atr1.5 pair-GBPUSD h24` | 2/6 | 1358 · 26% · 38% · -37.7 | 589 · 24% · 35% · -80.2 |
+| `h4s10 9am-NY market stop-atr1.5 pair-AUDUSD h24` | 2/6 | 1360 · 26% · 38% · -65.2 | 588 · 24% · 37% · -61.7 |
+| `usd 9am-NY market stop-atr1.5 pair-AUDUSD h24` | 2/6 | 1348 · 26% · 38% · -75.4 | 588 · 26% · 38% · -40.9 |
+| `prevday 9am-NY market stop-atr1.5 pair-adx h24` | 2/6 | 1422 · 26% · 38% · -78.5 | 589 · 23% · 34% · -93.9 |
+| `d1s3 9am-NY market stop-atr1.5 pair-AUDUSD h24` | 2/6 | 1353 · 25% · 37% · -82.0 | 588 · 23% · 35% · -97.4 |
+
+Every-day variations positive unseen: **6%**.
 
 ## Best by direction filter (ranked on the tuning period)
 
@@ -62,7 +88,7 @@ One trade a day across EURUSD, GBPUSD, AUDUSD, USDCHF, USDJPY (first fill wins, 
 | `d1s5+ema50 fib len5 lim0.705 stop1.13 7-16utc eod min20p` | 4/6 | 183 · 44% · 3.1 | 60 · 42% · 0.9 |
 | `d1s5+usd fib len5 lim0.5 stop0.786 0-24utc h24 min20p` | 4/6 | 171 · 39% · 3.4 | 82 · 28% · -22.9 |
 
-Top 25 still positive unseen: **6 / 25**. All setups with enough trades positive unseen: **8%**.
+Top 25 still positive unseen: **6 / 25**. All setups with enough trades positive unseen: **7%**.
 
 ## The past 50% winners — and what happened next
 
@@ -70,23 +96,23 @@ Every setup with at least 200 trades over the whole history, ranked by hit rate 
 
 | settings | tuning: tr · hit · R | unseen: tr · hit · R |
 |---|---|---|
-| `d1s5+ema50 fib len10 lim0.5 stop1.13 7-16utc eod min20p` | 293 · **49%** (8% full) · -9.8 | 105 · **39%** (6% full) · -14.3 |
-| `ema50 fib len10 lim0.5 stop1.13 7-16utc eod min20p` | 461 · **48%** (8% full) · -17.2 | 154 · **43%** (6% full) · -5.7 |
-| `ema50+cot fib len10 lim0.5 stop1.13 7-16utc eod min20p` | 246 · **48%** (7% full) · -19.5 | 91 · **41%** (7% full) · -6.7 |
-| `h4s10 fib len3 lim0.5 stop0.786 7-16utc eod min20p` | 152 · **47%** (18% full) · 3.0 | 66 · **38%** (18% full) · -3.3 |
-| `ema50+cot fib len10 lim0.382 stop1 0-24utc eod min20p` | 450 · **47%** (8% full) · -17.8 | 181 · **45%** (13% full) · -0.1 |
-| `d1s5+ema50 fib len10 lim0.5 stop1.13 7-16utc eod min10p` | 358 · **47%** (9% full) · -18.3 | 127 · **42%** (9% full) · -8.2 |
-| `cot fib len5 lim0.618 stop1.13 7-16utc eod min20p` | 403 · **47%** (11% full) · -15.0 | 149 · **41%** (8% full) · -12.2 |
-| `ema50+cot fib len10 lim0.382 stop1 7-16utc eod min20p` | 314 · **47%** (8% full) · -15.9 | 122 · **49%** (10% full) · 4.3 |
-| `d1s5+h4s10 fib len10 lim0.5 stop1.13 7-16utc eod min20p` | 291 · **47%** (8% full) · -15.2 | 101 · **39%** (5% full) · -15.2 |
-| `ema50+cot fib len10 lim0.382 stop1 7-16utc h24 min20p` | 296 · **47%** (16% full) · 10.7 | 118 · **46%** (16% full) · 2.2 |
-| `ema50 fib len3 lim0.5 stop0.786 7-16utc eod min20p` | 162 · **47%** (19% full) · 9.9 | 64 · **42%** (19% full) · -0.7 |
-| `d1s5+ema50 fib len10 lim0.382 stop1 7-16utc eod min20p` | 361 · **47%** (7% full) · -26.6 | 128 · **40%** (6% full) · -15.3 |
-| `ema50+cot fib len10 lim0.382 stop1 0-24utc h24 min20p` | 419 · **47%** (15% full) · 16.4 | 172 · **43%** (17% full) · -0.6 |
-| `d1s5+cot fib len5 lim0.5 stop1.13 7-16utc eod min20p` | 368 · **47%** (7% full) · -14.1 | 142 · **44%** (6% full) · -1.3 |
-| `h4s10 fib len10 lim0.5 stop1.13 7-16utc eod min20p` | 411 · **47%** (8% full) · -19.5 | 135 · **40%** (5% full) · -11.9 |
+| `h4s10 9am-NY market stop-atr4 pair-GBPUSD eod` | 1366 · **51%** (0% full) · 3.7 | 589 · **47%** (1% full) · -18.8 |
+| `h4s10+cot 9am-NY market stop-atr4 pair-GBPUSD eod` | 632 · **51%** (0% full) · -2.5 | 261 · **45%** (2% full) · -5.8 |
+| `h4s10+cot 9am-NY market stop-atr4 pair-adx eod` | 1354 · **50%** (1% full) · -38.5 | 568 · **45%** (1% full) · -18.4 |
+| `ema50+cot 9am-NY market stop-atr3 pair-GBPUSD eod` | 621 · **50%** (1% full) · 2.1 | 299 · **45%** (4% full) · -6.7 |
+| `ema50+cot 9am-NY market stop-atr4 pair-GBPUSD eod` | 621 · **50%** (0% full) · -6.1 | 299 · **44%** (1% full) · -8.5 |
+| `ema50 9am-NY market stop-atr4 pair-GBPUSD eod` | 1365 · **50%** (0% full) · -4.0 | 589 · **46%** (1% full) · -19.3 |
+| `d1s5+h4s10 9am-NY market stop-atr4 pair-GBPUSD eod` | 918 · **50%** (0% full) · 3.3 | 396 · **46%** (1% full) · -21.8 |
+| `h4s10 9am-NY market stop-atr3 pair-GBPUSD eod` | 1366 · **50%** (2% full) · 5.3 | 589 · **46%** (4% full) · -24.1 |
+| `ema50 9am-NY market stop-atr3 pair-GBPUSD eod` | 1365 · **50%** (2% full) · 3.6 | 589 · **45%** (4% full) · -20.6 |
+| `h4s10+cot 9am-NY market stop-atr4 pair-AUDUSD h24` | 640 · **50%** (3% full) · 3.3 | 299 · **45%** (2% full) · -19.6 |
+| `h4s10+cot 9am-NY market stop-atr3 pair-GBPUSD eod` | 632 · **50%** (2% full) · 1.4 | 261 · **44%** (4% full) · -9.0 |
+| `d1s3 9am-NY market stop-atr4 pair-GBPUSD eod` | 1358 · **50%** (1% full) · -14.1 | 589 · **46%** (1% full) · -46.4 |
+| `d1s5+ema50 9am-NY market stop-atr4 pair-GBPUSD eod` | 827 · **50%** (0% full) · -2.7 | 366 · **45%** (1% full) · -22.1 |
+| `prevday 9am-NY market stop-atr4 pair-GBPUSD eod` | 1370 · **50%** (0% full) · -18.9 | 589 · **47%** (1% full) · -41.6 |
+| `h4s10+cot 9am-NY market stop-atr4 pair-AUDUSD eod` | 640 · **50%** (0% full) · -11.3 | 299 · **46%** (0% full) · -18.5 |
 
-Setups that won ≥ 50% of trades in the tuning period: **0**; of those, still ≥ 50% unseen: **0**.
+Setups that won ≥ 50% of trades in the tuning period: **7**; of those, still ≥ 50% unseen: **0**.
 
 ## Picked, if each pair traded alone
 
