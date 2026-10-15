@@ -2315,11 +2315,50 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "#1 · vs Robert Gasser · lineup confirmed",
+     "eventId": "849811",
+     "gk": 849811,
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT142000MILLAD-LADMBETTS50-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7294,
+     "pAdj": 0.6981,
+     "player": "Mookie Betts",
+     "playerId": 605141,
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-15T00:00:00Z",
+     "teams": "LAD vs MIL",
+     "revealed": {
       "v": 1,
       "hash": "3341fe90f215f1cb22bbf69a6e74c85d017a8cc8d96a4b9a3c0d2dc9695919b4",
-      "iv": "ZHR/ehM/gSbIipQe",
-      "ct": "2g3D8/DO/i1hnOtVOwH9Duhkvq8VD4orvnsd9hEP1QMxeSGkuxYlx2SNy31o0/bXu15Ra5JEhrarv6YsAIHm2THQcFp66aXGNN+aFCC9W3X21AQanungJkR09alh0XpdpvcO6dnq7pvqUPuk1TRevbDnjrZ6Va2KhVOB8dM0QagtjTSms9mCgxe4vL2tFNo9oqXgGVC+aqOrOg0XlnzW9IfJ0nGTXP6cK1pClWrH+F3WjrIDRbAC1uZdlgCTWy0H8lY7b8HJASaidoHHdrvsjiSO6FR5GpZqc+IKpS+LPIjvB1by7/ev4grQjYeXxsH25213QGYPN/T5uUkEd2wSvBenpvSPkReOQ38XkBP9rhnKsHCMMYz3fS5XLzDAY5JnxyE5W8uS2eAVFbki4rIyOe8lIQ64x/tbnPH/hPY01LA5dOtfYePUuIHKHsQ1wuzmilGzdm/zCOJDyHK7FTeJhQZXaNoGV8pTw/l62LYesr0Cn6Kq6jS2qnIp1kF5MyoofqU2XkNAnTfizpqeCt1asT+b8geac+p6EeuANFrijkkW0qS2XAMP8U1LcTLbcdO6sqa4xHaRoC17SC4l1Zzb8Z4xFaviqwgIL0Vmh6r1EIVMBLx6Qf4IvvuGKA7kTOsWncoT5mwOlFdbGLq0bTiV8DOgBg=="
+      "salt": "3113486931fc87b0b58984c2c95143e1",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-14:dub#0"
      }
     },
     {
@@ -2333,7 +2372,7 @@
    ]
   }
  ],
- "updated": "2026-10-14T22:30:47.635Z",
+ "updated": "2026-10-15T00:00:14.847Z",
  "record": {
   "w": 9,
   "l": 10
