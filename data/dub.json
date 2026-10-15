@@ -2330,6 +2330,9 @@
      "sport": "MLB",
      "start": "2026-10-15T00:00:00Z",
      "teams": "LAD vs MIL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "3341fe90f215f1cb22bbf69a6e74c85d017a8cc8d96a4b9a3c0d2dc9695919b4",
@@ -2423,7 +2426,7 @@
    }
   }
  ],
- "updated": "2026-10-15T00:30:49.689Z",
+ "updated": "2026-10-15T00:54:00.521Z",
  "record": {
   "w": 9,
   "l": 10
