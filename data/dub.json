@@ -2307,12 +2307,6 @@
     "NHL": 2
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "3b8d7ebd07f12bec0601a142cfc2d63480244a93e0abaa52548677103754951d",
-    "iv": "08IbDrKOs9Yjoa1O",
-    "ct": "VAmEFj0/Xa1CScc4ejqDTtSoCLjrfA+8WM4zeN8qGJPvS41HB8VsBEPfQW5hofQTjBKF7di4opR0x4Y8U6inHiHq739/VY+zgeBX1bkdRNoOZYCbXPKF5btnkna30IrrHwB4mGkS3+2hGBYdmBBHbhGtL8kgphLGSBciCxq4+A04bx4pRV7c3qrfzvTcqTBCVAA3uxwhNHWYMCPrbDTdMxsUBg9RLqsOdTlTl9tgn3Urj0AWBGYuzmPlq/abpWlND67xixDdwURoDe1YUuJGLPYOmBuuj+k="
-   },
    "legs": [
     {
      "detail": "#1 · vs Robert Gasser · lineup confirmed",
@@ -2362,17 +2356,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.26 · 1.17 pts/gm this season (6) · a point in 4 of his last 6",
+     "eventId": "2026020107",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.65,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT14DALCOL-COLMNECAS88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6872,
+     "pAdj": 0.6704,
+     "player": "Martin Necas",
+     "playerId": "8480039",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-15T00:30:00Z",
+     "teams": "COL vs DAL",
+     "revealed": {
       "v": 1,
       "hash": "1d7508d228661dacec301ca266db03dcde48dde422f86f4a2e283117bf92536a",
-      "iv": "6vav+YVF960Miu7n",
-      "ct": "901bE5oDQjrgeFvQRwbSLHS6v/kxuIQQwsvR4fVa35NMPt9o2wAHKLEEZhRqskgZ+OYMauA60HIowVd9WwQTimOgLhxFHdx10N4nUeo6FT3Rew0oS2OA6fsJHLHMi/QrwHYQJ9LyBMYM90fdM0cHa3vWtKqLNPyqaszh0rMqBXl25CopCLVrg808rVnQ5XK0iTx+F0NXnSi+FTL7hxDprXg0et0jGvW3akBnvAUGm4RXE1rz7c1nQs31P4REAo5XMO7S87lkaDjVKyNEGfNuxhsD3RqqyojMnJuJBHuYCiSCdwUhgHikwRvSOvdjzW+yHMdxNiC1+gz7BhtB2QCrFgNJ8WL/RZlyD3RJk7AzdVy6aps2mPhFMFwW2ULfeGtbbF7rideN+kD79t+Za3tYejmm6qKLAc1TcrzkKIhICc4md9x4coIplXmUS7EaH/11R+gG8sl1TsHpjGQJMm3bMRLq2B9mjZPd8aPsv6WMCd6rOuCwH+WNT/hloBHULt1fTvqSEqbC8dUYDyAp/L1W7B4co1iTWxYcZx87VA3WNm0tFFk4qT1i79FTzi7YYOYrt2o8rqxfgqr9IZXXOE4c8utkeLpfFKuSnqyVrGkbLiA81rgtDpmFf6jEuaIrIYaSHwWUAa/zPAVLh3LJ/QEqejO/oB9xMLlwaUMnmqGzwGiDOnFvwLU="
+      "salt": "bbf5757bd79f9c865a1301faaa02da04",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-14:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Nathan MacKinnon",
+    "sport": "NHL",
+    "start": "2026-10-15T00:30:00Z"
+   },
+   "fair": -100,
+   "price": 123,
+   "prob": 0.5012,
+   "revealed": {
+    "v": 1,
+    "hash": "3b8d7ebd07f12bec0601a142cfc2d63480244a93e0abaa52548677103754951d",
+    "salt": "9f3ebe17097a48cdbacade66c59bd193",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-14:dub"
+   }
   }
  ],
- "updated": "2026-10-15T00:00:14.847Z",
+ "updated": "2026-10-15T00:30:49.689Z",
  "record": {
   "w": 9,
   "l": 10
