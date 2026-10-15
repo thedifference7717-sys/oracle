@@ -213,5 +213,57 @@
   document.addEventListener("toggle", e => { const d = e.target; if (d && d.matches && d.matches("details.fold[data-k]")) { try { localStorage.setItem("fold." + d.dataset.k, d.open ? "1" : "0"); } catch (x) {} } }, true);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", foldInit); else foldInit();
 
+  // Phone alerts (the engine's scripts/push.mjs). On the owner's own devices
+  // (the picks key is stored) inside the home-screen app, where iPhone allows
+  // notifications: a 🔔 button in the menu subscribes this device and gives a
+  // code to send the bot as /push <code>. Opening the app clears the badge.
+  const canPush = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+  const b64uToBytes = s => { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4)); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+  const toB64u = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  function alertsSheet(code) {
+    const el = document.createElement("div");
+    el.style.cssText = "position:fixed;inset:0;z-index:70;background:rgba(5,8,16,.7);display:flex;align-items:center;justify-content:center;padding:20px";
+    el.innerHTML = `<div style="background:var(--elev,#0E1525);border:1.5px solid var(--orange,#F7931A);border-radius:18px;padding:20px;max-width:440px;width:100%;color:var(--text,#fff);font:15px/1.5 Inter,system-ui,sans-serif">
+      <div style="font-weight:900;font-size:18px;margin-bottom:6px">🔔 One last step</div>
+      <div style="color:var(--muted,#a3abb6)">Send this to the Prop Shop bot in Telegram. Your alerts will then pop up on this device.</div>
+      <textarea readonly style="width:100%;height:96px;margin:12px 0;font:12px monospace;background:#070B14;color:#fff;border:1px solid #1E2A44;border-radius:10px;padding:8px;box-sizing:border-box">/push ${code}</textarea>
+      <button type="button" data-a="copy" style="width:100%;padding:12px;border:0;border-radius:12px;background:var(--orange,#F7931A);color:#120A00;font-weight:900;font-size:15px">Copy</button>
+      <button type="button" data-a="close" style="width:100%;margin-top:8px;padding:10px;border:0;border-radius:12px;background:transparent;color:var(--muted,#a3abb6);font-size:14px">Done</button></div>`;
+    el.onclick = async e => {
+      const a = e.target.dataset && e.target.dataset.a;
+      if (a === "copy") { const t = el.querySelector("textarea"); try { await navigator.clipboard.writeText(t.value); } catch (x) { t.select(); document.execCommand("copy"); } e.target.textContent = "Copied ✓ — paste it to the bot"; }
+      if (a === "close" || e.target === el) el.remove();
+    };
+    document.body.appendChild(el);
+  }
+  P.turnOnAlerts = async function () {
+    try {
+      if (!canPush()) { alert("Open The Prop Shop from its home-screen icon first. iPhone only allows alerts there."); return; }
+      const reg = await navigator.serviceWorker.register("sw.js");
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") { alert("Notifications are off for The Prop Shop. Turn them on in Settings → Notifications → The Prop Shop, then try again."); return; }
+      const j = await fetch("data/push.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null);
+      if (!j || !j.vapid) { alert("Alerts aren't ready on the server yet. Try again in a few minutes."); return; }
+      await navigator.serviceWorker.ready;
+      const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToBytes(j.vapid) });
+      alertsSheet(toB64u(JSON.stringify(sub.toJSON())));
+    } catch (e) { alert("Couldn't turn on alerts: " + e.message); }
+  };
+  function alertsInit() {
+    if (!canPush() || !P.hasKey()) return;
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+    try { if (navigator.clearAppBadge) navigator.clearAppBadge(); caches.open("ps-badge").then(c => c.delete("n")); } catch (e) {}
+    const nav = document.querySelector("#topbar .tabs");
+    if (nav && !document.getElementById("psAlertsBtn")) {
+      const b = document.createElement("button");
+      b.id = "psAlertsBtn"; b.type = "button"; b.className = "navlink"; b.style.border = "0"; b.style.font = "inherit";
+      b.textContent = Notification.permission === "granted" ? "🔔 Alerts on" : "🔔 Alerts";
+      b.onclick = P.turnOnAlerts;
+      nav.appendChild(b);
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", alertsInit); else alertsInit();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && navigator.clearAppBadge) { try { navigator.clearAppBadge(); caches.open("ps-badge").then(c => c.delete("n")); } catch (e) {} } });
+
   window.Pages = P;
 })();
