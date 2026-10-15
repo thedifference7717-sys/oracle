@@ -50,4 +50,10 @@ jobs:
           PUBLIC_DIR: ${{ github.workspace }}/public
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Posting to X by itself (engine/scripts/xpost.mjs); unset = the posts
+          # come to the owner to copy, as before.
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
           TG_PUBLIC: ${{ vars.TG_PUBLIC }}

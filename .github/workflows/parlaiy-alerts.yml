@@ -135,6 +135,12 @@ jobs:
           # Seals each Ladder, Dub and Robin pick until its game starts
           # (engine/scripts/seal.mjs), and encrypts the state.
           PICKS_KEY: ${{ secrets.PICKS_KEY }}
+          # Posting to X by itself (engine/scripts/xpost.mjs); unset = the posts
+          # come to the owner to copy, as before.
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
           # Client channels by tier (engine/scripts/tiers.mjs).
           TG_TIER1: ${{ vars.TG_TIER1 }}
           TG_TIER2: ${{ vars.TG_TIER2 }}
