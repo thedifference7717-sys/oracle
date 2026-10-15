@@ -2301,7 +2301,7 @@
    "id": "2026-10-14:dub",
    "date": "2026-10-14",
    "published": "2026-10-14T22:30:47.635Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 1,
     "NHL": 2
@@ -2379,6 +2379,9 @@
      "sport": "NHL",
      "start": "2026-10-15T00:30:00Z",
      "teams": "COL vs DAL",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "1d7508d228661dacec301ca266db03dcde48dde422f86f4a2e283117bf92536a",
@@ -2412,6 +2415,7 @@
    "fair": -100,
    "price": 123,
    "prob": 0.5012,
+   "settled": "2026-10-15T03:25:01.936Z",
    "revealed": {
     "v": 1,
     "hash": "3b8d7ebd07f12bec0601a142cfc2d63480244a93e0abaa52548677103754951d",
@@ -2426,9 +2430,9 @@
    }
   }
  ],
- "updated": "2026-10-15T00:54:00.521Z",
+ "updated": "2026-10-15T03:25:02.798Z",
  "record": {
   "w": 9,
-  "l": 10
+  "l": 11
  }
 }
