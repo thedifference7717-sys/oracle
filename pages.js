@@ -242,7 +242,10 @@
       const reg = await navigator.serviceWorker.register("sw.js");
       const perm = await Notification.requestPermission();
       if (perm !== "granted") { alert("Notifications are off for The Prop Shop. Turn them on in Settings → Notifications → The Prop Shop, then try again."); return; }
-      const j = await fetch("data/push.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null);
+      // From the repository directly, like the live data: the alerter commits
+      // it and the site only redeploys later.
+      const get = u => fetch(u, { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null);
+      const j = (await get(`https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/data/push.json?t=${Date.now()}`)) || (await get("data/push.json"));
       if (!j || !j.vapid) { alert("Alerts aren't ready on the server yet. Try again in a few minutes."); return; }
       await navigator.serviceWorker.ready;
       const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToBytes(j.vapid) });
