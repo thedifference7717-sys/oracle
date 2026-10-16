@@ -5599,6 +5599,9 @@
      "sport": "NHL",
      "start": "2026-10-15T23:00:00Z",
      "teams": "TBL vs SEA",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "4203e4e9e5fa6ef00dd415572ee12f9a2c2bc4b8d95ff5d2f0aff3e126e54a3f",
@@ -5652,6 +5655,9 @@
      "sport": "NHL",
      "start": "2026-10-15T23:00:00Z",
      "teams": "TOR vs BUF",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "13c71c2e8e22910659640ed9d1362436dcb188f80e11c2cdc68de80867dfa4e4",
@@ -5776,7 +5782,7 @@
    ]
   }
  ],
- "updated": "2026-10-16T01:00:39.084Z",
+ "updated": "2026-10-16T01:53:37.576Z",
  "record": {
   "w": 68,
   "l": 21,

@@ -2433,7 +2433,7 @@
    "id": "2026-10-15:dub",
    "date": "2026-10-15",
    "published": "2026-10-15T16:00:32.812Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 2,
     "NFL": 1,
@@ -2507,6 +2507,9 @@
      "sport": "NHL",
      "start": "2026-10-15T23:00:00Z",
      "teams": "TBL vs SEA",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "3edcba2d789371bc53b2be51b34025de5b2f334e67846a9a3a7de2b3a5bc179d",
@@ -2540,6 +2543,7 @@
    "fair": -139,
    "price": -144,
    "prob": 0.5808,
+   "settled": "2026-10-16T01:53:35.665Z",
    "revealed": {
     "v": 1,
     "hash": "3349597049c6ecb2e0aa196f3b51f6acba113fa8f7ab5f9aceff3210c19cb809",
@@ -2554,9 +2558,9 @@
    }
   }
  ],
- "updated": "2026-10-16T01:00:39.059Z",
+ "updated": "2026-10-16T01:53:37.067Z",
  "record": {
   "w": 9,
-  "l": 11
+  "l": 12
  }
 }
