@@ -5648,17 +5648,61 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#2 · vs SP TBD · projected, 93% to start",
+     "eventId": "849810",
+     "gk": 849810,
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.65,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT152000MILLAD-LADFFREEMAN5-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6983,
+     "pAdj": 0.6779,
+     "player": "Freddie Freeman",
+     "playerId": 518692,
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-16T00:00:00Z",
+     "teams": "LAD vs MIL",
+     "lineup": {
+      "in": true,
+      "slot": 3,
+      "at": "2026-10-16T00:00:48.878Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "39a2da102a9684ddf5fe323cae45641717f7ee06a24f5aec1dc6e32a452a9387",
-      "iv": "Yca+qdFzVLbPBFsp",
-      "ct": "JPfOKZKmBQYYHyseehS3nPEUmKElvopMi1t+wD2gjMy3Avg8GavnSX/2PnDpucrGE1i5Fbno/XZufWb130C9gXfj0cQ+PJiER6+y1gVJgoUHlt09AAVqBQasRku2Yfn3kBdnl4cGJxbWSica3QRBlZEn6U6YfxEMtNQYUq8DR6UhzngICFzhE/3eh8KsgJX53KUcXJrRi8+7buStF9fx4t6CwcrvFgE5zbgZJ3pW6gEGcnHLLkCj9vboRrBDmZ+o+Avico1SMrGCebS8A1UzNFJADaH//12K+AVkAYkwJ15R9z6mG9n3Odf2lyZQQrsMPfnvAbR1vz7nApRSwL61Ej/QAs8ll/7WDCMG+AeYEfBGmxKuKPfqXBUvcfnUictonDgm5QE7xFT3ny5U4m8sbisyv2lYwka3ZCpEd3g5fyzHbY5lDMPOpAHQSHZv4uG6RUYitSP/mJ58rec4R/3HyjfdyobLzjOKxwWt4iUD2qNLiSwlmfZN/9yA1jf/gzgf2Y6KWGVsA6Vsn2AVNEYep5vfxF6pY+WLE9rhbQm+BQD67dLB8aWwMavCIdUE9HcPnI+I1nTLwO9mehkdW54h8POrxv2YR19FnpkGjUpdUwwubpGoK60aZivHUkR+8rL+rGjQ2t9cvePt6ecwr2nPFzXnk1tuuhcfWQ=="
+      "salt": "be803d08c95b3f4c9b8293bf5b102ad7",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-15:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-15T23:00:48.065Z",
+ "updated": "2026-10-16T00:00:48.878Z",
  "record": {
   "w": 68,
   "l": 21,
