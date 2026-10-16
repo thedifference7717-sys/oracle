@@ -5650,6 +5650,9 @@
      "sport": "NHL",
      "start": "2026-10-16T02:00:00Z",
      "teams": "VGK vs CGY",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "1203f45ba3de4e894ce85900bb740fc77ce8d67c46c797030ed6cb4acff68819",
@@ -5822,7 +5825,7 @@
    ]
   }
  ],
- "updated": "2026-10-16T02:20:18.279Z",
+ "updated": "2026-10-16T02:24:32.225Z",
  "record": {
   "w": 68,
   "l": 21,
