@@ -5534,11 +5534,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 2.079 · 2.83 pts/gm this season (6) · a point in 6 of his last 6",
+     "eventId": "2026020117",
+     "kalshi": {
+      "ask": 0.82,
+      "bid": 0.81,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT15UTAEDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8206,
+     "pAdj": 0.8202,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -456,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-16T01:00:00Z",
+     "teams": "EDM vs UTA",
+     "revealed": {
       "v": 1,
       "hash": "a3bda33b15b3d6d9484a4498d888dff7ccc1dfc43d155d5e5de74114fef02c14",
-      "iv": "v8nU48cMfFefIHu6",
-      "ct": "TgRJcnf/yelDVef6mlYEKyyDTtYnjlVhwrDJlyYGSIYI7KIWTWHMn1qHUUOkHrZCrCHJuuMgkRRdzV/Ki1PiVcM4GcjKI+ONEZ2UWVi9bF9t4UCQup3eAmursLtZA488lBfhJRp+fGEubQ1ilIhsuKJnoH6JzGClsvF2Qq58fryi3t8VSZFzdnecx8+TyCLI76ymcNPehATQ6SUdTCy80wMqKmIeflD+EPqLI0uvRkRU1Y2QX/0ZK+aSuDpuXCLm9bb9+C2DM6hjcZOoWrIE0xcBobCSPrWT3F/D5olI4zhgy1eLqrnJpSvCz1JnsO+sjoWnhtrKPDFmHNCQPjcxyG23BK8Eb9p1JwBrMvnGUhUc3iClPRXWn8xYJXhXNMqWRvU7JgMvCl1TNU2mBJECFJQSW/HKzdPo3mNsmSGyumMb2CuNSOLhdbuySJyTI/ExrfE5MT0+dKJIJykMVW/Gpfh673pAE6eheStrqYCBIHTmeMANQolHTIyCelSAWlnmU7QWVnb7H0KFEaJBsuFjOS38fO2EdR3vRBTwsdV/e/oc0hAicL4aHhH4lt/KDwGMadNNUioUnK4HmcK32VxFrf3fem4/JCRwjzF32snuPV3b3tO2nB1mfGPxaKkZxSHTCOIBsa+wmfoOpytQ6dosttBl4Vk9ehboGKZZuvuE2HioPUPqFRt00Nas9H3Y"
+      "salt": "36e4384defeb66d86b1e7469ab907569",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-15:robin#0"
      }
     },
     {
@@ -5739,7 +5776,7 @@
    ]
   }
  ],
- "updated": "2026-10-16T00:15:56.258Z",
+ "updated": "2026-10-16T01:00:39.084Z",
  "record": {
   "w": 68,
   "l": 21,

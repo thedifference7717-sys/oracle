@@ -2077,15 +2077,81 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
+   "detail": "λ 2.079 · 2.83 pts/gm this season (6) · a point in 6 of his last 6",
+   "edge": 0.0005,
+   "eventId": "2026020117",
+   "fromProps": 195,
+   "kalshi": {
+    "ask": 0.82,
+    "at": "2026-10-15T16:00:31.101Z",
+    "bid": 0.81,
+    "spread": 0.01,
+    "ticker": "KXNHLPTS-26OCT15UTAEDM-EDMCMCDAVID97-1"
+   },
+   "line": 0.5,
+   "market": "pts",
+   "need": "to record a point",
+   "p": 0.8206,
+   "pAdj": 0.8202,
+   "pick": "Connor McDavid",
+   "playerId": "8478402",
+   "price": -456,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "to record a point",
+     "pAdj": 0.7305,
+     "pick": "Leon Draisaitl",
+     "price": -270,
+     "sport": "NHL"
+    },
+    {
+     "need": "to record a point",
+     "pAdj": 0.8088,
+     "pick": "Nikita Kucherov",
+     "price": -426,
+     "sport": "NHL"
+    },
+    {
+     "need": "to record a point",
+     "pAdj": 0.6715,
+     "pick": "William Nylander",
+     "price": -203,
+     "sport": "NHL"
+    }
+   ],
+   "sport": "NHL",
+   "start": "2026-10-16T01:00:00Z",
+   "teams": "EDM vs UTA",
+   "revealed": {
     "v": 1,
     "hash": "a020f683101f7da831603bc0306b69344569afbe786299529858fde5210b284a",
-    "iv": "COeTGlXlKZKyErJ1",
-    "ct": "cU3dpNu0+axzBN58r6MebIrmtXGKS0XJb4b16V3M8x0/tCzXV10oGWJs+8CijWspGVecVH2uPrnroc1zkxlLaowxBQ42oaWwcMXaEi/BWQITKY1ecdhIzDTqhoBVjUNsO9zU98fuPCGGKssB0+5P5ChuT7+WRyELKTsxLG71PXF0ppxGrjOGjpNKd3CEKaaCVnfzzb0ZFm5yo4PZX7Z6wk51p27BEJVuVKHUH3axYtcCCyD/cnIDhTrAPcMAiJD5XMOrFJtr9Jp7yODZxYfWa77UqE4/xwVrxXFOMwg1jG5wOUnJc9ZrZrGxFkCePKK1f8xHuKfBQJWY+Y6J/4xIWXOtg9fFk40tJSj7wlu6h/wOoEo+FisiIX85MdnMc07hZEjoJp/UNoYHv5e+xYhKUCWOur0figOm36m3ZFDDAZQdTFkQSPCFZ3X5/bjq108X8S4OHy1gVXYu2CbeQfnPH2Jz4WQOw2IwmrlXOeCMx+D1C8kE/T01nhw6xrm2emSxQXTVMQGg6GHqhfeu0LJfi3a1b1NyH9o0dt+YSGnOPJdbsEKNKgh0pv99UAFe4U5PisDfFjMTHTZN3RdxnMVrTQHaSg7OxY3nPcGakQnuWBDjf6UiD6XxE48LSzI5P5mYR1Us8rCX01yPrqJHHBjfLvUWEwOZfAkd1snxWzdzWkesgsK1Click2bQHZBuoD6vgHwcG2tLja3i1Lu0BCkl9dkuJsKYYtqI7qjviN4Ldz9XX38oevbYF5Nb6qWt37T+ySUNmUtChG1/Du2pCNiBr99xV3zZcOBGzDwvRQBtFT/LOAe+WzcZvkHKJ20LQVqt/49aj2Vl+ri2jz0wo9JGkdPO5zF/GN/Df3/cdLnQjBK28Uhsk+fPG9EW+xyr6Q5E/Qn7ISTHQsK+0acMmqL2niS2/QKcFfNz8r+K5ugBgdCrZMakOUuNrHy8AdzTVMJmZKhqcE6B0zNsXV46lPTzgo35AoUYEUBQQd8TfGWFYS7hGQXzBY2msbgBz159dj1B0izCG2vsNSCLjtkoiH9QMs7rAgjDDdO9lyepGLg4+UxTBlnEx7eXTq0maj6kxdLCsrLc7NtcAqkG07ZF8MYf0s3YVUsLqo7DS509I0zvVntNPybWJ8Ev1Sq4IFHZ4O90l7ORfgK3k+iO2AY3Bxb8WLOIcQ=="
+    "salt": "364311ddb3bed82c495234699853b6e9",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "fromProps",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "sport",
+     "start",
+     "teams"
+    ],
+    "ctx": "2026-10-15:ladder"
    }
   }
  ],
- "updated": "2026-10-15T16:00:31.104Z",
+ "updated": "2026-10-16T01:00:39.040Z",
  "state": {
   "account": 208.94,
   "base": 42.13,
