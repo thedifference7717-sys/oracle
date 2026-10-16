@@ -5797,6 +5797,9 @@
       "slot": 3,
       "at": "2026-10-16T00:00:48.878Z"
      },
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "39a2da102a9684ddf5fe323cae45641717f7ee06a24f5aec1dc6e32a452a9387",
@@ -5825,7 +5828,7 @@
    ]
   }
  ],
- "updated": "2026-10-16T02:24:32.225Z",
+ "updated": "2026-10-16T03:08:41.830Z",
  "record": {
   "w": 68,
   "l": 21,
