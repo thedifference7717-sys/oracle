@@ -5488,7 +5488,7 @@
    "id": "2026-10-15:robin",
    "date": "2026-10-15",
    "published": "2026-10-15T16:00:32.812Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 2,
     "NFL": 1,
@@ -5746,6 +5746,9 @@
      "sport": "NFL",
      "start": "2026-10-16T00:15Z",
      "teams": "SEA @ DEN",
+     "result": "won",
+     "actual": 50,
+     "note": "50 receiving yards against a 14.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "69b46e898edffadc2b05c43d8e0e05f65efa7c40134e73d77a7b83348dd797b7",
@@ -5825,22 +5828,64 @@
       "ctx": "2026-10-15:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 3,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 3,
+      "back": 5.705,
+      "pl": -9.295
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 1,
+      "back": 2.604,
+      "pl": -17.396
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 0,
+      "back": 0,
+      "pl": -15
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-16T03:18:06.128Z"
   }
  ],
- "updated": "2026-10-16T03:08:41.830Z",
+ "updated": "2026-10-16T03:18:06.850Z",
  "record": {
-  "w": 68,
-  "l": 21,
+  "w": 71,
+  "l": 24,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 344,
-   "l": 423
+   "w": 348,
+   "l": 476
   },
   "days": {
    "w": 11,
-   "l": 5
+   "l": 6
   }
  }
 }
