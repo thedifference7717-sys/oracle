@@ -5640,11 +5640,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "WR · sim median 22 receiving yards",
+     "eventId": "401872995",
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.64,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26OCT15SEADEN-SEACKUPP10-15"
+     },
+     "line": 14.5,
+     "market": "recYds",
+     "need": "15+ receiving yards",
+     "p": 0.7136,
+     "pAdj": 0.6529,
+     "player": "Cooper Kupp",
+     "playerId": "2977187",
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-16T00:15Z",
+     "teams": "SEA @ DEN",
+     "revealed": {
       "v": 1,
       "hash": "69b46e898edffadc2b05c43d8e0e05f65efa7c40134e73d77a7b83348dd797b7",
-      "iv": "1rUof5+BqCioAdkj",
-      "ct": "tA7oy0Yo580qOijLsN2P6fTguWnUHwQEoQF7giCx0QNE1iCqvEwsrvjjjVgE7VHisMhlDa1tEAQ7pacQ86PEeLdrBPsZm9hZXFBrJ/3AOqRXar/wogUwzXbZOgiYHyWiFrSAJtaW2XUVowkBbWx8014w5vUnRJQ5e6dy8p0BMkt2W07ES9Et4tQv0QtaeeO696EF4yHEHR5oW3g2By3HFMhyZYAbzUcI985DE0yD2W0s0X82y9nXiI6wF9lP6LQOtgwMWhMhLQ1Kv25dsRuGpd4B3yBGHSYn15UDB9qPLw2/ySpVuNPrV3wGXJ26e0MD2h5v/Y6o07RUyO7/VN7DUh8NyE60DbmuwnrqDnBsRfYJGOCMCbwFEVYi1koaXkjHsLiPLU1a5n7EQVnMe3v2EhlM83/rt8H+b92acpQ4C0jTwKdL3+uWY8yDbD0/udsh1NiayKLxJn535G+/tLjs8jGcRE3r/GfAnN98uHrC1igvv8DxtBo0oAapdoRduHcw1yDmZFEpJjZqGLYk7jMvzYPmjAMkuWWYk3D8HlRBbi5CDD8pokPo7WtGkpxhaYKj48pykilOio+hZKEDAmXzL6pQsDpPriPOuFbteRNjTlwlRNbUcTt3b1YNVjolyKFbVx8GU2WSL9FoJg=="
+      "salt": "27d0ea08e452e5821c32fe50a3f81e49",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-15:robin#4"
      }
     },
     {
@@ -5702,7 +5739,7 @@
    ]
   }
  ],
- "updated": "2026-10-16T00:00:48.878Z",
+ "updated": "2026-10-16T00:15:56.258Z",
  "record": {
   "w": 68,
   "l": 21,
