@@ -2247,9 +2247,30 @@
     ],
     "ctx": "2026-10-16:ladder"
    }
+  },
+  {
+   "id": "2026-10-17:ladder",
+   "date": "2026-10-17",
+   "status": "open",
+   "published": "2026-10-17T16:00:44.840Z",
+   "cycle": 10,
+   "rung": 2,
+   "seed": 42.13,
+   "stake": 51.37,
+   "games": {
+    "MLB": 1,
+    "NHL": 14
+   },
+   "seal": 1,
+   "sealed": {
+    "v": 1,
+    "hash": "5ced763f843d6821a23d625eabae96f220d4c5fda236d404307ade5f1ae58635",
+    "iv": "5dnzSnUsrIkUrFK+",
+    "ct": "Jcf4Eb/SC8dg2XUMSCKSnH43fY/9jlgzLogHuLhR7V6YAi3ZaZbMrm5UrgYLB7WTI3XBGoRlnu2YESNSfDRi9dP/iAhe4rqECfI3lMM+eW7Jo+vCb1syc8JFBqzB/K2YyrOU96PvajdW2FonDk8PeHinLIhxMRhtqyP8xycAUh0gOTGrca8TA/gxyKZf65/W6Duch6LfTmdw7R1RGPNmnehoW6vYALGN3vsoewZt5TzxJ4bWt5jtWEP0Q6fsR1tKO8iiXIEqKsWUyWheRJEYi3d8EwzEqSLO0TqXS8aVR5zIVioo0aSHHWjp1/b21iRoDV2Z8J1GteSEgaoBa/N5aVo5HhNJycmliQ49AMYcsZJXkoyOORe9bLt0da5IXD7vVbxCpwzpecLS4jaXidi02S1S4ppoFUV7knDXNbfnzmaKh0PcaSVpeAqGb2zEHWe2k71vpDvBZziQDJbCF5ewtbfAVRftHEz7O++7fFcKrcZqnQvUo/v1ERpsPKrxl+WLHPrSZVeeGY+F047D53PEtgEXlHQ44IgX1/2qVH81FNWwG53yBIVhi03+FanZ4AdK+GhN2daDIqS3vjF/nX5w3arnhEFUCPHE7e45KZIqPx8REQ6i08tD6YnVnjvxHNIze4ASTamvIcMzVQzYt5s/OHy99puS/J5ffiCl6EuoOFrbygKgB0I9a8WSLn3JD3m9++ERxFKtRORipRJkO1iWhMwpMOcfs/W/YK/kSgYVBdQZKeAvOws4pijK6+uFuX143gqSmnH+L5tOQ58cwD7FiHta3PuMBY+WkrLR2SyylCNGQQWj8iR017N2M7EP9QHmUHyIa2ZjY1Wgt+u7Zkqyh4iqcyGCfd+Qh7ft1b2BxtAI7aw+XqiBVSCQtBy6XDXNAAWa8hIontu+OMDkEw5JM5RQhOkmoyRLIwP3LwhhUWORyuTyCnJUviIAQgsGmFK54+duCr0FbOKTHnXK63IDSQ/cyZqjLAWL8zqHbaINRD1QBakHFufQh5ZvbAsb0KeDEhfM+vgvIIAnt/SQXk1HZlRn6k/n112DPKo3PY5Osc7zVZIiaLlYcVx12S/2KUUzCQ58BTINvi7wUvX1loXVRNrEusL+UOprQqhEK9Y2IrTFA7dnWwRpbUDlyzsldKL0EgX+0lSmliMB7vhHeFs="
+   }
   }
  ],
- "updated": "2026-10-17T10:00:26.153Z",
+ "updated": "2026-10-17T16:00:44.844Z",
  "state": {
   "account": 208.94,
   "base": 42.13,
