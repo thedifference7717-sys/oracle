@@ -5960,6 +5960,9 @@
      "sport": "NHL",
      "start": "2026-10-17T20:00:00Z",
      "teams": "TBL vs VAN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "a918bf73691a54ce0a80f1e4c66b28dfcb7d4afbb4e89992ab38bf385c357fab",
@@ -6056,7 +6059,7 @@
    ]
   }
  ],
- "updated": "2026-10-17T20:00:29.760Z",
+ "updated": "2026-10-17T21:12:41.556Z",
  "record": {
   "w": 71,
   "l": 24,
