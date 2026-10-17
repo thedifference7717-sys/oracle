@@ -6032,6 +6032,9 @@
      "sport": "NHL",
      "start": "2026-10-17T19:30:00Z",
      "teams": "WPG vs CAR",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "25ab04869695879d307b5ccee93736eb8ba3e81c7cf0c922859069399cc4ba67",
@@ -6059,7 +6062,7 @@
    ]
   }
  ],
- "updated": "2026-10-17T21:12:41.556Z",
+ "updated": "2026-10-17T22:21:21.646Z",
  "record": {
   "w": 71,
   "l": 24,
