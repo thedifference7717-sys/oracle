@@ -2567,19 +2567,50 @@
     "NHL": 2
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "aafef0fbeed876c15b217e08e3254594f50d05ffd213885d34220d9215fbdcd4",
-    "iv": "vX0s2XpJlBijdGUM",
-    "ct": "bWwYgI0ysZANyf9pZ0EmgaV6+yDC241APOa9UDwqxaPgGBQ8mF6ipPH/aM4mRdmy8BjbQThoBFrOzagduqqqGXYtyQr9gvHh/kDM/wQpHI5ydGKHfOLL1uvrtR1lCg3U37xCC0GfTmwRr75eqNLlgo6QztFNPBU8G0A016TwrdQePUCjOpFnfV4owmO00CtOmmVjF+6AdYTbBGyHJ+iIRInDNer4If8PguXr9izmcHlsDGFyEidIFoSpsoqz1uvR1/+w/cTVPGGm1JCO34aSGhSMJmFSrekp"
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.721 · 1.71 pts/gm this season (7) · a point in 5 of his last 7",
+     "eventId": "2026020119",
+     "kalshi": {
+      "ask": 0.81,
+      "bid": 0.8,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT16PITCOL-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7716,
+     "pAdj": 0.8088,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -426,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-17T01:00:00Z",
+     "teams": "COL vs PIT",
+     "revealed": {
       "v": 1,
       "hash": "e7043d6567e4edaeb22c974d56d35e676e84b66148664e431450aa486d3456ac",
-      "iv": "YBfMbYZCNS8LSX3S",
-      "ct": "JOxBbTMJgYVWEZdJaX87WEussOwjiaMlO7skd+aYTgtyhnnJYVIaL54ORssHpYzk2ukFPwzFQmA+aINTPvbYq0SAkAqb/4w5gf4R8Qz+GrctEKmHi4L2USxCodX1yPCpHI0Yi+V1Ri4ZQqVBs1y1Yz5V3ehlxjOBG2myEfViqJ8PgwVyop2z4eg0SwTTY46frZ8eURW4YybPTkK6HW2YXpcGAYsDL7Zo6l+yX9dU0Bkm6qMnGqJx55FKUELKB5pV7COZgoIz332Xq25RqTlv4ZjPOtTsvciooICbRZQFGmNt3EZyBgYrfWQ/KF47zuHys7SotZaPd7aWAQm+HOCHymS/r7jcf0WAT4hggBzp/LV0WnFIY5XTwgF2hZ3tlaX1Ebsc0JsrGUvqfbXPfyjyoLcjcsDsXST3VN7oCH/4gDtaUMXTFoh/c+KY+vY0FT/Ka+2Ju5wT1jdncGDzDfX9cRzfSMnVvUktRAkDUFxZ6yKWurFmZ0fD5yuAX7lDOuBfXFqFRtSMr//hIkR6loeVvdH6xrii9Ps5Ge4KCzIjHrJoCfkbg2V3iSA2knbnS5LqJKl5bNKg26AkPlHzIWQXIpJSCr6gOnNBSpBT8iE6p/5XENJhf+AufiFmOECggePRCA0RG2HAiJ8uKETqkhNmFQjeFii+SJnzlJ4x4lQbKxfjgyPZ98DQMX5q2ux6VA=="
+      "salt": "4476d074b5fc500ebfbec86dcc62a2f7",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-16:dub#0"
      }
     },
     {
@@ -2624,10 +2655,30 @@
       "ctx": "2026-10-16:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Chandler Simpson",
+    "sport": "MLB",
+    "start": "2026-10-17T00:00:00Z"
+   },
+   "fair": -126,
+   "price": -146,
+   "prob": 0.5583,
+   "revealed": {
+    "v": 1,
+    "hash": "aafef0fbeed876c15b217e08e3254594f50d05ffd213885d34220d9215fbdcd4",
+    "salt": "1bca4982d65f0d1e823a3b6b4ce64677",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-16:dub"
+   }
   }
  ],
- "updated": "2026-10-17T00:00:28.170Z",
+ "updated": "2026-10-17T01:00:43.666Z",
  "record": {
   "w": 9,
   "l": 12
