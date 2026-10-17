@@ -57,7 +57,7 @@
 
 <script src="build-check.js"></script>
 <script src="pages.js?v=5"></script>
-<script src="dub-stake.js"></script>
+<script src="dub-stake.js?v=2"></script>
 <script>
 const P = window.Pages;
 let dubs = null, ladder = null, lockAt = null;
@@ -70,7 +70,7 @@ let myOdds = P.store.get("dub.odds", {});          // day -> the parlay price yo
 // here still wins on this phone.
 let fills = null;
 const sentOdds = d => fills && fills.dub && fills.dub[d] && fills.dub[d].price != null ? fills.dub[d].price : null;
-const oddsOf = b => myOdds[b.date] != null ? myOdds[b.date] : sentOdds(b.date) != null ? sentOdds(b.date) : b.price;
+const oddsOf = b => myOdds[b.date] != null ? myOdds[b.date] : sentOdds(b.date) != null ? sentOdds(b.date) : b.settledPrice != null ? b.settledPrice : b.price;
 let stake = 0;                                     // today's, from the chain
 const chainNow = () => window.DubStake.chain(dubs && dubs.bets, bankroll, { priceOf: oddsOf });
 

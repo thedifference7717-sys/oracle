@@ -90,7 +90,7 @@ const roiColor = pl => pl > 0 ? "var(--green)" : pl < 0 ? "var(--red)" : "var(--
 function flat(bets) {
   let w = 0, l = 0, pl = 0;
   for (const b of bets) {
-    if (b.status === "won") { w++; pl += P.dec(b.price) - 1; }
+    if (b.status === "won") { w++; pl += P.dec(b.settledPrice != null ? b.settledPrice : b.price) - 1; }   // settledPrice: a leg voided
     else if (b.status === "lost") { l++; pl -= 1; }
   }
   return { w, l, pl, staked: w + l };
@@ -178,7 +178,7 @@ function render() {
       lines.push(`🪜 ${markOf(l.status)} ${who} <span style="color:var(--dim)">${P.odds(l.price)}</span>`);
     }
     if (du && du.status !== "noplay") {
-      lines.push(`✌️ ${markOf(du.status)} ` + du.legs.map(g => `${markOf(g.result)} ${g.player}`).join(" + ") + ` <span style="color:var(--dim)">${P.odds(du.price)}</span>`);
+      lines.push(`✌️ ${markOf(du.status)} ` + du.legs.map(g => `${markOf(g.result)} ${g.player}`).join(" + ") + ` <span style="color:var(--dim)">${P.odds(du.settledPrice != null ? du.settledPrice : du.price)}</span>`);
     }
     if (r && r.status !== "noplay") {
       lines.push(`🐦 ` + r.legs.map(g => `${markOf(g.result)} ${g.player}`).join(", "));
