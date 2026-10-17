@@ -5972,17 +5972,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.282 · 1.57 pts/gm this season (7) · a point in 6 of his last 7",
+     "eventId": "2026020122",
+     "kalshi": {
+      "ask": 0.62,
+      "bid": 0.59,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT17CARWPG-WPGKCONNOR81-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.692,
+     "pAdj": 0.6219,
+     "player": "Kyle Connor",
+     "playerId": "8478398",
+     "price": -163,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-17T19:30:00Z",
+     "teams": "WPG vs CAR",
+     "revealed": {
       "v": 1,
       "hash": "25ab04869695879d307b5ccee93736eb8ba3e81c7cf0c922859069399cc4ba67",
-      "iv": "IU1DjVigCJfrWQWA",
-      "ct": "ZrsjiDE8XLCm5r5oPSzx/cf2lZqCwcW6gn7lsWQ02YVEaRoIFQo8i3yEKobyHC1AL6NicDU4L91Cit004W1v9DF3McOHKYXZJOviaVgUE5GaUwFUwrlk4RoMWab11YeYmc1ZtPJ8x3yBHGhYE2hrVF75kyLAViHHG3HdqKqD32UOdgfVXnVRhk+aIJX+3BBX6dTRvPtsrRoYOlwDreADmftjv2kDtXcOASrKbv/DjHZ8k2iIG83RMx+Dgy/71L1e0NENfcY10j5IO/pMO0v3ya+RJV4vfH0irqlW1VjfRP2a2fOBYYTMS3Z2qclxMtmoSqdisW6UDpFgRfO4aVUZsImkn9VZr7r7WFZvlDVIF8JBk/kVbjjxEN9Wn2EXn+iRxIPXyPKpl9QRSQ5QcFL+rrKEhONLt8SdIs+sQFCRWzoyaMaO1bKl+k/k81ickJNPB8hfnd3MFpGeIYaH/M6Rx3tk0tVj62DpaXu1tdp4MGvj74vYC5PcatJtwUIlochr3o1O2QjG+UOMu9mnSzXfbLPqyVVEvOsiRowBguCq19XeRaA0FA0bunJbCKMlIkJEEJsrTPX5ICQbgY3cH1Z6IUlTWTrpKbq5rJlxYyWz1NA1ERERfUssuxK/Tmgz9SE/P3ffAYP/9TjTKijn3MhAHlADgw6jjFq8yiUYLO+iAVegjAQu4oyRQg=="
+      "salt": "afc6e05d333029f954fa960bb270234e",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-17:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-17T16:00:48.040Z",
+ "updated": "2026-10-17T19:30:08.458Z",
  "record": {
   "w": 71,
   "l": 24,
