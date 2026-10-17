@@ -332,7 +332,7 @@ async function j(p) { try { const r = await fetch(p, { cache: "no-store" }); ret
     const s = b.seed > 0 ? b.seed : seed[b.cycle] || last || b.stake; last = s;
     u += (b.status === "won" ? b.stake * (dec(b.price) - 1) : -b.stake) / s; }
   set("sRec", `${w}–${l}`); set("sU", sgn(u), cls(u)); set("pL", `${w}–${l}`); set("pLu", sgn(u), cls(u));
-  let dw = 0, dl = 0, du = 0; for (const b of db) { if (b.status === "won" && b.price != null) { dw++; du += dec(b.price) - 1; } else if (b.status === "lost") { dl++; du -= 1; } }
+  let dw = 0, dl = 0, du = 0; for (const b of db) { const px = b.settledPrice != null ? b.settledPrice : b.price; if (b.status === "won" && px != null) { dw++; du += dec(px) - 1; } else if (b.status === "lost") { dl++; du -= 1; } }
   set("pD", `${dw}–${dl}`); set("pDu", sgn(du), cls(du));
   let rw = 0, rl = 0, ru = 0, rt = 0; for (const b of rb) { for (const g of b.legs || []) { if (g.result === "won") rw++; else if (g.result === "lost") rl++; } for (const z of (b.graded && b.graded.sizes) || []) { ru += z.pl || 0; rt += z.tickets || 0; } }
   // The Robin plays every ticket: its return is units over tickets staked.

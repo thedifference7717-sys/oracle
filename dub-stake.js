@@ -27,7 +27,7 @@
   function chain(bets, bankroll, opts) {
     const o = opts || {};
     const pct = o.pct != null ? o.pct : PCT, gain = o.missGain != null ? o.missGain : MISS_GAIN;
-    const priceOf = o.priceOf || (b => b.price);
+    const priceOf = o.priceOf || (b => b.settledPrice != null ? b.settledPrice : b.price);   // settledPrice: a leg voided
     const start = +bankroll > 0 ? +bankroll : 100;
     let balance = start, stake = r2(start * pct), why = "10% of the starting bankroll";
     const rows = [];
