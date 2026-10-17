@@ -5940,11 +5940,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.742 · 1.14 pts/gm this season (7) · a point in 5 of his last 7",
+     "eventId": "2026020123",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.74,
+      "spread": 0.05,
+      "ticker": "KXNHLPTS-26OCT17VANTB-TBNKUCHEROV86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7748,
+     "pAdj": 0.7895,
+     "player": "Nikita Kucherov",
+     "playerId": "8476453",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-17T20:00:00Z",
+     "teams": "TBL vs VAN",
+     "revealed": {
       "v": 1,
       "hash": "a918bf73691a54ce0a80f1e4c66b28dfcb7d4afbb4e89992ab38bf385c357fab",
-      "iv": "WxrhB56fH7K+zD6f",
-      "ct": "hU2DR3XwCeCqU8oK87w0IZWdavO8InZ5vEFmufE03T7c1Ar50Cm8nztabM+BpFTkIZflYYsi6/ZboXcUe5dUVEXlRYvgIIAStf6mrwrPbr0WJ+WrHd8L+hzBr3iCaIlZaeUh6BQ7X6/wMI0cNScv+PnlM/v/Hx132a9ailKdm7zy25ONA40W8mfo9vVRDppRl7EJELEQoeORtGkxXTB+kwFTK7Aa0En8RiL2daZojlBsGpbttAd78Qm30NRlLDaKqZ0ygOzvDmd+UzMU7nbejrNGsHZAUX0to/VVDQyzeSIThui7SOuJH6TOWIAfsfmtia9PrnXsQFBMnAEjiWzXPBIO8NxRCYXFjndoyC4TnPeuXgG11m7SogpdZ3hwER2yfhirFi2F9tzBpN9RcawK7RjPmpATwOAHKUFwa+RsMHpI4lP+Mu4jHrBePjyFOgPgjRCUkVqCoJHgbaBtgefnAmnLpVi09tNHdnhlbGWM0UWYJM6s2pxlBtEbOejPpOc08THQ7tnbX1/72KJ7wU5CYeiniOf6FGe+Qji9kGQlj2DM2CLJhI2vy4sS02XJN/oShbm/fL8HkY3XX4NoEl3bfAAalTuUmZl87Im0XgwcSEyCU3NwlgQuwW0f7VsAsorfY3wLXPv41I6dZrU4dLoxpOc1QA8V33PtAgtLaOgvnaVl00rD1bbhSiGvjfBb"
+      "salt": "373281064a631d790060a0058853f57f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-17:robin#1"
      }
     },
     {
@@ -6019,7 +6056,7 @@
    ]
   }
  ],
- "updated": "2026-10-17T19:30:08.458Z",
+ "updated": "2026-10-17T20:00:29.760Z",
  "record": {
   "w": 71,
   "l": 24,

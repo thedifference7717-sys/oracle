@@ -2703,11 +2703,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.742 · 1.14 pts/gm this season (7) · a point in 5 of his last 7",
+     "eventId": "2026020123",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.74,
+      "spread": 0.05,
+      "ticker": "KXNHLPTS-26OCT17VANTB-TBNKUCHEROV86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7748,
+     "pAdj": 0.7895,
+     "player": "Nikita Kucherov",
+     "playerId": "8476453",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-17T20:00:00Z",
+     "teams": "TBL vs VAN",
+     "revealed": {
       "v": 1,
       "hash": "e15296ea40b36f09933aefd09dc229f085b5cca41d5dd2987240037b7c1b8129",
-      "iv": "pBDNzIiHPO70TV+z",
-      "ct": "mRLY744IGENF8u5WxjjKInG3M19+IPnPEMhzQhmbuQHx6adxFn+zRLfq1gd0fF2G+r4nhc16NSP9Tji1Wrz44ZB78cyt0x65g63WEaO0vjP+NGZtQGqWq9AT+NuhHDr2wTlwiP122tJr2yOoME9EzWag9o4WeQG5ukj5lte8iYeHdaAtU6JaUnHSILpfy6t37et27o0p3QswXCcXY2175Msi5sTGSNmH4vuChUSqh5rJp3YxxRdopb1hQjnCDZkIrvPnqnKSmju3Vt7UEZ0wOBOipSzEiWW2AObNjFT1ny2j4ZuYfFythdlqZstNhRFlQNzr7xuDTsAipwYrLlH3lhEWL7Vh5yUExv0cMjYYRUo+dNNbFL9DppjsP89ApuDpiy8QvYuJVmyKYYPzQJ0PS0iw2SH1sx9aPGp15iV8H/Ios2+ZAUOLHwlapgxNNi1tn9lxMzY2IaJ+ykvuUVmPKUqrBmKGDD+P5/TFRYK5OhOnZZfhl/fFFaydV5pyUdNzVUFTFOQTklc/z/6ysYS06FWVS4xCGnrzeHT58RXCkPDd5g0puDVXTAHUh/fv3KGuKJOLEXcPb1h6vUKTGBDbkPgkCEbUVF04xeQGdl710ONMy+mUn0QkeqJOO85b+lh5awYv8RyVAZOQnQO+k68Kiog8yhNkQA3RlxuQ+u20piVO4034ey/m8ZvoHA=="
+      "salt": "73634a158f5c830add7ec39cfcd4c4e6",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-17:dub#0"
      }
     },
     {
@@ -2721,7 +2758,7 @@
    ]
   }
  ],
- "updated": "2026-10-17T16:00:46.973Z",
+ "updated": "2026-10-17T20:00:29.737Z",
  "record": {
   "w": 10,
   "l": 12
