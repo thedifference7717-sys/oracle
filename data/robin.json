@@ -6016,6 +6016,9 @@
      "sport": "NHL",
      "start": "2026-10-17T23:00:00Z",
      "teams": "MTL vs BUF",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "623c91762a6f928b97f3cef6f631bd4142bdf3c74fbf60ee600748ffb7d799ac",
@@ -6136,7 +6139,7 @@
    ]
   }
  ],
- "updated": "2026-10-17T23:00:33.005Z",
+ "updated": "2026-10-17T23:39:36.099Z",
  "record": {
   "w": 71,
   "l": 24,
