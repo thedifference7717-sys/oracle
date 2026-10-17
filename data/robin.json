@@ -5996,19 +5996,93 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.357 · 1.29 pts/gm this season (7) · a point in 5 of his last 7",
+     "eventId": "2026020126",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.61,
+      "spread": 0.08,
+      "ticker": "KXNHLPTS-26OCT17BUFMTL-MTLNSUZUKI14-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7074,
+     "pAdj": 0.691,
+     "player": "Nick Suzuki",
+     "playerId": "8480018",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-17T23:00:00Z",
+     "teams": "MTL vs BUF",
+     "revealed": {
       "v": 1,
       "hash": "623c91762a6f928b97f3cef6f631bd4142bdf3c74fbf60ee600748ffb7d799ac",
-      "iv": "38wbW0aYk4Ifr8rq",
-      "ct": "77WkdXDBvvYaBmJnqkvWRDsL2m1AvDIY4bc4fGGFeaJvp0Lr8wTh3JYIOKgIZs/DH+cB70SVCXP7kJ8KauXYBq5euO0u+4XUOsF+zAwPn6cLYMwZZCDjcAD93n4/DcnFbBgdpf/DweKXllUwtiRRheQGRMMIbjYX1QFW7xDx8RJ3g05i/804rqwgDzjY0/1jXea0vSMHdPBJMcIznZ3+nt7/VunGVpu8JUEbTf1eHotMA6saqr03jzJ3eZ72YXVTMHQu8/edmjWSL/ky456Bk/WCekgn8HyY+G3fw8sIuAXIRvmZ19Ao4y1+749UkJhC2zOiW2UYCDphS9j66YleAfEXeHrBxf8aJOk0qjn2ODcpGof+YrWals49hv33EkU3dudBQBgS3N4JRayO/aw97qeid5dltoIJWdkt8voMavwqLwweC3QNQ5BIUf4W597zsy+bDSQy8wlQb74SvGwUY5u9Af9XZf9lkWzow4h6+i8RkVcC58hXyTtmrQ3pS4gyomh2jC4kaLslssLZMN0dY0DzyMjf1IU8Qe4pCGOx5SEyZCa8eigqCllB/40mJYJZ0hgZtou3V3mj0KoLcSFrKL8s8sc+obTpUrXHzpvX9lMgN5LZoF3LW5z9KOb202nPW3Pcky6OKfCzvsgF9L7LpvDOW1IBNdjvR/4K0MHr5FpZQIX/c2edCA=="
+      "salt": "7977f14cd2fac35d7a91117a9029d945",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-17:robin#3"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.342 · 1.5 pts/gm this season (8) · a point in 5 of his last 8",
+     "eventId": "2026020125",
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.62,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT17NYITOR-TORWNYLANDER88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7043,
+     "pAdj": 0.652,
+     "player": "William Nylander",
+     "playerId": "8477939",
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-17T23:00:00Z",
+     "teams": "TOR vs NYI",
+     "revealed": {
       "v": 1,
       "hash": "7d1bcc6d92a79c58e65c1fe36a7659369fa3ba84018acbeb2eed0719eab88fef",
-      "iv": "dEjZ5u3dy/vOP8p0",
-      "ct": "QXF372j2GxtFqs2bsKPRmtRUJ7d8xzXceVVVEszXrrH75ZaEBoVfDvzulCk02mWBP/cgShRMpaoTtX7cBVRt9GxSQWk8wfhRLjBzeYHaEk9FMSvSYrMZ7whszVgIbb2Zx5rfNxgeqwKKADo2dhOtbrzKyHLn2r5mai3gtXWaPDnSPk0w1TU+9wbTR3yG9CAfUPdNN2Gj+aORcnz6a/mp7/N9koP1mcJ4B8JrAkuiL9VXBO47B3VqwNHuHp/MUjzlNnJqoLojYZHO3YD78PGegQGwmKW92hpMP11ALPmSu9JP/l37GvEA05sQ91qaM4hX2vwX01w3caxdh6ir5VBAzEZXeGK8bBMtVz/oDvihrgxI5CKyonvHKzcxYIhdPuPci8/ubRXec1G+5wifZnOKDZphxzJRBfkMLeUIXzsASouHAvMLJ4a36JNflcFHJugm3pwCnsLDFu7CliNZcV1VOuIvmC2pf0Oy9uNrVkzUHWCSjh8bRux7OvBppdvn4cVUniX3WAUrwFEzB4Xfc0SLlao0tM+rt7xzv1BfvzcXVes9yEMmnFJyeqsQqO4WM7Wd4zUm0Cg1cLPDR4YsBg/XLD/wKcXhHJ8JIRkC7ExXF1a36hcamaGmChOpunMAVxuyK3YE1G1ryYpgoAgIaEVjWeBh9Tcahdgjkt0yySEfkbgUv6PqDYEhrdXA4nkC0w=="
+      "salt": "e1bf4bf5ae7006b58617adc2324df466",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-17:robin#4"
      }
     },
     {
@@ -6062,7 +6136,7 @@
    ]
   }
  ],
- "updated": "2026-10-17T22:21:21.646Z",
+ "updated": "2026-10-17T23:00:33.005Z",
  "record": {
   "w": 71,
   "l": 24,
