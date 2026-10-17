@@ -2630,6 +2630,9 @@
      "sport": "MLB",
      "start": "2026-10-17T00:00:00Z",
      "teams": "TB @ CLE",
+     "result": "void",
+     "actual": null,
+     "note": "game not played",
      "revealed": {
       "v": 1,
       "hash": "75279724ad7a8dd3d5dc6842c733a118354ad362198f3c6b93b26bb96a2a8e37",
@@ -2678,7 +2681,7 @@
    }
   }
  ],
- "updated": "2026-10-17T01:00:43.666Z",
+ "updated": "2026-10-17T01:11:54.183Z",
  "record": {
   "w": 9,
   "l": 12
