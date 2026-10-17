@@ -2561,7 +2561,7 @@
    "id": "2026-10-16:dub",
    "date": "2026-10-16",
    "published": "2026-10-16T23:00:16.345Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 1,
     "NHL": 2
@@ -2589,6 +2589,9 @@
      "sport": "NHL",
      "start": "2026-10-17T01:00:00Z",
      "teams": "COL vs PIT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "e7043d6567e4edaeb22c974d56d35e676e84b66148664e431450aa486d3456ac",
@@ -2667,6 +2670,7 @@
    "fair": -126,
    "price": -146,
    "prob": 0.5583,
+   "settled": "2026-10-17T01:31:40.759Z",
    "revealed": {
     "v": 1,
     "hash": "aafef0fbeed876c15b217e08e3254594f50d05ffd213885d34220d9215fbdcd4",
@@ -2681,9 +2685,9 @@
    }
   }
  ],
- "updated": "2026-10-17T01:11:54.183Z",
+ "updated": "2026-10-17T01:31:42.168Z",
  "record": {
-  "w": 9,
+  "w": 10,
   "l": 12
  }
 }
