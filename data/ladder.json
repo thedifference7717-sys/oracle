@@ -2167,15 +2167,87 @@
     "NHL": 2
    },
    "seal": 1,
-   "sealed": {
+   "detail": "#3 · vs Shawn Armstrong · lineup confirmed",
+   "edge": 0.037,
+   "eventId": "849817",
+   "firstPitch": "2026-10-17T00:00:00Z",
+   "fromProps": 40,
+   "gk": 849817,
+   "kalshi": null,
+   "line": 0.5,
+   "market": "hit",
+   "need": "to record a hit",
+   "p": 0.7703,
+   "pAdj": 0.7507,
+   "pick": "Chandler Simpson",
+   "playerId": 802415,
+   "posted": true,
+   "price": -275,
+   "priceSource": "assumed",
+   "runnersUp": [
+    {
+     "need": "to record a point",
+     "pAdj": 0.8088,
+     "pick": "Nathan MacKinnon",
+     "price": -426,
+     "sport": "NHL"
+    },
+    {
+     "need": "to record a hit",
+     "pAdj": 0.7282,
+     "pick": "Yandy Díaz",
+     "price": -275,
+     "sport": "MLB"
+    },
+    {
+     "need": "to record a point",
+     "pAdj": 0.6608,
+     "pick": "Martin Necas",
+     "price": -194,
+     "sport": "NHL"
+    }
+   ],
+   "slot": 3,
+   "sp": "Shawn Armstrong",
+   "sport": "MLB",
+   "start": "2026-10-17T00:00:00Z",
+   "startProb": 0.985,
+   "teams": "TB @ CLE",
+   "revealed": {
     "v": 1,
     "hash": "a18ee3c33e206214a03f7cf5f14a7c9d15de0bd8ec24765a1698e92bd8ca7904",
-    "iv": "7FOpVl9kUnJQ/Ttv",
-    "ct": "OErjdOYTSoQ3S9r0lZYXGZKD4Iky9XvV1nsTAXgtcCgjNL6rY9Bt8sQJVZlr7Lb2IRlXgSj4qbB1Y3CHf4QAbxTqr373rELkuJVM8vv2WEa01AFMU6xeJ+c2bDAlSkM4RiPPqWrzc4cBPtky6Mkuca5lU2Vi8Ta+EkrrohXo1DnCs3PcfWCA/Gy17/PONCfVEqau+TQkEthPFQ1BNwWsUTokBNw6+h4nTRvN76l+zJS22Vx908mjMKwpKBP2kQJHaybhUEExSR1sqmC5XCH47cbTwxEdz/tJqU5cf3rVDT/x8QpOlw1Ar6LXIzu5QiUIuDectStqQ9ZjXr73Cm/Fl1kEtnHNahXGG//rgtG4xDJhRlEqXxilUFJBLBFSBZ7IorZyb45/X/KTwttHjE+N920GUZmyE97cwFp06rYZpJRbRSRhBAqLjEZIwe9BKk4z2vz0supuB2visTorIvbxnfxEShKPg42SiqpNrXjZmgT/Jb2espk+59Vcorg+9uQebkHfR4v3+uW25Klup7QXVeWjmOPEm5EiVK/W57ZOdnJkD6KTzH/9Q68eeZOg1MtePDBLEXL/JAg8DZk1rp2EREMEy+arsI01R9Arvr5FS71AJe6cKIuH13kTXJXp8pWeR+1+ePfWXaf0RuO9lnPzevZF3QhoS6Xkb9vs7HQ3GWtnRBUJuLyBR7yIIA8JN9bu4aYpAwh4PHsf8+QSMUJRt1a/ojL7BYazV65Q9dBYJnBJBjtADiL0fXm1O5k2oGRxEjMQlexm7PAIEL85gKYnnQ8LWchOvTsCv/ND2zqp3bwTWC2ozSVdlL0vLargVeF+AGOwdoWBq1jIlb/6u3wDBQmd26+oWFhbyzAs7fnTR4KDpzv2LeYzy7LqgVxzBvHqKR8AQREw3o/k1qDU1Aq4ATkTxsyHG1cwUjma6AhZOgkKqpzczQ3nZRkMO+wl1rNWAU7+byvte7E/BGcOdAYtrr0/YyrTQujmoCPyQFFXiM9VfPQw3nYP1QgpRbhGkORpL8K+o/g5qA9cvF7ibQ0Ddr6T0N/giynHZwEiA432R4buSEy4nErljZPl4/pjWaTdLlZ8PeAdM4qCnr7euVKKoh2hiQVp"
+    "salt": "ea11ef455f0e81f1b094f0bf2edf4d44",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "firstPitch",
+     "fromProps",
+     "gk",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "posted",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "slot",
+     "sp",
+     "sport",
+     "start",
+     "startProb",
+     "teams"
+    ],
+    "ctx": "2026-10-16:ladder"
    }
   }
  ],
- "updated": "2026-10-16T23:00:14.449Z",
+ "updated": "2026-10-17T00:00:28.146Z",
  "state": {
   "account": 208.94,
   "base": 42.13,

@@ -2583,17 +2583,51 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Shawn Armstrong · lineup confirmed",
+     "eventId": "849817",
+     "gk": 849817,
+     "kalshi": null,
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7235,
+     "pAdj": 0.7282,
+     "player": "Yandy Díaz",
+     "playerId": 650490,
+     "price": -275,
+     "priceSource": "assumed",
+     "sport": "MLB",
+     "start": "2026-10-17T00:00:00Z",
+     "teams": "TB @ CLE",
+     "revealed": {
       "v": 1,
       "hash": "75279724ad7a8dd3d5dc6842c733a118354ad362198f3c6b93b26bb96a2a8e37",
-      "iv": "qrhOn9+v273Rdelp",
-      "ct": "ig/bcgGXHWBrzbOGVD7HYq+RpQxzLXqb3fUk8FI1oxaX813GQtQyPlAGtVMlBINqDhlmF1n2R2axg9zj4J62UNTMRVsVkPhdgKSf+zh1f7xwxmjOVDp7Nx2ps7x7dzVufFLvHvszKoMJ3IFaBkzpiRZ7VB4SRnxfVKkr4c8KQPahfUkpz2ljJAFPNGa5fL2of4O9sK7Cv+eI2QO3uYiILXKd5k80Uoocp/chDCxXr7FWgNYUDyFfC2y6Ukb0FNp6SNXmexcEFTUqB9m9NmZ1Qf8MMjduZJO+xTGOTWXt8nP9m2N/iQ7w2IBQ9WAH8syKLN0GS9sEzofzYEt5Fn46mLpa31/54J/tlOwpOoxQS9fXlFJftaoS7rS2UQhHoQsf0D7S3i17Ea9Pxy9ra4hI+g0kX/xBNT4I2yQFYOquUAnTjhi0WW/WZKDoAUzTT6LvFMCeiHghNgHF64918hXfpZeNcJiZl7wb772upoFUr/DfZTAdUeNptWJ6Um7OyP8WBJeeQ4E//gNFwHSEWY8Z619kibKJ6p/F9TE8Mqbb"
+      "salt": "ec34ce51150d721a06493e4090682b53",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-16:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-16T23:00:16.346Z",
+ "updated": "2026-10-17T00:00:28.170Z",
  "record": {
   "w": 9,
   "l": 12
