@@ -6527,6 +6527,9 @@
      "sport": "NFL",
      "start": "2026-10-18T17:00Z",
      "teams": "NYG vs NO",
+     "result": "lost",
+     "actual": 152,
+     "note": "152 passing yards against a 174.5 line",
      "revealed": {
       "v": 1,
       "hash": "f877462c041b849225236b5067ca99e87c4f3915c3e3b7a75f2b24c12ed444e2",
@@ -6554,7 +6557,7 @@
    ]
   }
  ],
- "updated": "2026-10-18T20:25:07.895Z",
+ "updated": "2026-10-18T20:27:24.280Z",
  "record": {
   "w": 75,
   "l": 26,
