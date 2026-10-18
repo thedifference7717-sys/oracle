@@ -2341,7 +2341,7 @@
   {
    "id": "2026-10-18:ladder",
    "date": "2026-10-18",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-18T12:30:45.851Z",
    "cycle": 10,
    "rung": 3,
@@ -2399,6 +2399,9 @@
    "sport": "NFL",
    "start": "2026-10-18T17:00Z",
    "teams": "BAL @ CLE",
+   "actual": 153,
+   "result": "153 passing yards against a 124.5 line (graded early, 20+ clear)",
+   "settled": "2026-10-18T19:05:12.901Z",
    "revealed": {
     "v": 1,
     "hash": "7654b093753d55174d769aa8132c2270ab565f5c9b7c41a025d4236ecb31a7ef",
@@ -2427,12 +2430,12 @@
    }
   }
  ],
- "updated": "2026-10-18T17:00:24.884Z",
+ "updated": "2026-10-18T19:05:12.904Z",
  "state": {
   "account": 208.94,
   "base": 42.13,
-  "stake": 65.03,
-  "rung": 3,
+  "stake": 89.12,
+  "rung": 4,
   "cycle": 10,
   "pl": 108.94,
   "cycles": {
