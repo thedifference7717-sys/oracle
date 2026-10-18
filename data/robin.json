@@ -6389,6 +6389,9 @@
      "sport": "NFL",
      "start": "2026-10-18T20:25Z",
      "teams": "LV vs BUF",
+     "result": "won",
+     "actual": 258,
+     "note": "258 passing yards against a 224.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "80976db4a4ac7e9c823d7bafb320f6a870bb81658bbd97fdb517eba3375aae8a",
@@ -6557,7 +6560,7 @@
    ]
   }
  ],
- "updated": "2026-10-18T20:27:24.280Z",
+ "updated": "2026-10-18T22:58:09.815Z",
  "record": {
   "w": 75,
   "l": 26,
