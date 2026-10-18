@@ -6405,6 +6405,9 @@
      "sport": "NFL",
      "start": "2026-10-18T17:00Z",
      "teams": "CAR @ PHI",
+     "result": "won",
+     "actual": 225,
+     "note": "225 passing yards against a 199.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "99cfd7ae74346d41faedbb7b4cf933fae1bfe5e7a672f92cda138a1f9640056a",
@@ -6477,7 +6480,7 @@
    ]
   }
  ],
- "updated": "2026-10-18T19:05:14.690Z",
+ "updated": "2026-10-18T19:29:42.300Z",
  "record": {
   "w": 75,
   "l": 26,
