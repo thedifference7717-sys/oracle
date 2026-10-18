@@ -6064,6 +6064,9 @@
      "sport": "NHL",
      "start": "2026-10-17T23:00:00Z",
      "teams": "TOR vs NYI",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "7d1bcc6d92a79c58e65c1fe36a7659369fa3ba84018acbeb2eed0719eab88fef",
@@ -6139,7 +6142,7 @@
    ]
   }
  ],
- "updated": "2026-10-17T23:39:36.099Z",
+ "updated": "2026-10-18T01:39:00.739Z",
  "record": {
   "w": 71,
   "l": 24,
