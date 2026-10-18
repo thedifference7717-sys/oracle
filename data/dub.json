@@ -2842,17 +2842,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 319 passing yards",
+     "eventId": "401873005",
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.65,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT18BUFLV-LVKCOUSINS8-225"
+     },
+     "line": 224.5,
+     "market": "passYds",
+     "need": "225+ passing yards",
+     "p": 0.8169,
+     "pAdj": 0.666,
+     "player": "Kirk Cousins",
+     "playerId": "14880",
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-18T20:25Z",
+     "teams": "LV vs BUF",
+     "revealed": {
       "v": 1,
       "hash": "a7d2f3f26ee0dc9192ba0fa3d791e6ed8af24c3eb18654cc50b121b80619cb4c",
-      "iv": "xT8Uv8QyhlbZo87l",
-      "ct": "bmoGPvJGFS3OICrE8vFlwvLm5OjWE+sxOU8+lTPK0XFKsF3tN1rl86VpPXVmWACklAIgy4QZxfoYQfnKCojwatS04Gw0djcbY62xH+MEW9dx/2JrCl1gct9Y6uTL3tp9Z6K30VWDuI/zRsZNgvhaP6QNM8wUakeMicxBWSZXW8KAarjLELW5U3GzcJ/rD7X2TmqbHDfze0mRtbWJD0EaTyFVWZlFOuc0sdzE5oQAjb3MYMp/t96wWYBk2KcwpGcoJA/n4csO95BngjLbjWkqjWIRrIPu9omSpeknXx1l9ei95YLkdRKOP4Xl3ZO1o8uta/jmqOymIrayeyTLK74riDx/fNv3qKqbwI+Tb1Nm5kyA9SbmF9gX3KYFGDdfc8RNuaRjE4akyMe+IkiuOcCXSDQjl1mR/2EuuHsQjmydlWlkN5MKmlDRPGCThdGhJkgp9I1FBUX0+0Ox6pOuttLPWwLiijSh9P+tf9V1KUtrxA02aW1mYFCbvk5+AVLiWk3n93DaX8sGa5waFnwFkom89z8DGQsZh/hbHtPBzIupmbf0URF9Wo9ZqBBU+jK1YZQZdGQIpEe2NAwpWJRFvf0hNID9RGXW9e8jzEGeMQTPefxwC5OsjwzQ0vSdtep20AVOHscrV8ZuLOE="
+      "salt": "b16ec2202eb8d266f73bb06ca2195541",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-18:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-18T12:30:47.481Z",
+ "updated": "2026-10-18T20:25:07.873Z",
  "record": {
   "w": 11,
   "l": 12
