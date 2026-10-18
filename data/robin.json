@@ -6437,6 +6437,9 @@
      "sport": "NFL",
      "start": "2026-10-18T20:05Z",
      "teams": "LAR vs ARI",
+     "result": "lost",
+     "actual": 222,
+     "note": "222 passing yards against a 249.5 line",
      "revealed": {
       "v": 1,
       "hash": "530cdc85bf172291a14875a3361a58380d20f6b94ba055316e1c23c5eb162f40",
@@ -6560,7 +6563,7 @@
    ]
   }
  ],
- "updated": "2026-10-18T22:58:09.815Z",
+ "updated": "2026-10-18T23:01:19.671Z",
  "record": {
   "w": 75,
   "l": 26,
