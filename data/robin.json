@@ -6045,6 +6045,9 @@
      "sport": "NHL",
      "start": "2026-10-18T02:00:00Z",
      "teams": "VGK vs PIT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "bc9e8c23ad123dcc6bfba744caed087e20e027de6f0678b29910378e0ad4272e",
@@ -6216,7 +6219,7 @@
    ]
   }
  ],
- "updated": "2026-10-18T02:00:45.258Z",
+ "updated": "2026-10-18T02:11:05.138Z",
  "record": {
   "w": 71,
   "l": 24,
