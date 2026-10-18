@@ -5932,11 +5932,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.791 · 2.57 pts/gm this season (7) · a point in 7 of his last 7",
+     "eventId": "2026020133",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.74,
+      "spread": 0.05,
+      "ticker": "KXNHLPTS-26OCT17EDMUTA-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7821,
+     "pAdj": 0.7897,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-18T02:00:00Z",
+     "teams": "EDM @ UTA",
+     "revealed": {
       "v": 1,
       "hash": "8381700303aa228fd2a4cddafd254b82be39f450a949de55731f66092e947788",
-      "iv": "XpYKIsfY98JRyDGF",
-      "ct": "QrSfPfDyqQ5IEUkVz6NXqvFpKZfcaba01r5lHVb8iNTUzy6EvluKeFhRAwTWE2R1/cC44w+UYNYY+eL4zH/FYgfHjg+7Tqz8Qfs7AHw7od56OOoqv6JrNZYd6pfIn6xIewKSJDpAK6kvGkTHj+pGy3/piWM+KdMdDb86l6xG73wb+AsUPDv6ZRqHIHasB6m4I6JYQUiMiestldwxEQPq7AD7B1om3luLu425JnY0aK/Oz2aw5vD1XNBVdW5G6yHPF8bicZRp+rFX344ICxYreHC/It2Up2P4e2TSNgKc+gMise1PRl86KVeUFAZZq/Td1guekmZ5PBLCV2SH7FmRdAZ+xaKnHjF3XdKSLMP6D9YD4HSbQVSIK81kIggJ4A9BfFVzsv2mRzStQUaTwc7CpuRVWU2psDz4LgO1fGVkaPRHfl26unglYKY0T1SKl+Hn8k2NiZlX5S27z/JxUDl2801/tsmhUWZ4sjYK6WGadi/6ymk2oU1xfxrp41G5TVmi0cTYZpvn201KqGr1HcQMuxGAZ8ImUU94E2hm31Ai0R6D/0GRMqyWbVSrNgcjKd1rr8mg6J5kBqW8redgtz11hnUfZgdZUKSlXO4zBVfKFxtqPB+yyP0ApSwrB48IFVjUyY+m/OwneVWd0UiOxEYOaI8ZQk80MSJmtBk1p56htUBR/Ar807Y4r7K+qJk="
+      "salt": "111971b15dde6824dae0e47e9dbe9305",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-17:robin#0"
      }
     },
     {
@@ -5988,11 +6025,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.504 · 1.78 pts/gm this season (9) · a point in 7 of his last 9",
+     "eventId": "2026020134",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.68,
+      "spread": 0.09,
+      "ticker": "KXNHLPTS-26OCT17PITVGK-VGKJEICHEL9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7354,
+     "pAdj": 0.7692,
+     "player": "Jack Eichel",
+     "playerId": "8478403",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-18T02:00:00Z",
+     "teams": "VGK vs PIT",
+     "revealed": {
       "v": 1,
       "hash": "bc9e8c23ad123dcc6bfba744caed087e20e027de6f0678b29910378e0ad4272e",
-      "iv": "jekin5/MiuOTp13t",
-      "ct": "xWcNM5iC5FSxGhYgw76PL0k2E/Lk4LWfLuzSPWKl872weHedzE/WPTNBqgI2U7iMJF3aC5hpiZdSH3ebd6rMmPp19iggO3qxsJxfnkhVmIhC/+LCpit7/RDAPX468CkQqJcOhEd9n8mGSZ4iqtlLsWGXxbKjOJx3ZnRudxCHnfJcSPBqfFSY2Bvd05zncr5643RiYuO/6O7sEGju4PyLtoBTn3HRCxlbbllkHgr1H3A6U9rODNOv5d4Xqan3NiIWbDRpyQbJ40j9lQLJl0e2661Ywj0F1LvNyxHIfWnKW45dAv14vLkSx08jHr2ci2vIwkJnpJqeYaXd133avQ5lEzm1Gtw7enjLqC20G9BwHU+lraB7lXfu87Gzmm7gTw0Yn47DzzK9aAWh3p9qr1VtQ/dqxpVbbcJJlL1qxM8++ZENuffJx3jJzsvJSug0y0huwkFNwa4B2DZHMIJEgQTjBoRchcoIfTEBMkyWuLiKtUarcr9Hja3x1oy8g40BJR36lbXTPKXcFiA1reMqbot78D7CxtOqGUcOBUonc8hYdsRTk1IEXfd+T8tNWGzU8avs2xYzgRHeUkOlmDPCijRvAsHUCN//bga2d0bNyDUTUaXvcd6WKbkXTa1RxQTzcJ1plZqx2E7ia+1b92Y6zNVKD1HPIHevXuV3fXuXjz71iooI8SXyF47aYg=="
+      "salt": "28a3dda2ba8e54297e015418bdcaa029",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-17:robin#2"
      }
     },
     {
@@ -6142,7 +6216,7 @@
    ]
   }
  ],
- "updated": "2026-10-18T01:39:00.739Z",
+ "updated": "2026-10-18T02:00:45.258Z",
  "record": {
   "w": 71,
   "l": 24,
