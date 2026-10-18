@@ -6313,11 +6313,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 228 passing yards",
+     "eventId": "401872997",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.72,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT18BALCLE-BALTHUNTLEY5-125"
+     },
+     "line": 124.5,
+     "market": "passYds",
+     "need": "125+ passing yards",
+     "p": 0.8887,
+     "pAdj": 0.736,
+     "player": "Tyler Huntley",
+     "playerId": "4035671",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-18T17:00Z",
+     "teams": "BAL @ CLE",
+     "revealed": {
       "v": 1,
       "hash": "aa9ac2c4319d2577c74dabd9aefdd1b941bfc09210c36bcc4cba9b723eb396d5",
-      "iv": "XB1IufKheJWB+F2s",
-      "ct": "+B0eVYAuAAZcAzQvqpoWvsBF7HfwW9yRhKTCvrjVE2qrABO3imRDGziL/KcLsU3xp61bb85z1tSYm+RxlK1BGiwS9hK3imNucFn4WtUNvKFSVMOHa8lB18mKr5iQPNbeFI+V+cZPgvB+QVXKSS8in5uPzrPvqvAL+bxXWBNzG/jjo8axUUa3I8RNPiI7/4RtUwi+MBWeRYcOtoJ4YzTNAi5EPRPKPxFjbUgUExCNSVDUj5eSs67eexC8ZdTNelSN8foE0Iid+CNoi6WBpF+zshnzB2g4ettMjlwdJzs3FnPdIiahd/nur5upc39zY1HWnhSxEOCZP6GsnGvOawtwwwCvKJyZZk+KdQO3KKYoZA73yrdKIvd1oVvqugX11/z15CEWe3G13C1KB1RSmprvm5nHGNsGHqEgtD2MNHr5gSTlsABSNTgrHXKS/teakSkvT1DS0WXL4GGqsn/wvbRGCvPXtLw2f7Wo/lSgD2lcsTxD1JRTCIeu6kLVHK4mRbEpU9g5EAhtzMyCdtYK5w53YWLI3o5Vyj2D+fUXZdNuGX5QCdTovyyVpchBSxn6iTzcSQpVGThx5zYrLGzzB3haKloWeOSy2L8tA4s8uD7wOgEqCWld/Xm/7PkQuTQVXC8t9/UH0QpoJH414x1sECho"
+      "salt": "3725a583aeacab1d030ca03065b902c0",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-18:robin#0"
      }
     },
     {
@@ -6345,25 +6382,99 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 277 passing yards",
+     "eventId": "401872998",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.71,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT18CARPHI-CARBYOUNG9-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.7959,
+     "pAdj": 0.7229,
+     "player": "Bryce Young",
+     "playerId": "4685720",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-18T17:00Z",
+     "teams": "CAR @ PHI",
+     "revealed": {
       "v": 1,
       "hash": "99cfd7ae74346d41faedbb7b4cf933fae1bfe5e7a672f92cda138a1f9640056a",
-      "iv": "AjFcaj+jFW9uS5ja",
-      "ct": "v717/kCYxzsFysZ/QJX6aAEj9AsFN8TWrcEB0ecld39OF1MlcaS0h4sr6IgwPXutJvfV7SM1h/guoljiTfiZes8tnYQ9eV8yC6qmHSPdemH8VyNJh0pvqsZz4U1dkMIqNykHFliAI5u0F0V8DTKGN4bBck0h9y3+ddfRx0El0D/+tPtrjRRIJMgYShT9OBQxlq031Mix997Cu8vuOoKe2sHed4E1BY+KIHP0Z3fpQmN/ooszVVr+czMmTs9a7u0aEk02RcYrUSsjVghpd/zKgiNflyZxHjMHkn3pgtanVMYWbW1dO/BAfsltuv6P+VvpaJ5BZzrcqQwg4jt8MvSy8daU00WmwLB39fW592lfkV0TNeUD5h2MnH8/NwTIUudRqo1HOgtqI+xh56kBkDEqrDp0BTi4syAbgvZyPlUCvJEJdMyDOkMqhWpvXBkkPMHJGxqSke7+GA0opTFTA5d9a6fu9HJVV4Wm7/Nz4J8KlMD5Qka/eRZdQgL3w2uKSQ9Q8Tbuswea59MtU4lt0jn8qxPhi3Txt9GnkkcrrbWj0dwlDIJmJS8nhDs1ULDbS1mAtauXKAP6630Y3268eKIYiBLJPWEyIC6mj6SFXjkIZHfts5qalik650ycA3YkDYUO7qP8D/+jD2LjmS+S"
+      "salt": "81ffe96049e0525922a726478816d379",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-18:robin#4"
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 233 passing yards",
+     "eventId": "401873000",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.74,
+      "spread": 0.02,
+      "ticker": "KXNFLPASSYDS-26OCT18NONYG-NYGJWINSTON19-175"
+     },
+     "line": 174.5,
+     "market": "passYds",
+     "need": "175+ passing yards",
+     "p": 0.758,
+     "pAdj": 0.7602,
+     "player": "Jameis Winston",
+     "playerId": "2969939",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-18T17:00Z",
+     "teams": "NYG vs NO",
+     "revealed": {
       "v": 1,
       "hash": "f877462c041b849225236b5067ca99e87c4f3915c3e3b7a75f2b24c12ed444e2",
-      "iv": "6zh/t6EQ3bgYfViz",
-      "ct": "jq7ZTh7sQGcn5q+/uRR/Qgczf1Rfpsl3CZKUMPFsKyb/kC5Z/ptGfX+MRaVQ6iEfAVM5RMEHgt6uVSVVWnehYbAGkH9u5kXVOa5Msho1rZW9FpWg6Op0WGlrADeUi166NK8Ho345z9EVGQnZuvQ9pSCtocO4mlZL3RRPGhiBS9EY7rvtdUMY8V+hBlb07rIiaVPYHzM3N5htuFkdvkhouMMYZRkN4hX2bvikyOJit9+RngcaxueN2o1eyFqNez0D1iYu19y9OMS8HZAxfCDl2OgAEXHGMNhKvW7Z7tlkm9u0TXqY1V+G4BDUc9mAqs+6KHQjtAk+ZsarAJIpVzB5hjsnrRBxA54tTx67h/OicgHP4po0043HISv0i9jmvMkmvEbnpmVwL5x+ruaT6a8+94pbyRW0JEkJtdgK2moqhAnNHHbYr4/ERkGwdkxezZREMa5MHVBU0PeQaTm14H+dbk1Bkcx35lnyqafQT8GJMsKIFrmUBY7I/z/nD9eUFSnJImZZwrAccTEYsHkafALgsnk3kwrsBIuTh/0oH8UFOxgvU8HH237XDlPDJG++hGqzLe3QTut5enTtxkMZbtrjYVtF/laUUrHykI8DjxWu2cyGaK6Yl12yY/EbXnI5+tV4U0UbZ9ni+QxxKzX+Hmk+yQ=="
+      "salt": "4b3b9f09618371f9e94bc5aa86a4191a",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-18:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-18T12:30:48.275Z",
+ "updated": "2026-10-18T17:00:24.932Z",
  "record": {
   "w": 75,
   "l": 26,
