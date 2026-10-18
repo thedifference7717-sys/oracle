@@ -2251,7 +2251,7 @@
   {
    "id": "2026-10-17:ladder",
    "date": "2026-10-17",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-17T16:00:44.840Z",
    "cycle": 10,
    "rung": 2,
@@ -2308,6 +2308,9 @@
    "sport": "NHL",
    "start": "2026-10-18T02:00:00Z",
    "teams": "EDM @ UTA",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-10-18T02:12:07.931Z",
    "revealed": {
     "v": 1,
     "hash": "5ced763f843d6821a23d625eabae96f220d4c5fda236d404307ade5f1ae58635",
@@ -2336,12 +2339,12 @@
    }
   }
  ],
- "updated": "2026-10-18T02:00:45.203Z",
+ "updated": "2026-10-18T02:12:07.933Z",
  "state": {
   "account": 208.94,
   "base": 42.13,
-  "stake": 51.37,
-  "rung": 2,
+  "stake": 65.03,
+  "rung": 3,
   "cycle": 10,
   "pl": 108.94,
   "cycles": {
