@@ -6755,11 +6755,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.465 · 1.83 pts/gm this season (6) · a point in 5 of his last 6",
+     "eventId": "2026020139",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.69,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT19SJTOR-SJMCELEBRINI71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7282,
+     "pAdj": 0.7203,
+     "player": "Macklin Celebrini",
+     "playerId": "8484801",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-19T23:30:00Z",
+     "teams": "SJS @ TOR",
+     "revealed": {
       "v": 1,
       "hash": "897edce81747d6c1c6c07ee1238ae257f5d1f8187ab49bf893e709d7a8a3af93",
-      "iv": "IGxonmBxOrV6x2J0",
-      "ct": "FQnKKOfH9KRLvXiQBBh+r4lOLeth0Uy49ob3467t5w5FcvSSojv4f2jXD5HafmdZrWeg5+TE11uYy/V7N4pK2ihV+Pht6qSbWRPYjNUSekNBsFQKw5FApXB0jF66O/kCbvDjV7EYNAsmijX6VVqJwlf2Iu39mm42GGUeEgTapKBSC7TQ+LhHGTt5DzcjhTeSAMXNAI3Dw0LcD0UubwZyw+jZ4CYBXXTH/AZZO7qUvcloB8LPFnHs/1ywHGt3UH36iMK3udeP+qFHjAihk6EKId+QfT/3c2YAlEROtDFHDTjOwBiyU1x4TnR0nbw42VR8moZPNw8+J3pRluHRG2Rv8pAku6s/omgxaXVftEw+C5yZuislRwhPOtWEiQ0tcLxnRYRb6pwobCGUd6Pog/g78zALQuhdDmfk3TF5+ecBUiDWI1giVBRnsiAmUW7wXqWevTkASyq3omOqrdcnGzr1hm0oJfoRade4oIYvpGQp/pnG5IS/1RGMPse1n62ZLPW56QzOlDK+hr4NwqND42v+QM2RJLwTUQRR6GdQMs87SahwDt3rJmgFxakqLPvFqrtq4H7cRPfrG09KrIED9+xAnLDEyqEkBGqHH0dmq2pqRkoFWilP5msz/3Qx4jB5emQBD2UP5BKmjQK3GE+nwnwF7MNCE0taEDDsP3//nkCYCI9cm83kEUoLItA9rwufQlc="
+      "salt": "4802bcc60014011ddb82c429fad17a41",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-19:robin#3"
      }
     },
     {
@@ -6818,7 +6855,7 @@
    ]
   }
  ],
- "updated": "2026-10-19T23:00:57.505Z",
+ "updated": "2026-10-19T23:30:56.038Z",
  "record": {
   "w": 79,
   "l": 28,
