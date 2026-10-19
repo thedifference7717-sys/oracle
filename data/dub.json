@@ -2819,7 +2819,7 @@
    "id": "2026-10-18:dub",
    "date": "2026-10-18",
    "published": "2026-10-18T12:30:47.480Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 1,
     "NFL": 12,
@@ -2848,6 +2848,9 @@
      "sport": "NFL",
      "start": "2026-10-19T00:20Z",
      "teams": "GB vs DAL",
+     "result": "won",
+     "actual": 276,
+     "note": "276 passing yards against a 249.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "c646c98b1b613fca27ae21dc16a36dd809cd889802b23e23e8d05482f5d9d19d",
@@ -2929,6 +2932,7 @@
    "fair": -243,
    "price": 130,
    "prob": 0.7081,
+   "settled": "2026-10-19T03:28:54.431Z",
    "revealed": {
     "v": 1,
     "hash": "401a3a8181d0c2b35e9b851ab8c654ecd255b77e7cf56bf294a8df636ac4a035",
@@ -2943,9 +2947,9 @@
    }
   }
  ],
- "updated": "2026-10-19T00:20:28.835Z",
+ "updated": "2026-10-19T03:28:55.744Z",
  "record": {
-  "w": 11,
+  "w": 12,
   "l": 12
  }
 }

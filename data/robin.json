@@ -6267,7 +6267,7 @@
    "id": "2026-10-18:robin",
    "date": "2026-10-18",
    "published": "2026-10-18T12:30:47.480Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 1,
     "NFL": 12,
@@ -6381,6 +6381,9 @@
      "sport": "NFL",
      "start": "2026-10-19T00:20Z",
      "teams": "GB vs DAL",
+     "result": "won",
+     "actual": 276,
+     "note": "276 passing yards against a 249.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "3d18a7207c4024c61897661869457605c93d331c566afd981244a799fdc5c575",
@@ -6597,22 +6600,64 @@
       "ctx": "2026-10-18:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 12.564,
+      "pl": -2.436
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 12.107,
+      "pl": -7.893
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 4.372,
+      "pl": -10.628
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-19T03:28:55.805Z"
   }
  ],
- "updated": "2026-10-19T00:20:28.857Z",
+ "updated": "2026-10-19T03:28:56.371Z",
  "record": {
-  "w": 75,
-  "l": 26,
+  "w": 79,
+  "l": 28,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 359,
-   "l": 522
+   "w": 370,
+   "l": 568
   },
   "days": {
    "w": 11,
-   "l": 7
+   "l": 8
   }
  }
 }
