@@ -6361,11 +6361,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 387 passing yards",
+     "eventId": "401873007",
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.63,
+      "spread": 0.03,
+      "ticker": "KXNFLPASSYDS-26OCT18DALGB-GBJLOVE10-250"
+     },
+     "line": 249.5,
+     "market": "passYds",
+     "need": "250+ passing yards",
+     "p": 0.8668,
+     "pAdj": 0.6679,
+     "player": "Jordan Love",
+     "playerId": "4036378",
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-19T00:20Z",
+     "teams": "GB vs DAL",
+     "revealed": {
       "v": 1,
       "hash": "3d18a7207c4024c61897661869457605c93d331c566afd981244a799fdc5c575",
-      "iv": "j3Qk9kLO35le8q9B",
-      "ct": "P1I8bLTC3rA0KnOLge8mlSfbLo4YyYnw+rt+q3S3EHYSkAzqL6hBOxBRLh/v3LIyHHrxfPONXNYf9RDQEQhWGI6RkKY1kPATTeZPOtHqFgYcrmc46KwngYu4X4HGvvqpDqDQEhmbdiMvmaGI9Ihx3BoKgULCKXHELq7z0b/Bq34IeyGfOXtcxXq/2VNKnF1F7mHGZKggItnTZHqxFHhORFwlxKfp42PcJO1uIKkQ6TI1TtatFrmtRFr+dwETKxOBxx/QsXeU2YDqz2ecNjo233z2mhI45VDePULW4nS/tt1rmsU9Uod0rb1stf2Ut16FOFoFbTRigHRHcMgM5xKpatVf6AWzsqw0lU2aWty8r8kMM1Z15p/fz22KzYGg5a3FKP4SByLY0ejxohWXLXFH/aWLTNjXeA+p9zValtf61LMrkZemwCkZrPhAhpd8gg7fgp67LfxOJtWqIOeV7b/3HkgZ1YxQ+MNZyTNQ7PDBb85dEtFfJBrHVwt5TSQaC5JPFmcuEp0cfGgGZHdSnf62OSvJmCu54u2z+vfg4X2slsRCy12GM8mrQlek7lb8gjA88upWSOboejszcEVu9hhrT4EUM0uX1jJfYARnxWntmkXZDcLGy6BqiXg59nq6QuLzCH+8OAnnJAl9Mw=="
+      "salt": "5e0c4020e58c5f6fae0ff92d1d5d0db1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-18:robin#1"
      }
     },
     {
@@ -6563,7 +6600,7 @@
    ]
   }
  ],
- "updated": "2026-10-18T23:01:19.671Z",
+ "updated": "2026-10-19T00:20:28.857Z",
  "record": {
   "w": 75,
   "l": 26,
