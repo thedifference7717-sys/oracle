@@ -2973,17 +2973,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.645 · 2 pts/gm this season (8) · a point in 6 of his last 8",
+     "eventId": "2026020138",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.76,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT19COLPHI-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7595,
+     "pAdj": 0.789,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-19T23:00:00Z",
+     "teams": "COL @ PHI",
+     "revealed": {
       "v": 1,
       "hash": "3552810296fdb8ec7d88a2505b508e2fb190bdb519cdc254523815263059c132",
-      "iv": "p484Lf+1mye1Rc1E",
-      "ct": "eEpvlHwFQ1m1lq1O2QMY4Nb1EXyFZE5G78LL6LXNnecM8NjBtpwKKgwPl/hfllhTSxb5sT/Hq09aociD3p4NiLHpJ3jzhU/XiC7StRaBciohj6PSv6oFEEzhIe7I3e/icgpUNDun33OMjfV9I4Q2JE53hB4BBUDeKMJZVfN+AbuhUj5wbGRuGPeAiHu8kXav6QxIiu/25BT19Daojbg1T3ulsvVxYps5g2wub+Ms8IZ5kJrdsFKI+K9cP+7pDeup35jTeCd6TT681rjoeZ2gHaH0H1lclMdtPgT9Ds90PuBpcMKnJQUKq6mArsDyY5hEDDliNqCYPfbUwI/woh+35xcf3nlIgxy8qlHoSIeuZgBt9UVmTLzAAJbh99Z8ReDJ1se29kkAk+1qmw/BWZWYAOr7MYY38N3BMe9D9SpEXW8QRq3q0vynoKUMqhFv/w3vIJRvh7/gY3K6+jB6dZmlWDIuBGbuBx4YLNAH9pJwx0B6c6Q2jRw/GRjRv+5OhtTu8g69/K7cfcXci4rcl+CmWnlcpRECS2KUrbuxxKc4FOJ1JBnC5vA/c/xeaeMcSWXPif+HXS4c/loJKEieVR/4pYkTfkNpA1z95dsV2Tfinvp+nA4ULZ2xP9X1hmEqvMSJwNrnmYGDziVuqKHvPQklWsToktrYs254GFLeKAP3ednjcHivpsVuIqh6"
+      "salt": "f9d02ee6283a8d7012eb6f50d1ad04b7",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-19:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-19T22:00:54.200Z",
+ "updated": "2026-10-19T23:00:57.481Z",
  "record": {
   "w": 12,
   "l": 12
