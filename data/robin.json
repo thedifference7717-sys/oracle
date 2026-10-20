@@ -6747,11 +6747,50 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#5 · vs Shawn Armstrong · lineup confirmed",
+     "eventId": "849815",
+     "gk": 849815,
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.67,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT192008CLETB-TBCSIMPSON14-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7466,
+     "pAdj": 0.717,
+     "player": "Chandler Simpson",
+     "playerId": 802415,
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-20T00:08:00Z",
+     "teams": "TB vs CLE",
+     "revealed": {
       "v": 1,
       "hash": "1476156a3c9eae7a9dd5a8ac7b347ad709ed16643d529a82b67fc668cc5cf336",
-      "iv": "1FLxPpVKGy8uT3KI",
-      "ct": "iiH200nMxqQUpI84WgSsbc6GfKUnzo9BSFVdeTHNk9JnHad03BTZZXjXJJM2s0/5jz9bDneJKyh+QAr7yEwI6Ggepoi1bHvERP1pvRR1iSYUNEuw7gVX85Oo+QijIMQrmS2CC7df/KrfVZqIRuD62cG04b4ciqMO3KHZQ89ylm4ZTjWYl6NRkjS+cwIWAwiSeBFhjm6ZmT4Iqjvpn+pXX+qrdhfK93F0Kqe5HTgenMD9ihFepIk2WR+Ks7o9ExksV2Ay8hk6G5mp1BYajozpkK/ly9GgRKRSpCzvK/tLCU9X5IMm4NADXZf6iYygOfUR/iJUwSrD+E2atbJhwGJkdY4dka1Pgc7f7qTrPYHkCGBg9erXOTXUCpBFMNEtoURSHj6pUqiIqCdwlODe+GCPAoCNPn34F1HQJitPZS0ZD/KwPmDhwuUkJZ1O1v/jqqPpO+0LNo06Bi5fUD0YnmcH05DW2CnP6hvbXrt3GkxIL/Yz8dj0UIOb0S1lPs6vD5Bw+ZwvgdTqsvdq8wR6pr4n+Scqy1YYm9LWxdKQAoJNLL5Vdpb+YeqMQ9Clftikr3XsIhZx6UJtRiC0Sl5CmO8ijBg6Fq2PK90oppauYSblO0YAMiSIqiEpCdM0SuczLrtppNSI5vL6Xe9WgP61H0O4H+S8Npot+eR/lg=="
+      "salt": "d07eb9ecf55df096328331601452f9a4",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-19:robin#2"
      }
     },
     {
@@ -6855,7 +6894,7 @@
    ]
   }
  ],
- "updated": "2026-10-19T23:30:56.038Z",
+ "updated": "2026-10-20T00:08:14.344Z",
  "record": {
   "w": 79,
   "l": 28,
