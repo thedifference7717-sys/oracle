@@ -6805,6 +6805,9 @@
      "sport": "MLB",
      "start": "2026-10-20T00:08:00Z",
      "teams": "TB vs CLE",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "1476156a3c9eae7a9dd5a8ac7b347ad709ed16643d529a82b67fc668cc5cf336",
@@ -6971,7 +6974,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T01:00:13.323Z",
+ "updated": "2026-10-20T01:11:55.377Z",
  "record": {
   "w": 79,
   "l": 28,
