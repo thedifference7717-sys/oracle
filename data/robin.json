@@ -7116,17 +7116,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 5.1 in 34 min",
+     "eventId": "401909088",
+     "kalshi": {
+      "ask": 0.61,
+      "bid": 0.6,
+      "spread": 0.01,
+      "ticker": "KXNBAAST-26OCT20BOSDET-BOSDWHITE9-4"
+     },
+     "line": 3.5,
+     "market": "ast",
+     "need": "4+ assists",
+     "p": 0.7134,
+     "pAdj": 0.6094,
+     "player": "Derrick White",
+     "playerId": "3078576",
+     "price": -156,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-20T19:00Z",
+     "teams": "BOS @ DET",
+     "revealed": {
       "v": 1,
       "hash": "0df6ad67eee29c8516cc601f6061d8172a36bac0a8c16100dcbb61a846c72ded",
-      "iv": "TRNqe5AckW6uthS2",
-      "ct": "EnZFSRMF8gxoFe+JNHlyDLbW7LQPIB7lU6Y3mR/hmj7t/tTGvd7E/GmLPKmiNFzhR4x7qw31ZOfC5zLI6fJ48SiK5v2enP/gIZ5cFXunZlmJSMCC0idtyXBAe1Cea64L6zAh+QtzijAFykrpFb/ub8lVXc0TF0N326jCHgmpjGWmYACXkVbUQYQFVHz8kHSpSNNue8q35AD5fiFh+i9FqsDbp7RwB7pVcXJbYQNFnnRGrU6egJzmBRmpQ1wQ3sXKnCqBoBM78z7EHENbIE4WKyGCNx20AtPLViO51u5wynjY5ivbhnZGu04YwjCcs5+PizlfJ37EzItNJRJy1P5WQdy4wPrd4XW8W63kmr1cshZcUmCESBiuHW3eFQ7jZXIExw4aIE890l2+x4+kcr5JsTDZgvk79dodcVzXtTsEf/kj0o+rqoW6r56TcEuVlSBLODQUEdAMU+Z/x9vLFbl8KYTOKmsRGLmxMPT6Nt9eB3TBQhIR7zwjGELikz1s2BjJ7QSBL2Jx4bdEWeVpAGkYL/LYd6cqVLm0ZzBW68vYhYykL/npK0QlGNjdhKRgY3ijz0YUgIi3d35L4ZU3l6z/ITm27zxEAfq4xQ=="
+      "salt": "48283e5fafc5ee14cc7f620823dc9a2d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-20T18:00:33.513Z",
+ "updated": "2026-10-20T19:00:22.872Z",
  "record": {
   "w": 83,
   "l": 30,
