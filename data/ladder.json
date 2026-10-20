@@ -2444,15 +2444,81 @@
     "NHL": 4
    },
    "seal": 1,
-   "sealed": {
+   "detail": "QB · sim median 273 passing yards",
+   "edge": 0.1786,
+   "eventId": "401873008",
+   "fromProps": 124,
+   "kalshi": {
+    "ask": 0.66,
+    "at": "2026-10-19T22:00:52.387Z",
+    "bid": 0.65,
+    "spread": 0.01,
+    "ticker": "KXNFLPASSYDS-26OCT19WASSF-SFBPURDY13-225"
+   },
+   "line": 224.5,
+   "market": "passYds",
+   "need": "225+ passing yards",
+   "p": 0.8384804569921918,
+   "pAdj": 0.6677,
+   "pick": "Brock Purdy",
+   "playerId": "4361741",
+   "price": -194,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "175+ passing yards",
+     "pAdj": 0.7042,
+     "pick": "Jayden Daniels",
+     "price": -233,
+     "sport": "NFL"
+    },
+    {
+     "need": "250+ passing yards",
+     "pAdj": 0.5303,
+     "pick": "Brock Purdy",
+     "price": -108,
+     "sport": "NFL"
+    },
+    {
+     "need": "to record a point",
+     "pAdj": 0.789,
+     "pick": "Nathan MacKinnon",
+     "price": -376,
+     "sport": "NHL"
+    }
+   ],
+   "sport": "NFL",
+   "start": "2026-10-20T00:15Z",
+   "teams": "SF vs WSH",
+   "revealed": {
     "v": 1,
     "hash": "f8f4ca0963ed766b5e1b2a1ce912f77128682f75c541dd276ddd69e378822184",
-    "iv": "VX3AuIbrDV17TbXw",
-    "ct": "l1e1fzRwkEL/a8X7I/ZT6sSsZqJBfJdf0xsqmjNmmEO+QEZE3DitWtOZoOY4ZnfUu10Fa4OaiQUOS/OjLTulEQnInYTNH9q/ZXjewqxeHy5QEBojEWpTCTpbOVhFU/06+svkULbzpjAHx9B9y4AjSNH6IKjdIdAQBFi2TTjdM8Ot8u1qxr9V3mrbNFB0ST/7OLtWoV5KAntxh4YCYeY5OpD0iceJHec/uXvdcPKbxAcU6aH3sFWjRUvZEif+V0vWIHouoidaGYFSmrbH2vcwiPXYgt3Egzi0LqBubW/1pmrocHdRp8UAL8bv4uxCv1Ch+A1nqiwlKcvX7/oqxIb4OJ0b3YxueRS9FqYUTgEh53WdPt1GX8BGQuJWZp+DsZDAEd2HXAiYDQXC7ZFGvXvT2yvyQvE8NjBhuFLci16lYRBuX2fnPROp0HWcLPqvbu1xH3QOszGoUnl2Km4BSecK5i7l2HAiio2X2tF3k5GuIgAvBYXMgVF6CGZlqXXIC8BBpzxUZ14KluiOJ5k+XE8KeTuS1zhpzeAjSygOJn/eKGzB43l2wD2WCdk3KyysQ0L1kv7GKIWFpxHYN9MCgcalAuywklS3odzgYWzLlNWs9YP54aUfBd+0UQPob+5gaAOusczXQ8Wb6Y7zj2BLllaOFG1k/6RTNZ52j39P7TJMdxisnETGRNRDWxJCxEARsEw3u6Cs8cJa4pUrn8s9I5ENR+aVVOVOYuv4yG6ldvkSpjSsTYjA4CLli70eD9+vKiPqeOPJ0YaShzX0StuoGn+pR0Uh7tZlQ6tYF3dXS1n7/3I3eJfR4Fw8bfG1j1UWsGOD3OAGIjv2kh8V3OKhU0AtF9w+eJPIISoae2N663c74a7N5c9XtvP4Sl8Z9kyyroa4LX0nAlVGxi6Tw6bhPCPxpQCmf2RTYOX8ziuWHBcv1VmJrnQFXyts5hq0kVhLZ7SGASvvFm8mQ+kEtXb+36/BPbDf6BVQpej8GbEtSmHkdJUaIJNIxvWC1FJzAsl7O9sdo4KBYYbqzJh762ZvmnOAKSya68cFHldU71jxcTCvkp/8Xvc9jl+iJrRjBke1aaN+SBYNV2snUWmwTM0aA6qNA3ubN/WhoZJf3zqx5JyBiTSdX9V3tAvbbRYF"
+    "salt": "c284cc049cf612b7cc7022c7da42fbc6",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "fromProps",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "sport",
+     "start",
+     "teams"
+    ],
+    "ctx": "2026-10-19:ladder"
    }
   }
  ],
- "updated": "2026-10-19T22:00:52.390Z",
+ "updated": "2026-10-20T00:15:32.415Z",
  "state": {
   "account": 208.94,
   "base": 42.13,

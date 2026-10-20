@@ -2957,19 +2957,50 @@
     "NHL": 4
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "1417beb31a16653e9a024e18048f445a338658ab83cbe430dcc493398adf1c02",
-    "iv": "6BpL9Dy9s7quLVw7",
-    "ct": "+lFWd9CtBvZhA15CjD3fNhAy6kVpu7LGeFrMGILl0rnca3w2MWAhcbceoZ1tVFYoHhNcY8fIz/OpRzP4fDuEh4sxl1/Q1/bxs4qc1JkA+gpI4Vb3J0VHrN0g8h9pMJhRBvowteNR+DNwReQm4YExVN3yt1RnbiCv0ab6SYAnVZU9JKjEjHZb1Cr7k7OUWS/6wCpU8YrDeiHwtPoljHkkD1VGft4KMQfbGBMIUMaZ1QA4ULKSKFj+pcZPzZiaf+deaecn81koHfBHIUyB9EmmgQ=="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 199 passing yards",
+     "eventId": "401873008",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT19WASSF-WASJDANIELS5-175"
+     },
+     "line": 174.5,
+     "market": "passYds",
+     "need": "175+ passing yards",
+     "p": 0.8012,
+     "pAdj": 0.7042,
+     "player": "Jayden Daniels",
+     "playerId": "4426348",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-20T00:15Z",
+     "teams": "WSH @ SF",
+     "revealed": {
       "v": 1,
       "hash": "204077f6b6e7207ddf1a59c56c1bb429e0c6d20cde5c93cd00005f2ae7a3636b",
-      "iv": "5aSipDA0Wfa3EaN2",
-      "ct": "33QlD5W5jk8dLb/x3cUrUPJ/yuEuZeeIgJsec7qlig09Tpnsry3FGsDVFX55CbR6utlvvksJihC720CRqnsrvuE9F0plBqRtFFrfoCScGRRiwGySFghyyPlnoySPkr12SFsB3GgVdC271rgRWVwW1SkMZnjDhQ5tudkl/xPBMzw4dGLWvScwYbHPqO9b3TE95LI5Si4k1r/RiIOc3Bl4tOBIRuoK254kJ/sOl10LFSC5v7LtcMtJ8CK3G7NwLk7OYjVUeuEBqdQbmyu/2AFDcQd08aVuBFPt+wOQqnTLYKQ/VMu4flTdfT17/zVHbUXDFjdyv/7HudeD9LJJWd0YsVvmzCZam0P6gbD7srPA6HQ5Wtyz0YeFRzhdSx/GASdXBMJL4Q7ali38tokswflg98Y4HMKYqbzvHgmEAhn1wzTwWfhSUZtfdWbvQh2GQ3QDyECU7coicm0t1xU0aZwiuiXTRjail15V0yVGe7n+X1hPlrA2G0tDmHy0WSYF/ISZ3h6fEGFl6E0ggzuYt/y92vgafhXq1wEFMfzNBgHhfE9FK3ETggwPPK73qXE34F7kuQCljhVntOpCMzfj+l+31RZpGwasEi90szmjs1ooLmF8uACSupPqZmZg7fU70BarRnvluEZwWfcKzt5s"
+      "salt": "eb275e28fc1e3fb6d486d46b6778d1c2",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-19:dub#0"
      }
     },
     {
@@ -3017,10 +3048,30 @@
       "ctx": "2026-10-19:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Brock Purdy",
+    "sport": "NFL",
+    "start": "2026-10-20T00:15Z"
+   },
+   "fair": -155,
+   "price": -124,
+   "prob": 0.6085,
+   "revealed": {
+    "v": 1,
+    "hash": "1417beb31a16653e9a024e18048f445a338658ab83cbe430dcc493398adf1c02",
+    "salt": "a78defb72d3f38b3ac8627aecbd06247",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-19:dub"
+   }
   }
  ],
- "updated": "2026-10-19T23:00:57.481Z",
+ "updated": "2026-10-20T00:15:32.442Z",
  "record": {
   "w": 12,
   "l": 12

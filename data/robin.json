@@ -6694,11 +6694,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 273 passing yards",
+     "eventId": "401873008",
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.65,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT19WASSF-SFBPURDY13-225"
+     },
+     "line": 224.5,
+     "market": "passYds",
+     "need": "225+ passing yards",
+     "p": 0.8385,
+     "pAdj": 0.6677,
+     "player": "Brock Purdy",
+     "playerId": "4361741",
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-20T00:15Z",
+     "teams": "SF vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "a17ae184bda977d3775ca958d0d58680f89d608a42bcda7e2584e2c93ebb0f92",
-      "iv": "W8Wt2wyJ/GB4YwvV",
-      "ct": "RfUKix0AdZ6mjmXpO/+rnviPqbQ0zVH+KZ8D7LePsqKqG9VAIIgCRRibYGFGaY5DAn6mD9wOQFIKAXZODFmY0hAWys9QvCKkke7UfaRTOW2tkOaeAxqzXAJ3ETE+m0U4CPdeMjP6TypBZvYqB9274N5rMGrsd7LAdz/gd/I9QpLq24zjhZ8PWWFo+eOXWpdoXpZJwff9gHGj9SD0RERPi1bTKlv641/7S0fNcXe5JlU+EGURA2B9PbBKMuJUEmmZavD595AnxHLibIfmya9thFQdQFnda9kyvK2SpKcOP1ppVsilMnuCpanOpizNImHX9ZKQYWu4IkRNhTJA2gIcu8EhGo2CqV5wEjs0LwzwLPPO/vURfDEiTfDENenYTIEMJWYZTt52TZVJusw/0grP+c2BNCvJajEn8wD22IuKSXA9ue50C2reAKeqKjKbBEzYnOCd/SxecH1CGwRhdfn4wrGBskJ6DUt1IwDsgoqRnEcQxeT5GPso2g5uRKDl7qsFZqZWajTdpKrgGAceCfiWsatxMtiBZuhgUq8y/h0aJS1Kxsrg+fzgdW44deNOazlbLGKizd2Rxc4ONgezJvUEwHlq45jdp1ICc4w9Jg3PkDrZ4L5hT1cwcG+tx3/u236i/cKWjnLhfggDG8o="
+      "salt": "179b15b33655cd5b53cddf711ee04597",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-19:robin#0"
      }
     },
     {
@@ -6897,7 +6934,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T00:13:27.137Z",
+ "updated": "2026-10-20T00:15:32.474Z",
  "record": {
   "w": 79,
   "l": 28,
