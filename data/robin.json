@@ -6648,7 +6648,7 @@
    "id": "2026-10-19:robin",
    "date": "2026-10-19",
    "published": "2026-10-19T22:00:54.200Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 1,
     "NFL": 1,
@@ -6860,6 +6860,9 @@
      "sport": "NHL",
      "start": "2026-10-19T23:30:00Z",
      "teams": "SJS @ TOR",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "897edce81747d6c1c6c07ee1238ae257f5d1f8187ab49bf893e709d7a8a3af93",
@@ -6980,22 +6983,64 @@
       "ctx": "2026-10-19:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 13.64,
+      "pl": -1.36
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 13.691,
+      "pl": -6.309
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 5.148,
+      "pl": -9.852
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-20T02:18:26.245Z"
   }
  ],
- "updated": "2026-10-20T02:06:02.068Z",
+ "updated": "2026-10-20T02:18:26.950Z",
  "record": {
-  "w": 79,
-  "l": 28,
+  "w": 83,
+  "l": 30,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 370,
-   "l": 568
+   "w": 381,
+   "l": 614
   },
   "days": {
    "w": 11,
-   "l": 8
+   "l": 9
   }
  }
 }
