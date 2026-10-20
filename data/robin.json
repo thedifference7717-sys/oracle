@@ -6759,6 +6759,9 @@
      "sport": "NHL",
      "start": "2026-10-19T23:00:00Z",
      "teams": "COL @ PHI",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "0880250b7107a92879ee2554cb78bc3899faf86d34dfb139849d736a90d1489e",
@@ -6977,7 +6980,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T01:20:15.303Z",
+ "updated": "2026-10-20T01:45:20.214Z",
  "record": {
   "w": 79,
   "l": 28,

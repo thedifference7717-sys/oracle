@@ -2950,7 +2950,7 @@
    "id": "2026-10-19:dub",
    "date": "2026-10-19",
    "published": "2026-10-19T22:00:54.200Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 1,
     "NFL": 1,
@@ -3024,6 +3024,9 @@
      "sport": "NHL",
      "start": "2026-10-19T23:00:00Z",
      "teams": "COL @ PHI",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "3552810296fdb8ec7d88a2505b508e2fb190bdb519cdc254523815263059c132",
@@ -3057,6 +3060,7 @@
    "fair": -155,
    "price": -124,
    "prob": 0.6085,
+   "settled": "2026-10-20T01:45:19.121Z",
    "revealed": {
     "v": 1,
     "hash": "1417beb31a16653e9a024e18048f445a338658ab83cbe430dcc493398adf1c02",
@@ -3071,9 +3075,9 @@
    }
   }
  ],
- "updated": "2026-10-20T00:15:32.442Z",
+ "updated": "2026-10-20T01:45:20.132Z",
  "record": {
   "w": 12,
-  "l": 12
+  "l": 13
  }
 }
