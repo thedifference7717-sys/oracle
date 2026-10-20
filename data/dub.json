@@ -3092,11 +3092,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 29.0 in 41 min",
+     "eventId": "401909089",
+     "kalshi": {
+      "ask": 0.59,
+      "bid": 0.58,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT20PHINYK-PHITMAXEY0-20"
+     },
+     "line": 19.5,
+     "market": "pts",
+     "need": "20+ points",
+     "p": 0.8505,
+     "pAdj": 0.5902,
+     "player": "Tyrese Maxey",
+     "playerId": "4431678",
+     "price": -144,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-20T23:00Z",
+     "teams": "PHI @ NY",
+     "revealed": {
       "v": 1,
       "hash": "bd217b8021cd75aeaad37bc5224421225fadcdffa5650c5ab6a6e33f9e071b8d",
-      "iv": "6o2/6DP3JGmuTVPO",
-      "ct": "File95UxU8w1iG8rwPmvuE4AUymPD9uf1phek7aOpZudvoj6JHVvaisWgeSs/I/THJGB5Hg6qkioMaMrHTAo0ZDTasWea0bHtOY7PwpKVisw9wFR5U2JPJIBswlO4/GWaFT7BGs6wwPczwJJngYrr6odQvpp7RsQiLiHYMjaEw51k38WKuBu2DJrkaDQ6d0NKiB2z344JgBuJyI3lRgZ6yHf5sA4IWmPjOYAz/wRTjCbeFs+1gMfrjwOnPBSYohTISDOtGuRyBwEj7gW2H3AB1sHj5MPWmK2M60lPlTM0F1Xs5cq0ztEFJ4w3VT+NjtgK/Oph3ZQe9GY1B1Ph52UmHRElFBoA73mELGUwZUoeMov1Z1mAN9dxMklWJ6EfK9e6bFDjw4IvLZvXNmo2G4MxIbCSszfHLVV0k2gzEhrMg6MFAC7rzZ2+oyyap0eXbnPJN7oTf32icCFw3WEggF0nSJs2RyBb1yqBnJlUnGyauFSfAaJkri79DpvkniBQeeor8oRXu67fCnjueBrhHX9bO8/Cje5U41JUDoeA9QxtmKL/50JJe/IkZ6zCy6PhVfAQCeKMytzJEFD5gFtUA5zLaA6yxJey+brHQ=="
+      "salt": "fd3c1cfa1d12cd3a2735bc8dc72fe25c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:dub#0"
      }
     },
     {
@@ -3110,7 +3147,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T18:00:32.476Z",
+ "updated": "2026-10-20T23:00:58.076Z",
  "record": {
   "w": 12,
   "l": 13

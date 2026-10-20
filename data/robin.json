@@ -7084,11 +7084,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 29.0 in 41 min",
+     "eventId": "401909089",
+     "kalshi": {
+      "ask": 0.59,
+      "bid": 0.58,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT20PHINYK-PHITMAXEY0-20"
+     },
+     "line": 19.5,
+     "market": "pts",
+     "need": "20+ points",
+     "p": 0.8505,
+     "pAdj": 0.5902,
+     "player": "Tyrese Maxey",
+     "playerId": "4431678",
+     "price": -144,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-20T23:00Z",
+     "teams": "PHI @ NY",
+     "revealed": {
       "v": 1,
       "hash": "937822c28d4dd9871409455de7ee74c202dbb13c23c7de35da6448fdcc36a232",
-      "iv": "JKAkEmgZZdO7Jmo7",
-      "ct": "5r64WDZziXRWfhiFmWVwlPnOUWlREEAZlJn5insbrlewpo5BFOfLGH+JLxR4HiUv2HAanUobbVmCDYWzpA96IjYgpG4ciUAQcgRzXyBWcdgPSa2osV3hyrxceHEzFPZAfSavCNC7uGX4XjIAR3QSFXHtK3hOP5mcsOl+80aLrfDXaCbYbaVGBlpQyoCuzeKtpmRZvWsuVzP5SYrFEHUBOY45FkVnhBHYUDw5bTupLy13HJSFBv6PNudyIkWlfPW9QhNUx/oe0AVdaxjo08laTJaGZk2jhVcRpcwVzDPqWEtkP1njnW+EP+PRg7dUvgVoDtxujWvnFBk7E+56ibFGTM9FGEYzNbcCGP9cxgUgmlFHiV6hDBwIDm6UKpnq6bxyFC9ygNMrY0tkdjqDGCjpQkjrlqnmcXKnzAWAakoULI6zX1aRBv3El9f4aUOAULRd10usKXYopu1uatoP0MiP5DhMc+9ulhsjVo4KZWt+RlzpQNATGMWi0ShKD5NGmiTUxZCD5PSb0zsLn1SL3VTTbBzoj7+w4GxdTGa3Hig8GaPSjJXVkT1VPb8BtAfyFcLT/nk20ltllm/f+yjMiNb/NtVZNcf0/oMVBeCy"
+      "salt": "f460211cac430d5e9bcdeac7fa7c8fb9",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:robin#1"
      }
     },
     {
@@ -7100,11 +7137,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.576 · 1.78 pts/gm this season (9) · a point in 6 of his last 9",
+     "eventId": "2026020142",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.7,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT20COLNJ-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.748,
+     "pAdj": 0.7209,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-20T23:00:00Z",
+     "teams": "COL @ NJD",
+     "revealed": {
       "v": 1,
       "hash": "876f8195a64cc165f7543036fca9e1696c95f7fbbb45cffc012acb60c8f8c0c7",
-      "iv": "vC3TYhcZXHOx0dQO",
-      "ct": "j0SVfTcsgZRNj4gXspwKvjfUgsSrP362qQ8ScHMEzGapT1SPFrESuheLyl9PWBty8d5wfXEtTgGHmzSqvvCg0CbsjZaPhp7fHciO2jr4JtxZ/sZ5fORD5AIB15hAyqZc0D9nl2PSGN1JYZT+QK7feYGV4pHoC5VZ8BtrBS+5wcs+2kV0E4PNq7SLK2OVq2DzuNoyTlqLvan+awG9DCAxQb3JNTwWapgF4wPl9tAXULjqyO7lGM/xycjbZbkudvOkgpJc3Yq3j2jvH2Dyzi9wvsbXM9UWV4wojsNJVenTtn9i30kVANxH2jpWNvldM0LAO5hEBIpBuPGL934iOqvDcZhZ3CDFxa/1NSc0gMANCjLWGJtCOKSG3V/PEJP6ZUpGEtnmvPSOtYHtCvszbQ88K0XBMUAeDvEENzsbNtNW4fKTEOybtA7kkJPiwXIfaX96mEaHK95306hcRwTFKxjDmz1EbULq87Jc46BV0d9FoyJuDBLReuw/fKe6WfQ+PU5HbrT5dujGXEW9IPMb8FH6eWFY0/BkkXV/uJnqUML78Mol4egInjGQXmOeB9FgdLUSri/Is4+VjJJ81b7bFzab2d0M2jMSV3Y6uEKqjtCjJatQaVjbsRQNZIGCnMYTm1ylrSQKws4jsQR4BYINc5CS+JqcApxSj0wYv6IM9QdoukkSy184emYud7c3ZwHV"
+      "salt": "d7f9ad3d8ab5bb09eef156d4b56b1e01",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:robin#3"
      }
     },
     {
@@ -7166,7 +7240,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T20:33:45.305Z",
+ "updated": "2026-10-20T23:00:58.111Z",
  "record": {
   "w": 83,
   "l": 30,
