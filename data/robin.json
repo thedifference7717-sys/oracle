@@ -6867,6 +6867,9 @@
      "sport": "NHL",
      "start": "2026-10-19T23:00:00Z",
      "teams": "NYR vs ANA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "34388cee84b3dc4f787a19936e17c495a8ae0404c11fe43a39830edb539dfc4d",
@@ -6894,7 +6897,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T00:08:14.344Z",
+ "updated": "2026-10-20T00:13:27.137Z",
  "record": {
   "w": 79,
   "l": 28,
