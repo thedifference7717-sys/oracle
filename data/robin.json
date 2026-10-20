@@ -6899,6 +6899,9 @@
      "sport": "NHL",
      "start": "2026-10-20T01:00:00Z",
      "teams": "UTA vs PIT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "ba9a6a5462a0948388c0b07fb849b6a74983f6e507c4e99eb5c5876c824001a6",
@@ -6974,7 +6977,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T01:11:55.377Z",
+ "updated": "2026-10-20T01:20:15.303Z",
  "record": {
   "w": 79,
   "l": 28,
