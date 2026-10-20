@@ -6876,11 +6876,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.223 · 1.22 pts/gm this season (9) · a point in 7 of his last 9",
+     "eventId": "2026020140",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT19PITUTA-UTACKELLER9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.679,
+     "pAdj": 0.6991,
+     "player": "Clayton Keller",
+     "playerId": "8479343",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-20T01:00:00Z",
+     "teams": "UTA vs PIT",
+     "revealed": {
       "v": 1,
       "hash": "ba9a6a5462a0948388c0b07fb849b6a74983f6e507c4e99eb5c5876c824001a6",
-      "iv": "M9LhtTjj//UDqak6",
-      "ct": "YeP+2V40swcJPWAQhk4Lyyhl1rZY5QeDvKGc81mbDuZsOSZRogLNd1nys6qpGsOI+JFRJX8yNS919hOcpMxuCDArdLMaHTA7bq/xh0qSurQ6F4eq9CZwRGdJdgcWQ3i2Y5JexTg+lDSSRenUBKf7RwtRoHzlfQbMYscUEhGEM4DFLsr+PQd3RkOHgdgeLb+PSNv6npunoG8omBHCVJ3b7T8/2vjptOa465wU7Bs8SF3NLo6LTdkehsF5WoM8DHRjewIHOOu0/34LqQH6HW0rE5JxeGMDr7ud8XAW9e7xcHVnNQlVTVDEqKl7i5e9SLX30NPXXDM8R6ycq+Xt1DZdiW9uOfryZyhwymkepdT2xEums5pQ4c/Hq3v+qMQcZEfapUkj0gjilpOh1wUvJBZLjEjZbnjNGC8q34fDZZ/JzZB/bQuF7xZ5yTyzct4S8r7++zF8KoHVip1fM7QNMmtkysBYTH410lFukpJaZUg5nKzl8T3YNw0JfjtG1ximFvj2UmZlUbuRtR2PUa0MTPymiTDCv14QUTqEI1cGF9FY5eYbM8VFNBS5zyskiGa4V8i3YFI82bmNMl/XT7JxjVfs2vksK2cdTKhEsAc2gGH4zG+Iblo7ChW+4y82u47pZv68u1BVatqQ295Fu/XQpopsb8ZKUqDQlV0NXSWvFPdVoWKteJDRDGmzkc4="
+      "salt": "9065afdb68df8f140ef0a6c43491c131",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-19:robin#4"
      }
     },
     {
@@ -6934,7 +6971,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T00:15:32.474Z",
+ "updated": "2026-10-20T01:00:13.323Z",
  "record": {
   "w": 79,
   "l": 28,
