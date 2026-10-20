@@ -6714,6 +6714,9 @@
      "sport": "NFL",
      "start": "2026-10-20T00:15Z",
      "teams": "SF vs WSH",
+     "result": "won",
+     "actual": 249,
+     "note": "249 passing yards against a 224.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "a17ae184bda977d3775ca958d0d58680f89d608a42bcda7e2584e2c93ebb0f92",
@@ -6980,7 +6983,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T01:45:20.214Z",
+ "updated": "2026-10-20T02:06:02.068Z",
  "record": {
   "w": 79,
   "l": 28,

@@ -2432,7 +2432,7 @@
   {
    "id": "2026-10-19:ladder",
    "date": "2026-10-19",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-19T22:00:52.387Z",
    "cycle": 10,
    "rung": 4,
@@ -2490,6 +2490,9 @@
    "sport": "NFL",
    "start": "2026-10-20T00:15Z",
    "teams": "SF vs WSH",
+   "actual": 249,
+   "result": "249 passing yards against a 224.5 line (graded early, 20+ clear)",
+   "settled": "2026-10-20T02:06:00.724Z",
    "revealed": {
     "v": 1,
     "hash": "f8f4ca0963ed766b5e1b2a1ce912f77128682f75c541dd276ddd69e378822184",
@@ -2518,12 +2521,12 @@
    }
   }
  ],
- "updated": "2026-10-20T00:15:32.415Z",
+ "updated": "2026-10-20T02:06:00.727Z",
  "state": {
   "account": 208.94,
   "base": 42.13,
-  "stake": 89.12,
-  "rung": 4,
+  "stake": 135.06,
+  "rung": 5,
   "cycle": 10,
   "pl": 108.94,
   "cycles": {
