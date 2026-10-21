@@ -3137,17 +3137,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 2.098 · 2.88 pts/gm this season (8) · a point in 8 of his last 8",
+     "eventId": "2026020148",
+     "kalshi": {
+      "ask": 0.83,
+      "bid": 0.75,
+      "spread": 0.08,
+      "ticker": "KXNHLPTS-26OCT20MINEDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.823,
+     "pAdj": 0.8298,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -488,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-21T01:00:00Z",
+     "teams": "EDM vs MIN",
+     "revealed": {
       "v": 1,
       "hash": "82f232b410b5cdd3fde86e1d59e44627278e92f24eb838d9c507eed324bf68d7",
-      "iv": "BJ/Z+HdCx5q1eADv",
-      "ct": "axCYqP+z/hXIBbDAhcKvDOdv+CAK33iOFVztqeF0IUlggY4lLV/4rW3tAg9bQjx1Jgj6O7pSgWFsFKZV4uIn0BT9R4KujzAnugRyo+inTOEgGcI5x15rHLKk5kFg/twHzQ2ZXdbDPLyjheqgP7BXax7/fK2n1m2gZbqnTzIfFkJ1Dvw+8W79b2RPfhTG2xBo6IF1WUD9BZEbbscqUjZ7dTHDbDlPHgVQL4FE9MkI+Y+l2UojlKtPSjJvaKI1jxL3oNbPPUUznUjbYcMDlMOEvYQgELwpK/o3TdD/o2da51JP0vh//WsHQPgQ/JlHk1h3oG2h0ZBaghDiNdlPUUzNk408G7+LDT2BVfYiIRPNv+UzINp6eeexcN3L9jCmegBooMQ7DU66gEv9V0F0pWSmTaDCEx/eI5mDllYVqpd0wqXIVuHTHQ8sRMjG0L3tlXnq1RMR10zoo4iyLhaQBn+pAyu8vrNeQmZMvIHEqS+qEJ5c2vbtXlTSfe/CSESSZC+PQBkpKaCaVkUUxTeev2ohxqV2teEG6gWohkXvLU6KwjPs9yHKF5bEthAXRgqP3s/gTS7Drv01UAYynZZB9i8D2Ri3YA4Us0TBmN05WQUQ1r6CR+YEvrzhnHAuAd/sv69M7T08OsDGKuZQ1LN5e5rkAWPFUB/VzgBeOLtCEOGuWfrCwFNOhcHjH/ZA"
+      "salt": "a9694b4c786f54e0593647a88a4e98f8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-20T23:00:58.076Z",
+ "updated": "2026-10-21T01:00:44.602Z",
  "record": {
   "w": 12,
   "l": 13

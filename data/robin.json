@@ -7129,11 +7129,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 2.098 · 2.88 pts/gm this season (8) · a point in 8 of his last 8",
+     "eventId": "2026020148",
+     "kalshi": {
+      "ask": 0.83,
+      "bid": 0.75,
+      "spread": 0.08,
+      "ticker": "KXNHLPTS-26OCT20MINEDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.823,
+     "pAdj": 0.8298,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -488,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-21T01:00:00Z",
+     "teams": "EDM vs MIN",
+     "revealed": {
       "v": 1,
       "hash": "94b4fef9a7ea886c35c80055789737f1e7e62eb68885517571eafecdb6a67d50",
-      "iv": "Oglv+nD/HJxzDRej",
-      "ct": "Aerytkc877uC6iGCZ28Hm4qWbkl/AWNgLtG0deLlOA0feyWuJu7EtYBoHGVX04MwYyUAtGB6jclAaXGuRf2OWewMm4gTjGWII5QcwwJ3SiVYXQH1HDelBRbvqsZqG2JsRMBxZkybEvjj2LbDgVEl78EnIOwl0Bo7erWGWepaGRJVkU36OaRHgCSY2AiWOD4oo5GLKTFQ0BxpOgbDjZWughrcTd45cZip2pz0VAw4p5XilEVbPMVXGXvJcpLFr3GURPT2hWiPIum87feE2udgp+wX9rFe2z1Q2PTo2iEugKCxekE1nIHbQjqmEKWVfKHSNkWGG46B+leES98qPqpZnkKn5EFnyAPjOUkHrfPA+pH1fxkcV365dhvHyMXK9egrMkT8q/Oh7uyYQfFaIiQEOWXesRVelooJBUbOHRxZ3AGGHL03jsEKkLqmvtJjEB907amEPfuFFzdttkEJSsgh1oc661hn+4rtx6QKkRDe/ryVTIXcXOqUGclthLYAaY7OJgkQhz3oA+Oqwi3N75si+S7ecTLyXb6jrtYaRAJOYOHq3dy3SvID36WGCGLotEmCyLMUhGR3ilqowRJVpwz+jYVqHiMFL54SO1BEu6d8c6dguCcfsDpr8Pz5NZZGz2OTO95gw03p/9lLYJVzoxMjjOQ89adqeOz+ksxeKfIa+88RKlvHNtLYsBVp6mQ="
+      "salt": "41d58274e9dcb3af5f9abe600828a719",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:robin#2"
      }
     },
     {
@@ -7240,7 +7277,7 @@
    ]
   }
  ],
- "updated": "2026-10-20T23:00:58.111Z",
+ "updated": "2026-10-21T01:00:44.636Z",
  "record": {
   "w": 83,
   "l": 30,
