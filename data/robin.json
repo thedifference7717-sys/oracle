@@ -7031,7 +7031,7 @@
    "id": "2026-10-20:robin",
    "date": "2026-10-20",
    "published": "2026-10-20T18:00:32.476Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 3,
     "NHL": 11
@@ -7288,6 +7288,9 @@
      "sport": "NHL",
      "start": "2026-10-21T02:30:00Z",
      "teams": "VGK vs TBL",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "e1f2ed2cf4a8214f0a9b462b34c11c05477233212c803b5487e7c3b9bfe6d485",
@@ -7360,22 +7363,64 @@
       "ctx": "2026-10-20:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 13.022,
+      "pl": -1.978
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 12.668,
+      "pl": -7.332
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 4.591,
+      "pl": -10.409
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-21T05:19:51.695Z"
   }
  ],
- "updated": "2026-10-21T02:56:20.792Z",
+ "updated": "2026-10-21T05:19:52.442Z",
  "record": {
-  "w": 83,
-  "l": 30,
+  "w": 87,
+  "l": 32,
   "void": 0,
   "unit": "bets",
   "tickets": {
-   "w": 381,
-   "l": 614
+   "w": 392,
+   "l": 660
   },
   "days": {
    "w": 11,
-   "l": 9
+   "l": 10
   }
  }
 }
