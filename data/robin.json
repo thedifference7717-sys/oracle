@@ -7406,9 +7406,20 @@
     ]
    },
    "settled": "2026-10-21T05:19:51.695Z"
+  },
+  {
+   "id": "2026-10-21:robin",
+   "date": "2026-10-21",
+   "published": "2026-10-21T22:00:23.757Z",
+   "status": "noplay",
+   "games": {
+    "NBA": 11,
+    "NHL": 2
+   },
+   "reason": "fewer than three qualifying props in different games"
   }
  ],
- "updated": "2026-10-21T05:19:52.442Z",
+ "updated": "2026-10-21T22:00:24.720Z",
  "record": {
   "w": 87,
   "l": 32,
