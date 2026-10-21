@@ -386,7 +386,7 @@ td.num{text-align:right}
     <p>One bet a day, chosen from <b>every sport on the slate</b>: ⚾ a hitter to record a hit, 🏀 a player's points, rebounds, assists or threes, 🏈 a player's passing, receiving or rushing yards, 🏒 a skater to record a point. Each sport's model rates every prop, each prop is priced at what it costs on Kalshi, and the ladder takes the one our model rates <b>most likely to win</b>, matchup included (the pitcher he faces, the defence) — any price (in NFL and NBA, the likeliest line no shorter than −350, so a win is never a big stake for a small return). The one thing that moves it off that man is an injury.</p>
     <p>It is not simply the biggest number. A sport's model is trusted only as far as its record has earned: a sport with no settled rungs yet leans on the market's price instead of its own opinion, and earns its say as results come in. Form, the opponent and injury tags break near-ties; a player listed out, or without a real recent workload, is never picked.</p>
     <p>Staked from an account you set yourself — every figure on the card is worked out from your number.</p>
-    <p>Win and the entire return rides the next day. Five straight closes the cycle and the money comes off the table, with the next cycle seeded at 10% of the grown account. Any miss ends the cycle there and the next one starts <b>25% bigger</b>.</p>
+    <p>Win and the entire return rides the next day. Five straight closes the cycle and the money comes off the table, with the next cycle seeded at 3.85% of the grown account. Any miss ends the cycle there and the next one starts <b>20% bigger</b>. The seed is sized so the account covers <b>ten busted cycles in a row</b>; after a tenth, it starts fresh at 3.85% of what is left.</p>
     <p>Only the cycle's <b>seed</b> is ever your money — everything above it is the book's — so a miss on day four costs exactly what a miss on day one costs. That is the one thing separating this from a martingale.</p>
     <p>The pick stays blank until it locks <b>one hour before the day's first game in any sport</b>, then shows the rung actually published to the repo, with its publish time beside the start. Read the red panel on the card before you run it.</p>
   </div></details>
@@ -417,7 +417,7 @@ td.num{text-align:right}
 <script src="pages.js?v=5"></script>
 <!-- The ladder's arithmetic only (ladder-math.js). The model that picks the
      bets is not published, so this page no longer builds a live board. -->
-<script src="ladder-math.js?v=2"></script>
+<script src="ladder-math.js?v=3"></script>
 <script>
 // The engine lives in a separate file as of BUILD 3. If it fails to load,
 // say so in the status bar rather than throwing at parse time and leaving the
@@ -1226,7 +1226,7 @@ function renderLadderInner(){
     el.innerHTML=`<div class="ld">
       <div class="ld-setup">
         <div class="l">Set your bankroll to start</div>
-        <p>The ladder stakes a fixed share of an account you set aside for it — ${Math.round(M.LADDER.basePct*100)}% on day one,
+        <p>The ladder stakes a fixed share of an account you set aside for it — ${+(M.LADDER.basePct*100).toFixed(2)}% on day one,
         then the whole return rides for ${M.LADDER.rungs} days. Every figure on this card is worked out from your number,
         so nothing here is anyone else's stake.</p>
         <div class="row">
@@ -1320,12 +1320,13 @@ function renderLadderInner(){
   // What today actually turns into. This is the number the box exists for:
   // win at the price you typed and that is tomorrow's stake, unless today
   // closes the cycle, in which case the money comes off and the next seed is
-  // 10% of the grown account.
+  // the plan's share of the grown account (st.next: 3.85% from 10/21).
   const ret=stake*dec;
   const closes=st.rung>=C.rungs;
-  const nextIfWin=closes?Math.max(0,(st.account+(ret-st.base)))*C.basePct:ret;
-  const nextIfLose=st.base*(1+C.missGain);
-  ldCtx={today,stake,closes,account:st.account,base:st.base,basePct:C.basePct,odds:todayOdds};
+  const nextPct=st.next?st.next.pct:C.basePct;
+  const nextIfWin=closes?Math.max(0,(st.account+(ret-st.base)))*nextPct:ret;
+  const nextIfLose=st.next?st.next.lose:st.base*(1+C.missGain);
+  ldCtx={today,stake,closes,account:st.account,base:st.base,basePct:nextPct,odds:todayOdds};
 
   // Only two rungs on this staircase are real numbers: the ones already bet,
   // at the prices those bets were actually taken at, and today's. Tomorrow is
@@ -1650,7 +1651,7 @@ function render(){
   </div></details>
   <details class="disc"><summary>Staking</summary><div class="disc-b">
     <p><b>BET.</b> sizes linearly off the edge: edge points x your <b>$ per edge pt</b> (default $2.50), so a +5.5pt game stakes $13.75 and a +2.0pt game stakes $5.00. Nothing at or below zero edge gets a stake. It is computed from the rounded number shown, so the multiplication checks out by hand. The <b>¼-Kelly</b> figure in each card's footer is the bankroll-proportional alternative, shown for comparison — they are two different staking rules, not the same number twice.</p>
-    <p><b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 25&#37; bigger, so consecutive busts compound, and any account funds only a handful of them before it cannot fund the next. Both the completion rate and the chance of running the account dry are computed live on the card. The rungs are not a fixed sequence. The price starts at an assumed -275 and the real one moves every day and every book, so nothing here is fixed: type the price your book is showing into <b>Odds you got</b>, or — better, because it is exact where a rounded price is not — type what a rung actually <b>paid back</b> and the price is worked back from it. Every rung ahead, the next bet, and the whole risk panel recompute off whichever you give. Past rungs are editable the same way, so a payout from three days ago corrects the chain above it. Rank it by the red panel, not by the payout.</p>
+    <p><b>The ladder, stated honestly.</b> One leg a day, staked so that each win's full return rides the next day. Five wins closes the cycle; any miss ends it. Because only the seed is ever your own money, a miss on day five costs the same as a miss on day one — that is the single feature that separates this from a martingale. What it shares with a martingale is the escalation: a busted cycle restarts 20&#37; bigger, so consecutive busts compound. The seed (3.85&#37; of the account) is sized so the account funds ten busted cycles in a row; an eleventh starts fresh at 3.85&#37; of what is left. Both the completion rate and the chance of running the account dry are computed live on the card. The rungs are not a fixed sequence. The price starts at an assumed -275 and the real one moves every day and every book, so nothing here is fixed: type the price your book is showing into <b>Odds you got</b>, or — better, because it is exact where a rounded price is not — type what a rung actually <b>paid back</b> and the price is worked back from it. Every rung ahead, the next bet, and the whole risk panel recompute off whichever you give. Past rungs are editable the same way, so a payout from three days ago corrects the chain above it. Rank it by the red panel, not by the payout.</p>
   </div></details>
   <details class="disc"><summary>What changed, and the caveat</summary><div class="disc-b">
     <p><b>A card per qualifying game.</b> Every game whose double clears the bet bar (default +2.0 edge points) gets its own card, however many that is — no top-N cap — and games below the bar get none. That is the same test the Telegram alerter applies, so the board and your phone cannot disagree about what counts as a bet. The table underneath still lists every game on the slate, bar or no bar.</p>
