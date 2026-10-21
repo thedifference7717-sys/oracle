@@ -2620,7 +2620,7 @@
    "id": "2026-10-21:ladder",
    "date": "2026-10-21",
    "status": "open",
-   "published": "2026-10-21T22:00:21.705Z",
+   "published": "2026-10-21T22:20:05.819Z",
    "cycle": 11,
    "rung": 1,
    "seed": 13.56,
@@ -2632,13 +2632,13 @@
    "seal": 1,
    "sealed": {
     "v": 1,
-    "hash": "c98cd97018bf436d82ce852c2feaf734df750d38d963d53e0222453f5708a79c",
-    "iv": "txw2riT6XdCi8dzI",
-    "ct": "HdogkdnE6HUoXKtmUhscJaRbzky5vgmz6OdLffl5Jn8EazwsHYggs5idSS8uzMzm6RMdBKBDnGV03LTcSZ+kCdXnnhcs6z9Oqzyd+kTBIK1CHUwZyEYbsOOWQRnLJCB9m2Vpa3aXizUtGaa9pxNjOmNvpPinyMHF7yRpY02+87QvL6LJsyNSRm0zLcf5C2yWLlVi226qQlcaChcyWX4OMKwEaerIjEIjBMzvh9KxRpah8ApM3Vf97RkBk0FkUZYGVngEpAvFFwTgzmk+8Vy3vAce0Nc8fxsM9N0++OJ2MdXH+ZBTHgeMxWvrCJkU93qcolE9Q+Ci/7zNAvrndcmHmT7elYFVpb2PBbffUjAkOCeG3oA1vXy9zyy3BUmt4NqSB3jj9Pty+Jwv80vQ9Mw2DWAwm4gWwgpzJkK0577Zo9mH/hL5VS4vXm0P/LZf9LZ5eG4QLNHk5m3zEd5FkKyuHJlMV9qB/zDXSYjIQfDWXXAWBj1+uNqYQi2xR2TXATTSHEADXgFeJ7sXw7FqieVBOIQkOTkg4TZmYJ+BvQvs1cgfDxXR2xdV0W43myzcT8phP4xEUX3cdgb/2mp1vkRQkN8f3Ltps+WnWccXYMybsmBaffXMpM0n5p1hcvbcDA011ohFq8wN/od2By4o2KyEFurS2RBppRrINAWR1Teq0B82p6oipDupR4RFMpYDZsAgZtLu8zmPqbVV644Z0JtDmxrmZmj4e0WtTnjqAT6ERp9/nZwhTDXM/RIwi3zhKihFTc3dJsrQXjgXmHwlZfmMcDrazIvt7kyI0IFSC5RYixKRh28F0Zx3TZ1bQGYPNcVEf7Fp9xmCGkgIEOvKT2yb4vDW6AwBJ/Gx8KMLFGv/z4h3exU1FhXYqhP2ZB+8iVNbv6Ii/ERluSEnFQ4pN9TPa8lx4fpr7e/Vo/vFMwEVv8AXpxZZG3II/Q7XEXSp3YOoIATUN6bIHd4zaUe4u/Y6TEAvPpb5nwylMDcmoD7nlnHoO/yIsEhrI5ziq8GDfJSWblx9c7FiucLkDN5UdMpf64UwLBkLTQvFgE1dpFlN13Blns+RzbUUGlV9aSCG56TW28hTBagchpjr0j+RqLcRmrcIX7pjnD1iL4/9qerx7ZBvccPD3ZzNZWy98e7CcwqBEr79ImYscRBztLlC"
+    "hash": "77adf5e65bf57fa373a59d058fe7ef895a7f052059feeb38855ab2e107c45434",
+    "iv": "7LhcPY/3x15nOKR8",
+    "ct": "790yZsknwElyvfvgIrMeBLAwHGBf8KZP/vP2bdSK2id1sGg96Gh1UXs7lcZ8/j6orn+L2yq+mzbX5ZTzIbaMXardCdcOpxtOwXX7239KEXW2Fog29xBiTtBmgof8Qc+sRkLMOm+ybH+MAOKF4d6GsNcCA7Gcr52kxd2e9B0N9k96M7OCufjugvPkMjH496U34jyByvb8cQMDp+vXclc1JOsVh11ftSqoGx2Z1e/Os4Zj0d6nsmbURjlcc3aAqgCBSnxC0CCwCahZWhpjDeCLIPWVNdibO6aOwrL4e5sxG8tLtjyVRyONgY4rPSJUJxmUZYlzxIeRqxJqk8IzFyIZWFCth/Al/aakNslrGJAKjKvIq4XaVIMkZQBu6dMHHSDj/afZ4/wMvWcYog3v1Za7g3A8ZDjkgYUavwO3WdXUgb1PyYR9IpfxYgg+CnpGvUfwiDqYmbcScN+5XlIzFoT32w/pgyklzlfDk69Dd9RKFcWYaGxXG32ul1kM9Q62BKfG4k14e7G11WSCCH1MxrumrSZzW9b+x7XKlFcoANY6vKQZrCm+J7Tzr/8WIfpuJYTw3M+gtPSNjRyQLTAyYj/+1uKbEREDHcyIxcg6swUY9941TEH/RiPQsmhBsx0z+RU7J6RBoRmAcspCXRpN2T7yz/idnmrlkY2RTl821BKJo6Z04F8xz3PEhxsiIsEZls9ntQaUa7hullvtr20B9yJvRKChczMe0bkh2sRJAfuTZegIrZpGhPKN/XtuhqtdEmPYRNt1ASKcvPglImXdDg1sFwG4RtyJiO5LzjGSgCJdjvlk76MmvsuWuWUIbVh39Qy+QREc6SqIBIWuQiHs8hJ4CPLKBxD5ZDCqC4uKqMzPhZw8QsBvpm+hgt8zIEbz99i8vzPloBYTPUvAh/Nbv525VPOEWXC8caGkAutRiu5s+JOkYzWw2aVz+4MPowDlone/dVoXy+1yaa+NjneWstwqKbJOiOJvJp6YR5kH78k47vjOVztBVKL1ToHnoS/ozwiSbdDDXZEWr/91Vp1ph9WQiMNOQ2xjl68azdna6lDutdKyD28+rtnfw6sCvZhxiPC4pLRmj/IE7g6B+6amZS9vJ2bF8vMWz0AZ"
    }
   }
  ],
- "updated": "2026-10-21T22:00:21.708Z",
+ "updated": "2026-10-21T22:20:05.824Z",
  "state": {
   "account": 351.89,
   "base": 13.56,
