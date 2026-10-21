@@ -7265,11 +7265,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.475 · 1.8 pts/gm this season (10) · a point in 8 of his last 10",
+     "eventId": "2026020151",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.63,
+      "spread": 0.04,
+      "ticker": "KXNHLPTS-26OCT20TBVGK-VGKJEICHEL9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7301,
+     "pAdj": 0.6721,
+     "player": "Jack Eichel",
+     "playerId": "8478403",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-21T02:30:00Z",
+     "teams": "VGK vs TBL",
+     "revealed": {
       "v": 1,
       "hash": "e1f2ed2cf4a8214f0a9b462b34c11c05477233212c803b5487e7c3b9bfe6d485",
-      "iv": "WSFiymLp9kMZPKs4",
-      "ct": "cbz0WtymC988NjecRD3DXx3fnNptSXKaIB72TVdVEBUOlxYic6uYfhBA+qRZntz3H1smENt8+cMDahAq6rEa5yc0WJd8eNhSNv4LjydOR82v0jxnpRFISI6VeWMf7z71hNNg4BlzkcFPGK/F4envTNsb+eS/MLkIbmuOQjbX0w+937uXBSVy8Dva3HP61ZI3TyxciiZH2COKgLw3dK42W7/PcEn7zQevwtVi3F8nawNnMT4U035ISSbKx2ck6ciV3747ort9J5tmeFQSjR267aOS7XPbsnbeMWaH/Qisrkq9mdC+yj5M80tevAfmiHGv9aq595u5JrKAlQA504elOzTgd/wu4wknrzfy10caRiBJmEUKb6BMaxodzql7bZ1Mc7Z0Q4wVxo6oBnqKxU4QDqGppYi3t2rKk6EgowUllJUpFnKrFjEi7l2wH+vo5P1N59ozp0enmQQbELABpgfbQKQnJxKbfhTTnQU2pZDLSGHaEprkLq7QSFRsLC+FhamdgKqyPbkv7qtaeXGkCSXGCwN0p9HXlXZJ7dO66gQW2UEC+2lPdM4EUBvgPoXGpJmQYV+/upmgSZE0jbQI5X3tYK3dACCtiINRvyjJrLaaIblE3SxqNz5ERNE14sNq/yAMEnePUs7JODIJDcdr8ErgKpRkx50ru65peIIZW5z++CVOzQvvtxJlvA=="
+      "salt": "928345ce20bcc359bd0eb0458f61fac5",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:robin#4"
      }
     },
     {
@@ -7323,7 +7360,7 @@
    ]
   }
  ],
- "updated": "2026-10-21T01:51:13.754Z",
+ "updated": "2026-10-21T02:30:30.367Z",
  "record": {
   "w": 83,
   "l": 30,
