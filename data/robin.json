@@ -7096,6 +7096,9 @@
      "sport": "NBA",
      "start": "2026-10-21T01:30Z",
      "teams": "OKC @ SA",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "0159e6f11f78d421dc5ffd7a480f1485304c419efa33eb523b4b03bd55379c9d",
@@ -7360,7 +7363,7 @@
    ]
   }
  ],
- "updated": "2026-10-21T02:30:30.367Z",
+ "updated": "2026-10-21T02:56:20.792Z",
  "record": {
   "w": 83,
   "l": 30,

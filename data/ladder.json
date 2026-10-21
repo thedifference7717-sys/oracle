@@ -2523,7 +2523,7 @@
   {
    "id": "2026-10-20:ladder",
    "date": "2026-10-20",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-20T18:00:30.279Z",
    "cycle": 10,
    "rung": 5,
@@ -2580,6 +2580,9 @@
    "sport": "NBA",
    "start": "2026-10-21T01:30Z",
    "teams": "OKC @ SA",
+   "actual": 10,
+   "result": "10 PTS against a 9.5 line",
+   "settled": "2026-10-21T02:56:19.211Z",
    "revealed": {
     "v": 1,
     "hash": "11a4122daf500084de8d10077469dd0774b4f264b3a0073cb9b48904a1876614",
@@ -2608,16 +2611,16 @@
    }
   }
  ],
- "updated": "2026-10-21T01:30:28.135Z",
+ "updated": "2026-10-21T02:56:19.214Z",
  "state": {
-  "account": 208.94,
-  "base": 42.13,
-  "stake": 135.06,
-  "rung": 5,
-  "cycle": 10,
-  "pl": 108.94,
+  "account": 351.89,
+  "base": 35.19,
+  "stake": 35.19,
+  "rung": 1,
+  "cycle": 11,
+  "pl": 251.89,
   "cycles": {
-   "done": 3,
+   "done": 4,
    "busted": 6
   },
   "canFund": true
