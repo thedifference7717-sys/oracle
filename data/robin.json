@@ -7480,33 +7480,144 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 22.0 in 33 min · over this line 8 of his last 10",
+     "eventId": "401909837",
+     "kalshi": {
+      "ask": 0.71,
+      "bid": 0.69,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26OCT21CHITOR-TORRBARRETT9-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.8784,
+     "pAdj": 0.711,
+     "player": "RJ Barrett",
+     "playerId": "4395625",
+     "price": -245,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-21T23:30Z",
+     "teams": "TOR vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "52a49f16507775a5c7115ea936f68539fd46aff31a79479f0a4a24c420cadd64",
-      "iv": "A8xSDDmoWR2cQBxq",
-      "ct": "EQ/00+1FVkmO8uSKPm3pwG5uafj5M0kgZoFza/w5lzrkbacICNPVrfbH5JCdeoZNFoOuEeTaHf9w+yxeMzCYE/HidkRTCJCMoGQI97QkZhALwDs3hRvpbYtXz4zkBjxtDda3PcCxwN7pKKsDfU9Vg0+yB3qKu86sboLfliOOqCWhQH9lPSjuKCba4W87DkwTK4oo2qPPkdF2a3JRNEB9RktMPM4lw07M3aZVkW14g504xqsoIOAgMv+75JMKeY8KWO3tf01rpTJLm2j9Y25EJq+mIz7lSrnC20HiYdruvxQO8giymG5P25UGqfz2MEAMuqPpHkaMkvCAxvw3IyA20X4LRls23MXqrX5UfuldOPe9gfz7oFxWOrRMeukr//w4V6uL6hlPrD0RDcCB5zDwwQUo2XaIeNpdF9RXHbiYoT29mL+lDnOuOetgTONQsPXFCkUILGWLWzOGNYdl59N1mAm0RYtHsajtdKdx6RPJj4BuKIM0RZXm0w/lRvYW4cXzC38ZNJd0aQ7jxSNtN6DjGn229xKxDlbBkTGZsGLuEAa1ZSJGcgBe0sYs3rUB1cicyydiycgu11PrWSdwTqqu9nVVJXYqwMSeEW1Dy+6k6gIgfrra8GvE7WD2Hwns6mF+v4S0Jdpvl/xykfCuh7EC"
+      "salt": "9bce60550ee5f377e6720c9086a0752f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-21:robin#3"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.184 · 1.33 pts/gm this season (9) · a point in 7 of his last 9",
+     "eventId": "2026020153",
+     "kalshi": {
+      "ask": 0.64,
+      "bid": 0.61,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT21FLAOTT-OTTTSTUTZLE18-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6703,
+     "pAdj": 0.6414,
+     "player": "Tim Stützle",
+     "playerId": "8482116",
+     "price": -178,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-21T23:30:00Z",
+     "teams": "OTT vs FLA",
+     "revealed": {
       "v": 1,
       "hash": "7a44b9eb72974972506542a0d121d25bd48c5890e595a7a5dc7cac14ffe027e9",
-      "iv": "T03shplAqxbJQvT5",
-      "ct": "p8ia3eC4ARrRRi33eQQskOq06W2/PlBBZnPeMw+ZM9+AEt4qN7hVu8Kx6nGUefPzzdu3FMs6qke07BEs7Oc7fdANaWmvMVI37q/ogiMJWf3h2sx20mvTBQnKq/F/EQ6NUB7UM7WejXXWpjtBybVlQVe/m6zxoA8T8halfDb8Qf31KGwy3l36SjPHnVAwMUtKIeeQkwT/38xLIgQRSZ2VOqojX43E9ZSv2kBG5IP+lmfnKcMIiZZlZEDI4QLuzVMK4ppiQMPrT5pVryo6+fASLF+04fMoKmO0K1Zr2FSxHguU+2vdhFLWtkse3CiXJZLw0Ld4cEzsnlcV2K32D6/xIp9VKmPqzwoaBqkhmA7SuQ/xy/2JsQ/gDOMraz9zXl4hSFcLJ2zLrRn9OORjsMk0quGStXBn7NV5ub3dBdKYsTluPvV/XCAUYv4l2GFjydwPSB38L2Lr8HlHlCIlzWNyAE53ap0kyYq8DYuWWc9hrAOiD6T8BwTzjM1hXiP35N5KGVbe8FP/nm8RzktM0X4AJYdiWvGbu68ZnR79WuRdsmO9WOSu+1R0eyntKEhXgcmh04qJQUvC7pWXRCRQb2uzcxfmMZMBlBfD9kFgnoxZFMCgFMIQ7ZBLST5HdqUtRgn7ePKxvg4Y3QjpZwIx7zm5GQsebZdgzhNd7pKDhLA5WoFEi2PtqtJ4lKOQgw=="
+      "salt": "81a386c8f4238d6bbe78faad6e1f434d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-21:robin#4"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.068 · 1 pts/gm this season (9) · a point in 6 of his last 9",
+     "eventId": "2026020152",
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.64,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26OCT21PHIBUF-BUFTTHOMPSON72-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6424,
+     "pAdj": 0.6502,
+     "player": "Tage Thompson",
+     "playerId": "8479420",
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-21T23:30:00Z",
+     "teams": "BUF vs PHI",
+     "revealed": {
       "v": 1,
       "hash": "956fa911ec8b8dc47e1cdc296c394ef737b1731cec40d4498f3576c4b7ff1bbe",
-      "iv": "0Gpa4z7fPqjeBOKV",
-      "ct": "cvfDnSSVMN2Aoh/yHeOVGpZpyXox6tFXOuVYJjb2yimg++RybJxeDytoRVCq7K5kkR/AwiTqIYWDbuDms1joLkLwhYG7uaw3gobnRPS7hsClQEQyKKniuCHsCa+/CPBVUolPxXHcK5mW3iiTHh8dwAMRRrFSOjlJTwTzjBsPl+mM9iMl7aYUP0hDySZS+tpc9Ig30Zd5FSYNTElSZGeNaNOjbbIz4Ho35Ow7Yj6l8n867BKg5Mx5H0dYz9x7Eoz1QObiB5yHRrVloDhlQc8G9OXwf0LCf3sxwcWUjjPrnx2ljmf7t0+ouH+yt/mOc7zbH8SFk+v1O1QWKsC8PJcZ88sv1eyaUdqSgaYkqZJTvBoZr1pQO9wyOgAwoLqijVv69XcDmTdrw8GvD8hWVe9+rZaA9JdV2DiRVIS8DCJTGXWqqlteUSXwycTvoBm7fP/NYerISNetVPaqSWTLDq09o3LvJNOLW1Exky2QMRV7IxgktowqWmSxPVit88C8pozAvQhz5GN6O39ISaG3AORI2HYM5eiAUIxxvsDqcov+ziOjIWjNjMpRK6rk91zas2ZHEKwM7wvwZKOQqjuFaMzyuiJGKsFik8jje4wm0z4d/ox3Uq2/uIYCIRNbzI6ugLcoF9rQ4g2fcoKlXwTXcKJjR8lkikihfeNLiuA0yJwFs0Hv+wPdCpDKhK2U"
+      "salt": "f2087adedb3ae4a21bd0737e9bd8ee7c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-21:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-21T22:21:28.753Z",
+ "updated": "2026-10-21T23:30:48.416Z",
  "record": {
   "w": 87,
   "l": 32,
