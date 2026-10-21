@@ -91,7 +91,7 @@ function ladder(history, cfg) {
   // stakes already in play are not touched.
   const moves = (C.moves || []).filter(m => m && m.date && isFinite(+m.amount) && +m.amount !== 0)
     .slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
-  let mi = 0, moved = 0, lastClose = null;
+  let mi = 0, moved = 0, lastClose = null, lastSeed = null;
   const applyMoves = before => {
     while (mi < moves.length && (before == null || String(moves[mi].date) < String(before))) {
       const amt = +moves[mi].amount; mi++;
@@ -99,11 +99,16 @@ function ladder(history, cfg) {
       if (rung === 1 && lastClose !== "busted") { base = round2(Math.max(0, account) * pct()); stake = base; cashIn = base; }
     }
   };
-  // A series beginning on or after the switch: the new plan, seeded fresh.
+  // A series beginning on or after the switch is on the new plan. After a
+  // bust it is the busted series plus the new 20%, and the busts in a row
+  // carry over (the owner's rule: Buzzer Beater's $10 miss on 10/20 makes
+  // the next series $12, the second of ten); after a completed series, or
+  // with nothing played, it seeds fresh.
   const switchTo = day => {
     if (!early || rung !== 1 || !isDay(day) || String(day) < old.until) return;
-    early = false; streak = 0;
-    if (C.seed == null || rows.length) { base = round2(Math.max(0, account) * pct()); stake = base; cashIn = base; }
+    early = false;
+    if (lastClose === "busted" && lastSeed != null) { base = round2(lastSeed * (1 + C.missGain)); stake = base; cashIn = base; }
+    else if (C.seed == null || rows.length) { streak = 0; base = round2(Math.max(0, account) * pct()); stake = base; cashIn = base; }
   };
   for (const b of history || []) {
     applyMoves(b.date);
@@ -179,7 +184,7 @@ function ladder(history, cfg) {
     } else if (b.status === "lost") {
       // Everything put in this cycle is gone, not just the seed.
       row.pl = round2(-cashIn); row.closed = "busted"; lastClose = "busted";
-      account = round2(account - cashIn); staked += cashIn; cycles.busted++; streak++;
+      account = round2(account - cashIn); staked += cashIn; cycles.busted++; streak++; lastSeed = base;
       // The plan covers `series` busts in a row; the one after starts over.
       const fresh = !early && C.series > 0 && streak >= C.series;
       if (fresh) streak = 0;
@@ -197,8 +202,8 @@ function ladder(history, cfg) {
   const today = C.today || slateYmd();
   const handover = early && isDay(today) && String(today) >= old.until;
   const nextPct = handover ? C.basePct : pct();
-  const lastOfPlan = !early && C.series > 0 && streak + 1 >= C.series;
-  const next = { pct: nextPct, lose: round2(handover || lastOfPlan ? Math.max(0, account - cashIn) * nextPct : base * (1 + gain())) };
+  const lastOfPlan = (!early || handover) && C.series > 0 && streak + 1 >= C.series;
+  const next = { pct: nextPct, lose: round2(lastOfPlan ? Math.max(0, account - cashIn) * nextPct : base * (1 + (handover ? C.missGain : gain()))) };
   const open = (history || []).some(b => b.status === "open");
   return { cfg: Object.assign({}, C, { basePct: pct(), missGain: gain() }), streak, next, rows, account, base, stake: round2(stake), rung, cycle, open,
            cashIn: round2(cashIn), toppedUp: round2(cashIn - base),
