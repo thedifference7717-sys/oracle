@@ -7104,6 +7104,9 @@
      "sport": "NBA",
      "start": "2026-10-20T23:00Z",
      "teams": "PHI @ NY",
+     "result": "won",
+     "actual": 20,
+     "note": "20 PTS against a 19.5 line",
      "revealed": {
       "v": 1,
       "hash": "937822c28d4dd9871409455de7ee74c202dbb13c23c7de35da6448fdcc36a232",
@@ -7277,7 +7280,7 @@
    ]
   }
  ],
- "updated": "2026-10-21T01:00:44.636Z",
+ "updated": "2026-10-21T01:12:43.142Z",
  "record": {
   "w": 83,
   "l": 30,
