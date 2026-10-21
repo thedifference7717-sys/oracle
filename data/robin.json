@@ -7234,6 +7234,9 @@
      "sport": "NHL",
      "start": "2026-10-20T23:00:00Z",
      "teams": "COL @ NJD",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "876f8195a64cc165f7543036fca9e1696c95f7fbbb45cffc012acb60c8f8c0c7",
@@ -7317,7 +7320,7 @@
    ]
   }
  ],
- "updated": "2026-10-21T01:30:28.189Z",
+ "updated": "2026-10-21T01:37:43.777Z",
  "record": {
   "w": 83,
   "l": 30,
