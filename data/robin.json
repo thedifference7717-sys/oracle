@@ -7189,6 +7189,9 @@
      "sport": "NHL",
      "start": "2026-10-21T01:00:00Z",
      "teams": "EDM vs MIN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "94b4fef9a7ea886c35c80055789737f1e7e62eb68885517571eafecdb6a67d50",
@@ -7320,7 +7323,7 @@
    ]
   }
  ],
- "updated": "2026-10-21T01:37:43.777Z",
+ "updated": "2026-10-21T01:51:13.754Z",
  "record": {
   "w": 83,
   "l": 30,

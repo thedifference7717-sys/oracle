@@ -3078,7 +3078,7 @@
    "id": "2026-10-20:dub",
    "date": "2026-10-20",
    "published": "2026-10-20T18:00:32.476Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 3,
     "NHL": 11
@@ -3154,6 +3154,9 @@
      "sport": "NHL",
      "start": "2026-10-21T01:00:00Z",
      "teams": "EDM vs MIN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "82f232b410b5cdd3fde86e1d59e44627278e92f24eb838d9c507eed324bf68d7",
@@ -3187,6 +3190,7 @@
    "fair": -233,
    "price": 104,
    "prob": 0.7,
+   "settled": "2026-10-21T01:51:12.547Z",
    "revealed": {
     "v": 1,
     "hash": "7792a5f7fa2fe3f875f76e487626f491bf7a6b3156f0f38e7cc18c71328f49a7",
@@ -3201,9 +3205,9 @@
    }
   }
  ],
- "updated": "2026-10-21T01:30:28.160Z",
+ "updated": "2026-10-21T01:51:13.666Z",
  "record": {
-  "w": 12,
+  "w": 13,
   "l": 13
  }
 }
