@@ -28,9 +28,18 @@ function decFromAmerican(a) { a = +a; if (!a) return null; return a > 0 ? 1 + a 
 
 const LADDER = {
   account: 100,    // default only; every viewer sets their own
-  basePct: 0.10,   // a cycle seeds at this share of the account
+  // The owner's plan from 10/21: a series seeds at the share of the account
+  // that covers `series` straight busts, each missGain bigger than the last
+  // (1/25.96 = 3.85% for ten at +20%). After that many busts in a row the
+  // next series starts fresh at that share of what is left.
+  basePct: 1 / ((Math.pow(1.2, 10) - 1) / 0.2),
   rungs: 5,        // wins needed to close a cycle
-  missGain: 0.25,  // a busted cycle restarts this much bigger
+  missGain: 0.20,  // a busted cycle restarts this much bigger
+  series: 10,      // straight busts the seed is sized to survive
+  // Series that began before this date ran on the old plan (10% seeds, +25%
+  // after a bust), and replay that way so the published record never moves.
+  // The first series to begin on or after it seeds fresh on the new plan.
+  before: { until: "2026-10-21", basePct: 0.10, missGain: 0.25 },
   maxStreak: 2,    // a player cannot be the rung more than this many days running
   // The price a "to record a hit" leg is assumed to be offered at, used ONLY
   // when a rung has no price of its own. It is a starting assumption, not a
@@ -44,6 +53,7 @@ const LADDER = {
 const round2 = v => Math.round(v * 100) / 100;
 
 const seedFor = C => round2(Math.max(0, C.account) * C.basePct);
+const isDay = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ""));
 
 const pickKey = b => b && (b.playerId != null ? String(b.playerId)
                         : (b.pick ? String(b.pick).toLowerCase() : null));
@@ -63,7 +73,11 @@ function ladderBlocked(history, maxStreak) {
 
 function ladder(history, cfg) {
   const C = Object.assign({}, LADDER, cfg || {});
-  const seed0 = C.seed != null ? C.seed : seedFor(C);
+  // Old plan until the first series that begins on or after before.until.
+  const old = C.before && C.before.until ? C.before : null;
+  let early = !!old, streak = 0;
+  const pct = () => early ? old.basePct : C.basePct, gain = () => early ? old.missGain : C.missGain;
+  const seed0 = C.seed != null ? C.seed : round2(Math.max(0, C.account) * pct());
   let account = C.account, base = seed0, stake = seed0, rung = 1, cycle = 1;
   // Cash actually committed to the live cycle. Equal to the seed until a
   // hand-recorded top-up says otherwise.
@@ -82,11 +96,18 @@ function ladder(history, cfg) {
     while (mi < moves.length && (before == null || String(moves[mi].date) < String(before))) {
       const amt = +moves[mi].amount; mi++;
       account = round2(account + amt); moved = round2(moved + amt);
-      if (rung === 1 && lastClose !== "busted") { base = round2(Math.max(0, account) * C.basePct); stake = base; cashIn = base; }
+      if (rung === 1 && lastClose !== "busted") { base = round2(Math.max(0, account) * pct()); stake = base; cashIn = base; }
     }
+  };
+  // A series beginning on or after the switch: the new plan, seeded fresh.
+  const switchTo = day => {
+    if (!early || rung !== 1 || !isDay(day) || String(day) < old.until) return;
+    early = false; streak = 0;
+    if (C.seed == null || rows.length) { base = round2(Math.max(0, account) * pct()); stake = base; cashIn = base; }
   };
   for (const b of history || []) {
     applyMoves(b.date);
+    switchTo(b.date);
     // A missing price used to fall through `decFromAmerican(null) || 1` to
     // EVEN MONEY, so a winning rung returned exactly its stake and the ladder
     // quietly stopped compounding on it — a wrong number, not a cosmetic one.
@@ -150,24 +171,36 @@ function ladder(history, cfg) {
       row.ret = ret;
       if (rung >= C.rungs) {                                 // cycle complete
         row.pl = round2(ret - cashIn); row.closed = "complete"; lastClose = "complete";
-        account = round2(account + row.pl); staked += cashIn; cycles.done++;
-        cycle++; rung = 1; base = round2(Math.max(0, account) * C.basePct); stake = base; cashIn = base;
+        account = round2(account + row.pl); staked += cashIn; cycles.done++; streak = 0;
+        cycle++; rung = 1; base = round2(Math.max(0, account) * pct()); stake = base; cashIn = base;
       } else {                                               // let it ride
         rung++; stake = ret;
       }
     } else if (b.status === "lost") {
       // Everything put in this cycle is gone, not just the seed.
       row.pl = round2(-cashIn); row.closed = "busted"; lastClose = "busted";
-      account = round2(account - cashIn); staked += cashIn; cycles.busted++;
-      cycle++; rung = 1; base = round2(base * (1 + C.missGain)); stake = base; cashIn = base;
+      account = round2(account - cashIn); staked += cashIn; cycles.busted++; streak++;
+      // The plan covers `series` busts in a row; the one after starts over.
+      const fresh = !early && C.series > 0 && streak >= C.series;
+      if (fresh) streak = 0;
+      cycle++; rung = 1; base = round2(fresh ? Math.max(0, account) * pct() : base * (1 + gain())); stake = base; cashIn = base;
     } else { rows.push(row); continue; }                     // open — state is frozen here
     peak = Math.max(peak, account);
     maxDD = Math.max(maxDD, peak - account);
     rows.push(row);
   }
   applyMoves(null);
+  // The next series, if it begins today or later, is on the new plan.
+  if (!(history || []).some(b => b.status === "open")) switchTo(C.today || slateYmd());
+  // What the next series seeds at, for a card that shows both outcomes: a
+  // series still on the old plan hands over to the new one when it closes.
+  const today = C.today || slateYmd();
+  const handover = early && isDay(today) && String(today) >= old.until;
+  const nextPct = handover ? C.basePct : pct();
+  const lastOfPlan = !early && C.series > 0 && streak + 1 >= C.series;
+  const next = { pct: nextPct, lose: round2(handover || lastOfPlan ? Math.max(0, account - cashIn) * nextPct : base * (1 + gain())) };
   const open = (history || []).some(b => b.status === "open");
-  return { cfg: C, rows, account, base, stake: round2(stake), rung, cycle, open,
+  return { cfg: Object.assign({}, C, { basePct: pct(), missGain: gain() }), streak, next, rows, account, base, stake: round2(stake), rung, cycle, open,
            cashIn: round2(cashIn), toppedUp: round2(cashIn - base),
            atRisk: round2(cashIn), onTable: round2(Math.max(0, stake - cashIn)),
            staked: round2(staked), pl: round2(account - C.account - moved), moved, peak, maxDD: round2(maxDD),
