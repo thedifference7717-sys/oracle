@@ -7076,11 +7076,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 16.2 in 29 min",
+     "eventId": "401909090",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.72,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT20OKCSAS-OKCCHOLMGREN7-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8721,
+     "pAdj": 0.7297,
+     "player": "Chet Holmgren",
+     "playerId": "4433255",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-21T01:30Z",
+     "teams": "OKC @ SA",
+     "revealed": {
       "v": 1,
       "hash": "0159e6f11f78d421dc5ffd7a480f1485304c419efa33eb523b4b03bd55379c9d",
-      "iv": "sHkYYJbBN8/wdza2",
-      "ct": "mA076ZKqyVHnEIngMYW6pER2TOL+P4IPyvxKOlIX1Jy5W5hrPHUo/qrLZe5QzTUFNtaGhEfa1UCimRvNapq/gvTTSzq4T2N6o1ctKmCeoHu6TPNGPr+5m+rL5AdIWO38dOSxHwl+kA0rZjAA135ccm3DHzxdadecjZsG6OPos/+GnfhRjXMw/85nq9hoiigVKyADxFZakmb9YF5R/vlrSGUdBMxtvyHBBIqCGpR7xrJKh+pO9o/4yIDuDHdxeg9TVxyVXCwiAm6P1mqhx4B5yPScMKSOzexmZ2a8DVLDiann7HOeouLvqpACsLOiRNcpIFfAfGv+ZJOzbMUq7uy9bFM+EuFUufnRUkeH2Ca1USOuvEL6h0/HfVO63F05E5KDgLTNc5pOsVWv6lfNQhZ5FS+gOBNY22WQVgJEbvClANnetJrQOPOUNdH0JRIYARkvYkvFDPx/0lViazO7hVUX37GWaSiIqKvvP0PEzdaBZe6Avro+pvZngAbJQID81mE/Ih8MzhbNpmzJK69hCH6fO4dl88g9qPZSbqUfNJknzBlJPOnTYMuSDN+fyejTjprcQaLmQ5zxsISwwdxB/u15PKcaLYWnL+txMlMaHJGO"
+      "salt": "7acac53e4fa558ad8f3a5b459f801e9d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-20:robin#0"
      }
     },
     {
@@ -7280,7 +7317,7 @@
    ]
   }
  ],
- "updated": "2026-10-21T01:12:43.142Z",
+ "updated": "2026-10-21T01:30:28.189Z",
  "record": {
   "w": 83,
   "l": 30,

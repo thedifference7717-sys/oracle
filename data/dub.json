@@ -3084,12 +3084,6 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "7792a5f7fa2fe3f875f76e487626f491bf7a6b3156f0f38e7cc18c71328f49a7",
-    "iv": "KFoouFQHz3ziHRmc",
-    "ct": "pGGNN5sJNTthgPD8xXhegZD7hUyyHLQ0W8knpjL4XANAsN7NP0jCnHvkPKGFtj89Dmn1YSRB4+OFJS4OZr2eE2W9rmFmoZPDM3SwmaTFdpnHjXZkMSywejxgjU2q+Iu//xLsTaBSfF7l/lo7MavItvMMHWp9m70OYsjhWCQU5R4UvyLLFxhG/iHzse4z0+64LKqr3j0z80KvnJ52vGH3DBwBs9u8iauMAm0b7QenaLbqTsNuoPzjh733JjpFJyXBTor8JS4HpIUQAZ8G4/M="
-   },
    "legs": [
     {
      "detail": "proj 29.0 in 41 min",
@@ -3184,10 +3178,30 @@
       "ctx": "2026-10-20:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Chet Holmgren",
+    "sport": "NBA",
+    "start": "2026-10-21T01:30Z"
+   },
+   "fair": -233,
+   "price": 104,
+   "prob": 0.7,
+   "revealed": {
+    "v": 1,
+    "hash": "7792a5f7fa2fe3f875f76e487626f491bf7a6b3156f0f38e7cc18c71328f49a7",
+    "salt": "c1527765163d0db1da78690898d322f6",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-20:dub"
+   }
   }
  ],
- "updated": "2026-10-21T01:12:43.010Z",
+ "updated": "2026-10-21T01:30:28.160Z",
  "record": {
   "w": 12,
   "l": 13
