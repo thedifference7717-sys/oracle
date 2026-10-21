@@ -3,9 +3,15 @@
  "sport": "MLB",
  "cfg": {
   "account": 100,
-  "basePct": 0.1,
+  "basePct": 0.038522756882859145,
   "rungs": 5,
-  "missGain": 0.25,
+  "missGain": 0.2,
+  "series": 10,
+  "before": {
+   "until": "2026-10-21",
+   "basePct": 0.1,
+   "missGain": 0.25
+  },
   "maxStreak": 2,
   "price": -275
  },
@@ -2611,11 +2617,11 @@
    }
   }
  ],
- "updated": "2026-10-21T10:00:49.688Z",
+ "updated": "2026-10-21T16:56:58.244Z",
  "state": {
   "account": 351.89,
-  "base": 35.19,
-  "stake": 35.19,
+  "base": 13.56,
+  "stake": 13.56,
   "rung": 1,
   "cycle": 11,
   "pl": 251.89,
