@@ -7582,6 +7582,9 @@
      "sport": "NHL",
      "start": "2026-10-21T23:30:00Z",
      "teams": "OTT vs FLA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "7a44b9eb72974972506542a0d121d25bd48c5890e595a7a5dc7cac14ffe027e9",
@@ -7654,7 +7657,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T00:00:56.275Z",
+ "updated": "2026-10-22T00:16:00.461Z",
  "record": {
   "w": 87,
   "l": 32,
