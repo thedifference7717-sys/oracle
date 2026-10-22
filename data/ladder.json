@@ -2705,9 +2705,31 @@
     ],
     "ctx": "2026-10-21:ladder"
    }
+  },
+  {
+   "id": "2026-10-22:ladder",
+   "date": "2026-10-22",
+   "status": "open",
+   "published": "2026-10-22T22:00:53.568Z",
+   "cycle": 12,
+   "rung": 1,
+   "seed": 16.27,
+   "stake": 16.27,
+   "games": {
+    "NBA": 2,
+    "NFL": 1,
+    "NHL": 12
+   },
+   "seal": 1,
+   "sealed": {
+    "v": 1,
+    "hash": "18904b438cb4ecd85b459d5abaa711d85a967bae404bada29c62a62177d0bba8",
+    "iv": "nJQjI5phoQ22qzdX",
+    "ct": "f5BMOShrdJLMEeJzhOd5NJmXGJ3DmtA+8Kbi788dBfeJh8r9bIrVIcshfKyh2e3fO9KN4DLkldz+DGAe+aXA8LHbIh+IB0xXEHxNGWOZF9C6Cydna9Q6ms+gnQO1ydDiioGN+ckGtkWo0CdFeLo1YK/36z5gAr3YyAWc5saHN9SWntZgNXJRkjKtf2ULvhcWjCF+mT+zDVzo+WLO1PneE+3qT1BFj5cYuHAlMT0W57qCAHnC3VTWnoSqdkl9yREtz37VttvODnKxZkYwGxkG4qZqFy05nZZcr+i1k3jbjzCMCNmtaiNz/Csdr/NjZg5etihhiLBk/2h9yfspLJ5Av+7N3VVpji66NbU0UNazxiOPeP4nEqZ20dipXhix2iZZ6wLBzxX82lYEiZKolQ/PoUPEkZZmtze3BvfRlAkwCgrl6r/6sWkfKnAbaUJrc57wo9P+qMMbfWyqdsvRYRYb2fWsmsRRtGwh7i3ypJH63xOuL5O/MKMNATq170IM2nhLPsCb3sX+AlGb1xph8RvbHOjbveF7b17uBEi1epMs5QE63TvjRiCU5bVcI0qUCRkI+ZgQ9AxrLoPcqhm3b4UVFnFP59ZLDbEaZodnRd1FA/2b4RqvjrSC3SfEfV7MIoCk8+D+1P08qzQhB3rQPgTT/0TrsmyxH0ahnunE46NFn4WIj+ZMn8VGrd8pVRwDIcw8tlijQZ6/C4gpQoJMUWUfPERDIFXHXMkvLZTb/Vn1Ki9V428EisexvaRTLV8YbYFuweiAuJCh9OpLxHZ53Af9XkC11fyVCL427HwRKikw76s8V2P4/DF5ZUFFmnL4U/Qyp8a6tubmi3IBihChjQ84ZXK84EK4W1X0f9rjHMFAd1BoZKQ+I7Vdvor4PlpVEIsCh69BAhgyzn4APD6PZjjzXw4357YxIIMk1roD84qNjCZ6s1BhgC0T9UHV5nMGIS1uu93zn+B2UMQwvbZOy+oKUEmDZrfnRST299noG1btHnf8rda85ZeD9H+GLESrQxvzPqRaTcF6ChrNEeX/O4TG5MIPyjals1VJCTmlvw8ueChHhN0AzRUZNGRPD65jtAtZKafKshbyZOA29oNairpS7Cs95w=="
+   }
   }
  ],
- "updated": "2026-10-22T10:00:00.987Z",
+ "updated": "2026-10-22T22:00:53.573Z",
  "state": {
   "account": 338.33,
   "base": 16.27,
