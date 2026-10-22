@@ -3230,17 +3230,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 19.9 in 34 min · over this line 2 of his last 10",
+     "eventId": "401909839",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.71,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26OCT21INDNOP-INDANEMBHARD2-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9125,
+     "pAdj": 0.7306,
+     "player": "Andrew Nembhard",
+     "playerId": "4395712",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-22T00:00Z",
+     "teams": "IND @ NO",
+     "revealed": {
       "v": 1,
       "hash": "eb987c45d09cb8f2925162a378f02e8832a918a326a34ce349a49df54dea2a80",
-      "iv": "Do9KyII5ImvL7mxH",
-      "ct": "8D1cZK620Bb6AB7zbKdeTqEwkofBEb/3M9HU8GffcHMp9joFDG2XWvVIRhfA0lQEqraQtsCTgvYF1zyACHYyRr2R2W1L0icJuxH6ggbT6NEQ50cyMBLaTIH5LN3S5g1TGBAFrWvp16nikOfU0s+GL9SykfLfNh1HRuMxXyJI7rlPDVZjOFV/Wur9YPOyH4ShUWjcRi+19T22zyq416SflatElGwYN7d2+uZcJRljbn19o+XUPRQW2uv8r6jmYo89oTLglKrFeeprgyDO75uhXoDIt78cEkNS77yX/dviZ5lYdCorPK6FmqZbOMiETsIel+LbJYpuCVv4hM7v5qwUzdiLlyUzn7DZPZspTcyMBkObm3LGfm402kcTAGdJyw+cLIbO1kzdtJ/1iCZ969zcpQ1+rcvwct6p/BbJ0SWB9YlQnIXY/5zy7SnU9XFS33KAqTrjDzTjN2P9hgmtfIpD0VcQACnF5Hoo3g5/71Cb/kaFJAM7/DNiol32t7W6AMlypitC7cAs+AJkfS6LUCBWyXYd2XIMP+meCn64WfS/mhjWgHfObwtIKzNcX/NtdWzcIqM5wzehbCNzFj5s9BvZwZx3acgeY5KAAiafyiHRoe4Pf/fDk9icwQuWm8KGgBjaK0fO2lGMfKpBYBoe/Fm0YsU="
+      "salt": "4f6ca171fb12d7bff870e9a83fa93f88",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-21:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-21T22:21:26.979Z",
+ "updated": "2026-10-22T00:00:56.251Z",
  "record": {
   "w": 13,
   "l": 13
