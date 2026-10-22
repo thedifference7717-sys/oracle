@@ -7713,6 +7713,9 @@
      "sport": "NHL",
      "start": "2026-10-21T23:30:00Z",
      "teams": "BUF vs PHI",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "956fa911ec8b8dc47e1cdc296c394ef737b1731cec40d4498f3576c4b7ff1bbe",
@@ -7740,7 +7743,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T02:00:03.294Z",
+ "updated": "2026-10-22T02:09:30.217Z",
  "record": {
   "w": 87,
   "l": 32,
