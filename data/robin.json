@@ -7926,6 +7926,9 @@
      "sport": "NHL",
      "start": "2026-10-22T23:00:00Z",
      "teams": "BOS vs NSH",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "dcbd3ce91b6b46df4cf4d0f5d36f78b8df8491c932827f1b0a48118fed4e7239",
@@ -7961,7 +7964,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T23:00:04.168Z",
+ "updated": "2026-10-22T23:16:12.251Z",
  "record": {
   "w": 91,
   "l": 34,
