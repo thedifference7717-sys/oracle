@@ -3208,18 +3208,12 @@
    "id": "2026-10-21:dub",
    "date": "2026-10-21",
    "published": "2026-10-21T22:21:26.978Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 11,
     "NHL": 2
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "3a52552718726c6fba10e5140c420a56e74661066e7989543e4a12e2e511ede4",
-    "iv": "rjX+wgfbYFZWPoe+",
-    "ct": "apa3FK0cvWeBQROqpI/Ps4DCIfjmDlpoU48J+m73B1AXzZ5ckLAB3S9K0VWN+Zn7sN+ULU7cEcYaaeD7ObQS0F+GCMtnfBjE4/QlVXXY2BguvrQrE8VWNOmu64EU2IWbKw4CgbgUqIDi5Hid2OMynPE/7cNNm8XnJOCxs7xcQNu4fPllfYNx1XLKKZxPE5rACB29aZHwnIDNrxSTym+QY5AETevtPNkXlKrjOmjSrGFqLOqqK+QD1Kq5nKVTXIpNTqhhjMwBblsKrMX8WEJmyqw="
-   },
    "legs": [
     {
      "detail": "proj 18.0 in 38 min · over this line 9 of his last 10",
@@ -3242,6 +3236,9 @@
      "sport": "NBA",
      "start": "2026-10-22T00:30Z",
      "teams": "HOU vs DAL",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "672daaf6f9ade1f4efe0ac6d6065d82be0371835fd29a6671e3518c16c5c2aa7",
@@ -3314,12 +3311,33 @@
       "ctx": "2026-10-21:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Jrue Holiday",
+    "sport": "NBA",
+    "start": "2026-10-22T02:00Z"
+   },
+   "fair": -534,
+   "price": -111,
+   "prob": 0.8423,
+   "settled": "2026-10-22T01:21:47.615Z",
+   "revealed": {
+    "v": 1,
+    "hash": "3a52552718726c6fba10e5140c420a56e74661066e7989543e4a12e2e511ede4",
+    "salt": "f41e3463b0b225be1d3b0805aa2672d9",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-21:dub"
+   }
   }
  ],
- "updated": "2026-10-22T01:13:08.914Z",
+ "updated": "2026-10-22T01:21:49.025Z",
  "record": {
-  "w": 13,
+  "w": 14,
   "l": 13
  }
 }

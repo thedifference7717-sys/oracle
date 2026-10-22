@@ -7484,6 +7484,9 @@
      "sport": "NBA",
      "start": "2026-10-22T00:30Z",
      "teams": "HOU vs DAL",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "dd8b96a7e1e98e4585ad150eb02e928d30721d89c528539b0e34fb9c08ccddb7",
@@ -7697,7 +7700,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T01:13:09.052Z",
+ "updated": "2026-10-22T01:21:49.164Z",
  "record": {
   "w": 87,
   "l": 32,
