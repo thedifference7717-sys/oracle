@@ -3222,11 +3222,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 18.0 in 38 min · over this line 9 of his last 10",
+     "eventId": "401909840",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.71,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT21DALHOU-HOUJSMITH10-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9231,
+     "pAdj": 0.7209,
+     "player": "Jabari Smith Jr.",
+     "playerId": "4432639",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-22T00:30Z",
+     "teams": "HOU vs DAL",
+     "revealed": {
       "v": 1,
       "hash": "672daaf6f9ade1f4efe0ac6d6065d82be0371835fd29a6671e3518c16c5c2aa7",
-      "iv": "uLRUFO6p3GDlvINN",
-      "ct": "3Y9cqp36F7VY8mymLmSegOrG3NTIMHZ0gRrLuRWm0Y9RskQebKefSUMDe4mfpcoOVgq1JtvVyE1lWC09Xl88g1ehT/9scEGxdnGkIf0Np/H61+e9yuIjRMNRL7biJdx3YMmFRI/R/wHKIWBZ0BCNj4FeiRYIb34DBv5Py8BQ57xKZwq0fIb9vLJsDNN79OCwd69pqdMYOsIBsme8SJ0U4yu+bvOlPPm+Og53WZ9Xx4L919tES84pUkYiUCleBytOgLVNfNQuS5hAgi+CqD2VPZvnXvmK2kCWqUVnHn9uHGOWLlQgo89nBAadxf5DoL/M9QPwhQQ6ah1Inhy0WBubTjYBoRHOEZgOzG3pVw6jasyJ4XWvia8WSer4LViWMM23tO+kzF0RaVvmpCZkrKE4DPeJtWKBcnRPp2u5fBNYyILHgUNXuDlYH81bbc8DuBjT4oDPZyWyi41G8TGyuPtTSCJJo/9Yv/9xLeW3RnxeqNk8NDTorc/ldaw/3QJBpcwLYUqoo7mZz9e2G+l5y2/ZgSE0W2d1uFgQqz1yy8K7BF6wykEvxg3KcBdyhmgbtBD8hq+zQwQvv4GxLIvaFYHTx4RVdvXC8DaAzMaC0KXpad90vMYA3QCg7f0h4MF3ECoyLmO85KAGfR6HVdIJedjAoimJ"
+      "salt": "c95927a1cc98de6ad42a24a0f9599fdc",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-21:dub#0"
      }
     },
     {
@@ -3277,7 +3314,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T00:00:56.251Z",
+ "updated": "2026-10-22T00:30:56.807Z",
  "record": {
   "w": 13,
   "l": 13
