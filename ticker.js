@@ -12,6 +12,9 @@
   const RAW = "https://raw.githubusercontent.com/thedifference7717-sys/oracle/main/data/";
   const EVERY = 60e3;
   const etDay = (t = Date.now()) => new Date(t).toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  // The betting day, as the bot keeps it: it runs to 6 AM ET, so a game that
+  // goes past midnight keeps its picks on the ticker until it ends.
+  const slateDay = () => etDay(Date.now() - 6 * 3600e3);
 
   const css = `
 #psTicker{position:sticky;top:0;z-index:40;height:calc(36px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;background:#050810;border-bottom:1px solid #1E2A44;overflow:hidden;font:600 13px Inter,system-ui,-apple-system,sans-serif;color:#C9D3E6}
@@ -86,7 +89,7 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
 
   // Today's picks that are already in the clear (their game has started).
   async function loadPicks() {
-    const day = etDay(), out = [];
+    const day = slateDay(), out = [];
     const [L, D, R] = await Promise.all(["ladder", "dub", "robin"].map(f => getJ(RAW + f + ".json")));
     const add = (prod, x, res, extra) => { if (!x || !x.pick && !x.player) return;
       out.push(Object.assign({ prod, sport: x.sport || "MLB", who: x.pick || x.player, need: x.need || "", teams: x.teams || "", res,
@@ -106,6 +109,14 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
   // A pick's game: its sport, and both team codes in its "NYY vs BOS" line.
   const pickGame = p => games.find(g => g.sport === p.sport && [g.away, g.home].every(abbr => abbr && new RegExp(`\\b${abbr}\\b`, "i").test(p.teams)));
 
+  // A pick in the ticker: his last name, his running count where it takes more
+  // than one (NBA and NFL: "Smith 7/10 pts"), then ✅ or ❌ once it's decided.
+  const COUNTED = new Set(["NBA", "NFL"]);
+  const tag = p => {
+    const nm = p.who.split(" ").slice(-1)[0];
+    const run = p.now != null && COUNTED.has(p.sport) ? ` <b>${p.now}/${Math.floor(+p.line) + 1}</b> ${SHORT[p.market] || ""}`.trimEnd() : "";
+    return `${nm}${run}${p.res === "won" ? " ✅" : p.res === "lost" ? " ❌" : ""}`;
+  };
   function draw() {
     if (!root) return;
     const byGame = new Map();
@@ -113,7 +124,9 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     const items = games.map(g => {
       const ps = byGame.get(g) || [], hit = ps.some(p => p.res === "won");
       const sc = g.state === "pre" ? "" : ` <b>${g.as ?? ""}</b>–<b>${g.hs ?? ""}</b>`;
-      const mine = ps.length ? ` <span class="ps-pk">🎯 ${ps.map(p => `${p.who.split(" ").slice(-1)[0]}${p.res === "won" ? " ✅" : p.res === "lost" ? " ❌" : ""}`).join(", ")}</span>` : "";
+      // A man in more than one product (the Dub and the Robin) is shown once.
+      const tags = [...new Set(ps.map(tag))];
+      const mine = ps.length ? ` <span class="ps-pk">🎯 ${tags.join(", ")}</span>` : "";
       return `<span class="psg${g.state ==="in" ? " live" : ""}${ps.length ? " ours" : ""}${hit ? " hit" : ""}">${g.em} ${g.away}${g.state === "pre" ? "" : ""} @ ${g.home}${sc} <span class="ps-st">${g.detail}</span>${mine}</span>`;
     });
     if (!items.length) items.push(`<span class="psg">No games on the board right now — today's picks lock an hour before the first game.</span>`);
@@ -183,6 +196,7 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     }
     return found;
   }
+  const SHORT = { pts: "pts", reb: "reb", ast: "ast", tpm: "3s", passYds: "pass yds", recYds: "rec yds", rushYds: "rush yds", rec: "rec" };
   const UNIT = { hit: ["hit", "hits"], pts: ["point", "points"], reb: ["rebound", "rebounds"], ast: ["assist", "assists"], tpm: ["three", "threes"],
                  passYds: ["passing yard", "passing yards"], recYds: ["receiving yard", "receiving yards"], rushYds: ["rushing yard", "rushing yards"], rec: ["catch", "catches"] };
   async function liveHits() {
@@ -196,6 +210,7 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
       const sum = await getJ(`${ESPN}${g.path}/summary?event=${g.id}`);
       for (const p of ps) {
         const n = statOf(sum, p.sport, p.market, p.who), need = Math.floor(+p.line) + 1;
+        if (n != null) p.now = n;
         if (n != null && n >= need) { const u = UNIT[p.market] || [p.market, p.market]; p.res = "won"; p.live = true; p.note = p.note || `${n} ${u[n === 1 ? 0 : 1]}`; }
       }
     }));
@@ -214,7 +229,7 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     games = g; picks = p;
     await liveHits().catch(() => {});
     draw();
-    const day = etDay();
+    const day = slateDay();
     const key = x => `${day}:${x.prod}:${x.cashed ? "cashed" : x.who}`;
     const fresh = picks.filter(x => x.res === "won" && !seen[key(x)] && !queued.has(key(x)));
     // A first visit shows the latest unseen hit, not the whole day's.
