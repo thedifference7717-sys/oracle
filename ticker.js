@@ -103,7 +103,28 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
       for (const l of legs) add(prod, l, l.result || "open", { of: n, grp: `${prod}:${b.date}` });
       if (prod === "Dub" && n) out.push({ prod, cashed: true, grp: `${prod}:${b.date}`, who: legs.map(l => l.player).join(" + "), need: "", sport: legs[0].sport, teams: "", res: b.status === "won" ? "won" : "open" });
     }
+    // The owner's own sport ladders (Strike Zone, End Zone, Buzzer Beater,
+    // Top Shelf): sealed whole, so only on a device holding the key (pages.js
+    // stores it as pg.key). Anyone else gets nothing from this, not even a
+    // placeholder.
+    for (const [S, b] of await ownerRungs(day)) add(LADDER_NAME[S] || S, b, b.status, { mine: true });
     return out;
+  }
+  const LADDER_NAME = { MLB: "Strike Zone", NFL: "End Zone", NBA: "Buzzer Beater", NHL: "Top Shelf" };
+  async function ownerRungs(day) {
+    let raw = null; try { raw = localStorage.getItem("pg.key"); } catch (e) {}
+    if (!raw || !(window.crypto && crypto.subtle)) return [];
+    try {
+      const b64 = x => Uint8Array.from(atob(x), c => c.charCodeAt(0));
+      const o = await getJ(RAW + "sport-ladders.json");
+      if (!o || !o.sealed) return [];
+      const k = await crypto.subtle.importKey("raw", b64(raw), "AES-GCM", false, ["decrypt"]);
+      const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(o.sealed.iv) }, k, b64(o.sealed.ct));
+      const d = ((JSON.parse(new TextDecoder().decode(pt)).fields || {}).data) || {};
+      const out = [];
+      for (const [S, rows] of Object.entries(d.bets || {})) for (const b of rows || []) if (b && b.date === day && b.pick) out.push([S, Object.assign({ sport: S }, b)]);
+      return out;
+    } catch (e) { return []; }
   }
 
   // A pick's game: its sport, and both team codes in its "NYY vs BOS" line.
@@ -113,7 +134,9 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
   // than one (NBA and NFL: "Smith 7/10 pts"), then ✅ or ❌ once it's decided.
   const COUNTED = new Set(["NBA", "NFL"]);
   const tag = p => {
-    const nm = p.who.split(" ").slice(-1)[0];
+    // Last name, past any suffix ("Jabari Smith Jr." is Smith, not Jr.).
+    const parts = p.who.split(" ").filter(w => !/^(jr|sr|ii|iii|iv)\.?$/i.test(w));
+    const nm = (p.mine ? "🪜" : "") + (parts.slice(-1)[0] || p.who);
     const run = p.now != null && COUNTED.has(p.sport) ? ` <b>${p.now}/${Math.floor(+p.line) + 1}</b> ${SHORT[p.market] || ""}`.trimEnd() : "";
     return `${nm}${run}${p.res === "won" ? " ✅" : p.res === "lost" ? " ❌" : ""}`;
   };
@@ -142,6 +165,7 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     const need = `${p.need || ""}${p.note ? ` (${p.note})` : ""}`;
     const prod = p.cashed ? "The Dub cashes ✅✅"
       : p.prod === "Ladder" ? "The Ladder rung is in ✅"
+      : p.mine ? `${p.prod}: the rung is in ✅`
       : `${p.prod} leg hits ✅ ${p.hits} of ${p.of}`;
     el.innerHTML = `<div class="ps-card" role="alertdialog" aria-label="Breaking news"><span class="ps-x" aria-label="close">×</span>
       <span class="ps-k">🚨 BREAKING · ${p.cashed ? "CASHED" : "HIT"}</span>
