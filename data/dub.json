@@ -3353,11 +3353,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 24.6 in 38 min · over this line 3 of his last 10",
+     "eventId": "401909093",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT22CLEPHI-CLEJHARDEN1-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.9142,
+     "pAdj": 0.6926,
+     "player": "James Harden",
+     "playerId": "3992",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-22T23:00Z",
+     "teams": "CLE @ PHI",
+     "revealed": {
       "v": 1,
       "hash": "b501c6bcb95aee7082bd229ccb2cde68bf8a4e5ceb5f1fdd41a2b183de891ee5",
-      "iv": "pFXeSZJlUWk/MQE2",
-      "ct": "QubXqSW0NzgfBkWyQ0Q0+ozfRXA6dvEV4DvJ0+fvGS6fs5gnH1zAQ6at1vLFQq6OfzlD6yZR1uWy0P7a99v/y3GIgvxEvzir1r+Czo+7S/wODe9KVlT0fvBXIb/V1bopm4uyxAP2wM+hUoEvlVW+Bo+ue3io28DSTDAM+zwOzDrzlvoqZmLG/5GmwRymK+BnhlSmTDxo/PVnPR/o6bbW8ruIcy4AdmMud/FcREaRsB23sg25o3selMyZKp9SClUH9JTANQvMWbe0zrK9TCpLgwFdb1e3QeknhLMN1ZXKlB9BvUtyMNeo3BWUwAk+cb8aUgmHcFtM1RqKyjv7TDa9TSio5JEdDx+jDm3AeJ/kpNURJidmNQgtKf9xOxcgHI4ecx4Ig1GMMqlq93Sotb4/4FzJBK7kHsy60KtNAKRdQR07ZT/lrzJ3lZ3nj6s1WEwkHRNsdJ9iHd0ppYhc7M5FUQoU14qWwxh8RMTEsP8K2NV/FQo5r1GlGzW2cmJdXXZb/5sADwCmxtLyvMOq7B+fX843imgaJoyDyHAZ9pN2pxVTShutlBjgIe4YxCtNv+8cyjtr34pGiFW/wA7WfrgibC3/MxJ0GHV9KtdV0QOOeKy+DxC7fE89T6eS9KRNIJ1e0f6pCja9D2nGbLM="
+      "salt": "3a99083e9a5dba6c2c7b9c7ff828efd4",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:dub#0"
      }
     },
     {
@@ -3371,7 +3408,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T22:00:55.447Z",
+ "updated": "2026-10-22T23:00:04.140Z",
  "record": {
   "w": 14,
   "l": 13

@@ -7837,11 +7837,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 30.7 in 37 min · over this line 5 of his last 10",
+     "eventId": "401909093",
+     "kalshi": {
+      "ask": 0.56,
+      "bid": 0.55,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT22CLEPHI-PHIJBROWN7-20"
+     },
+     "line": 19.5,
+     "market": "pts",
+     "need": "20+ points",
+     "p": 0.898,
+     "pAdj": 0.5628,
+     "player": "Jaylen Brown",
+     "playerId": "3917376",
+     "price": -127,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-22T23:00Z",
+     "teams": "PHI vs CLE",
+     "revealed": {
       "v": 1,
       "hash": "356487843b604baa24fa65f14b75bb9c2b7497ebbd9578f8f3b958252003f14f",
-      "iv": "j6Al5SoS8L6ZzDXq",
-      "ct": "OB9sDnySgmD8Oup7+NBRksgngg4VGVy7W7aPOTXs0BvIqY2pptRBOAGuDP9JNOzeSeVUuZU7R6Td26hQXwR9wGlT+Rrgbz9znMUcplbzxZNVnxp1whX5FjMfvGfJeXVxerwat5eCiUwVEYZzKA2znmwHjIbU6z/yCs0EWE/B/b7Pqd6Ya5DCgIM7WZ+YytoOqwJjY9UjiE1GXVhY6WypsF8dR8nunXTWHfW75HBrdoRHZDZJJmhT9W2E6IlFMCoZuUjfxM3X8aKbvNICACJQNbAhCbzDW4zivz6NoQpSTBsn304MZ+OAYDM8XrccpLfxo1OSkiU8frBzBWtsBkjYe7PnoZR+D/DGL5NGrvL41swkVeGMuylY2e4M0UFrl98t4D7X0SY74/odgXlZq6BeL6O31h80bO0Ao4GU0l4TX6jxv8VSmSFwITBHA9ja8wr8M6HEc+Zuo4X9looyKC6J1vlAShRZjqeG+O15WYBRdiYmoXQYdnvLNsQhKojbvuP0A/we+n6E1WYOjXV9wumPc8JRhlIC4bG0Uj40HEMUSmsKlpD/oejz6wmUmsAGg3jWQtpLFx5Sy1Rr8piGGhXLPoLSrNS4wZlSX66frPb6AZ6U2/2A++itqzNh6qJg1GCiDkC2pPwLw8ler9zdLIx3"
+      "salt": "749062ef6ae078cc4dad342034493dfd",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:robin#0"
      }
     },
     {
@@ -7869,11 +7906,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.331 · 1.2 pts/gm this season (10) · a point in 6 of his last 10",
+     "eventId": "2026020154",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.7,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT22NSHBOS-BOSDPASTRNAK88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7021,
+     "pAdj": 0.7194,
+     "player": "David Pastrnak",
+     "playerId": "8477956",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-22T23:00:00Z",
+     "teams": "BOS vs NSH",
+     "revealed": {
       "v": 1,
       "hash": "dcbd3ce91b6b46df4cf4d0f5d36f78b8df8491c932827f1b0a48118fed4e7239",
-      "iv": "5//JMDHZD6MJPPwf",
-      "ct": "yKpVqzvDpm//dsbPvGwhZac3eNDmxd+HUkd6HqNLCfRn7GuGUDRfH4TZOGd0qMS2Ju1sJfGNpj1cUpEVHoGwIxb82wH95JHjZ9xS5EGgcF6mpWieNiOD52AFpIStFbgDiaUAgo1PcR9eIAbiGlEjoe5DqEqPTqwpx9kgPdivNWUzxQSfyY/I48jIhDA5AukxwmNG8kd7h3zmK5lGk+aGo/w4rQx3vnvYR4JxZsmxuo6CtHJdD+uTWGV54I8BczGggtcsY3c/rFN+HXHpOb+oX21KE5Xd3fXXjtoNT3vSEbhZ+SfDzPPfzz4n36sklSB9hWdCIYfKIRYoB7g/aKO/Q76E/26pxzDHlfTY0lbyz0jBp5Nf1l6vEiHnuBPlwWm8fF2bHIjwY7jbUyDcKzh5xaWNJNeIeq6jHccV7kj3UDTbBTDQca0SOR7O8+HQjMzCkheGOUO6tHKJLgQvs3vFIYg7BTbCDaM5cSCMWhUmz+YO26N+WQDI6v7KW11dmHWhTuwodQ70Zct0+2OXsMMzQr2zp+gSTwD6iwbc6cQMv69QmBKoHX64wtlKL07J2CGMzqLRI7Fu0gc15YyZx/tKf0vzCuuGVV6kkMDo4lDi2yCA8AY2nUi6wLsFlRCR1TFsa6S7assHIhGR9i8QeyHm9RJs1ijXvzRPcji0CHmvs7bgFl8M9EuogVP3spKOlw=="
+      "salt": "0cadf184eea0ed721dfd4697955cbae4",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:robin#4"
      }
     },
     {
@@ -7887,7 +7961,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T22:00:56.322Z",
+ "updated": "2026-10-22T23:00:04.168Z",
  "record": {
   "w": 91,
   "l": 34,
