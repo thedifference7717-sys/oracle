@@ -7580,6 +7580,9 @@
      "sport": "NBA",
      "start": "2026-10-21T23:30Z",
      "teams": "TOR vs CHI",
+     "result": "won",
+     "actual": 16,
+     "note": "16 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "52a49f16507775a5c7115ea936f68539fd46aff31a79479f0a4a24c420cadd64",
@@ -7700,7 +7703,7 @@
    ]
   }
  ],
- "updated": "2026-10-22T01:21:49.164Z",
+ "updated": "2026-10-22T01:33:36.408Z",
  "record": {
   "w": 87,
   "l": 32,
