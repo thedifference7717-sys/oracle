@@ -7882,11 +7882,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 278 passing yards",
+     "eventId": "401873010",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT22NECHI-NEDMAYE10-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.8536,
+     "pAdj": 0.7743,
+     "player": "Drake Maye",
+     "playerId": "4431452",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-23T00:15Z",
+     "teams": "NE @ CHI",
+     "revealed": {
       "v": 1,
       "hash": "d1dc5609748513692458c073ae2504882e966436a05d4e3f54385248a895a1ed",
-      "iv": "oHvMSZLiLp+LpD6s",
-      "ct": "lM7vApu58HonlqB0buvLTonNTtOIfGMXLpn/BPlJLw9VmXGY9A6GAXA/lTNOrswdC7AW5x+rNfHo9pTOAyPXanhkCMuzZd3mhIGUCT9cfIvxV8cIzjBqxIcuI7QEcXKOHKVnf266wV+qGQ+UaE63tWI+v62qaHb2yu6BIOrCeOtG+nvJKeStc0QagQt1Q/aQDo9RyFqdREvZOD7RIuQ867EA88r4gm7pNz4IAyAmtbpUSzKhBmpu8kuD/+aqLPlxL9IsrLC3kNXI6eyiBNmry3qaZ5Ll1Vax2JNWksdJqxr1E3PZnNZJPH0kGndbeeYM3lAMdrZ7hAU6cheJ+QVpqc/cHWVkAyWEZ5Ar37TC6Gmp2PeCam9ZmeseKcshg4CcRKgH5fzxHbm7VvwJIDHZNjUl78L/R3g3/5/rM6ZL54GP0dXvydrTHLRuChqvxJoVoOXL8zesb5LootRtNTkFZr65JSSt2H5BDCi1CbSQhKBMWu2Mxf5zNX4oMd5CUOhzT41P7RgXdBVA/iOJKMzEJD2ocjcXqS20OOndh58pUU0CsZgxL1L/SgUDg5FVBCwojM3ujKHso4KehLPiS4Gfe/EsdKl2iyLV5PFNB3HR35xoQfhNJUkgdCo8Uj6scLjnbl6PCuOTSuQ="
+      "salt": "33882386cac43d125032033af9740d5c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:robin#1"
      }
     },
     {
@@ -8001,7 +8038,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T00:00:07.815Z",
+ "updated": "2026-10-23T00:16:03.323Z",
  "record": {
   "w": 91,
   "l": 34,

@@ -3345,12 +3345,6 @@
     "NHL": 12
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "8b21713e3a85ba546f9319330857aa856d4f23025817b183f639923a44995542",
-    "iv": "KI3EruEuSyjaaEsU",
-    "ct": "tLvPVts/fVS63oCGrstFmABLz93UChjXcRgj3IvXfxPlL9xFCWsWup7+mj/X+w2Q9Iu9NdymPlPaPOb1/BhYDUx9Q2jHCjDJzPqHCp+v5UtCh0ErZ27EGPoUFzC6yZQVSrBCsoYccOtwP8kVtNnAnvjShYkY4s2BikzuOGGrvpmDZE+hZ6mKstw+OrKZOKCfVuc9ziV9PmFzv4MrJLZ0DuFgGtl6jvv2uZwEUo9lwRnLNBwQXDU8WU5N1eQBt1GeexNDc7eEp3Z78GzMUUr/8b8="
-   },
    "legs": [
     {
      "detail": "proj 24.6 in 38 min · over this line 3 of his last 10",
@@ -3398,17 +3392,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 278 passing yards",
+     "eventId": "401873010",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT22NECHI-NEDMAYE10-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.8536,
+     "pAdj": 0.7743,
+     "player": "Drake Maye",
+     "playerId": "4431452",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-23T00:15Z",
+     "teams": "NE @ CHI",
+     "revealed": {
       "v": 1,
       "hash": "4f7eb6e40e21511008469c421520ecfe80be2424f92f9bcb770b46a877171d45",
-      "iv": "Ef7lk+NOEBg3pvzS",
-      "ct": "tMzZRzPuPO/0XDNFnrXWZymfcg1EuN3CrGkeQNrvJxcjxeD2cEswM11B0swCSPfN6hT4CzWdEsJH4sa4rxVeYJr2461P88j3BEpZ7oTjVPwdhaN1OpzHJB+C50gs0PuSx6QnbOfnUyLUrMGplA5cM/hlB/ah/Y6yA5EYtEnPfu+oKq61+nC9s58LVGH8JyXqmEkVuAtBAjgrqGaEl4YzG8K595WrI6DGI6ueUu0jURqUlfzIbA9dVrHNAibZi0Dr9BuGtNG2UdGH8NrpY21A59KffF+IXfAKTvF80VfAqKRNaziRntB3oATBeO7xubDZ3MlTj8rJ2r5d3HO8ohLYBxqLVqA5DRfUclMPNnbWXEmhuuAPLopY9hnrY2ee5lAr3YLV2a/HdNUYCXF4PI9+qz+qxwmvmb/13CKaHsrX/qccsx5rih/47OWLHXNYiq+KmzTw7VgVN11N5HbnD//c7i93qyO8nxcuGTvXqNB0BKO+kjvW1S8cFgkIuTQLONZAFtlIO1ESg8eb4azihXMdbv/POfhKOOXteVS5OIqiGui52HrJT9cVAg3DiohXvhMfUl8c1EMee0pSCVE4LwwygoLAv6z+O2Cd0KSeGW6I1zX8eaTGeGTeVa0/bVRbe74dTZ27m602"
+      "salt": "57a619117d232b1caa8ac4e5dcaf1590",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Jaylen Brown",
+    "sport": "NBA",
+    "start": "2026-10-22T23:00Z"
+   },
+   "fair": -355,
+   "price": -114,
+   "prob": 0.7803,
+   "revealed": {
+    "v": 1,
+    "hash": "8b21713e3a85ba546f9319330857aa856d4f23025817b183f639923a44995542",
+    "salt": "a4819c8d80ee8800169f862463aa1179",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-22:dub"
+   }
   }
  ],
- "updated": "2026-10-22T23:00:04.140Z",
+ "updated": "2026-10-23T00:16:03.293Z",
  "record": {
   "w": 14,
   "l": 13
