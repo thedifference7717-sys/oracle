@@ -8091,6 +8091,9 @@
      "sport": "NHL",
      "start": "2026-10-23T00:00:00Z",
      "teams": "VGK @ STL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "b14ffe8dfd967dd3486fc04839cbb93697013244a55283b61ca3e49a2d42c433",
@@ -8118,7 +8121,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T01:54:29.167Z",
+ "updated": "2026-10-23T02:09:33.567Z",
  "record": {
   "w": 91,
   "l": 34,
