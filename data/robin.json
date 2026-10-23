@@ -7905,6 +7905,9 @@
      "sport": "NFL",
      "start": "2026-10-23T00:15Z",
      "teams": "NE @ CHI",
+     "result": "won",
+     "actual": 223,
+     "note": "223 passing yards against a 199.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "d1dc5609748513692458c073ae2504882e966436a05d4e3f54385248a895a1ed",
@@ -8121,7 +8124,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T02:09:33.567Z",
+ "updated": "2026-10-23T02:20:04.066Z",
  "record": {
   "w": 91,
   "l": 34,

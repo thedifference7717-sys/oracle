@@ -3338,7 +3338,7 @@
    "id": "2026-10-22:dub",
    "date": "2026-10-22",
    "published": "2026-10-22T22:00:55.447Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 2,
     "NFL": 1,
@@ -3415,6 +3415,9 @@
      "sport": "NFL",
      "start": "2026-10-23T00:15Z",
      "teams": "NE @ CHI",
+     "result": "won",
+     "actual": 223,
+     "note": "223 passing yards against a 199.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "4f7eb6e40e21511008469c421520ecfe80be2424f92f9bcb770b46a877171d45",
@@ -3448,6 +3451,7 @@
    "fair": -355,
    "price": -114,
    "prob": 0.7803,
+   "settled": "2026-10-23T02:20:02.552Z",
    "revealed": {
     "v": 1,
     "hash": "8b21713e3a85ba546f9319330857aa856d4f23025817b183f639923a44995542",
@@ -3462,9 +3466,9 @@
    }
   }
  ],
- "updated": "2026-10-23T01:52:20.416Z",
+ "updated": "2026-10-23T02:20:03.989Z",
  "record": {
-  "w": 14,
+  "w": 15,
   "l": 13
  }
 }
