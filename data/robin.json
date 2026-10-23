@@ -7954,17 +7954,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.289 · 1.64 pts/gm this season (11) · a point in 7 of his last 10",
+     "eventId": "2026020160",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.65,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT22VGKSTL-VGKJEICHEL9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6933,
+     "pAdj": 0.681,
+     "player": "Jack Eichel",
+     "playerId": "8478403",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-23T00:00:00Z",
+     "teams": "VGK @ STL",
+     "revealed": {
       "v": 1,
       "hash": "b14ffe8dfd967dd3486fc04839cbb93697013244a55283b61ca3e49a2d42c433",
-      "iv": "MDCjIJLHCEKGuD/C",
-      "ct": "4mQr3mrub+Zm+wgETP0NtCvXapc6rLgLh1ccxIkbDFu2v/7xGe61oBHWtFg12DDWS4Jo5do7p7OFJlamr7Htq4lZ4sWjVOypQDc29+rZy9PONxNjRQueBd8Eq4vJCjtf8hDY0kT5ifbcfIPL0hm3gkiUQcqMggEnenZMG7ZMEBUg0+1CwB1EoJorzXygvNey1wJuijEnpK9pqpoqYcT/4bRBWIbKmPbabW59CTaiW8GjogVWU2PtM8SXB1h6lfndPxOeUyYjQhH/uuju16GDI1I6YngJI1TlgY/xsQlwUxl7Y6DQNnQQTNbd1gfu+DhjOiTNtK/PbiiKcgD/43LcawZAn6pdzknHir0OzwQDk2v/96m3n0xliPy4k9aYIFn4nkr1FzSRT2d/KlG2ny+1hdpnaYV8BtowXOCbl17qJb0wwre6iDaE8xJoG8k4q4pxLjKTPmn6ylYEy0CQ1xcwDczfbyfiDUg/N+p7sqJIZmj/hbewEE2UXStr4wkhivZ179zpU1YIGzhldvToCxjzCXbF44p8pdz0DE3qeMagnH+LOLC0hmBFE+Kb/VuuuKMMI4Mz8u5UdcchCn2wTddlIqXOsCinQuatFdgpwu9pkEQSo3HNU68I88FEm7Nx053ir/+W597VdAHOgEHv/AKKgj5z6LVFovMQWIL0FcEK+PQEfePFki+XuQ=="
+      "salt": "d5dcaaf1db2d3a1662bd03d8792a7e77",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-22T23:16:12.251Z",
+ "updated": "2026-10-23T00:00:07.815Z",
  "record": {
   "w": 91,
   "l": 34,
