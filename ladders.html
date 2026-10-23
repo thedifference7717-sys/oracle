@@ -118,7 +118,10 @@ const uTxt = u => `${u > 0 ? "+" : u < 0 ? "−" : ""}${Math.abs(u).toFixed(2)}u
 function render(d) {
   last = d;
   const today = P.slateDay();
-  document.getElementById("note").textContent = "yours only · coming soon for everyone else";
+  // The four accounts as they stand now, added up (the owner's ask, 10/23).
+  const total = LADDERS.reduce((t, l) => t + LM.ladder(((d.rows || d.bets || {})[l.sport]) || [], { account: bankOf(l.sport) }).account, 0);
+  const start = LADDERS.reduce((t, l) => t + bankOf(l.sport), 0);
+  document.getElementById("note").textContent = `All four accounts: ${P.money(total)} (started ${P.money(start)}) · yours only · coming soon for everyone else`;
   document.getElementById("grid").innerHTML = LADDERS.map(l => {
     const bets = ((d.rows || d.bets || {})[l.sport]) || [];
     const account = bankOf(l.sport);
@@ -153,7 +156,7 @@ function render(d) {
       <h3>${l.emoji} ${l.name} · ${w}–${lo}</h3>
       ${body}
       <div class="kv">
-        <div class="bk" onclick="setBank('${l.sport}')"><div class="v" style="color:var(--blue)">${P.money(account)}</div><div class="l">bankroll · tap to change</div></div>
+        <div class="bk" onclick="setBank('${l.sport}')"><div class="v" style="color:var(--blue)">${P.money(after.account)}</div><div class="l">account now · started ${P.money(account)} · tap to change</div></div>
         <div><div class="v" style="color:${un.u >= 0 ? "var(--green)" : "var(--red)"}">${uTxt(un.u)}</div><div class="l">cycles ${un.cw}–${un.cl}</div></div>
       </div>
       <details class="fold mini-fold" data-k="sl-${l.sport}"${P.foldOpen("sl-" + l.sport) ? " open" : ""}><summary><span class="fh">All ${picks} bet${picks === 1 ? "" : "s"} · ${w}–${lo}</span></summary>${P.betList(bets)}</details>
