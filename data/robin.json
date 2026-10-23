@@ -7955,6 +7955,9 @@
      "sport": "NHL",
      "start": "2026-10-23T01:00:00Z",
      "teams": "EDM vs CAR",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "1130dce9a5ed4fdc4ef1f922a7117071cf73cb4ec25c100b8d6eb6c4f8222fcc",
@@ -8075,7 +8078,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T01:00:38.780Z",
+ "updated": "2026-10-23T01:26:03.635Z",
  "record": {
   "w": 91,
   "l": 34,
