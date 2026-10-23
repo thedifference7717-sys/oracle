@@ -8246,6 +8246,9 @@
      "sport": "NBA",
      "start": "2026-10-23T23:00Z",
      "teams": "WSH vs TOR",
+     "result": "won",
+     "actual": 4,
+     "note": "4 REB against a 3.5 line",
      "revealed": {
       "v": 1,
       "hash": "9c8b81856a82141eb0a3777cff88992bd123721825f26753b2d49ec7f767288d",
@@ -8305,7 +8308,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T23:00:11.972Z",
+ "updated": "2026-10-23T23:55:44.275Z",
  "record": {
   "w": 96,
   "l": 35,
