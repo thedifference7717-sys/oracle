@@ -7927,11 +7927,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 27.5 in 38 min · over this line 9 of his last 10",
+     "eventId": "401909094",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.73,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT22DENOKC-DENNJOKIC15-20"
+     },
+     "line": 19.5,
+     "market": "pts",
+     "need": "20+ points",
+     "p": 0.8296,
+     "pAdj": 0.7411,
+     "player": "Nikola Jokic",
+     "playerId": "3112335",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-23T01:30Z",
+     "teams": "DEN @ OKC",
+     "revealed": {
       "v": 1,
       "hash": "3eb6ea6410757223432d1f9e8023f90986f62f763ac741be1dfcea8602116455",
-      "iv": "AJu6POIi+whq/cDU",
-      "ct": "ZFrhnWT8ezZ4IAcjGKS18z6UogYFLKF1BtXy9O3E0QBo/yDCEjZiLQlEfpTgw2Bp79RwkJFsN1IwbclgXWzNv8p/CPJpDVe4PMCEHvPbUyt9zc8lFU+jJeENAShM7rscRwwZ4PEnOHHq1rgwj+qSci7u/v40F5aXJRNDbDHzkbHfr7D1AW0kbQNRODWx/4V5HARh1OIGskJfZhpISU3y4s3uk/pPvigkQ/FOPdZHM2FDMZRTrCmw1X+edMitpsJf10hdoHgXs4E1SE9RGhvVaHbm6TE9tneNlKCu9mJM97jTzunYjNMWcE8h19p3/iDjOrLGoa1mNPAZOoHyGQizc87RuINDS2wQ2X/56C4ZEhHu/KfJ0nbBusReIFT+3gBp2XhdXa8VHcoFaX0vYWw0CRnksihJ6dS9sv5kqu44+LCfk2yaQcz0/Dnq8ZxJ9c7cFKsLnwZTGVJ9+iB0K9acuZCtBUFw/+NOSIwugJL5ZUhxHZ03zQ/AdzngS2mEAGv234clwfimnpDiOjzd3/EpjfS43uz9Y7RP/jjU7WaKIa3ZKP+akGMshd92nMU5Fjn5Q77vimoj9dt8Jvt8ij1BrrtEVShjwGxQ/S4G0KAMWirGaIPF5Prw+1rdxx477lukVwZAwbdRW7QNbWOtEfOK2w=="
+      "salt": "9bd73ef6745d20eb80afb0b5d132eb48",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:robin#2"
      }
     },
     {
@@ -8078,7 +8115,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T01:26:03.635Z",
+ "updated": "2026-10-23T01:30:17.121Z",
  "record": {
   "w": 91,
   "l": 34,
