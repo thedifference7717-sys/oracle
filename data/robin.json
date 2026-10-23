@@ -7935,11 +7935,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 2.129 · 2.89 pts/gm this season (9) · a point in 9 of his last 9",
+     "eventId": "2026020163",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.77,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT22CAREDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8266,
+     "pAdj": 0.7913,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-23T01:00:00Z",
+     "teams": "EDM vs CAR",
+     "revealed": {
       "v": 1,
       "hash": "1130dce9a5ed4fdc4ef1f922a7117071cf73cb4ec25c100b8d6eb6c4f8222fcc",
-      "iv": "81VLbtNkQhENqv7i",
-      "ct": "LHahKvtEmJkvD/kUQ9lnywMvE1PiGkst+Rt4TEkFB+ESiIwqAcWMKvv7DjByERoEXfLXqED8hyzzzMstmPxqTK04+KbFZCVg3iQoKOi992i4mJ1EeVlNqh9jPjd1HC6YbKWjW4fswVYr3NGoVZOCGzjSPelbmHyaYYdK+rcorwMPhHbISQuwSxIcX0XrO4hFnAQa62Y1ylM4AazgNIwqq+KU1ndU+OlUIE5oDqku144VZCh/FMMOYCsE6XEPl0Yb9QXBtPKpFg1niLQPs6eGVft50j+w+2nTNL4mI3xsURq7Eq05e9h2bB+Mi+EJ/H5kghBrkACqHWgN3SvsY028Ejol/Ywh5IBW4WiTJyc1DJEZfRDJ+5jIUWdlySdYzS3R9gAJ9RSvWqoxjPm9B3uTc0pEmTmw7t8cGrLC8rK4F7e10Q+Gxm1OmwnaZABv67r8DEgKqg4TGMjH5Yu1vhwpur6kHt4O3sgJBJTYdbYLqMQ4o11CXcU/UMQStUYbZJuNCJ6FWIoFPXPFispgh/GSV3ddphu7tCB++83qBMZSy96x9rXg8s0giIrQ9a1cOUcVfxJTcWJyDdzYNGviX4q4FU5WInESjcTUV/C6cVg0C5V0XzrNshPGNvcH+DyNuiPmdzt2E2mXd2gPA67sEn4njSspBIEupUmyUka4LfCSa0/AdGAQ92xrA6SmeJ+S"
+      "salt": "799eb5a5e675fb794432b2e237f21f3e",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-22:robin#3"
      }
     },
     {
@@ -8038,7 +8075,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T00:16:03.323Z",
+ "updated": "2026-10-23T01:00:38.780Z",
  "record": {
   "w": 91,
   "l": 34,
