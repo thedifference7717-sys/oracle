@@ -2709,7 +2709,7 @@
   {
    "id": "2026-10-22:ladder",
    "date": "2026-10-22",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-22T22:00:53.568Z",
    "cycle": 12,
    "rung": 1,
@@ -2767,6 +2767,9 @@
    "sport": "NBA",
    "start": "2026-10-22T23:00Z",
    "teams": "PHI vs CLE",
+   "actual": 21,
+   "result": "21 PTS against a 19.5 line",
+   "settled": "2026-10-23T01:54:27.406Z",
    "revealed": {
     "v": 1,
     "hash": "18904b438cb4ecd85b459d5abaa711d85a967bae404bada29c62a62177d0bba8",
@@ -2795,12 +2798,12 @@
    }
   }
  ],
- "updated": "2026-10-22T23:00:04.116Z",
+ "updated": "2026-10-23T01:54:27.409Z",
  "state": {
   "account": 338.33,
   "base": 16.27,
-  "stake": 16.27,
-  "rung": 1,
+  "stake": 29.08,
+  "rung": 2,
   "cycle": 12,
   "pl": 238.33,
   "cycles": {

@@ -7857,6 +7857,9 @@
      "sport": "NBA",
      "start": "2026-10-22T23:00Z",
      "teams": "PHI vs CLE",
+     "result": "won",
+     "actual": 21,
+     "note": "21 PTS against a 19.5 line",
      "revealed": {
       "v": 1,
       "hash": "356487843b604baa24fa65f14b75bb9c2b7497ebbd9578f8f3b958252003f14f",
@@ -8115,7 +8118,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T01:30:17.121Z",
+ "updated": "2026-10-23T01:54:29.167Z",
  "record": {
   "w": 91,
   "l": 34,
