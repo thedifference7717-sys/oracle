@@ -135,10 +135,12 @@ jobs:
           # Seals each Ladder, Dub and Robin pick until its game starts
           # (engine/scripts/seal.mjs), and encrypts the state.
           PICKS_KEY: ${{ secrets.PICKS_KEY }}
-          # No posting to X by itself: the owner turned the automatic posts off
-          # (2026-10-23). Without the X_* keys engine/scripts/xpost.mjs sends the posts
-          # to the owner to copy, as before. To turn it back on, pass X_API_KEY,
-          # X_API_SECRET, X_ACCESS_TOKEN and X_ACCESS_SECRET from secrets here again.
+          # Posting to X by itself (engine/scripts/xpost.mjs); unset = the posts
+          # come to the owner to copy, as before.
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
           # Client channels by tier (engine/scripts/tiers.mjs).
           TG_TIER1: ${{ vars.TG_TIER1 }}
           TG_TIER2: ${{ vars.TG_TIER2 }}
