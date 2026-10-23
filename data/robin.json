@@ -8226,11 +8226,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 8.4 in 29 min",
+     "eventId": "401909846",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.66,
+      "spread": 0.04,
+      "ticker": "KXNBAREB-26OCT23TORWAS-WASDAYTON8-4"
+     },
+     "line": 3.5,
+     "market": "reb",
+     "need": "4+ rebounds",
+     "p": 0.9079,
+     "pAdj": 0.7027,
+     "player": "Deandre Ayton",
+     "playerId": "4278129",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-23T23:00Z",
+     "teams": "WSH vs TOR",
+     "revealed": {
       "v": 1,
       "hash": "9c8b81856a82141eb0a3777cff88992bd123721825f26753b2d49ec7f767288d",
-      "iv": "uo5lG+BDeLb+26El",
-      "ct": "2X15ashQvW8RDxeEoNk6wSvXvPLyRU/AftLPkvmTqtcoxb4SAkD9kvQc0YHu49TlN98zx6Ieppe82MctmDJMKxPkiJSYiWY58srqpk+CkeJJ3XeQ59HyaB82+0yir0ZQi7n451idHvdN8gQ+zvwjJZ8UVicZqDIr9g3tOt9jypvaSdaiP8bn0YRs+ypuYul7n+FZS8Agmpn61pWERdMXOMW8KXoaXvMBpWStPVntbb4PCMKIqDsZSC/5+54VglmV8EvJp8GIOAWWlv5zOTNIu/b8oLaS/DqVLsUXUT6KYy5Q0Gz7LNfB1DSYVdbkGluASX84zUQITHfZArlkR0/CwzogKYJ3G5urjI/1iTWeGoleqOJ4noMd3KvMyFqrQp/5yqKbl1QSSOIfv2mDLXExrF9w+VnqPbPW9zWFLs+qL25qD5z/w9dwwv9itsDmpMAtbG2YlYUcXnK+kJOmtl0mMOegKQzNKd8j3+o9Lyk342Vt0o4CVVzIPvFdenIATojYARp0eut7phQDAZpQ8YtjZvKGtQsLqJZW8Djm6oB+lbDJMLgE3vcls6wXP1momWeY1AEeT/9QfvJO+1WcO4EKPOFmxK/OAt/ftfyC"
+      "salt": "e8778e50f93f6256f1eb5f623ca3e834",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-23:robin#1"
      }
     },
     {
@@ -8268,7 +8305,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T19:00:24.807Z",
+ "updated": "2026-10-23T23:00:11.972Z",
  "record": {
   "w": 96,
   "l": 35,
