@@ -8302,6 +8302,9 @@
      "sport": "NHL",
      "start": "2026-10-24T01:00:00Z",
      "teams": "COL vs TBL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "e1173148a67ebb544ce488ca3246227a1edb1b802438261af5b98d4424ab6781",
@@ -8429,7 +8432,7 @@
    ]
   }
  ],
- "updated": "2026-10-24T01:00:36.706Z",
+ "updated": "2026-10-24T01:12:22.559Z",
  "record": {
   "w": 96,
   "l": 35,
