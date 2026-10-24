@@ -29,10 +29,11 @@
 #psTicker .psg .ps-st{color:#7E8BA6;font-weight:700;font-size:12px}
 #psTicker .psg.live .ps-st{color:#FF5A5A}
 #psTicker .psg.live .ps-st:before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#FF5A5A;margin-right:5px;vertical-align:1px;animation:psBlink 1.2s infinite}
-#psTicker .psg.ours{background:rgba(43,123,255,.12);box-shadow:inset 0 -2px 0 #2B7BFF}
-#psTicker .psg .ps-pk{color:#6FA6FF;font-weight:800}
-#psTicker .psg.hit{background:rgba(247,147,26,.16);box-shadow:inset 0 -2px 0 #F7931A}
-#psTicker .psg.hit .ps-pk{color:#F7931A}
+#psTicker .psg.ours{background:rgba(255,255,255,.12);box-shadow:inset 0 -3px 0 #fff}
+#psTicker .psg .ps-pk{color:#fff;font-weight:800}
+#psTicker .psg.hit{background:rgba(34,197,94,.20);box-shadow:inset 0 -3px 0 #22C55E}
+#psTicker .psg .ps-pk .ps-w,#psTicker .psg .ps-pk .ps-w b{color:#22C55E}
+#psTicker .psg .ps-pk .ps-l{color:#FF7A7A}
 body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset-top,0px))}
 @keyframes psRun{to{transform:translateX(-50%)}}
 @keyframes psBlink{50%{opacity:.25}}
@@ -138,7 +139,9 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     const parts = p.who.split(" ").filter(w => !/^(jr|sr|ii|iii|iv)\.?$/i.test(w));
     const nm = (p.mine ? "🪜" : "") + (parts.slice(-1)[0] || p.who);
     const run = p.now != null && COUNTED.has(p.sport) ? ` <b>${p.now}/${Math.floor(+p.line) + 1}</b> ${SHORT[p.market] || ""}`.trimEnd() : "";
-    return `${nm}${run}${p.res === "won" ? " ✅" : p.res === "lost" ? " ❌" : ""}`;
+    // White while it's live, green once it hits, red if it misses.
+    const cls = p.res === "won" ? "ps-w" : p.res === "lost" ? "ps-l" : "";
+    return `<span class="${cls}">${nm}${run}${p.res === "won" ? " ✅" : p.res === "lost" ? " ❌" : ""}</span>`;
   };
   function draw() {
     if (!root) return;
