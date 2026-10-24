@@ -8290,25 +8290,106 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#2 · vs Nick Martinez · projected, 92% to start",
+     "eventId": "849805",
+     "gk": 849805,
+     "kalshi": {
+      "ask": 0.64,
+      "bid": 0.62,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT232000TBMIL-MILBTURANG2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6765,
+     "pAdj": 0.6573,
+     "player": "Brice Turang",
+     "playerId": 668930,
+     "price": -178,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-24T00:00:00Z",
+     "teams": "MIL vs TB",
+     "lineup": {
+      "in": true,
+      "slot": 5,
+      "at": "2026-10-24T00:00:08.920Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "fde4da929424930aa333f6c41d608ceed3aa37aff6d32f7b5337a03cd0db3db0",
-      "iv": "yqE0I4AodcoJf0K3",
-      "ct": "9AvxRXnfiUofF5iWmbBhSz7n4blEa4FiqumOUTeLvPAtUt3u9+aUhhPu56G2O16ZVheuDVvxa4It1yzVObFFDM+WqAv0AchTNBuNgvB0WuLSFzTSipukWLxhWFsK87sHnnbxExVfH+qF9WGIXI0OK3iIm96Zy8mL7i/gQKCq54pTV3YtNRhlHz4/2aCfGJkeNpYnOtoJC+pjIIBTnV3RQjqbgCYLMO3p/NnS6R8AJAdwtbilBBUcUAzhXBTiEwBfjbo9eN5NEdleQB2CoAkSSle940DQ+1JjCJmgbwubQ38rtQkOlrtowCcKubA9FiP8y3GQ1ty8U18HDTqppPftozwNz4CqldPn3dZLcd4mejBcsSDczTZTx11z1o2InfaLV9aARRoQX4iyjDjsueR9NSHQpYG6dRRh+NT4dsYpX9W+GwBjI/jnwmD/QhStDcP/AekU6df9cT/1RBcJUBNKloBCgADWTg2KiT6CKR+Uc++iUACWaZhk36V93HN1cgzc9JOz7Dh1x0jpblMOW8en7YTu58cgP9KUfxL7aHBvwm3wz5IXZ3dsQiqyJe/JWZlNipC0V/XHaxFRdIX6TQK8BercxVk6HiOVPpErLqJ90qbP3b8+DlMVKTK/7HyN+7Unw29ExCr7nnyxRkfUYN+YBNfHzfTZxzMU7m0="
+      "salt": "a57432207d1362936a82a543865f37e9",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-23:robin#4"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.177 · 1 pts/gm this season (3) · a point in 2 of his last 3",
+     "eventId": "2026020166",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.64,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT23MTLCHI-CHICBEDARD98-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6688,
+     "pAdj": 0.67,
+     "player": "Connor Bedard",
+     "playerId": "8484144",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-24T00:00:00Z",
+     "teams": "CHI vs MTL",
+     "revealed": {
       "v": 1,
       "hash": "2fbfcd99f1d944260d350f73594e4c2138196de59518ec25277d3d3ded817564",
-      "iv": "1DoCQAgIZT9ixI/R",
-      "ct": "JpamPDIYJgHEwQT4BEZ3EJ8f/27c2SJpwsJeKcEcSL94mjLUPigo4ZqgS3Jf44gIWsJY35GfvSFhN1ugGO0kf4zEkEJkEoKt5P7FTXvPX6wOhVgP3WMEjqhstULOLXHRNFaUai2x3jtU69/juVUxn2FAqp54V3TnftLX/CVvtaDDwyQ2SPwnmO/dhVLj/RUqvQWcQbhXR0mw+/BmDXmTUWeVCQ7gchU08NtIuSAS80cAX9fyM88p99Snkfo9ujE/brsur8ol2hTb87sB+3YnJj7rEfUGj7t7udTE5OFnf2u5dw95haToT6TUIwyFPGm9wyy+49Q2AKzAYW5khxcoLHArzkfM2NvtNDgJfFrEUPnRV+lnsmN7Q9kvsxwCDeSqXGpdqVwMEeMiwCPwElM78gzxhbZeZfidt4IDJF+X6hpJ6TFwYpr+0Tw+0xqbyKYpQXGjXy+OBd2p5XbR3y8Z8NF06qhvKTn97KpDc12Fo2BxoiEcrFgcEobCU78Jlro7DfbaoQ5euA/M8zQ3421vL/po0un8pJRvf4kCYXkoVljgQUp4oN/gWMOiPupqSJrK4vZcQbgIaxrpwo+KbuVpz9FXGs2X/yELjO4c/lzAEKLx1hgTCoHj1trzmuiH2D0OIM0OKbzmprhfpGHlQziPnO9A2vO4B35T2LItxq2pMkuZwQpaiXo="
+      "salt": "a9816feda5dbb73e407c29f9f9b7ff78",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-23:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-23T23:55:44.275Z",
+ "updated": "2026-10-24T00:00:08.920Z",
  "record": {
   "w": 96,
   "l": 35,
