@@ -2800,7 +2800,7 @@
   {
    "id": "2026-10-23:ladder",
    "date": "2026-10-23",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-23T19:00:21.820Z",
    "cycle": 12,
    "rung": 2,
@@ -2858,6 +2858,9 @@
    "sport": "NBA",
    "start": "2026-10-24T02:00Z",
    "teams": "POR @ SAC",
+   "actual": 12,
+   "result": "12 PTS against a 9.5 line",
+   "settled": "2026-10-24T03:58:32.462Z",
    "revealed": {
     "v": 1,
     "hash": "81786f6d8de4430dbcd988c73786cc2cbf1d3889fbe4d2590827f42d93b87fde",
@@ -2886,12 +2889,12 @@
    }
   }
  ],
- "updated": "2026-10-24T02:00:06.544Z",
+ "updated": "2026-10-24T03:58:32.465Z",
  "state": {
   "account": 338.33,
   "base": 16.27,
-  "stake": 29.08,
-  "rung": 2,
+  "stake": 45.42,
+  "rung": 3,
   "cycle": 12,
   "pl": 238.33,
   "cycles": {
