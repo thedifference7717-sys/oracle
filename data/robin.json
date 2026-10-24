@@ -8606,11 +8606,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 32.0 in 37 min · over this line 3 of his last 10",
+     "eventId": "401909855",
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.61,
+      "spread": 0.05,
+      "ticker": "KXNBAPTS-26OCT24MILPHI-PHIJBROWN7-20"
+     },
+     "line": 19.5,
+     "market": "pts",
+     "need": "20+ points",
+     "p": 0.9127,
+     "pAdj": 0.6648,
+     "player": "Jaylen Brown",
+     "playerId": "3917376",
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-24T23:30Z",
+     "teams": "PHI vs MIL",
+     "revealed": {
       "v": 1,
       "hash": "d779bcfe074e2cd12bb729e98ea73ad6646baa61c1ca4c95ce87183ae841805e",
-      "iv": "mnCvSc5z87PcgWQk",
-      "ct": "ooo2Riiee0h5+FzaiPFGT5ZRnrYEJABchC9h4l+wZ2x1/KuJR/O21Uf8i9DHtYbYypQwkvEkQtfgVbkCL1pZGCWyJhj3sfu2igyFj6FnAw2Zt5GjVScpWk7aQghb+FPNQBWv/6PE0arAjHhmpMgtsUGT+h+SJcOQYNXlHSWX52rMaIWZz92lClHiB6DbqgQS/z0JVMTQ9ZMFRS+UyAHMv5GlXwPuiRqJNKKG57jrYlxPBo0t5ifiDAvlw7RumziXZTm38wuITz9hLwiha2S+otisGMNZ/03vKutqeahcSHxbSzn3U2cvjJr/HJvpynvhl1WDIGsZDzKLPV2fh1dC0NqFs/yDBtn8FRu1ws9biuCm0i3WvPc0OQS/iMLbhS8IKEqOO4ZoI/f5/lUSTzesdE4OuoxnPLaoaUz7trj96/NjUpruzoV24mxkKFH9oJ9eazVew4WcQSOfypxwznCw0Mi8KyzZh+dj82+t1fxI6n6kAaqCmuvJhwbFKLX5A0kBvVb6UH6C7hu4oXf5QvCW55/S/O9gnU0yXTgj/UYAWcS08asreyEIi2osfwcCRKHARWjjzUXAnZ5zq3EWaegwneV1vDjwoAWChVhEOMlY62+TivXX0PfsC7IN+1ywbG9as3NnrEGSslZFU/9xZB5TEA=="
+      "salt": "485a3c71ced8286fdb69efbff76dee70",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-24:robin#0"
      }
     },
     {
@@ -8622,11 +8659,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 23.1 in 36 min · over this line 5 of his last 10",
+     "eventId": "401909854",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.62,
+      "spread": 0.07,
+      "ticker": "KXNBAPTS-26OCT24BKNCLE-CLEJHARDEN1-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.8918,
+     "pAdj": 0.6943,
+     "player": "James Harden",
+     "playerId": "3992",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-24T23:30Z",
+     "teams": "CLE vs BKN",
+     "revealed": {
       "v": 1,
       "hash": "f682a62caa22df05142c7c97e96bc2396cdaa6620b9f3d7974fffced0eb51281",
-      "iv": "My52cVb2aDGiyBYI",
-      "ct": "L60oVO6WGAlZxlc5AARpmieLZ6/iZA7Es3YrZDIx36aUjX572kZEWqY8D6DUg2J+abDyxZzkpeN2SqJQOqOPkXXHwV5CAr7DRDs6tfVaKfuBqyovWWiGlvxPYs/TDexVfnactGbqs5kZ10dQ0uk4+xTsIO6fxa4cYWmOmiDCAmbcsiXPKI8KOvBqYTTikE+9jGDet03uqtT4a6PVIrQ681ZnLvGk7vuODOSrWC0tM7k4xGRJE6OCMlgWGbmkIhqusg8B+FLEsu8uShT6n0QiHXOuFaIbNI0mA5m3smuIijycMmPXVSeo4TCTW6uDWAt71/c6zMvQABeQu9DyAmblzKkDMf3sT4COOvRLKB85u4TQTO9I7KmWEjr1HL8qao6nsdSPcLbi00GIOcHFAqloRsKU5tWG4Y6Txf1KhE3RKaImd9Wv8nih4pVCZYZNIENkNGftr0Gk5vHpLeLRCkrKezlp4cgdFl7T9QJ+wgMnksXzQf8VH9n32MuymkktPRthEEydgG0U8qcT6KT1IQ7Em/DdIHjtMVZJXE+0Z2ubd9SiA9ZHd0N5+csoweE1e9yJ3BHZRB2OSds2f0TdwR21ClQ9tEIZ3T3pcnR34+3PDbsko9pTr/DO4rE8dWZ60iQv3LER6zqaoozm7i6SOHw="
+      "salt": "b5da8b02880e72684d160a79ee4ffb28",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-24:robin#2"
      }
     },
     {
@@ -8730,7 +8804,7 @@
    ]
   }
  ],
- "updated": "2026-10-24T23:00:30.108Z",
+ "updated": "2026-10-24T23:30:57.140Z",
  "record": {
   "w": 101,
   "l": 36,
