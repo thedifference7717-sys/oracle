@@ -8433,6 +8433,9 @@
       "slot": 5,
       "at": "2026-10-24T00:00:08.920Z"
      },
+     "result": "lost",
+     "actual": 0,
+     "note": "hitless",
      "revealed": {
       "v": 1,
       "hash": "fde4da929424930aa333f6c41d608ceed3aa37aff6d32f7b5337a03cd0db3db0",
@@ -8509,7 +8512,7 @@
    ]
   }
  ],
- "updated": "2026-10-24T02:25:06.218Z",
+ "updated": "2026-10-24T03:27:24.920Z",
  "record": {
   "w": 96,
   "l": 35,
