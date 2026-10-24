@@ -3476,12 +3476,6 @@
     "NHL": 2
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "dc27f36717b66edef9ec616b4a3571f8354f70afcd3f0e8a3c5bb8542f836af5",
-    "iv": "FpNkEL+Grqk4VCcL",
-    "ct": "p+i/Ehf0ymrzHGLeqe7yw4GW8ZbWsEiyGoM9VO+B2L/8WFsq4THXfyXFuKuWQIAQoZXQZ3Q4WZG5TOg4rAmW9wsHHn6ONnR/q42lu/l6usVsdTDwgXdBsGw2PPFVKanta2HZ0EiqimxWvS7DD6bDPB958e4zqBe+mCx8aocK6T90AEXlfjJldr7qQapTFp1KDJBFGLeTxfdm5ms0Kvw79JfMhyH42dzVsGl8kRads4oKx2qQleyW+kw2+cL1kFL9vT+mpcLxK/cG8HpiJgxNWA=="
-   },
    "legs": [
     {
      "detail": "proj 18.9 in 32 min · over this line 9 of his last 10",
@@ -3576,10 +3570,30 @@
       "ctx": "2026-10-23:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Jrue Holiday",
+    "sport": "NBA",
+    "start": "2026-10-24T02:00Z"
+   },
+   "fair": -442,
+   "price": 127,
+   "prob": 0.8153,
+   "revealed": {
+    "v": 1,
+    "hash": "dc27f36717b66edef9ec616b4a3571f8354f70afcd3f0e8a3c5bb8542f836af5",
+    "salt": "e8454459861dca445079955d80bf1562",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-23:dub"
+   }
   }
  ],
- "updated": "2026-10-24T01:30:41.974Z",
+ "updated": "2026-10-24T02:00:06.571Z",
  "record": {
   "w": 15,
   "l": 13
