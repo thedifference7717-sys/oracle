@@ -8630,19 +8630,93 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 2.335 · 3.1 pts/gm this season (10) · a point in 10 of his last 10",
+     "eventId": "2026020176",
+     "kalshi": {
+      "ask": 0.84,
+      "bid": 0.78,
+      "spread": 0.06,
+      "ticker": "KXNHLPTS-26OCT24TOREDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8491,
+     "pAdj": 0.8404,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -525,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-24T23:00:00Z",
+     "teams": "EDM vs TOR",
+     "revealed": {
       "v": 1,
       "hash": "5c7f31f4624c066fe8b9c8e14d316ff3310cdf9bb1155e9e659098678ca52447",
-      "iv": "OMSya9DqazL1FlRX",
-      "ct": "lcGbcgb9dZkL84rjTCcFCvX05b0eiS43aVB9jf13bCwJr7ro/kC2+ptekaR4bFOsk55DX82uNslCSd9qtdxfU8BgpLalUVsAcrkW9JZ/xfNGo58fwh/k4QXYVuLGHQhQUD91zbgvHapSgCg+MJKy/aEawZwbf+JStQ92/iaqSFx2dOAGRhcOMcppmJhS8iEj/AwEwhCMgyu/0LT7D8POjYXb6U7iXI3Hx4lPjhXmdZXz9PJVwRDdnsZn0uuzGZG6iBee0kMkniPSjf/aTFXr08xltqYXZ+b/araGb+HA8eUbz4OHXZqmhG8Ay0G5Hg4DMpo4HBAx+pokX1vXyLiBTeEiVw+nLn8lX3U+RJs7n3jaYa+a5rxIEza8kVf87mdHBZTw8wBcrg4sGD0bYDCuP0DTLFkLrkKGzy4qOGoqROOIYU+zwFF7vnlRd2llVuAFfDWNPa35I2IlsEohBKAKmYf0IFveT8sHt46AtJdpyjQB47eTWYxJ5h524sP+0ThVtpQCmFIZHDJ3gChEMqBcUlAbsNZzRfy8XLyg0uuPBFZQ3OJZJDr6qv8omdW16E0Li5J1hWhrvFjR6NthtPpp5OuSwUaQ2O4XxfGqH7bA0i7xBm56hTS8PHfEKbimkNIqx9bIQ/qdTRKyluPEDG7pGN5SDh2wQKHUamigAoviGYXjM1sXqpe+vsBgioMvAsw="
+      "salt": "3afbffeeaa01482d251c5606660b54cd",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-24:robin#3"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.472 · 1.45 pts/gm this season (11) · a point in 7 of his last 10",
+     "eventId": "2026020170",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.7,
+      "spread": 0.06,
+      "ticker": "KXNHLPTS-26OCT24SJBOS-BOSDPASTRNAK88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7294,
+     "pAdj": 0.7593,
+     "player": "David Pastrnak",
+     "playerId": "8477956",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-24T23:00:00Z",
+     "teams": "BOS vs SJS",
+     "revealed": {
       "v": 1,
       "hash": "801ce5246fb3074e6480c22de9eb3fff9e93b8d5d318a49caf2f7c4e883a831e",
-      "iv": "sFHO5agA1GeINO6E",
-      "ct": "dPDU+qxMcdBbcEo5jckYdVzrG36QSyyjJGOg/5zcd9lhGjHyme+jmgkuCHsSMTjwlZplcCF0OfjjWMaG5VqW9+T6+gdHqLFYJZS1f8+l+RchsB+sT/aVa0jJE+vJACgi+Jd8+XtD5b0MBjgM3KJLvCEn4x8x+RCOlFQdAsW+EQ7s+dBBsdyo5E0EGFLK7gG7tnuAvUpRWMlHwnPzLVcTBrx5buC+Sclrpp+5RHxKhm8LOrMvGeXvHP+6/m+L759n5mr1hTpwYo391BLc/I2rZOM5xYURzjgSRDkZ4TrIIVdN38nCefnWC0j1j9xYeLPkRB0nwkV6CQ6SDCcvKQDs/f7lvxx5kqkhZJ7Dv/B6a/kuLUoKY/jaU9vXZ8uZMRFtG4OA4x29jZUJhh+fx465xaLaj7xL+YkW1eVzqQlLoT/BfiJsSXfW18itYQ6OcZQpEtAwskzPBDdTbbxHPhsXfCW2nmAQ9QZoDj7Jl5QcWn9zwy2l794s6L4YXhMdJbm526FUHPj6kvG5OfQ/070B3iBkJ5BextyirsOgQR+fEF7W8pM9/ZfhyTDMHIACN6qxs6fb7yLB4t54tsnzlSKQGW4snbIjW+wb4d3Lb8GpHkIzKazKWnhv+/cl7P7oVyupiKueP1eWt2DErPES6Xwbk3uBWYg5a888SplIEO0XPBll13rdkTnCdRDdyXG6Yw=="
+      "salt": "e8b0d0ec89f7910e8bad0b7e38a19ac4",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-24:robin#4"
      }
     },
     {
@@ -8656,7 +8730,7 @@
    ]
   }
  ],
- "updated": "2026-10-24T16:00:54.398Z",
+ "updated": "2026-10-24T23:00:30.108Z",
  "record": {
   "w": 101,
   "l": 36,
