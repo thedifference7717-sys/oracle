@@ -3484,11 +3484,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 18.9 in 32 min · over this line 9 of his last 10",
+     "eventId": "401909849",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.62,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT23NOPUTA-NOPSBEY41-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.898,
+     "pAdj": 0.6335,
+     "player": "Saddiq Bey",
+     "playerId": "4397136",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-24T01:30Z",
+     "teams": "NO @ UTAH",
+     "revealed": {
       "v": 1,
       "hash": "c5891b8af74cbf6e5681ec6f215313974a063ce26a08f902b945665e5630406f",
-      "iv": "4NWW0Kf1039XjbQw",
-      "ct": "XiexvB8h8cJ4CAuqyPChrt19P5nu8bUP5SvTKR9kccP4XBzrR97idPueqRgZU8wOY+rd2CTvkUNPFY77Z9kaCLcR2P3pBbG4fWBRpvYRujUIjhGaFjiTE79uJvSeZH+52dpKTKls8gwj5ZJXyWSaeP/cmLrEGJOa+IYflAqBo3f0d74yRnLB5eZZlUXYhRjS8GPT9UqFMa1/eTlL81MCoJfdoA3+jlpXb+tCK5Vc5DHfpmKLAb3BLoXGOB1LTosLSKEVt9sR1COJXKxygcU+sLCKhmJfsdWlF+31N5/WKYCaXGOQTRfEU8K7JvscrQN1TQhBKB7PNIgb/Tk4ihB+4B1k/88ac0hIGgDiBmiHeiZQrXmEUJihZi1zr88PlTOfKmv3P8gDkDKeb5W+hiIdKPTKrMmJvf7vCiC5ekiCmzXCyjGQCZEt+fpAKx07LPoMqEzEF1wEZNkUTOSIvQz5FnmLamK3V8CKrXkGvvGVrvnS93eZSaL/CflORIVBIWr5E1vaU/U56Toxd7Q7L+Zm8OG4UYoNvLyTbnDdpDKntB+/6y5cYrmsmW+m5q1NKgamTma5DfjHux8y0/zm660mi3wfQsHUar3Ft+sjG8pTN78OuLzk4eUd9QQONULCwM7WHVYPAEmWavA="
+      "salt": "9f554c7af46e64f0808d46ed9714dda1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-23:dub#0"
      }
     },
     {
@@ -3542,7 +3579,7 @@
    ]
   }
  ],
- "updated": "2026-10-23T23:55:43.964Z",
+ "updated": "2026-10-24T01:30:41.974Z",
  "record": {
   "w": 15,
   "l": 13
