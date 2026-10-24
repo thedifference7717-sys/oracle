@@ -8331,6 +8331,9 @@
      "sport": "NBA",
      "start": "2026-10-24T01:30Z",
      "teams": "NO @ UTAH",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "114b6cfaf3f4cb08139fc42c727a2fab0147c0349fef4cbc758757b23943c881",
@@ -8506,7 +8509,7 @@
    ]
   }
  ],
- "updated": "2026-10-24T02:00:06.604Z",
+ "updated": "2026-10-24T02:25:06.218Z",
  "record": {
   "w": 96,
   "l": 35,

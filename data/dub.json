@@ -3469,7 +3469,7 @@
    "id": "2026-10-23:dub",
    "date": "2026-10-23",
    "published": "2026-10-23T19:00:23.866Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 1,
     "NBA": 12,
@@ -3498,6 +3498,9 @@
      "sport": "NBA",
      "start": "2026-10-24T01:30Z",
      "teams": "NO @ UTAH",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "c5891b8af74cbf6e5681ec6f215313974a063ce26a08f902b945665e5630406f",
@@ -3579,6 +3582,7 @@
    "fair": -442,
    "price": 127,
    "prob": 0.8153,
+   "settled": "2026-10-24T02:25:04.774Z",
    "revealed": {
     "v": 1,
     "hash": "dc27f36717b66edef9ec616b4a3571f8354f70afcd3f0e8a3c5bb8542f836af5",
@@ -3593,9 +3597,9 @@
    }
   }
  ],
- "updated": "2026-10-24T02:00:06.571Z",
+ "updated": "2026-10-24T02:25:06.058Z",
  "record": {
-  "w": 15,
+  "w": 16,
   "l": 13
  }
 }
