@@ -32,6 +32,7 @@
 #psTicker .psg.ours{background:rgba(255,255,255,.12);box-shadow:inset 0 -3px 0 #fff}
 #psTicker .psg .ps-pk{color:#fff;font-weight:800}
 #psTicker .psg.hit{background:rgba(34,197,94,.20);box-shadow:inset 0 -3px 0 #22C55E}
+#psTicker .psg.miss{background:rgba(255,90,90,.10);box-shadow:inset 0 -3px 0 #FF5A5A}
 #psTicker .psg .ps-pk .ps-w,#psTicker .psg .ps-pk .ps-w b{color:#22C55E}
 #psTicker .psg .ps-pk .ps-l{color:#FF7A7A}
 body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset-top,0px))}
@@ -147,13 +148,18 @@ body:has(#psTicker) #topbar{padding-top:12px;top:calc(36px + env(safe-area-inset
     if (!root) return;
     const byGame = new Map();
     for (const p of picks) { if (p.cashed) continue; const g = pickGame(p); if (g) (byGame.get(g) || byGame.set(g, []).get(g)).push(p); }
-    const items = games.map(g => {
-      const ps = byGame.get(g) || [], hit = ps.some(p => p.res === "won");
+    // Each bet is its own segment (the owner's ask, 10/24): a game with two
+    // picks shows twice, each white while live, green on a hit, red on a miss.
+    // A man in more than one product (the Dub and the Robin) is still one.
+    const items = games.flatMap(g => {
+      const ps = byGame.get(g) || [];
       const sc = g.state === "pre" ? "" : ` <b>${g.as ?? ""}</b>–<b>${g.hs ?? ""}</b>`;
-      // A man in more than one product (the Dub and the Robin) is shown once.
-      const tags = [...new Set(ps.map(tag))];
-      const mine = ps.length ? ` <span class="ps-pk">🎯 ${tags.join(", ")}</span>` : "";
-      return `<span class="psg${g.state ==="in" ? " live" : ""}${ps.length ? " ours" : ""}${hit ? " hit" : ""}">${g.em} ${g.away}${g.state === "pre" ? "" : ""} @ ${g.home}${sc} <span class="ps-st">${g.detail}</span>${mine}</span>`;
+      const head = `${g.em} ${g.away} @ ${g.home}${sc} <span class="ps-st">${g.detail}</span>`;
+      const live = g.state === "in" ? " live" : "";
+      if (!ps.length) return [`<span class="psg${live}">${head}</span>`];
+      const one = new Map();
+      for (const p of ps) { const t = tag(p); if (!one.has(t)) one.set(t, p); }
+      return [...one].map(([t, p]) => `<span class="psg${live} ours${p.res === "won" ? " hit" : p.res === "lost" ? " miss" : ""}">${head} <span class="ps-pk">🎯 ${t}</span></span>`);
     });
     if (!items.length) items.push(`<span class="psg">No games on the board right now — today's picks lock an hour before the first game.</span>`);
     const run = items.join("");
