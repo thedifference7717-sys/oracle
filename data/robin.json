@@ -8362,6 +8362,9 @@
      "sport": "NHL",
      "start": "2026-10-24T00:00:00Z",
      "teams": "CHI vs MTL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "2fbfcd99f1d944260d350f73594e4c2138196de59518ec25277d3d3ded817564",
@@ -8389,7 +8392,7 @@
    ]
   }
  ],
- "updated": "2026-10-24T00:00:08.920Z",
+ "updated": "2026-10-24T00:17:08.039Z",
  "record": {
   "w": 96,
   "l": 35,
