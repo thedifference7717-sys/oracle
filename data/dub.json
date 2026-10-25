@@ -3739,19 +3739,50 @@
    },
    "seal": 1,
    "rev": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "fe90df122b4141a7647a4b5eeebbc62a4367413eb4b9c6c72d440ff7cc342a98",
-    "iv": "13pz8MqXnIXFqil2",
-    "ct": "tvHu4T7A9c8kT5+3/P0w/Aqg3xsVjFn4IIrH60ADiA+nV2hYYYTJ9wyN3JXDjUyFGDvhN2OjYUn/lYo/Ufyx6sB393N8YQxitFJItgrBGhgINui44UEUv875Xv7Ao5rMH4sa3O/ixwWfZAqemmixln6grisE29Zxw5YUkUCYGVqCgE/PiSPe/KmYlGv3nSt6iJuaBHh7r6wpe72P1OVKQxOecATpzhw4yDPzUkdOTUR6Zvx/ofq2OlGkA2+cxNfn0JUmM0J2xg5ancmQ9dPUS0+0SznYlfdM/dbK+xtfTW8Nm7bSGEtk7VehyTbXkYoZoV1PyWEPtY7VzU57pix99DpmXeepJoBNqRPtZKxSfsjLizrAjZ1u5Q0fzSGemHjdxLDvtd6BgMpKHBHWOT9XSrdittA3VN5us3KaHFo+8/aEri9++i15r09pBkJX"
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 26.2 in 41 min · over this line 7 of his last 10",
+     "eventId": "401909866",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.68,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26OCT25DETPHI-PHILJAMES23-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.922,
+     "pAdj": 0.7248,
+     "player": "LeBron James",
+     "playerId": "1966",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-25T23:30Z",
+     "teams": "PHI vs DET",
+     "revealed": {
       "v": 1,
       "hash": "f37da1ad4c40fc4889f7b26cc1ed5ad0476668c0e5782d1912a2c26c8fd0cd9b",
-      "iv": "SeZ6xD2M/OOLnk78",
-      "ct": "giua+xvHj5cl2VdSJ3x50EZA3wJyZXVFGmYDdXkzJjZvUVAzESJLKXpYOuF699xD7Djs3DlY7yDUWUtY04Pa3NBIpipygyaAFVOUQurKFtIsNkhA6I3D4mEG8YfSbHd55zGNSGEaylCkYT5afjIZ3w0ooAnqeWTuVhHDgl4EYPRom0IgdqsrVraCuuvDu2WSjFRPPF2v+8MtjlB6LIVMWzq+6CItIjr08/vDA4DBcT3FUmizxQykt4tF5L75hh3Flq5Ux3SOSEWR/Fx0a4vr9LLp7mV7WCiGxfJxZzic1bb8VF/RhD7FGGmOGVOBTph91zwO0TX+w9u3SxnbMxDNmBecrqwtgJCJ9+JkWfHeJD5+u7TOCI1KAkFumvWeY/O/AtCH+664pQp0oruo2puEkeKdqmqSIa7IOGR6494Z/Dm0BVmDzqRHDs1oDcZxLmXUyeOMl00RDB6dhyHPZScxuG2jn0TqNCwllf18aGPer1Wva0/hoiWt2mJ1uBCv072BDONR7yp3v48bqffdCMEhuuy0D8ycsIB+2aWnw1EAoN+LRRCvDkGDQT3gcXeoUPHrPLnihuowd0n+09JHqA6lZnJdf8cMwXRmyQhA+E3P5LETkOq8jBVLYsR2038FxBI01i0Lxt/TBBy7Og0="
+      "salt": "251b0ce1f669650e1bc0d6010d3b6adf",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-25:dub#0"
      }
     },
     {
@@ -3799,10 +3830,39 @@
       "ctx": "2026-10-25:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Desmond Bane",
+    "sport": "NBA",
+    "start": "2026-10-25T23:00Z"
+   },
+   "fair": -423,
+   "price": -117,
+   "prob": 0.8088,
+   "swapped": [
+    {
+     "at": "2026-10-25T21:20:35.405Z",
+     "in": "LeBron James",
+     "out": "VJ Edgecombe",
+     "reason": "injury report: Day-To-Day"
+    }
+   ],
+   "revealed": {
+    "v": 1,
+    "hash": "fe90df122b4141a7647a4b5eeebbc62a4367413eb4b9c6c72d440ff7cc342a98",
+    "salt": "105acf0982bd84bbbe32c4dcea7a7aa6",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob",
+     "swapped"
+    ],
+    "ctx": "2026-10-25:dub"
+   }
   }
  ],
- "updated": "2026-10-25T23:00:57.002Z",
+ "updated": "2026-10-25T23:30:18.646Z",
  "record": {
   "w": 16,
   "l": 14
