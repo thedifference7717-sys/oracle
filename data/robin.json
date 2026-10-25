@@ -8671,6 +8671,9 @@
      "sport": "NBA",
      "start": "2026-10-25T00:00Z",
      "teams": "SA @ DAL",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "e7932df1ce2be50e6e4242ddbd4bcfa696cb941a4ab1184d2b8ada6a5fb69331",
@@ -8885,7 +8888,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T00:00:37.386Z",
+ "updated": "2026-10-25T00:49:37.385Z",
  "record": {
   "w": 101,
   "l": 36,
