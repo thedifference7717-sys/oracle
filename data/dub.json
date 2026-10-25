@@ -3600,7 +3600,7 @@
    "id": "2026-10-24:dub",
    "date": "2026-10-24",
    "published": "2026-10-24T16:00:53.510Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 1,
     "NBA": 8,
@@ -3677,6 +3677,9 @@
      "sport": "NBA",
      "start": "2026-10-24T23:30Z",
      "teams": "CLE vs BKN",
+     "result": "lost",
+     "actual": 12,
+     "note": "12 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "b17f48b2dcbdb7a5fd9986280b69ea6511925464405b5957afc18f58b781c393",
@@ -3710,6 +3713,7 @@
    "fair": -460,
    "price": -102,
    "prob": 0.8216,
+   "settled": "2026-10-25T02:25:16.520Z",
    "revealed": {
     "v": 1,
     "hash": "08a69617ea188eb6496cbc1743c6c1e851f98e98bfb0a3bbc50a635aa655052f",
@@ -3724,9 +3728,9 @@
    }
   }
  ],
- "updated": "2026-10-25T01:27:21.540Z",
+ "updated": "2026-10-25T02:25:17.690Z",
  "record": {
   "w": 16,
-  "l": 13
+  "l": 14
  }
 }

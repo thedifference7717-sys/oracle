@@ -8722,6 +8722,9 @@
      "sport": "NBA",
      "start": "2026-10-24T23:30Z",
      "teams": "CLE vs BKN",
+     "result": "lost",
+     "actual": 12,
+     "note": "12 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "f682a62caa22df05142c7c97e96bc2396cdaa6620b9f3d7974fffced0eb51281",
@@ -8897,7 +8900,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T01:19:04.566Z",
+ "updated": "2026-10-25T02:25:17.863Z",
  "record": {
   "w": 101,
   "l": 36,
