@@ -8815,6 +8815,9 @@
      "sport": "NHL",
      "start": "2026-10-24T23:00:00Z",
      "teams": "BOS vs SJS",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "801ce5246fb3074e6480c22de9eb3fff9e93b8d5d318a49caf2f7c4e883a831e",
@@ -8894,7 +8897,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T01:05:15.047Z",
+ "updated": "2026-10-25T01:19:04.566Z",
  "record": {
   "w": 101,
   "l": 36,
