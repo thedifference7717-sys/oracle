@@ -8994,11 +8994,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 22.6 in 39 min · over this line 6 of his last 10",
+     "eventId": "401909863",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.61,
+      "spread": 0.06,
+      "ticker": "KXNBAPTS-26OCT25ORLNYK-ORLDBANE3-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9363,
+     "pAdj": 0.6764,
+     "player": "Desmond Bane",
+     "playerId": "4066320",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-25T23:00Z",
+     "teams": "ORL @ NY",
+     "revealed": {
       "v": 1,
       "hash": "42f64571a46b8142ac85dfee174db295b8911a1342ec6ccbc7cdc51e25120e80",
-      "iv": "PujeLHpXyb/8Qa1r",
-      "ct": "Z9HNAsgM8z0edI3G9eXmZ7+TFfTklUO2H/Tss6EPMCY2g54E8KxfNc8vcu7YE+l5KPmR3JKz45SZvZhw+lOQz4D8Sj4bXXN68vXzdcp8NQGlM6vqN9KTSZZy7/SxWhRcvGccMzvXLlL34UOWwrI5+Up37UFyF2QpZh7eaPQoyE6FkCKBS/dCDoO0xZF+SL9WoFUedy6yre5uBIVKL/ibj4vBA/aWQ/+ST9lqAuzXsviRkk4IO19gXHiidHZXt6D9OWQiZo7ONkfJtK4Skpqse3S5DdZygAzj8QcV5VvBgq7seiAeApLmipNmfqUZyuKUdqwBNHaqFY1iKS+Mc96XQDOB0IUyxqNA6rFOS9mDAKpOdIYkoPFJ8jEtdHCSDX5/pATgWY/tLyQuYuArzomPPAt59aeAHt7TF8U4/hlEoY5npKAMFV7Qsty/Fl4H761t9uATgkjggOAcD/v0clpsKw2zz9wlPgwB84Uwce7KmR+3sv94GF/8cmvSzomPi3AO52H3c5m4oaFdAyEqX1SBD3o9XjhZ2/rrAnCtAKBfE75is/dZz/sgNmtHPZLcr+sLJ4mUnSRF8z+T2KrmSyD7A5xybmDVTIJzcZ8I7MsW4NVw1Liv+mPCXCIW5YoCCwBeLoKccE3fNW/Uo/hG"
+      "salt": "985b092a89adefbc6a7ef04d41cb7162",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-25:robin#0"
      }
     },
     {
@@ -9058,11 +9095,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 16.6 in 35 min · over this line 8 of his last 10",
+     "eventId": "401909864",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.69,
+      "spread": 0.06,
+      "ticker": "KXNBAPTS-26OCT25TORMIN-MINJMCDANIELS3-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8772,
+     "pAdj": 0.753,
+     "player": "Jaden McDaniels",
+     "playerId": "4431671",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-25T23:00Z",
+     "teams": "MIN vs TOR",
+     "revealed": {
       "v": 1,
       "hash": "a29b06e9df580f678d5f3dc3f8636b31ca57cbd05a8bd7cb22332a4eb8cfdb95",
-      "iv": "ynoSnA/jOSEGRKUD",
-      "ct": "Ls0Znar5Y4sQuf4wr+i67vXDZgwkUHl82T5rMvvJCQ600HuZ+hk3cPOH7iASHh5/p5moQ4osUvTcQOTASrr296ZyX5Lf/PSFZQYWsVXODUVF1+gcgdobXNx0dBcT3V6aGTX3GLOtodBDHyifHb7ImzGFiZ+lpl8CCe8adP23WJIbTUEZzKrOHYuRx7o7yHeGshpT85K/TWb/3UoupXjlIFDj4yZtIksx5ShVa+sBUl8GVyal/3xFCq0jjD3lYYTJRk9O41He4xPo59hLRQwAG2mn1eaf2Uj7M+UAH9m0FgE2HLSlzC+tiIrxuB9htwFjdIWtrNEMAwrsRiYZC2/NBrHDCz8k4XHiawlh6nK8//p0TAgAXdkiSnNrKbGL05Rn7ZyI7J5OhC6b6Chd2LfrPd8w5DfZYggGPtnJjrSlV9yPcwInbWFjAre2p+kYoX8GShYOcLOHVEvyHKpnM1Cclqu1THMlkHj2YSVGn+wM0wJBj8y12BbQkMKHPkm87aQPKpviD5AZ0fPObmlqS+Ov8P+NIrllERigMWfIt+NEoO62n3iGqUNc9fslDYFeAEAnjEa2/NA9wtIK7MPHQRiqfquPzx74w5T26UPqEEoNzviJrKq3GD4LK3QTM0pm64e2+ESBBTeLmdNNkrT67HFOOM0cEyQV"
+      "salt": "93b56a1b4736e13421df49224639f818",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-25:robin#3"
      }
     },
     {
@@ -9161,7 +9235,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T20:25:06.496Z",
+ "updated": "2026-10-25T23:00:57.034Z",
  "record": {
   "w": 105,
   "l": 38,

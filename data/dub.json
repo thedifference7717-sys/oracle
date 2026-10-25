@@ -3755,17 +3755,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 16.6 in 35 min · over this line 8 of his last 10",
+     "eventId": "401909864",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.69,
+      "spread": 0.06,
+      "ticker": "KXNBAPTS-26OCT25TORMIN-MINJMCDANIELS3-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8772,
+     "pAdj": 0.753,
+     "player": "Jaden McDaniels",
+     "playerId": "4431671",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-25T23:00Z",
+     "teams": "MIN vs TOR",
+     "revealed": {
       "v": 1,
       "hash": "3e0e84eddbd59e07f0dd61375536317c71fd1d07b3693745c50650881dd28b2f",
-      "iv": "aAuOMKacmcCgWFjY",
-      "ct": "3+Arww1UvPMl1tY6d+F/unzTVsypRT2iEsU/iORzNDRH5kt+nINqV/S7B56fzmOgk/+Wh1kd8UpLtfxry/51fTazc1135GjT8404DaL67KNsfmtYubz/tB6jZDHLrRfbAbFYqxisksR7hp9J7YXWTKMjd9NWsX4zdHKkqvRpBvbdUf32tFNXYIJbC6vMO/a2gKQXp00AqJIyqnWahrc020rRVkGlgirNx0RqiD989pIp9TiI3nR71TtlTHCCZ5+cMyXCo9Du3nlWTXNjiCxZbWhfX3gSleFYrMJ9mymsc9iBQIdQKJ+69g2h52TKmwfNYG3j1UJZLmnPpX0PGpG0/P4u1D3TwsLgYUIPqGkvPRqQVv89Lyr/2LmSzgVgDW9WDZtTDM3fn5mKUD8GbOWzh4W9G61lfqao3NSZVcqWEnVfyEYDNz89/y5Af0o58UmNY1B+doMx+0GfvH0CIP4EHGsCnk6Mt+3NMNguE+zzSZJPUJp0XdksMl4Lv1ecQOogGAn0mbagF6UXoX3kWRyo8Us5Qmfz5+SkM0M2XpOmsDfnABVZyotLEFDJ0dBj6B0fz0NwIBRoEZ5vVCEXZbOlRFC7K7UfHdX+FKM+HSgp8PqV1WAnbt3N0UQCUP3XXQyOmE4KxIaijrBQVTuiblRmWqFQ7A=="
+      "salt": "a8ea5f69bfe023c26dab4940d5b57279",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-25:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-25T21:20:35.405Z",
+ "updated": "2026-10-25T23:00:57.002Z",
  "record": {
   "w": 16,
   "l": 14
