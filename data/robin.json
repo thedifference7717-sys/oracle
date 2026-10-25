@@ -9094,6 +9094,9 @@
      "sport": "NFL",
      "start": "2026-10-25T17:00Z",
      "teams": "NYG @ HOU",
+     "result": "won",
+     "actual": 206,
+     "note": "206 passing yards against a 174.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "14e7ec60523e89a94a1e420732ab4daaeb5d4997c40791d4b5b855b9cab7f155",
@@ -9121,7 +9124,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T18:04:30.518Z",
+ "updated": "2026-10-25T18:55:05.410Z",
  "record": {
   "w": 105,
   "l": 38,
