@@ -3629,6 +3629,9 @@
      "sport": "NBA",
      "start": "2026-10-24T23:30Z",
      "teams": "PHI vs MIL",
+     "result": "won",
+     "actual": 20,
+     "note": "20 PTS against a 19.5 line",
      "revealed": {
       "v": 1,
       "hash": "07cc6bfb995d93c8221ccace450c675a2271e2317acb6cf4ce02c93582db7b7e",
@@ -3721,7 +3724,7 @@
    }
   }
  ],
- "updated": "2026-10-24T23:30:57.117Z",
+ "updated": "2026-10-25T01:27:21.540Z",
  "record": {
   "w": 16,
   "l": 13
