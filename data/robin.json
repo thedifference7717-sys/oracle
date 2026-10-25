@@ -8651,11 +8651,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 18.3 in 32 min · over this line 4 of his last 10",
+     "eventId": "401909858",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.69,
+      "spread": 0.05,
+      "ticker": "KXNBAPTS-26OCT24SASDAL-SASDFOX4-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9011,
+     "pAdj": 0.7434,
+     "player": "De'Aaron Fox",
+     "playerId": "4066259",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-25T00:00Z",
+     "teams": "SA @ DAL",
+     "revealed": {
       "v": 1,
       "hash": "e7932df1ce2be50e6e4242ddbd4bcfa696cb941a4ab1184d2b8ada6a5fb69331",
-      "iv": "xEh6RWHjxR5kGzkk",
-      "ct": "J/EqBC1ex7UPN1cM6pKurrI+iPV5gfXBw1P502TudouxVm3W/I1JiHp+lTFmNANiyhPIDtemfBqlxa42xjsm7cq9BBjtDe/msZ6BP7GWzlHV9mrb4ddcBxI4COgSzJSQ9cHzt5ZiUx1yAo4CWg8HqcB7GfErdKNxx61khjfRLh3GrZ3pY0NCM8ynqFP7HOfjVVznyqgK0QPEFYWx5Z4zrx0aH3uluTdX+EpIz8I7RaO+K6LZVbQMLGG3L6KEgEppVoiy8roI01QeEsmda6n/y67AI0tILbj948cBx44/K9M+5egkqAnOOReu7lHecyl5b2p1JThFH3Xq7n0A1tO4k7Eka801H2pXJnRSI8DutrlIEmCcsZNshSTpnIULHO1aa8jagQZm/401v1a9fbOvtLcu5P67Po6kuWRWt5XYmmnvD0n0dW9oQ1uO3pfkb73UVP/cE8lp5hfQeXwEFYWeWfZgInUQHr+U1sw/OROwOah0CNgIDmqGslAEvH6JTnPZTdK4grmyqlw9DnsdHAEFDfpquSeXYqCsuhBc28qgwTfnmJlRrRkj+9cwEA4wyod14eHSnDIXjciHF8gRp2DdlJMyBywwbvRodCkQEZSQfYSoSiGsvTlxqsqezDd8OuxemGhH04z+9g00Xpc="
+      "salt": "844538d3b5b7b47a075f49fff058c891",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-24:robin#1"
      }
     },
     {
@@ -8794,17 +8831,61 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Logan Henderson · projected, 94% to start",
+     "eventId": "849802",
+     "gk": 849802,
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT242000TBMIL-TBYDIAZ2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.6978,
+     "pAdj": 0.6884,
+     "player": "Yandy Díaz",
+     "playerId": 650490,
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-25T00:00:00Z",
+     "teams": "TB @ MIL",
+     "lineup": {
+      "in": true,
+      "slot": 1,
+      "at": "2026-10-25T00:00:37.386Z"
+     },
+     "revealed": {
       "v": 1,
       "hash": "5e9e7488f45409a017252ed26b4c87db3017a74117a96aa988c39a7029eea376",
-      "iv": "2w9LMBZ7FF8b8kvu",
-      "ct": "pctV2Ti6rxlkfy/B8DTp2jGtbPBMMXl0JWrsRLScFwG9MuBPx3r1+wrXQdPHGswsdOdG1ljnriksytSUbMi61yvJNi0J2rvNt0HKngbFDK9jECMKnMT9Z7lXMlKWZv/HbhzTcIdhSdd702X6b0rTN8iteFRiszM211r4q5IF37IJmdbUHxid+d6aC2KKNjAFzJPuzemxH7Va2oj2uRc7DMnpI43LkUn2Bk1X3tZQ6KW5AEaTX6vaL9PShZ76V6KWu+HT0iho600P+t4PB3uPpSkbtRFfD3yncl3fpJC7RnffgCaN61IdY/AoO/qcffCECEUmfSj+y7lMkPDOM/iJC/Ujy7TM3QRkkasirlMVqhGQY4OC5/H7eXAswvkqYlwI+N4rqtE2PaFLq01qi6ENEe4M41B3kqx93pH/ImRqDIxxpAimepLJG6mbx/47hwXEIVIhmuwwQqVXdTRtWvhF37drF/CUv0DdBPQRzMkbBPjsMGpvarYyiIYczLhZm99FxsYTnadNVhwr3BEoy57pp2snMc/Gre8c33RD//KBwzL2Ta02+2OaiXLtVuT9jI67no4VZeGT22k4l7PuPtMqfXV9bm9WvqoEvKxBmNIRVWKgUPBXPhvIpTEK2Vap54AbK6JbqUBSSDOXznJeM/rCm3eJanKefmk="
+      "salt": "f36b49531353e408cace1badd8bbb6ed",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-24:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-24T23:30:57.140Z",
+ "updated": "2026-10-25T00:00:37.386Z",
  "record": {
   "w": 101,
   "l": 36,
