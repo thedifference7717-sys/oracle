@@ -8764,6 +8764,9 @@
      "sport": "NHL",
      "start": "2026-10-24T23:00:00Z",
      "teams": "EDM vs TOR",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "5c7f31f4624c066fe8b9c8e14d316ff3310cdf9bb1155e9e659098678ca52447",
@@ -8888,7 +8891,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T00:49:37.385Z",
+ "updated": "2026-10-25T00:51:42.971Z",
  "record": {
   "w": 101,
   "l": 36,
