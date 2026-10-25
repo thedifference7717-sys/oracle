@@ -9022,6 +9022,9 @@
      "sport": "NFL",
      "start": "2026-10-25T17:00Z",
      "teams": "BAL vs CIN",
+     "result": "won",
+     "actual": 172,
+     "note": "172 passing yards against a 149.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "ff7e57110de299d002e80460153aad76882eaaadc7880e2d9e22578bc668d8d0",
@@ -9118,7 +9121,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T17:00:01.421Z",
+ "updated": "2026-10-25T18:04:30.518Z",
  "record": {
   "w": 105,
   "l": 38,
