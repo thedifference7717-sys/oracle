@@ -2891,7 +2891,7 @@
   {
    "id": "2026-10-24:ladder",
    "date": "2026-10-24",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-24T16:00:51.522Z",
    "cycle": 12,
    "rung": 3,
@@ -2949,6 +2949,9 @@
    "sport": "NBA",
    "start": "2026-10-24T23:30Z",
    "teams": "PHI vs MIL",
+   "actual": 20,
+   "result": "20 PTS against a 19.5 line",
+   "settled": "2026-10-25T01:05:13.440Z",
    "revealed": {
     "v": 1,
     "hash": "21bd86a0e6e92e2d7d07889766d0084ef2a5d54d863e5829b5c4814e1ea86ee1",
@@ -2977,12 +2980,12 @@
    }
   }
  ],
- "updated": "2026-10-24T23:30:57.096Z",
+ "updated": "2026-10-25T01:05:13.444Z",
  "state": {
   "account": 338.33,
   "base": 16.27,
-  "stake": 45.42,
-  "rung": 3,
+  "stake": 68.83,
+  "rung": 4,
   "cycle": 12,
   "pl": 238.33,
   "cycles": {
