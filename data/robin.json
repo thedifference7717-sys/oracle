@@ -9160,6 +9160,9 @@
      "sport": "NFL",
      "start": "2026-10-25T20:25Z",
      "teams": "GB @ DET",
+     "result": "won",
+     "actual": 274,
+     "note": "274 passing yards against a 249.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "7fe163765aa309767d6fe23a2bd2d7750b3880bdb4465eeb00f6c26c9325f67a",
@@ -9235,7 +9238,7 @@
    ]
   }
  ],
- "updated": "2026-10-25T23:00:57.034Z",
+ "updated": "2026-10-25T23:12:13.349Z",
  "record": {
   "w": 105,
   "l": 38,
