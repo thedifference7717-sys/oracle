@@ -3888,11 +3888,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 17.4 in 36 min · over this line 1 of his last 3",
+     "eventId": "401909871",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.73,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT26DALMIA-DALPWASHINGTON25-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.897,
+     "pAdj": 0.7416,
+     "player": "P.J. Washington",
+     "playerId": "4278078",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-26T23:30Z",
+     "teams": "DAL @ MIA",
+     "revealed": {
       "v": 1,
       "hash": "11781d334f556ad51ff4fd0ed822ace43038d28ea6f829c2b9a3e1dbd7a194d0",
-      "iv": "gcddMKwlvsz1TlZq",
-      "ct": "ofqjDJGgwW4n91AO30nw2jj/gsUJEsIGXYLmWtzwsKF4wKvbpaQ0KDNrsc5toM70M5xHcOkH9QbqlgsKqzloH9dsXi1ZgoNpbDvrtKjIpse+hrCBq6gidULAKauSDpWWXtcr0NJzPkINbMSu572XAJZ9WAkI5hEJTIPOO1xFuVBe4cP2xze2LCYmkCpPL3zCOusjdh1iWNUUzhw0cuD78+nKYZNrP8xOfGw9ve1I9D13zdqjiQIPtSo96WOEMuRrVlS9m46sxrZ8j918lmxgjo6TLRvwNdCum+FFjnhGFA4TcGsSeXnjfVOSBLDp6tYm4wv4hDNqZs5np9eqJCyLyfUE0SUoMtWUzc8O91slimhJMF88vJ0IMX31fQCkv8h1voFBJbhesd4qX62eaeLOzWYXhy3AfIKEn1uJuoXKhAIY4rWhs/vQuwGVuAi0xpK0vXqXGtgw2nWBrMNHVvpEUNPRtu6zh5h/fuv1UO3+rH73upJrcmCF8k0NkeRXqwiepc3BB+lpYnhPilgLBXex9gQ5v/qUfyR49+oZCN+8Wljro3mxadBGGcCrDeyfN49WnFjXRr6hBIPuRKH4QtRK/PtZnRTa8cVPsYWBw0ysL28N7ljufgPdSWib1PNl21K53irccY5FOSGYSjHLoMEef6NaEA=="
+      "salt": "ad36f71029d5402433d8e9f617e00cf0",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-26:dub#0"
      }
     },
     {
@@ -3906,7 +3943,7 @@
    ]
   }
  ],
- "updated": "2026-10-26T22:00:33.423Z",
+ "updated": "2026-10-26T23:30:03.061Z",
  "record": {
   "w": 17,
   "l": 14
