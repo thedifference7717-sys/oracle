@@ -2982,7 +2982,7 @@
   {
    "id": "2026-10-25:ladder",
    "date": "2026-10-25",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-25T12:30:50.667Z",
    "cycle": 12,
    "rung": 4,
@@ -3040,6 +3040,9 @@
    "sport": "NBA",
    "start": "2026-10-25T23:00Z",
    "teams": "ORL @ NY",
+   "actual": 11,
+   "result": "11 PTS against a 9.5 line",
+   "settled": "2026-10-26T00:38:53.378Z",
    "revealed": {
     "v": 1,
     "hash": "6e465e0794e79d23284a491c1a3d09b8f90b6c8f4aaf8cbb7c33350cb38bbbec",
@@ -3068,12 +3071,12 @@
    }
   }
  ],
- "updated": "2026-10-25T23:00:56.972Z",
+ "updated": "2026-10-26T00:38:53.381Z",
  "state": {
   "account": 338.33,
   "base": 16.27,
-  "stake": 68.83,
-  "rung": 4,
+  "stake": 102.74,
+  "rung": 5,
   "cycle": 12,
   "pl": 238.33,
   "cycles": {

@@ -9014,6 +9014,9 @@
      "sport": "NBA",
      "start": "2026-10-25T23:00Z",
      "teams": "ORL @ NY",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "42f64571a46b8142ac85dfee174db295b8911a1342ec6ccbc7cdc51e25120e80",
@@ -9278,7 +9281,7 @@
    ]
   }
  ],
- "updated": "2026-10-26T00:33:39.333Z",
+ "updated": "2026-10-26T00:38:55.037Z",
  "record": {
   "w": 105,
   "l": 38,
