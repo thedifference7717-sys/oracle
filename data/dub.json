@@ -3731,7 +3731,7 @@
    "id": "2026-10-25:dub",
    "date": "2026-10-25",
    "published": "2026-10-25T12:30:52.433Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 7,
     "NFL": 12,
@@ -3761,6 +3761,9 @@
      "sport": "NBA",
      "start": "2026-10-25T23:30Z",
      "teams": "PHI vs DET",
+     "result": "won",
+     "actual": 16,
+     "note": "16 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "f37da1ad4c40fc4889f7b26cc1ed5ad0476668c0e5782d1912a2c26c8fd0cd9b",
@@ -3850,6 +3853,7 @@
      "reason": "injury report: Day-To-Day"
     }
    ],
+   "settled": "2026-10-26T02:02:42.698Z",
    "revealed": {
     "v": 1,
     "hash": "fe90df122b4141a7647a4b5eeebbc62a4367413eb4b9c6c72d440ff7cc342a98",
@@ -3865,9 +3869,9 @@
    }
   }
  ],
- "updated": "2026-10-26T00:33:39.229Z",
+ "updated": "2026-10-26T02:02:44.198Z",
  "record": {
-  "w": 16,
+  "w": 17,
   "l": 14
  }
 }
