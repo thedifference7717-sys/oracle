@@ -8948,7 +8948,7 @@
    "id": "2026-10-25:robin",
    "date": "2026-10-25",
    "published": "2026-10-25T12:30:52.433Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 7,
     "NFL": 12,
@@ -9110,6 +9110,9 @@
      "sport": "NBA",
      "start": "2026-10-25T23:30Z",
      "teams": "PHI vs DET",
+     "result": "void",
+     "actual": null,
+     "note": "did not play — stake returned",
      "revealed": {
       "v": 1,
       "hash": "bc5c3fecea712d6252123c47468322897f932f6abad63396a0ee1c077537e953",
@@ -9278,21 +9281,63 @@
       "ctx": "2026-10-25:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 27.017,
+      "pl": 12.017
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 20,
+      "back": 48.098,
+      "pl": 28.098
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 47.982,
+      "pl": 32.982
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 6,
+      "back": 25.423,
+      "pl": 19.423
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 5.587,
+      "pl": 4.587
+     }
+    ]
+   },
+   "settled": "2026-10-26T02:13:10.885Z"
   }
  ],
- "updated": "2026-10-26T00:38:55.037Z",
+ "updated": "2026-10-26T02:13:11.743Z",
  "record": {
-  "w": 105,
+  "w": 110,
   "l": 38,
-  "void": 0,
+  "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 466,
+   "w": 523,
    "l": 814
   },
   "days": {
-   "w": 13,
+   "w": 14,
    "l": 12
   }
  }
