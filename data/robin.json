@@ -9429,11 +9429,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 225 passing yards",
+     "eventId": "401873009",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT26DALPHI-PHITMCKEE16-150"
+     },
+     "line": 149.5,
+     "market": "passYds",
+     "need": "150+ passing yards",
+     "p": 0.889,
+     "pAdj": 0.776,
+     "player": "Tanner McKee",
+     "playerId": "4685201",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-27T00:15Z",
+     "teams": "PHI vs DAL",
+     "revealed": {
       "v": 1,
       "hash": "91dbe66d96adcbc791e61c6150f59ef00aae0378ec65a46e6d594966c599d2af",
-      "iv": "4d5NmyokZGzvDEGV",
-      "ct": "+TMbaVKGCObAJrf5L41FyCNifVkkW/9lNYxbArv4hTfG+aU9rq6INxSxYlujcIdDgVnjIWM0BXWUeiw0XF4Pc3yqgD940kLnA6+yR9hBQfB4Jds3cxFURgh26rjU7ndBfykymU91XnLq+3knvJD5Mhx7DZ5+v6DycTpiWePEu7OgR3oSPp47qh/+eVDJdyFhMl3qxZo//c8wSB1dU5hHHaJuAQ7DVz+wtr3cwosISuagMigdPC9zLugVWxx7jOlEgMD4zxCGHXaH+dOxM5Aqw0uKc6k+CEyLLjk6QaFcXcqyRdl7bJPhFxA3vW3LMm/TxH7OYzAElP9Z/dI6j+kIai0KWdc4mAv4LiPNzwSg9I2hVYDWvLtWwEf0xJVdyb8QjJl4IPBaVXZkGXc5L5i7Imru79EPNF1IJEXRKZEvc/qdLx7bI6NBccpgtMCDXC1I1btzi49xNws+ZvGpRwDI81UKcg0qSPCscF7g/gkPugBMpYUXDW0aynA3TIE6tYlQ7smVAB6Y0T6gJgIRSdi/oiBVbAbMPe2Rkc3f3T8Yc6ZzyoGfLzK6DopJEzs6R7lzCvb0LKDAybhjQSs064sKrKCDAvgkU7z0iTmemaJ9YG8Ug3XDANPVgoLf0FVbk8seKiBvneGEAZLiUsYmrw=="
+      "salt": "2a37fc1188f2c151389d4d9be5b24235",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-26:robin#2"
      }
     },
     {
@@ -9539,7 +9576,7 @@
    ]
   }
  ],
- "updated": "2026-10-27T00:00:04.459Z",
+ "updated": "2026-10-27T00:15:59.919Z",
  "record": {
   "w": 110,
   "l": 38,
