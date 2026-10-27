@@ -3902,6 +3902,9 @@
      "sport": "NBA",
      "start": "2026-10-26T23:30Z",
      "teams": "DAL @ MIA",
+     "result": "won",
+     "actual": 12,
+     "note": "12 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "11781d334f556ad51ff4fd0ed822ace43038d28ea6f829c2b9a3e1dbd7a194d0",
@@ -3994,7 +3997,7 @@
    }
   }
  ],
- "updated": "2026-10-27T00:30:52.931Z",
+ "updated": "2026-10-27T00:42:23.879Z",
  "record": {
   "w": 17,
   "l": 14
