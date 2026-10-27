@@ -9537,6 +9537,9 @@
      "sport": "NBA",
      "start": "2026-10-27T00:00Z",
      "teams": "IND @ MIL",
+     "result": "won",
+     "actual": 15,
+     "note": "15 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "c43045a132cf93a25f6ede2f5fb2aea936a1f2361a8523d01cb2620b474a8f49",
@@ -9659,7 +9662,7 @@
    ]
   }
  ],
- "updated": "2026-10-27T01:33:42.980Z",
+ "updated": "2026-10-27T01:48:18.207Z",
  "record": {
   "w": 110,
   "l": 38,
