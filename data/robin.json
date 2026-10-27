@@ -9585,6 +9585,9 @@
      "sport": "NHL",
      "start": "2026-10-27T01:30:00Z",
      "teams": "EDM vs DET",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "25a68c67c835bacd17ee60d3f66c13fa75cf84500fbe7d67b809e4a621e2ba93",
@@ -9662,7 +9665,7 @@
    ]
   }
  ],
- "updated": "2026-10-27T01:48:18.207Z",
+ "updated": "2026-10-27T01:50:24.556Z",
  "record": {
   "w": 110,
   "l": 38,
