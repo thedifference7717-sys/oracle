@@ -141,6 +141,12 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          # Which extra posts also go on X (each X post costs): 1 = on. Off, they
+          # go to the free channel only.
+          X_RECEIPTS: ${{ vars.X_RECEIPTS }}
+          X_COUNTDOWN: ${{ vars.X_COUNTDOWN }}
+          # Founder spots left on Whop, for the countdown (engine/scripts/whop.mjs).
+          WHOP_API_KEY: ${{ secrets.WHOP_API_KEY }}
           # Client channels by tier (engine/scripts/tiers.mjs).
           TG_TIER1: ${{ vars.TG_TIER1 }}
           TG_TIER2: ${{ vars.TG_TIER2 }}
