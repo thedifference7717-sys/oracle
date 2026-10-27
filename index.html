@@ -20,7 +20,8 @@ if ((window.matchMedia && matchMedia("(display-mode: standalone)").matches) || n
   --orange:#F7931A; --orange2:#FFB04D; --blue:#2B7BFF; --blue2:#6FA6FF;
   --bg:#070B14; --bg2:#0C1322; --card:#101A2E; --line:#1E2A44; --text:#F3F6FC; --muted:#9AA6BD; --dim:#63708A;
   --green:#22C55E; --red:#F05252;
-  --light:#F5F7FB; --ltext:#0B1220; --lmuted:#4A5670; --lcard:#FFFFFF; --lline:#E3E8F2;
+  /* The products section, once white: now the site's dark navy, a shade off the sections around it (the owner's ask, 10/27). */
+  --light:#0C1322; --ltext:#F3F6FC; --lmuted:#9AA6BD; --lcard:#101A2E; --lline:#1E2A44;
   --pad:clamp(16px,4vw,48px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -110,7 +111,7 @@ h1{font-size:clamp(40px,6vw,72px);font-weight:900;letter-spacing:-2.5px;line-hei
 h2{font-size:clamp(32px,4.4vw,52px);font-weight:900;letter-spacing:-1.8px;line-height:1.05;margin:16px 0 14px}
 .prods{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
 @media(max-width:900px){.prods{grid-template-columns:1fr}}
-.prod{background:var(--lcard);border:1px solid var(--lline);border-radius:20px;padding:26px;box-shadow:0 18px 40px rgba(11,18,32,.07);display:flex;flex-direction:column}
+.prod{background:var(--lcard);border:1px solid var(--lline);border-radius:20px;padding:26px;box-shadow:0 18px 40px rgba(0,0,0,.25);display:flex;flex-direction:column}
 .prod .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(247,147,26,.12)}
 .prod h3{font-size:22px;font-weight:900;margin:16px 0 6px;letter-spacing:-.5px}
 .prod p{font-size:14.5px;color:var(--lmuted);line-height:1.55}
@@ -118,7 +119,7 @@ h2{font-size:clamp(32px,4.4vw,52px);font-weight:900;letter-spacing:-1.8px;line-h
 .prod .rec .v{font-size:28px;font-weight:900;letter-spacing:-1px}
 .prod .rec .l{font-size:11px;font-weight:800;letter-spacing:1px;color:var(--lmuted);text-transform:uppercase}
 .prod .rec .u{font-size:18px;font-weight:800}
-.light .g{color:#15803D} .light .r{color:#DC2626}
+.light .g{color:var(--green)} .light .r{color:var(--red)}
 .tierline{font-size:12px;font-weight:800;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-top:10px}
 
 /* how we pick / sealed */
