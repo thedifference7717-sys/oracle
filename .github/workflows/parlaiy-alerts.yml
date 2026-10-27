@@ -145,6 +145,11 @@ jobs:
           TG_TIER1: ${{ vars.TG_TIER1 }}
           TG_TIER2: ${{ vars.TG_TIER2 }}
           TG_TIER3: ${{ vars.TG_TIER3 }}
+          # Each sport ladder's own channel (also sent to TG_TIER3, All Access).
+          TG_STRIKE_ZONE: ${{ vars.TG_STRIKE_ZONE }}
+          TG_END_ZONE: ${{ vars.TG_END_ZONE }}
+          TG_BUZZER_BEATER: ${{ vars.TG_BUZZER_BEATER }}
+          TG_TOP_SHELF: ${{ vars.TG_TOP_SHELF }}
           TG_CLIENT_DELAY_MIN: ${{ vars.TG_CLIENT_DELAY_MIN || '0' }}
           # The free public channel: the daily sealed and results posts.
           TG_PUBLIC: ${{ vars.TG_PUBLIC }}
