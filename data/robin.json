@@ -9444,6 +9444,9 @@
      "sport": "NBA",
      "start": "2026-10-27T00:30Z",
      "teams": "HOU vs ATL",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "1eddce1e38279e0c1763f4828611cf6a62259270423878afa84f46f1ec771f40",
@@ -9656,7 +9659,7 @@
    ]
   }
  ],
- "updated": "2026-10-27T01:30:32.233Z",
+ "updated": "2026-10-27T01:33:42.980Z",
  "record": {
   "w": 110,
   "l": 38,

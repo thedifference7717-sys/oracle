@@ -3872,7 +3872,7 @@
    "id": "2026-10-26:dub",
    "date": "2026-10-26",
    "published": "2026-10-26T22:00:33.423Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 1,
     "NBA": 9,
@@ -3950,6 +3950,9 @@
      "sport": "NBA",
      "start": "2026-10-27T00:30Z",
      "teams": "HOU vs ATL",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "2ceb2045a1fb640cedaa3322cf8c191dd7db4836c385981f8a6d254696736bed",
@@ -3983,6 +3986,7 @@
    "fair": -427,
    "price": -133,
    "prob": 0.8103,
+   "settled": "2026-10-27T01:33:41.379Z",
    "revealed": {
     "v": 1,
     "hash": "f6f704dbcf43bc8cd65acdec0b76f7fc7ae59040c0782a4775417feb0460ec2b",
@@ -3997,9 +4001,9 @@
    }
   }
  ],
- "updated": "2026-10-27T00:42:23.879Z",
+ "updated": "2026-10-27T01:33:42.727Z",
  "record": {
-  "w": 17,
+  "w": 18,
   "l": 14
  }
 }
