@@ -9437,11 +9437,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 22.1 in 36 min · over this line 2 of his last 3 · back-to-back",
+     "eventId": "401909872",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.74,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26OCT26INDMIL-INDTHALIBURTON0-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.8483,
+     "pAdj": 0.7609,
+     "player": "Tyrese Haliburton",
+     "playerId": "4396993",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-27T00:00Z",
+     "teams": "IND @ MIL",
+     "revealed": {
       "v": 1,
       "hash": "c43045a132cf93a25f6ede2f5fb2aea936a1f2361a8523d01cb2620b474a8f49",
-      "iv": "x47lbcPUItidkuvD",
-      "ct": "MEaFB76J+/vaqFN9r0ebtjZkchUKHfeDP8UKCI8CO2nZ17kQHGtBvtIhGNsUhFk95WKLUGBPQUlhOip4wLmBEHkDaroI1LgU9byUHF5NbKtjHKL9zWPan1fYSsA8SIXI00vVTQFmWpqdTG/gIFgMGF6cCe/+g25j/FvG+QU6WBWsDPMUa9Ysmwk1Pn7H4m6YJuSyZ4SL9hn+/Z2I2dTTcMN1BHgcMTK3YC3C1429m9ZJPQpnlO/zRVzQsrJBgUrIZ7LhU8uWC3UuqcCY/gJH+WSbOt/ZQVpzJdMuvTG+K91orTdOWYXPkyOcClOf0j9nkd4hk4DKo2rpsBcWfy8IlB/FB9qlXNkEblnW4aVyCM5hFsmHHkNWfpiQ118xvCNBYokzzExFAzsbl+Btche9bS9I9MKYMQkHHujyxY94hXrgWj6g/gYJiAArX88sPLvXh3+8ib3zcqjXZbqwE9vpaaxidO470mUI3pIxiR5jrtKaA4CA08JbOYXUmTS6HfXPb7QM7JYs2vu37weajxRu8etSwUuTZt/31L7Kbwhr7oGjKcZfHfQdGp7yRyIFPz7vZDXwqQ3i9hcvqikk0nAsNrYOzOC6HrwucFY306++9YaHUJgyPREuTmV0zlmV7WJpomuAqIdjlVyc9fZMt07k3arSBjX2NOzPNR31Ul1OKvnH1EugSMkrOg=="
+      "salt": "9b68355b88366fab814328b6d1bed195",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-26:robin#3"
      }
     },
     {
@@ -9453,17 +9490,56 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#1 · vs Robert Gasser · lineup confirmed",
+     "eventId": "849804",
+     "gk": 849804,
+     "kalshi": {
+      "ask": 0.71,
+      "bid": 0.7,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT262000MILTB-TBYDIAZ2-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.7385,
+     "pAdj": 0.7234,
+     "player": "Yandy Díaz",
+     "playerId": 650490,
+     "price": -245,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-27T00:00:00Z",
+     "teams": "TB vs MIL",
+     "revealed": {
       "v": 1,
       "hash": "cdbe04d9fd9e2e39231176e6a82e0b199c85f59c2f5d697009cc7f96961e3906",
-      "iv": "5zfs91X4Yo0ca73w",
-      "ct": "phiO7consz3IDtNWBBOWNI7g+NJEWlFyotOcwJ+/QcBfrRocJUbzl6cCa+XSMGP6PJzoy99WEPgVLdzm40jiBmGoMRr74R2jmp5/OCfPbq7oJrE8DQOnxl+CngMSoQKBIsaEY5z2fjLZ3yMPbhLe9S+mr33ldwqzt2ECjYJcyn7sBXliyWo2cZ1i0AL1YJtkhmwPpLrQs1MSWP3/aOP/OhRyZQOQWi0zV3uFdW+Alfmf9BR3XkYcUYaTLUNiQ6fLc2wNREo/ZZOuPkeLxwr3PNTXi3n4TC52SqIJX7svpDMVYL0GBWDd6ogX33VQYRj9zyjcbCjwEoWgyNN/dRZC2j5qb2JAkaMIWCpNdk59wt0NkcGWWmGynZLDYFp9Ru+EjbLq1DuCMsMsU4pD54ZuS/XT/U5cHKAtHSh12AF8fmPSnjX4DGSIy+GrJcDmRcYLIKMNToCq43pTxg0h9H7/znn439vIQoV4405llllwjoL4bHkNW6q/OK/7IEXfIPRchQOrR5Z+Drhz80OUMQZof9I3/jsuf5tRtLTVsA0ibxJpGKFBEegem275vVHR3hWBx4CXKXJzYYwEeq3tt9ZVhruliNTQNpVUM5I3VYfOkxnzqFmnprEpvGMWAd6YN4rHYutkLUvg72TYZCH1QtU="
+      "salt": "7a8d779392ce40fff7e2050796252891",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-26:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-26T23:30:03.083Z",
+ "updated": "2026-10-27T00:00:04.459Z",
  "record": {
   "w": 110,
   "l": 38,
