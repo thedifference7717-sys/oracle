@@ -153,7 +153,7 @@ function render(d) {
     const un = unitsOf(after.rows || []);
     const picks = bets.filter(b => b.pick).length;
     return `<div class="card">
-      <h3>${l.emoji} ${l.name} · ${w}–${lo}</h3>
+      <h3>${l.emoji} ${l.name} · ${w}–${lo} <span style="font-weight:600;color:var(--muted);font-size:.8em">· cycles ${after.cycles.done}–${after.cycles.busted}</span></h3>
       ${body}
       <div class="kv">
         <div class="bk" onclick="setBank('${l.sport}')"><div class="v" style="color:var(--blue)">${P.money(after.account)}</div><div class="l">account now · started ${P.money(account)} · tap to change</div></div>
