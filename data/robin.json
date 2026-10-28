@@ -9713,7 +9713,7 @@
    "id": "2026-10-27:robin",
    "date": "2026-10-27",
    "published": "2026-10-27T22:00:20.490Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 1,
     "NBA": 4,
@@ -9875,6 +9875,9 @@
      "sport": "NBA",
      "start": "2026-10-28T03:00Z",
      "teams": "LAL vs POR",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "d0b1b97fe4d9abe3d11e5d68535d36b0aed3dbd0b09f2171a3428d340d7baf30",
@@ -10045,21 +10048,63 @@
       "ctx": "2026-10-27:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 20.953,
+      "pl": 5.953
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 30.308,
+      "pl": 10.308
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 21.909,
+      "pl": 6.909
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 6.332,
+      "pl": 0.332
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-28T04:51:24.517Z"
   }
  ],
- "updated": "2026-10-28T04:42:03.655Z",
+ "updated": "2026-10-28T04:51:25.200Z",
  "record": {
-  "w": 116,
-  "l": 38,
+  "w": 121,
+  "l": 39,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 580,
-   "l": 814
+   "w": 606,
+   "l": 845
   },
   "days": {
-   "w": 15,
+   "w": 16,
    "l": 12
   }
  }
