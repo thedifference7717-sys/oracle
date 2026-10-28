@@ -9779,6 +9779,9 @@
      "sport": "NBA",
      "start": "2026-10-28T00:00Z",
      "teams": "DET @ NY",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "4e0ce9ee598393c5a5d6b1d4f805f884483bcbd1ff15355103dffa9f47334177",
@@ -10005,7 +10008,7 @@
    ]
   }
  ],
- "updated": "2026-10-28T02:37:12.078Z",
+ "updated": "2026-10-28T02:42:47.635Z",
  "record": {
   "w": 116,
   "l": 38,
