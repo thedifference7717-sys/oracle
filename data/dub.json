@@ -4142,12 +4142,6 @@
     "NHL": 4
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "e62e5f7506fa34b48f258722d8313ea9686d86badbab976ce85e935c6148955b",
-    "iv": "JJ7oMpBk9WnNj9P/",
-    "ct": "9GIWBNa8EBlYofmJMgRzkqAfsuDdslqYvGELd/zkt4dxbm28KPIL1smL+6Q0xji8qC5pJ5ZJXq44FIwGK7Jdd95kx86DU1ndUxv7AY1HFcj0iCqE61Wb4OnMPvdR9khPyWcIFKTNE86c0l0e3Em9mCZHI3+/SeX7MTMJy5UbVUhmfHHquYwtoWkLlk2Pj1uf4SAztFCrXtXvE9O6HSsrpAmLVjGjM19BLcVxAJXm1pc2cAWcc0IrtYxytvx3TV50h/zRIEHjgm9cpuwwFWLe4+BDQqD4rg=="
-   },
    "legs": [
     {
      "detail": "proj 18.3 in 34 min · over this line 3 of his last 4",
@@ -4239,10 +4233,30 @@
       "ctx": "2026-10-28:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Wendell Carter Jr.",
+    "sport": "NBA",
+    "start": "2026-10-28T23:30Z"
+   },
+   "fair": -473,
+   "price": 124,
+   "prob": 0.8256,
+   "revealed": {
+    "v": 1,
+    "hash": "e62e5f7506fa34b48f258722d8313ea9686d86badbab976ce85e935c6148955b",
+    "salt": "e7bae1662210724fbbeb47a24a11fa67",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-28:dub"
+   }
   }
  ],
- "updated": "2026-10-28T23:00:40.099Z",
+ "updated": "2026-10-28T23:30:22.610Z",
  "record": {
   "w": 18,
   "l": 15
