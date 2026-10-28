@@ -37,6 +37,11 @@ a{color:inherit;text-decoration:none}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:16px;border-radius:12px;padding:15px 24px;transition:transform .15s,box-shadow .15s;cursor:pointer;border:0}
 .btn.pri{background:var(--orange);color:#120A00;box-shadow:0 10px 30px rgba(247,147,26,.35)}
 .btn.pri:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(247,147,26,.45)}
+/* The Kalshi button: their dark-mode green wordmark exactly as supplied, on
+   the black it is approved for (their brand kit), with its clear space. */
+.btn.kbtn{background:#000;color:#fff;padding:8px 22px 8px 8px;gap:6px;border:1px solid rgba(255,255,255,.14)}
+.btn.kbtn img{display:block;height:34px;width:auto}
+.btn.kbtn:hover{transform:translateY(-1px);border-color:rgba(0,221,148,.5)}
 .btn.sec{background:transparent;color:var(--text);border:1.5px solid var(--line)}
 .btn.sec:hover{border-color:var(--blue)}
 .btn.blue{background:var(--blue);color:#fff;box-shadow:0 10px 30px rgba(43,123,255,.35)}
@@ -301,7 +306,7 @@ footer a{color:var(--muted)} footer a:hover{color:var(--text)}
       <div><span class="ck">✓</span>Check the depth — never chase a thin book</div>
       <div><span class="ck">✓</span>Availability varies by state</div>
     </div>
-    <div class="cta" style="margin-top:26px"><a class="btn pri" href="https://kalshi.com/sign-up/?referral=511bb4ce-bc03-44b8-be35-b3925888d30f" target="_blank" rel="noopener sponsored" data-kalshi>Open a Kalshi account →</a></div>
+    <div class="cta" style="margin-top:26px"><a class="btn kbtn" href="https://kalshi.com/sign-up/?referral=511bb4ce-bc03-44b8-be35-b3925888d30f" target="_blank" rel="noopener sponsored" data-kalshi><img src="kalshi-logo.png" alt="Kalshi" width="117" height="34"><span>Open an account →</span></a></div>
     <p class="fine">We may earn a referral bonus if you sign up through this link. It never changes our picks.</p>
   </div>
   <div class="term">
