@@ -9910,11 +9910,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.351 · 1.46 pts/gm this season (13) · a point in 6 of his last 10",
+     "eventId": "2026020196",
+     "kalshi": {
+      "ask": 0.71,
+      "bid": 0.69,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT27OTTVGK-VGKJEICHEL9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7061,
+     "pAdj": 0.7101,
+     "player": "Jack Eichel",
+     "playerId": "8478403",
+     "price": -245,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-28T02:00:00Z",
+     "teams": "VGK vs OTT",
+     "revealed": {
       "v": 1,
       "hash": "477c625f6419de24a62e71ad3da5831aec6b716a684793cc7ee9faf5a77b6b16",
-      "iv": "tSVCzvOHkHg2lbp1",
-      "ct": "aEgIuP18JnkWEj1+83AOmaQHSLXEJuyjfuEPtB2aU8MXSYu14QkeUNfpSR+16PINl963obyZ/d47AAJrJsVmJdLULrhnAyTZxocjqx1fmFilIuwNyPJghM4zPlM5K3eGA1gjqROQZnRkcH7drer33PhiN7gKVitx7LJDt5iy0cp72ZI12OZtvcW34GyYrBVCCRBPbWbCXGsxPKGlm7G26Rl+ppQ5/LKchj/yaPuftVXZ1NWt3AFoW9Nu58b+GJDXUwZaIjMFYl+Qsk8RaRigyhu3ICqKdnPUX4mlfMIjNsuv693rA4g/lBfCtiL6LdWeFi6pflHW5XkBaP6P3sR27GfbvRqIz6O+Q4tbURBwwd93G+kLs3oDpu4R1G2JNRUyKtAfob/iNHyrSGgita5VtbujhXF7oT0xxwt2MRkUz+11AZFqrZw1cSn+QsMSO9SDQ+HxR0eYoK6DdQ6TD2irbojaf6APcj3ljy/5mp3p0OKds+zjWfpb3+qyWAUDO+AHOgSJY/eM9ecIZJPFsZpjNgSIBQkDWU7Yn2kUDtH4KvbBGbti+m/ewztEFZ2BtDhDceNN3kdBeVXONnXxJRrPFeCqoMra30AF+91CUr7r/BDkDET0Ye/mLQgWqZ6yY5OZLzekV7O2Q3zwnnPCrjCbSDRaUX3UhC3pfzR1G7ge3njJy8d7nNYKouGE"
+      "salt": "af7155b6f5d4db3259332b446b14ddf2",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-27:robin#4"
      }
     },
     {
@@ -9965,7 +10002,7 @@
    ]
   }
  ],
- "updated": "2026-10-28T01:30:06.570Z",
+ "updated": "2026-10-28T02:00:31.433Z",
  "record": {
   "w": 116,
   "l": 38,
