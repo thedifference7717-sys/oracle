@@ -9878,6 +9878,9 @@
      "sport": "MLB",
      "start": "2026-10-28T00:00:00Z",
      "teams": "TB vs MIL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 hit",
      "revealed": {
       "v": 1,
       "hash": "727592bf370461b037c712353ceaf805815b39178680645a172a731dfebfc350",
@@ -9959,7 +9962,7 @@
    ]
   }
  ],
- "updated": "2026-10-28T00:00:52.207Z",
+ "updated": "2026-10-28T00:43:03.842Z",
  "record": {
   "w": 116,
   "l": 38,
