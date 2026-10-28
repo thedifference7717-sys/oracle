@@ -10150,19 +10150,93 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 18.3 in 34 min · over this line 3 of his last 4",
+     "eventId": "401909881",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.6,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26OCT28MIAATL-MIADMITCHELL2-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.911,
+     "pAdj": 0.6339,
+     "player": "Davion Mitchell",
+     "playerId": "4278053",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-28T23:00Z",
+     "teams": "MIA @ ATL",
+     "revealed": {
       "v": 1,
       "hash": "3add435106d1d896f0cc04ac7e0a370b357f5129eb39c9830154e7a517de849d",
-      "iv": "2iUk2tHXo2I2BajA",
-      "ct": "ZGAasWNzAvgLlBxr2qKOHMrXwV1/wlqC6rE0IrpLYtTpQqDGrBVN2sLC/uHukVOy8jJauAXVWv+9wIiq8sAwpS3oHExhf2ZmPVs8BbJjXOuCrZR/XjU36nBDps1cYWWtyEyENa8MUyKGyHmLYWaMkEMrfpCOciLAFtqGcG7ljVQaBMpvXYEkkYHVUgxUPtXlDDcDXrEn+bt+baVhWxhay/g9d1XG3o1+IwdaRFaMmdkOhfqdun0BANeLC+gzpJcxH7nPZrkElMGXTeIdXKoNjxYxE+7TJ+PWiqcg4aWGVpQzNFleLzWCesf+ncbW8LGzii/AuytlExU0LKK4xNFhDzj7deg2NmL17yzAuCwHAip5/WM2cjRaDRW/ZaW0P9utWAQ5BHHQW4ps2gR6h6sZq0LByqGrf/UxAWF17EiXMHAPNwWmULNyc0T1i379C4cMwTt59Ex7Hz9VI9L7+1vqytIgwBAwCetiJbjlpU25AhM+82aP6wbGSg4sBG11afLS1nQTPDsNz2tQesQG0ay4yTTK5S2Q4sAhD/aDDBgMeWPEUJ/ZlDRV7x6E6WJ/jEODDcWXRMpUmGdPaYnOwTodXa6a9Q/CFJ9H24kIqY+2wrVCs6pVT5dc//CruASywrX9COz4dyVWu4pGkoTqcO3OU+o="
+      "salt": "20b9b6cecfc29740cb234b9982b8f2bb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-28:robin#1"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 18.0 in 33 min · over this line 3 of his last 4 · back-to-back",
+     "eventId": "401909883",
+     "kalshi": {
+      "ask": 0.71,
+      "bid": 0.65,
+      "spread": 0.06,
+      "ticker": "KXNBAPTS-26OCT28CHADET-DETDROBINSON55-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9063,
+     "pAdj": 0.7131,
+     "player": "Duncan Robinson",
+     "playerId": "3157465",
+     "price": -245,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-28T23:00Z",
+     "teams": "DET vs CHA",
+     "revealed": {
       "v": 1,
       "hash": "e566e911213732c317004ac70db38bae0945320958a87d2d0965c42aeeeb35b4",
-      "iv": "G6fKYP4/wWVJ6NX7",
-      "ct": "vTg+2FBn8vwbH0pf8LcfkwtBjC8vv+CpqHq/CN88jfptBaWcl28o8gdneDHIguurN1rIUZpLhQ+mw5d4RTYlYw/YBpe9CznyFNTXOX5wrywtn7ACGu+NwWS1kZzf6ofEZSXdYRTZaSpxKagRw6hZ6IaXn9Lhlul3RUdxlSz1M79fj49z1yp8EOuwFObfjXTr/tWsUCgD1uLqppRcFECFmwE3LJSDop11R+vreFzQMaYrj9v1EliVI5u4wC4vghQB91MeeXIjlRPMJvkJjAVM3gVyyI2F7P1HvH1rmY7bEQXvW5OKMzdy0bM9iIvoKKKpxeChQwZVT9p8v/wKjG/sMqFdMDhmVIH4c1kiFcHkjwbL8VE/jDLaaMpwWHmVW+lln9A4AchGJ0F4+gIfrDNP4eEKZS/moUBuoAK9r5Y9Qc6hs6er8aOkepqfd1vK0drIaWvmD85wt2sadnNdsCD5QZpAOKm3o+AH/dYfRNBniKG8F2P0WNzI21BLzCYgFWu2cDdmyAZAq+CiGgnJvLCJOt9pT2nBaZuEeVATJnUf4evOuybLuSVVIQK2tVxN3Qw49W5mvy1V3yjB9oU3E4I6GbQc5KEPLNswRjCKNPl8V5NGphp3hSKd4EV484XcvIC3FfR8Brpr83HLPNuaPRYN/XGYHGpQR8Bafx5vgIeCxeiug4Vu2A=="
+      "salt": "f22214b423a3c4c4b4e0d742fc6064f1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-28:robin#2"
      }
     },
     {
@@ -10192,7 +10266,7 @@
    ]
   }
  ],
- "updated": "2026-10-28T22:00:26.630Z",
+ "updated": "2026-10-28T23:00:40.135Z",
  "record": {
   "w": 121,
   "l": 39,
