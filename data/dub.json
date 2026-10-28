@@ -4004,7 +4004,7 @@
    "id": "2026-10-27:dub",
    "date": "2026-10-27",
    "published": "2026-10-27T22:00:20.490Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "MLB": 1,
     "NBA": 4,
@@ -4081,6 +4081,9 @@
      "sport": "NBA",
      "start": "2026-10-28T00:00Z",
      "teams": "NY vs DET",
+     "result": "lost",
+     "actual": 6,
+     "note": "6 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "5279ebde3883bfaab89d9c38114650f34373f3ad58403977eebd369c5d5b53e7",
@@ -4114,6 +4117,7 @@
    "fair": -341,
    "price": 148,
    "prob": 0.7731,
+   "settled": "2026-10-28T02:51:09.351Z",
    "revealed": {
     "v": 1,
     "hash": "cb58b635b6d19d10596904105baf4912d95b1cfd6e4637f2143af1075fb101c7",
@@ -4128,9 +4132,9 @@
    }
   }
  ],
- "updated": "2026-10-28T01:30:06.274Z",
+ "updated": "2026-10-28T02:51:10.512Z",
  "record": {
   "w": 18,
-  "l": 14
+  "l": 15
  }
 }
