@@ -4033,6 +4033,9 @@
      "sport": "NBA",
      "start": "2026-10-28T00:00Z",
      "teams": "SAC @ SA",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "57471dccd9ae896457d200f28b57df5d3f28a16f4404fae8036e7d4f3bc6f73b",
@@ -4125,7 +4128,7 @@
    }
   }
  ],
- "updated": "2026-10-28T00:00:52.170Z",
+ "updated": "2026-10-28T01:30:06.274Z",
  "record": {
   "w": 18,
   "l": 14
