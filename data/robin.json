@@ -9970,6 +9970,9 @@
      "sport": "NHL",
      "start": "2026-10-28T02:00:00Z",
      "teams": "VGK vs OTT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "477c625f6419de24a62e71ad3da5831aec6b716a684793cc7ee9faf5a77b6b16",
@@ -10045,7 +10048,7 @@
    ]
   }
  ],
- "updated": "2026-10-28T03:00:31.270Z",
+ "updated": "2026-10-28T04:42:03.655Z",
  "record": {
   "w": 116,
   "l": 38,
