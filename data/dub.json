@@ -4011,33 +4011,121 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "cb58b635b6d19d10596904105baf4912d95b1cfd6e4637f2143af1075fb101c7",
-    "iv": "Rv5f/hlRHM86i+NT",
-    "ct": "ta0O8YA7DvgA3TXW4LqAQgNz/O9Em4X9PhW0xg/Wu/qWELGy3vqmOX8lpydq/CoklOuW8pgxf3WwQrrQp8nX/N3IPzu1GSNd1VbBjHmTZjSkahmVUCJgzcroQJbjA2lTs3FgRCh8d5aFPZNiBqaJX7faIMEGtorSwaf9Wzyp6IkitneXQVS4nICYOoU2fU29I4sk37g7u4CFs5Z7I1khdqf1ogD4heV/asLIq6OMiaIoiW+CVdsrkIqUO1VV4h/fhNHT2g9yl6Hjnvjla4ou2KKRgg=="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 4.8 in 38 min · over this line 2 of his last 3",
+     "eventId": "401909879",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.68,
+      "spread": 0.04,
+      "ticker": "KXNBAAST-26OCT27SACSAS-SACZLAVINE8-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8981,
+     "pAdj": 0.7217,
+     "player": "Zach LaVine",
+     "playerId": "3064440",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-28T00:00Z",
+     "teams": "SAC @ SA",
+     "revealed": {
       "v": 1,
       "hash": "57471dccd9ae896457d200f28b57df5d3f28a16f4404fae8036e7d4f3bc6f73b",
-      "iv": "yb1O/Ecci9QSVCtD",
-      "ct": "tQPUodzFuAFtHzOauILFJpuNjZHwZbDknpVw4LTR97MAQDISXMEIbjAEUhOdpwVHoM6wJyRDKFLMjDKjm32CHqyzcAHOXloVrCBNSSG1GWNC80AdERILeC9GuO6ePhBYNsK/PRBjqZvKnm6A5PLWPJqqE8fZfghSiBMfY8UnjkxoJU5TbjHxIfMzmV6hMhjl7q8Npf3r+BLfCU/8zi0+P2dVLnFSwfq9WuIbOhq/Hi3puLE4FawOLvA+vuhnZTR8rOUYNuxkbZXyl8DnX/HLTD3HEBXYJnw4xStCbW+C4jZDE7VoplfslRUq0tz9Z62S8uxp0U2/9gT3/6szIRUAM9fuaR0Q240xx3MQwYAkUm0vdJX+4597D2uBCcCv666a7YNbTDiqVY54SKDNbM2ZQ8ne51or8xFIAhaXLkmPek7yP+O5NwXPEqjPXk5OfBezfafyFCF94Zq5FBxzqKUwTNktPJxi9qYFrkp4BJjG3VjUzPwTtO7Oadv+MusE0LOmNXHz0hngFMCDBZOswSqcX8H+Ih7jXEXw52mePa7gsXnZNkyF5HlxgDV/DEeYrOAuTiKPWv4gYeNhrdnAl397mBib33J667N9X8Y8ojoo4cOdAqinJ6U/b6nsALXpZwfy8uBKe4j0iHc="
+      "salt": "ac491212c80a5faf57764c0189392c9e",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-27:dub#0"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 15.7 in 35 min · over this line 2 of his last 3",
+     "eventId": "401909878",
+     "kalshi": {
+      "ask": 0.56,
+      "bid": 0.55,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT27DETNYK-NYKJHART3-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8608,
+     "pAdj": 0.5625,
+     "player": "Josh Hart",
+     "playerId": "3062679",
+     "price": -127,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-28T00:00Z",
+     "teams": "NY vs DET",
+     "revealed": {
       "v": 1,
       "hash": "5279ebde3883bfaab89d9c38114650f34373f3ad58403977eebd369c5d5b53e7",
-      "iv": "YG+i/1atSUQdjiDm",
-      "ct": "quqEc9R0emgPvyTir8VWKyNMepgfTWtjdQvP7KtZdndrQ0ZoruCVT5XoMVxzKuoJlTmd1Jq7KDxrprEJg/iQGnPweD9bkCSmtrx/FBDTscMZgLKsv7EmCs8DApkcz/mhpzBZTR+uNt0CXZlqxXrwRUjuPY8V8ibkRaXjk0wCG3QRsqDpCXncA0ZmrRwTCLSILgI5UamBJVeAOjif4HUupP8TZDAyaqrnhTallcFonQOilzZSmtrb+U0LfAtemjOh6WGHalfkp4ZsKUAg+3BciZiPIeBdjKtiYyqk0kaj1Hmu7MWkvNSVMyKBxWNFqyoo1BCibjJPyIbXjWskpfZUy45fZDCQ1wKg9o150aytoIfvCDaqsi3oCQrdtLiadxmaYIMnR1YKyr9iJ+bAELHoK4scxPc9Js0CSgPOIm/x5eCWHZN+QfER6eTEhs5Z4SrazWi/U23hy7lIwc6EUYWOA6XH5V0V3y1W+++kocL/ZUoAlnxWgdvNGCjhHMyqPwG3s1C5ZlrCvYSFhdFN2SJ7ki3kBNDlRQ33QT4k740rjGWaAygab+IJj2zQvyhGH2yF3cMG+kSJXvFoSpSk7wXMcXcs+fiR8J+SgOSJUxRV5qHnhGd9h/8Y2w2vvBz59mFUNuv4TJicfw=="
+      "salt": "41465c4af31bc16b4f59086781a5a51a",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-27:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Duncan Robinson",
+    "sport": "NBA",
+    "start": "2026-10-28T00:00Z"
+   },
+   "fair": -341,
+   "price": 148,
+   "prob": 0.7731,
+   "revealed": {
+    "v": 1,
+    "hash": "cb58b635b6d19d10596904105baf4912d95b1cfd6e4637f2143af1075fb101c7",
+    "salt": "add90f3c8b62b7625f7ca47f0f43fa3a",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-27:dub"
+   }
   }
  ],
- "updated": "2026-10-27T22:00:20.491Z",
+ "updated": "2026-10-28T00:00:52.170Z",
  "record": {
   "w": 18,
   "l": 14

@@ -9759,19 +9759,93 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 16.6 in 31 min · over this line 3 of his last 3",
+     "eventId": "401909878",
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.63,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26OCT27DETNYK-DETDROBINSON55-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8828,
+     "pAdj": 0.6527,
+     "player": "Duncan Robinson",
+     "playerId": "3157465",
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-28T00:00Z",
+     "teams": "DET @ NY",
+     "revealed": {
       "v": 1,
       "hash": "4e0ce9ee598393c5a5d6b1d4f805f884483bcbd1ff15355103dffa9f47334177",
-      "iv": "VTgeAItk3elMx+cx",
-      "ct": "R/7xoYMKmImjI58mdVBUO/P7UUCLzQBn1YLrqimO19QFGBAyPc7BVZsaSRkr68NIeAONRBKjAxyQ0bMVpOJkeYPndpNnSRPV2poWibGZGt+QKebfQpRmejGGBZUUXMCJlrYsA5jxn7g+ln75SEVxhoEfo0Xy2kOneC+Vldg4ge1VpXpnV/DTxEDi6gnE68gbhOeEsjVu6AADBaFa+mzm2kMO7Tcq5DvnB8PSo6ft9/OgEZjdZNY2wXwEdz6mLnXjDfa4rsSNRUw3dqWYnT79ZvKoT+EAantSYjnkUYv/B3RCBWq2Qwcr0/A6eaIMYEzjWT3n5ar+d3xqnFEkvy2CQpX9YQCBUOIQgPzvpuiitlQue0fiP6sgsJOuKHLHJRAHj55HTv3A5gdgWrWRgBYswBwDL9+lorHe5+fHBrdd8kmDFJqb7LVm9un86NkU+t2CBKW6L6WLQ+aLko6NmmY68UiMH8wwQgoN7NAII9MOMyR+kn1FHnDDmh3p5ebnTG5wqDSWuL5ZHhmRwJnxURppRa7gNaOfVBEhCkH87Uw0VOjHVFRghI6SoCY5zTSYz1d1uN0rPaGGk65u2gnBfTJedTQl3fn4KyDfpcRG8so640BwmlybmOPOjZkBprE+ksi4ZRdKEc7JLZDmEwDRsiHqCosS+Q=="
+      "salt": "145126ed97fe2f151f257c177e610148",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-27:robin#0"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 4.8 in 38 min · over this line 2 of his last 3",
+     "eventId": "401909879",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.68,
+      "spread": 0.04,
+      "ticker": "KXNBAAST-26OCT27SACSAS-SACZLAVINE8-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8981,
+     "pAdj": 0.7217,
+     "player": "Zach LaVine",
+     "playerId": "3064440",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-28T00:00Z",
+     "teams": "SAC @ SA",
+     "revealed": {
       "v": 1,
       "hash": "412d828a97d970faeac7b6e8e2944652af9e0d91482420c41d5bb75f17bb8725",
-      "iv": "k2j4YeXiesBtW4Lz",
-      "ct": "Sih0LjlKRbIxIYqronqGh61CXvMI500HKZkxz9mlzvR6IGNk+qKxOumhvuHG512bxg0P/C1u/KCELUqYBXW9mTCCZ/aoo3fbLEaV/tMPthNUm1o0S2igbQyzo6bUxrnbVZvmUXYYk3rRH/A2+pvzZ4JTqkRt5O+/7rVCHGryDploXPWzGQbMHShzPwcjnvLmQAMjLkkYblPtmbRhMbizuhtDK6W0diewDDTYnNxnFj3Eg9IYpgXogYudoYxd1q9gDVnsmMUde/bCcMuZJn+29qedeGBq5NzNkhBV/q+7ivfB5gT+VfDHPPxD5KpBTXIFUqQogJnCsUB+KAY5rdykRauJB0ZEhsiRqMNLif5qNB4ED7fnH2nZgZmaq4UFBCS6COetT/ES42/7od0JRS1cSiou0OGekUmXccXWLC+8S9ZEcEwD2VsPhn8Em5pt5mDk6fIvg52HdRqyVnhAv6m+auiovHQ4KsFvbMQfSWbfTX3EaAzJTxV8oSP7jIqbPf+mBHpuIgyoqsxzpob3n42bW5lgzz4eWjN37k7fXhnVhCUwJK6FhBSgIf4S52ky/NUeevINrubhsDUB5+f9Wxhjq1HRGhQjzrlufVnZcwTEVly4ZA+C17fVygZHs44K19pawgWPVZiGU3rXPg=="
+      "salt": "d14cc5b667d0a09d8dfd703ac1f004bb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-27:robin#1"
      }
     },
     {
@@ -9783,11 +9857,50 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#6 · vs Dustin May · lineup confirmed",
+     "eventId": "849803",
+     "gk": 849803,
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.64,
+      "spread": 0.02,
+      "ticker": "KXMLBHIT-26OCT272000MILTB-TBCSIMPSON14-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.731,
+     "pAdj": 0.6936,
+     "player": "Chandler Simpson",
+     "playerId": 802415,
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-28T00:00:00Z",
+     "teams": "TB vs MIL",
+     "revealed": {
       "v": 1,
       "hash": "727592bf370461b037c712353ceaf805815b39178680645a172a731dfebfc350",
-      "iv": "d/fD1kiLpropEWy3",
-      "ct": "DTX3Ntz70ohSJx0pRnEGeXFeG4AWfJsElik7gTiWVcUeq1k4nUx8byzqE+zUdlkUyhCTYi+lcbiJK756eiqphBV2oMzTy0HU4eixutg5McyUaiPVHwMIrTP8oVKoVoJDX1raim4A8mg8CljU4r+ky9scX4LZ0D4K0Zpnx12qVMoPTT5hqKW2P+y86emIwHV4Bmf2FJclcpRp1zhxIN/EJyR+LI4VmpWyyVOBGfo7cNwfwBsnQFaOkZYEVrz40hIkuk0PPwpUKDyABjdia1mPzRKXnCk+BvLsbAsAxl2yqbfM4dpAlAeGtBuws1VVjgzolVmJHtapVCLCbfQ823IuHojyKO/hBOn8EJNU83CKAAUhBAiWVXUvWJvkv+fAGTN9x0x0Uii6nHzUU6PLegv2BtaWERHzRrNrXAEVSy6rQCJrTlZo6F+1QoqvcomJu0pjHRkEwzy3P7wMXot/S1tZsh1S8zDRkQI+TsMXlLQ0PXCpcqZBdIY2hzcPmFSctnwlogot1D303zAVJ1H5qLC/UJ8GzIwCtbwUTGWuoEHwBd3Opclqv+HWQLB1sd4Aej9MZyUq8iPS15Aeo52W14aDIsLynHdy+AkYGN3sH6c1ZVo16rqC1DbKY3Kh+43j1tf9iZ8A8T+kou+BG/F4d5CrqFJ5OQY="
+      "salt": "7c9922d876599b720ced0823a62d4276",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-27:robin#3"
      }
     },
     {
@@ -9799,17 +9912,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.297 · 1.27 pts/gm this season (11) · a point in 8 of his last 10",
+     "eventId": "2026020193",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.65,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT27NJDAL-DALMRANTANEN96-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6951,
+     "pAdj": 0.6709,
+     "player": "Mikko Rantanen",
+     "playerId": "8478420",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-28T00:00:00Z",
+     "teams": "DAL vs NJD",
+     "revealed": {
       "v": 1,
       "hash": "fdc00c0ce7c779726b08a649619b1f6bf504df69a61fcbc877006656354c6f07",
-      "iv": "BYLsotC6JUPN1wJc",
-      "ct": "LOfte/+aUZSoK2h7h2EZdaDYToCDSWIUDvaseVLzruozOoMJg+Vg6kpxX0W7RpEPdJRvxzzvgOMnoEv9VfnTrRW4lBuBU3OY2btk1z6IGOODWmO7UGjQrVmOUmn3AXvOBH9O2pXcU/xcpuqLmumKZ+ql4o2MxrZsdqkjz2cfQxzkaSUMgpfVPzuZqUiEEo630Z+K0pjSX4g2F/G7uKgabYKHTmYP9WQnN8ybs17Q8tRDxra6y9e8ureCmO980WuZwDXZeaRlxL14Xteji7O2k84AUNoKDt9rW1bPQklL2IN5m8yyogdvSSx/9tQRWQ8fkykmrjCTeuXBpHRhUUwwHCaUCbXuPn2/7R+PFoRSOqq5L/veITFDn08W4yMskVWbSUYOYLnJgfybV701rnaU12l4sYLnpumWS2M+1emqKN0uNFOZpPxDxSlq5BY6HuL00AlEtamZK//zlHD1sWbSuChgoIZ1gXFbilvw8/CoGrjqOFIH+pM2j6nBQNJCYh9F0jwOhapqZMeT3ngKZWUGOfbQF836D1mRyYxkN/ym9WTcIXXBoXeho3BGb3rH/4wj7ZPoQIn5ykErJB1uvxd+nJgdzOWATOwPqNbzRetBfRfoYNfmyltsOaaodeM4SZLfWD9N0Hx1kUe//GRJX4D6oqkxIugoBsmTJ2oku9/2Jnr5Ugd0bK7rG8+2HDuJf/M="
+      "salt": "a29a9a3dd83b80b43de916e52b7b3cfb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-27:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-27T22:00:21.358Z",
+ "updated": "2026-10-28T00:00:52.207Z",
  "record": {
   "w": 116,
   "l": 38,
