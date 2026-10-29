@@ -10293,17 +10293,56 @@
      }
     },
     {
-     "sealed": {
+     "detail": "#6 · vs Jacob Misiorowski · lineup confirmed",
+     "eventId": "849799",
+     "gk": 849799,
+     "kalshi": {
+      "ask": 0.61,
+      "bid": 0.6,
+      "spread": 0.01,
+      "ticker": "KXMLBHIT-26OCT282000MILTB-TBCSIMPSON14-1"
+     },
+     "line": 0.5,
+     "market": "hit",
+     "need": "to record a hit",
+     "p": 0.678,
+     "pAdj": 0.6419,
+     "player": "Chandler Simpson",
+     "playerId": 802415,
+     "price": -156,
+     "priceSource": "kalshi",
+     "sport": "MLB",
+     "start": "2026-10-29T00:00:00Z",
+     "teams": "TB vs MIL",
+     "revealed": {
       "v": 1,
       "hash": "b2aad180f190900a251c7dfddffd715ad7d646577b27d17d5aea4d94ad1e1c3f",
-      "iv": "L9EY9TmJ63SQH61S",
-      "ct": "7uLpMJ6mKh9oHCW+L+rmc6n6KNYVyq1ULZQ5iL59lKzDKYb7vVqekMjA8MChMJjqfk75faQb5NuxmOfQT4cSilvaRI/wUeeGGyK2cRXW+ju1W4+zgwADfsvHOAA9edjm8IYtev0x4uPpJ8iqDITthaiQR96vnR43UArT+F2PwuW7RrBW6gUOnisLt0wg6a4irII8OoMreEla30tfYWcZcSzuKzZxtHGeIk8vN1DTlORXVmD/0YMFViLG30ya8WgER135PBcQRz3GNLOXxb57V4csM2HHCt+Uaqe9K4DUuKL9XztC7ok32F6yXHam0DGeKCsQifrAIlRM/GktM6FehAqs2kAX8b7I7oRS0R4W3YCc8xWeeggj8gsH4jqQUbAPPC4PuNnmifZ6sfvtWMbQCwF1pVFjwb59adeWP53fg/v1yraADzANJuOr80fBdyWBEemX8SaSzw9Pd9xMn5R/XaSf6AOT38bGkPGjxofzLyaVElkDB1LNAkaalUX/kv4mvWwIXL9/PgbPzxvddwt7B1mGgcdwjz7AEQvzVRTBnyCiR7s0kKfYutGHOmMXXdi3diet1QQbp/DmPbA7MEUPxxL2J7B+tJng1f3HMhWXFhbY/yDeiz2bgbNzgRGZN7O+h70pGzn/kXoYMid3WvacXR0GvbwCfQRGAtQ="
+      "salt": "a5bbb83213f975d271233ac3e4affe4b",
+      "keys": [
+       "detail",
+       "eventId",
+       "gk",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-28:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-28T23:30:22.648Z",
+ "updated": "2026-10-29T00:00:46.942Z",
  "record": {
   "w": 121,
   "l": 39,
