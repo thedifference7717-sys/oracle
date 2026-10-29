@@ -161,6 +161,8 @@ jobs:
           TG_END_ZONE: ${{ vars.TG_END_ZONE }}
           TG_BUZZER_BEATER: ${{ vars.TG_BUZZER_BEATER }}
           TG_TOP_SHELF: ${{ vars.TG_TOP_SHELF }}
+          # The private orders channel the trader on the owner's Mac reads (engine/trader).
+          TG_ORDERS: ${{ vars.TG_ORDERS }}
           TG_CLIENT_DELAY_MIN: ${{ vars.TG_CLIENT_DELAY_MIN || '0' }}
           # The free public channel: the daily sealed and results posts.
           TG_PUBLIC: ${{ vars.TG_PUBLIC }}
