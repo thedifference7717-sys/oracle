@@ -10252,6 +10252,9 @@
      "sport": "NBA",
      "start": "2026-10-28T23:00Z",
      "teams": "DET vs CHA",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "e566e911213732c317004ac70db38bae0945320958a87d2d0965c42aeeeb35b4",
@@ -10379,7 +10382,7 @@
    ]
   }
  ],
- "updated": "2026-10-29T00:30:59.310Z",
+ "updated": "2026-10-29T00:46:38.943Z",
  "record": {
   "w": 121,
   "l": 39,
