@@ -3256,7 +3256,7 @@
   {
    "id": "2026-10-28:ladder",
    "date": "2026-10-28",
-   "status": "open",
+   "status": "lost",
    "published": "2026-10-28T22:00:24.091Z",
    "cycle": 13,
    "rung": 2,
@@ -3314,6 +3314,9 @@
    "sport": "NBA",
    "start": "2026-10-28T23:30Z",
    "teams": "ORL @ TOR",
+   "actual": 3,
+   "result": "3 PTS against a 9.5 line",
+   "settled": "2026-10-29T02:04:19.520Z",
    "revealed": {
     "v": 1,
     "hash": "36b5683219f4d7adace805eec81f5c75c3c3e15da901404c2ba46332e77e046e",
@@ -3342,17 +3345,17 @@
    }
   }
  ],
- "updated": "2026-10-28T23:30:22.577Z",
+ "updated": "2026-10-29T02:04:19.523Z",
  "state": {
-  "account": 487.83,
-  "base": 18.79,
-  "stake": 28.89,
-  "rung": 2,
-  "cycle": 13,
-  "pl": 387.83,
+  "account": 469.04,
+  "base": 22.55,
+  "stake": 22.55,
+  "rung": 1,
+  "cycle": 14,
+  "pl": 369.04,
   "cycles": {
    "done": 5,
-   "busted": 7
+   "busted": 8
   },
   "canFund": true
  },
