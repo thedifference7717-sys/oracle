@@ -10096,7 +10096,7 @@
    "id": "2026-10-28:robin",
    "date": "2026-10-28",
    "published": "2026-10-28T22:00:25.813Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "MLB": 1,
     "NBA": 12,
@@ -10354,6 +10354,9 @@
      "sport": "NHL",
      "start": "2026-10-29T01:00:00Z",
      "teams": "COL vs NJD",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "e96870340a83f9a0e51dc568ceb58e3019f998af73c485a56bf62d84a123da42",
@@ -10428,21 +10431,63 @@
       "ctx": "2026-10-28:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 20.547,
+      "pl": 5.547
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 29.308,
+      "pl": 9.308
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 20.832,
+      "pl": 5.832
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 5.902,
+      "pl": -0.098
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-29T03:26:51.911Z"
   }
  ],
- "updated": "2026-10-29T02:04:21.048Z",
+ "updated": "2026-10-29T03:26:52.637Z",
  "record": {
-  "w": 121,
-  "l": 39,
+  "w": 126,
+  "l": 40,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 606,
-   "l": 845
+   "w": 632,
+   "l": 876
   },
   "days": {
-   "w": 16,
+   "w": 17,
    "l": 12
   }
  }
