@@ -10207,6 +10207,9 @@
      "sport": "NBA",
      "start": "2026-10-28T23:00Z",
      "teams": "MIA @ ATL",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "3add435106d1d896f0cc04ac7e0a370b357f5129eb39c9830154e7a517de849d",
@@ -10422,7 +10425,7 @@
    ]
   }
  ],
- "updated": "2026-10-29T01:00:11.284Z",
+ "updated": "2026-10-29T01:05:25.277Z",
  "record": {
   "w": 121,
   "l": 39,

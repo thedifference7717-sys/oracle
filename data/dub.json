@@ -4135,7 +4135,7 @@
    "id": "2026-10-28:dub",
    "date": "2026-10-28",
    "published": "2026-10-28T22:00:25.813Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "MLB": 1,
     "NBA": 12,
@@ -4164,6 +4164,9 @@
      "sport": "NBA",
      "start": "2026-10-28T23:00Z",
      "teams": "MIA @ ATL",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "1c35c2d72e7e3d1f721cf33586fcc4f6f853f2be625e9ebbdc379615911dd25c",
@@ -4245,6 +4248,7 @@
    "fair": -473,
    "price": 124,
    "prob": 0.8256,
+   "settled": "2026-10-29T01:05:23.963Z",
    "revealed": {
     "v": 1,
     "hash": "e62e5f7506fa34b48f258722d8313ea9686d86badbab976ce85e935c6148955b",
@@ -4259,9 +4263,9 @@
    }
   }
  ],
- "updated": "2026-10-29T00:46:38.580Z",
+ "updated": "2026-10-29T01:05:25.043Z",
  "record": {
-  "w": 18,
+  "w": 19,
   "l": 15
  }
 }
