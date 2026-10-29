@@ -10577,6 +10577,9 @@
      "sport": "NHL",
      "start": "2026-10-29T23:00:00Z",
      "teams": "TBL vs WPG",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "29a1be9b4f307d80761d40c18f721726e5654759c90b46d52abc90df64754914",
@@ -10612,7 +10615,7 @@
    ]
   }
  ],
- "updated": "2026-10-29T23:00:08.192Z",
+ "updated": "2026-10-29T23:12:40.597Z",
  "record": {
   "w": 126,
   "l": 40,
