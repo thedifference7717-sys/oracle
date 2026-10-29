@@ -10300,6 +10300,9 @@
      "sport": "NHL",
      "start": "2026-10-29T00:30:00Z",
      "teams": "EDM vs CGY",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "6be34ffb927af100b92eea96d9bcbebd90270df85c65990537ffcafb0d5546b7",
@@ -10382,7 +10385,7 @@
    ]
   }
  ],
- "updated": "2026-10-29T00:46:38.943Z",
+ "updated": "2026-10-29T00:56:00.416Z",
  "record": {
   "w": 121,
   "l": 39,
