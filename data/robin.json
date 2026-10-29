@@ -10328,11 +10328,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.694 · 1.75 pts/gm this season (12) · a point in 6 of his last 10",
+     "eventId": "2026020201",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.71,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT28NJCOL-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7673,
+     "pAdj": 0.7413,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-29T01:00:00Z",
+     "teams": "COL vs NJD",
+     "revealed": {
       "v": 1,
       "hash": "e96870340a83f9a0e51dc568ceb58e3019f998af73c485a56bf62d84a123da42",
-      "iv": "RyfGZay0ojat1E7m",
-      "ct": "e6cYLDdTQp3jGMYWy8ZbY5uPLqkVV9i/ATLC3o8DcYf34ULeomkKkBRv5DrpqCK6jUhn3wTXpAphQMeHPVuzVORX3nmXK2pGVg0awVYbywy+7uba5LGfCXjhi+jtzR5xq6CT5jApajI6XYiNMojoeQYozMA2WxiO7PDMVPhJ9LJzc+vBYWoBMksYes/4zdpz+vWiG0NM0Pag0u8R6F9RL2ji8bdRyZ5RqNFh2mIRmqIMJQ7rzu5UplIvq3ZrMkNa2NDvDZzsikDILdUYnG/SjLEReGWihzW58iB/fj6+A5y0Fg3h1+kWFEjQwlUpIkEr7QFmnVcb5/+Fqg0nH+dGlw2EN95e/nD1x+rK4zyzDTMXLJx3+FrLl0mlpdbMB4rXVKO16R7unLIUE1t7wD8S6dfF4gRQaPkmrF7SCfw3soxSOTg05kV5L1taltUuRK0sBOtOQGg81CFJwOBbRmd/wO4Wn+Th67xYVmehqD13FzKNXyz68XMS4h9q4jZWrODWfdkAX8kS+uw5hw67FMvK4BXMBtLmAJuduZr/ji4O++aASS3Rx6GUulTOn5jq0z5MOYuyaTSjHwrrUBPcammB+3a6IAubHdIxqWBZ4UYGM3bPPGwABHjd90YrNgUYcsh15/p7jRq8J/QIfdDP9mEozmpMSjy281dKWlupYVQHIkAEm1tCHY3GHTbkPgY3yMJOxMg="
+      "salt": "0a5a056f9cbd79c7ca9c1958cd90d425",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-28:robin#4"
      }
     },
     {
@@ -10385,7 +10422,7 @@
    ]
   }
  ],
- "updated": "2026-10-29T00:56:00.416Z",
+ "updated": "2026-10-29T01:00:11.284Z",
  "record": {
   "w": 121,
   "l": 39,
