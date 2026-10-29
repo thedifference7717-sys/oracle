@@ -147,6 +147,11 @@ jobs:
           X_COUNTDOWN: ${{ vars.X_COUNTDOWN }}
           # Founder spots left on Whop, for the countdown (engine/scripts/whop.mjs).
           WHOP_API_KEY: ${{ secrets.WHOP_API_KEY }}
+          # The owner's own Kalshi bets, only on /bet (engine/scripts/kalshi-trade.mjs).
+          KALSHI_KEY_ID: ${{ secrets.KALSHI_KEY_ID }}
+          KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
+          KALSHI_MAX_BET: ${{ vars.KALSHI_MAX_BET || '25' }}
+          KALSHI_MAX_DAY: ${{ vars.KALSHI_MAX_DAY || '100' }}
           # Client channels by tier (engine/scripts/tiers.mjs).
           TG_TIER1: ${{ vars.TG_TIER1 }}
           TG_TIER2: ${{ vars.TG_TIER2 }}
