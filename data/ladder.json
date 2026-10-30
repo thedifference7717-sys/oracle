@@ -3359,15 +3359,81 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
+   "detail": "proj 3.9 in 33 min · over this line 1 of his last 4 · back-to-back",
+   "edge": 0.2496,
+   "eventId": "401909893",
+   "fromProps": 627,
+   "kalshi": {
+    "ask": 0.6,
+    "at": "2026-10-29T22:01:21.382Z",
+    "bid": 0.59,
+    "spread": 0.01,
+    "ticker": "KXNBAAST-26OCT29CLEATL-CLEPWATSON8-2"
+   },
+   "line": 1.5,
+   "market": "ast",
+   "need": "2+ assists",
+   "p": 0.8495576461311067,
+   "pAdj": 0.6042,
+   "pick": "Peyton Watson",
+   "playerId": "4576087",
+   "price": -150,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "225+ passing yards",
+     "pAdj": 0.6785,
+     "pick": "Bryce Young",
+     "price": -203,
+     "sport": "NFL"
+    },
+    {
+     "need": "10+ points",
+     "pAdj": 0.7515,
+     "pick": "Peyton Watson",
+     "price": -300,
+     "sport": "NBA"
+    },
+    {
+     "need": "10+ points",
+     "pAdj": 0.6539,
+     "pick": "Aaron Wiggins",
+     "price": -186,
+     "sport": "NBA"
+    }
+   ],
+   "sport": "NBA",
+   "start": "2026-10-30T00:00Z",
+   "teams": "CLE @ ATL",
+   "revealed": {
     "v": 1,
     "hash": "f2fcd45b61558ee0eac2fbdf6bdf63602010795c2a6ed9d5966360ec38e8b323",
-    "iv": "eeOQWDOZ2PbZnDTQ",
-    "ct": "S24gHZ3Txz1ZISBrDVF9gla4OVdV/UtRBEIoDTQb7RmGhHTLah6xhvCcvxq+HEp7pAMRSFqlIVhT0l82iurv2vEjO/n7g8C/rNAmSkGYGsdftiLuNkK4LIinUgyoCp1R0CEe7vxp6UY8ECRrs+/Jy1lLAE4LmrhV2YvxXAQXeki3A/ypHrF4gRrzNmImuG1Gv7uCpYx6m/m2RdEKuJgq2Nz/EgXRNoWayB9Kt9MMlCdsVQyl8pjd35b2vaiWycqfgvvMTRqCDOUEee9+gitJuldopg4GbBhPu7BSA8bQN8QsRaGaTO7EJln4LSeQJ886kWG4F8PWKpKnvfnyGi0JuKhxT1DG0JtaR1+8hGpq9W3IKucFZR0ZaiQpe/iSGw4zdEltephsZp37Oz08W1R2XgciNIdFCOwzL80dAHkooXkDNNZStUoDvu0jOuhhKtAJl2JYLzNZuwVrV9wUqqFWkOVZZ6Ix1gdm6jL2k25wP4EeUz8uZen5Y5kJbliGQsfEWwK9utsleO3ANF63xLmAd0allWbHytBMefDquBSM5+prUzEzU7R4VP30kDuLvjriWDEMGuOJg0xg0v2bxeKxUA7ITnjtXnllkHJ2MNREqQUW71k33qn9k4ydRzpae8+Yyxv4/VIgtgPlyr2R0dR1edj4gXkP/xyWIBKX4bCTq7Qy8p/3xz00A+M9TCqTy4axMrl+HxirA6KjdezNijHpTFygBwtOQ/c/z6PGVVm6DvRyvHrLcR5qXdokaxz+gp2IEkD0J0groKQV67UJL77HY0sfRPuwWDMIQfKwI0n6xyp8Eib70LLqa55om+jKdgKz/9FFuM1BgRFzsCPMTmwhK0cCM5AUabuI4i7BuJvmupX1mXbIIr6e8ae8tARxsIuPQsRmgwN3tpS2h+ERqY4JlG8s4s85ypautJDKGvcX7YaOJ4AdzKvSILvJm0f//yWYl2Q/5WULeVjSQ+QHygHExi9MV4pBuPxziQCnWV7OfGExLYSv/n5S0hlM5sM3iKxLkDB7JX3YXhuZWsIVXc9/my9hDCzjUoPO/jfWZ6bh+uuVhDJLSrdCxms0S7rUBGiTAEMfqtoTyrfeSAg23abuAasRPDfhHxKNpbeMFDsUXxhog25XYSkiIhk="
+    "salt": "325ccb94531517e22b11c96c9110e289",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "fromProps",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "sport",
+     "start",
+     "teams"
+    ],
+    "ctx": "2026-10-29:ladder"
    }
   }
  ],
- "updated": "2026-10-29T22:01:21.385Z",
+ "updated": "2026-10-30T00:00:11.389Z",
  "state": {
   "account": 469.04,
   "base": 22.55,

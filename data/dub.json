@@ -4289,17 +4289,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 14.0 in 27 min · over this line 4 of his last 5 · back-to-back",
+     "eventId": "401909893",
+     "kalshi": {
+      "ask": 0.65,
+      "bid": 0.62,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26OCT29CLEATL-ATLAWIGGINS2-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8214,
+     "pAdj": 0.6539,
+     "player": "Aaron Wiggins",
+     "playerId": "4397183",
+     "price": -186,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-30T00:00Z",
+     "teams": "ATL vs CLE",
+     "revealed": {
       "v": 1,
       "hash": "fad1141e9f8c3c2b52753316080e5f19fb876089fd5f2aea7ed929b178e1c62a",
-      "iv": "IvBEwEcv0S1kPHir",
-      "ct": "K6zpT6rksxAbXqSvEzSZ3Q2XACEA9O9MR0WJqwtVDD0uUHDfxycL2vKErUdHzX9EcdQgoIhTE+ipXybP76JX4BZmA0SonqIn5yBMwrRuuhEO7SZLj56NrtYhY8WgqQWZJ4qKC/7XB8FJG876BgQ773CbST75Yc95NhHtqjLwanupAbI0nklKVTecrjeH5P9TEjW/g0Y42+3bJzDdmmUzsOpU+8qP4vYmx+e3+5bj8P30mh7jnuc6MquGGxKnFsngVJBkMQctxlv9zzbSIIiUlBGJjdyTUbLRJc7RbXDYj7BeWqUOL40tgaSe1nVdn3xPXT1ESWefOuJEROyiqdnaN4b0G8V/IqFj/ByO1zL3WDGeyYh5x/Gp6XL9HwCotLUFQVIwO48oxsZNbDyUVG3q4b1iM3HmChZnDBpZVQjWhDqEDhjFHkZyM/HN+sbyMwd+fzLXC1kc2EfxJ7C6SWzZv23S97eGZrZuDV2rk2HaziTwZZBNOXHMTAuSZ7IzVZcu6LTgO6zK/4sz2i9KUs+3GzX68Tpai4RU+NDsZy/uRkSh642DMB25dTCNUjYqjRIZ7CMOIoslZfhaXDjYLxwUy6rqO3x83K05cKdrC4lJGZVcVEnu6qprMV78Fsy4Qjq9BJcdI6NwRPmGFFZtz26EGZehAAJ1waWgIjzElBlVAg=="
+      "salt": "670374a30e35033bf19e181e6a1c46cb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-29:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-29T22:01:23.923Z",
+ "updated": "2026-10-30T00:00:11.419Z",
  "record": {
   "w": 19,
   "l": 15

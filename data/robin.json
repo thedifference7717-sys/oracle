@@ -10525,11 +10525,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 3.9 in 33 min · over this line 1 of his last 4 · back-to-back",
+     "eventId": "401909893",
+     "kalshi": {
+      "ask": 0.6,
+      "bid": 0.59,
+      "spread": 0.01,
+      "ticker": "KXNBAAST-26OCT29CLEATL-CLEPWATSON8-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8496,
+     "pAdj": 0.6042,
+     "player": "Peyton Watson",
+     "playerId": "4576087",
+     "price": -150,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-30T00:00Z",
+     "teams": "CLE @ ATL",
+     "revealed": {
       "v": 1,
       "hash": "cb0741efcb9b3520c8e9dc6f2f88475728657a4d98be64acffe72ef854db9d0a",
-      "iv": "6P88fYVktBOwFL2f",
-      "ct": "X2NXG1fYIt9Bp0AXKDSsehlvNajkAZSTaoLWo0/j4B+LBAs1m331XUglwRQ+fYbb2Ye3JZsmHcZ5CJpIjvV9piG1utAk0EkXT5F9OPgKwxX8dKGjw5FIE+O3Ay9SWVbvbvk6kzqvMW/ZKd6k0hl8laNaZ59xIuPdZtfhPaY+5rdGK0ZKG0L9e8HaR96wFvHVkQ2LnfREqS1Zxu9OI/tFVp6F4wo6dvAB9eBeV1NVFZWQ3b+3yMPvAFjHIE3+pvExEvDYkjNKZZuIZ1FdNXCQoHdOtRnOe4DdP0NhRW8/QpkiaueOCVDTHW0Cnzd9FTf6hXOBwJeIZtI17qgXmONyP71AZb8rShbGmRzdmGHdOvSO9+AS9/mfpz36uTaoANv6tfwqXiUfRkZw1WfTR3AcvtICj5SKu3zzxq+NR1+wZ0RGOrIQfjvOw8FhqyD/lbRpHQjRgNnsVakTN5sT5d5dTfQqS+hdBwhVcOEjflsxUjh9SbDUvFkD23FSDRSNNXn57uU1JFFM1bJKxOsWWmEVdmDUH1hlhJOnKaybBvf2yAsytQDbcugDe8ZRUlUOYqDPgqBAaetSUbtvU5sWKFa4mW4WQ84lQZKDSxCzId+/Ucuqhk20W/Gr8wi+k+0g2VlrJu1AsUeiE1SjMuEXfmKI6nRXz+AIFssQPF/NPA=="
+      "salt": "0dd7fc94b3e89d54a7da2d1981d1d68f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-29:robin#0"
      }
     },
     {
@@ -10541,11 +10578,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 20.5 in 38 min · over this line 2 of his last 4",
+     "eventId": "401909894",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT29SACNOP-SACDSABONIS11-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.8057,
+     "pAdj": 0.6923,
+     "player": "Domantas Sabonis",
+     "playerId": "3155942",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-30T00:00Z",
+     "teams": "SAC @ NO",
+     "revealed": {
       "v": 1,
       "hash": "f707742bf20154109dc3432268646a1dcb604d64bcb721e9ef7d55cc6911c54e",
-      "iv": "8QbZrKQsAOzLzZ3W",
-      "ct": "PLgX2dBfrKeCmztN/HDA0gwAXYC3GB8/ZDh4NA1l7k4KBUUAuInsKsjDQK4ee3OvHEoA82XhyL808EJBKVPQSXVa1METSbk8phBSddvcd9/Tkoqd3K2m9UjngB7Fe4UdiE1v1dOkJ48nsYQLHUs0L5hhurwelYTSuK4c8A1rqz+lSziQiq8szVIS7B0yWCJ95+rQIwquyIdrT3h8zo73WlGWlobiOn1pQI9x346iz0b954BE9EaX5wOPPVKAxCGOshUBkK/D8n7QRWU8e8RksTQOqV4LTrycpDRbLZrOkDgkoYBr/rdQCfprdPWVzpORSsXyoX48gFJDjtIG1PPhoMvTjlF7DFt6x0ZIFpun24/pidb5A4UH751+D3wYL2miwYfVSQoX8tHYTltqVDvwtOAMZx+3p0jZ36BjTDsPr4F1oF6cVKRlsK1XMdfJ1iEOT27DHyQm8TJ/yqZT/CKVu0J9sQ0QiaND7b9l5cYcqOmJuWk7oXXtupRPWWYBjH8CMI/fUJi7YT5JZI+KavLTS7JepY1gexBPCSfkmPgs1nmq+6rkrDOcFjzyQIvRDk8Mlth1WaA2zMG9uP51Xrj2MP3NsjpxO7cLdSp8IP+VB/RxHOFpQBrYHXER9EMxU67SlsvDM9J9ctxp8wX3ZMxU5qzT6hg="
+      "salt": "bd5137946d7158366a9f4d4bdf152a41",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-29:robin#2"
      }
     },
     {
@@ -10615,7 +10689,7 @@
    ]
   }
  ],
- "updated": "2026-10-29T23:12:40.597Z",
+ "updated": "2026-10-30T00:00:11.460Z",
  "record": {
   "w": 126,
   "l": 40,
