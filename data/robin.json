@@ -10593,6 +10593,9 @@
      "sport": "NFL",
      "start": "2026-10-30T00:15Z",
      "teams": "CAR @ GB",
+     "result": "lost",
+     "actual": 209,
+     "note": "209 passing yards against a 224.5 line",
      "revealed": {
       "v": 1,
       "hash": "57029e6df2a5546df82b610dd33d9be34b0fe0fc2c67b6651e77f517a03d7dae",
@@ -10806,7 +10809,7 @@
    ]
   }
  ],
- "updated": "2026-10-30T02:25:48.927Z",
+ "updated": "2026-10-30T03:25:43.416Z",
  "record": {
   "w": 126,
   "l": 40,

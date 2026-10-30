@@ -4266,7 +4266,7 @@
    "id": "2026-10-29:dub",
    "date": "2026-10-29",
    "published": "2026-10-29T22:01:23.922Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 3,
     "NFL": 1,
@@ -4295,6 +4295,9 @@
      "sport": "NFL",
      "start": "2026-10-30T00:15Z",
      "teams": "CAR @ GB",
+     "result": "lost",
+     "actual": 209,
+     "note": "209 passing yards against a 224.5 line",
      "revealed": {
       "v": 1,
       "hash": "468a2a598a2fa9c078dc7204e12aa30f7756ec6ab58e4eae28e84e1d24f09823",
@@ -4376,6 +4379,7 @@
    "fair": -227,
    "price": 130,
    "prob": 0.694,
+   "settled": "2026-10-30T03:25:42.153Z",
    "revealed": {
     "v": 1,
     "hash": "1e7b3d0b78709cd79d6ca46347c1938afb7a6318367f4aa767304be4c5b8e297",
@@ -4390,9 +4394,9 @@
    }
   }
  ],
- "updated": "2026-10-30T00:55:08.339Z",
+ "updated": "2026-10-30T03:25:43.285Z",
  "record": {
   "w": 19,
-  "l": 15
+  "l": 16
  }
 }
