@@ -4273,19 +4273,50 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "1e7b3d0b78709cd79d6ca46347c1938afb7a6318367f4aa767304be4c5b8e297",
-    "iv": "OAhqXFVhKO2YrUb1",
-    "ct": "VKJz/oEE7NosE8Zr23toBcqA/2XkqwdR4T+0VWjIkgbWmNL/Uxu+GVDOKYSSiluuEFQow4X4T5AhDZxUGaPTJ2eBuZtS4WsquU2ij4I2MHuhW2ekspf8/4IClI08M3XjmaD1gQeqGi4WbiaDWFjhfdC4ccakSw8+jHzIgx//0+vvk6iU2zB+gp1UWVqutzEz3EafgUq9fxpZPG1ImDgnjIEH5OlH6VxXlRiOEN033NUBWJ5zREP5aahJXFqdCuJloWbK6mt8rkjUbEXnoI23uQ=="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 320 passing yards",
+     "eventId": "401873023",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT29CARGB-CARBYOUNG9-225"
+     },
+     "line": 224.5,
+     "market": "passYds",
+     "need": "225+ passing yards",
+     "p": 0.8449,
+     "pAdj": 0.6785,
+     "player": "Bryce Young",
+     "playerId": "4685720",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-30T00:15Z",
+     "teams": "CAR @ GB",
+     "revealed": {
       "v": 1,
       "hash": "468a2a598a2fa9c078dc7204e12aa30f7756ec6ab58e4eae28e84e1d24f09823",
-      "iv": "Kr3x48hKo5mY0Ei9",
-      "ct": "mykvElywWBBsAv88XAVoG1vaBWdrIacoB3UfodIbNTdZmd1+V/O5N4V7kzjUzAZqMnIPEoM4ldFv8yJprfGfRHYpFTLYWZyvsMuawpmOq18VL07+sCsX2T2iieNbCivjA+t8usiqNDcIIihrV7s9ZO4lbd8F0ydwYIqlL2mGwc0IawfyYlPCCDSNpccoQEcPRx6c4hkcrOwTveaWv3UX5WU3v7deXGGMdfcl6NSQwyOWoHffQ0U1hqM6paXaPQhaWIZpVDSiqHCmCzSXZzolLUbQY4VwYWMmbNWtQPNoaNyGh3plQ7KEZWoH6JNea6qZRgK4xyCydj9bh4U3+0R1CEni31qf1OUXepKV10duiFhwbaU9/ubisRh+F2Z7XFl0gc/7vuBRCzSjqdnF7+8qOaokDrZ6SJ6yvCs57KuaDoDf98D1kyYNNjn2eDqLy3y+NoXszBVpAlRkCWV3vHPAKTI7PH5wBXHcDgsoYpGCl4HgXp9JLCi5lwf0TwL1OmwwexWI4smzU8n43JYx8B3o8R8d1AcSXXUY3yNj4VLw3+NYrzil+bhHDw/xCGrYV119LjQTo2DsKlg89zL1IGe5lGDxHBOT8EfhVyeNZ19BNtPD9wLkKhjsiXAPiSLqlCR0J8nCaK+9/gs="
+      "salt": "7fa7f951cbf6ad80973f298e37e49304",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-29:dub#0"
      }
     },
     {
@@ -4333,10 +4364,30 @@
       "ctx": "2026-10-29:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Peyton Watson",
+    "sport": "NBA",
+    "start": "2026-10-30T00:00Z"
+   },
+   "fair": -227,
+   "price": 130,
+   "prob": 0.694,
+   "revealed": {
+    "v": 1,
+    "hash": "1e7b3d0b78709cd79d6ca46347c1938afb7a6318367f4aa767304be4c5b8e297",
+    "salt": "ba39d0066ec9294d6f5d9899ff728f6d",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-29:dub"
+   }
   }
  ],
- "updated": "2026-10-30T00:00:11.419Z",
+ "updated": "2026-10-30T00:15:43.493Z",
  "record": {
   "w": 19,
   "l": 15

@@ -10570,11 +10570,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 320 passing yards",
+     "eventId": "401873023",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26OCT29CARGB-CARBYOUNG9-225"
+     },
+     "line": 224.5,
+     "market": "passYds",
+     "need": "225+ passing yards",
+     "p": 0.8449,
+     "pAdj": 0.6785,
+     "player": "Bryce Young",
+     "playerId": "4685720",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-10-30T00:15Z",
+     "teams": "CAR @ GB",
+     "revealed": {
       "v": 1,
       "hash": "57029e6df2a5546df82b610dd33d9be34b0fe0fc2c67b6651e77f517a03d7dae",
-      "iv": "9RBiH3AJEA0wlHgW",
-      "ct": "syPSeZCbAGYlLJlR/iFT0ZhC1PsfvjrTq4li93kf8pEq8RC6f3n18WnABspJ7DawpJ3CSObHJtNN6zzxDDBGM8LLFkP65ooa+cojBhdS1fDMaqjyqJKfUjpkLAUlzMUIBdf50fAcx0dYNSWdidP8fTX/jwq/0GBx6m0PZT2HTeGHZALnRV2TRGbg6RhWyQpEgkDoOfNnvKlY0Wh+5wjl8dlgwmZxJZjjlB0iCRfS9vk2XbvTt9Y4iNC5NPmW02hMaxB4+ybTODsvl2gU64hFGtXQbrO0aydcVKe6M0C9DFWflYYO3qAHOZ/B1d2AUdjrlGdIcFFgxgU0ar2EIbEbsclYzeyhhbpDOOb169xic6A/nAbH+/36kmSdcohhmxmQm2KWauwXZ76fGAb0O+uVRWSi+zsp0+qXDxabz0RcHnDobO7HehXSA4Ks1JTjJ5G3uwiWMKEFCwtLEh7OES8iu+63MFnDv7V1uqn/fKV3YnHirUc8vQmGpTHy2iF83Djt0lGBoN27AacRyEJfxZpZkYJaBchUZ/pQaP5flsV74IfiTjz32wdoq1dlXjbDeSgsI97nlat2Ka4YzRwriRWbZFhHkVoHTqVyfjGoSiM590wzU6+zhX30wyUlc/hznsZsmxUvR5FjKk7hDQ=="
+      "salt": "2bf2d449b5b93a3e47757bad1e70e09d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-29:robin#1"
      }
     },
     {
@@ -10689,7 +10726,7 @@
    ]
   }
  ],
- "updated": "2026-10-30T00:00:11.460Z",
+ "updated": "2026-10-30T00:15:43.530Z",
  "record": {
   "w": 126,
   "l": 40,
