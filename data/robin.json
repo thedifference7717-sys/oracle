@@ -10638,6 +10638,9 @@
      "sport": "NBA",
      "start": "2026-10-30T00:00Z",
      "teams": "SAC @ NO",
+     "result": "lost",
+     "actual": 9,
+     "note": "9 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "f707742bf20154109dc3432268646a1dcb604d64bcb721e9ef7d55cc6911c54e",
@@ -10803,7 +10806,7 @@
    ]
   }
  ],
- "updated": "2026-10-30T02:01:00.475Z",
+ "updated": "2026-10-30T02:25:48.927Z",
  "record": {
   "w": 126,
   "l": 40,
