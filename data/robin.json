@@ -10545,6 +10545,9 @@
      "sport": "NBA",
      "start": "2026-10-30T00:00Z",
      "teams": "CLE @ ATL",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "cb0741efcb9b3520c8e9dc6f2f88475728657a4d98be64acffe72ef854db9d0a",
@@ -10726,7 +10729,7 @@
    ]
   }
  ],
- "updated": "2026-10-30T00:15:43.530Z",
+ "updated": "2026-10-30T00:16:48.966Z",
  "record": {
   "w": 126,
   "l": 40,
