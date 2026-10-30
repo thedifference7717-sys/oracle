@@ -4392,9 +4392,44 @@
     ],
     "ctx": "2026-10-29:dub"
    }
+  },
+  {
+   "id": "2026-10-30:dub",
+   "date": "2026-10-30",
+   "published": "2026-10-30T21:00:19.957Z",
+   "status": "open",
+   "games": {
+    "NBA": 10,
+    "NHL": 3
+   },
+   "seal": 1,
+   "sealed": {
+    "v": 1,
+    "hash": "5c57f5af192989134241c56b47869338539dc094de5260ae8f1738b5ab04effa",
+    "iv": "XEQthq2gDmHQ/b6b",
+    "ct": "dE3u469QUUA/0uxFrVNrgEEVkDs/wzuc2tPmBuWuBk8+C8LO2M3ISKK9VctRNfDtVJFAG+IJY6A3jkMWxIXraGK5e5vxw8LhYBxFcuMnEi3NzUcp9yadlKt6hNnft0UJHIvKQb9sawAPo7aIJy+6LCgBGq8aFRFpUhK/g1iDD2uYmeTmvfK8N0WNbof8RLPhrXBOs+dPSvvtVVCJVryQ/Y3F0gTiFcyjJeZYonOWqK5TaQ9B4rOpNxMs7BUS5LYGXzfe6LG19hDSWOP/4m+Br5xFew=="
+   },
+   "legs": [
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "cd750f9f13a06948989ad1067e1ac26b28eaa23bdf0c05b4ee371ace35d6a0f4",
+      "iv": "s+LIJTjQdPq6w9kZ",
+      "ct": "xlgkNVJ5ostfoLXf+yrGEqD2PHQ8BD6rahxQsX62fthi6DhAQ2QoVBfKD+8bSrdjuXW1kvh5zp8ltjA1cZ6JraDWEJ441h8OaxUmZEUjHWhWXuYY/2Hpt6dNDop8JSCGNv2L8hCpc25it+SoxMfUnw+PBHLIjyQt+NE65myJETWBPJdUTvYGlcv3zZiys0BaEsmDqGrt0kE8r4kz/nvdtByxxEB6bmuC2m3bC3spbWsdifIaW1qFmiT+hoVb8WsRW0d1O3HDixSCLH9GSS5jIiblD8jpPqD+NHbZJ67coYJlvBfRBHZaNjfy1/KgFT/YXzQoGae041gFtiPFz/ablpEi1tc5n8hxSk7B9a5ruqoq2eVZjn/UyyisohBMiurqHnEzA/z9CXblelEzR6G2OfKrvW1Tv3wCwj+9GwWJNy357qkdPcYrV52ZBZjT94oXeffZ1bv/8MLbShnnnvYWSo4L3mhbQqxjWknllOfQdRZ7vHhYfS95Yu6NC+r7DU6oluhucIpou5PDu8ZhAGNJAB8OpO1FxJMjbS/j+PgRYOag22TGPsSxdayRgC2Z66stgkB8swr1PastOWQnf9gww1HUzu2sKd0ccUyzFiVZW3HR/aqDjoOzSrYbOGVYfGs+ae5Wa181QigRAwisNOLLpl9xMA=="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "0106d99cad46c6a984ae0fe04cc17e6594f784fdc68ac52cb6c65ae98bedd11e",
+      "iv": "Vv+zD92+LikNH3xz",
+      "ct": "UsYx9b5NyXCjkuK7zsVl2fNi2YPhAQe5jffFnDbT2W+ngl0eFj4rTQjpGhQKgbVGugoLiP6u4zFNzup1epTuY//Jpdmhw0fgSGkx0I66eMqg3zQQJvfY16LcveEyZInfFAEhISpiNUgqy7wg+BCC2TzCjdJnbsN5GiRSGbnBqdmF5Oxpotcyl3P9lQfeqMnUoVm8ax8Bal3P0w37Q02El1XMD/Vogn/jRRNR7wj8mMZ7aCRWeI08eTpnvE3eb8jWmBpMvhN2S3ZlveHWLGw7fNrNW3F9IpjqBjPZvhSONIKxVJLdYaSB4IejLri6Qbff7kMu3V21LjD4lA8sLOk5Izxt81ouRDEXsN8wcyBf5YF297blNWC3VEwMp9TryNP/S76f+fsxmOM3pDchIsUHwnwHgHaWuR7NGtbI/InrVFJOWB0Etdo4coA/4WwZ0ZdJCIer0RXzb/CCSYTZ8+bFZCd+wsA8kuYR5+fxhcTqKFNJFV9+dcuwGFPTLHBrZpgc7tIGhlAQCJ7B/cmmTKUmmT5vzVkQF3XVVFdfydDDuQBMd0HiQg9wrSrCeTIjmcfp7NaTYIfoLGgUgoE5MbMPjzSyODJIjpomHu+U19hnzkBz2+YLe6ojWxnhVPkwK+z+uwOb9webUVYIZw3WONBeX1wm"
+     }
+    }
+   ]
   }
  ],
- "updated": "2026-10-30T03:25:43.285Z",
+ "updated": "2026-10-30T21:00:19.958Z",
  "record": {
   "w": 19,
   "l": 16
