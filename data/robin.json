@@ -10905,11 +10905,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 18.7 in 33 min · over this line 3 of his last 5",
+     "eventId": "401909279",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT30DETBKN-DETDROBINSON55-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9255,
+     "pAdj": 0.7719,
+     "player": "Duncan Robinson",
+     "playerId": "3157465",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-30T23:30Z",
+     "teams": "DET @ BKN",
+     "revealed": {
       "v": 1,
       "hash": "cfbe6fad5aeb68287948118b610f7fd3bd4fc7ec18e47c2f13ad75b32b063f66",
-      "iv": "SSqW2YivaEUI4fJl",
-      "ct": "92eDmX19G5Z/wmN128cvGZMxjcgm/rLZO+GU96IaU2uYQ8hwNnN+j7MrzGMyIr7kqafKIrv/DKMTqMQ3p9MaMkm5nb+r/kWNpjuSxSdnFfTV1vr6E0/sV2WneV7cMAeyeB0UsbpisKvbFBk9e1BmDUXX94EQIMr4BxmOndFQ1gttHusMvib1oPmoG8Gl4C2E4rSCrFHLRqhBf7375VUEIkai79RToBK5twKD9pFAkndZA+ArdUSz61Ar58Bu0309gonRqO/GqtrGoW0xM5flRaXAxxFbdifkgoK0kaypKdPq43UW+bkiSlcTK1zWrdYuiVf2yC6YBukIqhlwCEt80rxsFwFqKtqCOOAqIq0q6kB2/AG/fidm6IqNZWKX0alLI2Ry1bKCg1STogNcf7vjph/+inPTVccE/z0b8pjDM1U1ZmPW8cOWXRGiwICAP2OeA6aozZ4MjeV3k04Of4f+40oqd60iO8yoFUAVJi0tad+WMOp1LWK4ykP+Tpj6cdF5kk1F76BTDglAeAxyBCyWJ98h/8BP2xUL3llSqsqac6BV0Kv/G/cEkLm0eVjLIR149NbmjMMyaVxfgiPfd7B60W4iRi4ONa2HBuorITT6KjTSG+YmEOfAaTDaJbVi4cZ8fReRwqsyhzXAN1ImzkYuDXVh6IA="
+      "salt": "cda9c535b60cb8e804052fd648b12f04",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-30:robin#0"
      }
     },
     {
@@ -10921,11 +10958,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 17.1 in 34 min · over this line 2 of his last 4",
+     "eventId": "401909281",
+     "kalshi": {
+      "ask": 0.59,
+      "bid": 0.56,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26OCT30ORLTOR-ORLWCARTER34-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8919,
+     "pAdj": 0.6079,
+     "player": "Wendell Carter Jr.",
+     "playerId": "4277847",
+     "price": -144,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-30T23:30Z",
+     "teams": "ORL @ TOR",
+     "revealed": {
       "v": 1,
       "hash": "5976c9160b4ab33dc3ce02c107d958d8ea76d76d8a6c244477660a46b0604e83",
-      "iv": "qEqiOZxNeugIWEnw",
-      "ct": "2ngTjXf5+ehWjYHsUatYwoSBt280SxHDsYVU4QFp95CNRUbKgSGuk0G2Nl7yiuF6CdgeYCbWpsPJzDYpq8W8aCDbuA92b3xl6lAEfW8/Ebp7dt0xmqnGcQaNJ0EXGME73dNJIsEox0yJJ+tFQiJUwSVk/sB8Hk7HrE7CBL3HLjcyCOV8mf+ZfpX1zQvytc4YCcxY8kEkveAXyVteNLmmSdLrPDG9XVa022iRW4DBU4rV+dR1YoCBpTwLt4fLBj//g98BPpHQjqmZHayjrHdYEdLA1r1kfoA/2aYnU/QYlMSo91rjJo5mActzIzcgBSgniQ7Sl6AzsKwDX+hMP623QYKbKgfqhe2ALEuaKfCg+Z5xq59Mi7WRJvPcL8z+uhRAIDSdO0mBRwJOUgMQFzviR4xraz6dtTp539ItoHlNq6O21bWn1Up3EG+ODPYHE3MVQg1p1rtL5bVeD/o3o6NryVQEIDioghET8NV+fFprkpsOrgbZYR4c+WbFMJjqpN4vbM7imI5W0vgdNEHcdgT6QE/3Pww9WcaqOGtalCHQ+hauipXYlDkC2yvN8CCVkU2kInABabv/gZ2ZymMndiPQPgtkRRbQLCXWCF84yo3u/rYSnleRIJgEhLnpYvshaK5kbJe00e78WaHAi0Rr/eKTRJYp35al"
+      "salt": "8354ce2db3c99be4cc95f0107341ec7a",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-30:robin#2"
      }
     },
     {
@@ -11029,7 +11103,7 @@
    ]
   }
  ],
- "updated": "2026-10-30T23:00:51.024Z",
+ "updated": "2026-10-30T23:30:08.323Z",
  "record": {
   "w": 130,
   "l": 42,
