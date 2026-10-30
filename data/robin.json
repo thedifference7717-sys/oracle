@@ -10663,11 +10663,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 13.5 in 29 min · over this line 4 of his last 4",
+     "eventId": "401909895",
+     "kalshi": {
+      "ask": 0.64,
+      "bid": 0.63,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT29MEMPOR-MEMJWELLS0-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.7818,
+     "pAdj": 0.6426,
+     "player": "Jaylen Wells",
+     "playerId": "5112087",
+     "price": -178,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-30T02:00Z",
+     "teams": "MEM @ POR",
+     "revealed": {
       "v": 1,
       "hash": "a36778b2b9814305b2aebffb2855942066e43de46203b39341cb06b52139dedf",
-      "iv": "dNuuugrKn1w1y3+U",
-      "ct": "OsyvdzZRV2pLZ63ppRy6dgq1erTgkulZu6edDZARoeJKXYFhpCEaQrR/w4ciWcbQlTfRgSiJE1GzoE/C8A56RQBY31gDBcCYmOlAzmaEk++scR8wiIPhlnH3uzlPKXMv1JiAM80jOh2sgZMhFjVpSrR0Jk6CYw+y+fEr276Nx18Drk5U6Fg7tkxWnwuL0Ux0bEw3u0RLgRTi94c7q+WKTcATRjQstSq0eIT7PS57JIq6IU/RiSNL5M7JlQHEyTVQY7Sl20UwDlOG+72hTxEKs1fQ7+BOeJk6xz9N7rpaUbzjZWEAc1K/iYr4h5vIu91ZiVKmr4sXIe/aWWqYdjtGZCtwQ7HsNcBDSgyNZPgf/DUEWbny9ahmfHoy0JePkH5t1S1EqP8Nb8SgfuaWYifk3dUSs++53LNg9F2FJECQRgQNOMQVERnEuKw563w0eNb4gFuWTFxCaHZ+DeYaZvq7qYI7EgTxJEHkSb8VDLwiMs6Y9IPrlck/B8PvuqtvHn21+Xsd9uB9ituG+amgLpqBGTCv9Ovod3vYa3FHokRL2RPPi4TeWQf8u0MiOpburNA1vf+bkZ6AsbkUfDAtkptbbX8W9x1PnlzbHYZSgiK86paPR6YCSoAYrUVzcJbVUQVhivUzuUlZz24w56JLFw=="
+      "salt": "2669f186888c5de9fa5f95eba61c47b3",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-29:robin#3"
      }
     },
     {
@@ -10719,17 +10756,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.591 · 1.36 pts/gm this season (11) · a point in 6 of his last 10",
+     "eventId": "2026020213",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.73,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26OCT29VANSJ-SJMCELEBRINI71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7506,
+     "pAdj": 0.76,
+     "player": "Macklin Celebrini",
+     "playerId": "8484801",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-30T02:00:00Z",
+     "teams": "SJS vs VAN",
+     "revealed": {
       "v": 1,
       "hash": "69ee53d7fdc08fa53d2e4b1b562049cffd656e1a5abb13cf332efa03add2e4f4",
-      "iv": "OrUAFD4eojI/5+rn",
-      "ct": "mmGPyQATux14Hh6x+aY5WGepktBdvENZAPe1sS5wnAjj1SNrXm1BEWp+BHVIb99pEd00U/WYt4uw2pTcY455Eh+KvlJxbwzJFsysGOVxL6ELKb3BXeq7NdQRjqAM40gBpvXn7AjtbeQrYQcL+8jGqM6h0fDKghLsUXgatIz1lf6+zXD4/qJQozoShKej5Og8e37qTXsU2YOGTNiLGiuC+r2YjllXYfB8r6e/DCUVulwAzOVr1kcEwBHvNmIaDFrovRykm+YY0TBnOXJVXL5VZWPGZwwnW1DCPPvjT/68ACyIoIPOS6mfB5EGfTB+1wBHmUPHHevImsJJHT8xA9GcH47BLRpOnkAH07OF8rfMdEjSNS5nyfgWh1uhKESHIx8/OCJcFIdfmDbLF2sdFRvx80vfUoUcM3licwedYcmrfMF+QcjYlg4x9lLMpchqkRUUViSqyKyrXs7hxja23DbmMy10yk9OekwPWVGWU4GA0Jb74nSHHEMn4pfZShzCfi0dDHIdlqwcN/K2qKTb59OslYbuJ61kXVtET9Cg9Pgm+S8/F3lqdUYIxE/FE+JyeTRPZ/JRoQ6cKN8bAiN5EaBU4cNlJ+UhaFoGw1ZXqlxYjJJXaFKUc80C4RaGLdoXoNbGXy/iNT71W8+pLAFQG+YF37UO4qSDNqjGm0JF2D7p7rAPs6VJ1J1lAsIhsdZW3CSu"
+      "salt": "d2567f5519433dda18871db6adf68ab8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-29:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-30T00:16:48.966Z",
+ "updated": "2026-10-30T02:01:00.475Z",
  "record": {
   "w": 126,
   "l": 40,
