@@ -11074,6 +11074,9 @@
      "sport": "NHL",
      "start": "2026-10-30T23:00:00Z",
      "teams": "FLA vs WPG",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "890d3fdd05043c752a189ad8344eaf60511f167b6621ca9983112a24f4838cf5",
@@ -11149,7 +11152,7 @@
    ]
   }
  ],
- "updated": "2026-10-31T00:38:14.070Z",
+ "updated": "2026-10-31T01:44:29.155Z",
  "record": {
   "w": 130,
   "l": 42,
