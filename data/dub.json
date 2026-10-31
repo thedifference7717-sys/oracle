@@ -4397,7 +4397,7 @@
    "id": "2026-10-30:dub",
    "date": "2026-10-30",
    "published": "2026-10-30T21:00:19.957Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 10,
     "NHL": 3
@@ -4473,6 +4473,9 @@
      "sport": "NBA",
      "start": "2026-10-31T00:00Z",
      "teams": "MIA vs IND",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "0106d99cad46c6a984ae0fe04cc17e6594f784fdc68ac52cb6c65ae98bedd11e",
@@ -4506,6 +4509,7 @@
    "fair": -404,
    "price": 169,
    "prob": 0.8017,
+   "settled": "2026-10-31T02:10:37.852Z",
    "revealed": {
     "v": 1,
     "hash": "5c57f5af192989134241c56b47869338539dc094de5260ae8f1738b5ab04effa",
@@ -4520,9 +4524,9 @@
    }
   }
  ],
- "updated": "2026-10-31T00:38:13.678Z",
+ "updated": "2026-10-31T02:10:39.076Z",
  "record": {
-  "w": 19,
+  "w": 20,
   "l": 16
  }
 }
