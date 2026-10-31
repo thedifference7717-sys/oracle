@@ -11337,6 +11337,9 @@
      "sport": "NHL",
      "start": "2026-10-31T17:00:00Z",
      "teams": "BOS vs CHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "130839be1c97924607205199306a977a8ca9b0d1f1dc2ac8ea50c5292fb1b1f7",
@@ -11372,7 +11375,7 @@
    ]
   }
  ],
- "updated": "2026-10-31T17:00:24.687Z",
+ "updated": "2026-10-31T17:33:13.976Z",
  "record": {
   "w": 134,
   "l": 44,
