@@ -154,6 +154,7 @@ jobs:
           # Founder spots left on Whop, for the countdown (engine/scripts/whop.mjs).
           WHOP_API_KEY: ${{ secrets.WHOP_API_KEY }}
           # The $7 Ladder Pass's Whop product id (engine/scripts/pass.mjs).
+          LADDER_PASS_PLAN: ${{ vars.LADDER_PASS_PLAN }}
           LADDER_PASS_PRODUCT: ${{ vars.LADDER_PASS_PRODUCT }}
           # The owner's own Kalshi bets, only on /bet (engine/scripts/kalshi-trade.mjs).
           KALSHI_KEY_ID: ${{ secrets.KALSHI_KEY_ID }}
