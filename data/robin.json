@@ -10950,11 +10950,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 17.5 in 34 min · over this line 3 of his last 5",
+     "eventId": "401909282",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.61,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26OCT30INDMIA-MIADMITCHELL2-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8989,
+     "pAdj": 0.6493,
+     "player": "Davion Mitchell",
+     "playerId": "4278053",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-31T00:00Z",
+     "teams": "MIA vs IND",
+     "revealed": {
       "v": 1,
       "hash": "526acab1405562be2df3f29532e7a32bf1cbd9bd8fa841b69c504614f3d4ed8d",
-      "iv": "Htm1+s+SY8o9saZJ",
-      "ct": "qg6pBQpIFtTVIhvO9Rfh3FOF3S3J/euxzjO+kBhiY3S4VMx7gzEneg6HBAEppQuqbNPlK4N+GxiiIkzuS8zE9yLYGYsq4BU21KM7g5/y9oORcGPcpAERFKIOJkhtC7t9UQYyqms+Wsw0T45dA2XL2sfrjqM1CGgMYPDb/MmSuLUSJv2vJ0NxkzZkXdkx811o3kzCB5bVJlLnIx5ElT75jnS9KQ7PfR2wVmG7mVUiayphTiglWUoLYIYSNKDKIbWDzQBKGpoZ+JX+9wOd3BUG4xHmz82fHL6OdaZ6q71U/6pPYAQrdeSMIOSR1Sbwl5DENGOcDTafOrqiKD9vI0f1YkcCkd8rHmsHkB3nB+uA4nQ4ykb+ZtUBa3t8e9dYnwPj1sghI/tmLDg8sBoaxKgU+oXXi4CG8j8McOVAnzYyd6h8Hr+291E4Xi6J9s0dAFww8EE9MC5bCjLh8aIBiAeADokkPQfzz/kKBaClWszzAWWBroS9S2rNwH2J+xcTUcbQYwuw6u3QjgvqPQXiouzYaTLVi6HUcL8FZfm8XqI8q57h2Zky3kyf4yqTZcJiGrBvx1Z3Io7mVjngTIxMRjlA8XdAbbm6RAdB6lJLD66CFH1dP686FvCumYM0YHNVvNrc5CXj253HQWaHPJK4goGqS2dRY3w="
+      "salt": "fa81add700e5d260ec3979ee8b038473",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-30:robin#1"
      }
     },
     {
@@ -11103,7 +11140,7 @@
    ]
   }
  ],
- "updated": "2026-10-30T23:30:08.323Z",
+ "updated": "2026-10-31T00:00:17.249Z",
  "record": {
   "w": 130,
   "l": 42,

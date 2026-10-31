@@ -4403,12 +4403,6 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "5c57f5af192989134241c56b47869338539dc094de5260ae8f1738b5ab04effa",
-    "iv": "XEQthq2gDmHQ/b6b",
-    "ct": "dE3u469QUUA/0uxFrVNrgEEVkDs/wzuc2tPmBuWuBk8+C8LO2M3ISKK9VctRNfDtVJFAG+IJY6A3jkMWxIXraGK5e5vxw8LhYBxFcuMnEi3NzUcp9yadlKt6hNnft0UJHIvKQb9sawAPo7aIJy+6LCgBGq8aFRFpUhK/g1iDD2uYmeTmvfK8N0WNbof8RLPhrXBOs+dPSvvtVVCJVryQ/Y3F0gTiFcyjJeZYonOWqK5TaQ9B4rOpNxMs7BUS5LYGXzfe6LG19hDSWOP/4m+Br5xFew=="
-   },
    "legs": [
     {
      "detail": "proj 17.1 in 34 min · over this line 2 of his last 4",
@@ -4456,17 +4450,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 17.5 in 34 min · over this line 3 of his last 5",
+     "eventId": "401909282",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.61,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26OCT30INDMIA-MIADMITCHELL2-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8989,
+     "pAdj": 0.6493,
+     "player": "Davion Mitchell",
+     "playerId": "4278053",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-31T00:00Z",
+     "teams": "MIA vs IND",
+     "revealed": {
       "v": 1,
       "hash": "0106d99cad46c6a984ae0fe04cc17e6594f784fdc68ac52cb6c65ae98bedd11e",
-      "iv": "Vv+zD92+LikNH3xz",
-      "ct": "UsYx9b5NyXCjkuK7zsVl2fNi2YPhAQe5jffFnDbT2W+ngl0eFj4rTQjpGhQKgbVGugoLiP6u4zFNzup1epTuY//Jpdmhw0fgSGkx0I66eMqg3zQQJvfY16LcveEyZInfFAEhISpiNUgqy7wg+BCC2TzCjdJnbsN5GiRSGbnBqdmF5Oxpotcyl3P9lQfeqMnUoVm8ax8Bal3P0w37Q02El1XMD/Vogn/jRRNR7wj8mMZ7aCRWeI08eTpnvE3eb8jWmBpMvhN2S3ZlveHWLGw7fNrNW3F9IpjqBjPZvhSONIKxVJLdYaSB4IejLri6Qbff7kMu3V21LjD4lA8sLOk5Izxt81ouRDEXsN8wcyBf5YF297blNWC3VEwMp9TryNP/S76f+fsxmOM3pDchIsUHwnwHgHaWuR7NGtbI/InrVFJOWB0Etdo4coA/4WwZ0ZdJCIer0RXzb/CCSYTZ8+bFZCd+wsA8kuYR5+fxhcTqKFNJFV9+dcuwGFPTLHBrZpgc7tIGhlAQCJ7B/cmmTKUmmT5vzVkQF3XVVFdfydDDuQBMd0HiQg9wrSrCeTIjmcfp7NaTYIfoLGgUgoE5MbMPjzSyODJIjpomHu+U19hnzkBz2+YLe6ojWxnhVPkwK+z+uwOb9webUVYIZw3WONBeX1wm"
+      "salt": "e91c406e5416974b04bd73f0d4d0e7b5",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-30:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Duncan Robinson",
+    "sport": "NBA",
+    "start": "2026-10-30T23:30Z"
+   },
+   "fair": -404,
+   "price": 169,
+   "prob": 0.8017,
+   "revealed": {
+    "v": 1,
+    "hash": "5c57f5af192989134241c56b47869338539dc094de5260ae8f1738b5ab04effa",
+    "salt": "7ed819340b1e0b6ae467fa2ec8f5e60a",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-30:dub"
+   }
   }
  ],
- "updated": "2026-10-30T23:30:08.281Z",
+ "updated": "2026-10-31T00:00:17.207Z",
  "record": {
   "w": 19,
   "l": 16
