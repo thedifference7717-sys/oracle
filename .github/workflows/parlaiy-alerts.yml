@@ -153,6 +153,8 @@ jobs:
           X_COUNTDOWN: ${{ vars.X_COUNTDOWN }}
           # Founder spots left on Whop, for the countdown (engine/scripts/whop.mjs).
           WHOP_API_KEY: ${{ secrets.WHOP_API_KEY }}
+          # The $7 Ladder Pass's Whop product id (engine/scripts/pass.mjs).
+          LADDER_PASS_PRODUCT: ${{ vars.LADDER_PASS_PRODUCT }}
           # The owner's own Kalshi bets, only on /bet (engine/scripts/kalshi-trade.mjs).
           KALSHI_KEY_ID: ${{ secrets.KALSHI_KEY_ID }}
           KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
@@ -172,6 +174,15 @@ jobs:
           TG_CLIENT_DELAY_MIN: ${{ vars.TG_CLIENT_DELAY_MIN || '0' }}
           # The free public channel: the daily sealed and results posts.
           TG_PUBLIC: ${{ vars.TG_PUBLIC }}
+          # Bluesky and Threads, beside X (engine/scripts/social.mjs). Unset = off.
+          BSKY_HANDLE: ${{ vars.BSKY_HANDLE }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
+          THREADS_USER_ID: ${{ vars.THREADS_USER_ID }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          # X switches: X_DAILY=0 keeps the morning and matchup posts off X;
+          # X_SEARCH=0 turns off the reply, mention and highlight searches.
+          X_DAILY: ${{ vars.X_DAILY }}
+          X_SEARCH: ${{ vars.X_SEARCH }}
           DD_PRICE: ${{ vars.DD_PRICE || '-175' }}
           DD_MIN_EDGE: ${{ vars.DD_MIN_EDGE || '0.02' }}
           DD_PER_SPOT_PT: ${{ vars.DD_PER_SPOT_PT || vars.DD_PER_EDGE_PT || '2.50' }}
