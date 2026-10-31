@@ -11046,11 +11046,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 16.1 in 38 min · over this line 2 of his last 4",
+     "eventId": "401909286",
+     "kalshi": {
+      "ask": 0.64,
+      "bid": 0.61,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26OCT30DENPHX-DENCBRAUN0-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8696,
+     "pAdj": 0.6536,
+     "player": "Christian Braun",
+     "playerId": "4431767",
+     "price": -178,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-10-31T02:00Z",
+     "teams": "DEN @ PHX",
+     "revealed": {
       "v": 1,
       "hash": "d81bc785558232e3b8e39ee4262e3eba38e717d74c65e3f57c2568ae0f2cb462",
-      "iv": "ekbJOuYLILBpjpvI",
-      "ct": "hiMP7y34PCw2HRIk8X6kdw3ynm9Wlj4eVlnNPxJyRxBivFcVRxuWz4FTHrk+alrwR26OouUhFVXfY0nIsM5GnQVCjhKJA7wQwK5e5f05vMJ6R579rkNqAPMEDmGgSbiSXAB7Znqudmt/qp3cafqmPen0xKBy/v2/m9rXSUoRa3pJEGRatse4xE/Ri4W24KqhVw4ousVLmyXDigx6wUvlALqkaG8N4s9kGaN1OCLoAFC9VMkqKbMvkwZa69Io9FLap9lV8TnudeOGcqIvHhIT0dAIm8JcRbyVAIz7FQi2BHtKVyTjwi9QiYm4uQA+VzYMCtUqkHCZ8IoqfpvPnz7/NfvgTIZE5BSLzkwSD/1V40fiaqH+t1SW6ni9apBMuRTsTXK1Yh8prQna/aGvr0U5l6p4pAIUP20XXkmNwCzKY0zcPRraeDR0hVDYvaG5xIXhyeE600kMef1uFuJ1DsXqPL3O2h/64alv3WhUuUxRggoslDjTYyZRuIdkY7tNVkBuUpHd28rwPCbsmZ80Z1pOyC0C3OxYVi31YF832Q9HOBHzYZWP8S/MrQgKFbeUc5OkVmvn32A2Zz7hSTvJ8cjmcH8PwO8it7vVLrHEvHNR40VKNyO+CgvY+PDriSE+KbuPQGQdQgkxZCSsXh5mEfUqXg=="
+      "salt": "8a8ef25f377cbae4f41dc86525b9976d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-30:robin#3"
      }
     },
     {
@@ -11152,7 +11189,7 @@
    ]
   }
  ],
- "updated": "2026-10-31T01:44:29.155Z",
+ "updated": "2026-10-31T02:00:08.265Z",
  "record": {
   "w": 130,
   "l": 42,
