@@ -11317,11 +11317,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.449 · 1.29 pts/gm this season (14) · a point in 8 of his last 10",
+     "eventId": "2026020217",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.71,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26OCT31CHIBOS-BOSDPASTRNAK88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7252,
+     "pAdj": 0.7309,
+     "player": "David Pastrnak",
+     "playerId": "8477956",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-31T17:00:00Z",
+     "teams": "BOS vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "130839be1c97924607205199306a977a8ca9b0d1f1dc2ac8ea50c5292fb1b1f7",
-      "iv": "Jpf/qxSf/i1UGi2B",
-      "ct": "EUpig/ec4MlcEopkHjJ+YqzhEX5eEGZm8n/9tpk6cvAJjNDB5oj8HSoOTbQTbvy6Wk110semyTrRaaZcdR9LI5CGD0Vx+ySWfDifIx2oqW4i/VA6bUzavGQof101joCFUt+u3cuJ1Xq/TT55Wsj7VkFT6scG15FzTxAt6imkOSdHpvZfUJ/hgkvwcUc22XLVmdQIY8efnHCgYV5WCQ0cx30m20ElwnycW/1c6/DMrj9YThQ9KF0/qwX8skr1GvrmFcYAhkCQijT8+WsODsmO/XALnlmR0pXBvsHqW8bPD+ORf+8SGbijGFcYVjXUgS2+L+hvtkRBybM454vA+YE0LQA+5KzcHwK1K17vQXBQdPcjQNAWtF0HhGLlSA3G9z1dI3eXq6fyCpKkuhkufYSlj9T7M3xqI5nWftsrXimuPBO55Og5fTdpztK1y0O+NXv6alb8efxJ33SA3TqG7EYYNe5UQSAznmzU49xfmpUGx1QTdu4IY8T+rIq+wJLyXREj28/el0m1Hccex/06gGEB35YSAlqyjf7h6IgF2t6E8B/QRE/SNIijxhdS62xHAHe1n9CfIonqLuYYzwgirwFHK6tqFpsggCXGs6kVH1idaJEKkoAVhmgH6QOzKdUi28fMB2KJuNYnY4BcRSxSrBdbRVTppB7f12XfE0jlLS0giXNZ6+zJfihF2uglA/eTjhAu"
+      "salt": "e14c426442f13fb6a907168dbfd069e8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-31:robin#4"
      }
     },
     {
@@ -11335,7 +11372,7 @@
    ]
   }
  ],
- "updated": "2026-10-31T16:00:59.157Z",
+ "updated": "2026-10-31T17:00:24.687Z",
  "record": {
   "w": 134,
   "l": 44,
