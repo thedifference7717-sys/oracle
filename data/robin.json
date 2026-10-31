@@ -11385,6 +11385,9 @@
      "sport": "NHL",
      "start": "2026-10-31T20:00:00Z",
      "teams": "SJS vs OTT",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "c1e8426f39b26a46eb9b33dd708f23cbb1fcbd54f8eaba152ac7e3d5f98b34a5",
@@ -11412,7 +11415,7 @@
    ]
   }
  ],
- "updated": "2026-10-31T20:00:16.437Z",
+ "updated": "2026-10-31T22:38:16.352Z",
  "record": {
   "w": 134,
   "l": 44,
