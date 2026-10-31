@@ -11365,17 +11365,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.43 · 1.33 pts/gm this season (12) · a point in 6 of his last 10",
+     "eventId": "2026020222",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.68,
+      "spread": 0.04,
+      "ticker": "KXNHLPTS-26OCT31OTTSJ-SJMCELEBRINI71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7217,
+     "pAdj": 0.7205,
+     "player": "Macklin Celebrini",
+     "playerId": "8484801",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-10-31T20:00:00Z",
+     "teams": "SJS vs OTT",
+     "revealed": {
       "v": 1,
       "hash": "c1e8426f39b26a46eb9b33dd708f23cbb1fcbd54f8eaba152ac7e3d5f98b34a5",
-      "iv": "t3wXyVFeyXrq0D/D",
-      "ct": "i79bbEViAWB8XtRji/Kd//KxJKilbzIyOO6sZCUII0GIc0Xy4LB5qyQz+JBNhoUQ7xrvTP/wm2yVlgsPHvU7xyXA3vlMNqMWiB1NZ6661VFpP1jWRlPeBkUoxuX8+Jc5H7noR2Y6rbCt6c1HKAlo7EP1P0AcZGMQSh0eumbd3M6h7byM+W8leBP9RDgojREMeuf2uUroCfaZGilP6bhI70AFjnPC3+3K5bU52bmXIH/srkSf7xiBlFs0dB+dk/r3YWv+THK9y4HM0y/O4ZlCZ1Uh2+hSp4ckxfJZ4c9qBpfdZl3ryvfBoJFQEbaFsn8Dv7371FnWpGoGu/pLrleLqbiBWNc0hK91UQsKmqeHgdk/rXUeMik9IugcZJA22mSsCBWmlo5cOWHCqL1QEuBSjSMcy6FQdcCkgq8NObMZju2iKN4i3yPHchwe2jHA4JrgKotA619CAnrgtkvoA+WNJgzd+z0qAzxJR28u3g2itxesTmLvQTLMJdPw9hjBzwXtt2D5aDD8R3Srag4NQ9aH6pXSx9rDFXrMxhI3Rhz1Cl1CvWdlU2xNCYbskRHrXLFkNpqvZTF4qfyJb1zyuF8RIYZBFLPDQS5YyrnH80NsbffK1z626THKsQ9nd+saxsBYfdMWWLqgFQDKyIjy3NoRgAUahQ9eulW+VGQTBudNpaV861L4SJgZYfQU6PVCAo4v7Q=="
+      "salt": "986cc5be3dc9ea8a3ab951bae5084c13",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-31:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-10-31T17:33:13.976Z",
+ "updated": "2026-10-31T20:00:16.437Z",
  "record": {
   "w": 134,
   "l": 44,
