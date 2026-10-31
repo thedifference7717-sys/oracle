@@ -10860,7 +10860,7 @@
    "id": "2026-10-30:robin",
    "date": "2026-10-30",
    "published": "2026-10-30T21:00:19.957Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 10,
     "NHL": 3
@@ -11069,6 +11069,9 @@
      "sport": "NBA",
      "start": "2026-10-31T02:00Z",
      "teams": "DEN @ PHX",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "d81bc785558232e3b8e39ee4262e3eba38e717d74c65e3f57c2568ae0f2cb462",
@@ -11189,22 +11192,64 @@
       "ctx": "2026-10-30:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 14.191,
+      "pl": -0.809
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 14.487,
+      "pl": -5.513
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 5.529,
+      "pl": -9.471
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-10-31T02:31:57.431Z"
   }
  ],
- "updated": "2026-10-31T02:10:39.215Z",
+ "updated": "2026-10-31T02:31:58.138Z",
  "record": {
-  "w": 130,
-  "l": 42,
+  "w": 134,
+  "l": 44,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 643,
-   "l": 922
+   "w": 654,
+   "l": 968
   },
   "days": {
    "w": 17,
-   "l": 13
+   "l": 14
   }
  }
 }
