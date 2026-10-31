@@ -3438,7 +3438,7 @@
   {
    "id": "2026-10-30:ladder",
    "date": "2026-10-30",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-30T21:00:17.641Z",
    "cycle": 14,
    "rung": 2,
@@ -3495,6 +3495,9 @@
    "sport": "NBA",
    "start": "2026-10-30T23:30Z",
    "teams": "DET @ BKN",
+   "actual": 10,
+   "result": "10 PTS against a 9.5 line",
+   "settled": "2026-10-31T00:31:52.458Z",
    "revealed": {
     "v": 1,
     "hash": "451d5824242403e85476f1df690c6fab9a6d9a5b437a6ddc652bac5a1130978f",
@@ -3523,12 +3526,12 @@
    }
   }
  ],
- "updated": "2026-10-30T23:30:08.254Z",
+ "updated": "2026-10-31T00:31:52.461Z",
  "state": {
   "account": 469.04,
   "base": 22.55,
-  "stake": 37.58,
-  "rung": 2,
+  "stake": 49.43,
+  "rung": 3,
   "cycle": 14,
   "pl": 369.04,
   "cycles": {

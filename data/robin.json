@@ -10925,6 +10925,9 @@
      "sport": "NBA",
      "start": "2026-10-30T23:30Z",
      "teams": "DET @ BKN",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "cfbe6fad5aeb68287948118b610f7fd3bd4fc7ec18e47c2f13ad75b32b063f66",
@@ -11140,7 +11143,7 @@
    ]
   }
  ],
- "updated": "2026-10-31T00:00:17.249Z",
+ "updated": "2026-10-31T00:31:54.487Z",
  "record": {
   "w": 130,
   "l": 42,
