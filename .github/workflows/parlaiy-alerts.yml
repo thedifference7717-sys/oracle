@@ -63,6 +63,12 @@ jobs:
         working-directory: engine
         run: npm i --no-save --no-audit --no-fund --no-package-lock web-push@3.6.7 >/dev/null 2>&1 && echo "push library ready" || echo "push library unavailable; phone alerts off this run"
 
+      # Picture cards for X and the free channel (engine/scripts/cards.mjs).
+      # Without it the posts go out as text alone.
+      - name: Install the card library
+        working-directory: engine
+        run: npm i --no-save --no-audit --no-fund --no-package-lock @resvg/resvg-js@2.6.2 >/dev/null 2>&1 && echo "card library ready" || echo "card library unavailable; posts go out as text this run"
+
       - name: Restore alert state
         uses: actions/cache/restore@v4
         with:
