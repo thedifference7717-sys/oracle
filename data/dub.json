@@ -4425,6 +4425,9 @@
      "sport": "NBA",
      "start": "2026-10-30T23:30Z",
      "teams": "ORL @ TOR",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "cd750f9f13a06948989ad1067e1ac26b28eaa23bdf0c05b4ee371ace35d6a0f4",
@@ -4517,7 +4520,7 @@
    }
   }
  ],
- "updated": "2026-10-31T00:00:17.207Z",
+ "updated": "2026-10-31T00:38:13.678Z",
  "record": {
   "w": 19,
   "l": 16

@@ -11018,6 +11018,9 @@
      "sport": "NBA",
      "start": "2026-10-30T23:30Z",
      "teams": "ORL @ TOR",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "5976c9160b4ab33dc3ce02c107d958d8ea76d76d8a6c244477660a46b0604e83",
@@ -11116,6 +11119,9 @@
      "sport": "NHL",
      "start": "2026-10-30T22:00:00Z",
      "teams": "VGK vs NJD",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "01779481fe0c956e54b065845d931b4343c500db48f3654d6e2cf0c58bb5ff82",
@@ -11143,7 +11149,7 @@
    ]
   }
  ],
- "updated": "2026-10-31T00:31:54.487Z",
+ "updated": "2026-10-31T00:38:14.070Z",
  "record": {
   "w": 130,
   "l": 42,
