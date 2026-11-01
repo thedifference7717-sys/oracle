@@ -11903,17 +11903,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.934 · 2.64 pts/gm this season (14) · a point in 10 of his last 10",
+     "eventId": "2026020230",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV01EDMNYR-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8022,
+     "pAdj": 0.7914,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-01T23:00:00Z",
+     "teams": "EDM @ NYR",
+     "revealed": {
       "v": 1,
       "hash": "a32fa0bc52d140fa87d7219785ddc0aa581735b1d0af917f0cde029d98dbe2d3",
-      "iv": "MM3ruyiQESBocBSs",
-      "ct": "ZvWp4WXlafxo89IuCI877iMam1yvc7S4vBk8Kwpco+k++WX6XGIjsoqfLZtar0HqCG2cH7IeYrg13P0ZFMwclY4P7EBDQ/CA6Zis/P626l4eoDdZlpvka8u5ejQprGd8trlkLCo6lEF28+7QrYnNi99YtasbGd+/qgmF21eEIURMjA4g+M70CtEdpMbXHtCanINtmS8UO9W2xinLpRdItjTcYtYt9V5nE5BZlAJghsLhuHKgxn8MqefOTWo+P5bfGnQZibCsTgaSP7hgUF3ZvskgyGE3lDXMjuLS9Iz13+dP0TQnFPoj2nCgnp7K1uvQYdliF6EOi7dHYegXnJYw/MhOJMTBLa9D4OaIlZ1u/5mXF6wcKOD409rb59DxNVJIGG1dRO/FSp5Ry9VhSldlvP61mkM4ghGXjgeZh6HbJnRGpXK7U/hAHKFuVWoW1KbuHwvh8C+q3x3W2zFtk6mSAZsJTDnmU1IEy4Iz+Rs12LEFygYzESa2Xqe0SzOIZygi9QFwtmIDfFc8V64y5ACABFhzq+0lCNzQ77VTRAJMZ8vcjXzDz5uIlMEt25tzk4Zcfo1Hi3zODcAPwIOU+rnB0Eq+KnKnBo+oNlrQo3NK9NKgQ3alaUHamJN2LCk0eQJ7qJuxIRB5zk5t8LSyQdk4tNVWCIVOPI1x2DTOvtvJiRDOUqzpUfkU0H8N7yYf1Mk="
+      "salt": "9eb86cc9a5a29447e5041d08d363cd9f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-01:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-01T22:12:10.177Z",
+ "updated": "2026-11-01T23:00:20.391Z",
  "record": {
   "w": 137,
   "l": 47,
