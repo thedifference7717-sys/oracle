@@ -11739,6 +11739,9 @@
      "sport": "NFL",
      "start": "2026-11-01T18:00Z",
      "teams": "BAL @ BUF",
+     "result": "lost",
+     "actual": 0,
+     "note": "0 passing yards against a 199.5 line",
      "revealed": {
       "v": 1,
       "hash": "51fb836f0c504c2a9b4abd63ab1994b23019c45e9a4d06c659c30e935626504f",
@@ -11870,7 +11873,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T21:07:38.665Z",
+ "updated": "2026-11-01T21:23:43.638Z",
  "record": {
   "w": 137,
   "l": 47,

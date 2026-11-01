@@ -4654,19 +4654,13 @@
    "id": "2026-11-01:dub",
    "date": "2026-11-01",
    "published": "2026-11-01T17:01:15.118Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 4,
     "NFL": 12,
     "NHL": 5
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "12b32b411f1e05ff90448f8612f9b5b85d57e06b95ceb41cc25a7ced73f662d8",
-    "iv": "oEQ4cX3hUJ0CZxtF",
-    "ct": "e95Zz+D3YWOXCh0PkZD3r5Vaa9uHGqofzwV9kP4krww9Ebsx7enS+twWBjhNHloSz4yey0rX73SoGYySMvDoXcrA7G7UtWWOJ1IRGE7aKjuxYBWIhNBa6h+xBGs3Nzc09VNSD73KXG20/xuFAgDz8gp0ZXi3borLfxZa1DW2GYc5ZVvGf+LDh6Vc78CNg/7cb0xbkBivwczYE6I4e0KV+vmIJtdHODNSldxbAUZ32HYnktOOr4/F5rKS9MiwBf8oaNHa8de+lHU0mHqOzJqw"
-   },
    "legs": [
     {
      "detail": "QB · sim median 313 passing yards",
@@ -4689,6 +4683,9 @@
      "sport": "NFL",
      "start": "2026-11-01T18:00Z",
      "teams": "BAL @ BUF",
+     "result": "lost",
+     "actual": 0,
+     "note": "0 passing yards against a 199.5 line",
      "revealed": {
       "v": 1,
       "hash": "593541df7319179149ca28f6ac2b998371886bea0a583f431007465aa579d03d",
@@ -4758,12 +4755,33 @@
       "ctx": "2026-11-01:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Drake Maye",
+    "sport": "NFL",
+    "start": "2026-11-01T21:25Z"
+   },
+   "fair": -394,
+   "price": -128,
+   "prob": 0.7975,
+   "settled": "2026-11-01T21:23:42.086Z",
+   "revealed": {
+    "v": 1,
+    "hash": "12b32b411f1e05ff90448f8612f9b5b85d57e06b95ceb41cc25a7ced73f662d8",
+    "salt": "ee1568dfe8ea7631547a71d347210246",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-01:dub"
+   }
   }
  ],
- "updated": "2026-11-01T20:30:56.356Z",
+ "updated": "2026-11-01T21:23:43.291Z",
  "record": {
   "w": 20,
-  "l": 17
+  "l": 18
  }
 }
