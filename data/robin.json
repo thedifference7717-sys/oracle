@@ -11829,6 +11829,9 @@
      "sport": "NFL",
      "start": "2026-11-01T18:00Z",
      "teams": "NYJ vs LV",
+     "result": "won",
+     "actual": 233,
+     "note": "233 passing yards against a 199.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "86c7fa29512e5efad43cd4dc349f9ead48cef485b20c5a39e162bae0cd6de5cd",
@@ -11864,7 +11867,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T20:30:56.381Z",
+ "updated": "2026-11-01T20:39:45.757Z",
  "record": {
   "w": 137,
   "l": 47,
