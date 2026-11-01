@@ -11784,6 +11784,9 @@
      "sport": "NFL",
      "start": "2026-11-01T18:00Z",
      "teams": "MIN @ DET",
+     "result": "won",
+     "actual": 11,
+     "note": "11 receiving yards against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "34a14fbaeebcc20a0e35156038811652cae95989071246966d78c07eb7a0bf77",
@@ -11867,7 +11870,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T20:39:45.757Z",
+ "updated": "2026-11-01T21:07:38.665Z",
  "record": {
   "w": 137,
   "l": 47,
