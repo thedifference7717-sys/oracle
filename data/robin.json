@@ -11305,6 +11305,9 @@
      "sport": "NBA",
      "start": "2026-11-01T00:00Z",
      "teams": "CLE @ MIL",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "f40470766565de59d65a34747eb563a0e730ef39efc6be489a4cd0265adaeecb",
@@ -11526,7 +11529,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T00:00:27.532Z",
+ "updated": "2026-11-01T00:50:56.588Z",
  "record": {
   "w": 134,
   "l": 44,

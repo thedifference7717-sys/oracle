@@ -3528,7 +3528,7 @@
   {
    "id": "2026-10-31:ladder",
    "date": "2026-10-31",
-   "status": "open",
+   "status": "won",
    "published": "2026-10-31T16:00:55.470Z",
    "cycle": 14,
    "rung": 3,
@@ -3585,6 +3585,9 @@
    "sport": "NBA",
    "start": "2026-11-01T00:00Z",
    "teams": "CLE @ MIL",
+   "actual": 2,
+   "result": "2 AST against a 1.5 line",
+   "settled": "2026-11-01T00:50:54.407Z",
    "revealed": {
     "v": 1,
     "hash": "80fe937e8c425abfb3155d8b9e4af423a355abda2d7e98ddbdafde1797c88800",
@@ -3613,12 +3616,12 @@
    }
   }
  ],
- "updated": "2026-11-01T00:00:27.460Z",
+ "updated": "2026-11-01T00:50:54.411Z",
  "state": {
   "account": 469.04,
   "base": 22.55,
-  "stake": 49.43,
-  "rung": 3,
+  "stake": 77.2,
+  "rung": 4,
   "cycle": 14,
   "pl": 369.04,
   "cycles": {
