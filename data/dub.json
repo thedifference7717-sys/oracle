@@ -4533,33 +4533,121 @@
     "NHL": 10
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "ff02a916fcb0d4a37304b287581cf9a411536137a29453092d1e03700a0addd3",
-    "iv": "Z7uWxq20ZI+YiDih",
-    "ct": "KUn/0d6xF5A2b03RlCOWr0VtRVuTFpBsLSj26cLI7WhMxqHSoqV8hvjN/1fKUXENsmRGfN6pWMrVx9EbVQwt1kbKJice3UKP0N3LeTmNEJQpN8WMQyQZaZSXR4uS9F5CCS56dNRTklepBU7CpPUp6+TSJ9AkiSbeuKzpDH4sT2kSmXW84zM5C1g1J5hobWSYIcHCQMnKlSDBN+gcrY1dSbeOGpfb/DZWkcCpmpjossKKqZ7aAoEfW//TaabpmSSxBzfRanPg3D3QHOOuBR3kyBet"
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 15.1 in 29 min · over this line 3 of his last 5",
+     "eventId": "401909899",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.69,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26OCT31SACMEM-MEMJWELLS0-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8694,
+     "pAdj": 0.7131,
+     "player": "Jaylen Wells",
+     "playerId": "5112087",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-01T00:00Z",
+     "teams": "MEM vs SAC",
+     "revealed": {
       "v": 1,
       "hash": "df07aecbdff4739993a83270b39d92673a7057d204baed48aa86d11f6dde8cd8",
-      "iv": "PNRwD/wMwMYNWMmh",
-      "ct": "auMZABFEkFpyz4sA+Eyvi5eYwC8sSXnAbyDjshy25x6qT8Ye0/ujeJd+ZhptkAMLS+RIKV/a8kB+MFscg2Au1XL+oOl4ddYDHvw3rJ9lS1p+BCaPnozSbFB7w/smfhUQY1noFMcld2/3YlZVx5Zp8+RmC7VC/gSXoZWCz3RmL31mETx1lSZ+uuA6PMnnlSJHFnpzb+9hitdqGU7T83FBZAjx83RD3gWjr8EyzQwnwk/qyKij4at9IvInqJW3PpzRYJlHZT/2Pi8jnuQm8wRCCTHYhEbz4IBnifolekvNK7L8lfDv5WFuJZVS7IzHTUFRodva0MvEFhxElHHHh4yjvW51NUiLou33jDrktZQfWnKn3a/MGtuwnoXueO6b8+I1kgoZkvO6ZKd9vwwNddYRJLfDuwLMdkVkyGyniFeD0040My6xAHEbE9232+iHsN3rNAAVrJFaXOuM5OzdRpuJ1AQNpfRaSdyE4klNRExM2s5k7j+c1P9/0UiqqqF/eU6+GG1DzvLsjlUvh5l9+iDlNtXEbF73d/bEaLdK+tBwiMmIRuP2o7RXq691/Y8QPoWAnhGhaGzyNLav8EPC2JthIUuusef2pQZPR/BwxFW0GhY/PfRCh9UTVX7DzqBfu6mButgVz4vCESqwC0g="
+      "salt": "838745b667d5f6a68a73873ce3bea2eb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-31:dub#0"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 6.8 in 34 min · over this line 6 of his last 6 · back-to-back",
+     "eventId": "401909901",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.74,
+      "spread": 0.02,
+      "ticker": "KXNBAREB-26OCT31MINSAS-MINJMCDANIELS3-4"
+     },
+     "line": 3.5,
+     "market": "reb",
+     "need": "4+ rebounds",
+     "p": 0.8746,
+     "pAdj": 0.7707,
+     "player": "Jaden McDaniels",
+     "playerId": "4431671",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-01T00:00Z",
+     "teams": "MIN @ SA",
+     "revealed": {
       "v": 1,
       "hash": "8f06a578d126204e6d445cb98bb4cf5e37b398d3ce150b0f764c309cd06aa308",
-      "iv": "9pziLka/y92BCMun",
-      "ct": "w6utwhHleG2Iztybhu9r5rjEv4ANu/Jhm9ds7wIpst9S333gZ0NxOmWSA8NnjwuDsklFjvNTEm/svdH/+/Ts7sIrzKqTRsA/UwqO0poBp/c/37mK/0HPrHTu/8qfwiD0vs7doMZiCL6PMCN48C920LGCBRtA7Cy8t8XFsSgfBamAxfBuBX1BlGc9miYwIgWWNpgeFtOyz9NtUZkQz758NgF4VJ2m4nZDOklJF9w6IxhrX29v2Z0snZyas60wv+SUcWVGdWG6C624oNz8oqFCMUTfyMM/tGkkVusjJkrehBYDOxOwcAGKieau9prAU7KAevnjY1b8aK3gpW5wTSF4vBiYKhTjpKhNrg3fJrW0ykD/3/w8UjlMFkbuBBEg2mES97J1k0Ed9kfxQEnv8gKbCjmh5FTAzcHq4CU6PxCiypq3Sk7PcuxoTg2OsaWBSR06DiwY7D3GXOa6B0ipAs0ybDu3SSpnCPTZ1KAc7q+9ojVPJEIa5+gJm/MCjWQVVZvtGsIGNhCFCUSrBd3/YkxSIrW7ZwcdPLhaTlv1OyxffiT6t+cuhdwn91puK1h8RH3lMgzSJV7QOVpNQtTYyRpsE71yg34aIznfCGVgMbQlukL2bGHJR+FLNJvyZwK0ZQegaUyf+NRlEHnfaNgoDuZ1KGitZre96vunj0cniWRGP4k="
+      "salt": "85d1949358c7f3513e4380d84872fa5f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-31:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Peyton Watson",
+    "sport": "NBA",
+    "start": "2026-11-01T00:00Z"
+   },
+   "fair": -317,
+   "price": -114,
+   "prob": 0.7604,
+   "revealed": {
+    "v": 1,
+    "hash": "ff02a916fcb0d4a37304b287581cf9a411536137a29453092d1e03700a0addd3",
+    "salt": "af99ceae4e753e02fde16d47e66c612e",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-10-31:dub"
+   }
   }
  ],
- "updated": "2026-10-31T16:00:57.979Z",
+ "updated": "2026-11-01T00:00:27.490Z",
  "record": {
   "w": 20,
   "l": 16
