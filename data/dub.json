@@ -4527,7 +4527,7 @@
    "id": "2026-10-31:dub",
    "date": "2026-10-31",
    "published": "2026-10-31T16:00:57.979Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 7,
     "NHL": 10
@@ -4600,6 +4600,9 @@
      "sport": "NBA",
      "start": "2026-11-01T00:00Z",
      "teams": "MIN @ SA",
+     "result": "lost",
+     "actual": 3,
+     "note": "3 REB against a 3.5 line",
      "revealed": {
       "v": 1,
       "hash": "8f06a578d126204e6d445cb98bb4cf5e37b398d3ce150b0f764c309cd06aa308",
@@ -4633,6 +4636,7 @@
    "fair": -317,
    "price": -114,
    "prob": 0.7604,
+   "settled": "2026-11-01T02:29:10.296Z",
    "revealed": {
     "v": 1,
     "hash": "ff02a916fcb0d4a37304b287581cf9a411536137a29453092d1e03700a0addd3",
@@ -4647,9 +4651,9 @@
    }
   }
  ],
- "updated": "2026-11-01T00:00:27.490Z",
+ "updated": "2026-11-01T02:29:11.504Z",
  "record": {
   "w": 20,
-  "l": 16
+  "l": 17
  }
 }
