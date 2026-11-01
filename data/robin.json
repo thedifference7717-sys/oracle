@@ -11923,6 +11923,9 @@
      "sport": "NHL",
      "start": "2026-11-01T23:00:00Z",
      "teams": "EDM @ NYR",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "a32fa0bc52d140fa87d7219785ddc0aa581735b1d0af917f0cde029d98dbe2d3",
@@ -11950,7 +11953,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T23:00:20.391Z",
+ "updated": "2026-11-01T23:10:50.034Z",
  "record": {
   "w": 137,
   "l": 47,
