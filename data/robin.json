@@ -11674,11 +11674,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 10.2 in 36 min · over this line 3 of his last 5",
+     "eventId": "401909903",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.71,
+      "spread": 0.06,
+      "ticker": "KXNBAREB-26NOV01BOSORL-ORLWCARTER34-6"
+     },
+     "line": 5.5,
+     "market": "reb",
+     "need": "6+ rebounds",
+     "p": 0.9032,
+     "pAdj": 0.7805,
+     "player": "Wendell Carter Jr.",
+     "playerId": "4277847",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-01T20:30Z",
+     "teams": "ORL vs BOS",
+     "revealed": {
       "v": 1,
       "hash": "c65e68ce342a16d996e8a938e364c3750d1f99738eab58333cfc3b9ec9d47aaf",
-      "iv": "SX+fLsKDHSzo11jk",
-      "ct": "0/rcuKkVTrnwjWKE6zGJY/iL2YMV4bAMOgfovT6z3BC9pOxRnVwMucbrFqEHk3yVngXvwkV9RqGyFk/cRougkT9xL5gj8RiHb/1ACng8YgQgY3tJNzSDcqtFdGL3rugkJjR9fFLKylUVhm9lmeBdVXlQaXEbjtSi/ejTCkk/qd6eLg0RiSM7uUYKmV4pejrMchR/piwa8WplbgA3JCtllk267060iX+J6pfFcCU+LVJsryO+8EY6ikSGWN3DrXhKqHnIxszZh0uD/UBTY+ZOT4yZir6sfVspxv7bHVxDek92fQAHnfiQfINTLC6IrJB/6xtlmjLv+RsvlkszETIlA97nFlzvsg6Od1RqdqaZHzZ2QdOMwEs4xQwIG/wWeaSiKpZEbIt5y8DQpSztBHbZwExHyaVMsH8ZMjNqjzceCDKOgTpNHZL8j07SlS58+kQYcP/nmHhkP6uN9hDNcKmScfJPAJJKo7oqo8BzP9bkI54q6JRYS8ecZxPQdeyfGRCCFxBvmz6O6NLWal8fp6ntuWOIb0AH+NU3ADfTHMzeZHAhHesg1XPhRN++eXjVyUwTvuouuXhUTd3kM8plPFTZnMmbrIW9JnAWucpTs6uwOJ84rDRf8bN39WH03Q0cjVQk5wsA6LNWw4RNzCHMrTeGi/CqbGh8Tg=="
+      "salt": "e2853e16eb3d60ff4acd9f3fa357e0ac",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-01:robin#1"
      }
     },
     {
@@ -11827,7 +11864,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T18:00:46.592Z",
+ "updated": "2026-11-01T20:30:56.381Z",
  "record": {
   "w": 137,
   "l": 47,
