@@ -4669,11 +4669,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 313 passing yards",
+     "eventId": "401873026",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.71,
+      "spread": 0.02,
+      "ticker": "KXNFLPASSYDS-26NOV01BALBUF-BALLJACKSON8-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.8829,
+     "pAdj": 0.7539,
+     "player": "Lamar Jackson",
+     "playerId": "3916387",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-01T18:00Z",
+     "teams": "BAL @ BUF",
+     "revealed": {
       "v": 1,
       "hash": "593541df7319179149ca28f6ac2b998371886bea0a583f431007465aa579d03d",
-      "iv": "iSZX3+DMuGrJtCaM",
-      "ct": "zw6z+XKEYtCUCQgHnoeYTY5qxu8Pa+CXnUS8A0/ZrRwMCakfNRVb4HpEL/EPZ5dnB+cYTqCEl5iCR4Nrhaii+Lux0Rpoph8i9IeJEt+qJbLck0an79gmyHsn/ILcp3G42hLaa0T6KHUwyDPlgMTQK0su9/AM6sPqRQ9RgujOuf85ZR4mSySOZr/GRDupsjYvoQWC/gfjoMiruT9ZKrQBDOoN8BXQ5fv8I8BaELihl1wjaMm+PRstpJyC+g1PObgTzK/Qp9bjBDBqaTfV6mnqZpojI3/T/R0wAs/CuXshJ0u48PwgNW1Q8pHLzBPlWlD8W7/dPDZj1Nis0lh+62RHpYzYhfVbU+pBAixv5YmuAQ06cWcCjRm9SlEF3PWWJ0SP5RlSJ0cTxpTImerm4IiHukj9lZNSso3vEgtmlS27Kh52VF4Ba7gMa/tVs9v8KWZrqNjoFT04baUUgknhvaZnHoivoqXbERP3xHn7F0/H6Rqdu81tTyFGG3wmQEaPYt0pzuj40i3bT1Mc1fuW5JmOvj/jiP4ljEyXwEVfHkbqr4xbE9BgXmLj4Oo1r8iPjlq7axbukSkhr4C25myVSpjPbe/vV01Gxx32G9+bcdKTZg6aBMTAMx4X06IrYPdWWLWatm+lCkacW837UXxTee0="
+      "salt": "72067f00068134182cbb2330378c3627",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-01:dub#0"
      }
     },
     {
@@ -4687,7 +4724,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T17:01:15.120Z",
+ "updated": "2026-11-01T18:00:46.548Z",
  "record": {
   "w": 20,
   "l": 17
