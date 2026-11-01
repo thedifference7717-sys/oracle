@@ -11731,6 +11731,9 @@
      "sport": "NBA",
      "start": "2026-11-01T20:30Z",
      "teams": "ORL vs BOS",
+     "result": "won",
+     "actual": 6,
+     "note": "6 REB against a 5.5 line",
      "revealed": {
       "v": 1,
       "hash": "c65e68ce342a16d996e8a938e364c3750d1f99738eab58333cfc3b9ec9d47aaf",
@@ -11910,7 +11913,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T21:25:50.523Z",
+ "updated": "2026-11-01T22:12:10.177Z",
  "record": {
   "w": 137,
   "l": 47,
