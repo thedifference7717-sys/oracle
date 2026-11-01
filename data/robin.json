@@ -11423,11 +11423,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.776 · 1.69 pts/gm this season (13) · a point in 7 of his last 10",
+     "eventId": "2026020226",
+     "kalshi": {
+      "ask": 0.78,
+      "bid": 0.73,
+      "spread": 0.05,
+      "ticker": "KXNHLPTS-26OCT31CGYCOL-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7798,
+     "pAdj": 0.7773,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -355,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-01T02:00:00Z",
+     "teams": "COL vs CGY",
+     "revealed": {
       "v": 1,
       "hash": "4fedeb21dbd2dc7698a4ff90c95ea09d8a2ee65e5e5d69d488c2aa003f296498",
-      "iv": "aR7ME9i4w06356ev",
-      "ct": "/Gf4s7ewZT6gljTIT1iNgJJ7pBDbjwxo0O10M6VF7DUJ/zxI3C7gS5l7VkdjBPJzJ3nLHT7ZowXrE7FGzZbxZlz+VZOSRufc6wMdIQgHdIelMD0rlI/fv04QdnF5WlZc5Qcqyeqr2DmPlANARPJ1X/pAZ8KCeuC2Bbt548N/GG5Wd3eZ3fp+Uxl086bJaY1sFSbJuoi7v8mfqeP3Vtu/MwJ/ASdIl0fdMbMIgSeP2puohwPsDZy1Gn4vkz1w22oQZtOkJCzhabMSdpYtQdVgTxBoyTZThDdas3X2EvBTgD0Z1jMEhPR8kS5K6m7Y09EcVeldm5CFS3L6Fqb+iVjakmA6zJoPck0tz3KqK16Aoh4MlkTb2+kUR1WUoYiDQdJ6Mka/3R3vk/WzDcKkIQBvJI2cD4dwM7bXr6uAsRYocNT96wMDmDLFCHIZ3vdBm7zsdJXkxOzf5XZpdhVt6wxRKB8sXHRc2hdB5RCk3NpuVrksP4zMC9JTjPp1QrhY3KjnakWBQxY6QhhDoDBV3e+VTa7bXICumixmrCgjjdNWOIrj1BMsQ2xvr2ykg5vzCavogA5x6pjn4ajfADhvbkLH9LZ3Am6Psef1FjgCnSrdI8f2EGZK2Js4nOwBI4cIWJNsnTPeGxIAFfcJ/PJhZLMgF2oC315cDf83TKVPa/WkBSE5M/zO15RIRGvIRnIchUJBBTzl"
+      "salt": "e583f1e600cfc01b546ea21adeb44195",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-10-31:robin#3"
      }
     },
     {
@@ -11529,7 +11566,7 @@
    ]
   }
  ],
- "updated": "2026-11-01T00:50:56.588Z",
+ "updated": "2026-11-01T02:00:57.997Z",
  "record": {
   "w": 134,
   "l": 44,
