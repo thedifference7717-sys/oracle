@@ -11620,7 +11620,7 @@
    "id": "2026-11-01:robin",
    "date": "2026-11-01",
    "published": "2026-11-01T17:01:15.118Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 4,
     "NFL": 12,
@@ -11686,6 +11686,9 @@
      "sport": "NFL",
      "start": "2026-11-01T21:25Z",
      "teams": "NE @ MIA",
+     "result": "lost",
+     "actual": 199,
+     "note": "199 passing yards against a 199.5 line",
      "revealed": {
       "v": 1,
       "hash": "50dac943fe3cbe6fad41e508ed8a27dd88945044c6e9a56f3351e05007b7da3d",
@@ -11950,22 +11953,64 @@
       "ctx": "2026-11-01:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 12.59,
+      "pl": -2.41
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 12.081,
+      "pl": -7.919
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 4.33,
+      "pl": -10.67
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-02T00:32:22.653Z"
   }
  ],
- "updated": "2026-11-01T23:10:50.034Z",
+ "updated": "2026-11-02T00:32:23.247Z",
  "record": {
-  "w": 137,
-  "l": 47,
+  "w": 141,
+  "l": 49,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 658,
-   "l": 1021
+   "w": 669,
+   "l": 1067
   },
   "days": {
    "w": 17,
-   "l": 15
+   "l": 16
   }
  }
 }

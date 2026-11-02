@@ -3618,7 +3618,7 @@
   {
    "id": "2026-11-01:ladder",
    "date": "2026-11-01",
-   "status": "open",
+   "status": "lost",
    "published": "2026-11-01T17:01:12.819Z",
    "cycle": 14,
    "rung": 4,
@@ -3676,6 +3676,9 @@
    "sport": "NFL",
    "start": "2026-11-01T21:25Z",
    "teams": "NE @ MIA",
+   "actual": 199,
+   "result": "199 passing yards against a 199.5 line",
+   "settled": "2026-11-02T00:32:20.629Z",
    "revealed": {
     "v": 1,
     "hash": "f6286c05093e421e96a69b6a73de9f83ca29e307cfc1dc5da824920e5b2d5d64",
@@ -3704,17 +3707,17 @@
    }
   }
  ],
- "updated": "2026-11-01T21:25:50.482Z",
+ "updated": "2026-11-02T00:32:20.632Z",
  "state": {
-  "account": 469.04,
-  "base": 22.55,
-  "stake": 77.2,
-  "rung": 4,
-  "cycle": 14,
-  "pl": 369.04,
+  "account": 446.49,
+  "base": 27.06,
+  "stake": 27.06,
+  "rung": 1,
+  "cycle": 15,
+  "pl": 346.49,
   "cycles": {
    "done": 5,
-   "busted": 8
+   "busted": 9
   },
   "canFund": true
  },
