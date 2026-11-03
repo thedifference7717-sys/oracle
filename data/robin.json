@@ -12264,6 +12264,9 @@
      "sport": "NHL",
      "start": "2026-11-03T00:00:00Z",
      "teams": "FLA vs DET",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "a1c600e88de773a1c60b488c8f57969929095b3e9aa94b304d87d436206b9d8d",
@@ -12291,7 +12294,7 @@
    ]
   }
  ],
- "updated": "2026-11-03T01:35:29.804Z",
+ "updated": "2026-11-03T02:23:58.527Z",
  "record": {
   "w": 141,
   "l": 49,
