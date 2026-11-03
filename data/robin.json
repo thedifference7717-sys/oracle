@@ -12213,6 +12213,9 @@
      "sport": "NHL",
      "start": "2026-11-03T00:00:00Z",
      "teams": "BOS vs VGK",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "584cad4905daada09241c2aedb47b1ee3ed2ab68099c9a75671c1326f0106755",
@@ -12285,7 +12288,7 @@
    ]
   }
  ],
- "updated": "2026-11-03T01:00:17.852Z",
+ "updated": "2026-11-03T01:14:26.810Z",
  "record": {
   "w": 141,
   "l": 49,
