@@ -3709,7 +3709,7 @@
   {
    "id": "2026-11-02:ladder",
    "date": "2026-11-02",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-02T23:00:53.414Z",
    "cycle": 15,
    "rung": 1,
@@ -3767,6 +3767,9 @@
    "sport": "NBA",
    "start": "2026-11-03T00:30Z",
    "teams": "ORL vs WSH",
+   "actual": 10,
+   "result": "10 PTS against a 9.5 line",
+   "settled": "2026-11-03T02:50:20.397Z",
    "revealed": {
     "v": 1,
     "hash": "703f46cc42a4004d56f6744ace8e924e646eda1eca826a4997dda6d45c6387a5",
@@ -3795,12 +3798,12 @@
    }
   }
  ],
- "updated": "2026-11-03T00:30:26.855Z",
+ "updated": "2026-11-03T02:50:20.401Z",
  "state": {
   "account": 446.49,
   "base": 27.06,
-  "stake": 27.06,
-  "rung": 1,
+  "stake": 34.86,
+  "rung": 2,
   "cycle": 15,
   "pl": 346.49,
   "cycles": {

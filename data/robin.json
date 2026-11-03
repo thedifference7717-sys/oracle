@@ -12067,6 +12067,9 @@
      "sport": "NBA",
      "start": "2026-11-03T00:30Z",
      "teams": "ORL vs WSH",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "235a1a8f279c0b82cc2eb297aab1361dc64fd137e25d69fbaf969b7adcddc3b6",
@@ -12294,7 +12297,7 @@
    ]
   }
  ],
- "updated": "2026-11-03T02:23:58.527Z",
+ "updated": "2026-11-03T02:50:22.150Z",
  "record": {
   "w": 141,
   "l": 49,
