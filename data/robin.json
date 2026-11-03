@@ -12001,7 +12001,7 @@
    "id": "2026-11-02:robin",
    "date": "2026-11-02",
    "published": "2026-11-02T23:00:56.707Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 15,
     "NFL": 1,
@@ -12163,6 +12163,9 @@
      "sport": "NBA",
      "start": "2026-11-03T03:00Z",
      "teams": "MIA @ LAL",
+     "result": "won",
+     "actual": 12,
+     "note": "12 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "f87fc18c3f763682f39a94d655ff868fcbac05bd0c573d24aea7606c190336c0",
@@ -12331,21 +12334,63 @@
       "ctx": "2026-11-02:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 6,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 31.542,
+      "pl": 16.542
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 20,
+      "back": 60.814,
+      "pl": 40.814
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 65.838,
+      "pl": 50.838
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 6,
+      "back": 37.949,
+      "pl": 31.949
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 9.099,
+      "pl": 8.099
+     }
+    ]
+   },
+   "settled": "2026-11-03T04:12:02.119Z"
   }
  ],
- "updated": "2026-11-03T03:00:53.444Z",
+ "updated": "2026-11-03T04:12:02.720Z",
  "record": {
-  "w": 141,
+  "w": 147,
   "l": 49,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 669,
+   "w": 726,
    "l": 1067
   },
   "days": {
-   "w": 17,
+   "w": 18,
    "l": 16
   }
  }

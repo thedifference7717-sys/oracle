@@ -4782,7 +4782,7 @@
    "id": "2026-11-02:dub",
    "date": "2026-11-02",
    "published": "2026-11-02T23:00:56.707Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 15,
     "NFL": 1,
@@ -4859,6 +4859,9 @@
      "sport": "NBA",
      "start": "2026-11-03T03:00Z",
      "teams": "MIA @ LAL",
+     "result": "won",
+     "actual": 12,
+     "note": "12 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "ddc327b757ea6c913a8009f3d12bb4cf2d98528132c6334a7b15f0e259b483c2",
@@ -4892,6 +4895,7 @@
    "fair": -341,
    "price": 157,
    "prob": 0.7731,
+   "settled": "2026-11-03T04:12:00.851Z",
    "revealed": {
     "v": 1,
     "hash": "477b76e23ad30db9401d816568f158ad79df10b72b2a167c3f327e54107571ca",
@@ -4906,9 +4910,9 @@
    }
   }
  ],
- "updated": "2026-11-03T03:00:53.400Z",
+ "updated": "2026-11-03T04:12:02.074Z",
  "record": {
-  "w": 20,
+  "w": 21,
   "l": 18
  }
 }
