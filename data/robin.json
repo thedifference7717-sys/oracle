@@ -12112,6 +12112,9 @@
      "sport": "NBA",
      "start": "2026-11-03T00:00Z",
      "teams": "OKC @ CLE",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "0f80b44cb28f535faa16a96805645936601894d25492fe92403254275165fc89",
@@ -12245,7 +12248,7 @@
    ]
   }
  ],
- "updated": "2026-11-03T00:30:26.926Z",
+ "updated": "2026-11-03T00:42:11.382Z",
  "record": {
   "w": 141,
   "l": 49,
