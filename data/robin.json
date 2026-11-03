@@ -12148,11 +12148,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.595 · 1.71 pts/gm this season (14) · a point in 7 of his last 10",
+     "eventId": "2026020234",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV02COLCHI-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7512,
+     "pAdj": 0.7629,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-03T01:00:00Z",
+     "teams": "COL @ CHI",
+     "revealed": {
       "v": 1,
       "hash": "be52f139a98225fc67523fab91a06c7d23e64ec3c1cd609184f005fdc275f9e0",
-      "iv": "oWNeBRg+t0zca6JV",
-      "ct": "BwCAgLPbR3p5UQiiz+JJdzQ4smptB7YiunhsINJNrpqjcithangdzh0WI0ohbZIR2Z/3ME7CEW0i0XUpySpSzMHMYuKgXVYFi4k+jCqPG9aUUf3HCQSopFBE/3HgwAVOLt6tB3y1EFVXj3wM6HFQ1rU373fSjNZyqADffH7KXy0aurwUUyuNW02zumx109qXeGlFUxg0n7jU2e+w2B3cpJeRNsx+tnR3OfAApZmmZW3uPqUnOQ14VbIQWg92WOWSWWakjLt7TR+Kc86Z+dgWMtkvxZAcPJeCR+z1eQbbUCriMwEHRRqpw/SpiuRxj6iypLfxUpTk1v11A/CqKH27oVCc1PINkVCCosG213Q8jFTy1X7ezH9NCJSbx/RTSihVm8DNXqB5vjRE1pWK+T4Xxlw040nVImrGAiXQxbjyyPhBo0nra1nHqJUo1Zeien916jmvJcF7exTF9o2RNRRRbWj5Pmw5HCMqmc9EBjgFdEUd+5nsy2YIadsBw1k8QGoSDg8965kQ45RoEYvrOFZOOqFpoJ2T/gPLTsu10/JuUxl1AxGdkca/fFLrazDT85B1X6H9bIVQ1yK3vyGGv3hWRbYmQ+pk0OSpbu4ZSTp4N7N1dxHbwg0ObqJ2jbg5NxJhQJHG7IMGy1O2oiOAj1IUEVSNm5ibvsuBDQlBfWyVivlXkurQUvq4f02Mf0zH9MPppnE="
+      "salt": "a4f131191775af2a0e8daec2e580418c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-02:robin#3"
      }
     },
     {
@@ -12248,7 +12285,7 @@
    ]
   }
  ],
- "updated": "2026-11-03T00:42:11.382Z",
+ "updated": "2026-11-03T01:00:17.852Z",
  "record": {
   "w": 141,
   "l": 49,
