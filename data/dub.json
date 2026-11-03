@@ -4789,12 +4789,6 @@
     "NHL": 4
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "477b76e23ad30db9401d816568f158ad79df10b72b2a167c3f327e54107571ca",
-    "iv": "p/+WKs/YKFH5+fRb",
-    "ct": "dEZnG6LbfV1lNrMAC8VM5DGAjLuTLoTNJNSr4FAfTirDwnBKBipHEkLXbFbpb96H6sPMvMXrgPjwpNZKkdpwa6TI1FYt7uMBLMYyh+bRhw4GEXDwggmJmbJhm2X9zsHbEleqvxAfV3a6xXJ7rwLup6S2g+zRUZtng6byeVPsudBz1jHXJLBfReud/ejEZVBwrbZm6E8f4aDtuZtFaBCOfvt5aSMDnste5aUb/Akpq4iirdqr0Fd3xuEVXfS8UM/q4GMHrgGPq17zwGKYgZlWXAUCu6Y="
-   },
    "legs": [
     {
      "detail": "proj 4.5 in 30 min",
@@ -4845,17 +4839,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 16.0 in 34 min · over this line 4 of his last 6",
+     "eventId": "401909921",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.6,
+      "spread": 0.07,
+      "ticker": "KXNBAPTS-26NOV02MIALAL-MIADMITCHELL2-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8739,
+     "pAdj": 0.6918,
+     "player": "Davion Mitchell",
+     "playerId": "4278053",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-03T03:00Z",
+     "teams": "MIA @ LAL",
+     "revealed": {
       "v": 1,
       "hash": "ddc327b757ea6c913a8009f3d12bb4cf2d98528132c6334a7b15f0e259b483c2",
-      "iv": "CXrSroiJMaoBhzfn",
-      "ct": "/jQCD8WkLbf3Dwna7WZrx1CIFkRznjYKaFbI3ErHmw8U5Qp3VBDIMhU49sFpu8EQiXgLS/cCJ2Xy3kfuSPBzxuG4krOI2v6azO9nOgw+96qT3kVH4WNgBa8yhPnQwwlpSFZys5mdr9SfRBbNzdGbZNJZKp/+wwxwrjIssO0bKHa7zBskCs10MMEkGsDo7RFr16RHRawcTF4dwFR5+u4EQmWY1puI72elssfTYDoEL7mMYwbG1T/iRl7X+cgwPcSmBPUkp3BwqyCPCkt42HitUzeCwPMV8ZClG30a4MMSZbdPPJuhFeBT7koNhOS1l3mtKEppCUhStGMKZtgzTtfZBCCeCWfEoTFt3L4OJIuw6AGyXeIZuqn9UBSQ3Dki1L3+eS3epjE/ea9TRwZbWjoJGAnvuGo3clRvncLY5fT8E22w7QFzxeTAwZGEbCaxMTjcs2Ni9/uGEEkn11UJwaXd9P5/7JoLRGg99rlLr1Ht3g8HWyZ1ztSD7W8iwIgbvzpAJzbuX6kbiaII3xlPNnwcR3GgnpEyX/EwKMXNAW7j3bqZMOoAKEqwLVmAwNzRHM24LXX3V8ggoP/HNf6xQrYQbbH0S34kW265fX/O6hP2jzWYcYLninwmFROJeURVvE0UzDxFAepkngzfElK/P7B+Ig=="
+      "salt": "824735ba70be14acc86c80cbbedbdf60",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-02:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Tristan da Silva",
+    "sport": "NBA",
+    "start": "2026-11-03T00:30Z"
+   },
+   "fair": -341,
+   "price": 157,
+   "prob": 0.7731,
+   "revealed": {
+    "v": 1,
+    "hash": "477b76e23ad30db9401d816568f158ad79df10b72b2a167c3f327e54107571ca",
+    "salt": "ff9891feb00f6b867857686416694d21",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-02:dub"
+   }
   }
  ],
- "updated": "2026-11-03T00:42:11.232Z",
+ "updated": "2026-11-03T03:00:53.400Z",
  "record": {
   "w": 20,
   "l": 18
