@@ -4797,11 +4797,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 4.5 in 30 min",
+     "eventId": "401909907",
+     "kalshi": {
+      "ask": 0.58,
+      "bid": 0.57,
+      "spread": 0.01,
+      "ticker": "KXNBAAST-26NOV02OKCCLE-OKCJMCCAIN3-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8846,
+     "pAdj": 0.6323,
+     "player": "Jared McCain",
+     "playerId": "4683778",
+     "price": -138,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-03T00:00Z",
+     "teams": "OKC @ CLE",
+     "revealed": {
       "v": 1,
       "hash": "496e3fc00c5613e785b9cdde470903f9339e70097a7d814355a33089192f258f",
-      "iv": "P0C5gojquEtevCD5",
-      "ct": "ZAcfG4lSD9h1oLD4pSwzuRS5t9olzp0W2zvr4VNQBYQAgf9h5MM8Z2p+sB3OibcoDZh+6CePm9NIMeD1obCFDYEdBtjUivbsxX4Yh9us1p+yPHJYkBjmj9lATpTc1v26sm135dP228YOwGDkySmEPM6Sr5w8rgfKvD+cyXjw3pjuQBlBY0uCEKnd5fPoAzmPSFhghCmSImKj7FKvdC8Vqcvl5ixUAcSAGd1EOnOiyKSUXUjD29LvMQYLUfHezm8lpjKzMN0tM9sSWeG6GfXz+pNuoQ6fwtfvMc4Z4GY+r5k814vjqw1Cs/7h4r8AgmBtl+ch8RCH+U53J9yeopkCe+tfnR1PbSGkR0eFfPO74m5444MB9AmqXWgExzGG85mDZfkzFajCOAOFbOrlfi7wqKs4MRERDeTyvuVzzf5LJ9H0mnnCDcZw8yT46/56ul9RmK2r5RK2VaZZpKBBOOFijBmvofJ/5/fHxJoE0aFXLwAEhPIhGoyInP+e0gytoynrNMfsJH4uLrKV3i2AvPzqWd5w++HsphEHmbfxZT4LA06XH7m3pMh8P9/noWndVGWNGriEVLVrULzZWpDux6e6DG+TXvj4xhte"
+      "salt": "5708bd8d8578c147cfd7636db4f878b8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-02:dub#0"
      }
     },
     {
@@ -4815,7 +4852,7 @@
    ]
   }
  ],
- "updated": "2026-11-02T23:00:56.708Z",
+ "updated": "2026-11-03T00:00:26.222Z",
  "record": {
   "w": 20,
   "l": 18

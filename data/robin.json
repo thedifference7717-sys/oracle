@@ -12055,11 +12055,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 4.5 in 30 min",
+     "eventId": "401909907",
+     "kalshi": {
+      "ask": 0.58,
+      "bid": 0.57,
+      "spread": 0.01,
+      "ticker": "KXNBAAST-26NOV02OKCCLE-OKCJMCCAIN3-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8846,
+     "pAdj": 0.6323,
+     "player": "Jared McCain",
+     "playerId": "4683778",
+     "price": -138,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-03T00:00Z",
+     "teams": "OKC @ CLE",
+     "revealed": {
       "v": 1,
       "hash": "0f80b44cb28f535faa16a96805645936601894d25492fe92403254275165fc89",
-      "iv": "8a+r58rqPuTM4hpJ",
-      "ct": "8kPS7uXY2tENpeRW02nfTTzHOUCIYmOZOmBXtOKmBTwymhXkv5nzGy7nnvpuWalEToM/sJHv7WEchv14+Lt6Ja7gqUErbSO/mrd12H8/aj+ULYIs7LhBua2J9p3n1hdwTOHOYe8U5CsIrEdRUCYlqZctfmt+lbrp/Vz6kU3z81u5jWs5UBImQBzcqFBffE4PNXLMUUpKNy0Cnio8VYMAV1QreM2fmp7z3FMYfoYATgi5Na3sAQnb1LjSkopCA0/nOiPtbseIwAqV/EsBwEYVoGA33m9NMns2gQQvmR6Wpf07lQGV41IQ0oFjR/eQHOcbNVzHZT7DZP/Q9Bxfl9CpkTLuCuJvy9MxZHI5UmTZ8Ubb+BLHO8s+tuzPGwEpiWU0WsU9jzcjTXw6imZKnueJrcbEVcSxH9VKErzmKdt6W+BzpbbbzKVRwGkwUlv9EIDyKXcRxiHTlywRqX3IZ0QmK7owouxX+M+rvly4BkBOP18mpl+6lwcupxkEOQHdP0sR8IaAGQwK/VPTUawogBJwFTvP+NgVSZDgMjWAXu9FDyAcuA4MQFJiEsGhlToBZApasnwRjtCtlLf9itztz4CSHdQj6+rKU6AfOFA="
+      "salt": "0e17fd448451607a0d62d977f80a3278",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-02:robin#1"
      }
     },
     {
@@ -12079,25 +12116,99 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.341 · 1.27 pts/gm this season (15) · a point in 8 of his last 10",
+     "eventId": "2026020232",
+     "kalshi": {
+      "ask": 0.71,
+      "bid": 0.67,
+      "spread": 0.04,
+      "ticker": "KXNHLPTS-26NOV02VGKBOS-BOSDPASTRNAK88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7042,
+     "pAdj": 0.7126,
+     "player": "David Pastrnak",
+     "playerId": "8477956",
+     "price": -245,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-03T00:00:00Z",
+     "teams": "BOS vs VGK",
+     "revealed": {
       "v": 1,
       "hash": "584cad4905daada09241c2aedb47b1ee3ed2ab68099c9a75671c1326f0106755",
-      "iv": "iYCUj/W53ihpoVmG",
-      "ct": "FrxQpM1+LhRPPTeuFvtDkc56JJ/KIxu6So0v7g6T61P8rKu6I3pCnnq0fH4gFBED1cU63uEsBKW2AEbIcVrl473CZH4v5Gk8+UXSartp1aNUx8nDNFxrfXGjJf+9foebuZrEwcm5hDs6EEC1QnZ1UJDtTHzeiWjsdo5TrgxNedR0MF9wQt2Yt8LnWPvuV602QbMc0XjXOAgdnwxIm5B0G8JLxdDzGipKlAnkXyUQcOelLKqfDV2XwwFAKKvcb39dM7D+P0uNDOetRag3dIYpfNNP49OdlsqD1DOEr1AGEZzG14TCBsXITWqUT0rVDMxNaDSqDbLR+sisDKQ14w7MM7h5kUFDGWhYo4TUqE4633r6pKOk4UAfbrnuhfamvddB8XhAqGoG8UpDK/tJPQWAoEA4ntqruSHrn68n2jPeYuUTPm7IOzSH2n5wYHaMpqMqBjqgOV0ynBu1uc6euIK6sVdR/q/F2kI2xOV6FIK3NrdCWN+7xPE2j+uTMzCg3A863hKY/yjxuswq68rGwEY66QR6WEX9xdCI10iiCPicRm01krK1RsDnIkTHjH28WB98uAtyI6BA4ywfd6jKTS2Fc/ONPDux7TvHJpmPMZzJINqsatdo4W8LLyxaIcRLdUfRghUnKgBSjxOWpZp6kKSgEDDajm3VaZTeKf7cx8pgCNsJIfVLHHotXPMXd1qdKhLF"
+      "salt": "43ce73c1098807189fed76bbd1217343",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-02:robin#4"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.33 · 1.43 pts/gm this season (14) · a point in 8 of his last 10",
+     "eventId": "2026020233",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.67,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV02DETFLA-FLAMTKACHUK19-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7018,
+     "pAdj": 0.6889,
+     "player": "Matthew Tkachuk",
+     "playerId": "8479314",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-03T00:00:00Z",
+     "teams": "FLA vs DET",
+     "revealed": {
       "v": 1,
       "hash": "a1c600e88de773a1c60b488c8f57969929095b3e9aa94b304d87d436206b9d8d",
-      "iv": "sL0EEneNYWqZnlP2",
-      "ct": "Ut5gQ/jeFCZ9584ZI1iXeutSv2KAwtIp1NKGa4ydgse4tj6ff7Su0ycr/NhARD0dntf9i0gxpJKenRbeSVOrVDehZDUfxpeiVyV11pDkeJqklB3c1qYHKpTy/WP2oGGAH/IalfqHX2lNHZYndaSQqgw9P4APycBd5IZHI2jTDSBW2qY9GvpOZdcEZu5XSU0yyBRwGJm0806XCKb86l0h0yetLrhbzalEUd/vOz8oMdgdxpX0IYaxJPmOt4rO6f6UFgyQUzzxqwAWBh4TLb0JZfQQdk9WG0vhhpeH/Nxf01HIAwLFFcB44p3lq8ZfHlqvIl7Dxuk421o0xFG2blVfUeVBOuC6K87iqHF3u8mmN9CnKOaDTXnBXdy7BRB8tx+ZqtC4mLa87QE/xCG8SgHYbvc2n6lpAUahXeUz4IXaBN+NO2KUZMZJCeO8l8JH/kZy87qfdH5dnBRc2wxocP4J+LXGgsmW1n7mQ6swjJ6qOwGcxq8VLP/Qz5/cRGOMpq8QoaWggXWpuC5cNH9KhW39wvCzPmdOSu1pE9QrCMb8dY0bXz/SBW7kpaK+IPSAtwvmWCMaC4poXykBiqVO3cmXkMGi+1xn0WNH/n7ZUjNkc3Sk0mAbAOyWwdlEXKKju26vXi/Sy2sgWJz1/XZ60KOvu87sieMbsjajhXH++sjsGhJrX19Vfffi02rQiGaDf70="
+      "salt": "1b769e4a72dd6d40ac84967ad8e97c7c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-02:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-02T23:00:58.183Z",
+ "updated": "2026-11-03T00:00:26.265Z",
  "record": {
   "w": 141,
   "l": 49,
