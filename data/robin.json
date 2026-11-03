@@ -12047,11 +12047,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 19.7 in 35 min · over this line 3 of his last 6 · back-to-back",
+     "eventId": "401909911",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.71,
+      "spread": 0.05,
+      "ticker": "KXNBAPTS-26NOV02WASORL-ORLTDASILVA23-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9127,
+     "pAdj": 0.7749,
+     "player": "Tristan da Silva",
+     "playerId": "4702382",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-03T00:30Z",
+     "teams": "ORL vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "235a1a8f279c0b82cc2eb297aab1361dc64fd137e25d69fbaf969b7adcddc3b6",
-      "iv": "fKqYpgzgJBqNrgkp",
-      "ct": "+RTRj7B2EvGglsLGXtSTWQ7J1OJlu3ABjTzp+dpsD3MKi9JDotvRMYo4caFL4HASL6pbm9eQlyHsHGy8zYQq0JS4bHXDbIaIVYLZuK5T9hZ0kh8fmj0D5S/Hvkv4FsZo5rfXESZ0EOieWIyJBVuqeC1JRfY5eqrLyGYR4HhJ5RznfxrgFJGEiWAkx4OkwI/vIETaLCPp/elHqoAC1es6tD4lzPsikyY0JEdEn+NiySon7EkwY48bfE6K6BSZuo5g74G3TdM7saI5bKzsvx31v0f0WNQONbVJ1OjkWhRR/17MKc/87j+UtB7OH12ke2Cz8T0STa562A8WL/D+0cZ7uYfUM2gSMplMvatcwPSYpedjGbrA7dgTUfedkDkaWIHVKCLe4DCDlVb2Pxm6iFxsrpQoYSVpzsZixceKU2WyB96RZywGL6SDdh3DKmzaQCtuU+TiMA1hNX2KvhGc2GXOuXTIMBn/RjfRydnsAKcipHqaVEBnsspB+zVfPsk+cj49SCSL/BkWq7Cxl1XkCeIKDwT2XZkLbPE5NI2dgqTGa6PPpLgkLUAg7fufKmf04FPeiZ70lBbJMW8Mniygh18O1HKen9wAuWjWR209CpZhO07ZUnOyZ7kqBFe+0/gs0uDDctmoucTFp3WZ0KMjzRy5/2u25Km8Gakz+nOPHCGqfMrBPtBZTQ=="
+      "salt": "0e64bc04438aee30ff579fdaa05baa99",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-02:robin#0"
      }
     },
     {
@@ -12208,7 +12245,7 @@
    ]
   }
  ],
- "updated": "2026-11-03T00:00:26.265Z",
+ "updated": "2026-11-03T00:30:26.926Z",
  "record": {
   "w": 141,
   "l": 49,
