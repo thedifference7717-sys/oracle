@@ -12377,9 +12377,106 @@
     ]
    },
    "settled": "2026-11-03T04:12:02.119Z"
+  },
+  {
+   "id": "2026-11-03:robin",
+   "date": "2026-11-03",
+   "published": "2026-11-03T23:01:16.945Z",
+   "status": "open",
+   "games": {
+    "NHL": 11
+   },
+   "seal": 1,
+   "sizes": [
+    {
+     "m": 2,
+     "tickets": 15,
+     "avgPays": 1.922,
+     "expWin": 7.944,
+     "ev": 0.0129
+    },
+    {
+     "m": 3,
+     "tickets": 20,
+     "avgPays": 2.66,
+     "expWin": 7.7,
+     "ev": 0.0185
+    },
+    {
+     "m": 4,
+     "tickets": 15,
+     "avgPays": 3.676,
+     "expWin": 4.195,
+     "ev": 0.0234
+    },
+    {
+     "m": 5,
+     "tickets": 6,
+     "avgPays": 5.076,
+     "expWin": 1.218,
+     "ev": 0.0276
+    },
+    {
+     "m": 6,
+     "tickets": 1,
+     "avgPays": 7.001,
+     "expWin": 0.147,
+     "ev": 0.0312
+    }
+   ],
+   "legs": [
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "5c147684e571f7ae5166af812d56c6bd82b0338b06505748ee85847affbc4479",
+      "iv": "ZWmAIaISMHToZbGX",
+      "ct": "NxRjqvBFtHHQ99wTDSU1XjAqVP6JuMmIDT0eeZjc7EFzonJCI8GfNBxLhiDItY65TsdcvuECifMshrZqVzrCyEA/fsyC785FD0IMur24KRItivfCceV0jYjHrQfB5hMp7ZS/VZn/vdy5kvCwJ8Hn/UgKXQ5sgjSkCLMPg8iR5wSvf+CUg1CqHUcF5jpdMiYdP8ef3LEzQGfvGe/mtMfLiJkt3dRktYskomGRBa6z8aUuTQZSFShApu4R9PSOZmdTi0cXEvABDerZfWF/WIa8wjC4blDZ7TDfRspCsDFzv5otzew2C0k0erVsiyaRK5SKMz0pwbntvK4kizEOzFvbHKJ1cc2zJqowB1RFXGsB2ZNgNzlx4Pz1NUQObNb2f+kO6W62voZmVy/hgDg/wm0AzubpCPytRmsknXdj8TcCBhj1iXyK5/SzPui9roNTDZnf+Xu+cLXPIsIPxGpwCum/4Uh6Hb42ow6VCOzAMR4/a9LDdljZfnzjc7VSCxcYAoxRKLdtRQTmUaBxeOQA2mrkJ2kfRrRx6HtobYVehxNS8I6T885TfnPSdnk4hQvKEEFCM72rEA/5F3vdgA19raC3Bu7+M+EH7ywfNedOXtX/Ux5FKweCPPacUJkKIWBZ0/QR/9U8Evux5/G3mgF7WkMSP1FgNU6gEU0Y5wH0r2Yd4JBCoyIOPPF3o4z4rPiO"
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "26f832cad52f1087dededd10140d77f2827806f70e2bba09dbb324c623fc7514",
+      "iv": "92RSy4dWGYIj3vzD",
+      "ct": "jIIS0r6JflRJN+1CPSvrJfFxz0yWtRu+XON+OstQQfWtIq1uvaCZyXqZen4hsoIRVD2hMrRwbGnucmKen9LJd5ZeUfuh7EcCDDFwMnBFD+RnC2FQchb/Fv6qcC8y6+/RvT3haVYst0NtEZe2BrApZNLW4BzPg+Rs0nXV4NpTx/rghXGbYCXhxtU3aPUvPJNt+52mIieZyO6jIIgTDTa1aIaVCd37PfOfW6oY15xGcN2wdNjLgyaCVawLCeoGfTJjPd9AdJJTpLec6aaA02hxxzx1qP2A2bgJOI3lQ88I5K9ofM+1K2HHwlDg7X73/kqNNgpBTZSBTlutKwEoDCf+SGvErJyU4h85LTKG7+Qg8BWNvpwfvsA2aSdf+ptM6G17yrpmkNdHSHcBlKoQFDRNNKWREr6sgSAPv+Z8m1F+2YQYkGmetUMTJspvfTdNizxoKOk4yemQK4tiVag4dyd+tYFhZvQ3kFs+/d9X44wJPX5Jd5udJF9pj1yxDz54kKmf0C3OmS+rl86VYpwj8HvhS2XG5wusI67i9hv6JWH0KHqpSHJJ2YaieeBcbz6PTvuh/oS+0q7Zlh22Lzy1liG5Tb0eMBjd5IyZ2+QkkJQvX4PZhKIUvw9JkrN5xhidts8ijiuKDLrIYuqiHVHH2TC0JZ96PFLvCbBEdL9Rn5VLobl0bfeujDEh4qbcmD98KA=="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "12a00c50054e47a99be7ffc1b17cea760f0d4a3c43defd2b85b5a3cdeb404092",
+      "iv": "uM3AE0uKiFbKT4y7",
+      "ct": "sQmX+K5jllutbWQas0UagrOjYgDP81iGar9PUtROESPqU2h0V8ig2ZEOmpEcVnTF29Z0FkwiKJfAJXSGAOw74cS/uRmBnqZQJErjb5AFQZKUFf1NPf82ocTfhGiwf/Q68YCtJ55mJnNhZmL0QwuJsubJdwvJXxIoiDF3YMrOr3k+ovuz44FPRkp1FydxK3qkUFqySTppxSFc9Lt4+UwTRkFLogLHUx26KrxObg+9VOXMzeto7PuqaRln4fug8XwuwlgVVq+cmJFb/9i7fVNITB5mDgUQvy1nSbXyqf17fEEetiBEIFM2EMA/f3xLPlfQgoeQaPuyy0PYAF+sdqL98i9Qp84BRlg64CON5MPZ4Q9Rob8C0bAIsU3cI3joPgFMieFVrn8f49Jxr+TW5hmq6roiYrAMC+yUekLjA5f/opRlKwhy7rYhM404FCklWbqhW+nm3NnZOVHaf9d2DAH+n/I/kUgocw47p8mPzR8KFiiCejGH9QvT2nWw13f42/8p2czY/pu1jNaIVHuTcVBJJwYwISGwGFKEL2gj1CWDGwa7GYSrl8H3R/94FPYxnN2OUcvaHpbLEkIm68xGeZhq+IYhj5ysmZxOprbyvAGfxu0t9fQzc8rXQnWDBBYlyDfr4kETo+MGhZtOLrRHasznRgjVIL9yeIuVkQe9EJre/AbFMXiwnYSqFTmp3u+yUQ0l"
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "1a0a140868cdc78c48e4bf4745f2d28d823c87f23708085fe366a08ed9cf1744",
+      "iv": "1/OTtnpNvTaT47AU",
+      "ct": "ZeesZ5Hg5XH/q0oTF0wr78WQk5lRBaV8g3htMIe1Cf+mxpkLMHgXE4Nl2sacPsYCrh9YbbQqB29MNsAcVHYCG3ElmYAZU2PXSyhGT7k6TK16y30JLhqgP0QzQYKcQ5zMbDbWFq5zy6CeeXrovZLClHSA5mQLKSsqkJm4oqqahQUOpV653h37AN3f2KYj+qeWDSoGJXSAn38YdX8T7uoFUqzGUqBQWvJxWjrS4Yc10mt0Ebie9sIZFaaH/dxgtd/b51PZdYsf+OJQmc3pWNPG7qKyl6dUjYZrFNsipus0YjtScmHfadqRMUQtqmbPqAgM0ANH6ZiMmTs+S11ZAWglNRLGfvjLRe8ul9GeXIg+ACNlFHeXkaKq2haR9CrCguL+dSF49FDfA61x8i8AhB5x9RKKgz5TiPKyFizCbeA04YjaWpuhSmNDQ88hImPu4r2iNOhn/qg29gsPoFLBLEmoXC5nck6ghdgKPWuVjH9RnBDI3De4AEirpogKFFsPL+/DR2+xiW/tbudK7CIidWTSx7ky3u6Jsk9o4YEp900Y5leckcjtaKLn7d30bRHaqeGpE2oYEnrMPpSjpBPjQ1OgKfS6F8Z85IJmL5VOjEN96diScor3eXuBaY8zc0PP4fkQEVp9oHRVm4uKj8IskLctajW3Ulso+XU3TOvJHIJKobAIssKxoy8BRgVIEqvz29kBCw=="
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "f43b9c91c6f38a7957b4a2882a7475992a0618d1a9c75b409b52c28d30faef17",
+      "iv": "Miend6yd30F8HlL7",
+      "ct": "QCYWAapch2HDs5M0LptOLzfadCv3QKrvABL4ZyTsgBP7CbWnvDwg4ZzFaep5TWGSOgwimSuZM0kVWoGmAV1awdcSQj1wm/NylWgUZE4gRgETzegSLAWhG9zgVS8ngWW8asR9VQ+9QmkZNoH6klIfJquPCqUlSGmy0vby17cFZHpQ8VBhUkj3oNM6N36Wkob3moWipOfqps+p0DlutCTIcyrxtyrXhgZb+NZBX6tbMcTQTCaI/x+n9y9DL8FXtuS5LXKoQpBWi+4TV6mFAgL6TETNyeeKQ+Q12lALt1ZVuDM/UYOdjfpUPRtNDx0WhHiibUudHFHdgR7sQkK7CYhA+TBXjRRs+dlEhFdDMqL08l745liSSTPovxIbX3qsz7+TQ70mEDQpsMp2u2Sq55E+9UCIkTUTuJ2/vPokgTQtdjdpb7f8LG7HiuwKyn9vlyaDUkmNjSbvkiM9f308K0hv9oHlPddRmvdUVKSSRBLFVlTEa/xpoI2v+ZbjaV5nqK4YliTHf1oeuNTTg56h8TrNG1gbmUo4ZLGl+h6Qxzv+rWdq5/djSYNEI4HM8kkFN/J2wrzmhs6XXlUf3tj02sXW6vcYoS1LVCJOW87+dWfSNDeXTjmqR5sAf+1gLXd55K0hC7mcUDSfg7FLgI8s0QxwM04SILdGJvb55DiaBP2t4OIJYX/IajE/eoz6feEtaSGw"
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "76a2bd466b9e19a2bd77b8ecbf2941da1ae22408afb06043014ea6f90798b88d",
+      "iv": "cNQ9170DDmWKtuis",
+      "ct": "4J9rGBeYK9Odp/YyhW6rlXsgU/Q0ycsY/7F49D6YO3X+tvOAwOWX3oBq3jZZRwgjIpHyjp1fRl/RkLMzpJwdvt0aQsWMM7stiJ8ziylDJOYq5myoAja8Ezk3k104mZq8d7v32x03DV4GkZFMWukDqsBO9hJDzy1qD/EZwr7bKZOZ4+yNKkbwBKBwuEQLrrS6rPMMlhFxQgaTXOcTEIr+iPihjwJu90aF5BNdTXAGBPUshQWCBjFRBaDhDn1GENSDbN4D/iBF/BFRiA6dzH4OyXXiB6zMdZ1Z7DpNlk6SngEH3ywgRuKeW+ILpUSmtE8+8VuTdVZABOdUvYVuSDpdIJYiqduFFbcVgoRjQ2KscHpuQ7Uiw/SYequ3GfbAOiZKAJ8N1HKVIX29zw/dklJZ95Ac6TXqqUU4QFTGhURB9di9LVE5nV0BW4gGO3bnt9Q9soIa+aDR8HzwQYkUoEIUkkR9QU8wPlieZwqD02o3hAa0CSxiq+5pH9udxpHwHxenqwLM3qXPgL9gmjLshna+emrfYCAr1kjmmDQ5IyLghjHh3nH54I7ISy3DyBkGTWIqJ8awJPRtSupavaSjfb+C5Wpn5tMp3QDtzzJhncICLMc2EDikVQbrKWKCX9/cR+VnNtDhASz/v790eeQIRsGzyhLLu06gGB3w28edtNHPkU5HliC1Jh9fj0it+9c="
+     }
+    }
+   ]
   }
  ],
- "updated": "2026-11-03T04:12:02.720Z",
+ "updated": "2026-11-03T23:01:18.228Z",
  "record": {
   "w": 147,
   "l": 49,
