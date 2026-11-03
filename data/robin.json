@@ -12168,6 +12168,9 @@
      "sport": "NHL",
      "start": "2026-11-03T01:00:00Z",
      "teams": "COL @ CHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "be52f139a98225fc67523fab91a06c7d23e64ec3c1cd609184f005fdc275f9e0",
@@ -12288,7 +12291,7 @@
    ]
   }
  ],
- "updated": "2026-11-03T01:14:26.810Z",
+ "updated": "2026-11-03T01:35:29.804Z",
  "record": {
   "w": 141,
   "l": 49,
