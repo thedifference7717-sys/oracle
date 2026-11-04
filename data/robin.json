@@ -12590,6 +12590,9 @@
      "sport": "NHL",
      "start": "2026-11-04T00:00:00Z",
      "teams": "TOR vs UTA",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "1a0a140868cdc78c48e4bf4745f2d28d823c87f23708085fe366a08ed9cf1744",
@@ -12710,7 +12713,7 @@
    ]
   }
  ],
- "updated": "2026-11-04T02:32:27.947Z",
+ "updated": "2026-11-04T02:43:00.817Z",
  "record": {
   "w": 147,
   "l": 49,
