@@ -12657,17 +12657,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.207 · 1.5 pts/gm this season (14) · a point in 7 of his last 10",
+     "eventId": "2026020246",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV03ANAVAN-ANALCARLSSON91-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6756,
+     "pAdj": 0.6746,
+     "player": "Leo Carlsson",
+     "playerId": "8484153",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-04T02:00:00Z",
+     "teams": "ANA @ VAN",
+     "revealed": {
       "v": 1,
       "hash": "76a2bd466b9e19a2bd77b8ecbf2941da1ae22408afb06043014ea6f90798b88d",
-      "iv": "cNQ9170DDmWKtuis",
-      "ct": "4J9rGBeYK9Odp/YyhW6rlXsgU/Q0ycsY/7F49D6YO3X+tvOAwOWX3oBq3jZZRwgjIpHyjp1fRl/RkLMzpJwdvt0aQsWMM7stiJ8ziylDJOYq5myoAja8Ezk3k104mZq8d7v32x03DV4GkZFMWukDqsBO9hJDzy1qD/EZwr7bKZOZ4+yNKkbwBKBwuEQLrrS6rPMMlhFxQgaTXOcTEIr+iPihjwJu90aF5BNdTXAGBPUshQWCBjFRBaDhDn1GENSDbN4D/iBF/BFRiA6dzH4OyXXiB6zMdZ1Z7DpNlk6SngEH3ywgRuKeW+ILpUSmtE8+8VuTdVZABOdUvYVuSDpdIJYiqduFFbcVgoRjQ2KscHpuQ7Uiw/SYequ3GfbAOiZKAJ8N1HKVIX29zw/dklJZ95Ac6TXqqUU4QFTGhURB9di9LVE5nV0BW4gGO3bnt9Q9soIa+aDR8HzwQYkUoEIUkkR9QU8wPlieZwqD02o3hAa0CSxiq+5pH9udxpHwHxenqwLM3qXPgL9gmjLshna+emrfYCAr1kjmmDQ5IyLghjHh3nH54I7ISy3DyBkGTWIqJ8awJPRtSupavaSjfb+C5Wpn5tMp3QDtzzJhncICLMc2EDikVQbrKWKCX9/cR+VnNtDhASz/v790eeQIRsGzyhLLu06gGB3w28edtNHPkU5HliC1Jh9fj0it+9c="
+      "salt": "f9f034dc2438da3ff57811a7264191f8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-03:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-04T00:30:56.900Z",
+ "updated": "2026-11-04T02:00:49.033Z",
  "record": {
   "w": 147,
   "l": 49,
