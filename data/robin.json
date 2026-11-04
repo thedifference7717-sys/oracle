@@ -12454,6 +12454,9 @@
      "sport": "NHL",
      "start": "2026-11-04T00:00:00Z",
      "teams": "TBL vs DET",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "26f832cad52f1087dededd10140d77f2827806f70e2bba09dbb324c623fc7514",
@@ -12624,7 +12627,7 @@
    ]
   }
  ],
- "updated": "2026-11-04T00:00:15.457Z",
+ "updated": "2026-11-04T00:22:28.938Z",
  "record": {
   "w": 147,
   "l": 49,
