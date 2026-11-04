@@ -12446,6 +12446,9 @@
      "sport": "NHL",
      "start": "2026-11-04T00:30:00Z",
      "teams": "EDM @ NJD",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "5c147684e571f7ae5166af812d56c6bd82b0338b06505748ee85847affbc4479",
@@ -12632,6 +12635,9 @@
      "sport": "NHL",
      "start": "2026-11-04T00:00:00Z",
      "teams": "MIN @ PHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "f43b9c91c6f38a7957b4a2882a7475992a0618d1a9c75b409b52c28d30faef17",
@@ -12704,7 +12710,7 @@
    ]
   }
  ],
- "updated": "2026-11-04T02:00:49.033Z",
+ "updated": "2026-11-04T02:32:27.947Z",
  "record": {
   "w": 147,
   "l": 49,

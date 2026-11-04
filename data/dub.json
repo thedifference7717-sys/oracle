@@ -4913,7 +4913,7 @@
    "id": "2026-11-03:dub",
    "date": "2026-11-03",
    "published": "2026-11-03T23:01:16.945Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NHL": 11
    },
@@ -4988,6 +4988,9 @@
      "sport": "NHL",
      "start": "2026-11-04T00:30:00Z",
      "teams": "EDM @ NJD",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "038215c615c957f28e5211a75e79aed91358f1b7c9ac9b73c4ce1122f165b744",
@@ -5021,6 +5024,7 @@
    "fair": -121,
    "price": 101,
    "prob": 0.5465,
+   "settled": "2026-11-04T02:32:26.845Z",
    "revealed": {
     "v": 1,
     "hash": "f12e86c46f246f45960b511cf1492aa4486049a36e0142fd569a431747bd9582",
@@ -5035,9 +5039,9 @@
    }
   }
  ],
- "updated": "2026-11-04T00:30:56.853Z",
+ "updated": "2026-11-04T02:32:27.711Z",
  "record": {
-  "w": 21,
+  "w": 22,
   "l": 18
  }
 }
