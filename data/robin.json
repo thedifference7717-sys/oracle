@@ -12502,6 +12502,9 @@
      "sport": "NHL",
      "start": "2026-11-04T00:00:00Z",
      "teams": "COL @ CBJ",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "12a00c50054e47a99be7ffc1b17cea760f0d4a3c43defd2b85b5a3cdeb404092",
@@ -12627,7 +12630,7 @@
    ]
   }
  ],
- "updated": "2026-11-04T00:22:28.938Z",
+ "updated": "2026-11-04T00:28:49.631Z",
  "record": {
   "w": 147,
   "l": 49,
