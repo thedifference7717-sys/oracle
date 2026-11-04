@@ -12382,7 +12382,7 @@
    "id": "2026-11-03:robin",
    "date": "2026-11-03",
    "published": "2026-11-03T23:01:16.945Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NHL": 11
    },
@@ -12686,6 +12686,9 @@
      "sport": "NHL",
      "start": "2026-11-04T02:00:00Z",
      "teams": "ANA @ VAN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "76a2bd466b9e19a2bd77b8ecbf2941da1ae22408afb06043014ea6f90798b88d",
@@ -12710,21 +12713,63 @@
       "ctx": "2026-11-03:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 18.394,
+      "pl": 3.394
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 24.908,
+      "pl": 4.908
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 16.847,
+      "pl": 1.847
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 4.553,
+      "pl": -1.447
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-04T03:12:23.824Z"
   }
  ],
- "updated": "2026-11-04T02:43:00.817Z",
+ "updated": "2026-11-04T03:12:24.665Z",
  "record": {
-  "w": 147,
-  "l": 49,
+  "w": 152,
+  "l": 50,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 726,
-   "l": 1067
+   "w": 752,
+   "l": 1098
   },
   "days": {
-   "w": 18,
+   "w": 19,
    "l": 16
   }
  }
