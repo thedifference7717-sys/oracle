@@ -13012,6 +13012,9 @@
      "sport": "NHL",
      "start": "2026-11-05T03:00:00Z",
      "teams": "SJS @ LAK",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "45b420cdf2561433d35fd85ca5d2ddabea064182ad64e2d2d6febcf65d823a90",
@@ -13087,7 +13090,7 @@
    ]
   }
  ],
- "updated": "2026-11-05T03:30:59.335Z",
+ "updated": "2026-11-05T04:22:43.408Z",
  "record": {
   "w": 152,
   "l": 50,
