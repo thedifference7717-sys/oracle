@@ -12887,6 +12887,9 @@
      "sport": "NHL",
      "start": "2026-11-05T00:30:00Z",
      "teams": "FLA vs CHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "0db17acafb76bb41a72961514e54e153e1f2b1fd177c05eb88fb076ee91dd6d3",
@@ -12967,7 +12970,7 @@
    ]
   }
  ],
- "updated": "2026-11-05T00:30:23.265Z",
+ "updated": "2026-11-05T01:05:53.295Z",
  "record": {
   "w": 152,
   "l": 50,
