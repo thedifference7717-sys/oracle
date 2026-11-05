@@ -5076,6 +5076,9 @@
      "sport": "NBA",
      "start": "2026-11-05T00:00Z",
      "teams": "WSH vs ATL",
+     "result": "won",
+     "actual": 16,
+     "note": "16 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "71cab022b5ad7c50a403e8a25fd535b04e513def05e7a65a2799074e62b336ff",
@@ -5111,7 +5114,7 @@
    ]
   }
  ],
- "updated": "2026-11-05T00:00:47.944Z",
+ "updated": "2026-11-05T01:47:53.317Z",
  "record": {
   "w": 22,
   "l": 18
