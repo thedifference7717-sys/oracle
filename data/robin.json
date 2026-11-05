@@ -12919,6 +12919,9 @@
      "sport": "NBA",
      "start": "2026-11-05T03:00Z",
      "teams": "SAC vs LAL",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "8439dda013b5f16fb970a7f6e99d7119dbb65fbc5790a4204b4d070c2606d064",
@@ -13090,7 +13093,7 @@
    ]
   }
  ],
- "updated": "2026-11-05T04:22:43.408Z",
+ "updated": "2026-11-05T04:42:49.600Z",
  "record": {
   "w": 152,
   "l": 50,
