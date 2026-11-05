@@ -5048,12 +5048,6 @@
     "NHL": 4
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "47a8bff481f0fe2d5fd519ff1f34d01e6da99ce25ec8000b4f6925f5032e78bd",
-    "iv": "3wbEhbvbqqfdN+9u",
-    "ct": "aZZLh5yGATlqm7xy0p0mgWngzCmBCLrLzuZxnoB6YX/dGSmmsOEGiAgIetoTf/MaBP8GYzYTIU2C8zrjUPu2Dyfepwd0Gj+vFUsEQUPBmwF5z4IRiAh+vL7eRc9KQgrNti5G0WwuqJFhJBcQkoxDNPBp2VnAvsOKqhUsaGnSBITEqGMBzr+lEXlTpJYCmkET6GQnOzyNjgsD6S1x6P6lwelJreNz9XXYXAkhQFERpToi624JoQrVLnxuatogzHYTUXkCQiIens7i7lq4GAOwjGCFCU4="
-   },
    "legs": [
     {
      "detail": "proj 22.2 in 39 min · over this line 5 of his last 7",
@@ -5148,10 +5142,30 @@
       "ctx": "2026-11-04:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Davion Mitchell",
+    "sport": "NBA",
+    "start": "2026-11-05T03:30Z"
+   },
+   "fair": -342,
+   "price": -129,
+   "prob": 0.7737,
+   "revealed": {
+    "v": 1,
+    "hash": "47a8bff481f0fe2d5fd519ff1f34d01e6da99ce25ec8000b4f6925f5032e78bd",
+    "salt": "94d86e5b6d7cb2ff70e11bbd45852bf2",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-04:dub"
+   }
   }
  ],
- "updated": "2026-11-05T03:00:53.749Z",
+ "updated": "2026-11-05T03:30:59.290Z",
  "record": {
   "w": 22,
   "l": 18
