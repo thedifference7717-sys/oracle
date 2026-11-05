@@ -3889,7 +3889,7 @@
   {
    "id": "2026-11-04:ladder",
    "date": "2026-11-04",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-04T23:00:41.800Z",
    "cycle": 15,
    "rung": 3,
@@ -3946,6 +3946,9 @@
    "sport": "NBA",
    "start": "2026-11-05T03:30Z",
    "teams": "MIA @ LAC",
+   "actual": 10,
+   "result": "10 PTS against a 9.5 line",
+   "settled": "2026-11-05T05:48:31.192Z",
    "revealed": {
     "v": 1,
     "hash": "76c50b73dec1f4908074829c487e6deb7ed356dc668493ac11b8cf362d28bf31",
@@ -3974,12 +3977,12 @@
    }
   }
  ],
- "updated": "2026-11-05T03:30:59.259Z",
+ "updated": "2026-11-05T05:48:31.195Z",
  "state": {
   "account": 446.49,
   "base": 27.06,
-  "stake": 44.68,
-  "rung": 3,
+  "stake": 65.66,
+  "rung": 4,
   "cycle": 15,
   "pl": 346.49,
   "cycles": {
