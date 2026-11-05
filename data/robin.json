@@ -12867,11 +12867,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.393 · 1.4 pts/gm this season (15) · a point in 8 of his last 10",
+     "eventId": "2026020248",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.69,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26NOV04CHIFLA-FLAMTKACHUK19-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7145,
+     "pAdj": 0.721,
+     "player": "Matthew Tkachuk",
+     "playerId": "8479314",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-05T00:30:00Z",
+     "teams": "FLA vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "0db17acafb76bb41a72961514e54e153e1f2b1fd177c05eb88fb076ee91dd6d3",
-      "iv": "VIy6Ueaex7Y857nV",
-      "ct": "fIhTJsndhhc7cZZcd5gwEgytOk0WFwNGDdLHqb9LlyWlFBN1cN8Q5fejhJvxsZDoKqitfdI7oPuTdHxmzfnb12PpoGNOP8vC4kMU6lU0D3xiXXR6Urb88pUf1zhfBZbstZTnCY05tIw8gbb1nXyFW+b7j11JtECUnxe/PNjWF1z7zwbTDuNHDIEdLqReCz9EIgJb9jo5Be79sYTCFEFXpgcuPGPxVRUqdhuM8YIqBBlLxfdMgqvdWOYOs25h9sjI4+D9Q08iyB+oIpE2xPgRUJ0O9YTcF4v8kntzpG44yD/1noCY3F14XpCazfu6nAzcJHVd3So1LarSo73ls07GMlVYCLIwucGv4INVdqw0iksV+LGkfABSyhjOyuE46ubs0SSYW39oaaJwFdbSYUs0R39WlEiRAJ4mLvl70EF/0Qid+gk0F7BVlSsqnQkG5ygiR/rpW0upxfo8d3xWhL4lGyHhzGgPEz8I7f6LizPNq5S185J1UktCzNDEX2ZQj/urOTaIxpMb82R0EulI5wyZRc4/pHTU1RqGz+bk/za0WkpNmU34KD1/ZIHJVlfZprUYYYYyDGwVt8OpalTs8kalJRPE2UNc+v9XaoAhgpPT9RcoqPDqOTafpsSi4rA4AKAEFH3WIA9Ly1+HEEjnEOHT6gkabSJM5m/9SCvaVuCSFYtMkDpfoURMupXLNWZjNQ=="
+      "salt": "ab0bdd2023398b21f7006beedac29dfa",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-04:robin#3"
      }
     },
     {
@@ -12883,17 +12920,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.164 · 1.21 pts/gm this season (14) · a point in 7 of his last 10",
+     "eventId": "2026020247",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV04OTTBUF-BUFTTHOMPSON72-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6656,
+     "pAdj": 0.6797,
+     "player": "Tage Thompson",
+     "playerId": "8479420",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-05T00:30:00Z",
+     "teams": "BUF vs OTT",
+     "revealed": {
       "v": 1,
       "hash": "c1cdd6bfa1ce9b21b77d72fed5815d9e1b843ccbdfd9a8eaea61150daaa96a7d",
-      "iv": "FyvnMs/NBQ7ttrKm",
-      "ct": "bjLL9ts+W0a9QVE5+XwIKlS6unYV3MGsr7OWrPfzv794DAf60eP69jhg1acVBSMkSO5M/y+vhTCEOqwjqvuTld0c60t5GdfZ2DZ/4E2xkuvAOVTohIMqCZoF9cEDAZ+WCTrJ7pduyDEB80R1BuP1iej7GWvgAkGksaNgqcb+mVMRo2J6l+2ABrCh65l/GQzecdKmdZTDjSwMJu8WIkugjdn6ZR21LiejP8BOnZ9O9UsBMix9PgFT/jtmUpaHx1SoiiuafowhhFQdAHxOE3TqhN2YdPa41wFeq622BW0OCWlwkmZDL+YGczoTBjaOrYSJhWCASLh73ifAinsEtHtJpPW6oVfndrITZjV6Zxs7vN9kzaqwsDsvxBMYVLZ2gTbNZPs14oZcCxc3ScJHc0zA9qj7ylu7ejPcTIsup7zZINDnZhAIMSbk60GAY3IAUNXyzIphDKDwz/kr+f1OCfGCnMk+2wHCStVYC/Vjaj22gfbTOPzH1YDwaNeBMAZVOmqRggA7xq/BdIYforwtTB3aB7D/r2B6IaBWKOqErn0M33PlxRPSHozqWCPsMhFT3ikPLxmAlMtl1Y5qnalHhdBFliLhLUdvR0nK3Wsa/nF/n5oGyqYDLEx0F4V+EoVF3PajzApLUpDdjiN26eelgqxNEt2OhbULUmJ+D93cPcbZHDp8WcDtMOMybuDBOEDOl/o="
+      "salt": "4fba10cd0fc30094e3445ecd41f4cd90",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-04:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-05T00:00:47.988Z",
+ "updated": "2026-11-05T00:30:23.265Z",
  "record": {
   "w": 152,
   "l": 50,
