@@ -12946,6 +12946,9 @@
      "sport": "NHL",
      "start": "2026-11-05T00:30:00Z",
      "teams": "BUF vs OTT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "c1cdd6bfa1ce9b21b77d72fed5815d9e1b843ccbdfd9a8eaea61150daaa96a7d",
@@ -12973,7 +12976,7 @@
    ]
   }
  ],
- "updated": "2026-11-05T01:47:53.558Z",
+ "updated": "2026-11-05T02:08:46.733Z",
  "record": {
   "w": 152,
   "l": 50,
