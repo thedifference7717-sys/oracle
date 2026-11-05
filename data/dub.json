@@ -5056,11 +5056,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 22.2 in 39 min · over this line 5 of his last 7",
+     "eventId": "401909923",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.71,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26NOV04ATLWAS-WASTYOUNG3-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.8818,
+     "pAdj": 0.7655,
+     "player": "Trae Young",
+     "playerId": "4277905",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-05T00:00Z",
+     "teams": "WSH vs ATL",
+     "revealed": {
       "v": 1,
       "hash": "71cab022b5ad7c50a403e8a25fd535b04e513def05e7a65a2799074e62b336ff",
-      "iv": "FRY9T/HUPmMvzdge",
-      "ct": "dGSp7dVmtQpBKGGdTRS0WAzhiiO0rgBJe0WnEnsxyJQoe0Wtmer0Fxyi54nxTM9wtS4xp0Kbf3yo64P37ijYLrZ1IK6cftFQ8BmyFJonNKFBQwfuRmKAn10qSRQOqu198BOTbf4YS2D8SQkfaOvhRV6BC3ieFFrdiZfxYwvy6QoU1Asn7z8bJmsxJgHLQH1775z+Dexf8Kh5Uvtq6bAnfBw4BnUnZ5x6RCGHQO41cyYRUaaf6EqiQ1AsyWVSdHDB9XpdkUAMbWJmUshTL7jkrTvOt3OD6HKFE/+F6JIr805OKPRpDVN9pjwwt4rZojmm+PATNDLZoTDn5CK+qHRWR4l2SA6KRh5oYtTA+yb5JeJQvyJpNlFlgMesdT4VboRD7Jm4uJ37E1agmmB8OdfxkD6Ko+JLThBl/YSunIp4Vrko6aVJatX4Zcl/cFVsj8CeKIY4ykQljRmU1hdFRfnxgz+69PeH3qJAeE9Oraq/NCLQMbv2c+SmLUUAPzoDyAHHRhwqsOewhPDIP/T4TiPZ7Zt8f6mexrZ8Deo++pBPRtQWUDXG5e8vO1iMkfipH4De+nY2OK8HAY3CQirqim3xcttoTeiz3i5QBKJRwgN3mLrdjNgk443pWckXhMQfmQkKOCk8kLHcPrSMlcA="
+      "salt": "1fe6df5c54184551f3435aaac67d0324",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-04:dub#0"
      }
     },
     {
@@ -5074,7 +5111,7 @@
    ]
   }
  ],
- "updated": "2026-11-04T23:00:43.927Z",
+ "updated": "2026-11-05T00:00:47.944Z",
  "record": {
   "w": 22,
   "l": 18
