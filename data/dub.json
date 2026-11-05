@@ -5104,17 +5104,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 17.2 in 39 min · over this line 4 of his last 7",
+     "eventId": "401909934",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.69,
+      "spread": 0.06,
+      "ticker": "KXNBAPTS-26NOV04LALSAC-SACDSABONIS11-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8773,
+     "pAdj": 0.7649,
+     "player": "Domantas Sabonis",
+     "playerId": "3155942",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-05T03:00Z",
+     "teams": "SAC vs LAL",
+     "revealed": {
       "v": 1,
       "hash": "ac673b34fd20eb43774d05938ee27142171c0633b9a929f0e027438224bf82a2",
-      "iv": "GD8zEqUtLA2UGvuu",
-      "ct": "G1Mr3O3ftDKKB9sMpfSHRDRbr7hc2UHNBQ8qnt2q/HIlezLYGdX1eRORmy1teknZ5zp8DynYnaTATS7es6SK+4B98CGLdEP3uO7nZNlbDbCyv9BVXoQI4wpGkPNGz5TZVo4dl50dVD6AuvozIk8WOdf7JZ0qvN3lsEDKUgJ2E8fZVY3cJMn4ZpfnnIACiWCCq5VpL785YXnTd/VTX1qO9Cz/kvpOCUcsb1qCen8zbn1rDkqVg4bAXb4XgmEoDAT1Xb1Y/2JxU4YUwRg5lCOIZQOgkZqAiBw5/zOhp/MH7R2rmSORa6iyQs7xTCWZPYdYOvUoTk6u1lOypuADUjVg/kXBXRZC6F4XIPMGK3oxTiaFjOCjZt5ov4praphf0bTNbPRdEVm3zvF0rsAdu5O/6IX9mfVjRO40hjsIJEjsHQy4/+W3haku9dtLnZkUr4sagxyRvMzKZBAG/T8vDlfjka8USVYMQL4GZvVuU108rKfPk7j9XPAHji7fWvTKZQjWSQXeL0Na68oCd8Gwm2wFdBxWkbyG8PaQ0Dj4zChHw8ohFod28lr6x+FfKHgpmNgCT2JGBKiFap1j7Uz6psno2lG2SfTnG0vUMkvZjJ9dUqcJFfgZJ2PoYrssMPmMUt40/O699QYtvAIepw3IBXgdqYyogw=="
+      "salt": "784b560f518d1297738ebdf4e7ef7466",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-04:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-05T01:47:53.317Z",
+ "updated": "2026-11-05T03:00:53.749Z",
  "record": {
   "w": 22,
   "l": 18
