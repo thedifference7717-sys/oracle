@@ -13252,6 +13252,9 @@
      "sport": "NBA",
      "start": "2026-11-06T02:00Z",
      "teams": "ORL @ PHX",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "461bece207fea90c36db9b7d22c5d0bd5d22949ae9a27422244dbcb3c26c6bbb",
@@ -13468,7 +13471,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T03:00:23.544Z",
+ "updated": "2026-11-06T03:48:32.854Z",
  "record": {
   "w": 158,
   "l": 50,
