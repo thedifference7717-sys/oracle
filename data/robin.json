@@ -13260,6 +13260,9 @@
      "sport": "NHL",
      "start": "2026-11-06T01:00:00Z",
      "teams": "EDM vs ANA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "4917a0b0f1116e27034ab10cc7bec7aadeacbe5e3ab4ee71c716816c960e2c84",
@@ -13388,7 +13391,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T01:15:16.779Z",
+ "updated": "2026-11-06T01:52:11.447Z",
  "record": {
   "w": 158,
   "l": 50,
