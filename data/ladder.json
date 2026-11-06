@@ -3991,15 +3991,81 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
+   "detail": "QB · sim median 262 passing yards",
+   "edge": 0.2094,
+   "eventId": "401873037",
+   "fromProps": 536,
+   "kalshi": {
+    "ask": 0.72,
+    "at": "2026-11-05T23:00:26.269Z",
+    "bid": 0.71,
+    "spread": 0.01,
+    "ticker": "KXNFLPASSYDS-26NOV05JACBAL-BALJFAGNANO12-125"
+   },
+   "line": 124.5,
+   "market": "passYds",
+   "need": "125+ passing yards",
+   "p": 0.929267446021212,
+   "pAdj": 0.7553,
+   "pick": "Joe Fagnano",
+   "playerId": "4429582",
+   "price": -257,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "10+ points",
+     "pAdj": 0.7323,
+     "pick": "Wendell Carter Jr.",
+     "price": -257,
+     "sport": "NBA"
+    },
+    {
+     "need": "10+ points",
+     "pAdj": 0.6903,
+     "pick": "Tristan da Silva",
+     "price": -194,
+     "sport": "NBA"
+    },
+    {
+     "need": "to record a point",
+     "pAdj": 0.8624,
+     "pick": "Connor McDavid",
+     "price": -567,
+     "sport": "NHL"
+    }
+   ],
+   "sport": "NFL",
+   "start": "2026-11-06T01:15Z",
+   "teams": "BAL vs JAX",
+   "revealed": {
     "v": 1,
     "hash": "bd6b5772f5593b14fbda6961d8edc54e72268b5609c2da84cc37937dbfdf2915",
-    "iv": "3dWwzyhp7XcvheZ3",
-    "ct": "ROtTZOI50UHTOmVcX90Bh4Oa59LIKXng33D8k1kGvlOao92JczDk4oh+w0XdNHCtQouXGF71bUTxCLMlKP5DnzHmDD3O3CebU4TnlO2rNxAHmsemgBNeBcxuZ8m6OM6NXHKL855kthFTdVsfTSdRMyNFIm1c2JMw8UGj9NeRE0/TT8jYxIRqBndQK6eo61zRqUXmJJ9VNqmCD8CLkvEE0P/RmboQiV8rLzMhHNHSP+yek4MNU+Piu+ZtQ6YKJtSvgXTQ7RdQg8ns5ibhvfH40BHxgBwDBoKGs9DGtX/F0XtluVxfWKweDQCgRviYsZNZrQ0jl3KHABN2pGG3n48D6xSzBERvJbBGo2DURfqvyNzGbs+fmVferg73JZnZHW92cGFpYTorwQDaijBgunRCiarx5JpMcjgl0whFkXZEvKg/8DV7lBMtEEJ6PJS7sn8dwzp9sRK9CrxsqYalOtZ1eB3fEzFRcN6vitfLzjs4FiptBjM4p6hGPN8jBbEpgv9r2Cu1sM4off2D3T882eVeL7JuhI3Fd4dA8HEQHISTwP5KkDFYAoTPwwBj570j/K8fe55ScQxicYeDA4fly5uubbaDUhvTWq5vCBP3y66YSEw2JtnPwl4TO3MtK35Pa5eOmQz7VaQYh3s/Ta05oGWs5eEOMQTReLOmK1h4VqZ57UuX8IVaKKbtREpB5+Whnfwfao/qg/S50oitjApwTlDWWXan4/Z2/75aply9F2/hFUuofGeyaM7k7q6vo5n7D98U44ZQWx2syoyg1fXZxX+N2U4gM/lYdTqBk+ZvZc3e6hXmr1qirnhxsTjLV+8QVv5++7xrr3Q3rK7tIl05uxfsddpl2oR21b7lBfbvurlheRIo1UQmarH9lTlzoOJ9SdV/EFjy7G6MuxERRP1wePw4nCS/xyLf0gx3eB1hmCSX0nSt8rxOQPaXnofPWNcVHebgnaPUvtMi+bnQHGGTj8AlnVINcc9fVtyO0igSo5drlvhLURua0198FjSSPB+zeOrGSqnJrgLFxOEE1uQrhDZKIVR8+OygmfPIng7B/ju9WFEX2Pba2aawMWZKVIh0qdZ3/pxwv/kWzSD0wmUKJrlQ9GVy8rmrPD1CDU7jSlFEwuG6XjHiq6M="
+    "salt": "6f23415ae9633f84718a2d0cbd215204",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "fromProps",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "sport",
+     "start",
+     "teams"
+    ],
+    "ctx": "2026-11-05:ladder"
    }
   }
  ],
- "updated": "2026-11-05T23:00:26.274Z",
+ "updated": "2026-11-06T01:15:16.705Z",
  "state": {
   "account": 446.49,
   "base": 27.06,

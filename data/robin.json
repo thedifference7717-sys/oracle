@@ -13187,11 +13187,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 262 passing yards",
+     "eventId": "401873037",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.71,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26NOV05JACBAL-BALJFAGNANO12-125"
+     },
+     "line": 124.5,
+     "market": "passYds",
+     "need": "125+ passing yards",
+     "p": 0.9293,
+     "pAdj": 0.7553,
+     "player": "Joe Fagnano",
+     "playerId": "4429582",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-06T01:15Z",
+     "teams": "BAL vs JAX",
+     "revealed": {
       "v": 1,
       "hash": "9fbf5012bd7f021342f8a836ad97cc7739e3c9d8eecdbb53faa1887971a354c7",
-      "iv": "zyNHvOPDf/pv/yJs",
-      "ct": "wCg8Jf5zqfP5kCEVo13rgNwTxi/Q9fIgfhysWowNCW9KDoIAmVm36u80See3n2RcF9Y2iVjMrDxVZSXGsK7W/nmqpqKiP4Hx9C5Fi/QSJulR96mnjDK0VPM6nGb3+42l9T8urq3AUvNpmzM5eRRDSGRfFsXh1Qm/XfyEu/mUz/S3K5oD1R+npzFu2+FTMDLcbsPbsndiKQ4ZesoySGAElCo8WHKC0LTl0nBx6vnBDv70RuQX+zkw/nZqQzox3kQNBI4d2NsUnex2G628/kJrxZd1o5z/SIBGCsCvg/MedXQUATJS2QxgF9u7spIDzyK4qJ+wnruR02i3kLNZVG7iLqHngrFMzSZz08psBOSUIRYCUweOppgLRVPIyU7CXZRXOk5AbCiM+QPjmiuL742c0GLVyhR7NUBmr+KzTexrR6TEn07YbpQVwhnDGRneGIyQVPOHyQZZ7TTh2a8RfZENNt7nadUEwTffJhty8pruzJk7RRZotWmMJ/9YQRzuk+XrNbW8YGfYwn1nLse9ZK/QLoaBHO0d31Geh62rjAhBiyiaiES9K98MGi8UnlI13xvH3d+Q34mUmvk+6ScVbftUwHYc5b7CBrze+iaWZwwVrvKauz9KMnFHXmkDeP/0TeieUMIrXg5CpiPrvqVw3lLvXg=="
+      "salt": "28a4b9e5031845016ffc84e810dceee6",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-05:robin#0"
      }
     },
     {
@@ -13351,7 +13388,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T01:00:49.813Z",
+ "updated": "2026-11-06T01:15:16.779Z",
  "record": {
   "w": 158,
   "l": 50,
