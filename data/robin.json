@@ -13373,11 +13373,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 5.1 in 35 min · over this line 4 of his last 6",
+     "eventId": "401909937",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.74,
+      "spread": 0.01,
+      "ticker": "KXNBAREB-26NOV05MIAGSW-GSWBPODZIEMSKI2-4"
+     },
+     "line": 3.5,
+     "market": "reb",
+     "need": "4+ rebounds",
+     "p": 0.7233,
+     "pAdj": 0.7448,
+     "player": "Brandin Podziemski",
+     "playerId": "4709138",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-06T03:00Z",
+     "teams": "GS vs MIA",
+     "revealed": {
       "v": 1,
       "hash": "e3f8103172f259f355cc0c8224c1f676eed7507f9c37b4c84a5527a27354c3b9",
-      "iv": "Qk0UvqnLA2LXfFJz",
-      "ct": "FsbWiXQ5sWlCrn9z+g1OLaUR38y/9PuX5QMWC7jIxoeOgwcA5CurRsBlfqDXOk1cHyW2x19BaFv1BsEUd/WoAsn1/xds149DOWQKXCHQmeJFnL02Fk8fmSi630CtlvfQj3BrDr65NzbWfo59a1Ww9NsGTk+2LPh72HaEZgXVG/cumHABnRoGUh6VVDBQaJN9ka8dSSd7O5KHH3gZQ71hIE+iOR6Z5rWDMc6iXXiYGbGu1hgMEpKnEV4oBHaJbig/bYPH/uJ2PkN/Tt9r3jl9lXlm6ilMvHMQQ50c2LVJNHLwFG7hdjEt+zQVqJIBTOR+eZrFcC7dPUkvQN6NkW+vXDNjIDpaiBwSat9Dfn2mv3fS7dG56x0FBYd8nFIsaPAlEBMKLDKUOhvFm2ZTtRFzKB/oFMNuQhkFF4vJCV9KWdVRbmJa8UVjyyXCGj1kOfiyXCqzpLMRdQoNgI7qayzbpENOofI3lesnX5oVb3L6ww1skcyxhi9r/t5m8OK6xy/wGXgu1VgQAbqE4UiS1V9EKbAUc+xyx1a3OsaMINGG+7OqEiNT4g7MqGjfswr69yf9xxfLJtQww18mSf0Z8S+ir0tQJ51XbwC97c0pdWX8d142JCG6B/uEnX3vAnQSWTagtgjkV12iUfHP+FktfPYmlRG7Sr8eOMs="
+      "salt": "a0c9a83b8368ef6b0a04ed78d4289782",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-05:robin#4"
      }
     },
     {
@@ -13431,7 +13468,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T02:52:59.473Z",
+ "updated": "2026-11-06T03:00:23.544Z",
  "record": {
   "w": 158,
   "l": 50,
