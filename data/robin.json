@@ -13232,11 +13232,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 18.1 in 34 min · over this line 4 of his last 7",
+     "eventId": "401909936",
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.64,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV05ORLPHX-ORLTDASILVA23-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8897,
+     "pAdj": 0.6903,
+     "player": "Tristan da Silva",
+     "playerId": "4702382",
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-06T02:00Z",
+     "teams": "ORL @ PHX",
+     "revealed": {
       "v": 1,
       "hash": "461bece207fea90c36db9b7d22c5d0bd5d22949ae9a27422244dbcb3c26c6bbb",
-      "iv": "WrCEVQd1kVFb/k1u",
-      "ct": "OwUShNKytextxGNJalHBIscOKpC+oI6va/RLXEOI9lUJo8R7pr9Yb8ECUW+NmKJakRXH/Tv2OWR2znCw4QQTiTu9VCbts5onDJRkxcMnRrOfavterKDrCGkI9h5z2dHjZUipgRu7KoKlVBwRp2N5i94BKs6FdBNmRkGez4TB0ki3j6C118DLErYwTPmDr0P5xKR9WVXgQdEOnJG1Rdt16wq5U835E1zGpUu111WXoMsGroNVCbs69SXT8bKmRqDiHVl8B17tUOJtrKP+v5+CLL0Yr2nJFsTWrOG2gxeenfS9iBfmhSCA+sj+JKv08wgyZT+x3JA8hs5Zr3bfauRURMuHEGblAwoKCv34JV8CkRFXveL9ekCBx8xqE89IBzAQ6BJhM16vQr/UYet9XajCCj4RsADx6RUYrQMsenvf2KhZ2w8jhPcgNS2bCQpIqYyyjyD9WrAvEnbtsw2GuY9e626V1lHbM7jrPTLizajn5z7xbb40Z+l2OUmDQXvcwBz67gxivILxYbkugSW6lYwbBcd0VaQ4c4JARklL+bBc5As4tz19KBm2ru7uhfvVBKs/US1MyFIsSyy7blkZvb/rjwSfWoQpoYLjkRFryST3rdUrEy56+BDA3+FkmpJETb0BU6sDtLDureQKvzYFMA1/KtGE+/k="
+      "salt": "484d6102dd28db50214fc6ca3c1d1390",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-05:robin#1"
      }
     },
     {
@@ -13391,7 +13428,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T01:52:11.447Z",
+ "updated": "2026-11-06T02:00:33.764Z",
  "record": {
   "w": 158,
   "l": 50,

@@ -5179,12 +5179,6 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "43a563b571e96a3a5d4154cad18841d8c64d6b321f24e25d1db2cc21d3cedbcc",
-    "iv": "Q3Bwc5wpuGLO4wI1",
-    "ct": "/HQT/YsZQIRanpjEs2Cx9TnALRTmLLjU/Iys/D+JwZ3jFsznxP/efFEJEHshr8jt4/lfdtdOq26ktccJy7ft5E+bAiMEWme0Y9j4H1a5a6G3fJYBTjY8hlAQz5MaklGdy/MTFIrrEFoKDoZXlwyrOZ4fexBGi6kHRnpnWp+ZW8cx7h1aD02Poeh7pspuXQ7sIwvA/DZXvZOCJg93EZzHU20CBlbPySwfZpW8Mqcz9BTrk/WNy0D6wIqNHX6QHpY4it22beXog96ZwBhw/f1fxw=="
-   },
    "legs": [
     {
      "detail": "λ 2.24 · 2.5 pts/gm this season (16) · a point in 10 of his last 10",
@@ -5235,17 +5229,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 2.0 in 41 min · over this line 2 of his last 7",
+     "eventId": "401909936",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.72,
+      "spread": 0.03,
+      "ticker": "KXNBA3PT-26NOV05ORLPHX-ORLFWAGNER22-1"
+     },
+     "line": 0.5,
+     "market": "tpm",
+     "need": "1+ threes made",
+     "p": 0.8297,
+     "pAdj": 0.7591,
+     "player": "Franz Wagner",
+     "playerId": "4566434",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-06T02:00Z",
+     "teams": "ORL @ PHX",
+     "revealed": {
       "v": 1,
       "hash": "00fc41d1d9583eef4cceb065de305226ca896c948816dc3e93655ae7b7e69de0",
-      "iv": "pGLMYwXJXtLAUj2m",
-      "ct": "jctcEbVIqlT/u3prsPk1MtlujJGxbm9Tpta/ap12G7qfYVx6k6f9MBN/6KH1a6KohSt6/pnIlfPy+uqY2CjlW6QKr0G+VYZbSV7GFX2sxON+kwcO1VPo4B7wtVnkGfhC8acmi/4sy4OL2IiauKH/iU76PQw7p8vpXOqEgEPGDfm65YQM6CE/MA2xytB/lWpbYxc/17/Ba9A8SGfskcxcNF7T8WI4I7eNMJFncTfUyzpMPoGr1jLgyrRcRAh0i0Y7aRtoE+Uq7FT8rKx0Z98/RTN/R4yeVfAFxHrPNPXdS/0IbLEAkKdbIQKlNNBSH3S0GFQLFwHiXHvs6T3M5fVzENkCyk67eH+maP848Q1Gr/0pb0KdiPQozxgtYOte/RHpIEcKN6tfmpJQ9pLOXOWJW2azM9uZm71EuxoQ01pBANTQWAS8PAdaSSQnPVJDx35dI8gOAbaLt2X31uaVDl6bqS+riGDnqvYnb8/WVsxDqCjuXeKLQsc2tXRofeksxpmIXgHzX6JoMzT3G/HFH6PWLCoVkzFca2l0tCFF5p9/aCrDoOLADfptIj9UrU1TKFMWzSj4uLRdTaGK7P3VN5yIOFZ0dODXOJJMhOZQwadxlqmMSVQw4fzVAgXpjL2p3/Tzk3gucng67dv8+b4Xm6tB"
+      "salt": "04526bf85d44e4282e92aa806ccc3f1f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-05:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Joe Fagnano",
+    "sport": "NFL",
+    "start": "2026-11-06T01:15Z"
+   },
+   "fair": -229,
+   "price": -176,
+   "prob": 0.6962,
+   "revealed": {
+    "v": 1,
+    "hash": "43a563b571e96a3a5d4154cad18841d8c64d6b321f24e25d1db2cc21d3cedbcc",
+    "salt": "efc0c2b36a3784a58f6506569e08336c",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-05:dub"
+   }
   }
  ],
- "updated": "2026-11-06T01:52:11.313Z",
+ "updated": "2026-11-06T02:00:33.716Z",
  "record": {
   "w": 23,
   "l": 18
