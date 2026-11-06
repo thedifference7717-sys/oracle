@@ -5187,11 +5187,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 2.24 · 2.5 pts/gm this season (16) · a point in 10 of his last 10",
+     "eventId": "2026020260",
+     "kalshi": {
+      "ask": 0.85,
+      "bid": 0.83,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV05ANAEDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8391,
+     "pAdj": 0.8624,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -567,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-06T01:00:00Z",
+     "teams": "EDM vs ANA",
+     "revealed": {
       "v": 1,
       "hash": "3e056cb10932db676383123b7e77ad15ee7e2a8e2ee58f3734650c35c73a9333",
-      "iv": "iJQaEwJiAqGILYdW",
-      "ct": "1aO15qcCh2LRwR5B0IJeQvEzqYasT+egZY7g4lMoRF8SrN+O+atYV+r6sfRRfNzZXNN2dQWdrxGAXWtF02v8YgY3CA4+tkA1eBkw9tTkf3HqpDFEac2UIHSzU0w9BO8DjHMzhchWhTbIX/hNi24s6MHH9VosmIIhlL2JLcFxY8Wjc9c9R7E7OsvvR/T6WVqQxVBMKx6eQ162yOdPGYcqCNgW+j5moIpSk+C4v0xGgTon0550Pwrrwp8GkWnNNSmwfpno+R8kJxD2xxAamd7FOo6omaf9WmAwcYCMm7vsZoiaEei9QyhJ03Y+lBNmPM4TJHwrDiDimki6D69JvJWAqsvFIyDVIonzJRtg08k02jWmsYifbs949cD6PuRSuZVaOTp1VrBhs4zZtO1oYdrPmZHRw6q02CPmJUH/l4YccfH5LREQh8ZH7PGEhNDR8aJL9F+E3Db2gD/k0ZFY912R5QtI0PNjhN0Fa+HGCbY8b+kNKTqolgP0aYTIKlT+0oBfSlM59gLoidL/M4ADEVPS59YfRmmrre01sS0soj0HgTz4lk50WPdlv08gurgUs7EUpGCAKe5I7aCirNfKEwV218h1gojveVZTNVwqKI2YA6UQr5aTbZXeYy54mCbMwd4pwFjagmWBjnFT61bHr2DR3HWxgqa4K/IQ/GLh+cKCWmVzl2KrpbTnnb/lXBQ="
+      "salt": "9643c82d3cae49db41d602ca94ba4fbf",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-05:dub#0"
      }
     },
     {
@@ -5205,7 +5242,7 @@
    ]
   }
  ],
- "updated": "2026-11-05T23:00:28.910Z",
+ "updated": "2026-11-06T01:00:49.763Z",
  "record": {
   "w": 23,
   "l": 18
