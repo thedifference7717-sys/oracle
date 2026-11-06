@@ -13345,6 +13345,9 @@
      "sport": "NHL",
      "start": "2026-11-06T00:00:00Z",
      "teams": "TBL vs CHI",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "070ac206de18a7fc2802fa67e8da87960bb3fe316b54d1565de242a7990e4bf8",
@@ -13428,7 +13431,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T02:00:33.764Z",
+ "updated": "2026-11-06T02:52:59.473Z",
  "record": {
   "w": 158,
   "l": 50,
