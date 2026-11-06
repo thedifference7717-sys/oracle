@@ -5172,7 +5172,7 @@
    "id": "2026-11-05:dub",
    "date": "2026-11-05",
    "published": "2026-11-05T23:00:28.910Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 2,
     "NFL": 1,
@@ -5249,6 +5249,9 @@
      "sport": "NBA",
      "start": "2026-11-06T02:00Z",
      "teams": "ORL @ PHX",
+     "result": "lost",
+     "actual": 0,
+     "note": "0 3PM against a 0.5 line",
      "revealed": {
       "v": 1,
       "hash": "00fc41d1d9583eef4cceb065de305226ca896c948816dc3e93655ae7b7e69de0",
@@ -5282,6 +5285,7 @@
    "fair": -229,
    "price": -176,
    "prob": 0.6962,
+   "settled": "2026-11-06T04:25:39.129Z",
    "revealed": {
     "v": 1,
     "hash": "43a563b571e96a3a5d4154cad18841d8c64d6b321f24e25d1db2cc21d3cedbcc",
@@ -5296,9 +5300,9 @@
    }
   }
  ],
- "updated": "2026-11-06T02:00:33.716Z",
+ "updated": "2026-11-06T04:25:40.223Z",
  "record": {
   "w": 23,
-  "l": 18
+  "l": 19
  }
 }
