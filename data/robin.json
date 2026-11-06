@@ -13284,6 +13284,9 @@
      "sport": "NHL",
      "start": "2026-11-06T00:00:00Z",
      "teams": "NJD vs STL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "add750a81a6330bf8d86e354e3a9d279022f419891018e49602e3f983d37508b",
@@ -13311,7 +13314,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T00:00:42.069Z",
+ "updated": "2026-11-06T00:24:01.080Z",
  "record": {
   "w": 158,
   "l": 50,
