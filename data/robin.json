@@ -13207,6 +13207,9 @@
      "sport": "NFL",
      "start": "2026-11-06T01:15Z",
      "teams": "BAL vs JAX",
+     "result": "lost",
+     "actual": 60,
+     "note": "60 passing yards against a 124.5 line",
      "revealed": {
       "v": 1,
       "hash": "9fbf5012bd7f021342f8a836ad97cc7739e3c9d8eecdbb53faa1887971a354c7",
@@ -13471,7 +13474,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T03:48:32.854Z",
+ "updated": "2026-11-06T04:07:50.449Z",
  "record": {
   "w": 158,
   "l": 50,

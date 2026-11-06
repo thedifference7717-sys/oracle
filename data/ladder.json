@@ -3979,7 +3979,7 @@
   {
    "id": "2026-11-05:ladder",
    "date": "2026-11-05",
-   "status": "open",
+   "status": "lost",
    "published": "2026-11-05T23:00:26.269Z",
    "cycle": 15,
    "rung": 4,
@@ -4037,6 +4037,9 @@
    "sport": "NFL",
    "start": "2026-11-06T01:15Z",
    "teams": "BAL vs JAX",
+   "actual": 60,
+   "result": "60 passing yards against a 124.5 line",
+   "settled": "2026-11-06T04:07:48.545Z",
    "revealed": {
     "v": 1,
     "hash": "bd6b5772f5593b14fbda6961d8edc54e72268b5609c2da84cc37937dbfdf2915",
@@ -4065,17 +4068,17 @@
    }
   }
  ],
- "updated": "2026-11-06T01:15:16.705Z",
+ "updated": "2026-11-06T04:07:48.549Z",
  "state": {
-  "account": 446.49,
-  "base": 27.06,
-  "stake": 65.66,
-  "rung": 4,
-  "cycle": 15,
-  "pl": 346.49,
+  "account": 419.43,
+  "base": 32.47,
+  "stake": 32.47,
+  "rung": 1,
+  "cycle": 16,
+  "pl": 319.43,
   "cycles": {
    "done": 5,
-   "busted": 9
+   "busted": 10
   },
   "canFund": true
  },
