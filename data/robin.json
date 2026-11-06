@@ -13211,11 +13211,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.769 · 1.43 pts/gm this season (14) · a point in 7 of his last 10",
+     "eventId": "2026020253",
+     "kalshi": {
+      "ask": 0.8,
+      "bid": 0.78,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV05CHITB-TBNKUCHEROV86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7788,
+     "pAdj": 0.7882,
+     "player": "Nikita Kucherov",
+     "playerId": "8476453",
+     "price": -400,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-06T00:00:00Z",
+     "teams": "TBL vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "070ac206de18a7fc2802fa67e8da87960bb3fe316b54d1565de242a7990e4bf8",
-      "iv": "wC803NKAuK+vqXXr",
-      "ct": "E3MIh0K99aXBrWysdgnmQHsnCle3Szde100mZQ+pAOEh5cQU4Pl+CDLXHmgitYMngi4t9mmtdzlXmBa8PHnoBcRahX0PHvkYdlUJlTEaHTkNWjMraLYR+cfy3eIcLMqHnn0X0jvre6s6XY9GEZLEbkQWa7CLPa4jLvzLRtipG7r3KPiBA66vlWkz233pUnKkjG9FsUjcVGJKDnPQkMagElcL6xFrbvzzDtf4RK2+ctTjMMkxOqq2pPku1qRy1xhLnMWC2dY4Gcbm/1Jt2frRR26cxOXhNRtau7nPi5QyGX6M0KoxJurIKo9qnZXhhkScB7X88mqTkYUTQ68n3BG5X7nEJhBZkILg6ATe28KVijdTQadVpPSjLmF7Io88lEbLe/jRzzWEOnq4q+Cll/IjT0mjts/e9YU9TCGpeEOm0BT/InZbDUYFv6K7JahevefOysH8iYF0+DuhHdLkvSfQQ780EYJSJLelbORD5zHBKDd1Nq80MIv52oogweA0GzYVzOt+PrmVL1PjaajdVT0Xhm4sCdFXn+BeyR+T3fBVpH77bdn7Zt+a95KcsXMZqn8bYvCX+ZPD7XebhupY+bc+S4qOaMRlPXmU7/sJ0FQALBdsgwb7a6IE0pBJhA/HInTJm9QMmFTiF5c21eiAUacs2ojxpGpthFX8R1i1mKVaTX1FkiO5OV5v/MEiOflkWg=="
+      "salt": "41ce6249455dfeed49a1e274944988ad",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-05:robin#3"
      }
     },
     {
@@ -13227,17 +13264,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.337 · 1.27 pts/gm this season (15) · a point in 7 of his last 10",
+     "eventId": "2026020254",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.71,
+      "spread": 0.04,
+      "ticker": "KXNHLPTS-26NOV05STLNJ-NJJHUGHES86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7033,
+     "pAdj": 0.7396,
+     "player": "Jack Hughes",
+     "playerId": "8481559",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-06T00:00:00Z",
+     "teams": "NJD vs STL",
+     "revealed": {
       "v": 1,
       "hash": "add750a81a6330bf8d86e354e3a9d279022f419891018e49602e3f983d37508b",
-      "iv": "7tfQHH6OIqyrCLR9",
-      "ct": "rukD7VPvxZGT1EuGO7V7UsA6F4/eQyqduKsDNCWqaygcBUIS3jKuCU8aacQD5+nXiikFxkjqE89IfHJRtmqoFhUWJvXAdvo0Oo/aaPwwAiEpYW4E2+4u/O46+Nrpk0+f/cuidoTAdjuDRps8sMduIgDMvDerEarWA5W4ynqv+TCMMM3dSKrnZvTBv5fBMLING3vn2nvlpdHmqVbM8SXd0eiytnPE9i/r1tVfNQ7Y+G5OwmnzfAJSM/Y8mO1AIO4Z8mN2ltbvQK9Jx1a2szXQ+UitWCRcLyttTJbsfiTu+DKtEMaCTwvK/SToc8foVfLXTxDQjE2aZQVM0T5ft7DAWidN/7IXiW2/MCKeyBBoofKzYoVt1oyx9L7Wdo5QLf/wwwkadDp9dXJmaiT50ITcf8ODV6LfHqRb9J/UCMeydan69Uj/JfY2xuyjOvQEXieAiKwNb7SQwgce/V3Jj7qgVi4XMz1teAUyT3MkGFed40bscTd+w405r1jYtPGZGIIIFJlBbxnSxngbP1jMip6StN1vmH19e9Uh7htySg63uaOYmKSj8AA97Vdx4Jz3C6KfiwH+vBS2gFRJmInGOxs4c0/y9qF8Hmr63Qg7C9eKuOhC+X3NnJkq9qHODKbD6h3poiFXMRwHX7qBtWhmLQcQ4azDnH96GxHuHoLsRT0mou6YeRAkhPp63Hg="
+      "salt": "506a0e888066a36d65321d3bc9802044",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-05:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-05T23:00:30.209Z",
+ "updated": "2026-11-06T00:00:42.069Z",
  "record": {
   "w": 158,
   "l": 50,
