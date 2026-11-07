@@ -13733,6 +13733,9 @@
      "sport": "NHL",
      "start": "2026-11-07T00:00:00Z",
      "teams": "BUF vs CBJ",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "ae174d8fec3911e29439b136902173d69a42b10332460e21e58f169c1b46e971",
@@ -13805,7 +13808,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T01:23:26.770Z",
+ "updated": "2026-11-07T01:26:38.090Z",
  "record": {
   "w": 162,
   "l": 52,
