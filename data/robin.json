@@ -13711,11 +13711,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 14.1 in 28 min · over this line 5 of his last 7",
+     "eventId": "401909294",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.69,
+      "spread": 0.08,
+      "ticker": "KXNBAPTS-26NOV06PORLAL-PORJHOLIDAY5-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.7932,
+     "pAdj": 0.7709,
+     "player": "Jrue Holiday",
+     "playerId": "3995",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-07T03:00Z",
+     "teams": "POR @ LAL",
+     "revealed": {
       "v": 1,
       "hash": "41765b92d6a14387a9f49c0df5aa412d300a4d34ce246f8d3860779b080e2019",
-      "iv": "zCfPiaL3ekks5v1p",
-      "ct": "LE8FmndvjwcAkwkU22sFTqu/Kmj88OWUrHz3l/fXPr9yaMGbh+4FpvgbwzoI1HFGzdUyvcRb4fAY0ocVgTezAYl/rwv5h3weWJxJl2DLX3Spj0EWZ37sjup8lNiA8+uNN9H88NmTHNVKoE1wUMRGu9M8zRjwtQ+QKaFzWFlorf+SwiczhhN80ihEjCZSm1axcB9BzvUOmpyV1swTb3ybniwo/OTL/AgeVPNpKan/q4TMSOrMcs1H85SVIgqKrvNISi0rNzxh6jEkqVq8jy3Kd8ILw4vKdnedNKxUvpwmzPrplIUdBgQVblYB9jehZShoPzDO00BrS8Eb7AFjoPem19OHwF7mU0MNrXD4jHcXqhwXE6Z9FBVuTvxCmlSZIVR0ReqbPy6XXPf0P4LoigPn6MV0+L2h9wFsmVLNk4JNX+pjHbBxIx7bUNy4qBddIPACIaXtwYY/Z49gMt+9NS2y7oB0a2wW0EBv0+SHwiljBzW7wWYq4dI11G6T/LhIIEljigJfJ7rtGHp84/qyx3S3GV4ykAE4htRpMBKp+dHwMITMyzbV+5Qmi++KOxumWGlgcQmWIux1v36c1Z0md8Q8m4xthvtuhHBtXNYEgsV/bGQFmepdZhw8bVxzEtN6gDvRUT83FCKI8WVFY80T"
+      "salt": "ab1f57566dadffbc15c107abae7b65c9",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:robin#3"
      }
     },
     {
@@ -13814,7 +13851,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T02:21:08.676Z",
+ "updated": "2026-11-07T03:00:46.538Z",
  "record": {
   "w": 162,
   "l": 52,
