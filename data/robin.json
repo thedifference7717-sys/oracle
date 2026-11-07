@@ -13955,11 +13955,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 14.9 in 25 min · over this line 5 of his last 6",
+     "eventId": "401909938",
+     "kalshi": {
+      "ask": 0.62,
+      "bid": 0.61,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV07DENIND-INDOTOPPIN1-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8666,
+     "pAdj": 0.65,
+     "player": "Obi Toppin",
+     "playerId": "4278355",
+     "price": -163,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-07T22:00Z",
+     "teams": "IND vs DEN",
+     "revealed": {
       "v": 1,
       "hash": "218c06a0713369dae22e369b82bf20c587730826db91f91cfccf8bee88a99172",
-      "iv": "kMALpGoEnOe90gL0",
-      "ct": "pALiQv8XElbYbLKrMKfjTSUcQmOWwqRhENGEQrSmd+pRIevw73YWApQ5MywPv1UeO3nooooyMVq1Dsvm82sK+6vPD/8Aa3cXr68cs/CFM3JOlnQYeRZdT4NeJtGgpljW0PSYwccH3LfiecC720ob870Fd8HfqKpYbwAkazqnOoNk61YZeTDEpucqcS8nPN9x1T0URf/19gsC5LQXrmMoEHHI0UJfpXFUpWBTvl+FmSgU/APC3PwVUehgV8HPbt6DyY5ZfaC45VihL9VoQ5NeJ0UVPjQeZ86LMdys/xF/Kl2sGo/nlVc2+tsijlC1Xs+5RY/6+SCQLD8OsXk/t8XxILkbNhvkw3xvkaEqYSIb9/ju+k+E1YO5n0NcupjI26OTrdcBB1Kcc3MwU1KcAofqKhgrflFcc+9o6IfPb+60bOacts99rvCcPKqIHiSXzIT2NUOk7xp4LIVsjpfo5NKtmq0c7PKU3ynpdzW3TwWxWriWGBxMit5/UVyG9+afKUb4maFcJnybxNb0lVIe379ph8UvA8JUyGRZ13krHmlBy0JXN99DPIkjQCUU317ng/I6qDdXzbDNWt9j1jU0g16hfuq4rOxEs2yzb5OYS+mEsvVGT95hVJ3HS2IVFGzYWJ7C86dlM3eu+uXVz7M="
+      "salt": "a32de376809bc4c7a4bc0f2cd73dc5c9",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-07:robin#1"
      }
     },
     {
@@ -13997,7 +14034,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T16:30:37.292Z",
+ "updated": "2026-11-07T22:01:02.960Z",
  "record": {
   "w": 167,
   "l": 53,
