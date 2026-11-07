@@ -4070,7 +4070,7 @@
   {
    "id": "2026-11-06:ladder",
    "date": "2026-11-06",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-06T23:00:20.972Z",
    "cycle": 16,
    "rung": 1,
@@ -4127,6 +4127,9 @@
    "sport": "NHL",
    "start": "2026-11-07T01:00:00Z",
    "teams": "MIN vs SJS",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-11-07T01:23:24.753Z",
    "revealed": {
     "v": 1,
     "hash": "b74b729b71ed6064c7c08a7781db85fe9ee1952ed9d079503b16a9f59619de68",
@@ -4155,12 +4158,12 @@
    }
   }
  ],
- "updated": "2026-11-07T01:00:31.834Z",
+ "updated": "2026-11-07T01:23:24.755Z",
  "state": {
   "account": 419.43,
   "base": 32.47,
-  "stake": 32.47,
-  "rung": 1,
+  "stake": 40.59,
+  "rung": 2,
   "cycle": 16,
   "pl": 319.43,
   "cycles": {

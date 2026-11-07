@@ -13587,6 +13587,9 @@
      "sport": "NHL",
      "start": "2026-11-07T01:00:00Z",
      "teams": "MIN vs SJS",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "f759f7034fa4c3929bc4192f7e786e843b6888cdba339a056a9d1166f32918e4",
@@ -13802,7 +13805,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T01:00:31.880Z",
+ "updated": "2026-11-07T01:23:26.770Z",
  "record": {
   "w": 162,
   "l": 52,
