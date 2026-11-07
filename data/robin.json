@@ -13575,11 +13575,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 17.6 in 30 min · over this line 5 of his last 9",
+     "eventId": "401909288",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.71,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26NOV06BOSCHA-CHAGALLEN8-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8767,
+     "pAdj": 0.7709,
+     "player": "Grayson Allen",
+     "playerId": "3135045",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-07T00:00Z",
+     "teams": "CHA vs BOS",
+     "revealed": {
       "v": 1,
       "hash": "8de60b41b125863a05b4ae2c31fa96a3b9c8d676bc2f58c4f33c77922b84e4f1",
-      "iv": "Ts3gPHkxvaIcKuzg",
-      "ct": "07DjK6XluLdtig2uXXiw6gaItvgzjAP5At0okklOxdlXFExK9k2sBgFwInJ2x8Qnp196m2PniaUBQtuo2zgKQdcNq7PlhcEsd8dkHmb+BVyEUxJCSlQDaj2J+/h8UUuXxn26Z9soPnhz0cVqYSE0mzOEOEjygQe7gBIfBTZSQvQ8nvNkN+ezPmaxVLPHKmy/SekAhPF/nroOZhtTAxMx3V2d9Zgn2VNDMtxPZXLbTX3+9w5B/hKNP75TrPANHZjb3Ku1Z8z2YbXKz2nS909QsAi0UxzyPSzdPFuE3DSaJB0FGV5pELktx+ErH7sEA91bGKeF5Ve5M0oK6VjIjiqjGKCUbvvoUiQEOlAAUgpxIsHvaWIJm8/8xh8lks19fAoC7vfuC2Bjy+wvlntSvlD0ywlFy5yZ9yqYfl2zwMrwHlVNNWiFuPudCMN/kqhB2uDhpc/h2BD9yrKjKsxtqokw39Zdh8cvlwma6wjHxAGt+q5t+7yqIrcfQlHIxwqCdWqmwISLHyYdmCZ8TNqKAiyaCYKXYky2EuYZ2939a6upMLlFF8gtJnkvP3qq+bEdchzQoUPkJ/dzQLqi5Gplzo1O+CCxG5G/HpedCWITKBIRXtkjIN41eFzHHkReC3JH4vPFEIYD0gJu6hDwSoWg5AyF"
+      "salt": "8284115e6cfb2d7f93f620d20ad9abe8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:robin#1"
      }
     },
     {
@@ -13599,11 +13636,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.149 · 1.2 pts/gm this season (15) · a point in 7 of his last 10",
+     "eventId": "2026020262",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.66,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV06CBJBUF-BUFTTHOMPSON72-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.662,
+     "pAdj": 0.6723,
+     "player": "Tage Thompson",
+     "playerId": "8479420",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-07T00:00:00Z",
+     "teams": "BUF vs CBJ",
+     "revealed": {
       "v": 1,
       "hash": "ae174d8fec3911e29439b136902173d69a42b10332460e21e58f169c1b46e971",
-      "iv": "1O+xabLQQnLy/iGa",
-      "ct": "FpZ6pe84iiDuJPLpgdKgKei/TOdQrb4tvCPur3a8a0+lN2/aBs0iR0q8kcjqlg4bk5Qv1YUkpeOuN8E4FYIzfOsMZkAs6nQTi9L0bca5X0OlzuJuHQbDza+8mAY+9V6zhTB0z/6Ah3Oos66KpTa7+FUOMqUXHxx77XfA7As17JMr5pQMF/cVMqF1/8MZbf2a4bvkEh4XUn8agzDDVaZmR+fd7/yifGOE6JKXg/cGQ4bC389HzSc26C4XUms7NeBD1047PbEUyEtSNX0y6hgQOBkxtA9iyL1z7zrLozR7tLZqQKZ/ELRu6H5wQAX0W0B7gziIB5YBIkSEyyQPijl/5QJLLM/6vu6YU0mydY8LgOGrLgeuK51mVedpWtFIoOYLBe9CO9EV4Xl8nfN4nARHOrHPHs3FvbwwIrQLAuvANOjNMYsGqZAr3rqTObYJddOuacVR27VRKGu2BZy+ES3OGsOi1vNGpR/BouJgCZDCSuUAnogHtV1f+R7Us4TwTCtsQyhoywz0W25hoVW1Gnc9ZKfJlIIjmQstKS5C125XB7cDEyc1yI9PiVyyg8516IXfRLzCbEXm+PD5Bf04H6DvswFsOQXyvsobwpRiEkkAykFIFHUQuyzd/FQ184PdGqTZneMovZosqD+HxxilHbDR2IrVcx17Jq12kGikDsxtCSPoLmFkWNjJGH6kFWL4"
+      "salt": "6ec39cf172f6a4d0d723a080ebfa0f08",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:robin#4"
      }
     },
     {
@@ -13617,7 +13691,7 @@
    ]
   }
  ],
- "updated": "2026-11-06T23:00:24.801Z",
+ "updated": "2026-11-07T00:00:25.759Z",
  "record": {
   "w": 162,
   "l": 52,

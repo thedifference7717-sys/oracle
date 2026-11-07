@@ -5325,17 +5325,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 17.6 in 30 min · over this line 5 of his last 9",
+     "eventId": "401909288",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.71,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26NOV06BOSCHA-CHAGALLEN8-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8767,
+     "pAdj": 0.7709,
+     "player": "Grayson Allen",
+     "playerId": "3135045",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-07T00:00Z",
+     "teams": "CHA vs BOS",
+     "revealed": {
       "v": 1,
       "hash": "1da42543923c5b361407ea9d9a2d55674e2843c9875c41318c250493df11da1a",
-      "iv": "s8ZMd7B9RDb2E/qF",
-      "ct": "+Oj1VbzcVcGOIxLrbbONnZMmOaOiDPRIg4xEHenNn6QcuezOqlnVxhrRNwnPNH7U91+SrBAlzNlRi/0bny0E1FF9IagNeHhxEaNHi7qgCp6V2GpmWmar4DgfjpqivmA3CvUKVhkGZ+wG+mVB0tomfKdSQHFw/KVc138WGZIGSKkl7Dt5XgjCRoDwlfz/Dt8a9m0mIlgcpieBGUEjiTkABLorbNSurOWDmelRHAbY5CZqJdjBUQcVk+XN8V75KC8jbdDZuKhh2Lbv0o2RnRqsZMzzDpkfS55h1bEYjS1ZoFBZrycV3MAgR9SFcCLO6wuPZYw0li2A3W/5mtG7q/LTdRUnEEM+7jAFhL/bStdgrMOamJ0JLQl67Os51SoOJ0a0aQYeT9ABvQrBpkApIEdcSPK0/X9LdW4aMdzLRYvAfDmUYgx0YPxA0IX3FSZqFNvZCedwhXJ++DAWejd2X/5qU/lBhSSts+xiFqXfIwP7efQhSyf7Mv/aT4eYTIa6oS75oM2oSOxz7oxsNl3Vjjp+SH3rPoT5oeMCwJokeAbJfv2s0+jL9jZiYgqrY/+2vqKIqWhIxlCJ2v9NxJ8Eqje1uZAwq+PdHwFjLS0XwOeHlVV3b87krDmA+o44vaFONXoQoNtWoQbQwhhCKvXHZw=="
+      "salt": "62965ac6457cc829d32f6257ecb4338e",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-06T23:00:23.503Z",
+ "updated": "2026-11-07T00:00:25.733Z",
  "record": {
   "w": 23,
   "l": 19
