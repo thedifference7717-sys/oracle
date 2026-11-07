@@ -5309,19 +5309,50 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "6bdc922d13fd1bcd29e10b3303cce6fb8837c696e4134d4af5a78b603020b565",
-    "iv": "ffS+rzaY+1t3bMyk",
-    "ct": "MdizL3e/T78zfpvKpGNieYt1obeJh1DjhhY3q8+txO7K+deorG42RglSZJwGl/NrFs6gwh1V5ybCCAewLLlAwCsC7AlHYi73pwi+pE1n2YIlvvCng0Htskz+iG8MCZ/HoB5qj7jJWy4NPwv07G060wA7xsI+xTjv/FIK4GtGLvuMhApL/xWKg/37Xrlu7XERCMNY4Sp2Z6XD8O40puPYDpjOCdIDrsBOT8oOum7B++15MkKBePIQ6AYVnclkVVeCe1Iq2nHEq5hwLzw+grSCxE141+4hASo="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 17.1 in 37 min · over this line 4 of his last 8",
+     "eventId": "401909290",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.71,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26NOV06UTADAL-DALPWASHINGTON25-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8764,
+     "pAdj": 0.7604,
+     "player": "P.J. Washington",
+     "playerId": "4278078",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-07T01:00Z",
+     "teams": "DAL vs UTAH",
+     "revealed": {
       "v": 1,
       "hash": "ea5f3c0d8e18ca9114d7693545f9b6c36d632cc8364a50dd7b7e43cda9c7860b",
-      "iv": "M8gcRO6o1+8zGXlB",
-      "ct": "x06+EUknTcEUCxUq8BpeCSfbj5yUq2bCZ3vVuybo+A2V73mjQsY8VczB6ozbj0w0tTasYYO/rCcyq01beXD12z7oLENss8tmk8zy3SkBD0AtqxrjaGnA8Z6sj0fFR0DG5gEBnvizNzywmsZ7ZQM0Yfg5ra7kzQZ/xfQQ3ev3Ht23OUW9vXaFT+7v40BLUrTZAKMpKAQprhC2Z4K1DT5/6u0JoQ15UKVpfAX1Iezf6pR30oG8R4BWHZKAdGRelU25ZVXGQijItJtHR5dG1CuOK3E7t5ndpgFuVYhQ+DMaKIXAh5xqPS6k04EGndsNO+H3Ej3X59H3gR9INJnXR6LaaqJGex4F9OomT4L5S8Z4gvkvaP8FSIssEQBQIG6Rw/9BBnSRTQ72lB2LMXiH8YJBriDOn05YQ68uGKM2g9J4Lmp4yr54hCYWKhXl3N8cz9aKEe8CZmPhV2oH09YLNXteu9AT5cCqraHWfdjzHlDUIQpYVEKpo0ZM5rhT4xX1DsHD56t37B/BSVZ79yWN6y4QBGLXQ00p+qfT8ofNB0ehoIMM9Sw71YJU4Wme1dufO9X0FnR0H3h/Lh+RkRR7PHqRt7NioR9I5Gi9+YdMMOJ1VB16+qR3tLWNG0cvimpB/L9p0yVYpN6wQIHB/O0Mc4yog7RjittILg=="
+      "salt": "a01942c233272805c163d2b3ffe73cf6",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:dub#0"
      }
     },
     {
@@ -5369,10 +5400,30 @@
       "ctx": "2026-11-06:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Kirill Kaprizov",
+    "sport": "NHL",
+    "start": "2026-11-07T01:00:00Z"
+   },
+   "fair": -332,
+   "price": -125,
+   "prob": 0.7683,
+   "revealed": {
+    "v": 1,
+    "hash": "6bdc922d13fd1bcd29e10b3303cce6fb8837c696e4134d4af5a78b603020b565",
+    "salt": "0ae34ea7b19dee9bb4cc89044033c1a6",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-06:dub"
+   }
   }
  ],
- "updated": "2026-11-07T00:00:25.733Z",
+ "updated": "2026-11-07T01:00:31.854Z",
  "record": {
   "w": 23,
   "l": 19

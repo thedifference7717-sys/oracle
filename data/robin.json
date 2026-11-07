@@ -13567,11 +13567,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.436 · 1.53 pts/gm this season (17) · a point in 9 of his last 10",
+     "eventId": "2026020263",
+     "kalshi": {
+      "ask": 0.8,
+      "bid": 0.78,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV06SJMIN-MINKKAPRIZOV97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7229,
+     "pAdj": 0.7849,
+     "player": "Kirill Kaprizov",
+     "playerId": "8478864",
+     "price": -400,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-07T01:00:00Z",
+     "teams": "MIN vs SJS",
+     "revealed": {
       "v": 1,
       "hash": "f759f7034fa4c3929bc4192f7e786e843b6888cdba339a056a9d1166f32918e4",
-      "iv": "NEowNIogfjn44yYe",
-      "ct": "Cdu8dVz8HL9JFzoYwX6p8WMOczYJ3+8EPxZYO4y0/P17emRMnNOu31udOwuamKf+0AWkvqsupKHq6vx4md3iVUTcewiDWm6ljb4tfTDVKx/1uXC2HJQJHuNXZYo/xyUwS5UPZtPPEZT1XHr4Ui0m9Zx7uCRC/aV619wXdgIR5WcwR69BTAenT2rrBDJpud+Qs/YhNdDKjZuIA7kBm9WMjHbk2myyE2OaPCmMP8xYK/QFwE8BbDViGUe+Q1lfJIQgSrhp7fr7EEJqeFXoDe+mjNgQ/Z61qlCQCrDudWHLq0/HrjepxYu7+l34is5q8uYjjkoDmK/hNUG33oJizdEViB3hAwQVDCZV7lvyOPWUYWpHRRCxCgNA2yV5F/4o6XE072OY+XP9Q6BZ/w/Zh+8UblYD4bTZW6mVhCQuWeH57KNcF7S9oSwcd8oYTaCj7kPM/J7EdNw7S7huufGb9hgUg04sWO2ij1WEfZPVzBJfNtimbopzV1RV4jvPlWGhUMkdHZUKzO8LxplZ54AuUKNfUUmIzBcr1HweEGK+gOmlAb1pzw5cjwjuaB7kXVyeaBT5ZF3E+4/MLTTFTXnwOiu8YI9HypEFye6XGrdobR1Bdj4j2UsbB/TpNxjGZXNvhjS4H2W+q6+E7r3dWZwWUfUpdlU4luZJ7T7/A1VTMX6z0/79X3wrGtv7xtpyZg/kYdc="
+      "salt": "3989a535ecf520376b5a1c44b2a1ffc3",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:robin#0"
      }
     },
     {
@@ -13620,11 +13657,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 17.1 in 37 min · over this line 4 of his last 8",
+     "eventId": "401909290",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.71,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26NOV06UTADAL-DALPWASHINGTON25-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8764,
+     "pAdj": 0.7604,
+     "player": "P.J. Washington",
+     "playerId": "4278078",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-07T01:00Z",
+     "teams": "DAL vs UTAH",
+     "revealed": {
       "v": 1,
       "hash": "b5ca652d6ed18ec0d56ce7d700be9884df4b3513f5f3182bfbde82522ad5ee6a",
-      "iv": "Qzz53zhrAx5iqFbQ",
-      "ct": "b//r+xtizCAJdvHXlKezCpDp05sMlr1oYGuJIjh57FvZ3IwLDRC+FBYs14tk1pMxLUsyitK/bwMqHffQIJ8m+ouYiJyYCVJ+FOWz7e114fD5UjXulXetGPQk3g8SI2i2ChhccIRkMDsJwmj4avGINEAhKwoQNVT56xh08ldj/Qp8hTaUclkIe2Q47tk3ab1Bt2RChQMTGNLY2UazHMgfjMtjIzTvCK1WNkzzKeQ2QlovJuZSAJMDo5d7CLDClXvfXHoXoLIy7TWb7VDc1hnWXi5YPJwUxyjxnSF2R8++OJpkWc205LoiCKbOaNWI5zu7qlClGa+TI0/U6bJhEklmq4e71AotG1k9cgIS9MKLuCtAN0oyCsjRrHRsp59IU4eks1kpevgDm0mAyTXDbjUeIvUYERLHAp58vfzF3u1/oqeKdRW4m3u4q6jmishvZ5B5M4ySC4+fQBFt26FgCTE/fqYS9UkPPiG65jVSVg2Zh1YXsX9T1R+KxgCNMT2Y9C4Rl0GWZIkpjPV4IPyJpbntodpB2Pjq522Xnixc3O8UD9cfr5aBeDvf+9vGgNfmD4GqKEl7bId7OyLEkCUusCXjjeY5MaWxAVlteyt9ViPcpRrCMZs8Tv7O9ebIV+TP+m7jci0K0q31zKFnxUeFj5bf8uC+NHFBG+fJ"
+      "salt": "27b69c978b7fecc4b15b4991fad2c8a0",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:robin#2"
      }
     },
     {
@@ -13681,17 +13755,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 0.981 · 1.13 pts/gm this season (15) · a point in 7 of his last 10",
+     "eventId": "2026020264",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.6,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26NOV06ANACGY-ANACGAUTHIER61-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6197,
+     "pAdj": 0.6313,
+     "player": "Cutter Gauthier",
+     "playerId": "8483445",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-07T01:00:00Z",
+     "teams": "ANA @ CGY",
+     "revealed": {
       "v": 1,
       "hash": "ac318b1ac4274657d539a98d7177f0850593620bbe53ac15d15fbb0c350b3aed",
-      "iv": "awoBp0q53DzPuJ+L",
-      "ct": "6MJUZRuhBEYD1rJPmYREyOksxC2M9vI2+e85tdMhf/OT22Z8lVk0Nxwxcki33G62aTfADHOU3bdA6lObB7p3eO/gB2E+sK+uWoLAX7rLXblet94G/8KEh7VdmK7A2IqcH2URvcVmF9hWVtvVHxi9DPgFCWFFZia3izx8wNDYWd/PEX/VqmoDUhb03a75o5nYBwdfeK3JgGtJExQTk5U28hf0EpFfRM/iioUiCz8ebOw8VOWXziLQiHbYyyUjsQ8Ny2CqSYkJV0ByP7PFDcnhc1/CwuYeee+Xq56JkSaRKYA7k1XuaiRbbREJ3fSLWM9xuxF2dE/kJsFoY3TmffkBsKFdF2rHiv9DU6uyCDi2RYc7LlUVUysYrLoHEA/vrJdJnVNE9dJmXtkAwWzsaugxSIOxCK/uKdNVXznJCXTq0SIVwSueynux3lZhkS/gNPbmK3dPKTFxuSBax+lVdUZ4xGAyjPqayvEhDhX0cKfacBOtqCZbJZCbVXfLM3aL87XrIQqOPO4nm9vrMMHAB6ZXYhEKO8oAkHT8jjl1Ehs6s1KmKtOY4GHGQ2s5XI/BPBJh2ZmWjynO6CF0aY6UAQeXjeBhxuRiiYCme+TPJaDux6YU2M36XhXqMMDFlQXgsPowxC4jSp7/vo1tt4krScTsPQtuJcXPIhF3X3ZmwXyHKqiWJpcd0qGcWyI6FWbfNh8="
+      "salt": "dd1f2a89bfaefbb79807d42af5acc5e3",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-06:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-07T00:00:25.759Z",
+ "updated": "2026-11-07T01:00:31.880Z",
  "record": {
   "w": 162,
   "l": 52,

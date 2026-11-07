@@ -4081,15 +4081,81 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
+   "detail": "λ 1.436 · 1.53 pts/gm this season (17) · a point in 9 of his last 10",
+   "edge": -0.0771,
+   "eventId": "2026020263",
+   "fromProps": 1208,
+   "kalshi": {
+    "ask": 0.8,
+    "at": "2026-11-06T23:00:20.973Z",
+    "bid": 0.78,
+    "spread": 0.02,
+    "ticker": "KXNHLPTS-26NOV06SJMIN-MINKKAPRIZOV97-1"
+   },
+   "line": 0.5,
+   "market": "pts",
+   "need": "to record a point",
+   "p": 0.7229,
+   "pAdj": 0.7849,
+   "pick": "Kirill Kaprizov",
+   "playerId": "8478864",
+   "price": -400,
+   "priceSource": "kalshi",
+   "runnersUp": [
+    {
+     "need": "10+ points",
+     "pAdj": 0.7604,
+     "pick": "P.J. Washington",
+     "price": -285,
+     "sport": "NBA"
+    },
+    {
+     "need": "10+ rebounds",
+     "pAdj": 0.7758,
+     "pick": "Domantas Sabonis",
+     "price": -335,
+     "sport": "NBA"
+    },
+    {
+     "need": "10+ points",
+     "pAdj": 0.7709,
+     "pick": "Grayson Allen",
+     "price": -300,
+     "sport": "NBA"
+    }
+   ],
+   "sport": "NHL",
+   "start": "2026-11-07T01:00:00Z",
+   "teams": "MIN vs SJS",
+   "revealed": {
     "v": 1,
     "hash": "b74b729b71ed6064c7c08a7781db85fe9ee1952ed9d079503b16a9f59619de68",
-    "iv": "azBGgNmi6HNlg8+O",
-    "ct": "YL7X5U25e1R11zqwqc2H4P2IuQn0Uhoi7KqeWBWugapgcH1HGZeIJricBkRb2o0fE1g4qfD6+HuhhPqAEEgMUOOeyN4OpgwCNkBb195kx6dyR2r+6idQ5LR2oWK0EJOay9G6sKDaJsxXXzoLUyiL7RekPqpW9CLROsz0+4HE13z5R8U6yle7YuZbbj0+qqGQFUcAyoXwYjeRs/pc93VrQhjyKcRIEdv50t05nqpqNk6PBaUuUMtKT/MZ7PVsLzsiEDBJp3DjEO5ikBcZYjhVno9T//A9SLp4mMyPhZfnSuzbBPoZekMbsHfJKOoO+XNmfPRN73LMLq0E6hcpZJ4Gc/rD47k22FP8ry+UFVssiqF3YvMc3VbEwifwpS7I0WhDYpj0nHNLUjykzfzShyYJlMm1g612N6NKqJ5W3kdevrI9HtSeGKpBY+joJANWvdXR8jV1W0F5Z1EpbX65OBCxI4D3nOnoQS7xLg4n8VRkrLtnjtt9LawHQpjdVqDNAitRRucs/X77/qEqxt9ZRk7JCBouSAP+KeeSqzjnnBVj3hrbLqQwEBDxXEZtrVmsTQ7Iyyv3jtUppjymJdW2P0v23gFRfZcCLccZDWefZ1lYWAdj9lv6c/tm3lDnQtJoKiPswaXAcrMNLfxt+7i6k2Rt8q7GQhUQi9fDUDu93hzuNnU3GUEdWuL0EpPtcOY5RyMj6KitRXr31t0kahf1oGSVVKsS5oaiXPJ7kNiRFnyR8e0un71c8bNzOY9BbHJNV+quIJ1Lzdvy4sIf8bGjjkWqHqAiULLK4Fu3ghma4O43H1sB58mv+HJ/KOGmDPHD7dG1DBI0Brr+z5WQCx66v1X0Rn5knwyeeFuiK2Q9KU2XjnAQgrfTvm8xy9TPx4TX434rfSRb8JEvK97HLsC2RQC95nxmD4b8iPkIecrUJkHcq1hhtPwFT+07Hd4JzchhfVvZEh9kKnf4qSrkAk8CT3so/+ZD7+kf6U+H+hiCTZZ2Gmn4g8UW4vwrCsDnKBSi5V2C46QFdV0nDVMl8H/DKBfO5vnmcR2+sBM8e+zAB+tyApgsS2UzwenFcYqzeTHFUkf9B6euY/OCWK7lb4aQtuvns/m1d+SkDFolMdq/Q9BVH+J+qM3Mb159juIYSZ5T0SWYSLdn"
+    "salt": "de9d328f83e839cb73225570f5cc9881",
+    "keys": [
+     "detail",
+     "edge",
+     "eventId",
+     "fromProps",
+     "kalshi",
+     "line",
+     "market",
+     "need",
+     "p",
+     "pAdj",
+     "pick",
+     "playerId",
+     "price",
+     "priceSource",
+     "runnersUp",
+     "sport",
+     "start",
+     "teams"
+    ],
+    "ctx": "2026-11-06:ladder"
    }
   }
  ],
- "updated": "2026-11-06T23:00:20.976Z",
+ "updated": "2026-11-07T01:00:31.834Z",
  "state": {
   "account": 419.43,
   "base": 32.47,
