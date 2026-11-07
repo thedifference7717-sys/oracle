@@ -13635,6 +13635,9 @@
      "sport": "NBA",
      "start": "2026-11-07T00:00Z",
      "teams": "CHA vs BOS",
+     "result": "lost",
+     "actual": 0,
+     "note": "0 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "8de60b41b125863a05b4ae2c31fa96a3b9c8d676bc2f58c4f33c77922b84e4f1",
@@ -13811,7 +13814,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T01:51:46.788Z",
+ "updated": "2026-11-07T02:21:08.676Z",
  "record": {
   "w": 162,
   "l": 52,

@@ -5303,7 +5303,7 @@
    "id": "2026-11-06:dub",
    "date": "2026-11-06",
    "published": "2026-11-06T23:00:23.503Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 9,
     "NHL": 3
@@ -5379,6 +5379,9 @@
      "sport": "NBA",
      "start": "2026-11-07T00:00Z",
      "teams": "CHA vs BOS",
+     "result": "lost",
+     "actual": 0,
+     "note": "0 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "1da42543923c5b361407ea9d9a2d55674e2843c9875c41318c250493df11da1a",
@@ -5412,6 +5415,7 @@
    "fair": -332,
    "price": -125,
    "prob": 0.7683,
+   "settled": "2026-11-07T02:21:07.274Z",
    "revealed": {
     "v": 1,
     "hash": "6bdc922d13fd1bcd29e10b3303cce6fb8837c696e4134d4af5a78b603020b565",
@@ -5426,9 +5430,9 @@
    }
   }
  ],
- "updated": "2026-11-07T01:51:46.632Z",
+ "updated": "2026-11-07T02:21:08.564Z",
  "record": {
   "w": 23,
-  "l": 19
+  "l": 20
  }
 }
