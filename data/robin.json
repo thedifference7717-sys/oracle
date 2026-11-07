@@ -13680,6 +13680,9 @@
      "sport": "NBA",
      "start": "2026-11-07T01:00Z",
      "teams": "DAL vs UTAH",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "b5ca652d6ed18ec0d56ce7d700be9884df4b3513f5f3182bfbde82522ad5ee6a",
@@ -13808,7 +13811,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T01:26:38.090Z",
+ "updated": "2026-11-07T01:51:46.788Z",
  "record": {
   "w": 162,
   "l": 52,
