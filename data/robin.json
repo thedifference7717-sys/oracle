@@ -13824,6 +13824,9 @@
      "sport": "NHL",
      "start": "2026-11-07T01:00:00Z",
      "teams": "ANA @ CGY",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "ac318b1ac4274657d539a98d7177f0850593620bbe53ac15d15fbb0c350b3aed",
@@ -13851,7 +13854,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T03:00:46.538Z",
+ "updated": "2026-11-07T03:40:42.142Z",
  "record": {
   "w": 162,
   "l": 52,
