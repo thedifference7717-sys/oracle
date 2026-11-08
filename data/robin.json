@@ -14393,6 +14393,9 @@
      "sport": "NFL",
      "start": "2026-11-08T18:00Z",
      "teams": "CAR vs DEN",
+     "result": "won",
+     "actual": 213,
+     "note": "213 passing yards against a 174.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "94b782855a96d728b2dfee5d96338a9cad6fcd9b07e462643a5406f0d2b25d08",
@@ -14489,7 +14492,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T20:30:11.685Z",
+ "updated": "2026-11-08T20:48:24.287Z",
  "record": {
   "w": 172,
   "l": 54,
