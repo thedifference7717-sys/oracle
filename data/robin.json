@@ -14582,6 +14582,9 @@
      "sport": "NBA",
      "start": "2026-11-08T23:00Z",
      "teams": "DET vs LAL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 3PM against a 0.5 line",
      "revealed": {
       "v": 1,
       "hash": "51fadf852df0d7fe6914769271788b533e9895f1e7a73e8e39862b9feb3b2493",
@@ -14609,7 +14612,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T23:00:26.633Z",
+ "updated": "2026-11-08T23:30:46.100Z",
  "record": {
   "w": 172,
   "l": 54,
