@@ -4250,7 +4250,7 @@
   {
    "id": "2026-11-08:ladder",
    "date": "2026-11-08",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-08T13:30:18.139Z",
    "cycle": 16,
    "rung": 3,
@@ -4308,6 +4308,9 @@
    "sport": "NBA",
    "start": "2026-11-08T20:30Z",
    "teams": "PHI @ CHI",
+   "actual": 13,
+   "result": "13 PTS against a 9.5 line",
+   "settled": "2026-11-08T22:21:49.762Z",
    "revealed": {
     "v": 1,
     "hash": "52d1289f56b4df349c683f31b03868bb1fd3a3a9fd422e2e956608efc3012188",
@@ -4336,12 +4339,12 @@
    }
   }
  ],
- "updated": "2026-11-08T20:30:11.609Z",
+ "updated": "2026-11-08T22:21:49.766Z",
  "state": {
   "account": 419.43,
   "base": 32.47,
-  "stake": 46.66,
-  "rung": 3,
+  "stake": 62.8,
+  "rung": 4,
   "cycle": 16,
   "pl": 319.43,
   "cycles": {

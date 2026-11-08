@@ -14348,6 +14348,9 @@
      "sport": "NBA",
      "start": "2026-11-08T20:30Z",
      "teams": "PHI @ CHI",
+     "result": "won",
+     "actual": 13,
+     "note": "13 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "ca81c466702b2baf5133e0a289074adae15d8319ca97b781fdabe5142aed819f",
@@ -14569,7 +14572,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T21:25:10.791Z",
+ "updated": "2026-11-08T22:21:51.094Z",
  "record": {
   "w": 172,
   "l": 54,
