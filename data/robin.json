@@ -14031,6 +14031,9 @@
      "sport": "NBA",
      "start": "2026-11-08T00:30Z",
      "teams": "ATL vs BKN",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "c659528fe279bb6f8ca29d19cd7d1e0d8f60fbc8bda8c79ec527886db5a66310",
@@ -14111,7 +14114,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T01:00:33.702Z",
+ "updated": "2026-11-08T01:40:25.647Z",
  "record": {
   "w": 167,
   "l": 53,
