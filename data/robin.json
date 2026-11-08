@@ -14282,7 +14282,7 @@
    "id": "2026-11-08:robin",
    "date": "2026-11-08",
    "published": "2026-11-08T13:30:20.525Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 7,
     "NFL": 13,
@@ -14540,6 +14540,9 @@
      "sport": "NFL",
      "start": "2026-11-08T21:25Z",
      "teams": "SF vs LV",
+     "result": "won",
+     "actual": 225,
+     "note": "225 passing yards against a 199.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "014c339a62a49d04d6b085bea3fa367f7f740be2532324410d7c5c6a9d0cf990",
@@ -14612,21 +14615,63 @@
       "ctx": "2026-11-08:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 5,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 18.08,
+      "pl": 3.08
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 24.307,
+      "pl": 4.307
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 16.338,
+      "pl": 1.338
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 4.392,
+      "pl": -1.608
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-08T23:47:32.664Z"
   }
  ],
- "updated": "2026-11-08T23:44:25.404Z",
+ "updated": "2026-11-08T23:47:33.446Z",
  "record": {
-  "w": 172,
-  "l": 54,
+  "w": 177,
+  "l": 55,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 872,
-   "l": 1206
+   "w": 898,
+   "l": 1237
   },
   "days": {
-   "w": 22,
+   "w": 23,
    "l": 17
   }
  }
