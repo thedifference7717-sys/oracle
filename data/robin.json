@@ -13967,6 +13967,9 @@
      "sport": "NHL",
      "start": "2026-11-08T03:00:00Z",
      "teams": "EDM vs VAN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "6d5457191269ba81b46cfdb8fa19fa1e42546b4b2dfc6413eb96e33109300f5e",
@@ -14231,7 +14234,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T03:00:12.383Z",
+ "updated": "2026-11-08T03:28:11.990Z",
  "record": {
   "w": 167,
   "l": 53,

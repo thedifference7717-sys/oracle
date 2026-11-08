@@ -4160,7 +4160,7 @@
   {
    "id": "2026-11-07:ladder",
    "date": "2026-11-07",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-07T16:30:33.987Z",
    "cycle": 16,
    "rung": 2,
@@ -4217,6 +4217,9 @@
    "sport": "NHL",
    "start": "2026-11-08T03:00:00Z",
    "teams": "EDM vs VAN",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-11-08T03:28:10.605Z",
    "revealed": {
     "v": 1,
     "hash": "c015a6617388e65cffe8fad0572c4f6a21ebb2b4b29e33114c3e2516b46877f2",
@@ -4245,12 +4248,12 @@
    }
   }
  ],
- "updated": "2026-11-08T03:00:12.302Z",
+ "updated": "2026-11-08T03:28:10.609Z",
  "state": {
   "account": 419.43,
   "base": 32.47,
-  "stake": 40.59,
-  "rung": 2,
+  "stake": 46.66,
+  "rung": 3,
   "cycle": 16,
   "pl": 319.43,
   "cycles": {
