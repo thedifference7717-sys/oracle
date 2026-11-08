@@ -14562,17 +14562,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 1.5 in 22 min · over this line 8 of his last 8",
+     "eventId": "401909946",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.65,
+      "spread": 0.08,
+      "ticker": "KXNBA3PT-26NOV08LALDET-DETKHUERTERSF-1"
+     },
+     "line": 0.5,
+     "market": "tpm",
+     "need": "1+ threes made",
+     "p": 0.7532,
+     "pAdj": 0.7297,
+     "player": "Kevin Huerter",
+     "playerId": "4066372",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-08T23:00Z",
+     "teams": "DET vs LAL",
+     "revealed": {
       "v": 1,
       "hash": "51fadf852df0d7fe6914769271788b533e9895f1e7a73e8e39862b9feb3b2493",
-      "iv": "ehLbSzAJahoOn63p",
-      "ct": "ej2Nq87MFgC4Fa4U/qNExGIUCAphQWa+7JN9CkVyWOoj1rnZXXfoUvji5dQFUuI5fSOOYKEI2bZ2VE94gxf/i8DG89w9xn66gFkOJ7uM+IcSUW+Oymbz9lXjxMScbxv0Ao0l/bYKd5e9gP1sKXXzsmRmKcnGTbWcv9buAplH2Kv9KgdhIa5IF/cncVvLAh7Mb+S/Gu9El32Xqag2hC23SGuaDZRO+NrP6SS4T4rPuPAApQyYgfg8Oik3k4iz8rIQuD1u7L2slCMnr9d8LhIf/otcn1rIASN3D9KR58bj7Cx/kww7YXgm68oUfve7xwXtUaQhsV+vdUVNyu3+m9OZaCnBWFPqxqHT/VT+KKC/L6z+w6RG84jAv5V7FgclUN2G9BZCQCh3w03KuBPTJgIOHy4Uq3qU1haKeZdv5OEZHhVj14nDTlvmjaNlJXg8ZeKxG4RsmvPmMIdCn4U3oiCCtlwm99PqFcHN7xt5TFLI4pHC7FTw2qYQZ73YF4oVefceUVgoV5h6jzjIZt5kIJG73EJyYtylABysJ8eICA5USFdIvbhMrpcN+8YrCJ7SH6p8B27k5wK5NTCyRvM/fWY4hHcIdv8PolPLumOOMG23wOgg1rVXMc+dnC3YT0zdAbq7feV2WzjYQ1BDb/TjnQ021koOr10="
+      "salt": "3be216c76fb93e00342307868dc87c5f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-08:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-08T22:21:51.094Z",
+ "updated": "2026-11-08T23:00:26.633Z",
  "record": {
   "w": 172,
   "l": 54,
