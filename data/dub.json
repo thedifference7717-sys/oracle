@@ -5492,17 +5492,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 3.7 in 23 min · over this line 4 of his last 6",
+     "eventId": "401909943",
+     "kalshi": {
+      "ask": 0.66,
+      "bid": 0.61,
+      "spread": 0.05,
+      "ticker": "KXNBAAST-26NOV07HOUPHX-HOURSHEPPARD15-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8345,
+     "pAdj": 0.6805,
+     "player": "Reed Sheppard",
+     "playerId": "4711272",
+     "price": -194,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-08T02:00Z",
+     "teams": "HOU @ PHX",
+     "revealed": {
       "v": 1,
       "hash": "cebd19216d9c5b4488f473f9666aa8d8f59ecc9048eedf6903992331e97dad04",
-      "iv": "iLh6m4NGl4t6zqwz",
-      "ct": "7ot09KyHYYo30DCqoDfsI2vk2SjlLZovutrdAuUe04BDZVU/j4wi1boTNf/RhKMxv15BhcaNsed+8lNAodPgtAHCvLHHOMDwzJS1hq72jXBCr++fWBwxUoUc353SaxNyplfyMadgDdtC6EunL1SfrDc4aFWuQDyLzmy5LQYLzK9dNxd5Jg4L3wSuIftEeXIEyH9n159MFct/TuwOituMmtvhbM4l0A2zsrQQYF8RC030CUa0RWWQ878XXacwkDDuwNoHTE4V24G2SbPDKNdUwpSNdwQqI7Vivf/H448JAGBuKRHmGnixMMHn2my/XwY15A5bO+Jp8OB/m8t7ruIFL6DBOYyOQyFSW6jtxILhCDSS8KduSTs2PCkcQX/A0u7vEnD9rEcF3OEDJzuga9ooFffl6MGYynzUCu0wP2nRp9BbJCSrtJq5xEgdYWK3A7pu0CzIjzpewmqza0niyWIrzxFx9Az72kmGvlGmDN4oKtguw1B1Kj9nCWUouZndTVhOQ0jxhtP8JK1K6aMMpU43xpYWWAMy3fFL76SJMX77NKTbe6op//XP/WRe6G1w3SKOFA7yOy5zEfUAsmcmd0FTs3TjpylZIXKkvOB4CL/IcIVKh9GGLedDn5uKVl2R2RoivLQkeuQTKBlf+QOQIMg="
+      "salt": "ab24f9b738e1cd3a61402c42f386720d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-07:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-08T01:00:33.659Z",
+ "updated": "2026-11-08T02:00:56.283Z",
  "record": {
   "w": 23,
   "l": 20

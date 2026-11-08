@@ -14104,17 +14104,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.224 · 1.21 pts/gm this season (14) · a point in 5 of his last 10",
+     "eventId": "2026020275",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.62,
+      "spread": 0.1,
+      "ticker": "KXNHLPTS-26NOV07PITLA-LAAPANARIN10-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6792,
+     "pAdj": 0.712,
+     "player": "Artemi Panarin",
+     "playerId": "8478550",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-08T02:00:00Z",
+     "teams": "LAK vs PIT",
+     "revealed": {
       "v": 1,
       "hash": "5d52f9e68a352155742d1ecf743282e2d264b20469511689d42db1e452d0b2ef",
-      "iv": "zFsdZc6QTngakfhL",
-      "ct": "SKOVdfoBiqG2rJ5U8DOcoy7r2Pfl//aBo0Ov9Cv26KSMc31vaP0RMDcDFJWfb2PAOryusikhQNj9B/5PhsGSUs9wXsNxmCGxnXvZ2fM8xbp0I731awuhMdJxGFpW/RntZ9u/YyXKg40UxyY/4AlE6RhKy3sWriimhURTX7UYXnMb3b4jgS0XcbVwP1CeS8HOP7NVFhcOpwOCNBjs5NdFSlK7VGTKPPIk7c627xiieI6Tgfia6Yxtg6KKmpS4GSXO7Oa4PeUFG3OO/qi7MOcVF2+bmqy7irdUhGYW/RQr2H+0au9hATv8NgmnEqXBUH5wxy4PQLFj/xhb5QRD1gaQAbiD6Rs9oqBAM1ztn+nCEyOra8Pl7C4J8gMIpFpQjHwCbn+vyL7ZWFBDDckZSaPIYevPhgXD8y85rbSsQjAJm1gB7tR5/uwTG0g7O9zyTKCBmrCsePJ1HTP7pQb63yDfu2rglmo6Q/UCDZSH5Qi5A3SzTq8RU3LAeVYQxubGghhZXjXkyl7Adm17sw7kcTjRSoqJHaZMv5u76zuRRh5uF0uqRIa+tVAKgsjQRStXN/+3/51ULt3049JQklSG4tiuSBunurtF/ovfkquG+1uNmRo2cjrC71FKv6c12FB4DqLuwMsRjjaT+T6ieON6xqDwcWvOhfpWR5slBgSxqr522e1/Nishl5lPg6jn7w=="
+      "salt": "fc2efcddf183da3cf2be0448cf1f248c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-07:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-08T01:40:25.647Z",
+ "updated": "2026-11-08T02:00:56.327Z",
  "record": {
   "w": 167,
   "l": 53,
