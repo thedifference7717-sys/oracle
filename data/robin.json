@@ -14492,6 +14492,9 @@
      "sport": "NFL",
      "start": "2026-11-08T21:25Z",
      "teams": "SEA vs ARI",
+     "result": "won",
+     "actual": 175,
+     "note": "175 passing yards against a 149.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "a32ea19553006178b007393785a0eaf29f756334d6a1f9138a70ea967bb6032f",
@@ -14612,7 +14615,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T23:30:46.100Z",
+ "updated": "2026-11-08T23:44:25.404Z",
  "record": {
   "w": 172,
   "l": 54,
