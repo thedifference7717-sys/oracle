@@ -5447,11 +5447,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.239 · 1.28 pts/gm this season (18) · a point in 6 of his last 10",
+     "eventId": "2026020271",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.61,
+      "spread": 0.08,
+      "ticker": "KXNHLPTS-26NOV07CHICAR-CARSAHO20-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6827,
+     "pAdj": 0.6939,
+     "player": "Sebastian Aho",
+     "playerId": "8478427",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-08T01:00:00Z",
+     "teams": "CAR vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "d62f49d595b9f579b53c581aeb6d5442700e67e6233cecfccb73ab417c5d3dc5",
-      "iv": "LlGbG7XOGIoYehrg",
-      "ct": "7MbXouKS3p5hKw8h7PD6JUR5IOQn/5QU6wjbzclB7ntYHIlmUNNbPJ5sB8RSnKGai/Z2RBZy7y9Wcm9rp89e5HWa8R8a6SJhTHpIA6WexbzgPYp8WsMKF63Mrt2mAFkU2nEm15Jel0KkyRYJ5f3ltuEWSFPw8MvqPVGzz8gsCSXbfuqYQtO6dr1mqtehop97wpSwnwUVRnzryAnd11sxQyU6NkK4xb3bp5zo4NtaGBL5KsZOWCZCFmOxMIdfOlR21G2OoQ1mIeyFnQPqzfNfWECkKwAaRZmrAkrbvPE0UsCf9/G0yUbVAjL3sm6znb9KhkIIs2zeEicOOmgtE4GBMKglJP29vAsx5bCPQ6ePte8Sbh7mdUSi7C6wTwvba5KQYq7q8RGZzaGVIuvuqTo+wMY4BYziT+EGmkhdY/Byl6juNl3BR/dkK0qrg/DdbLllB1HrwIoY91mf6AaRJSBAiV/CaiLGOMo59ipix4Ie0ZMN3Iggb8qVE6Ctc1F5bjas3k25Y3iHYsH3DOb8ZCiwY1eriaaHVK+Ss52mvTR2WuG/AGQWrTkMEmURIeHhCH9P1H/gfC4aCsVOvSkYoVwhws8+z9wGKqSX02RuHII72OAn/hY52IM4HTgLo79u0s9reRLmCYm6UISMaRN6wzOOuI8L6bXVbHvDlSKlltvtTeehRqslSRP41g=="
+      "salt": "9902c81f1805867c80c8875a5579245b",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-07:dub#0"
      }
     },
     {
@@ -5465,7 +5502,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T16:30:36.233Z",
+ "updated": "2026-11-08T01:00:33.659Z",
  "record": {
   "w": 23,
   "l": 20
