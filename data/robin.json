@@ -14079,6 +14079,9 @@
      "sport": "NHL",
      "start": "2026-11-08T01:00:00Z",
      "teams": "CAR vs CHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "72e616dba7b8aaa16e48b5b4636b99109f6bfaf6d613fe8890433053a8901515",
@@ -14151,7 +14154,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T02:00:56.327Z",
+ "updated": "2026-11-08T02:21:13.628Z",
  "record": {
   "w": 167,
   "l": 53,
