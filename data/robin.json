@@ -13947,11 +13947,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 2.453 · 2.59 pts/gm this season (17) · a point in 10 of his last 10",
+     "eventId": "2026020276",
+     "kalshi": {
+      "ask": 0.87,
+      "bid": 0.78,
+      "spread": 0.09,
+      "ticker": "KXNHLPTS-26NOV07VANEDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8608,
+     "pAdj": 0.8844,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -669,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-08T03:00:00Z",
+     "teams": "EDM vs VAN",
+     "revealed": {
       "v": 1,
       "hash": "6d5457191269ba81b46cfdb8fa19fa1e42546b4b2dfc6413eb96e33109300f5e",
-      "iv": "cJp40BBOFIVOMi5r",
-      "ct": "WWhGW1m7D+CrjNIoQqwKjJeybhh+dFpTg3ILIP66oek79IJl2UECY0G16iEEbuhWTBIvhSKvfobkdKZ0MFznaqhjqDZAX3kWFkTGBw/wpesDbdZpJO4Jur2FQzPfm67ygrio4kMbE7gp+tddxTQ0j86kckK5izugmL0sKilDP7qzRHaGWAh0ZgLyx3LlPN+EIeoQBNTCT7C7ZHY5oHtZhAdkqRhrsUR4QSaJ7PieP7yLhdkz/ujaSWCwsLOAJnQBEEv9u+8iVih2Jbdf1f8o+PJ/EDPOjwf8K/TNPrim//pgE84X7D1fWRU1DWKL/bi9ASr7hKuK9M8IliL+H9kbZOie/axEupvBDSY3oz67re4AxsJ1KXyfNK5nNS6pKrIc8E0Njubd+OnvlAtMEJV66DZwrkNQtkJ55rC0wWc9+n4JYf/2jM3oduqBaDKTfJOU5c/vTl6vuwfyzep8qh3SuUNbDot1Watuq3/hVrC+io8UVweBuOoQjNE27dwEiqd1o+P9acgpy9z5e1QqTMdm4O7h60TUl+QWuKCorZDmpXEwoEPllGHqPfzmHBkA0IvyNJsnOB52TXHIrryFIY7SLaMhyMts7OrfTyFaV+NybR5+rfUhiwT5/H+DRn7aqeBk0XSJNP0f+w9OUur7VBksFXPl1nR2v0DMf9QIHcbIUErNFUqmkcvXwbiMyC+GDJ6n"
+      "salt": "1e618dab58041835127a6518df818abd",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-07:robin#0"
      }
     },
     {
@@ -14003,11 +14040,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 14.7 in 30 min · over this line 6 of his last 8 · back-to-back",
+     "eventId": "401909944",
+     "kalshi": {
+      "ask": 0.63,
+      "bid": 0.6,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26NOV07SASPOR-PORTCAMARA33-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.855,
+     "pAdj": 0.6662,
+     "player": "Toumani Camara",
+     "playerId": "4431736",
+     "price": -170,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-08T03:00Z",
+     "teams": "POR vs SA",
+     "revealed": {
       "v": 1,
       "hash": "7f3616a8de14286de283414f9fbb6b8ac023804a7602b27271e6b2ca7f454bdc",
-      "iv": "wgD3jD7n0oTTPt+F",
-      "ct": "J0JBdeyI8eQNx1i2lycODBUtFQrNb5yUVXs6c4O9rPHhgsEyDNPDHNYD3nBmetAuReeJ8i8+265dsXfzIggFlShuW0ICPv7sHOC4jPsfrxYAOOpW7twSBzBH9K0imdlwMDrfU/1B5JH5OoCtwdbXHufnJ8rS94iP6IJwhM3MsRS1pt0bERiEwBVmWI5OKpOZxN4UwopDcZFVfvtf7YArRSPWst7X3DHT4jBSFh4qZu8LqZLLy4Inf38JQeroFkzwNxJVq5v8X+wCdmvXH2Gai57DsrvfLUZ0kLciRCzggXo9AsxKcTYDDDbdz/o7mQr8kquVLeYY3qN8FkrP7MpDCjaamJQUPfEzxoQUTf87H2uzRySiEnjBlHvYT0XFpbJlCq+seaYEhc28YZezo75tyUcdtnGSrI+F6c8NL53xY9ecbEzGxJGp1A/51Y2RIvsuUEJg9mQrcdSDuYEq+5p06uL7ElkIp3aXtJ7/JE59JPBdqmEcHOEfUmyzZxY1BsxclkGHQih0OV3zPZ92eVQKz6otacH44RS/SzsdEUVy5A4xtNU+Ac6PXMoeEDRxp70bSJzuKSMwVsNDwqD7DMo0kG+GHpIcwBE/NYcWY4plP8+HamQoFJXABN5lV0MDhadkNC+g1ggCtkqZ/Estqan7/t9spmTOiESZU0omrvafXg=="
+      "salt": "ea9ca8b2a35047e10acdd62b2fe251ff",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-07:robin#2"
      }
     },
     {
@@ -14157,7 +14231,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T02:31:50.510Z",
+ "updated": "2026-11-08T03:00:12.383Z",
  "record": {
   "w": 167,
   "l": 53,
