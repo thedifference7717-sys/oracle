@@ -14336,19 +14336,93 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 281 passing yards",
+     "eventId": "401873041",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26NOV08DENCAR-CARBYOUNG9-175"
+     },
+     "line": 174.5,
+     "market": "passYds",
+     "need": "175+ passing yards",
+     "p": 0.8856,
+     "pAdj": 0.7871,
+     "player": "Bryce Young",
+     "playerId": "4685720",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-08T18:00Z",
+     "teams": "CAR vs DEN",
+     "revealed": {
       "v": 1,
       "hash": "94b782855a96d728b2dfee5d96338a9cad6fcd9b07e462643a5406f0d2b25d08",
-      "iv": "TGTTmO9+uOEUlj+n",
-      "ct": "jUsOtZpn9TtbIqDBLVIrom3r20WYcEhahK5zKPp3fds34Hglg5D7Vov3NSljVJUcNerTVa4vpXuXKsSseUocNF4J4dG4XS1m1LPLBvIRwx23y1BvnDwGXT6E0tbG+XmGdg1VYCbR5/ZkrraA2yuJAfAgZiMowxcyDDslFTqmNT6K+If5dlyTtfZATmrjsn+EiA6695F1cEvBpJW9TvRJK5xvV/fmf89axMkui7H8A3tdHKTujjGy4aDQJWFQslZKiZx/QH+8+OnITFJYRl20ZnIq9mskCOIeLIrxm6LykVdQ6bnfQF7rS2yCx3E8pG7CjSry94b9c4MBGIF7PZHemw9OqAPXl8W3fst0xwA5EHUkyWSKJEmcf9oDJAQpoYMRcVo1e4kftaabDqDNqnwNCNTiJsbXg97TuocPxUDRboknYIe9x/EbkPl2jGCR1idTGmYJPo/QI79zu+TCUmzW/dX/kj3MVGkKEYQ8HZJkvM4lXHJI9f4U0FOmsn7rkwBvAiW9JmuphT94cXIvSGShW8F63+SQVKZE9haABdIRluwmtyxhPz8VuLL17QF7jz+F/mpK5vjbcbqSGpf62dmqrFSPGh6kThRq22dQnJvMppgWom/Vt3pcwx3bsOPeA7krJrkYHSAOPV1o4xFOJg=="
+      "salt": "3523786876e8af34dfa2d48fcf0f3745",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-08:robin#1"
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 338 passing yards",
+     "eventId": "401873042",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26NOV08DETMIA-DETJGOFF16-225"
+     },
+     "line": 224.5,
+     "market": "passYds",
+     "need": "225+ passing yards",
+     "p": 0.842,
+     "pAdj": 0.7147,
+     "player": "Jared Goff",
+     "playerId": "3046779",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-08T18:00Z",
+     "teams": "DET @ MIA",
+     "revealed": {
       "v": 1,
       "hash": "0a7738627328ed27fcf3d59fecb8ac28968123a816fde0d195b81e6b8bbbfa39",
-      "iv": "t4ac8wru6PMjQ2dL",
-      "ct": "dCnRJOf0PYmlQZUIn2lBDriShg1Qi5HiyHhjeo+d4nPpDmL9UaYFpyAe/Exkl4BJ8A+sjRiz4n72WmN/jz7KaXOyd9/g/XvS5jT5cvucOiwqtCDgQU1hZ+tEG7/qopMC9Mo3hFf0K11IxLt6PBzGlqBVbnEciV2v7pEvttmn94PiYU+1O7Lp7sFgneFIkvlhVQmlJENe6csjfaia2QCKqPHBT+RG0BepkIJ4Gd+L4CQ6yzyIyQqfyzQWA+lPGnQ1OwUWCZXTTirGyIbD/Y+DwQ72SIMG9VOD6JbS/+gPOlty+MdxcQdh0/QC06bx313Uck750TpdDl7H6LVtQqOjJP9I8mEW2QMHpboqvw0IWUtb4PjP0YIMiDJX3+TksWYHOCh63KNMUyqbr//6Elvm9mCoqp5pb9KxbnAIsEWCveg/C3Mgvb5ciP/YxH0xXKuj+pbLt/PUhB1ZzZCVn13BCHdFg0TJrPT3AX0bF0+BBJwFc7+0TqaQ1+0/7/+OJTfjD2O9HF8UcSeGeLVvG7wAY6gk71a6Q/wm4p76UfSebznYDSAL1nRskNov+MHD2NOkxGSVzUUKB3rUTtcay/JcLgg8LoghlU9OllTZPRXl8QXtGQw5dBQ39I1DhdXDG4U/0GdJp133/LymZw=="
+      "salt": "b145ab7a3ced8febd468ee8fac7e98cf",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-08:robin#2"
      }
     },
     {
@@ -14378,7 +14452,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T13:30:21.515Z",
+ "updated": "2026-11-08T18:00:29.766Z",
  "record": {
   "w": 172,
   "l": 54,
