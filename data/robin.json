@@ -14011,11 +14011,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 15.8 in 33 min · over this line 4 of his last 10 · back-to-back",
+     "eventId": "401909939",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.73,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26NOV07BKNATL-ATLOOKONGWU17-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8189,
+     "pAdj": 0.7689,
+     "player": "Onyeka Okongwu",
+     "playerId": "4431680",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-08T00:30Z",
+     "teams": "ATL vs BKN",
+     "revealed": {
       "v": 1,
       "hash": "c659528fe279bb6f8ca29d19cd7d1e0d8f60fbc8bda8c79ec527886db5a66310",
-      "iv": "80evfJb5bqr0HwqQ",
-      "ct": "q0ereJJjNZW3cnjsvV36aBqfd8UynWHz4ph84xArJV/EknwMy4UplpIxwj0Kjb8CGqPQSQVezlGKCO6XZMa/F55niZEVXUa5ussvG/hrSLioRJxTgNSgj22vmhkuKRCbLO/V7gen8v+A3LBnW09++85ldbCX1GVgGYMnf5dE5TH6wRNZh5zrppKYkyFj+U09JGFyTroZb6wStsYCUUvryiXSMw7Mr4tIN5kKWMwuAh92XXpA5flY081NcjRh3mBcJQCb0BSw0GLPBrx6p7aHEDfpRsVRI/btfn11nhVbb76PWQOUcNgGmm0od/eq+4P8yGSVrYfTZSMNnF/4wePyoz2zNrrjIatHKQYwEf08ueG4A0HZqLdu1qE5warifMBKzBMR7IYGxoG3zjVg3wvgGgZMYbMkc7F1yzoHc5VR2INRM49aAUlpLLPXrY+ADrhwbvz7GePcDI6iyUI+cSHFkuh8tdE70xNUZZAkGSQPIy44cEM4w5K2GGYJPflcTSFDmybkafc2RfTpfoUEjoHYQeIH/sMt5FXi6ALd+LdyLHc1k8+dk08uG45rn+jAMNCgjOZJADLfHtEOTeZe3xOnrgWVddPDo85m0ycOYGTX50uOUjv02XLnrWoRL8gMMnbo4vP4/i7Q49pFPklBcC+CrqudKoIsJ91YutqxCsOYTUPWe3m+"
+      "salt": "fb6928862368fabed5546ee23c141b67",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-07:robin#3"
      }
     },
     {
@@ -14037,7 +14074,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T00:08:53.443Z",
+ "updated": "2026-11-08T00:30:32.901Z",
  "record": {
   "w": 167,
   "l": 53,
