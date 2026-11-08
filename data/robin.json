@@ -14127,6 +14127,9 @@
      "sport": "NHL",
      "start": "2026-11-08T02:00:00Z",
      "teams": "LAK vs PIT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "5d52f9e68a352155742d1ecf743282e2d264b20469511689d42db1e452d0b2ef",
@@ -14154,7 +14157,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T02:21:13.628Z",
+ "updated": "2026-11-08T02:31:50.510Z",
  "record": {
   "w": 167,
   "l": 53,
