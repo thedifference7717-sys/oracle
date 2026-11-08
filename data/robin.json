@@ -14328,11 +14328,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 16.9 in 35 min · over this line 3 of his last 9",
+     "eventId": "401909945",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.69,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26NOV08PHICHI-PHIVEDGECOMBE77-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.892,
+     "pAdj": 0.7592,
+     "player": "VJ Edgecombe",
+     "playerId": "5124612",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-08T20:30Z",
+     "teams": "PHI @ CHI",
+     "revealed": {
       "v": 1,
       "hash": "ca81c466702b2baf5133e0a289074adae15d8319ca97b781fdabe5142aed819f",
-      "iv": "X3ObSTg0/kIlDVb+",
-      "ct": "zY9Lg1YWV5g7c2tx+xpcmtcWQWLjJZoI8UPvbBw9WT4F3exOVn8KAcJg2eEi56Rmb3Mv3H7n2AqvuC6KZVHXZycXV9hAoLry4SiuA6x5bf2prhf9//S8IVa9SWW56dkLHcZQbbQkmXHclz4BziknPT8j1FyxRfVnPQhY3/pnPeo7bD6iQAnXUilcqYyRj2IEe7NIda6SOWgRRxqD9+Pbgin+B9P21B+W4aBHSK0rrt+qtdp1/36pppSg7t/nTFhO4qR7plDZmMH77raigIcWe5gThSJfbcGc5V/BZpSB0ZFDZiecrl0k0QL5WGDlKp+GMT5P7PGUNzJOKIyeHq9u3F5RORhymBL60yg1T0WsticCSF8jPp5kS3pbgaxL1KRttmJ3wQxb/KZNEMzZTtzgd2j/Xvsa5VVLGS3J70NTmyLV9C1wGXEO94vEi1P9E25Ya7bKoUty3SKbaJb99/XsI4Y/OkMw0K2qLKFP7qcxX+EWZCc7scAAFNcqnJR+G5WZWnfv95EHza96QWaZD/cw5Rfiy6QxpUHdxOCC31JNeSqZMvfJ+vamEkiibOt1ddG4RzNNRR63B6i5A9FYi065tHj6VkNmfsEHLPAHyi+jQhHlBLQoR1VUc2ypcezJI3RrvbVsK6Y3KLqVjmAeG9R/pXA="
+      "salt": "ad8b84b3ccd1973d4dba568e8d9cde64",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-08:robin#0"
      }
     },
     {
@@ -14452,7 +14489,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T18:00:29.766Z",
+ "updated": "2026-11-08T20:30:11.685Z",
  "record": {
   "w": 172,
   "l": 54,

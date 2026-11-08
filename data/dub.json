@@ -5570,12 +5570,6 @@
     "NHL": 6
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "74bce99727b188cff39701f230d540417a31f2cc31a58a660890b36a60b668a5",
-    "iv": "/e4SFmoivJjq2Kpj",
-    "ct": "gcc9QgAhqdQ+/jh1x3n/qEv1T/v8PHrV9uENTuQWNOMCTtIC3bh4cc1Rh9uCbbBVMmBjLiJDEH24g8J1DdqV4/H6pizUX4J480X1ANl16c79U4el4BSRPVq9P3IEoHLpl7WoDuU9Vt8j6lLVRCHwicqyUe9YslcXl7uE82vvY6UuLfioFkJ4hCLDmZtpHik1NqdYu079iYwSHCXzm21qiSeSMTyZgEwLh9V7UFqf/MnlgxJlAkUtamyUWAXvuxJaU9f6FprOvSZqJ8KLw+qGXp4="
-   },
    "legs": [
     {
      "detail": "QB · sim median 281 passing yards",
@@ -5667,10 +5661,30 @@
       "ctx": "2026-11-08:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "VJ Edgecombe",
+    "sport": "NBA",
+    "start": "2026-11-08T20:30Z"
+   },
+   "fair": -293,
+   "price": -114,
+   "prob": 0.7457,
+   "revealed": {
+    "v": 1,
+    "hash": "74bce99727b188cff39701f230d540417a31f2cc31a58a660890b36a60b668a5",
+    "salt": "2690334640f1f5c74cf1dd4bc3caf855",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-08:dub"
+   }
   }
  ],
- "updated": "2026-11-08T18:00:29.726Z",
+ "updated": "2026-11-08T20:30:11.642Z",
  "record": {
   "w": 23,
   "l": 21
