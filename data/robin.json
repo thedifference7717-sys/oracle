@@ -14469,19 +14469,93 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 233 passing yards",
+     "eventId": "401873048",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.73,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26NOV08ARISEA-SEADLOCK2-150"
+     },
+     "line": 149.5,
+     "market": "passYds",
+     "need": "150+ passing yards",
+     "p": 0.834,
+     "pAdj": 0.7536,
+     "player": "Drew Lock",
+     "playerId": "3924327",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-08T21:25Z",
+     "teams": "SEA vs ARI",
+     "revealed": {
       "v": 1,
       "hash": "a32ea19553006178b007393785a0eaf29f756334d6a1f9138a70ea967bb6032f",
-      "iv": "96pkn9TRurWhnG/4",
-      "ct": "dmAKK6TXuZOqJKg02LxdVpRyXajrXGnpHy+gxJoyzEqRTjUZ2UUrDlstwoYdEOskAloyZXW8pOLdPWYabUdIi97DAuyPdgLJPvtygKmpwCYL3P7OhATCyXr19i/cZtF9ux21UngbRNDaGJY3hvruqobiYckZLKGpSrCVwg2vN18Vy/7k1IDz9H+ePQbjGWW1lrYcqhK9oKmnU3b02KtO5+ZDwt62uU7nvDXV+hY85DHRjev+esUtauwQoLJvgLS9jz88q8zlF7rKl2/2bKyisbv11+enjKPKb86y+xhOTfg7wRgdWv8u7tUntCvDxpR9TDKyASqK0aunS6SGNcXPj+Y/B/Zk2/ot9o3WcFfNiKSNvdsNo+1ypoPvPlTtMTszHCLvUoGjn+fxqM2y2IzYKS5otLtVYWFVYJfXbiR4Hm9AbVttu+Mrqh3UG4nN/lHOrx/s5yPojSl1OKPbxaA2BGmUk+C5HbI/NE3kqfIw3bsUNECDz9v2mN6biEUSFkJdR7MUhoHmXtymG7TZF2dGexvQQvK6eE7hk531ZHVqerxvwi9gsEHD/XRkbWwqTEIujDD8llUJLSBtezTEAXaNaOj8xCD9rjQrlQwgz4WV5+ByyGC3+F5GSvvVUDyihoe0g5dyxx/Umu4T"
+      "salt": "c4010e8389c79acc624d491517d04a5c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-08:robin#3"
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 287 passing yards",
+     "eventId": "401873047",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.74,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26NOV08LVSF-SFBPURDY13-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.8058,
+     "pAdj": 0.7561,
+     "player": "Brock Purdy",
+     "playerId": "4361741",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-08T21:25Z",
+     "teams": "SF vs LV",
+     "revealed": {
       "v": 1,
       "hash": "014c339a62a49d04d6b085bea3fa367f7f740be2532324410d7c5c6a9d0cf990",
-      "iv": "UyHxdnqK+/r+4xX5",
-      "ct": "wpEP9Y5/4ctvwjaaF4Xl0fSWiN24CsnpFVoEhGI2o23NtjMdWUbw4RUoMJG5CYntigMLQEprkS2F8f8Cjl0tV6r39pU8grgI0dXuxRM8SGpJ0ejXIuzYueMxMtYE5CB50dcAin3kWIngJ2hMX4XE+FEXbf3sP5bZb//bKghiDjDazljkPLiXmzlZiYqRRcb7nQg9mNx9521f3n99ezroTx7GTO1vNNsgUlLHKBhHwNXMDQ4e8Dc2JfEM3AsYhFTeTdZFKMfeoFCePfsdAa/57zjNH18e07tJKvDtug7myrFmpv0Ibw81CUqNPfmdW36+PpUeYB9p2Mhp21XmF6BcME6kfvBeA4Auey6IFMRkmoB+/Lml0sCToV4nKvFflihAuR5bfoR3EGXgDfLhwjKS1dAqBxffIDlnETMLeDRXcsJQrh3hkSwi87cZ+x49YbYJ0Jd+UN4UQtcdVF/RIzHk9oFaQJ3fBUGZP6ZbYN+y89mN92XflUVQ+ChtbCL/DTRRXrHDPE8yfD+IGaEwfNEf52uZQNAP6opDnRvv8rv4sAKQfsgVfpF5KOq4DII3YgDLWljaJb+9LvggNQ44CTTvIy5xomQI0XJfqVwtTKHtgax67KS8dRONHu2KwwrQzTmYUSvGUp1Qhr9D"
+      "salt": "93f2127b5ae122f78a3fd593bf72e696",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-08:robin#4"
      }
     },
     {
@@ -14495,7 +14569,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T20:51:35.083Z",
+ "updated": "2026-11-08T21:25:10.791Z",
  "record": {
   "w": 172,
   "l": 54,
