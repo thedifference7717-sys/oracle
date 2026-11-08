@@ -13975,6 +13975,9 @@
      "sport": "NBA",
      "start": "2026-11-07T22:00Z",
      "teams": "IND vs DEN",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "218c06a0713369dae22e369b82bf20c587730826db91f91cfccf8bee88a99172",
@@ -14034,7 +14037,7 @@
    ]
   }
  ],
- "updated": "2026-11-07T22:01:02.960Z",
+ "updated": "2026-11-08T00:08:53.443Z",
  "record": {
   "w": 167,
   "l": 53,
