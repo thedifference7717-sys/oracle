@@ -5563,7 +5563,7 @@
    "id": "2026-11-08:dub",
    "date": "2026-11-08",
    "published": "2026-11-08T13:30:20.525Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 7,
     "NFL": 13,
@@ -5640,6 +5640,9 @@
      "sport": "NFL",
      "start": "2026-11-08T18:00Z",
      "teams": "DET @ MIA",
+     "result": "lost",
+     "actual": 170,
+     "note": "170 passing yards against a 224.5 line",
      "revealed": {
       "v": 1,
       "hash": "f5fb66e35721d2239d50d73302125f2f05b16a1c593af09343463919ad4a6a9a",
@@ -5673,6 +5676,7 @@
    "fair": -293,
    "price": -114,
    "prob": 0.7457,
+   "settled": "2026-11-08T20:51:33.802Z",
    "revealed": {
     "v": 1,
     "hash": "74bce99727b188cff39701f230d540417a31f2cc31a58a660890b36a60b668a5",
@@ -5687,9 +5691,9 @@
    }
   }
  ],
- "updated": "2026-11-08T20:48:24.093Z",
+ "updated": "2026-11-08T20:51:34.725Z",
  "record": {
   "w": 23,
-  "l": 21
+  "l": 22
  }
 }

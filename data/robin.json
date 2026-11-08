@@ -14441,6 +14441,9 @@
      "sport": "NFL",
      "start": "2026-11-08T18:00Z",
      "teams": "DET @ MIA",
+     "result": "lost",
+     "actual": 170,
+     "note": "170 passing yards against a 224.5 line",
      "revealed": {
       "v": 1,
       "hash": "0a7738627328ed27fcf3d59fecb8ac28968123a816fde0d195b81e6b8bbbfa39",
@@ -14492,7 +14495,7 @@
    ]
   }
  ],
- "updated": "2026-11-08T20:48:24.287Z",
+ "updated": "2026-11-08T20:51:35.083Z",
  "record": {
   "w": 172,
   "l": 54,
