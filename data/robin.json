@@ -14921,6 +14921,9 @@
      "sport": "NFL",
      "start": "2026-11-10T01:15Z",
      "teams": "MIN vs BUF",
+     "result": "won",
+     "actual": 28,
+     "note": "28 receiving yards against a 19.5 line",
      "revealed": {
       "v": 1,
       "hash": "0d2fd1970a82557d3d14c6382ffa72f56cc645a9b069e7e00b9aa337bdf64fe8",
@@ -14993,7 +14996,7 @@
    ]
   }
  ],
- "updated": "2026-11-10T03:00:07.284Z",
+ "updated": "2026-11-10T04:28:32.867Z",
  "record": {
   "w": 177,
   "l": 55,
