@@ -5717,17 +5717,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 3.5 in 27 min · over this line 5 of his last 9 · back-to-back",
+     "eventId": "401909954",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.68,
+      "spread": 0.06,
+      "ticker": "KXNBAREB-26NOV09WASDET-DETDJENKINS24-2"
+     },
+     "line": 1.5,
+     "market": "reb",
+     "need": "2+ rebounds",
+     "p": 0.8067,
+     "pAdj": 0.7501,
+     "player": "Daniss Jenkins",
+     "playerId": "5107199",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-10T00:00Z",
+     "teams": "DET vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "b5b3945aad71b96872fd01758d2100db2f46cdfaafc49408ab75c14bac59df53",
-      "iv": "JqH8GN1+swmNVluh",
-      "ct": "V65CegwdB2lKhdbsv1aMfEVWIXTjnUKirOYXH4IR6EhxaqGaCWKXlWjItymp1liosuCw32LwlhOVdDPpkY9wc6imI0ThizRTf39YadfTrY5S7AoAt0vsoHHpzk3lJDylVH6kBimRY9AnqQTGaF+BMYuF9Vg2jQCv+hMUEozD5P5egVc1KrJplQAqoTzrKft25cXzmWNtdk2LwiAdNlFXeMwWk3JD2Y6aIGe0t8z0YEGhqGoYzZnBIP2N2k6pAODsbHpex7o/DaAUBASO8UXAVvr3vo5/VwzamQ4xeVxl7pGG7/yrMH7Bd78mVdD1T0G6yBUXt9y6rxcLeLYhePAaoHyALDrXSgs3ufvrq/NyE/0yKZWRTsTDdUbDW9Tc4j/HnwDA4zqNda2X9YrGzQuUyLnhXgUSdF40yyTlUHsHE0/7nK/SvmH8xG0gauhi/JVAsDBvyZ9GRb4NpGCnYrVMDZK4MUfWtTeRztLcmpaHVgt8UJFfgQME3qFcZvcOpjbNgBFcpA8pz1+W2t15vMtAl4f0XqFSxAvZPIREV0xYHJwBiXnSGyrAzGUW5SiABCpAsj5ntSw4lQSmuhC747ZE4YqELWfdfHqTZ+xuEkl+pDpJHkHUxytYoBEZ+VeIdEnEIVP6Ls8I/biP9vDORp76z57dNjZ9I9FmeuQP4cl9qTc="
+      "salt": "9ee0d329fc0a272e7775ece5b159f7c4",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-09:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-09T23:00:36.141Z",
+ "updated": "2026-11-10T00:00:26.018Z",
  "record": {
   "w": 23,
   "l": 22
