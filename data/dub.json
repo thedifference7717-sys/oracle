@@ -5701,19 +5701,50 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "ab1bba304a423fe30090de888b73a98fe89097918ccb5cbadf1e9d4e983fd4e5",
-    "iv": "TlAZc8cu5TQz5am4",
-    "ct": "mqtkfX9ZHWgftCQ31ChfmFAABCj8xJ2bhvu6RRlvpCpXpdkVqdIwU91VeUmb93LpDQChn9KyWeRAJqkk5WZCKkT1fx7AvVOO6qCth0816PfQoqMhVr7A+3GL5aZn7OmeKPQQ+nWoUBebj8gWWjppMdRcwUuHeYjhKbP+XVwb4QnusrwarzIb+0a30z60y5BiBqxHllrEQOupAAJH4Dk46vg84thr1qxXpE13inrAl/nSkiWuDnE66eXLz8DIWCvSlNueWCZ+tscYL7UTsDB/dgzNHlQCuQ=="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 15.3 in 31 min · over this line 5 of his last 10",
+     "eventId": "401909958",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.71,
+      "spread": 0.06,
+      "ticker": "KXNBAPTS-26NOV09SASPHX-SASDFOX4-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.853,
+     "pAdj": 0.7851,
+     "player": "De'Aaron Fox",
+     "playerId": "4066259",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-10T02:00Z",
+     "teams": "SA @ PHX",
+     "revealed": {
       "v": 1,
       "hash": "bd015bb05a6e09d48f3cff2a29685cde1702b9b457eb2af2a1e3c26fe36fc5ac",
-      "iv": "WTn7q35YaJcbfJJG",
-      "ct": "rs92DQZn+7xh4o4HChKjQfhesgjJzY+gjMivp3DxtNv6z10k5wOwippG1vWv6lJTa/1GJaLYWrvG/If5QAYVg5HOqEZIInX+9h/zJPQGjREDQ+0+TBrxusqvC4UJlSIr5+Kd2MdJflMjAtz98wYPSJ0ZajxyVJMtBKodusrleOhz5zLYrrP8gBbniCK2TRwpc2Ldv19rmzMwYh6EwzZhtt+2y8QSXfK1XHiULosIUeIUJ9fZomN/yrojgdEehSjkUdDtBdRnhss+FIHz1aWcANHipbCc5Lnkw6yu/JXLh03dZOPociGV1UnMgi5quq+SzJK+/Ys+XZwhNv3aMChUcCrq23RRPL8MVCxoy8jUyu0piDEVX29ct3AefkrUHAVcVMnu0XPZ1mqnVrtm5xGeaox9ulUdMo+OmjWsX975tgki36EIXriBR5eKSEdpdWGXP3CF3XrbuKDHQ+cJfSoeKRmRSkJLjxR+5fANx+NCykyOnGrL6QE6y1FfaUZ4EYB4efw/w0gKqjMNBPRizH4mm0dsyKvSVdSGhVl9Tel0+sAlk8v/RqZldvGHl/A996arVR8xLTaNY6Qy8dh9eMJJpFJ7IXR4hKVC9Bqkv5iGpBC+M8z12iqTVfK38SWBIwhmguNDutr0nsE="
+      "salt": "9d093ee5cb67f3a17c8756941c8b7493",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-09:dub#0"
      }
     },
     {
@@ -5761,10 +5792,30 @@
       "ctx": "2026-11-09:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Connor McDavid",
+    "sport": "NHL",
+    "start": "2026-11-10T01:00:00Z"
+   },
+   "fair": -221,
+   "price": -133,
+   "prob": 0.6881,
+   "revealed": {
+    "v": 1,
+    "hash": "ab1bba304a423fe30090de888b73a98fe89097918ccb5cbadf1e9d4e983fd4e5",
+    "salt": "c6280977b4ec259d3527285e8c9bfc1f",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-09:dub"
+   }
   }
  ],
- "updated": "2026-11-10T00:00:26.018Z",
+ "updated": "2026-11-10T02:00:24.376Z",
  "record": {
   "w": 23,
   "l": 22

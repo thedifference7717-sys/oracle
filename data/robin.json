@@ -14757,11 +14757,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 15.3 in 31 min · over this line 5 of his last 10",
+     "eventId": "401909958",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.71,
+      "spread": 0.06,
+      "ticker": "KXNBAPTS-26NOV09SASPHX-SASDFOX4-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.853,
+     "pAdj": 0.7851,
+     "player": "De'Aaron Fox",
+     "playerId": "4066259",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-10T02:00Z",
+     "teams": "SA @ PHX",
+     "revealed": {
       "v": 1,
       "hash": "d8521ccd4bf5262548ec48c32ac79ed908bcacde55b819926de9f4e3a3be0299",
-      "iv": "MMT7gjm3rc/t2L3o",
-      "ct": "DFxQ9+JdrCO/5SoSdVYoHG9/FXluSz1hPcf/wt9zhzdhdgsj5viEzpEP8isVYFVFsXA1jHYfqGwud7na858gYC2SFKjB4Mni3E8R3KaGzvDNCL1Gg5+m3rMWWCyyKUBUc2QXQ65sOo4OMBvZGt3Tihmb8GBem9+bgvxY7KSMv/tM/Ygh2053LCOIvlltmv849rNluZZE4w2B7XaCmdtEYIvTqiul42FKTCwD9etulC1IIud0TVxsH4UcikCceuhlXfShi87h59GeO3HoPik80oiuz0JN7ACG8VGkIhB8zfFst4JegUOTAhd66UdaHNaHdrktg3QfjGk15IILQR+rJk9w2+igS84GbCdHsAN3DNlhP7zyjF9edAN44fMM+mPEpESDfQu+bH2X5MQj+FxK/359OOzJIO9wBOIOvgVPGVyMuONWja9wlMk/7OOjaN7afZqLGaZLJUDTcXaAUwORabR8A4j4utJUYgcw1Uae1l1WWovK2Jo46POnaNtgHXHDUCKN34VEt5TxGF9K9QxWYrU33KZD+CTUUzUP6XXzKX9/C3hWZVXTEU1vDtHf4zTZz7xH7gQHwifcwfta+uja7pgvzxDtTuKyMZVtuqvzhWtHm0xFGBT4kvxKRoRT+6fYUmOPHp2HO2fSXQ=="
+      "salt": "a2884092e8e03ac870654fccb0de2e3b",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-09:robin#1"
      }
     },
     {
@@ -14910,7 +14947,7 @@
    ]
   }
  ],
- "updated": "2026-11-10T01:17:55.400Z",
+ "updated": "2026-11-10T02:00:24.400Z",
  "record": {
   "w": 177,
   "l": 55,
