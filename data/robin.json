@@ -14852,11 +14852,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "WR · sim median 35 receiving yards",
+     "eventId": "401873051",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26NOV09BUFMIN-MINJADDISON3-20"
+     },
+     "line": 19.5,
+     "market": "recYds",
+     "need": "20+ receiving yards",
+     "p": 0.7738,
+     "pAdj": 0.7658,
+     "player": "Jordan Addison",
+     "playerId": "4429205",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-10T01:15Z",
+     "teams": "MIN vs BUF",
+     "revealed": {
       "v": 1,
       "hash": "0d2fd1970a82557d3d14c6382ffa72f56cc645a9b069e7e00b9aa337bdf64fe8",
-      "iv": "dN1VYM3rCsBIkcWu",
-      "ct": "lxb6YzJl6SfRhOo+F/ibPvG48HeB9OM/AbLkgHQWoFNADxsH8j53aGCxNzjU6Q2P6pzu4M68ytJAUrtcxwWaZ6Xn/UnNyfJUiqHEvT895Mt8r0darYygWeUkMs8ZYxejet/y+Q2PYh2eXflaWIOCL9rhvAnl/z1dQTYbJdP8uggruMmOcixlfM24Q8XYaabee90v4caknqo6U+HCClZIxSrNWqgzD7pJA8FC+ohLMhtR5yRgLrFw4LQK7ekkeIoYpuazF2MUFj3UyySzZmrvtge0gS8335E4pqXfQCKh7BUPOUfyvQdpNN4DyIa1bWHRZGLOa3F69SP2OKTSw2e0jJoTe1dcy022rs25DXP7KxR0jXCl6sHc5HiY9OCmRTATf9HKtl08NFIANA2B59ljFZXJjKtrDUWpFq1wekoyV6v6Y+ZosX5++VgWAwro18BeCfH9H0E2DdWBn4wutPX93HtpFGFVY0J6iusRZESoeXeTpHxe+fTY0/eYW10oFbjdA1e/BEyRyRv5reboHGdY660Sxcb7iQoo+g7lz5gKIvxZf7huh+6rBwOAEJhLUBUKNQ58HiupRmmp33yJ274+V443u6iVXu+neiaVt2/nS2b568v9MLVz0KwtKXvf2jSavKCVCjjvhWBGbkz/omcUMw=="
+      "salt": "f7462bee9cacb318f64182689709ae99",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-09:robin#4"
      }
     },
     {
@@ -14870,7 +14907,7 @@
    ]
   }
  ],
- "updated": "2026-11-10T01:00:44.826Z",
+ "updated": "2026-11-10T01:15:46.902Z",
  "record": {
   "w": 177,
   "l": 55,
