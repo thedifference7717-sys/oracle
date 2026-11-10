@@ -14946,17 +14946,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.366 · 1.24 pts/gm this season (17) · a point in 6 of his last 10",
+     "eventId": "2026020285",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.72,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV09NYISJ-SJMCELEBRINI71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7092,
+     "pAdj": 0.7228,
+     "player": "Macklin Celebrini",
+     "playerId": "8484801",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-10T03:00:00Z",
+     "teams": "SJS vs NYI",
+     "revealed": {
       "v": 1,
       "hash": "aa52a8f5399453eccd7495d6b97606731346f42bba08608ae12d2011a9c27f42",
-      "iv": "Mo+smX6aBLciC85B",
-      "ct": "mTQ81TvEQMqAM5xleIwua9TxQAkc/pGX2JI+qadyEFJPMn+eK2AagHE0iE6qqlZIHyrXqGBuImz4DUqoZEa+Ru0hWTmyi+zcTKGU30zKY4QNu99W3K2IWNcEhsJ0gm5N57ScsoMgMWcl5aeRThSkCxrF9nZPmSb9JWqAfs/iYcocUrcezKD+rIGosY+PPGErT+xNG60mzCxHCpPWtXGkPHtpSjns3sadvQ3KVuiPO6zoPZms93GdglhIjlu4v4AWhdXLHdVSJjsDU2YCgfoW40+K4Ik9ik7vfen2z/3B0wfq/GIosUr9nxFMDCrXLAu1PpX+xH3w5u2OKIQkifWyl0XQOJuNRBp//Ucgg707AjoZGvNMNgSfBfsxZYsflOX9FxiWmsfB/KYXzT5XOQ6Ohybho2yRvoJ6dRPq3G20FXB0vFgv6fEWT4fZ1ygfr1Yxjla7mk5gboWE9hz7JgcchrOEPKM0/vEnPLdpBjxo8Sr7RvzvoP0mLM2ORUR3VQq0pCpC6y1LTEJ9oXvhpmkXcVLX2KOaykT1lxdV93yj6O2TOANQVZhgU2GXblBR+zhdq3Ra9Wkh3GO4Z+3zaFKnFDzaV8kvN7BXczvVWA8LAsmqbYzcLQN1Y98KBHN8oxCQAZ2diPaIzG4v4rZzP6NXIZOfkChhI9FD4JfEZAisSXz9ACsWmM/dsGFWG2O7tq2VmFQ="
+      "salt": "ff52fdec79ddcd99f41700f5a66606d8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-09:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-10T02:37:09.663Z",
+ "updated": "2026-11-10T03:00:07.284Z",
  "record": {
   "w": 177,
   "l": 55,
