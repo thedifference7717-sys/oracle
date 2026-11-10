@@ -14709,11 +14709,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 2.179 · 2.61 pts/gm this season (18) · a point in 10 of his last 10",
+     "eventId": "2026020283",
+     "kalshi": {
+      "ask": 0.84,
+      "bid": 0.83,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV09NYREDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8323,
+     "pAdj": 0.8561,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -525,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-10T01:00:00Z",
+     "teams": "EDM vs NYR",
+     "revealed": {
       "v": 1,
       "hash": "ceb79add87f0dd5fa4628fe646c6cc4b4e7cb779c761e9f4d22cb22226d6f5d7",
-      "iv": "8UAV/Mzssm7MqcV4",
-      "ct": "NbZaGZa5F00kCOr+GbF12p31Xoe2UM2fe/0eRKgD/BlbA6KGbUTXiZcTg2n/eJv8QV2YPUxUOkGlM3+1g+0tgMXIw82ojAyZ713crAUnjwY+DTcv/5yTHDz8+inZuxsimt9P1MpXjtvnPeVEZQIhvKTacj88/xwIjU3OoVhJwaYcx73kq4Mo1Rzr0YGOAC/PfzyPlawQX7MJc5ucNYNx6kMaDEaP2k640TaHeBoZK9vz5k6P/M6JquqtMVj2TJYvEYaqcojmHxgrCLvkv6w4CV/vC1jS0YIQc47VH37DWqRmrcsGsJJTG12ZlWEj/v2IbLvlKefsOfIhyfnxGS6l83rZ59hm4w90yKUIOes9IDlptDudQ65MLY+r3q9fSbJ0wBw4ZSWfDepp1YeLoHwj0kyiujmWIdNdoLMVMfdAx6im3vp84KpXWhOwzW4mXgyxRGWOJhZfKkODHuyLpBes+0qtYMcX6uBVqetPF5QabRufsoAqPviM+PdeplBHvbS5Q7cZ+jlinVDRD7NmobPZaHqq+YlYaIhCQDbL27NUNkmUrDkbzDP7kUiCMvfvT5Kd9WYD+ZQZxdYF3K57uhOZe11avW/388J7Au6L2oAu8ZuSGHXRLuVFHhusNpu2rBTi9ZpMCg+tX/wyK3jwRDiQJbAl00cGSusCZ+19+ci8HeVxLNJPzcm3lIUuyC50tYL4"
+      "salt": "bc23c65395582602ed3232f33b92da6d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-09:robin#0"
      }
     },
     {
@@ -14833,7 +14870,7 @@
    ]
   }
  ],
- "updated": "2026-11-10T00:00:26.055Z",
+ "updated": "2026-11-10T01:00:44.826Z",
  "record": {
   "w": 177,
   "l": 55,
