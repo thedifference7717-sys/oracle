@@ -14870,6 +14870,9 @@
      "sport": "NBA",
      "start": "2026-11-10T00:00Z",
      "teams": "ATL vs LAL",
+     "result": "lost",
+     "actual": 0,
+     "note": "0 3PM against a 0.5 line",
      "revealed": {
       "v": 1,
       "hash": "e1f91bd8883d6f14dfb15eb02e345dfc27f8a5bd801060baeb4a369320f3500f",
@@ -14950,7 +14953,7 @@
    ]
   }
  ],
- "updated": "2026-11-10T02:05:42.855Z",
+ "updated": "2026-11-10T02:23:31.424Z",
  "record": {
   "w": 177,
   "l": 55,
