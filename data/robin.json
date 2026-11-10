@@ -14822,6 +14822,9 @@
      "sport": "NBA",
      "start": "2026-11-10T00:00Z",
      "teams": "DET vs WSH",
+     "result": "won",
+     "actual": 2,
+     "note": "2 REB against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "1af8fe241ffd255f65fc4401805101632cf63427ca6593b04794391ccdf2488d",
@@ -14947,7 +14950,7 @@
    ]
   }
  ],
- "updated": "2026-11-10T02:00:24.400Z",
+ "updated": "2026-11-10T02:05:42.855Z",
  "record": {
   "w": 177,
   "l": 55,
