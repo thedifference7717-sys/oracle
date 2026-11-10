@@ -4341,7 +4341,7 @@
   {
    "id": "2026-11-09:ladder",
    "date": "2026-11-09",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-09T23:00:33.335Z",
    "cycle": 16,
    "rung": 4,
@@ -4399,6 +4399,9 @@
    "sport": "NHL",
    "start": "2026-11-10T01:00:00Z",
    "teams": "EDM vs NYR",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-11-10T01:17:52.376Z",
    "revealed": {
     "v": 1,
     "hash": "ba5e3e3f789812c4e36517218e1529d160d93d315b9d22f2617f43911a376580",
@@ -4427,12 +4430,12 @@
    }
   }
  ],
- "updated": "2026-11-10T01:00:44.770Z",
+ "updated": "2026-11-10T01:17:52.380Z",
  "state": {
   "account": 419.43,
   "base": 32.47,
-  "stake": 62.8,
-  "rung": 4,
+  "stake": 74.76,
+  "rung": 5,
   "cycle": 16,
   "pl": 319.43,
   "cycles": {
