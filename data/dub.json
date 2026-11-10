@@ -5694,7 +5694,7 @@
    "id": "2026-11-09:dub",
    "date": "2026-11-09",
    "published": "2026-11-09T23:00:36.140Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 8,
     "NFL": 1,
@@ -5723,6 +5723,9 @@
      "sport": "NBA",
      "start": "2026-11-10T02:00Z",
      "teams": "SA @ PHX",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "bd015bb05a6e09d48f3cff2a29685cde1702b9b457eb2af2a1e3c26fe36fc5ac",
@@ -5804,6 +5807,7 @@
    "fair": -221,
    "price": -133,
    "prob": 0.6881,
+   "settled": "2026-11-10T02:37:08.481Z",
    "revealed": {
     "v": 1,
     "hash": "ab1bba304a423fe30090de888b73a98fe89097918ccb5cbadf1e9d4e983fd4e5",
@@ -5818,9 +5822,9 @@
    }
   }
  ],
- "updated": "2026-11-10T02:05:42.556Z",
+ "updated": "2026-11-10T02:37:09.500Z",
  "record": {
-  "w": 23,
+  "w": 24,
   "l": 22
  }
 }

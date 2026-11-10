@@ -14777,6 +14777,9 @@
      "sport": "NBA",
      "start": "2026-11-10T02:00Z",
      "teams": "SA @ PHX",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "d8521ccd4bf5262548ec48c32ac79ed908bcacde55b819926de9f4e3a3be0299",
@@ -14953,7 +14956,7 @@
    ]
   }
  ],
- "updated": "2026-11-10T02:23:31.424Z",
+ "updated": "2026-11-10T02:37:09.663Z",
  "record": {
   "w": 177,
   "l": 55,
