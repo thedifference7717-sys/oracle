@@ -15162,6 +15162,9 @@
      "sport": "NBA",
      "start": "2026-11-11T00:30Z",
      "teams": "NY vs MIL",
+     "result": "lost",
+     "actual": 1,
+     "note": "1 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "8ca5d21d1b5dbf3cc7d50287ed1cf282a1b9a512aa02003d09b62a8fdba12244",
@@ -15333,7 +15336,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T02:46:17.150Z",
+ "updated": "2026-11-11T02:52:39.065Z",
  "record": {
   "w": 181,
   "l": 57,

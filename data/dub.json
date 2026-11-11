@@ -5825,25 +5825,56 @@
    "id": "2026-11-10:dub",
    "date": "2026-11-10",
    "published": "2026-11-10T23:00:57.974Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 6,
     "NHL": 7
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "be8b79fa80b1dc3fdccfcb53cde5af5563a8a20b5182a7ba7d16dfa9fa556715",
-    "iv": "dTBCapVVegaLAD+v",
-    "ct": "dO+vDNIZ7wUiVSF14s+zwDbCi+RK5llQjFlqAxvXCPfX+XMcgXPZVKXMowh8wjyZLlO+Zr4QTyQLxbCV7n5C8LRIv3zzAAABBRqRfWhuarrC+dLAY0cAXXELR3sF0XunQeNuz6NJFbQarQI+v5Fo+BOSOWVWfcEB+aGTYL/s6pjJDZ7c4gzkdSB6abQFh3XYr6AWytbEt+qijWLLalNTzSEznkBAPA+THYtoxPSK321EADvzByA0LeSWpzeWLlB6O0KJM839xsp1KZFl9Cn7PR0uEm8="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 2.0 in 42 min · over this line 6 of his last 9",
+     "eventId": "401909964",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.74,
+      "spread": 0.03,
+      "ticker": "KXNBA3PT-26NOV10ORLSAC-ORLFWAGNER22-1"
+     },
+     "line": 0.5,
+     "market": "tpm",
+     "need": "1+ threes made",
+     "p": 0.8197,
+     "pAdj": 0.7761,
+     "player": "Franz Wagner",
+     "playerId": "4566434",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-11T03:00Z",
+     "teams": "ORL @ SAC",
+     "revealed": {
       "v": 1,
       "hash": "f8a2b6e0ffd2bde7cf1d9636fb495a4f49347662c9e016d5d053d57a3d44f386",
-      "iv": "TkpIZYXUvqN4iAoR",
-      "ct": "y8ywCERZRw2Hkw/Mv/d37AMLdRiM4Zmussy2kSBmcSL5G8IWTbISHY06rYauDoWnagCwU4ZlYrhENn+f7KH3MdAL4PqK1dmCiQghAk6BOhHbAW/WVIo7bwNEsfPnKd2Tt7IX+tiXAfcYTX+v8WH1D0V1IZZmV0XilegI3Nc2yZzAoH/LpFbFw1JX8NU0nAoAhdy7qM27HKoovH6ThAKgtY7pZQCWWgnjILVZRwIORzNY3q60Rd5VO9cHRP/mbXktKP7aAtch165fj0bHia76mxcOLFLTlozsqG7z9HVXQb47euC4F1Feb0qs+jliO/P34B9wr37emjwFNp4CeeLo6wagvc1kbGRG3SPz69kxI1rxB1apw5Kdu2tTJidpM2NuSGKUcKJQajM70UV3ZTndjTugR0wuLlRnr/8UD7kSr/dgfKEwBh4GsqpBNosozKXVefLy/GWHKAQmhvw8MK7atB+Zo+LtoNjF2NPHVPGYdASa8NlwvnDkYCTiJNBQjENv5agBlin+CMYyl4O9CjYH8uE2eZRh3xLi7QQemMBt7r2xpreoXD1GV2YeYgaAdIiqq5jWT1wQ3PrZXRqhWJfYS1iZJ/aTts+mvs79jjEp65ThXgvFNdkudOoUxS5q+AS9aIg306CYV3qnF+fA1Xo2"
+      "salt": "92f66b9547125d8fcc72563243bc6480",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-10:dub#0"
      }
     },
     {
@@ -5867,6 +5898,9 @@
      "sport": "NBA",
      "start": "2026-11-11T00:30Z",
      "teams": "NY vs MIL",
+     "result": "lost",
+     "actual": 1,
+     "note": "1 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "669c5cb4f5f1834651ea9e06eb244a8f634eb87644aa95e38aed1ccab5333233",
@@ -5891,12 +5925,33 @@
       "ctx": "2026-11-10:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Davion Mitchell",
+    "sport": "NBA",
+    "start": "2026-11-11T02:00Z"
+   },
+   "fair": -163,
+   "price": -146,
+   "prob": 0.6193,
+   "settled": "2026-11-11T02:52:37.181Z",
+   "revealed": {
+    "v": 1,
+    "hash": "be8b79fa80b1dc3fdccfcb53cde5af5563a8a20b5182a7ba7d16dfa9fa556715",
+    "salt": "1cd853896598a43439d5abfea57df8ff",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-10:dub"
+   }
   }
  ],
- "updated": "2026-11-11T00:30:54.658Z",
+ "updated": "2026-11-11T02:52:38.408Z",
  "record": {
   "w": 24,
-  "l": 22
+  "l": 23
  }
 }
