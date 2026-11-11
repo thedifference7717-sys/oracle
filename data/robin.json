@@ -15109,6 +15109,9 @@
      "sport": "NBA",
      "start": "2026-11-11T02:00Z",
      "teams": "MIA @ UTAH",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "063156ca293ea1db8943cf90410d1d517a212b7a26552beb7390c9762b93a663",
@@ -15373,7 +15376,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T03:00:06.533Z",
+ "updated": "2026-11-11T03:40:57.854Z",
  "record": {
   "w": 181,
   "l": 57,
