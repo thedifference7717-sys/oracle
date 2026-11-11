@@ -15215,6 +15215,9 @@
      "sport": "NHL",
      "start": "2026-11-11T00:00:00Z",
      "teams": "NJD @ WPG",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "91490384992a605d3204a69dda4defcd44cf11406f24deb27ead2dde06e80d1c",
@@ -15287,7 +15290,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T00:30:54.713Z",
+ "updated": "2026-11-11T01:07:43.733Z",
  "record": {
   "w": 181,
   "l": 57,
