@@ -15207,6 +15207,9 @@
      "sport": "NHL",
      "start": "2026-11-11T00:00:00Z",
      "teams": "COL @ TOR",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "4e340d99c56b5e79c375545c1a4b14b39b130e5e8a51484e1643c509179bfe7c",
@@ -15327,7 +15330,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T02:00:36.334Z",
+ "updated": "2026-11-11T02:42:03.723Z",
  "record": {
   "w": 181,
   "l": 57,
