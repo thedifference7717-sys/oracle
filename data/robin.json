@@ -15303,6 +15303,9 @@
      "sport": "NHL",
      "start": "2026-11-11T00:00:00Z",
      "teams": "OTT vs WSH",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "b3e890009496ba87785bc0fcf9219ba2c1b0908efc90a7599af1b5b3201ddbe5",
@@ -15330,7 +15333,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T02:42:03.723Z",
+ "updated": "2026-11-11T02:46:17.150Z",
  "record": {
   "w": 181,
   "l": 57,
