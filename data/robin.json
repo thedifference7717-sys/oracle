@@ -15134,11 +15134,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 2.0 in 42 min · over this line 6 of his last 9",
+     "eventId": "401909964",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.74,
+      "spread": 0.03,
+      "ticker": "KXNBA3PT-26NOV10ORLSAC-ORLFWAGNER22-1"
+     },
+     "line": 0.5,
+     "market": "tpm",
+     "need": "1+ threes made",
+     "p": 0.8197,
+     "pAdj": 0.7761,
+     "player": "Franz Wagner",
+     "playerId": "4566434",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-11T03:00Z",
+     "teams": "ORL @ SAC",
+     "revealed": {
       "v": 1,
       "hash": "b685b8260e0fc853671af186e6415ec55c0eeed14aa6efa627f76156406ee870",
-      "iv": "Kbap0CLsU0WnMXcA",
-      "ct": "XHdI3pm7NR7NZ4ZoNS4iILSsrh3cWJsYjNf1tVeJDdoBtBLomSWpdpwJIhOGjdw2CK8WzGi4MPoAD7yMSgOuKAKMhza9lWo8d25swUq0a36AbNYhFpo6/PkNcgcFl9mi7CwbvUACCw20ACRtGLhSM7DLbUMjV2F/e1HHP/iXSCxGZqvSwkxh2LDv72KpF5noaPvEZu2VUEeBbS346PbVIwWwl+Lj4qgKI9waD5zJpLAWFZk1OrqfQiXLSkiwbquVhscxzDDp1MZbpE92Z44FmoKGC4/kw4xjXWgjywfHm8OMcQ1L+/Dkx/cZdntawWRCSr+lQn8AMFSlFqPmVlm9klhByZgAFB5Te5YhQ9w2Oze8ZHDgj2UbbXO5P5t1LLO69uHg9rgVJzdo1OB4vix/nAtHStkVyaa2vbYDijgUXkSSUV5YhSAAwBrQuhbL64mZTTQD5BORkGYnSgxu68Wgi3z1Q/qSNRJAMpJ928Gj/5Sm8yoVU/NqhlfJ9idgYjYse7PVszy1IKqVgBlZF2QNuwDVYlAVGMsvPSjdIZ0BcdpJSKVDusx+gX4qivp3vujMf2hyVIbikFwLOT62L79xlZK1CtWo2Jn2TkbuOOLMYQ/tahTmWARv8GtYn13yywHdHib47dCl2Vxy7aHfsKLC8kc="
+      "salt": "9382960f0b47e012a190af1dec0aa5a9",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-10:robin#1"
      }
     },
     {
@@ -15336,7 +15373,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T02:52:39.065Z",
+ "updated": "2026-11-11T03:00:06.533Z",
  "record": {
   "w": 181,
   "l": 57,
