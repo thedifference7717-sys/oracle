@@ -15113,33 +15113,144 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.529 · 1.67 pts/gm this season (18) · a point in 7 of his last 10",
+     "eventId": "2026020286",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.77,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV10COLTOR-COLNMACKINNON29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7398,
+     "pAdj": 0.7751,
+     "player": "Nathan MacKinnon",
+     "playerId": "8477492",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-11T00:00:00Z",
+     "teams": "COL @ TOR",
+     "revealed": {
       "v": 1,
       "hash": "4e340d99c56b5e79c375545c1a4b14b39b130e5e8a51484e1643c509179bfe7c",
-      "iv": "8TPSqGTS/OgiQTPh",
-      "ct": "4M28qgKKAtI9HEP/X0JzIYJ6ffRcXIbgKSuTptnog+aJDoMnN0V0zmNv89AlefYXB2vc2CNCh5eRH2Fic8WyHC41sKttrFNFaDQZO28CmO3gNFAk6qBnm1libpq+dLwdL78zZFo590SxcOULLfNmOI0PD8vSx5AAZFy9hggEgW8qSkSkmUX7UGSqvePp8l5d3MfKaGmvn6Nb42C/ycvV5DTeXtmUMKgGM3UhdlCvnSepbaSZ35yw2NLHGfxsVoHl6e0PdAdy69N7zxpXtqSPfGvSmwzqwoO5WQsLhspvznBDP2HcpNrAwHuEW2f+R/WErjo9c5lqbHGIz+5M5aJWzfj5XcMfG0GKIkw7TnuIqc6AlfPOfIWYMkaz3qI0+oUn9wGYdmEziGbRgIhG95YyqC/3Tw/bz0390Jg40hzhGjCqjiFSf7BHNIjmrQKjXjjGbEtkCgzS31c3rpLuc6fBDgt86o0RLXqavTSAA5TyUL5Dd7clMzaHE3Ri1yvrlhpKbqVrJhxU1ASkYGuTNF99Udte0GajcrZJNbLMDlEW37W6dw4FMuCco7v8sC2Ytj6XAbT2eqpigessvN87cI2LewiGHkcnxFcN4+Hys2yniUnKTp7lqdM/WZnbe7jNzDbZG2OnESRT3npMq2xILldDmlp6uptF1LEazELoafMbgAyqVjf7XmCPMG5xkjyiab9TVbY="
+      "salt": "fff02af3334d76874632d8cac056b6e1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-10:robin#3"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.297 · 1.39 pts/gm this season (18) · a point in 8 of his last 10",
+     "eventId": "2026020291",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.74,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV10NJWPG-NJJHUGHES86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.695,
+     "pAdj": 0.7454,
+     "player": "Jack Hughes",
+     "playerId": "8481559",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-11T00:00:00Z",
+     "teams": "NJD @ WPG",
+     "revealed": {
       "v": 1,
       "hash": "91490384992a605d3204a69dda4defcd44cf11406f24deb27ead2dde06e80d1c",
-      "iv": "uMaZe7GHCr4yqB1N",
-      "ct": "32V45yAdAECW4HYa73d5L2xFtuySCuSUAmC0DwhSJEcJVHyAbvKJoF6K+fcF/yY/SP5E6GQKVv7xCQ/HtOqbKJC6rL5/qKBD0wez4vKQKqbJz3Hpn1skKZhhe6kjIO/Hxht17ZxVjXQ3m4YmoOyXIlXH6TxqjpXxkW+QVWom/TT9nrWIgItl/VsoWc805vamkt1cII6zqE9mGBWkDAqqS4wd/hKY+N5vvO5elEdnpIzNtCr7atucBklkUkgQNEJ46C6YCPy5udlQ8RVSHRGMAUuFaQys/3VOTKxkGiY8XWTfnp5MN9Pk4mgEgCW2qvtxhtJXTM2RSffcMm2xZUjM0cN0SD0rQoV16AePmhtqrLHqrncuQUj56RTKHLo7L83vYz7B8knuF6kogg5nIx0uGlL7NvoxwOUijdwp/k9qi77hjMks8Kv+RlAJq8S5Rg3TkAODucGX11hsCjWmWAzp76PRFHBX2kCfTxIN7yfvR+1W9UgLMq3N6dh2sSDCQISe3z1GDtDXZ51s0LRFrdw9UIAFG2EXK2R8VjFuL4sR0L70YC26x7gCRD4YZwgDLe/zUvxM/nwNZFby4xs1NEBgeq9ogQeGNIQRMX3c72Kid6J6Kd0lnpdNZkBgKXa4rdfF4s7p1d2tE3cLhYac3IDlq+RdE4uHzlqEQofn8CNqJRVZn8PE3day"
+      "salt": "67e8f28754cbb4af70a3e4f41407d585",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-10:robin#4"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.23 · 1.28 pts/gm this season (18) · a point in 8 of his last 10",
+     "eventId": "2026020288",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV10WSHOTT-OTTTSTUTZLE18-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6807,
+     "pAdj": 0.6928,
+     "player": "Tim Stützle",
+     "playerId": "8482116",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-11T00:00:00Z",
+     "teams": "OTT vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "b3e890009496ba87785bc0fcf9219ba2c1b0908efc90a7599af1b5b3201ddbe5",
-      "iv": "tN/+pVNVHFK/2XrM",
-      "ct": "gC8UARuLQln07h8B6JLthgycHwTCyZy0xMUmugpCgJOkyNyXafUjvYawSNpDEDTSgTB3QgbkJkRKkp3EpNYyIXK4Al4hk1CMgMW1ElTJWQTaI3iDI4prBoh6w9HKoFkPjjTEPM8opuaPx23TuNOAqEoG2ggZJI+3Z6v8I/yxW18QFDcQhlglS0W6KqNJNk9PKyVK7NjLsqhTzLYChHymO8A8W9B1zcCiMJIih5cSIo3ZnkBYsu9NT8vgf50eckWfjGWYrk6xVyTRJBa+KYhxUb//ICsqI0JXNSljqTGuZByHxmzA2FW5KtYF3xuL/aINWJ+jy5UOuyCFDZCJEe+hyiMRUzBtMEJry0yYSEwLF4NA6Giznxm7amAKd/1oAOb909YlilrLPRL2ToMggQNy138YnevijuJdXpotGC5suCczmQkzv1V2gg60FykF4HuokkF4r57uOCF9/Z6t3x+QyqN5jCzPknk0qWgCKkw9kEDXkCIkl4XVKU8u0K4Mg5nwPbbaiao9qJxCAf8vQp11I8qPxE5SLesR8p6Mqof1+PSs/8N05FhERkBvLbpu8gkD0NrNbBXU8p8KS2xQxs/qOHkPiMNX6dJF8XoV7eiUvfgB1xB192FK7i2Q4jbrsj8Z9IUhm86YeqIEW8SnwfvNXb+4cUo0cRaKjrHhGGSIozuTN8gBqlz7jqXE9AY="
+      "salt": "4d40dc03623a97089045f9cd022f4591",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-10:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-10T23:00:59.494Z",
+ "updated": "2026-11-11T00:00:30.749Z",
  "record": {
   "w": 181,
   "l": 57,
