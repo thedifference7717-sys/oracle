@@ -15105,11 +15105,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 3.0 in 26 min · over this line 5 of his last 9",
+     "eventId": "401909960",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.73,
+      "spread": 0.04,
+      "ticker": "KXNBAAST-26NOV10MILNYK-NYKMBRIDGES25-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.7555,
+     "pAdj": 0.7615,
+     "player": "Mikal Bridges",
+     "playerId": "3147657",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-11T00:30Z",
+     "teams": "NY vs MIL",
+     "revealed": {
       "v": 1,
       "hash": "8ca5d21d1b5dbf3cc7d50287ed1cf282a1b9a512aa02003d09b62a8fdba12244",
-      "iv": "9UCCyTF6ft/XST05",
-      "ct": "5//ske0EEwUMNtFURUTv1fIAaXwAdVZlHacOV6KH/q98Gnsh0GrrpsxL1fQyQT6dPmA180CPcmLpOU9+KTroDgEz11mzvGa4ijTiKLBoWSUt9hMw7rPNAi2SJtB1kTUVlAJ2fk1OaCX6FEDQOXSnVNJCyRWdoAn6EJZVFUvWNSaK32w46VcYH8agW4sGB3skIcUO6oq6AACKf4v11RywY88lwIJhmg0TAo1kM32IWR5xkyJzf/7VlZkescv8AXf5kMwkl3dTrcQj1CWxqqq0lVI3Jyjje4YAgQdPo0Q0EWhOBuPzPEMvj3YQDLyNOcNWwnkwilCqAYlxDbNkqF4Tz+nqs982GfnejAdhrBKqtFqKDjk/z6LTLmR4lmYFISCIgLKLb79d+BPMQO9vrjPD+QGc82+AM3Qq/QhuuTvD/alvbmxb0kXxLjEN0dCLSzBuk5oZJiOfESuWKaThWHTrYzPZx1pVK9LZrsVBntz3cxJEProCw0vTky8mQyxPV8aERFxfTbotZhOHmTOFXVIRZ/u7+snJTuneOYAede4MBfcgNr/IXUo2jvj00hh/9MZ4oe4EyQ0B26rxYgIPhTzW5jb/IOYSTuUPbtdnO9cdewtJIsiamkCoSPaG7jZleBAR7fQciPh6QtK7pIz1jM+b"
+      "salt": "e3f9498f557487f9598984a06dd880e5",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-10:robin#2"
      }
     },
     {
@@ -15250,7 +15287,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T00:00:30.749Z",
+ "updated": "2026-11-11T00:30:54.713Z",
  "record": {
   "w": 181,
   "l": 57,
