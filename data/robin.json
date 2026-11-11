@@ -15089,11 +15089,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 17.5 in 36 min · over this line 7 of his last 10",
+     "eventId": "401909963",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.71,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV10MIAUTA-MIADMITCHELL2-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.9119,
+     "pAdj": 0.7691,
+     "player": "Davion Mitchell",
+     "playerId": "4278053",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-11T02:00Z",
+     "teams": "MIA @ UTAH",
+     "revealed": {
       "v": 1,
       "hash": "063156ca293ea1db8943cf90410d1d517a212b7a26552beb7390c9762b93a663",
-      "iv": "aK5j8htp2xSCSdho",
-      "ct": "DVO4hbk/PnXxd1P05hsq7SCuQpa2mIfXbxUlg5GsXNrcOUsqT8d3dxB4rb6z0v2ZEw9LHxUmoJjUrfVYsMOL8Hs7SL1CCS+e+wvDNtS5v2NOcIVbjqhabM6liGh2lOWrc7D54YBj4TQMVJRFezkG9LJLMSbdbb84h/rcFeai1U9DRVDtKwmCxTCIaGjykblVBy8kN2+hUNJb+4RWatYOMYmd/XVSiBYhITKiXy/uBoKUVZg9+UIQzQ9AJgnrAg7UsAcIWXiBnzO7UMQ91p1bfGEZt8P9wRNl0ub+BZxWXiEk5MYIo+avVaPcYDPPsmbbXfTmZMyQSOFfW/hHC0DI6/S5iPSJ0ShnJ3jY4sEF8aANdtK2kmb3nFZM7TCtErNfKpGx3bN00Q+F0yITHKvWq+fNxI4lw5Kw5SyTYuFfiLBN3fS7/LR367ZNUjfXS3aZCJ9iB7deGCk74KpkzR4oHpEHeEjPbPZnHrCN1AqwkGO3Ntwy2zAzGZ+uSuXt0aRAYIYAwdsX/A4FqNpm9J+Fc/XkckSHrOHt9oqPT0ZzbXiiF8Tu1N7Vn9sYqHnu2rY7Lk3qDIOR0wiSIMUKgEj3lEZPZxXTTUEbIhedUzyrinqpFUXCyqPmDdow8CUuTsZPJ7S9ayt31D/pjLqjGSTpV2KiFeB1"
+      "salt": "ee1936d2e746e35d07756bdec8616a92",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-10:robin#0"
      }
     },
     {
@@ -15290,7 +15327,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T01:07:43.733Z",
+ "updated": "2026-11-11T02:00:36.334Z",
  "record": {
   "w": 181,
   "l": 57,
