@@ -5974,17 +5974,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 5.8 in 29 min · over this line 8 of his last 10",
+     "eventId": "401909969",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.73,
+      "spread": 0.03,
+      "ticker": "KXNBAREB-26NOV11SASCHI-SASSCASTLE5-4"
+     },
+     "line": 3.5,
+     "market": "reb",
+     "need": "4+ rebounds",
+     "p": 0.8121,
+     "pAdj": 0.7675,
+     "player": "Stephon Castle",
+     "playerId": "4845367",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-12T01:00Z",
+     "teams": "SA @ CHI",
+     "revealed": {
       "v": 1,
       "hash": "12f79889a763cd0eae06c82c5d3fa2af7c55a8ebae1631d0d2715e14d743ec2d",
-      "iv": "B88gckn5k6AMJIBf",
-      "ct": "aWI87G8PzcMZMKrUBhls+BgFeUH0woJepr0yXrsUl1AaekjEqrRSc/wmVrIbAyd5k22XLehHFYfEolT0YE7LIM9mIi6pbIUZUVNOqRbsUi381iMTsVaYZabiOqi9JrAVApLw8WfmB3CS8sBtW/a67u2OL4LO2Yay0ShZI5EUwfnFK0Z7pljBbC20ajADd1qrZvouDl18+l42BWzJ9ksgU/M4vA31jYTk4+HEIrdjiA8O35BCbpNgrYklxAOHtfVoZ2IaYQFXS8lAro8OiUvavbJ+Is+dmaZ6mwvwKfRdDiIcf598W3kg+K+FUspjLsdDd5/9DD5iY7p55Pj4Pq9xP6IPUuhABxqHnk4Wfiw9sjftgFTWx2WRcVo0+VfC202p/q0+fybUk3qHiL//tfGOQt44Ht0FyZSM0Ik9KiJ8plq0UYTHqPMX+lU7aXX6nIp9/VEzYMQMqXfIH/ioYx25vhprVk3neEfgGA4zsSqgYnfciirAQVL6ld/MZ8XH2K0ATxxw8jxNMniy/uHSCYGJfiVvuZ5NIfy5m5fKONUO2TIWrlTOkHdaop6FrhlX77z79bgMfZzTgzY4o3aPZQdSmjfEFrs9VUydXR7T3QgOVjySyTE6MP75hEV/6wVIJ4mYLd6/jogp/siXNG8cvw=="
+      "salt": "3215bccdf960e7ca242146abd115d7ab",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-11:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-11T23:00:13.754Z",
+ "updated": "2026-11-12T01:00:44.444Z",
  "record": {
   "w": 24,
   "l": 23
