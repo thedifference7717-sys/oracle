@@ -15537,6 +15537,9 @@
      "sport": "NBA",
      "start": "2026-11-12T02:00Z",
      "teams": "ORL @ UTAH",
+     "result": "lost",
+     "actual": 9,
+     "note": "9 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "e0d29f0e832a791c962d1fd8400c58dfa28f7f273080c176df53335be8c46f9d",
@@ -15753,7 +15756,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T03:34:22.195Z",
+ "updated": "2026-11-12T04:32:09.884Z",
  "record": {
   "w": 184,
   "l": 60,
