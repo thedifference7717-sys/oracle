@@ -5952,7 +5952,7 @@
    "id": "2026-11-11:dub",
    "date": "2026-11-11",
    "published": "2026-11-11T23:00:13.753Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 10,
     "NHL": 6
@@ -6025,6 +6025,9 @@
      "sport": "NBA",
      "start": "2026-11-12T01:00Z",
      "teams": "SA @ CHI",
+     "result": "lost",
+     "actual": 1,
+     "note": "1 REB against a 3.5 line",
      "revealed": {
       "v": 1,
       "hash": "12f79889a763cd0eae06c82c5d3fa2af7c55a8ebae1631d0d2715e14d743ec2d",
@@ -6058,6 +6061,7 @@
    "fair": -177,
    "price": -155,
    "prob": 0.6384,
+   "settled": "2026-11-12T03:19:33.711Z",
    "revealed": {
     "v": 1,
     "hash": "a7aafdfd75a69ea5cc497a5f8a4b236183e315f68e69f863ec9fb5c4539a46f6",
@@ -6072,9 +6076,9 @@
    }
   }
  ],
- "updated": "2026-11-12T02:00:32.059Z",
+ "updated": "2026-11-12T03:19:34.948Z",
  "record": {
   "w": 24,
-  "l": 23
+  "l": 24
  }
 }
