@@ -15595,6 +15595,9 @@
      "sport": "NHL",
      "start": "2026-11-12T00:00:00Z",
      "teams": "TBL @ BUF",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "8f7227c32488fcc5fee82c1f5c8df94600a687affe4e87a4f3afd1fc54c38376",
@@ -15630,7 +15633,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T01:00:44.492Z",
+ "updated": "2026-11-12T01:13:21.978Z",
  "record": {
   "w": 184,
   "l": 60,
