@@ -15424,7 +15424,7 @@
    "id": "2026-11-11:robin",
    "date": "2026-11-11",
    "published": "2026-11-11T23:00:13.753Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 10,
     "NHL": 6
@@ -15729,6 +15729,9 @@
      "sport": "NHL",
      "start": "2026-11-12T03:00:00Z",
      "teams": "SJS vs PIT",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "7ad98fa25cd6a986f3027f9c8b8f49d02172c3c43dd37452644faee73b98bfba",
@@ -15753,22 +15756,64 @@
       "ctx": "2026-11-11:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 9.903,
+      "pl": -5.097
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 8.471,
+      "pl": -11.529
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 2.714,
+      "pl": -12.286
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-12T05:32:00.126Z"
   }
  ],
- "updated": "2026-11-12T04:32:09.884Z",
+ "updated": "2026-11-12T05:32:01.013Z",
  "record": {
-  "w": 184,
-  "l": 60,
+  "w": 188,
+  "l": 62,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 913,
-   "l": 1336
+   "w": 924,
+   "l": 1382
   },
   "days": {
    "w": 23,
-   "l": 19
+   "l": 20
   }
  }
 }
