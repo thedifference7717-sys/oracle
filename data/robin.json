@@ -15550,6 +15550,9 @@
      "sport": "NBA",
      "start": "2026-11-12T01:00Z",
      "teams": "SA @ CHI",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "ce4aa1b209388b68bff9c1404268e98dce45f0d6ceb30381ba099bd840ef3cbb",
@@ -15633,7 +15636,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T01:13:21.978Z",
+ "updated": "2026-11-12T01:17:36.334Z",
  "record": {
   "w": 184,
   "l": 60,
