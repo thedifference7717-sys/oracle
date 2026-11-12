@@ -15489,6 +15489,9 @@
      "sport": "NHL",
      "start": "2026-11-12T02:00:00Z",
      "teams": "EDM vs PHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "8b5cbefc47a4a223b09b603d0129a0b18566215aacb72a94e044eaf90f20b799",
@@ -15750,7 +15753,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T03:00:34.074Z",
+ "updated": "2026-11-12T03:34:22.195Z",
  "record": {
   "w": 184,
   "l": 60,

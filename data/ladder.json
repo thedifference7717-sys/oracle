@@ -4522,7 +4522,7 @@
   {
    "id": "2026-11-11:ladder",
    "date": "2026-11-11",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-11T23:00:11.601Z",
    "cycle": 17,
    "rung": 1,
@@ -4579,6 +4579,9 @@
    "sport": "NHL",
    "start": "2026-11-12T02:00:00Z",
    "teams": "EDM vs PHI",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-11-12T03:34:20.506Z",
    "revealed": {
     "v": 1,
     "hash": "4b601a4f2d046bdc83e5eee77da23c26579e1471d24458acc52ff3e520105f9c",
@@ -4607,12 +4610,12 @@
    }
   }
  ],
- "updated": "2026-11-12T02:00:32.026Z",
+ "updated": "2026-11-12T03:34:20.510Z",
  "state": {
   "account": 490.81,
   "base": 18.91,
-  "stake": 18.91,
-  "rung": 1,
+  "stake": 22.25,
+  "rung": 2,
   "cycle": 17,
   "pl": 390.81,
   "cycles": {
