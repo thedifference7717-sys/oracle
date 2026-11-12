@@ -15485,11 +15485,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 15.1 in 28 min · over this line 5 of his last 9",
+     "eventId": "401909966",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.7,
+      "spread": 0.05,
+      "ticker": "KXNBAPTS-26NOV11WASIND-INDANESMITH23-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8611,
+     "pAdj": 0.7707,
+     "player": "Aaron Nesmith",
+     "playerId": "4396909",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-12T00:00Z",
+     "teams": "IND vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "6de4ddbd94e44340ed1aeecd1878e0e3ba3e74d2c3705ca6bd3c6a3935b69bf4",
-      "iv": "JD/aqjUXU9FUFlgc",
-      "ct": "EhJT56WvSyztmCqjlmzCFCD3b2dko2cZoQTbyK1G/0Jzc8Z2eUJdxSF8G6QkECuM4sQmjlnJwUurLHcbMxywPy9Y4wen8jNQJSnCbjUZwZVbqdMCdacl1nuasgKKnexBm0mpxoCVVIzdUqXJFNg67/4OulM3wQhD1icSNmvmeM0vmZfXiZ2UBV+zmjrNnyZLfyeYC54orsb1agICgt7Id5N2aOsS82CezTwejIA0GdFbgF/cJpjCtxA1iZWODOdEnfg1ebE91WS/gEyjRAgDLmWV8JeLsj1o48NoN/g7LXulhcKJREfATXeoNZnjp7aQrFpIksb688NrXma7I+iGe4rF9U/pb/tB9NakSENHjGDY3EzIUReqfjRz7WZo8S0u1U+vMxoJqSS6T3ps4VRu4+lcj5/+bl0oNACPzmZrpl1DMltRPFvJudkDPerCbdVLmZ/nNkmAfS4fKv5r8YkKkFx2TpOEYOVBV8HYVF2sUYgMxx9aHQIpRZf/mhZ0FECo5X6yJGkiuSI2l2V0qw8YGn25Xi66/PqQu3yIKnV8x8nQVF2VNoA2FgzRTdzdKnYmfN0Myuqsd4LxlgyACG0mW1FUmyChxgSBOnvX9kbMYVLIA2Whb1qaJJIoXzsO/U/dbWS0UWlfx7SGnJu2p+g5MTM="
+      "salt": "5667a07d7a0e70bff55a6849190f9f8f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-11:robin#2"
      }
     },
     {
@@ -15501,11 +15538,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.46 · 1.29 pts/gm this season (17) · a point in 7 of his last 10",
+     "eventId": "2026020293",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.71,
+      "spread": 0.06,
+      "ticker": "KXNHLPTS-26NOV11TBBUF-TBNKUCHEROV86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7273,
+     "pAdj": 0.7436,
+     "player": "Nikita Kucherov",
+     "playerId": "8476453",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-12T00:00:00Z",
+     "teams": "TBL @ BUF",
+     "revealed": {
       "v": 1,
       "hash": "8f7227c32488fcc5fee82c1f5c8df94600a687affe4e87a4f3afd1fc54c38376",
-      "iv": "aoqfiKwfdAEWuiml",
-      "ct": "5Vzv7v9cCvkIWz1eA4UCkmwGcu/6vtGWuOTwiLq/glQLP1r+2PM3acCguEaeJh8W/u0GE7l5+ckQCjSxiMLlX9GFz2HTlwuO73Cal8M2yav2Ku7VPWeeGWiFTqE3apx8mmnqmEu96zAijDx4am2rglGugcESpWGHRhoOUejCN4Q3/bWVQv7qwTBvXx+eBsdEagVFTng2RsVlfrK1Oqt08DwpDk8yiecAfQ4chYg1WzDXhoQKJnDAzmhJ1f1PX0/8eLle1cnsxtwqiWPmafoNlApDw52KNdiN0PxWBvNTRpyQk8ZkHHtbA/Chv/81xwBQ4Cv++pVXiTLG1PeE9KrzQF/zpdJ+UnzsLGCG/MuGCQ1kiVC4MS5idm+dJrZXM40SXdKcBvuKS/1yjP15WL7cqfoJkXJDWhqidGGXhtfel/E0Y/r+rBOeHYeqbXeVayKYKCX7/77AZAKLEEGAE6hB16o6B7NOcEIx7knWoej9tut5BzIjGn5zl6QEgCrIit92T1d94tNq6VluJ5w1ZQDffrREL89ivcUoeeuVEs/C+JN+LMBK5g2g+hAt6cIpeYt3GzZV5NawkAYcAczgb1DzgvmgSH4p2Ya6o8KGWRKg8hPPPMmiiWBQgRpfy8hcW32Lo4J1dElaJMz4rKc0apy2kJkMyu+8C2r4U45ZStw7l+Z3qKwJYNluXDRsEbFk"
+      "salt": "2b5ac8a6e092b8d9f73d0486fc9ba6f1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-11:robin#4"
      }
     },
     {
@@ -15519,7 +15593,7 @@
    ]
   }
  ],
- "updated": "2026-11-11T23:00:14.847Z",
+ "updated": "2026-11-12T00:00:41.425Z",
  "record": {
   "w": 184,
   "l": 60,
