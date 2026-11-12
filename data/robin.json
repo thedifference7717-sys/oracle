@@ -15579,6 +15579,9 @@
      "sport": "NBA",
      "start": "2026-11-12T00:00Z",
      "teams": "IND vs WSH",
+     "result": "lost",
+     "actual": 2,
+     "note": "2 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "6de4ddbd94e44340ed1aeecd1878e0e3ba3e74d2c3705ca6bd3c6a3935b69bf4",
@@ -15710,7 +15713,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T02:00:32.107Z",
+ "updated": "2026-11-12T02:21:36.230Z",
  "record": {
   "w": 184,
   "l": 60,
