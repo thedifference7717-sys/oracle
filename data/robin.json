@@ -15703,17 +15703,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.36 · 1.17 pts/gm this season (18) · a point in 5 of his last 10",
+     "eventId": "2026020298",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.72,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV11PITSJ-SJMCELEBRINI71-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.708,
+     "pAdj": 0.7217,
+     "player": "Macklin Celebrini",
+     "playerId": "8484801",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-12T03:00:00Z",
+     "teams": "SJS vs PIT",
+     "revealed": {
       "v": 1,
       "hash": "7ad98fa25cd6a986f3027f9c8b8f49d02172c3c43dd37452644faee73b98bfba",
-      "iv": "7LKYdEmEYivgEEGe",
-      "ct": "YRPfyaDvDozUb0HT1leVmvaP1yb3jNp7oGupRTyx/Zwm04nsVAd9Web6NfG3rBbpaYROhkmz7k5Obe3pAvn3PVPvMNvmsUP5LcN0yPEsGUBBuBwYxo+62WuhrzIWlHO8c9jZZ6xC5o19hKU6E92GNspKDZvMuA25mhuHd3lXaii6JYPvv4trREG183e3SrBIdJbfgfl66NaQ+vpsUMLL9ZO2KvfDYk+aihg7snE/6nvlgTr9GZkCgatJYyUQWOAzy4/LrFiM6wOwyG+bQsjtSydh24K0ihGXy2cHl3KQIA0VqtpoYfofRFMJkeGfSYYbWQopd9ZocEktVmerdBtQyfbmynLSfBQoqcPTt2t2004bBJE1QSZk62sGZQKkFfEoEiPs16to6OrQtMzyDcibPqO7yctvg2HipP/rlF5I7nMFGxrc+JPii5FPIzKIn8sUYynHiBA0x7o9VQPeNUiWsh3jXUr1IqTd81O13vrjVKP9OAvv6hGrhspYKwuHJcv6UglTkc4xuQ8OYHhscZT8z4w+8chOQNXPrwgZZ7n4hIhbHGwalbjU0p+ee+6kbW5yEj+PwnWNBFqiBEVnyb7aDty/4q8PaoS0Wm51PRnK4q5nz+5VKqQaQYzs5GCiwr7/yhzCAU8ZGQifCaBJoI2dSOMkCyEyfVciN2YDu7f5eMeYXUiUF3KlSlWem8GQY/3V"
+      "salt": "81d4c0fef25496eeec71ecf8b33b06ee",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-11:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-12T02:21:36.230Z",
+ "updated": "2026-11-12T03:00:34.074Z",
  "record": {
   "w": 184,
   "l": 60,
