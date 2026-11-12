@@ -15469,19 +15469,93 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 2.208 · 2.53 pts/gm this season (19) · a point in 10 of his last 10",
+     "eventId": "2026020295",
+     "kalshi": {
+      "ask": 0.85,
+      "bid": 0.83,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV11PHIEDM-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.8356,
+     "pAdj": 0.8643,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -567,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-12T02:00:00Z",
+     "teams": "EDM vs PHI",
+     "revealed": {
       "v": 1,
       "hash": "8b5cbefc47a4a223b09b603d0129a0b18566215aacb72a94e044eaf90f20b799",
-      "iv": "ztvnVjqQejAHBiRA",
-      "ct": "TXm0b2ZAQ44nnx7C+XKOT69S5kc+ozVgDurFlvIrslFrDgMzjyWxhSoPXfgmlSY5qT67GFt1GN785LCadqEhTUqzYh8Wt4HGJsNQQdaUPSha04hfJTTq9EfoI3gZrHnFceyP7vE3O5hBhrmP9gwAxrxyG3hVw4eDGkXTKToCc7xvTMsnqv75clIdxdOzmW3BzzqlIBVaEUK9ypAPOEYcbDxxiN0bdZkJ9KVYy6eP3F85bcqBgB4SSuVDOGxshXNAxBlFteYuNVBzQYFIA3iLszhczJILGQdiu2fK9BdwMaWcdozFw1OIg6W+94QhLDYA0sSAVEUxE/2f5p8qRH5cXz2IhjnC5Q7zebTD/NtMZbMfWJPv7VM9pHqaTl3ASzYxRpM+xm7OuJCEAeGjVjsl6u+Op5MAJqq1Uaup4Rx5bWXlFPPmBKssFc/OsL+X2YFJqMGH1LcMueki4XfK7IGocoIHi7l9IkXf3YFXUDwfOCsA+a20enmRPIlE0kDLrbSx5gBfwvugBxClVovYcd/KPZoQ9ZXv8GE5X0xv+NO1PuAAYr1XTx0Ardn9dgVBsiEbB1v9F50+caqsT5JKeDMEofh+c6LZjEDnea4BJ/QhmAoFvGXOAE6zaH0vT06UmxuAs8vUjgfPSjAT7V4MQFrCNc89CbYBOK6IohWfVphwEcvP782hZZ+IB15ZT9e10LwO"
+      "salt": "e515b753c85a3cad61b9732465696acb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-11:robin#0"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 19.2 in 40 min · over this line 5 of his last 10 · back-to-back",
+     "eventId": "401909973",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.71,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV11ORLUTA-ORLWCARTER34-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8817,
+     "pAdj": 0.7561,
+     "player": "Wendell Carter Jr.",
+     "playerId": "4277847",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-12T02:00Z",
+     "teams": "ORL @ UTAH",
+     "revealed": {
       "v": 1,
       "hash": "e0d29f0e832a791c962d1fd8400c58dfa28f7f273080c176df53335be8c46f9d",
-      "iv": "ZsmECAnhfoi/agSo",
-      "ct": "D0Oa0vu67msZD8vqwC80CU9YQUyoUVKfnirna1qVN9wr9KgTjYZ5EW6jKOhG1OT93HFAJiAMWQ1Pd8gQ6rb8/sjEsmcR+gz7KDCcRpNrPPWzRL0pAZf4LE1tv0dYrpZH2Gx04+4ItK+KHDRt1u19zIK43T40fhy8uZBjP/AkinpUCPFzwxx+gfF6E23xPyUNCE2dGaypd0ltTL/rk4/kEVfiXtg61oaPdhK2tpfqN/0MBB7Am5tHsBZEt5oh8NzAKXVg/qxw8HexNP7aC7NL4lgKtPT7x04eZYlMsntmNvHdXecUUN1adY2Dqv+6NSJ8AYS/uX6KrAo3YpXbPY+tAcCq4vbG7MIb4gTzhmEgPQ4x/37pxQfCYGpvC0qEF3Z1+tga1HLRUME6mWy88uh+sygOwk10yIfKyXvMUQ+q8UEaND0AjeTGyfvqsrBPmpTb697RvgHtjNP76C/wtTS4pLaaXVv7bWRZpYwPoVwl9WUJkVMhEtKrrUQwlTErrhmw7pDbUz1loGBrBam8nagQ8oVjowuZMcc2yO1beFmcoGFcJXZ/xbW/IUJlqrXU5HwsspENU8Em3XWhak52gx5kE5Fgmn3IKEvX8zVPAw8p2w5sqNYyYUsEjA/WGLiJyGsOgeQSZoYcolOTQWU6L5hUZQ74W/qG0mfkGwluYZZqk2NQZJ7WDFZI"
+      "salt": "37e9b9ea9607395ab3aa35e479d89742",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-11:robin#1"
      }
     },
     {
@@ -15636,7 +15710,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T01:17:36.334Z",
+ "updated": "2026-11-12T02:00:32.107Z",
  "record": {
   "w": 184,
   "l": 60,

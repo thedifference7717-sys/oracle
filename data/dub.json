@@ -5958,19 +5958,50 @@
     "NHL": 6
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "a7aafdfd75a69ea5cc497a5f8a4b236183e315f68e69f863ec9fb5c4539a46f6",
-    "iv": "1SHViSdZOG8OZ68c",
-    "ct": "MXK1IjlYx2px3oP/9Zekdak9OyguvU3fWCkNap/DanXO/AvRc2/pz41OopS1gBCiMU/QEWJS179ARUj1R4PYA5Ao5OCYAi2hBAwDgYmGikt98GUaXlJRnghYhgK/Q2xP3rsf7b3dSghkYP56oyTGR1sOA1OBAO47eMuaxUd3aQUdL16DW1cNgJbwNcG3Lonmhy4EGJYQMdMav7UnUbk3WJ0rAHtXnzBuTotgIpQT7RmkE/uG5VkT7LflDthdjPTaHeMTdGWR7XjcWVTUbFiUo7LqKMOdgA=="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.819 · 1.89 pts/gm this season (19) · a point in 9 of his last 10",
+     "eventId": "2026020295",
+     "kalshi": {
+      "ask": 0.8,
+      "bid": 0.78,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV11PHIEDM-EDMLDRAISAITL29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7862,
+     "pAdj": 0.8013,
+     "player": "Leon Draisaitl",
+     "playerId": "8477934",
+     "price": -400,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-12T02:00:00Z",
+     "teams": "EDM vs PHI",
+     "revealed": {
       "v": 1,
       "hash": "3fa2050f19246e9ca09a6311e4c94dcf464ececc14552ca5c4ad0924f2ed2ace",
-      "iv": "Ik/f1HF/ZLRyG0qn",
-      "ct": "6vToEM9vCrI2/GGEGbGLelAoCvDRYBm4zBG7V0K6yZ6T3Vu6k1kxV2aJQ/+psVUy6qBZRB6EC7pAiex2sQIpB7jhbhsYDsK2sFURdP6XWa9yQKwk6jkMQvV3kEohUPnOl61txIWIgycifI5aQY3Z0eIM4bDcg5KQimcenJw0mO6NEzRg09pbGNDnyrx5jzC4+TG9+g17C5mOyKYNM/xyAm4MLcknmrAObXXj0ZZ9lOGRWyfbvdeyAzfiLXnxw7YmIxSxWq3i9vOPJ+eQxy1SAkxBkju75wgIEu8wYfthOfMxx2Pap66dh34h8Lbrp6z/mJB/9rLxE/MuzyuMSPuFtoa+Gpha5jfuAsTtiTz0/WXhP/Z/Dml+P5MTFGtmfawGVTIi7rucjjV2oAUPvaxiAJl3uDjnNOBoGl4I+WBtm45qKBla+A1osMnkBbhnqyDfxpL0PYy/tvi8dJ4sUrC95CRmSKuu/EkDFszwZIy1NR9jI1AZ3vqg377F5oyiMTykX6MyvRVhhvvi3GlTfAbJeQg6+MSf6laV7TYENFf20jhr6Z6lwSwwo0oLPvewr/+rnz18SFqJiTz/CzU5GvuFAgM08eMOxMpjBlIS3nEyYXzNP1UVG6aZl8wcSpNi0oncFz/i9gij2Nb2ugcaFMH0I3SoTw4IBN0vWBUmvgqgXXJueXKTgVbbEDE1bGh7Pw=="
+      "salt": "bc933e084c4767b8114488e0a5b7cba4",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-11:dub#0"
      }
     },
     {
@@ -6018,10 +6049,30 @@
       "ctx": "2026-11-11:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Connor McDavid",
+    "sport": "NHL",
+    "start": "2026-11-12T02:00:00Z"
+   },
+   "fair": -177,
+   "price": -155,
+   "prob": 0.6384,
+   "revealed": {
+    "v": 1,
+    "hash": "a7aafdfd75a69ea5cc497a5f8a4b236183e315f68e69f863ec9fb5c4539a46f6",
+    "salt": "d0e75340072f55bfea930055e3ba0f11",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-11:dub"
+   }
   }
  ],
- "updated": "2026-11-12T01:00:44.444Z",
+ "updated": "2026-11-12T02:00:32.059Z",
  "record": {
   "w": 24,
   "l": 23
