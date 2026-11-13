@@ -15976,6 +15976,9 @@
      "sport": "NHL",
      "start": "2026-11-13T00:00:00Z",
      "teams": "MIN @ TOR",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "32c2ebe4d06b00090bdc183c05cc025cefab4ee1255969beb6dca33574261fe2",
@@ -16011,7 +16014,7 @@
    ]
   }
  ],
- "updated": "2026-11-13T00:00:34.845Z",
+ "updated": "2026-11-13T00:41:00.811Z",
  "record": {
   "w": 188,
   "l": 62,
