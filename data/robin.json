@@ -15960,6 +15960,9 @@
      "sport": "NBA",
      "start": "2026-11-13T01:00Z",
      "teams": "MIN vs DAL",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "d263f69fe1ad944def1064f2a1377fd6ea211f679508ee88d2a596ee4b06884f",
@@ -16128,7 +16131,7 @@
    ]
   }
  ],
- "updated": "2026-11-13T02:00:28.926Z",
+ "updated": "2026-11-13T02:02:34.861Z",
  "record": {
   "w": 188,
   "l": 62,
