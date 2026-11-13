@@ -6079,7 +6079,7 @@
    "id": "2026-11-12:dub",
    "date": "2026-11-12",
    "published": "2026-11-12T16:00:50.601Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 4,
     "NFL": 1,
@@ -6108,6 +6108,9 @@
      "sport": "NBA",
      "start": "2026-11-13T00:00Z",
      "teams": "WSH vs DET",
+     "result": "won",
+     "actual": 2,
+     "note": "2 REB against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "58d6b9bebbdff7ea4bb3c24833e83b2b8e51d169e641a60e0793d38ec0d405a0",
@@ -6189,6 +6192,7 @@
    "fair": -129,
    "price": -107,
    "prob": 0.5633,
+   "settled": "2026-11-13T02:21:14.960Z",
    "revealed": {
     "v": 1,
     "hash": "b197dd1e9d167cf6c9ef8110b47c229e5309b5597b0f29a458ecbc56418eba81",
@@ -6203,9 +6207,9 @@
    }
   }
  ],
- "updated": "2026-11-13T01:33:30.017Z",
+ "updated": "2026-11-13T02:21:15.992Z",
  "record": {
-  "w": 24,
+  "w": 25,
   "l": 24
  }
 }
