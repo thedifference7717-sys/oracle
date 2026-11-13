@@ -15895,11 +15895,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 6.3 in 22 min · over this line 8 of his last 10",
+     "eventId": "401909979",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.65,
+      "spread": 0.03,
+      "ticker": "KXNBAREB-26NOV12CHAPHX-CHARKALKBRENNER11-4"
+     },
+     "line": 3.5,
+     "market": "reb",
+     "need": "4+ rebounds",
+     "p": 0.7762,
+     "pAdj": 0.6973,
+     "player": "Ryan Kalkbrenner",
+     "playerId": "4576060",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-13T02:00Z",
+     "teams": "CHA @ PHX",
+     "revealed": {
       "v": 1,
       "hash": "dc40ab3bc83ef1040004ef62b0a2920ff4c6dc6762dd74be6c6befb135f37d3e",
-      "iv": "UlexhNTsfvFeF1pU",
-      "ct": "xUKqO+rbuovpnwR1phUTB0sXG15w644Dg/JYUV80gK+PS2dnO00sdPu5bq7ZTbDlM+IpukrHsdLcJNmhjB9qiZoFjlbMhyGpAXDYsK3EiD9+ci5S3tcrnh+vu2Tobp4/Rj+xe3AnYs06/gg4r9PPMwTgcFWfogNUo3YXsrlUKPSLQcsPQrHCgA9svd8jFe1Edz1967aoQke2AzHgLve1xZ1jdBL5TpY/VMFtdpVBk39LQ/5VLYqNSL8+V7rF3U+TGBQ0NpP/t1LGvdJBga/QhhiY9LMcmA4gU3ZebY5T/rwsuu6QJ/0JuyH0geYmJk+DsjfvqdTb+n+Rvzt3LdIZ89SfhJGGz/2jVbe5xhFXjMQpXMNrca/s6WvEWKB6A/JgD6ifpuX3VG7t1yu9XOX+HFcPwKGWoLqc498fFpStyzjwlNQ4Wz03Z6KZwraz6i08VPRMZ5cc0QkKeo8D04V2ezE4YN/CYeivY874ONsjiVfZRXGU/mBLychGoXC7rcn+Wqarvm0Es9kCSqB1dGMipUoqzyDK/60rv4CGN+JvKn/PE5UZSYkupJdYVrEFB3phvO6DewxSuvBwW64uDt+Jm4DxSyR5QSoqWq+EAN7oMUjwawjvUxU4088tSmu9BRewSY9o7KZ1Rd+Az1kFJouIlPPXmp6EZGhJ"
+      "salt": "1f1f4a081f8079d83c46db4ef64631bf",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-12:robin#1"
      }
     },
     {
@@ -16091,7 +16128,7 @@
    ]
   }
  ],
- "updated": "2026-11-13T01:40:47.851Z",
+ "updated": "2026-11-13T02:00:28.926Z",
  "record": {
   "w": 188,
   "l": 62,
