@@ -36,7 +36,9 @@ strategy("Trading Walk 5-Minute Strategy",
      calc_on_order_fills= false,
      process_orders_on_close = false,
      commission_type    = strategy.commission.percent,
-     commission_value   = 0.0)
+     commission_value   = 0.0,
+     max_labels_count   = 500,
+     max_lines_count    = 500)
 
 // -----------------------------------------------------------------------------
 // Inputs
@@ -95,9 +97,15 @@ minStopPips   = input.float(0.0, "Skip trade if stop < X pips (0 = off)", minval
 maxStopPips   = input.float(0.0, "Skip trade if stop > X pips (0 = off)", minval = 0, step = 0.5, group = G_RISK)
 
 G_VIZ = "7 · Display"
-showEmas   = input.bool(true, "Show EMAs", group = G_VIZ)
-showLevels = input.bool(true, "Show entry / stop / target levels", group = G_VIZ)
-showSetups = input.bool(true, "Mark setup candles", group = G_VIZ)
+showEmas    = input.bool(true, "Show EMAs", group = G_VIZ)
+showLevels  = input.bool(false, "Plot flat level segments", group = G_VIZ, tooltip = "Older style. Duplicates the entry/SL/TP lines below — leave off unless you prefer plots to lines.")
+showSetups  = input.bool(true, "Mark setup candles", group = G_VIZ)
+showSigLbl  = input.bool(true, "BUY / SELL label on each signal", group = G_VIZ)
+lblDetail   = input.string("Direction + prices", "Label contents", options = ["Direction only", "Direction + prices"], group = G_VIZ)
+showTradeLn = input.bool(true, "Draw entry / SL / TP lines", group = G_VIZ)
+lineExtend  = input.int(8, "Extend lines N bars past the trade", minval = 0, group = G_VIZ)
+showPanel   = input.bool(true, "Status panel (which way to trade)", group = G_VIZ)
+panelPos    = input.string("Top right", "Panel position", options = ["Top right", "Top left", "Bottom right", "Bottom left", "Middle right"], group = G_VIZ)
 
 G_EXT = "8 · External signal (10X Trading System)"
 extMode     = input.string("Off", "Use an external signal", options = ["Off", "Signal is the entry trigger", "Signal confirms my setup"], group = G_EXT, tooltip = "The 10X Trading System is closed-source and cannot be rebuilt in this script. Add it to the chart and select its plot below to drive this strategy from its signals.")
@@ -352,6 +360,130 @@ if flat and not justFilled
     curTgt   := na
     curEntry := na
     curR     := na
+
+// -----------------------------------------------------------------------------
+// Signal labels and SL / TP lines
+// -----------------------------------------------------------------------------
+// A signal prints a BUY or SELL label and three lines: entry trigger (blue
+// dashed), stop loss (red) and target (green). The lines follow the trade — if
+// the stop moves to break-even or trails the EMA, the red line moves with it.
+var line   lnEntry = na
+var line   lnStop  = na
+var line   lnTgt   = na
+var label  lblSig  = na
+var label  lblStop = na
+var label  lblTgt  = na
+var string sigTxt  = ""
+var bool   sigFilled = false
+
+armedNow = pendDir != 0.0 and (na(pendDir[1]) or pendDir[1] == 0.0)
+
+f_txt(bool isLong, float e, float sl, float tp) =>
+    string dir = isLong ? "BUY" : "SELL"
+    string out = dir
+    if lblDetail == "Direction + prices"
+        float riskPips = math.abs(e - sl) / pip
+        float rewPips  = math.abs(tp - e) / pip
+        out := dir + "\nEntry " + str.tostring(e, format.mintick) + "\nSL      " + str.tostring(sl, format.mintick) + "  (" + str.tostring(riskPips, "#.#") + "p)" + "\nTP      " + str.tostring(tp, format.mintick) + "  (" + str.tostring(rewPips, "#.#") + "p, " + str.tostring(targetR, "#.#") + "R)"
+    out
+
+if armedNow
+    bool isLong = pendDir > 0
+    sigTxt    := f_txt(isLong, pendEntry, pendStop, pendTgt)
+    sigFilled := false
+    if showSigLbl
+        float yPos = isLong ? low - 0.8 * atr : high + 0.8 * atr
+        lblSig := label.new(bar_index, yPos, sigTxt, style = isLong ? label.style_label_up : label.style_label_down, color = isLong ? color.new(color.green, 10) : color.new(color.red, 10), textcolor = color.white, size = size.normal, textalign = text.align_left)
+    if showTradeLn
+        lnEntry := line.new(bar_index, pendEntry, bar_index + 1, pendEntry, color = color.new(color.blue,  0), style = line.style_dashed, width = 1)
+        lnStop  := line.new(bar_index, pendStop,  bar_index + 1, pendStop,  color = color.new(color.red,   0), style = line.style_solid,  width = 2)
+        lnTgt   := line.new(bar_index, pendTgt,   bar_index + 1, pendTgt,   color = color.new(color.green, 0), style = line.style_solid,  width = 1)
+        lblStop := label.new(bar_index + 1, pendStop, "SL", style = label.style_label_left, color = color.new(color.red,   20), textcolor = color.white, size = size.small)
+        lblTgt  := label.new(bar_index + 1, pendTgt,  "TP", style = label.style_label_left, color = color.new(color.green, 20), textcolor = color.white, size = size.small)
+
+if justFilled
+    sigFilled := true
+
+// Follow the trade: extend the lines and track a stop that has been moved.
+tradeLive = pendDir != 0.0 or strategy.position_size != 0
+if tradeLive and showTradeLn and not na(lnStop)
+    float liveStop = not na(curStop) ? curStop : pendStop
+    float liveTgt  = not na(curTgt)  ? curTgt  : pendTgt
+    line.set_x2(lnEntry, bar_index + 1)
+    line.set_x2(lnStop,  bar_index + 1)
+    line.set_x2(lnTgt,   bar_index + 1)
+    line.set_y1(lnStop, liveStop)
+    line.set_y2(lnStop, liveStop)
+    line.set_y1(lnTgt,  liveTgt)
+    line.set_y2(lnTgt,  liveTgt)
+    label.set_xy(lblStop, bar_index + 1, liveStop)
+    label.set_xy(lblTgt,  bar_index + 1, liveTgt)
+    label.set_text(lblStop, beDone ? "SL (BE)" : "SL")
+
+// Order expired without filling: grey the label out so it is not read as a trade.
+cancelledUnfilled = (expired or flipped) and not sigFilled
+if cancelledUnfilled
+    if not na(lblSig)
+        label.set_text(lblSig, sigTxt + "\n(not triggered)")
+        label.set_color(lblSig, color.new(color.gray, 25))
+    if not na(lnEntry)
+        line.delete(lnEntry)
+        line.delete(lnStop)
+        line.delete(lnTgt)
+        label.delete(lblStop)
+        label.delete(lblTgt)
+        lnEntry := na
+        lnStop  := na
+        lnTgt   := na
+
+// Trade closed: stop extending the lines, but leave the last few bars visible.
+justClosed = strategy.position_size == 0 and nz(strategy.position_size[1]) != 0
+if justClosed and showTradeLn and not na(lnEntry)
+    line.set_x2(lnEntry, bar_index + lineExtend)
+    line.set_x2(lnStop,  bar_index + lineExtend)
+    line.set_x2(lnTgt,   bar_index + lineExtend)
+    label.set_x(lblStop, bar_index + lineExtend)
+    label.set_x(lblTgt,  bar_index + lineExtend)
+    lnEntry := na
+    lnStop  := na
+    lnTgt   := na
+
+// -----------------------------------------------------------------------------
+// Status panel — which direction to be trading right now
+// -----------------------------------------------------------------------------
+f_pos() =>
+    switch panelPos
+        "Top left"      => position.top_left
+        "Bottom right"  => position.bottom_right
+        "Bottom left"   => position.bottom_left
+        "Middle right"  => position.middle_right
+        => position.top_right
+
+var table panel = table.new(f_pos(), 2, 6, border_width = 1, frame_width = 1, frame_color = color.new(color.gray, 50))
+
+if showPanel and barstate.islast
+    string bias = not useTrend ? "BUY and SELL (filter off)" : upTrend and allowLongs ? "BUY signals only" : downTrend and allowShorts ? "SELL signals only" : "Stand aside — no trend"
+    color  biasC = not useTrend ? color.new(color.gray, 40) : upTrend and allowLongs ? color.new(color.green, 20) : downTrend and allowShorts ? color.new(color.red, 20) : color.new(color.orange, 30)
+
+    string state = strategy.position_size > 0 ? "LONG open" : strategy.position_size < 0 ? "SHORT open" : pendDir > 0 ? "Buy order working" : pendDir < 0 ? "Sell order working" : "Waiting for a signal"
+
+    table.cell(panel, 0, 0, "Follow",  bgcolor = color.new(color.gray, 85), text_color = color.gray,  text_size = size.small, text_halign = text.align_left)
+    table.cell(panel, 1, 0, bias,      bgcolor = biasC, text_color = color.white, text_size = size.small)
+    table.cell(panel, 0, 1, "Status",  bgcolor = color.new(color.gray, 85), text_color = color.gray,  text_size = size.small, text_halign = text.align_left)
+    table.cell(panel, 1, 1, state,     bgcolor = color.new(color.gray, 85), text_color = color.white, text_size = size.small)
+
+    float pE = not na(curEntry) ? curEntry : pendEntry
+    float pS = not na(curStop)  ? curStop  : pendStop
+    float pT = not na(curTgt)   ? curTgt   : pendTgt
+
+    table.cell(panel, 0, 2, "Entry", bgcolor = color.new(color.gray, 85), text_color = color.gray, text_size = size.small, text_halign = text.align_left)
+    table.cell(panel, 1, 2, na(pE) ? "—" : str.tostring(pE, format.mintick), bgcolor = color.new(color.gray, 85), text_color = color.new(color.blue, 0), text_size = size.small)
+    table.cell(panel, 0, 3, "Stop",  bgcolor = color.new(color.gray, 85), text_color = color.gray, text_size = size.small, text_halign = text.align_left)
+    table.cell(panel, 1, 3, na(pS) ? "—" : str.tostring(pS, format.mintick) + (beDone and strategy.position_size != 0 ? "  BE" : ""), bgcolor = color.new(color.gray, 85), text_color = color.new(color.red, 0), text_size = size.small)
+    table.cell(panel, 0, 4, "Target", bgcolor = color.new(color.gray, 85), text_color = color.gray, text_size = size.small, text_halign = text.align_left)
+    table.cell(panel, 1, 4, na(pT) ? "—" : str.tostring(pT, format.mintick), bgcolor = color.new(color.gray, 85), text_color = color.new(color.green, 0), text_size = size.small)
+    table.cell(panel, 0, 5, "Risk",   bgcolor = color.new(color.gray, 85), text_color = color.gray, text_size = size.small, text_halign = text.align_left)
+    table.cell(panel, 1, 5, na(pE) or na(pS) ? "—" : str.tostring(math.abs(pE - pS) / pip, "#.#") + " pips  ·  " + str.tostring(targetR, "#.#") + "R target", bgcolor = color.new(color.gray, 85), text_color = color.white, text_size = size.small)
 
 // -----------------------------------------------------------------------------
 // Plots

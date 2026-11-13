@@ -35,8 +35,25 @@ setup, entry, stop and target on the chart and runs in the Strategy Tester.
 | **Break-even** | Stop moves to entry once the trade is 1 R in profit | on, at 1 R |
 | **Risk** | Position size derived from the stop distance | 1% of equity per trade |
 
-Trend direction shades the background (green up, red down), setup bars are marked with
-a triangle, and the live entry / stop / target levels plot as blue / red / green lines.
+### What you see on the chart
+
+When a signal prints, the script draws:
+
+- a **BUY** (green, below the bar) or **SELL** (red, above the bar) label, listing the
+  entry, the stop with its distance in pips, and the target with its pip distance and
+  R multiple — set `Label contents` to `Direction only` for just the word;
+- an **entry trigger** line (blue dashed), a **stop loss** line (red, tagged `SL`) and a
+  **target** line (green, tagged `TP`), all extending with the trade;
+- the SL line **moves** when the stop moves — the tag reads `SL (BE)` once it is at
+  break-even, and it follows the fast EMA when trailing is on;
+- `(not triggered)` appended and the label greyed out if the order expires unfilled, so
+  a signal that never became a trade can't be misread as one;
+- a **status panel** (default top right) with the direction to be following right now
+  — `BUY signals only`, `SELL signals only` or `Stand aside — no trend` — plus the
+  current state, the live entry/stop/target and the risk in pips.
+
+Trend direction also shades the background (green up, red down) and setup bars are
+marked with a small triangle.
 
 ### Why the ATR buffer on the stop
 
