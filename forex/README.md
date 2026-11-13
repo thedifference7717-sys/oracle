@@ -88,6 +88,50 @@ timezone; max new trades per day; skip trades whose stop is narrower/wider than 
 | needs no rejection candle, just a pullback | `Setup candle` → `Any pullback candle` |
 | trades only a session (e.g. London open) | `Restrict to session` → on, set `Session` + timezone |
 
+## Using it with the 10X Trading System
+
+[`tradingview.com/script/d6U4818M-10X-Trading-System/`](https://www.tradingview.com/script/d6U4818M-10X-Trading-System/)
+is Trading Walk's own indicator, and it is **invite-only and closed-source**. The
+script page returns `access: 3`, `has_access: false` and an empty `content` field —
+the Pine source is not published, and the description gives no concrete algorithm
+("combines price action and multiple market timing algorithms"). It therefore **cannot
+be reimplemented**, by me or anyone else without the source.
+
+What this strategy can do instead is *read its signal off the chart*. TradingView lets
+one script consume another's plotted series, so the 10X dots can drive the entries while
+the stop-loss rules above manage the trade:
+
+1. Add the **10X Trading System** to your chart (you need access from Trading Walk).
+2. Add **this strategy** to the same chart.
+3. In the strategy's settings → **8 · External signal**:
+   - `Use an external signal` → **Signal is the entry trigger** (the 10X dot becomes the
+     setup bar) or **Signal confirms my setup** (requires both the EMA pullback pattern
+     *and* a recent 10X signal).
+   - `Long signal plot` / `Short signal plot` → pick the 10X buy and sell plots from the
+     dropdowns.
+   - `How to read the plot` → `Non-na (dot/shape plotted)` is right when the plot only
+     has a value on signal bars; use `Value > 0` or `Crosses above 0` if it holds a
+     level, or `Value changed` if it steps.
+4. Keep `Stop placement` on **Setup bar extreme**. This matches Trading Walk's published
+   guidance for the 10X system — stop below the green buy dot, above the red sell dot —
+   with the ATR buffer holding it off the wick.
+
+**Verify the hookup before trusting it.** Turn on `Plot received values`, open the Data
+Window, and check the values change on signal bars. If they just track the candle close,
+the wrong plot is selected. The strategy also drops a warning label and takes no trades
+while the external mode is on but no plot has been chosen.
+
+**The catch:** TradingView only exposes series drawn with `plot()`. If 10X draws its
+buy/sell markers with `plotshape()`/`plotchar()` only — common for signal indicators —
+they will **not appear in the dropdown at all**, and no script can read them. In that
+case your options are to trade the 10X signals manually using the stop/target rules
+here, or to use 10X's own alerts. There is no way around it from this side.
+
+For reference, the published 10X chart snapshot is **GBPJPY on the 15-minute**, and the
+indicator's hidden inputs show a multi-timeframe dashboard (W / D / 240 / 60 / 15) and a
+"Buy / Sell" label mode — so it is a self-contained signal tool, not an EMA setup. No
+moving averages were on that chart.
+
 ## Notes and limits
 
 - **Position sizing** assumes P&L scales as `quantity × price move`, which holds for FX,

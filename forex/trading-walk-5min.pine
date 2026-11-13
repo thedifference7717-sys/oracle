@@ -15,6 +15,16 @@
 //                 trailing stop on the fast EMA.
 //
 // Every number above is an input. Nothing is hard-coded.
+//
+// ALSO SUPPORTS AN EXTERNAL SIGNAL (e.g. the 10X Trading System)
+// The 10X Trading System is invite-only and closed-source, so its algorithm
+// cannot be reproduced here. Instead, group 8 lets this strategy READ its
+// signal plot off the chart: add 10X to the chart, add this strategy, then pick
+// the 10X plot in the "Long/Short signal plot" dropdowns. The 10X dot becomes
+// the setup bar and everything downstream — stop placement, break-even,
+// targets, sizing — is handled by the rules above. Per Trading Walk's own
+// published guidance the stop sits just beyond the signal bar's extreme, which
+// is exactly what "Setup bar extreme" does.
 // =============================================================================
 
 strategy("Trading Walk 5-Minute Strategy",
@@ -89,6 +99,14 @@ showEmas   = input.bool(true, "Show EMAs", group = G_VIZ)
 showLevels = input.bool(true, "Show entry / stop / target levels", group = G_VIZ)
 showSetups = input.bool(true, "Mark setup candles", group = G_VIZ)
 
+G_EXT = "8 · External signal (10X Trading System)"
+extMode     = input.string("Off", "Use an external signal", options = ["Off", "Signal is the entry trigger", "Signal confirms my setup"], group = G_EXT, tooltip = "The 10X Trading System is closed-source and cannot be rebuilt in this script. Add it to the chart and select its plot below to drive this strategy from its signals.")
+extLongSrc  = input.source(close, "Long signal plot",  group = G_EXT)
+extShortSrc = input.source(close, "Short signal plot", group = G_EXT)
+extRead     = input.string("Non-na (dot/shape plotted)", "How to read the plot", options = ["Non-na (dot/shape plotted)", "Value > 0", "Crosses above 0", "Value changed"], group = G_EXT)
+extWithin   = input.int(1, "Signal stays valid for N bars", minval = 1, group = G_EXT)
+extDebug    = input.bool(false, "Plot received values (Data Window)", group = G_EXT)
+
 // -----------------------------------------------------------------------------
 // Core series
 // -----------------------------------------------------------------------------
@@ -143,6 +161,31 @@ touchMidShort = high >= emaMid  - tol and low < emaMid
 touchedLong  = touchRef == "Fast EMA" ? touchFastLong  : touchRef == "Mid EMA" ? touchMidLong  : (touchFastLong or touchMidLong)
 touchedShort = touchRef == "Fast EMA" ? touchFastShort : touchRef == "Mid EMA" ? touchMidShort : (touchFastShort or touchMidShort)
 
+// --- External signal (10X or any other indicator on the chart) ---------------
+// Every reading is computed on every bar; only the selection is conditional.
+extL_nonNa = not na(extLongSrc)
+extS_nonNa = not na(extShortSrc)
+extL_pos   = nz(extLongSrc)  > 0
+extS_pos   = nz(extShortSrc) > 0
+extL_cross = ta.crossover(nz(extLongSrc),  0.0)
+extS_cross = ta.crossover(nz(extShortSrc), 0.0)
+extL_chg   = ta.change(nz(extLongSrc))  != 0
+extS_chg   = ta.change(nz(extShortSrc)) != 0
+
+extOn = extMode != "Off"
+extLongSig  = not extOn ? false : extRead == "Non-na (dot/shape plotted)" ? extL_nonNa : extRead == "Value > 0" ? extL_pos : extRead == "Crosses above 0" ? extL_cross : extL_chg
+extShortSig = not extOn ? false : extRead == "Non-na (dot/shape plotted)" ? extS_nonNa : extRead == "Value > 0" ? extS_pos : extRead == "Crosses above 0" ? extS_cross : extS_chg
+
+// A signal can be acted on for N bars after it prints.
+extLBars = ta.barssince(extLongSig)
+extSBars = ta.barssince(extShortSig)
+extLongOk  = extLongSig  or (not na(extLBars) and extLBars < extWithin)
+extShortOk = extShortSig or (not na(extSBars) and extSBars < extWithin)
+
+// Sanity check: a source left on its default tracks close exactly, which would
+// make "Non-na" fire on every bar. Warn instead of silently trading noise.
+srcUnset = extOn and extLongSrc == close and extShortSrc == close
+
 // Session / daily trade cap
 inSession = not useSession or not na(time(timeframe.period, sessStr, sessTz))
 var int tradesToday = 0
@@ -151,8 +194,21 @@ if newDay
     tradesToday := 0
 tradeCapOk = maxTradesDay == 0 or tradesToday < maxTradesDay
 
-longSetup  = allowLongs  and bullOk and bullShape and touchedLong  and inSession and tradeCapOk and barstate.isconfirmed
-shortSetup = allowShorts and bearOk and bearShape and touchedShort and inSession and tradeCapOk and barstate.isconfirmed
+// Base pattern: the rejection candle at the EMA.
+patternLong  = bullShape and touchedLong
+patternShort = bearShape and touchedShort
+
+// How the external signal combines with it:
+//   Off              — pattern only
+//   entry trigger    — signal replaces the pattern (the 10X dot IS the setup bar)
+//   confirms         — pattern AND a recent signal
+triggerLong  = extMode == "Signal is the entry trigger" ? extLongSig  : extMode == "Signal confirms my setup" ? (patternLong  and extLongOk)  : patternLong
+triggerShort = extMode == "Signal is the entry trigger" ? extShortSig : extMode == "Signal confirms my setup" ? (patternShort and extShortOk) : patternShort
+
+gateOk = inSession and tradeCapOk and barstate.isconfirmed and not srcUnset
+
+longSetup  = allowLongs  and bullOk and triggerLong  and gateOk
+shortSetup = allowShorts and bearOk and triggerShort and gateOk
 
 // -----------------------------------------------------------------------------
 // Stop-loss placement — the heart of the strategy
@@ -317,6 +373,16 @@ activeTgt   = showLevels ? (not na(curTgt)   ? curTgt   : (pendDir != 0.0 ? pend
 plot(activeEntry, "Entry trigger", color = color.new(color.blue,  0), style = plot.style_linebr, linewidth = 1)
 plot(activeStop,  "Stop loss",     color = color.new(color.red,   0), style = plot.style_linebr, linewidth = 2)
 plot(activeTgt,   "Target",        color = color.new(color.green, 0), style = plot.style_linebr, linewidth = 1)
+
+// External-signal diagnostics: turn on, open the Data Window, and confirm the
+// values change when a 10X dot prints. If they mirror the candle close, the
+// wrong plot is selected (or 10X draws its markers with plotshape, which
+// TradingView does not expose to other scripts at all).
+plot(extDebug and extOn ? extLongSrc  : na, "10X long src",  color = color.new(color.lime, 0), style = plot.style_circles, display = display.data_window)
+plot(extDebug and extOn ? extShortSrc : na, "10X short src", color = color.new(color.red,  0), style = plot.style_circles, display = display.data_window)
+
+if srcUnset and barstate.islast
+    label.new(bar_index, high, "External signal is ON but no plot is selected —\nset \"Long/Short signal plot\" to the 10X plots.\nNo trades will be taken until then.", style = label.style_label_down, color = color.new(color.orange, 0), textcolor = color.black, size = size.small)
 
 // -----------------------------------------------------------------------------
 // Alerts
