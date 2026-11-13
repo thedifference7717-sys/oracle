@@ -1,0 +1,326 @@
+//@version=5
+// =============================================================================
+// Trading Walk - 5 Minute Strategy ("Where I Put My Stop Loss")
+// =============================================================================
+// A pullback-continuation strategy for the 5-minute chart.
+//
+//   1. TREND      Identify direction with a stack of EMAs (8 / 21 / 55).
+//   2. PULLBACK   Wait for price to pull back and TOUCH the fast EMA.
+//   3. SETUP BAR  Require a rejection candle (doji / pin bar) at that EMA.
+//   4. ENTRY      Buy-stop above the setup bar's high (sell-stop below its low).
+//   5. STOP LOSS  Placed just beyond the setup bar's extreme - with a small
+//                 ATR buffer so it sits outside the noise, not on the wick.
+//                 Alternative placements: swing extreme, ATR multiple, fixed pips.
+//   6. EXIT       Fixed R-multiple target, optional break-even move, optional
+//                 trailing stop on the fast EMA.
+//
+// Every number above is an input. Nothing is hard-coded.
+// =============================================================================
+
+strategy("Trading Walk 5-Minute Strategy",
+     overlay            = true,
+     initial_capital    = 10000,
+     default_qty_type   = strategy.fixed,
+     default_qty_value  = 1,
+     pyramiding         = 0,
+     calc_on_order_fills= false,
+     process_orders_on_close = false,
+     commission_type    = strategy.commission.percent,
+     commission_value   = 0.0)
+
+// -----------------------------------------------------------------------------
+// Inputs
+// -----------------------------------------------------------------------------
+G_DIR = "1 · Direction & trend filter"
+allowLongs  = input.bool(true,  "Trade longs",  group = G_DIR)
+allowShorts = input.bool(true,  "Trade shorts", group = G_DIR)
+useTrend    = input.bool(true,  "Use trend filter", group = G_DIR)
+trendMode   = input.string("EMA stack", "Trend definition",
+     options = ["EMA stack", "Fast vs mid EMA", "Price vs slow EMA"], group = G_DIR)
+fastLen     = input.int(8,  "Fast EMA",  minval = 1, group = G_DIR)
+midLen      = input.int(21, "Mid EMA",   minval = 1, group = G_DIR)
+slowLen     = input.int(55, "Slow EMA",  minval = 1, group = G_DIR)
+
+G_SETUP = "2 · Pullback & setup candle"
+setupType    = input.string("Doji or pin bar", "Setup candle",
+     options = ["Doji or pin bar", "Engulfing", "Any pullback candle"], group = G_SETUP)
+maxBodyPct   = input.float(45.0, "Doji: max body as % of range", minval = 1, maxval = 100, group = G_SETUP)
+minWickRatio = input.float(1.0,  "Doji: rejection wick / body ratio", minval = 0, step = 0.1, group = G_SETUP)
+touchRef     = input.string("Fast EMA", "Pullback must touch",
+     options = ["Fast EMA", "Mid EMA", "Either EMA"], group = G_SETUP)
+touchTolAtr  = input.float(0.10, "Touch tolerance (× ATR)", minval = 0, step = 0.05, group = G_SETUP)
+
+G_ENTRY = "3 · Entry"
+entryBufTicks  = input.int(2, "Entry buffer beyond setup bar (ticks)", minval = 0, group = G_ENTRY)
+orderValidBars = input.int(3, "Cancel unfilled order after N bars", minval = 1, group = G_ENTRY)
+cancelOnFlip   = input.bool(true, "Cancel if trend flips", group = G_ENTRY)
+
+G_STOP = "4 · Stop loss"
+stopMode    = input.string("Setup bar extreme", "Stop placement",
+     options = ["Setup bar extreme", "Swing extreme", "ATR multiple", "Fixed pips"], group = G_STOP)
+stopBufAtr  = input.float(0.10, "Stop buffer beyond level (× ATR)", minval = 0, step = 0.05, group = G_STOP)
+swingLen    = input.int(10,  "Swing lookback (bars)", minval = 2, group = G_STOP)
+stopAtrMult = input.float(1.5, "ATR multiple", minval = 0.1, step = 0.1, group = G_STOP)
+stopPips    = input.float(10.0, "Fixed stop (pips)", minval = 0.1, step = 0.5, group = G_STOP)
+atrLen      = input.int(14, "ATR length", minval = 1, group = G_STOP)
+pipSizeIn   = input.float(0.0, "Pip size (0 = auto)", minval = 0, step = 0.00001, group = G_STOP)
+
+G_EXIT = "5 · Targets & exits"
+targetR    = input.float(2.0, "Target (R multiple)", minval = 0.1, step = 0.1, group = G_EXIT)
+useBreakEven = input.bool(true,  "Move stop to break-even", group = G_EXIT)
+breakEvenR   = input.float(1.0, "…once trade reaches (R)", minval = 0.1, step = 0.1, group = G_EXIT)
+useTrail     = input.bool(false, "Trail stop on fast EMA", group = G_EXIT)
+useTimeStop  = input.bool(false, "Time stop: close after N bars", group = G_EXIT)
+timeStopBars = input.int(24, "N bars in trade", minval = 1, group = G_EXIT)
+
+G_RISK = "6 · Risk & session"
+useRiskSizing = input.bool(true, "Size position by risk %", group = G_RISK)
+riskPct       = input.float(1.0, "Risk per trade (% of equity)", minval = 0.01, step = 0.1, group = G_RISK)
+fixedQty      = input.float(1.0, "Fixed quantity (if sizing off)", minval = 0.000001, group = G_RISK)
+useSession    = input.bool(false, "Restrict to session", group = G_RISK)
+sessStr       = input.session("0800-1700", "Session", group = G_RISK)
+sessTz        = input.string("Europe/London", "Session timezone", group = G_RISK)
+maxTradesDay  = input.int(3, "Max new trades per day (0 = unlimited)", minval = 0, group = G_RISK)
+minStopPips   = input.float(0.0, "Skip trade if stop < X pips (0 = off)", minval = 0, step = 0.5, group = G_RISK)
+maxStopPips   = input.float(0.0, "Skip trade if stop > X pips (0 = off)", minval = 0, step = 0.5, group = G_RISK)
+
+G_VIZ = "7 · Display"
+showEmas   = input.bool(true, "Show EMAs", group = G_VIZ)
+showLevels = input.bool(true, "Show entry / stop / target levels", group = G_VIZ)
+showSetups = input.bool(true, "Mark setup candles", group = G_VIZ)
+
+// -----------------------------------------------------------------------------
+// Core series
+// -----------------------------------------------------------------------------
+emaFast = ta.ema(close, fastLen)
+emaMid  = ta.ema(close, midLen)
+emaSlow = ta.ema(close, slowLen)
+atr     = ta.atr(atrLen)
+
+// Pip size: 0.0001 on most FX pairs, 0.01 on JPY crosses. Falls back to the
+// instrument's own tick size for indices, crypto and stocks.
+pip = pipSizeIn > 0 ? pipSizeIn : (syminfo.type == "forex" ? syminfo.mintick * 10 : syminfo.mintick)
+
+tickBuf = entryBufTicks * syminfo.mintick
+stopBuf = math.max(stopBufAtr * atr, syminfo.mintick)
+
+// Evaluated on every bar (never inside a conditional branch) so the series stay valid.
+swingLow  = ta.lowest(low,   swingLen)
+swingHigh = ta.highest(high, swingLen)
+
+// Trend
+stackUp   = emaFast > emaMid and emaMid > emaSlow
+stackDown = emaFast < emaMid and emaMid < emaSlow
+upTrend   = trendMode == "EMA stack" ? stackUp : trendMode == "Fast vs mid EMA" ? emaFast > emaMid : close > emaSlow
+downTrend = trendMode == "EMA stack" ? stackDown : trendMode == "Fast vs mid EMA" ? emaFast < emaMid : close < emaSlow
+bullOk = not useTrend or upTrend
+bearOk = not useTrend or downTrend
+
+// Candle anatomy
+body      = math.abs(close - open)
+rng       = high - low
+lowerWick = math.min(open, close) - low
+upperWick = high - math.max(open, close)
+isSmallBody = rng > 0 and body <= rng * maxBodyPct / 100.0
+
+bullRejection = isSmallBody and lowerWick >= body * minWickRatio and lowerWick >= upperWick
+bearRejection = isSmallBody and upperWick >= body * minWickRatio and upperWick >= lowerWick
+
+bullEngulf = close > open and close >= math.max(open[1], close[1]) and open <= math.min(open[1], close[1]) and body > body[1]
+bearEngulf = close < open and close <= math.min(open[1], close[1]) and open >= math.max(open[1], close[1]) and body > body[1]
+
+bullShape = setupType == "Doji or pin bar" ? bullRejection : setupType == "Engulfing" ? bullEngulf : true
+bearShape = setupType == "Doji or pin bar" ? bearRejection : setupType == "Engulfing" ? bearEngulf : true
+
+// Pullback: the bar must reach down to (or into) the reference EMA while still
+// holding above it — that is the pullback, as opposed to a break of the EMA.
+tol = touchTolAtr * atr
+touchFastLong = low <= emaFast + tol and high > emaFast
+touchMidLong  = low <= emaMid  + tol and high > emaMid
+touchFastShort= high >= emaFast - tol and low < emaFast
+touchMidShort = high >= emaMid  - tol and low < emaMid
+
+touchedLong  = touchRef == "Fast EMA" ? touchFastLong  : touchRef == "Mid EMA" ? touchMidLong  : (touchFastLong or touchMidLong)
+touchedShort = touchRef == "Fast EMA" ? touchFastShort : touchRef == "Mid EMA" ? touchMidShort : (touchFastShort or touchMidShort)
+
+// Session / daily trade cap
+inSession = not useSession or not na(time(timeframe.period, sessStr, sessTz))
+var int tradesToday = 0
+newDay = ta.change(time("D")) != 0
+if newDay
+    tradesToday := 0
+tradeCapOk = maxTradesDay == 0 or tradesToday < maxTradesDay
+
+longSetup  = allowLongs  and bullOk and bullShape and touchedLong  and inSession and tradeCapOk and barstate.isconfirmed
+shortSetup = allowShorts and bearOk and bearShape and touchedShort and inSession and tradeCapOk and barstate.isconfirmed
+
+// -----------------------------------------------------------------------------
+// Stop-loss placement — the heart of the strategy
+// -----------------------------------------------------------------------------
+stopForLong(float entry) =>
+    float lvl = switch stopMode
+        "Setup bar extreme" => low - stopBuf
+        "Swing extreme"     => swingLow - stopBuf
+        "ATR multiple"      => entry - stopAtrMult * atr
+        => entry - stopPips * pip
+    math.min(lvl, entry - syminfo.mintick)
+
+stopForShort(float entry) =>
+    float lvl = switch stopMode
+        "Setup bar extreme" => high + stopBuf
+        "Swing extreme"     => swingHigh + stopBuf
+        "ATR multiple"      => entry + stopAtrMult * atr
+        => entry + stopPips * pip
+    math.max(lvl, entry + syminfo.mintick)
+
+qtyFor(float entry, float stop) =>
+    float dist = math.abs(entry - stop)
+    float q = fixedQty
+    if useRiskSizing and dist > 0
+        q := (strategy.equity * riskPct / 100.0) / dist
+    math.max(q, 0.0)
+
+stopOk(float entry, float stop) =>
+    float distPips = math.abs(entry - stop) / pip
+    bool okMin = minStopPips == 0 or distPips >= minStopPips
+    bool okMax = maxStopPips == 0 or distPips <= maxStopPips
+    okMin and okMax
+
+// -----------------------------------------------------------------------------
+// Pending-order state
+// -----------------------------------------------------------------------------
+var float pendDir   = 0.0   // 1 long, -1 short, 0 none
+var float pendEntry = na
+var float pendStop  = na
+var float pendTgt   = na
+var int   pendBar   = na
+
+var float curStop  = na
+var float curTgt   = na
+var float curEntry = na
+var float curR     = na
+var int   entryBar = na
+var bool  beDone   = false
+
+flat = strategy.position_size == 0
+
+// --- Arm a new pending order -------------------------------------------------
+if flat and pendDir == 0.0 and (longSetup or shortSetup)
+    if longSetup
+        e = high + tickBuf
+        s = stopForLong(e)
+        if stopOk(e, s)
+            pendDir   := 1.0
+            pendEntry := e
+            pendStop  := s
+            pendTgt   := e + targetR * (e - s)
+            pendBar   := bar_index
+    else if shortSetup
+        e = low - tickBuf
+        s = stopForShort(e)
+        if stopOk(e, s)
+            pendDir   := -1.0
+            pendEntry := e
+            pendStop  := s
+            pendTgt   := e - targetR * (s - e)
+            pendBar   := bar_index
+
+// --- Expire / invalidate the pending order -----------------------------------
+expired   = pendDir != 0.0 and flat and bar_index - pendBar >= orderValidBars
+flipped   = cancelOnFlip and pendDir != 0.0 and flat and ((pendDir > 0 and not bullOk) or (pendDir < 0 and not bearOk))
+if expired or flipped
+    strategy.cancel("Long")
+    strategy.cancel("Short")
+    pendDir   := 0.0
+    pendEntry := na
+    pendStop  := na
+    pendTgt   := na
+
+// --- Place / refresh the stop-entry order, with its bracket already attached --
+// The exit order is submitted alongside the entry, so the stop is live from the
+// moment the entry fills rather than from the close of the next bar.
+if pendDir != 0.0 and flat
+    q = qtyFor(pendEntry, pendStop)
+    if pendDir > 0
+        strategy.entry("Long", strategy.long, qty = q, stop = pendEntry, comment = "TW long")
+        strategy.exit("X-L", from_entry = "Long", stop = pendStop, limit = pendTgt,
+             comment_profit = "TP", comment_loss = "SL")
+    else
+        strategy.entry("Short", strategy.short, qty = q, stop = pendEntry, comment = "TW short")
+        strategy.exit("X-S", from_entry = "Short", stop = pendStop, limit = pendTgt,
+             comment_profit = "TP", comment_loss = "SL")
+
+// --- Detect the fill ---------------------------------------------------------
+justFilled = strategy.position_size != 0 and nz(strategy.position_size[1]) == 0
+if justFilled
+    curEntry := strategy.position_avg_price
+    curStop  := pendStop   // the level fixed when the setup bar closed
+    curTgt   := pendTgt
+    curR     := math.abs(curEntry - curStop)
+    entryBar := bar_index
+    beDone   := false
+    tradesToday := tradesToday + 1
+    pendDir   := 0.0
+
+// -----------------------------------------------------------------------------
+// Trade management
+// -----------------------------------------------------------------------------
+// The bracket submitted with the entry is already protecting the position. These
+// blocks only ever TIGHTEN it, and are skipped if the stored levels are missing —
+// re-sending strategy.exit with an na stop would leave the trade unprotected.
+haveLevels = not na(curStop) and not na(curTgt) and not na(curEntry) and not na(curR)
+
+if strategy.position_size > 0 and haveLevels
+    // Break-even: once the trade has paid for itself, stop risk at zero.
+    if useBreakEven and not beDone and high >= curEntry + breakEvenR * curR
+        curStop := math.max(curStop, curEntry)
+        beDone  := true
+    // Trailing stop on the fast EMA — ratchets up only.
+    if useTrail
+        curStop := math.max(curStop, emaFast - stopBuf)
+    strategy.exit("X-L", from_entry = "Long", stop = curStop, limit = curTgt, comment_profit = "TP", comment_loss = "SL")
+
+if strategy.position_size < 0 and haveLevels
+    if useBreakEven and not beDone and low <= curEntry - breakEvenR * curR
+        curStop := math.min(curStop, curEntry)
+        beDone  := true
+    if useTrail
+        curStop := math.min(curStop, emaFast + stopBuf)
+    strategy.exit("X-S", from_entry = "Short", stop = curStop, limit = curTgt, comment_profit = "TP", comment_loss = "SL")
+
+if useTimeStop and strategy.position_size != 0 and not na(entryBar) and bar_index - entryBar >= timeStopBars
+    strategy.close_all(comment = "Time stop")
+
+if flat and not justFilled
+    curStop  := na
+    curTgt   := na
+    curEntry := na
+    curR     := na
+
+// -----------------------------------------------------------------------------
+// Plots
+// -----------------------------------------------------------------------------
+plot(showEmas ? emaFast : na, "EMA fast", color = color.new(color.aqua,   0), linewidth = 2)
+plot(showEmas ? emaMid  : na, "EMA mid",  color = color.new(color.orange, 0), linewidth = 1)
+plot(showEmas ? emaSlow : na, "EMA slow", color = color.new(color.gray,  30), linewidth = 2)
+
+bgcolor(useTrend and upTrend   ? color.new(color.green, 94) : na, title = "Uptrend")
+bgcolor(useTrend and downTrend ? color.new(color.red,   94) : na, title = "Downtrend")
+
+plotshape(showSetups and longSetup,  "Long setup",  shape.triangleup,   location.belowbar, color.new(color.lime, 0), size = size.tiny)
+plotshape(showSetups and shortSetup, "Short setup", shape.triangledown, location.abovebar, color.new(color.red,  0), size = size.tiny)
+
+activeEntry = showLevels ? (not na(curEntry) ? curEntry : (pendDir != 0.0 ? pendEntry : na)) : na
+activeStop  = showLevels ? (not na(curStop)  ? curStop  : (pendDir != 0.0 ? pendStop  : na)) : na
+activeTgt   = showLevels ? (not na(curTgt)   ? curTgt   : (pendDir != 0.0 ? pendTgt   : na)) : na
+
+plot(activeEntry, "Entry trigger", color = color.new(color.blue,  0), style = plot.style_linebr, linewidth = 1)
+plot(activeStop,  "Stop loss",     color = color.new(color.red,   0), style = plot.style_linebr, linewidth = 2)
+plot(activeTgt,   "Target",        color = color.new(color.green, 0), style = plot.style_linebr, linewidth = 1)
+
+// -----------------------------------------------------------------------------
+// Alerts
+// -----------------------------------------------------------------------------
+alertcondition(longSetup,  "Long setup",  "TW 5m: long setup at the EMA — buy stop above this bar's high")
+alertcondition(shortSetup, "Short setup", "TW 5m: short setup at the EMA — sell stop below this bar's low")
+alertcondition(justFilled, "Trade filled", "TW 5m: order filled")
