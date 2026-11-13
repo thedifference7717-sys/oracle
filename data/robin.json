@@ -15915,6 +15915,9 @@
      "sport": "NBA",
      "start": "2026-11-13T02:00Z",
      "teams": "CHA @ PHX",
+     "result": "won",
+     "actual": 4,
+     "note": "4 REB against a 3.5 line",
      "revealed": {
       "v": 1,
       "hash": "dc40ab3bc83ef1040004ef62b0a2920ff4c6dc6762dd74be6c6befb135f37d3e",
@@ -16131,7 +16134,7 @@
    ]
   }
  ],
- "updated": "2026-11-13T02:02:34.861Z",
+ "updated": "2026-11-13T02:35:46.522Z",
  "record": {
   "w": 188,
   "l": 62,
