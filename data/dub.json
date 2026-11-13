@@ -6086,12 +6086,6 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "b197dd1e9d167cf6c9ef8110b47c229e5309b5597b0f29a458ecbc56418eba81",
-    "iv": "Q8rhLN36fCSlAFya",
-    "ct": "DeoSGjoVI3sRuQ9Yy1hNfrV/28+Z2rpS7eVqJcVe88tlannEShRQ7TK4mD0YIlvP9hlmsOU91OaNqd4cyO4pz6vcBMwxtwT3b1YCYcwajdeNeBZvCc4Ld7hanBigevcXbu4cJXb7vGFzN8OmhhezKWDcrE/Phe+GH9Gyw8FSzdiOGCAgVNhlQEqlpFb91LZnv9yQiGiJgaOi7HzPRdq0MarUk/+FKKY510d744ZPsQihotTcvzE3uFFQAIKb8znTH/KDRwW7IhOaaCXr/eStzLr+nIY="
-   },
    "legs": [
     {
      "detail": "proj 3.7 in 36 min · over this line 7 of his last 10 · back-to-back",
@@ -6139,17 +6133,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.216 · 1.17 pts/gm this season (12) · a point in 8 of his last 10",
+     "eventId": "2026020305",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.67,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV12BUFCHI-CHICBEDARD98-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6775,
+     "pAdj": 0.6922,
+     "player": "Connor Bedard",
+     "playerId": "8484144",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-13T01:00:00Z",
+     "teams": "CHI vs BUF",
+     "revealed": {
       "v": 1,
       "hash": "042d7b02d41a17d457032a10b36142b2aec3420c73bfc24229169e5689155721",
-      "iv": "L0T94V8+qeznGGpR",
-      "ct": "FcL2KrE9l+R84idsceJMA5hHtMVH5GEDZIqFtNyVNqee+GiL+4GZgzDwcfmGPEnaAgyfOGbklHar7yQGXB5ktg/wkvY7DWUnIeaU1XbendVYA1ANJ+BcFeFudBaAFWx6X82fZ7oXt2sA23W+F29X1VCEu94Uh5T0ntijmdesB+symCzcFtxIZmRb2kNmMrdp0D4pb/XmzRv98tOZrMrdTc/FVKTAnB9rcKCDQE9eQXBlW9+RyEuQaLWqJqhCnTZyPuTuxvOMtrVDrhfcKYeF1blKiNmta+ZYL8iQs6VD5kjeGai5VgZlg8PDY+uafm9q2mxbWkJVaulSvA/eyKnlZWIIqbqX9zv6e1Y1nMq4KhW6zReghHeihXs04pczBvcYy5L1gOQDJqRohSWQ+V46V9FhwsKx3wQuIzSqnmmZqurggcmO9M6ajSWgYQSpyZ+LJy9A1QVIj+KeQm+sl6qraTpUJAsRnh1n5T77alVBItxQrkLbD1kAaQ5zPRGPpdYC2HfXqH+Q9BBVIO5qaLLeVl5H4XL2EDZ/D9q8Px9IMHuAaO+XaMf9hVCCq9EuJVtUsP7puQkjJnkUxqwMuZKXGzJ7qV1NSk4XLxXfUJq7GT5xJ0K3T6IUEuRd2suyIA+qcodiQBUhmm43GMeqZ2dymAhvAisX+ta+fpI3xC6ay9xZSdwUYI5Ny+j8Eg=="
+      "salt": "979b206f0bcd60c7cb13b11798ca9ce1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-12:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Duncan Robinson",
+    "sport": "NBA",
+    "start": "2026-11-13T00:00Z"
+   },
+   "fair": -129,
+   "price": -107,
+   "prob": 0.5633,
+   "revealed": {
+    "v": 1,
+    "hash": "b197dd1e9d167cf6c9ef8110b47c229e5309b5597b0f29a458ecbc56418eba81",
+    "salt": "9c8c290cba3aec6b055f636e5b1965fe",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-12:dub"
+   }
   }
  ],
- "updated": "2026-11-13T00:00:34.795Z",
+ "updated": "2026-11-13T01:01:02.902Z",
  "record": {
   "w": 24,
   "l": 24
