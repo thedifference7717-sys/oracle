@@ -16061,6 +16061,9 @@
      "sport": "NHL",
      "start": "2026-11-13T01:00:00Z",
      "teams": "BUF @ CHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "dc09626df390b3f8fe922d27add6e1fc2a56a7d5651f29c2bbc4624e2588142c",
@@ -16088,7 +16091,7 @@
    ]
   }
  ],
- "updated": "2026-11-13T01:01:02.954Z",
+ "updated": "2026-11-13T01:40:47.851Z",
  "record": {
   "w": 188,
   "l": 62,
