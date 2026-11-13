@@ -16011,6 +16011,9 @@
      "sport": "NHL",
      "start": "2026-11-13T00:00:00Z",
      "teams": "NJD vs WSH",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "61db3d947695902a456006c597da1b2fb71cdd83486eade398e9b8698f19d121",
@@ -16134,7 +16137,7 @@
    ]
   }
  ],
- "updated": "2026-11-13T02:35:46.522Z",
+ "updated": "2026-11-13T02:39:55.677Z",
  "record": {
   "w": 188,
   "l": 62,
