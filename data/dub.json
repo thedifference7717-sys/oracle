@@ -6094,11 +6094,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 3.7 in 36 min · over this line 7 of his last 10 · back-to-back",
+     "eventId": "401909977",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.7,
+      "spread": 0.05,
+      "ticker": "KXNBAREB-26NOV12DETWAS-WASTYOUNG3-2"
+     },
+     "line": 1.5,
+     "market": "reb",
+     "need": "2+ rebounds",
+     "p": 0.8314,
+     "pAdj": 0.7628,
+     "player": "Trae Young",
+     "playerId": "4277905",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-13T00:00Z",
+     "teams": "WSH vs DET",
+     "revealed": {
       "v": 1,
       "hash": "58d6b9bebbdff7ea4bb3c24833e83b2b8e51d169e641a60e0793d38ec0d405a0",
-      "iv": "WEvKO8T2Xghx72jK",
-      "ct": "Z/32vKolVeBrECY5zckX9oogHVXuJMMNxXuFrDsY1uMbWNol0joxmvi9u4FAQQFOZB7DaLKD/Lm2XLPj410EWj0O9LYr5ohVSc1qn5TNErz3Kf6WHAEJpBcNG49VZZmimiL1aQ49LvMZPMwC1NJSkav06SO66hjN6eEx7uD8gnAfJx0CZF8s1t5GOasyOBdNUem8Y/eCGbgmNf/SpofVL0Hhy0tAYtsvjXlA0fmc8aWhgEh9yFHp9u3xwe0IPOAsI69MO6PQ65IpiXM7rLj44DAquFyz2dzs3KYXclVdFXCHHVK2OwViJcleE0q26bFd2MPHynQQB+SiQffr+QWhdS1f+LlW2CrKw7TIhj1eyBYCZ39uvVgxy/UW4CHzYKYTsI/d8Jbaj40QiIk6RZFOk9Yb+OMEhKGXaHnKZl+Zccyb+JxDii6e0g7QBFr7E6sG7ik0Z2XzydEp2deF3yZ3/lnrCBlWOlhSox0xBF4NVFfrKsixjE9cYVluMCiSnt6092ncKfA9R6Dvc48mfYEIr4BqdQE3ts2vEzOKI1mzsee3XKKYz1kxUzsILm1UOnVY+f0YgxQ6w8VsTMoBVbHFeuFANwzoPLeiGDnzM1B2i1ZLzD+LLVG2GsNBHFggmCpC8Hky2CZF5M3A6Rw50/RC5MZEtIAKvFWabw=="
+      "salt": "be8a7622b67168d8ecf089d0a09f148d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-12:dub#0"
      }
     },
     {
@@ -6112,7 +6149,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T16:00:50.601Z",
+ "updated": "2026-11-13T00:00:34.795Z",
  "record": {
   "w": 24,
   "l": 24

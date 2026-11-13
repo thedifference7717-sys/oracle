@@ -15850,11 +15850,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 2.9 in 33 min · over this line 6 of his last 10",
+     "eventId": "401909977",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.66,
+      "spread": 0.08,
+      "ticker": "KXNBAREB-26NOV12DETWAS-DETDROBINSON55-2"
+     },
+     "line": 1.5,
+     "market": "reb",
+     "need": "2+ rebounds",
+     "p": 0.7614,
+     "pAdj": 0.7406,
+     "player": "Duncan Robinson",
+     "playerId": "3157465",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-13T00:00Z",
+     "teams": "DET @ WSH",
+     "revealed": {
       "v": 1,
       "hash": "a9c1f2981d373f76e644cabfe3d3e248e6d624684415b906d63e36a92b1d775c",
-      "iv": "xLcGKQIdKI2e2Ocq",
-      "ct": "CiQPPNZ7160+3Ov4iYUlk8nIoAUV9iFspYcEea3ky6zCSO00eAaaA4lv7lxnFjQfv/nEV15F37ixz9x3UQc40BCB+aBatgBk1aJbCMvJYdiVinbskRHqWirUIm2MSfNguM3L1CV1fqGTgzZLgo3kLyVyoc8nKJZnZHUinVOu048CO4gwaZ/dpFF5N4i2JbYrma2xGN3ohcWMGNooGtl2HwmuWnjCX7y4LIvlzqM6/WbAWPBOHq7Gdx+uhmSyT+IjuqDP+mDrsXxLNKmoUl/Kaat09Xx5YSOJR6G4X83eLcAn2lN3qOweUBV8PTVSgAYn86wljZvBdmyIiyBs072VWHrpb5A2U9chBvvsaDBBxNwJmpF9+waXiFbR7NFQ8iL09W9jJ27oGmqP8YW5SXJZzplf0Gnjv7ah/ArVkD8uan/WNVX5cmKieXyawsDHy7GHyakpLwjN4PZgH2xdUvgguDjIEaZQjLMuhIxzmn7mRMMcwzcCocBU5P4WB1ql4vJ2++/o4qaLqO5gk1NHDasKNqUd/RGSltQq2uCsbSZwRlv5KEm6GwV8rxw7L12eXYdduJMfu5oV7Cnn2wXLOy4cgODBhWARB/iABfMSlZjImnsbYcCnsujokzDvi+em1CRs8sN3wdbDCaQDVk91zGwv3wHXRrc="
+      "salt": "2cbf329da81868df79d88223f7acedd3",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-12:robin#0"
      }
     },
     {
@@ -15874,19 +15911,93 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.442 · 1.37 pts/gm this season (19) · a point in 9 of his last 10",
+     "eventId": "2026020303",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.69,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26NOV12WSHNJ-NJJHUGHES86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7239,
+     "pAdj": 0.7386,
+     "player": "Jack Hughes",
+     "playerId": "8481559",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-13T00:00:00Z",
+     "teams": "NJD vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "61db3d947695902a456006c597da1b2fb71cdd83486eade398e9b8698f19d121",
-      "iv": "ZJzp/gi97IJjdDHK",
-      "ct": "y0+McEDWexOPeLRWcilhjRAVjKEFq7dBjKUgRwTewSnfjw+NxLCkqpI34D1P9kOTlz/YVmEQS6ToDFhOnvB2A0HtyjjjPbnpjc33xwXGtjcKPN8Y766cAT2iq+EGGyacHawzKXaeEg0CMPLN61FSXiMJxaFXtjW4GlL3yz8hiD0p1RodPFMCD5OxqrPHZLlmfFjDrhu6aI/dN0a5zFN80TH03+hVub4Kda6GyWfvreRP6JlR5fHDYbFS/mN5w3sv5PKdVTy7YslbHTH8DZ0MLIsGIuWu/KtyglNnCPrR48YJNxJqgybSfjfoY0nEjuG5+lc9QjmemRuPBVeKgurvYjgtsLbo+IM7fiTZWMxLgmnZ2gvpMal+vnw7/q8PzjPKYEb8wmL9stpBXqhQjcOZsoZ3ksWnk0lkoSPnzU0y5RNllT+0e1bFcBYBj15seMnABTdVn05Mnff9BK2dmgOp/e7FDxq3BrLA011SHUG3sjpaHkibZE2qIs2RXayXbzSZ2GUcxryGRdKCqw+KlYkHfpFei6X30yJ2A3wq4wWB8WIP6N+j3Ed1rKNgzXAjuUoove5l2+658aNhwYX6aFKJgQYC3iABV1teLq4iXfc78Q8c3R/39PQHM13uYenucX9G836+vIdieFwqhVZu2IhtvyhPq2RoPBL/KkFTwETKK5HHxAjTTv5oSVs="
+      "salt": "62f4585c17dbe9816ea13657d2e983f3",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-12:robin#3"
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.316 · 1.6 pts/gm this season (20) · a point in 9 of his last 10",
+     "eventId": "2026020300",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.74,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV12MINTOR-MINKKAPRIZOV97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.699,
+     "pAdj": 0.7459,
+     "player": "Kirill Kaprizov",
+     "playerId": "8478864",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-13T00:00:00Z",
+     "teams": "MIN @ TOR",
+     "revealed": {
       "v": 1,
       "hash": "32c2ebe4d06b00090bdc183c05cc025cefab4ee1255969beb6dca33574261fe2",
-      "iv": "WPKyC8pobBFoBabA",
-      "ct": "DVr5E6aRFUDSEOOWntntM6I2Gb/GIJvwy4PvRbQ42ea4TRlTqlGP0blIDcBPL/hyJD+9WqYMHzgParyYe982EhDN1Q4bafNz0o44SzVVeiO1F13nPX675V5wRnBlEAW8xqiXjXb4EuTwFGH9zjYomy8wHBml47cF4Xb1MjqUrdOZZTZ9VWFhzlmkMHmK+1E0iDkF342ueJfyxo2hOstU2YsVTvhIE7iyo6MxpW8y/6YF959VnPK37cDtm/mihh939fwT3YMHP3LSg/iBek3KuJuQXXOUEPZaCZYXuZWja4zIKewKCxT5w2Kyxj38wBoFxdFekmEi2D4cDC5GruKtHoYcQFEzHnMPQcAyR5WpLP/dnUd2Cc3ZuMYtugHv7pS+e6zND3x7MFbi309YsVmmkT+J0fr/8dXbIje2zq2UiBeBhz5q5mRkr3bO4SpAX3Co9QVEY6Njnox4EtSOuZ7feDnCv2gUYljE8ilSrtNbFn+aaDEypmxCcVGju7oduJsJlcYOuVmh+SBZGSxUBcfZfsr4Y+SPMlaPgVM+GpyhxLdOXRDg1axrM2Ae4WUpKMPOGak1tiinS2iw58qKHMw0DgiYoTECeSTrE0oOVOnyb4U9KgCF2xH0LAMCYJpaWjwcAVXWcyJOEMe5bDCgDhQJGrtBOLFRbibXAhIV/j3BH8rUC6y69qjWGjxGQ4GUDw=="
+      "salt": "178e20cbdbd3bdedd8f5fe9a4ad4b0e4",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-12:robin#4"
      }
     },
     {
@@ -15900,7 +16011,7 @@
    ]
   }
  ],
- "updated": "2026-11-12T16:00:52.201Z",
+ "updated": "2026-11-13T00:00:34.845Z",
  "record": {
   "w": 188,
   "l": 62,
