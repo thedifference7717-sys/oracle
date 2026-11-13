@@ -4612,7 +4612,7 @@
   {
    "id": "2026-11-12:ladder",
    "date": "2026-11-12",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-12T16:00:47.775Z",
    "cycle": 17,
    "rung": 2,
@@ -4670,6 +4670,9 @@
    "sport": "NBA",
    "start": "2026-11-13T00:00Z",
    "teams": "DET @ WSH",
+   "actual": 2,
+   "result": "2 REB against a 1.5 line",
+   "settled": "2026-11-13T02:58:33.708Z",
    "revealed": {
     "v": 1,
     "hash": "7e81afba7221ac7571f517858d750a2f178ab91fae93f913f352c89556c85b7a",
@@ -4698,12 +4701,12 @@
    }
   }
  ],
- "updated": "2026-11-13T00:00:34.759Z",
+ "updated": "2026-11-13T02:58:33.712Z",
  "state": {
   "account": 490.81,
   "base": 18.91,
-  "stake": 22.25,
-  "rung": 2,
+  "stake": 30.06,
+  "rung": 3,
   "cycle": 17,
   "pl": 390.81,
   "cycles": {

@@ -15804,7 +15804,7 @@
    "id": "2026-11-12:robin",
    "date": "2026-11-12",
    "published": "2026-11-12T16:00:50.601Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 4,
     "NFL": 1,
@@ -15870,6 +15870,9 @@
      "sport": "NBA",
      "start": "2026-11-13T00:00Z",
      "teams": "DET @ WSH",
+     "result": "won",
+     "actual": 2,
+     "note": "2 REB against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "a9c1f2981d373f76e644cabfe3d3e248e6d624684415b906d63e36a92b1d775c",
@@ -16134,21 +16137,63 @@
       "ctx": "2026-11-12:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 6,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 29.562,
+      "pl": 14.562
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 20,
+      "back": 55.305,
+      "pl": 35.305
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 58.18,
+      "pl": 43.18
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 6,
+      "back": 32.631,
+      "pl": 26.631
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 7.623,
+      "pl": 6.623
+     }
+    ]
+   },
+   "settled": "2026-11-13T02:58:34.885Z"
   }
  ],
- "updated": "2026-11-13T02:39:55.677Z",
+ "updated": "2026-11-13T02:58:35.359Z",
  "record": {
-  "w": 188,
+  "w": 194,
   "l": 62,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 924,
+   "w": 981,
    "l": 1382
   },
   "days": {
-   "w": 23,
+   "w": 24,
    "l": 20
   }
  }
