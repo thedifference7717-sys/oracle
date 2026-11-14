@@ -16670,6 +16670,9 @@
      "sport": "NHL",
      "start": "2026-11-14T18:00:00Z",
      "teams": "CAR vs SEA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "b17ced88203b2227018429a036517cd809a68a49b4e6178da53e403d6b46d90c",
@@ -16697,7 +16700,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T18:00:39.421Z",
+ "updated": "2026-11-14T18:35:30.385Z",
  "record": {
   "w": 198,
   "l": 64,
