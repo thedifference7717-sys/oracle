@@ -16331,11 +16331,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 9.1 in 18 min",
+     "eventId": "401909303",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.65,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26NOV13PORSAC-PORRWILLIAMS35-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.8802,
+     "pAdj": 0.7295,
+     "player": "Robert Williams III",
+     "playerId": "4066211",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-14T03:00Z",
+     "teams": "POR @ SAC",
+     "revealed": {
       "v": 1,
       "hash": "3aaefe287a5d81a348eda17d0f8add3a505e9716e3fca3056b49e621d29135dc",
-      "iv": "dzn20j7iithFqOjJ",
-      "ct": "EjIOWtYpF9kbqY+oRekWA3+aMV2L/LHWdFhCPgf89FhsIl4qdfAjTiwFRir6C137mquoPDCtpqC1wss7PeLG4KqKvDfmACY9P569mCyPmLWer67NI93x9PxcVrvCnkFGx74jfawdYGIylZPH/yVPX3KoNPfMSCqzqhEqtE5FzP+K+6mDSHmt32D1S+EfyZV4IWrOaTqim4MPmBmyrQtruyE/mstYDTVYob879XhsNfvK5h0+2ymnm+IPQqjz0BeUoh900J5wesWGgAal9yMbavEkPboqqus7+B4Pzz1d5P8RzQ5eToMNatHxjvwzdz62I41vtWnSpf6YXs/mJ/CnXmEB/7lI5n4IampreMUuXLTtkoUnxVunP75IYUThYzi6+/qHogmElPw29OQJvGOk8FI6LW5GIpmOwMpvFj7iNIcvabbw377+QF4hju1ZWiq+Y7Tv5lOFy68Rl+nnaD/ulIvDpPdDMvwW3Kk3H0k/A8Yj4lh7RR43ie1a633o3Oseabet9avJcRAPqBsRK6tLMQlIStpAZQk0SeY/v5C2utNhGKmue3u62HflWrV9l/THlgyyqXIAKFHBV2aOd77rc7Iy3uJNQHObA+gUo8PRa3d/3eM="
+      "salt": "7037c5ec83f368ec04186bb36bf361d2",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-13:robin#3"
      }
     },
     {
@@ -16387,17 +16424,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.19 · 1.28 pts/gm this season (18) · a point in 9 of his last 10",
+     "eventId": "2026020311",
+     "kalshi": {
+      "ask": 0.67,
+      "bid": 0.65,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV13NSHVGK-VGKMMARNER93-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6718,
+     "pAdj": 0.6788,
+     "player": "Mitch Marner",
+     "playerId": "8478483",
+     "price": -203,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-14T03:00:00Z",
+     "teams": "VGK vs NSH",
+     "revealed": {
       "v": 1,
       "hash": "4065a9f34568bd76600bdb02c51d2713a12a263cc9761966491d537ea21a8343",
-      "iv": "l9H92xi6f3acMX0C",
-      "ct": "IjPsWkwl9QHqyi+3vchriNvdJnMDrHUWxGUQ3HUAht/cJDE+hqbg8gzC5jpp8miUmzgpobqRbshFuvw9qCSd0HtUCYVq5z1l5miUgm5ySDz7S2tIikwvi179sjW+USG0GIMjIT4OjbSDFmmlAhQGcJCKt0R9eqAYJmoCg2CluP3OF1pc1YjkeLt/0Qn4RR0dJiHB8n5+oJ0jgEgGHlABM9lrEjgVZP84WVhFZdoE99ihWkI42d974f6ZnkAUiYrURsIssd7r+/shUVEHLQjdnPw9lEuXbCMB/5Q3MmiNnAVFgmIQtz282MgA6NuiN0oVjT+cVGszUyNBT7xo6qRq64ohiHanKhZEU34pRZ7F/k2lKdNy3s6MK9AXxW+z25Tt4BIWMDCWa3Y5V3AQGe78Tovo25YdMsgv7f7c1C1ytXzL5H6njO9xthNpHU8Nn/3imZQWULxTmR/GWpbez0MGHV0vOIEyhG2MbLeeAUvaQ8kO9SMwzQQSyrRe7qfGa4IXkss6GGW7aFHlaAqTm4NEekU9FCcz7xphgLxS5zqvZmgdDeo1Ivl/OUaOCgyjLs+18WrJSPRye+PzTzsRTvsdXUiQU+YB5pVvvFnIAHmL+IVexItwoG985WK7JVBnPDA+DMefdjMKiRRPOsSA4Jw4Hj7n0kd0uyeKOkT/w9WI1cfTVghec6RHudK2PQ=="
+      "salt": "6d4f892d2e5f41276045e28ef5464242",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-13:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-14T02:40:13.692Z",
+ "updated": "2026-11-14T03:00:25.641Z",
  "record": {
   "w": 194,
   "l": 62,
