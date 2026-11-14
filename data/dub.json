@@ -6232,17 +6232,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 8.8 in 21 min",
+     "eventId": "401909298",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.74,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26NOV13CLEMIA-MIABPORTIS95-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.8679,
+     "pAdj": 0.7895,
+     "player": "Bobby Portis",
+     "playerId": "3064482",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-14T01:00Z",
+     "teams": "MIA vs CLE",
+     "revealed": {
       "v": 1,
       "hash": "bd47f8e528ccf305ffb95f9e7b191be03852a458a476284f0ead79f03b91c361",
-      "iv": "ybFqDZVCyt7JbWrA",
-      "ct": "6EgwWTeEXmEz0YjdRsBVMfJjVOkWlhtPsxmyT2FDvTdKF77VmDgN55rZYon4kj73dSHcLI86Qpfa+MkNMAj6l572PCt+HtEQfv2k2ncBSQjie2m3r+m1ZV1ZsSR7neYnnA4wmSt6Fbu/BDsi2RiV0xdvk/ayHtkM/lv6LUT+E+KBWgIp8iUewzSKKJ7NIHflSp+BLUgs+RYlb08pJVumQVqZRdsk7XQPisSopH/3yrpIBP9XJ+h0peP95xmXDjz7ccNV8vkl2zmboPyWnhKeVLXDx4m/+8UdwYLeQb2ON16UeVvkoOmXyKgbIaGxkw9KnZwMj9Xfl3qz0vnAzbq4fr6dObJv3EZcgPRm0DETuppiIB0OpXcHKx71aXYHAirKRgPJEyiIfV5iYfxyBgotHBXkl0zUd2xOiXgGYJkkIdfaPE1rG/VMgCAQAzPwXwVyR6PJyI/1qrSXmo2oBbS6RqsPfUdrd3UMT5hdoBoy5ff3R0hmgFWmhJ+bky7b8vatlZ/n3pyJPeahV4jKWRZ4Xw7PTxp3UhgMirbD1h4sen6+ASMGnaPESL/IcbLUatwv6j2h2VU5HRbRBimU33fkDUYexTcxwEqkWA=="
+      "salt": "3370998e6f3c09c48e7757345c3e5154",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-13:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-13T23:00:27.378Z",
+ "updated": "2026-11-14T01:00:49.637Z",
  "record": {
   "w": 25,
   "l": 24
