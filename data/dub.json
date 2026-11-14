@@ -6210,7 +6210,7 @@
    "id": "2026-11-13:dub",
    "date": "2026-11-13",
    "published": "2026-11-13T23:00:27.377Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 9,
     "NHL": 2
@@ -6238,6 +6238,9 @@
      "sport": "NBA",
      "start": "2026-11-14T03:30Z",
      "teams": "OKC @ LAC",
+     "result": "won",
+     "actual": 6,
+     "note": "6 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "a8dd1108761460afaffc3993d69c3190e5bf85a8eb6016d6334da27ed80ce927",
@@ -6319,6 +6322,7 @@
    "fair": -372,
    "price": -137,
    "prob": 0.7881,
+   "settled": "2026-11-14T04:39:29.324Z",
    "revealed": {
     "v": 1,
     "hash": "043a0fa36e0acdcfba5da193483ca6ce26ab533feda5adb4cbfd4ef3c24a415f",
@@ -6333,9 +6337,9 @@
    }
   }
  ],
- "updated": "2026-11-14T03:30:00.662Z",
+ "updated": "2026-11-14T04:39:30.430Z",
  "record": {
-  "w": 25,
+  "w": 26,
   "l": 24
  }
 }
