@@ -16343,6 +16343,9 @@
      "sport": "NBA",
      "start": "2026-11-14T01:00Z",
      "teams": "ATL @ CHI",
+     "result": "lost",
+     "actual": 9,
+     "note": "9 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "18a4da5542e2a49fbb7d8f3383ff93cb799dba145c11bd6636c00cb4f2e96d98",
@@ -16508,7 +16511,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T03:30:00.709Z",
+ "updated": "2026-11-14T03:46:51.872Z",
  "record": {
   "w": 194,
   "l": 62,
