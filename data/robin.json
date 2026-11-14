@@ -16391,6 +16391,9 @@
      "sport": "NBA",
      "start": "2026-11-14T03:00Z",
      "teams": "POR @ SAC",
+     "result": "lost",
+     "actual": 2,
+     "note": "2 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "3aaefe287a5d81a348eda17d0f8add3a505e9716e3fca3056b49e621d29135dc",
@@ -16514,7 +16517,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T04:30:00.412Z",
+ "updated": "2026-11-14T05:28:01.908Z",
  "record": {
   "w": 194,
   "l": 62,
