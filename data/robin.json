@@ -16650,17 +16650,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.316 · 1.4 pts/gm this season (20) · a point in 7 of his last 10",
+     "eventId": "2026020321",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.71,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26NOV14SEACAR-CARSAHO20-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6991,
+     "pAdj": 0.7335,
+     "player": "Sebastian Aho",
+     "playerId": "8478427",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-14T18:00:00Z",
+     "teams": "CAR vs SEA",
+     "revealed": {
       "v": 1,
       "hash": "b17ced88203b2227018429a036517cd809a68a49b4e6178da53e403d6b46d90c",
-      "iv": "f4lEN3x7hospQCa0",
-      "ct": "gzQZwBN9C4ALx+M2FTSiS3qvt59TtC8a/MMJAJZKexVl/wIIRaDuT0YFyHCPGePcQtFw4cqOC6dvw3Esp6EfcxXZbpVBas038vO+KxxkClkyoZVQrkUv3+7KrDs6oVv3CvzOLwPJmcS+dVJ+9v3HXXfRDj9yEgF0+EO6XKZHrgD14iAkjU5AUcztoI79D1YzcZy8jJP7hPbboWVYhC9tOUIooftcsPAe3rTlRHnNKfh9/nuaU0tbjaBS/8lGituIJv/5iUxZHCvSbma/wfJH5y0dqS0QUInZDy7qPT8VH99t8wNFcbZJZ0Z/8cPaDWioaCOBwod1tQA1sWd6U2qg1uDkqxcVEVe866NlYHMju1OsvHWMoPfkQqYCzeQYK0ykiGFAwaiiyK0H0JxJ9mCFd8ndsPJKJ0YBvK3D0r2uBNu9kAeRH46ihhOYloLJnra4tNfp0tN2HYB7Bcv3sVJX8oZuiTAd+oxeXEKtgQ6U00uknZbhDdE4e692GZDJjW+2QFBOhU4/h5jYumpv1ZtEZyyESdaBPuzg2/9r7NvdcuRTN78c32zeqypeeTAhWqhNmW5WfLCO+c6hPJ5Gohntf4BRIlz3BcY+dUHj8MJYMRVmDWxGlTnoLOaIYMBaG9/m3v60KJMKv9oB0n4gMXQNzQ0jFTYWknZXJ/rnr4SkMInZpF1gwOLxC9Q="
+      "salt": "fb98656421edc52afd256b292bdb906a",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-14:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-14T17:00:51.282Z",
+ "updated": "2026-11-14T18:00:39.421Z",
  "record": {
   "w": 198,
   "l": 64,
