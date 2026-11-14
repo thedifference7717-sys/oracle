@@ -6216,19 +6216,50 @@
     "NHL": 2
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "043a0fa36e0acdcfba5da193483ca6ce26ab533feda5adb4cbfd4ef3c24a415f",
-    "iv": "Mz54Up+mBypQ/CPZ",
-    "ct": "czMve4ltVh/bWLshIqyjZHIS3Es9XptsHbitz/xqRShe3+xuh2SA14S3+iQWboTGeQeTeSKV9C/WpDQCMSKywNZFUwXw1oiZg7OM3DfKNbqibAZwjvqiz3tZAO0xSY74xkxt6YnPPt38RIWG2gYSiESKrqCQbmxEF4kTZrqF/TvVypUvwyBlsK/vpXoHDxrstTdJmncjOxapUD529swoHo3ezX5A+WAg0jm2skkXuPYRbXqdOxzls1SbZmHEJeyDhFTfjYZGofXbIjYWcoLwBg=="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 10.2 in 22 min",
+     "eventId": "401909304",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.71,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26NOV13OKCLAC-OKCKWILLIAMSSF-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.9081,
+     "pAdj": 0.7869,
+     "player": "Kenrich Williams",
+     "playerId": "3133626",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-14T03:30Z",
+     "teams": "OKC @ LAC",
+     "revealed": {
       "v": 1,
       "hash": "a8dd1108761460afaffc3993d69c3190e5bf85a8eb6016d6334da27ed80ce927",
-      "iv": "YTVJhn/qICD8g/7w",
-      "ct": "hLLOFmqv0/2S96wdFXPDpxSRAQvwQNCk9fNTBmpxBrz8n6wnBgBJlGs767lb7AbE+txWo4hH94IyC7krK7ZezsPHQf3B3fSiw/7Gpnpv3wKUpQ1LXA4xwGW4S53z/462I3sUzwK8n+gcQzP8uUuvaKkrtE5njqrRhcUEvbNhyKPAAn38ApUKZln9G1/vcc1WYzo1fySU8rpeZnofVFqeA0ZE+CUmadqcnKC83GfqDFZlnzQo0hab4QXEJGwBApDQcYpdYAK6i2KTeoQhUExIPqEzQABfCPcq6Wsc/MD0z4eXBBuonYaCx4efvQQlCueRLSQsf5ZWoFUvRU0QTBt4+eANj3A995FDRroKnXdiDCA25R5OiVzAuAILe96Qe4XpE0ZOvXRIVSRMbwI8WvBabm/bT7PEy87v+4qjqmj3dVFEj/8Q92VLWFOd1N93ULyrKNezrmiW7j/MshDHJUgW/xGnkIdpwkhtYkcRkyueG0ajBpslBlspv/Dge8iAQpu86z1g86V/pPTkJ0tp9zvqINjrJIqsXKPVEkqUgJpv6lzQ5+lQtWLy0EQO+0onLSv8VpPM4ZLER89OFZUkX+edUJwUbn+UHqhRwYHbIpthsQ=="
+      "salt": "49c7d1977b210a8a02adaaa9f691afe0",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-13:dub#0"
      }
     },
     {
@@ -6279,10 +6310,30 @@
       "ctx": "2026-11-13:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Alex Caruso",
+    "sport": "NBA",
+    "start": "2026-11-14T03:30Z"
+   },
+   "fair": -372,
+   "price": -137,
+   "prob": 0.7881,
+   "revealed": {
+    "v": 1,
+    "hash": "043a0fa36e0acdcfba5da193483ca6ce26ab533feda5adb4cbfd4ef3c24a415f",
+    "salt": "002f98878215dd5313c18b1f196dea76",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-13:dub"
+   }
   }
  ],
- "updated": "2026-11-14T02:40:13.349Z",
+ "updated": "2026-11-14T03:30:00.662Z",
  "record": {
   "w": 25,
   "l": 24

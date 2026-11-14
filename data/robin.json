@@ -16230,11 +16230,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 11.0 in 23 min",
+     "eventId": "401909304",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.69,
+      "spread": 0.03,
+      "ticker": "KXNBAPTS-26NOV13OKCLAC-OKCACARUSO9-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.9228,
+     "pAdj": 0.7698,
+     "player": "Alex Caruso",
+     "playerId": "2991350",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-14T03:30Z",
+     "teams": "OKC @ LAC",
+     "revealed": {
       "v": 1,
       "hash": "271f493f23250c0ef5da9236237f90335e90f54bdb32caf8f453d2edf941dab8",
-      "iv": "ieEM7uR2asNFNw3E",
-      "ct": "ZMtscVfmtWd5RurBZLtHzgHfFQf4wMJprXyUBMoKa9km7ugejhLlrc2NmqEU45lRBE1TnI0ssL8evY6nWxjJUf/6rrF71MEjfZW4NxUM7COkdrFjIEArwjejKppoDOUEJOpGICQKywyCRzMH496tTNa4GFK2tTKvB8oUbbJXNx2nsU5VO7dSlG62sQaAKZM/xaqOMspPlEkIdNiqX1Dvk7dLhzJS9E9Srr3EAkfD28KxwLmVvOWTfLPy6ZUX0xmSlU6jVRhmNnzMZvbwoLJOEseE6j3ZAs0wzhf30ARRKD22hwulAcQkk8N0lzjtkMLtPJf1DKBJ05AXRAV5HrY+IeN3F6EMuECn1dQLbJa46vvejuZxDxz/0ATioRm/xLlRIwZMJKydSQt12clSYx6R4ouf4lhND/Nv4owfuhamJdPlJjctfvc7daxoPARDZ6GCsSerVi3PB76KMi8b9nr/d9zl4VJ8epXcnNMDRm854dguOZa82cWAQsdpjWZVOeQyENOVroFq72QPnZ81djEae4R5xX77xrtcoVmrouHAQlqZymIvhOP++rcdzt5vdXER2G8gH/mBYhfRWelZDrnOf71bDQpSZQjnuw=="
+      "salt": "d70312e463b1c49043dad7bdc364e3d1",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-13:robin#0"
      }
     },
     {
@@ -16471,7 +16508,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T03:00:25.641Z",
+ "updated": "2026-11-14T03:30:00.709Z",
  "record": {
   "w": 194,
   "l": 62,
