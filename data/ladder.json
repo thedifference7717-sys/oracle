@@ -4703,7 +4703,7 @@
   {
    "id": "2026-11-13:ladder",
    "date": "2026-11-13",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-13T23:00:25.064Z",
    "cycle": 17,
    "rung": 3,
@@ -4760,6 +4760,9 @@
    "sport": "NBA",
    "start": "2026-11-14T03:30Z",
    "teams": "OKC @ LAC",
+   "actual": 5,
+   "result": "5 PTS against a 4.5 line",
+   "settled": "2026-11-14T05:51:12.094Z",
    "revealed": {
     "v": 1,
     "hash": "2d7d7e2b07b686f3af1204f4884713d910cd1807d7a31c5f2e25564ae370dc4b",
@@ -4788,12 +4791,12 @@
    }
   }
  ],
- "updated": "2026-11-14T03:30:00.630Z",
+ "updated": "2026-11-14T05:51:12.099Z",
  "state": {
   "account": 490.81,
   "base": 18.91,
-  "stake": 30.06,
-  "rung": 3,
+  "stake": 41.76,
+  "rung": 4,
   "cycle": 17,
   "pl": 390.81,
   "cycles": {

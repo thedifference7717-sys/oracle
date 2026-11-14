@@ -16185,7 +16185,7 @@
    "id": "2026-11-13:robin",
    "date": "2026-11-13",
    "published": "2026-11-13T23:00:27.377Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 9,
     "NHL": 2
@@ -16250,6 +16250,9 @@
      "sport": "NBA",
      "start": "2026-11-14T03:30Z",
      "teams": "OKC @ LAC",
+     "result": "won",
+     "actual": 5,
+     "note": "5 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "271f493f23250c0ef5da9236237f90335e90f54bdb32caf8f453d2edf941dab8",
@@ -16514,22 +16517,64 @@
       "ctx": "2026-11-13:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 12.344,
+      "pl": -2.656
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 11.775,
+      "pl": -8.225
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 4.205,
+      "pl": -10.795
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-14T05:51:13.821Z"
   }
  ],
- "updated": "2026-11-14T05:28:01.908Z",
+ "updated": "2026-11-14T05:51:14.457Z",
  "record": {
-  "w": 194,
-  "l": 62,
+  "w": 198,
+  "l": 64,
   "void": 1,
   "unit": "bets",
   "tickets": {
-   "w": 981,
-   "l": 1382
+   "w": 992,
+   "l": 1428
   },
   "days": {
    "w": 24,
-   "l": 20
+   "l": 21
   }
  }
 }
