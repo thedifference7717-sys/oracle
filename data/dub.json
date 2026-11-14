@@ -6252,6 +6252,9 @@
      "sport": "NBA",
      "start": "2026-11-14T01:00Z",
      "teams": "MIA vs CLE",
+     "result": "won",
+     "actual": 5,
+     "note": "5 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "bd47f8e528ccf305ffb95f9e7b191be03852a458a476284f0ead79f03b91c361",
@@ -6279,7 +6282,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T01:00:49.637Z",
+ "updated": "2026-11-14T02:40:13.349Z",
  "record": {
   "w": 25,
   "l": 24
