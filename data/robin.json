@@ -16484,6 +16484,9 @@
      "sport": "NHL",
      "start": "2026-11-14T03:00:00Z",
      "teams": "VGK vs NSH",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "4065a9f34568bd76600bdb02c51d2713a12a263cc9761966491d537ea21a8343",
@@ -16511,7 +16514,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T03:46:51.872Z",
+ "updated": "2026-11-14T04:30:00.412Z",
  "record": {
   "w": 194,
   "l": 62,
