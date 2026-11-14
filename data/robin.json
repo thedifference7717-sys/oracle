@@ -16258,6 +16258,9 @@
      "sport": "NBA",
      "start": "2026-11-14T00:00Z",
      "teams": "ORL vs MIL",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "71004cdb62a909ae09159b7576d324a8493c426050bf1379bfe428468062e918",
@@ -16391,7 +16394,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T01:00:49.686Z",
+ "updated": "2026-11-14T01:04:07.469Z",
  "record": {
   "w": 194,
   "l": 62,
