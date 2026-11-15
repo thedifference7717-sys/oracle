@@ -6485,11 +6485,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "QB · sim median 299 passing yards",
+     "eventId": "401873057",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.75,
+      "spread": 0.02,
+      "ticker": "KXNFLPASSYDS-26NOV15JACTEN-JACTLAWRENCE16-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.8376,
+     "pAdj": 0.7794,
+     "player": "Trevor Lawrence",
+     "playerId": "4360310",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-15T18:00Z",
+     "teams": "JAX @ TEN",
+     "revealed": {
       "v": 1,
       "hash": "3f14b42d4ff904464a8797eb201eb30ca6a899f273659e76add818d75eb48dbb",
-      "iv": "s64fAU8YiApVTa+g",
-      "ct": "O4/cEFJzJBgJrjJILvoNO/BLBeHYvJ+cRPdMn1/6Q+W/jOLJ5ZA7TEbR+AFF8CfdQtIekPp9QeUudYI0amLz5M93h5sNFOLF9yxX9ShHf63gtC4IY4uRykqkuzq2DoI/1d55yRUbOB9DFUrU/ZlFIqcHRcoBhh2+l5ogBvCjqh7L4+v6D+SmfOZKXB3GW92gqYM5L1xcim4XhVwFq7KypPnZv02d+oxm+9Sy9fz3y1BvI2tU3RYbwwLu5kXGvVhjRtzghjnwYyl6bEk/F1bh73dostJd1QWRUhCxkKThKduc/FejiMTCy6wlI2lQQOp0BZ/XAi0TzRayeKVefEHRUHKsSZ+j1CKarePxpv00wKSIbb1Oy6IapfRAcktfhZ0pDNcMJF43s9AjrFW6CYSbiLV3p3KuPmHJgkVjJhhKgykDoU4VsObUKpGcmkjVp/mtcQYNEcYk7bihJ0uB48I2yww8gyl8xT43vxq1ejnofowDJ0StC8Unun3+Lg5BGEPIwGJ58L6w/+cnUxIa/OqsxWolGma5uckvZVdUC2h6HZKlzbrhFTYHMRnTkmJmo3qxfFXNwFuU9UTgYqVEiy0KhK+6typ+s75o521650NhmfoFshFaswjjtlFdZuZEbrJevw/NsGMdHyI3NNHU8gGxc05D"
+      "salt": "2e79077e7ad3f9e845460115a3edf6ca",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-15:dub#0"
      }
     },
     {
@@ -6503,7 +6540,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T13:30:38.744Z",
+ "updated": "2026-11-15T18:00:27.930Z",
  "record": {
   "w": 27,
   "l": 24

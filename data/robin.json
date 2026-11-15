@@ -16999,11 +16999,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 16.8 in 37 min · over this line 4 of his last 10",
+     "eventId": "401909985",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.73,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26NOV15INDPHI-PHIVEDGECOMBE77-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8966,
+     "pAdj": 0.7962,
+     "player": "VJ Edgecombe",
+     "playerId": "5124612",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-15T18:00Z",
+     "teams": "PHI vs IND",
+     "revealed": {
       "v": 1,
       "hash": "db6bc0315532011a535912edba83ea1304c9eec12bdb961225862b878d8ba0c3",
-      "iv": "HtiE4SIt/8mviLMT",
-      "ct": "eLQvEmt0ufErCvrCIc9hD3aNPaVTpb620vX4qtkt/Q/33f7aSNtE1/Zxc8P/3Ug0xoj+DeNxPaz29p+RvjSReR9mQTT8Zaov0OOhyzI29uwWGsiqnTg70rqRtryFwvRsTBEU4Pwb0XOqprg6xFFSr+2/zZIQgE0opbOcH/oNmPEGHiOLoZ7Yhk161xGPsSke7OmvZLb7jUoi7dbMcAjXjJmD53/CliVULw5598yVLcCSWcA8HqaONXra0CTGSqtINiitpn8bjJtGd2O+lOu/n5KnUhtKaT5FS+2Sw0VUYZnQpxx6CQXFe1volG61kpK0/fUwFQQfco4XoqoS9Xr2Or0IO4O+yX32JmJIEY9hTv9A2a5ShtFLEWl0r/C4UVRTxVIiR20cxK0gCMbC/5O5zrTcx2dgE0m2P02+oM7uhVKbKc0lbfyQH/5vxfXhBQKXw3J98UkvBZt2dmxOXAUesT3N7Gg9x8nNhDciHxoGbjQVohmJEWVTMUR/GQAwr47pBUUEIpCPPq0epTUhMn5jvRotAN0p14qm5mLWqbbcxbCT924tvWTbLMbCl2aUMIMU3h9Lz7jTXlsQgQkS9xdoMAvt1BwOxlGtt9beuqdyCogcs+BMk32TyDu41R8D5qGdHKGSseDJ1H/dIz2X3KQVoNN3QPc="
+      "salt": "e8214f353b0bd4e456251941d46fdca9",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-15:robin#1"
      }
     },
     {
@@ -17023,11 +17060,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 299 passing yards",
+     "eventId": "401873057",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.75,
+      "spread": 0.02,
+      "ticker": "KXNFLPASSYDS-26NOV15JACTEN-JACTLAWRENCE16-200"
+     },
+     "line": 199.5,
+     "market": "passYds",
+     "need": "200+ passing yards",
+     "p": 0.8376,
+     "pAdj": 0.7794,
+     "player": "Trevor Lawrence",
+     "playerId": "4360310",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-15T18:00Z",
+     "teams": "JAX @ TEN",
+     "revealed": {
       "v": 1,
       "hash": "e9f12eea7e27b7663c51c34856bcb7b7f49b013debac3cc2dbc1a5db9d0308ad",
-      "iv": "lLQgiJjM7Sh/7v4g",
-      "ct": "+ILiEQvJCF3Bgb0KyfOWMAeaWcmIBqY8syglZhI4c8orhrEhk7oEpFTZ26V0Ka7+N9HwlvkiTwQRphawWVMFy9gfZlRtPfdXE2QUNh76ROBgi7iQ5lrbyfJijNBDgzkpK0ONFcEyJPsrpd0rIzr5hkHS1QRdk8AJ97JbmYIUT0jjavdVQzSvZSBy/WAUpYBsl0kdipvDJocayF+dH1VvCT2qwtjlwQS8LfFuODnZFrXp+zmEqfhNBdwe377wAw8siiy3B2oC/NfnCZJI62ompNq1ITEnJeXOoRes7UWMEo/Bjk0UfFKvpJX/B72WyXWUGwg6YYeZ7UXkCp5d/oFpanejSwVxt9AS3T5R+AWtKNwnWQPCFilpkaRkCetqC6W5Kh1hL/WggX9jRRgobHOZEncqvpuUBroZcGnWOdXLhi190I4Ft2GFtDeRUJljluXc5Ghlmtj2N5b5Tob7hgbPW1ufb5b5d8jCIyOesqlmwCKuIYt9yTaEeN4Jzcrs8BH8nUQ4hXeNqvIqLspeNnxica0B7baFaD74nkt8mUG8+Bg0rt6w1pCpisCxZoaZoBgpccjImd0BtaN2mFnLPBpGeiICzIQSIK2n/8/Kn5yMLqeDBjfwGhIwIwsAOAk/rb/2WOcqVDlCqv1qsvG7YExQMltcKRY="
+      "salt": "9a2bcca68993a932471efc63de9dc0a7",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-15:robin#4"
      }
     },
     {
@@ -17081,7 +17155,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T17:38:13.147Z",
+ "updated": "2026-11-15T18:00:27.986Z",
  "record": {
   "w": 201,
   "l": 66,
