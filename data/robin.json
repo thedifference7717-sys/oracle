@@ -17087,11 +17087,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 8.9 in 21 min",
+     "eventId": "401909989",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.68,
+      "spread": 0.07,
+      "ticker": "KXNBAPTS-26NOV15DALBOS-BOSSHAUSER30-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.8745,
+     "pAdj": 0.7774,
+     "player": "Sam Hauser",
+     "playerId": "4065804",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-15T23:00Z",
+     "teams": "BOS vs DAL",
+     "revealed": {
       "v": 1,
       "hash": "4aa5e0db91a0314244e5309948ce1dcd0d23e696f3a49158952b53e77b0450e0",
-      "iv": "TKrMKV4TiChg+DWf",
-      "ct": "RmAgEEa4+TL8q54udKtrD8ccuJWOK7/Esqpb9bgrG0cPNYvA9RSWztIBYbAOfqOxN/C4aYMRMS8a0hKYF39yDjr09JhJm6ey4r0c8hSwVBGCwOVoz2M8GCHrRzI45nl72+UlKonNx5Odg2F9yhKPS4r3IAM3dwNpxqgdiz5PSG4iN5U85gtU87TC/iR9HjJPHqgqf5PVJptyfnNK21oixsUBPeAen3tDKBFil9KwojG4zA87zT8xCH0x5oxuFJUJhCGSzPMsyC+KJG0tkIQ6BDLduCZBp8EKtlsCgaUw4BscJGo49MV2bF/yMYn+agzp3fV7LmZZFDT/Y/oVSzLpFcpJTD1DKHjQIYSnYq+/udjvpQWz6k8ffDHgfO9PHICfyM8paVVeJmgXRFyJrrqedgj3Gm5WfShD/0TMfJCMq6q1ixBwvDrwUQH6W//V6bl4tVjraB0SsYHiAn0HbOdOHQ0sll5PrJEjKeUEuCOcu7S2Pzymb+eB5AOeNpn/9ftJZBKTZlQLDJKina7rE36fTCQ6l1d736kfiLEErg96dEkQk9519XfgI5FCfANy3KGGdLslJWNv0no90paGrzERWEg5CIWQAsbs6Q=="
+      "salt": "0577146cd825369545a74802afefe375",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-15:robin#2"
      }
     },
     {
@@ -17238,7 +17275,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T22:49:51.355Z",
+ "updated": "2026-11-15T23:00:34.016Z",
  "record": {
   "w": 201,
   "l": 66,
