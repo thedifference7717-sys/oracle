@@ -6346,12 +6346,6 @@
     "NHL": 14
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "27e161282dfc0c13d2f3acb83e6cb337c713e52dde37798bf299e7bb8b583a4b",
-    "iv": "eJ9TJ3ffQaTAi1Oa",
-    "ct": "7RPI5eY9BZ1gG0j+7vmrb3XwC87k7vR2CC+sPEFLJcwSSt3niSN2eiVsjWWEDz/FrifKMPJUlFfaehV2PCjsPCpFb5dNBSF8MF6Pi1rP+Hn+4eUbd+IdAsa0texga6mG2mmTbSMrzKgqhWtHqVMzGuvWcrHH97tB8vu4Q1ZCTRhZk7qiV/DuMivcqpBDSFg2PA2uqf42YPzgPJEHAxV9v3DJQrmz+wVbJsZ+wjMHuJ36fMq14ujqsTnsA6PTBXFNTk0AEF9Fl4fLVhDiWKo95iAtQMkkdg=="
-   },
    "legs": [
     {
      "detail": "λ 1.602 · 1.85 pts/gm this season (20) · a point in 9 of his last 10",
@@ -6399,17 +6393,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 20.1 in 35 min · over this line 4 of his last 10",
+     "eventId": "401909984",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.67,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV14CHIMIN-MINJMCDANIELS3-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.8459,
+     "pAdj": 0.7271,
+     "player": "Jaden McDaniels",
+     "playerId": "4431671",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-15T01:00Z",
+     "teams": "MIN vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "265ab97efe44122f5f237a7030b01d123de583663afa17b730e3a66a58ce030d",
-      "iv": "ltnl2NybeBOPJtjA",
-      "ct": "dRSqZotmC7HSmZ3zr9EKKOVAqsIHcmJGTGfis4OHFSW7knQohde14qQ6JcXplgmFIIBes74MSmGgZGdJBDbhx9MkY19j6jO+H5WWlthD5o4ZaPnGOECyuPS0x2FPzZPqomj/tdsxVIG95GGEq5lvRnuSdFz+DRBRYu0wppN/hExXiAUTlW4aMYEP1/1OJPfCN4ANY4QYC3HYy8smFsShaejCaSwM6Dw6qybOnWAxpAzrNB+sAsfjg2Y9mMDb+g9gXA1vGsVkb1R5fjWu322hePvqujY3yQSHF53MEiOnmjNqR5WbOnjlaahvJMKEG4aGV0n4W2dLkV3juCd8FFOQII3GRQj4VrmE5h88EpBgx6GJSvfNIRht6OkNVrQ5c6gcBdWmHl/wGJliDOdegBHYvua6UHIHhHUDDvbQeB6Kl/RlHMhknH8mDnL9HO6+r1RwwdClKK4OSEOh1LRDKm9tZgbBn3gsRtZlMkXqH+uCC4q4XN8V2a7GS6qmb9afSR27HSSqeDx43lx2sSlSkYJurA3d3a3XOxskRCMJHU2WZ6u1OqgePU3Ac2G661YTdM/qlpyLJEhK/czTGwldWp9DAZ3PX0l1IRvKoIqbVjWoV9fsUqD1q7P7fMhR3BWGbWc+Fs9wL7InaZo6m1C6AJUK6dOowcy3"
+      "salt": "c175d85655da54d7712f9ca1efc2488a",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-14:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Connor McDavid",
+    "sport": "NHL",
+    "start": "2026-11-15T00:00:00Z"
+   },
+   "fair": -175,
+   "price": -117,
+   "prob": 0.6363,
+   "revealed": {
+    "v": 1,
+    "hash": "27e161282dfc0c13d2f3acb83e6cb337c713e52dde37798bf299e7bb8b583a4b",
+    "salt": "c0a7540fc04edec866adde27ff9bc8a5",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-14:dub"
+   }
   }
  ],
- "updated": "2026-11-15T00:00:36.680Z",
+ "updated": "2026-11-15T01:00:45.136Z",
  "record": {
   "w": 26,
   "l": 24

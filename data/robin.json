@@ -16655,11 +16655,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 20.1 in 35 min · over this line 4 of his last 10",
+     "eventId": "401909984",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.67,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV14CHIMIN-MINJMCDANIELS3-15"
+     },
+     "line": 14.5,
+     "market": "pts",
+     "need": "15+ points",
+     "p": 0.8459,
+     "pAdj": 0.7271,
+     "player": "Jaden McDaniels",
+     "playerId": "4431671",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-15T01:00Z",
+     "teams": "MIN vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "87ff5735f843a3c4354be64f0715d2daa22d3a617afa999b7e515ffcd84abfa5",
-      "iv": "l4RL94VlBGiZ3tgJ",
-      "ct": "JLt80lSz2vixCBZVQ/DOI5ulkWdGl8+xaAXFurWY6VfNq8SxS6EVSF3OUQPcsro04mK1tDw2NhrZC9VwOgu7aFJPHvbWOpNwltMJtAoLavBLivgRP3tLAMmYDtavXUIOplMYpm+mYzJN5Ar3/jFft82peOckEyzVrlnTmD8neETOwlM3sNQY/ah5uvgrph1/mA/+pFZPXGUv7Jl4OsDhF3FditE9+Dvkj5XjbHQF8F2xHkW8Z6rop6eJIWO20R+vJmtxeE9pnfz95WYhSFXRFmOglyuOCD/KbnP0c4YvvaEgzM+Le0s2ULOjUZNWKFAOlszAS8ypfbH/9pW0DlQQ5zPOzirL8scgRtB1/0o1J+osCusvH4cI3povtr9VJP4UhDTGEAd+uisS/TFcUbNX0wtOhDGiEg5d8im7RbRSO5J4yXL6QEYQmzODDS5hE3IQC5grHDUXIfUuoTI8gshepLNd+i8r9dJ9rzqBursEwlmgBu6sXhlaXO8WY68nLTCN2OgYXnXvvteKp9qXXb3Tm3l5ulf56dzoDDmqjxdKyK2bF3CHemba7M3jkEJFfXxtWQwR2ssWeD7kktWLSyr9jkur8n/Miwg1jQ0YfybSpICCxNld2/irHFi3S69e13HSwW8C6IjPAOVHO/sneBwFD8ulzNLsxOs="
+      "salt": "a5ce0551d0583ec2e8546eacebc5823b",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-14:robin#1"
      }
     },
     {
@@ -16753,11 +16790,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 5.4 in 32 min · over this line 7 of his last 10 · back-to-back",
+     "eventId": "401909983",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.73,
+      "spread": 0.04,
+      "ticker": "KXNBAAST-26NOV14BKNMEM-MEMTJEROME2-4"
+     },
+     "line": 3.5,
+     "market": "ast",
+     "need": "4+ assists",
+     "p": 0.7625,
+     "pAdj": 0.757,
+     "player": "Ty Jerome",
+     "playerId": "4065733",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-15T01:00Z",
+     "teams": "MEM vs BKN",
+     "revealed": {
       "v": 1,
       "hash": "c183aa8832f1ba87cd17702eaa3466831322b17f9441c0df5178fbedba1ce737",
-      "iv": "cyPHlkyPDIqIBQJj",
-      "ct": "mbHyrLG1P5j5NGTbnaDogeEM5A8hX3yLTIGN+7aB2UWeKYz45vAIF5MocvXLwHIQPizohu3XZPjBiDbumZpc4k4qM4kJ7TLobQ4HoG6WKOUWWibjwHFpoSV6YqqZXPlrT++xuD6byyKIGfPsjUDB5tIFqvrF4xuH6ag6SFaCysjK+v1FctBF39jzUzV5z72ESVGj0QFdLQAfVqxu/b3oY0TQ6wGNUD7xdYNDID2GkkjhbhP96xhi06o3skCN1kIW8wCvOXeUQQZfTqr6I/tVQBDUKpGACW/rToR84ccONC1B0M4ylR/XD/NviQHNetxy2hRd/tvQ8jFb0h54vlQSarCMkfFT6Qhwf8oKchzRJvHogrdt8apcifICMzZ7UOCnPvWE6hfl1ZPJKkZcBInIIELlEoc2nzkPsWj8j+UALSPSba+YNbJJn5ba3BUbfFRcN81Boii0DjR5QgrdzAbXBV1GCPFIPWq7+6VEu+HImNvUe0LLVgcz7ZJnj8as97r8T3k2Htfg8HaTe35kpIbE4bTfa0aL1jGd9iYlo8N6JHkL1k/cIx2RKh8xFCYlNJ2ibwxTugpmvfAHqfLIqrTohu8JlOetLtNuG7jUGpinulWmllHeUB7ABW3DvgGR671v27AW6E8ipcCp96zJRD4SbIeNTgdna/EQvsE="
+      "salt": "52439636501edd1afa6f6cc9dd72fd03",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-14:robin#4"
      }
     },
     {
@@ -16811,7 +16885,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T00:00:36.713Z",
+ "updated": "2026-11-15T01:00:45.170Z",
  "record": {
   "w": 198,
   "l": 64,
