@@ -16565,7 +16565,7 @@
    "id": "2026-11-14:robin",
    "date": "2026-11-14",
    "published": "2026-11-14T17:00:50.143Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 5,
     "NHL": 14
@@ -16822,6 +16822,9 @@
      "sport": "NBA",
      "start": "2026-11-15T01:00Z",
      "teams": "MEM vs BKN",
+     "result": "void",
+     "actual": null,
+     "note": "not in the box score — stake returned",
      "revealed": {
       "v": 1,
       "hash": "c183aa8832f1ba87cd17702eaa3466831322b17f9441c0df5178fbedba1ce737",
@@ -16894,22 +16897,64 @@
       "ctx": "2026-11-14:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 3,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 9.279,
+      "pl": -5.721
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 7.619,
+      "pl": -12.381
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 2.329,
+      "pl": -12.671
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-15T03:30:20.275Z"
   }
  ],
- "updated": "2026-11-15T02:36:55.541Z",
+ "updated": "2026-11-15T03:30:20.905Z",
  "record": {
-  "w": 198,
-  "l": 64,
-  "void": 1,
+  "w": 201,
+  "l": 66,
+  "void": 2,
   "unit": "bets",
   "tickets": {
-   "w": 992,
-   "l": 1428
+   "w": 1003,
+   "l": 1474
   },
   "days": {
    "w": 24,
-   "l": 21
+   "l": 22
   }
  }
 }
