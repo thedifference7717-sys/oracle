@@ -17019,6 +17019,9 @@
      "sport": "NBA",
      "start": "2026-11-15T18:00Z",
      "teams": "PHI vs IND",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "db6bc0315532011a535912edba83ea1304c9eec12bdb961225862b878d8ba0c3",
@@ -17158,7 +17161,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T19:31:34.676Z",
+ "updated": "2026-11-15T20:26:19.902Z",
  "record": {
   "w": 201,
   "l": 66,
