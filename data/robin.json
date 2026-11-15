@@ -17011,6 +17011,9 @@
      "sport": "NFL",
      "start": "2026-11-15T21:05Z",
      "teams": "LAR @ ARI",
+     "result": "won",
+     "actual": 220,
+     "note": "220 passing yards against a 174.5 line (graded early, 20+ clear)",
      "revealed": {
       "v": 1,
       "hash": "3ad3fee937c2e3fd38dcd49364a01fa38aab4897c0dccda824087bfb1ac6e073",
@@ -17235,7 +17238,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T21:30:38.547Z",
+ "updated": "2026-11-15T22:49:51.355Z",
  "record": {
   "w": 201,
   "l": 66,

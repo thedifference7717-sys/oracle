@@ -4883,7 +4883,7 @@
   {
    "id": "2026-11-15:ladder",
    "date": "2026-11-15",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-15T13:30:36.597Z",
    "cycle": 17,
    "rung": 5,
@@ -4941,6 +4941,9 @@
    "sport": "NFL",
    "start": "2026-11-15T21:05Z",
    "teams": "LAR @ ARI",
+   "actual": 220,
+   "result": "220 passing yards against a 174.5 line (graded early, 20+ clear)",
+   "settled": "2026-11-15T22:49:49.782Z",
    "revealed": {
     "v": 1,
     "hash": "3a2bf5546bb0752e0a8bcf5d916ddb608c84d2b115c446f7c119c9f1e260d2d3",
@@ -4969,16 +4972,16 @@
    }
   }
  ],
- "updated": "2026-11-15T21:05:10.406Z",
+ "updated": "2026-11-15T22:49:49.787Z",
  "state": {
-  "account": 490.81,
-  "base": 18.91,
-  "stake": 49.71,
-  "rung": 5,
-  "cycle": 17,
-  "pl": 390.81,
+  "account": 538.18,
+  "base": 20.73,
+  "stake": 20.73,
+  "rung": 1,
+  "cycle": 18,
+  "pl": 438.18,
   "cycles": {
-   "done": 6,
+   "done": 7,
    "busted": 10
   },
   "canFund": true
