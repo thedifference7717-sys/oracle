@@ -16726,6 +16726,9 @@
      "sport": "NBA",
      "start": "2026-11-15T00:00Z",
      "teams": "DEN @ NO",
+     "result": "lost",
+     "actual": 1,
+     "note": "1 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "14ed811a608f6ba62faa884361fdb4ae57243cc66269dae33792f1dd49755a12",
@@ -16891,7 +16894,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T02:34:49.425Z",
+ "updated": "2026-11-15T02:35:52.908Z",
  "record": {
   "w": 198,
   "l": 64,
