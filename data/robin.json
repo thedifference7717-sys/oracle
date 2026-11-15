@@ -16945,7 +16945,7 @@
    "id": "2026-11-15:robin",
    "date": "2026-11-15",
    "published": "2026-11-15T13:30:38.743Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 9,
     "NFL": 12,
@@ -17155,6 +17155,9 @@
      "sport": "NBA",
      "start": "2026-11-15T21:30Z",
      "teams": "CHA @ LAC",
+     "result": "lost",
+     "actual": 3,
+     "note": "3 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "3e2383908f4cebb307e8a759cc3ad67a702c0caed05c54f21744570efc72838c",
@@ -17275,22 +17278,64 @@
       "ctx": "2026-11-15:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 10.389,
+      "pl": -4.611
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 9.113,
+      "pl": -10.887
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 2.998,
+      "pl": -12.002
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-15T23:56:32.220Z"
   }
  ],
- "updated": "2026-11-15T23:28:31.665Z",
+ "updated": "2026-11-15T23:56:32.973Z",
  "record": {
-  "w": 201,
-  "l": 66,
+  "w": 205,
+  "l": 68,
   "void": 2,
   "unit": "bets",
   "tickets": {
-   "w": 1003,
-   "l": 1474
+   "w": 1014,
+   "l": 1520
   },
   "days": {
    "w": 24,
-   "l": 22
+   "l": 23
   }
  }
 }
