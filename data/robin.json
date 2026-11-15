@@ -17107,6 +17107,9 @@
      "sport": "NBA",
      "start": "2026-11-15T23:00Z",
      "teams": "BOS vs DAL",
+     "result": "won",
+     "actual": 6,
+     "note": "6 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "4aa5e0db91a0314244e5309948ce1dcd0d23e696f3a49158952b53e77b0450e0",
@@ -17275,7 +17278,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T23:00:34.016Z",
+ "updated": "2026-11-15T23:28:31.665Z",
  "record": {
   "w": 201,
   "l": 66,
