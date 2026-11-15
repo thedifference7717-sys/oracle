@@ -16630,6 +16630,9 @@
      "sport": "NHL",
      "start": "2026-11-15T00:00:00Z",
      "teams": "EDM @ TOR",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "7194e20b301e6b71dd630fc11ec82ebbce7dbff51254c9075e536221e0a5a017",
@@ -16885,7 +16888,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T01:00:45.170Z",
+ "updated": "2026-11-15T01:37:09.696Z",
  "record": {
   "w": 198,
   "l": 64,

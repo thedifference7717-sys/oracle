@@ -4793,7 +4793,7 @@
   {
    "id": "2026-11-14:ladder",
    "date": "2026-11-14",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-14T17:00:47.804Z",
    "cycle": 17,
    "rung": 4,
@@ -4850,6 +4850,9 @@
    "sport": "NHL",
    "start": "2026-11-15T00:00:00Z",
    "teams": "EDM @ TOR",
+   "actual": 1,
+   "result": "1 point",
+   "settled": "2026-11-15T01:37:08.444Z",
    "revealed": {
     "v": 1,
     "hash": "22ea1acd6327880a20384ae2f12b0273d4c7dd65fd8b9043d2b3a6f5808c0727",
@@ -4878,12 +4881,12 @@
    }
   }
  ],
- "updated": "2026-11-15T00:00:36.657Z",
+ "updated": "2026-11-15T01:37:08.447Z",
  "state": {
   "account": 490.81,
   "base": 18.91,
-  "stake": 41.76,
-  "rung": 4,
+  "stake": 49.71,
+  "rung": 5,
   "cycle": 17,
   "pl": 390.81,
   "cycles": {
