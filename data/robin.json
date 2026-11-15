@@ -17051,6 +17051,9 @@
      "sport": "NFL",
      "start": "2026-11-15T14:30Z",
      "teams": "NE @ DET",
+     "result": "lost",
+     "actual": 48,
+     "note": "48 passing yards against a 224.5 line",
      "revealed": {
       "v": 1,
       "hash": "f104b8ec67eb5cd63db41a3ff30be7b151f057b866b43f135a85570bf8f1a6a2",
@@ -17078,7 +17081,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T14:30:03.169Z",
+ "updated": "2026-11-15T17:38:13.147Z",
  "record": {
   "w": 201,
   "l": 66,
