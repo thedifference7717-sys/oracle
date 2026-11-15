@@ -16678,6 +16678,9 @@
      "sport": "NBA",
      "start": "2026-11-15T01:00Z",
      "teams": "MIN vs CHI",
+     "result": "won",
+     "actual": 16,
+     "note": "16 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "87ff5735f843a3c4354be64f0715d2daa22d3a617afa999b7e515ffcd84abfa5",
@@ -16888,7 +16891,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T01:37:09.696Z",
+ "updated": "2026-11-15T02:34:49.425Z",
  "record": {
   "w": 198,
   "l": 64,

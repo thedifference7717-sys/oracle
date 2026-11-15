@@ -6340,7 +6340,7 @@
    "id": "2026-11-14:dub",
    "date": "2026-11-14",
    "published": "2026-11-14T17:00:50.143Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 5,
     "NHL": 14
@@ -6416,6 +6416,9 @@
      "sport": "NBA",
      "start": "2026-11-15T01:00Z",
      "teams": "MIN vs CHI",
+     "result": "won",
+     "actual": 16,
+     "note": "16 PTS against a 14.5 line",
      "revealed": {
       "v": 1,
       "hash": "265ab97efe44122f5f237a7030b01d123de583663afa17b730e3a66a58ce030d",
@@ -6449,6 +6452,7 @@
    "fair": -175,
    "price": -117,
    "prob": 0.6363,
+   "settled": "2026-11-15T02:34:48.415Z",
    "revealed": {
     "v": 1,
     "hash": "27e161282dfc0c13d2f3acb83e6cb337c713e52dde37798bf299e7bb8b583a4b",
@@ -6463,9 +6467,9 @@
    }
   }
  ],
- "updated": "2026-11-15T01:37:09.588Z",
+ "updated": "2026-11-15T02:34:49.289Z",
  "record": {
-  "w": 26,
+  "w": 27,
   "l": 24
  }
 }
