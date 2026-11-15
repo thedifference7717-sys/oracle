@@ -6354,11 +6354,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.602 · 1.85 pts/gm this season (20) · a point in 9 of his last 10",
+     "eventId": "2026020314",
+     "kalshi": {
+      "ask": 0.78,
+      "bid": 0.77,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV14EDMTOR-EDMLDRAISAITL29-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7523,
+     "pAdj": 0.7784,
+     "player": "Leon Draisaitl",
+     "playerId": "8477934",
+     "price": -355,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-15T00:00:00Z",
+     "teams": "EDM @ TOR",
+     "revealed": {
       "v": 1,
       "hash": "c9ec493c514147bd7dd4e6202e352cda71669a47fc0bb6887962f26b19309f40",
-      "iv": "gR54iX8SMRItt9VS",
-      "ct": "FWwDnhe2rHYjsCQfmYOSFr62F2dUjoVZeqt+Inls6WAnpxnBhd1YsAgFraEAqinU0y8YIQx6lIrVzCWeMYjiDoEqhTRJjR/7JWftk57vDKQdAycNDfQX50xGiF+PR2/lUr48cQ1jlt2+Odn+sccL07/UBcb9UtQ1wgCF56EzDCJDu80YUbe6mutKf8T8clJ7dRd7pTjbPvdEhn0/J03Cc0UujOCEVwQHKuAv3Fd984apQEjwgeN5i11UFyHHrnFhOmSCpSGvUCepzrrtryfEsHhON6+z4lzYOU0EahWQE2/t7b9YYL4GLUObbv+r/E2nRsOvxWGYLfgJFDHh4smuF0woEs7B5WIBmfYNXYLralip1B/Djr3+2pkIeliiO5TlH0OebLUduOEC+cP5ji2GZqNv8pfunlovgYAmscKOt0jaZb/m2Eq2ld4JeAr4HeDpI0uYMeg+4aoojN2iH2d3WPD2Ba70RCHo7EJqDWzcIn5uecRoYICzeKg+J6+XDtQQi3G4x+s1UugahLNYmychsMYKBhSXZz/4qNPOGbR2zps6jhp0TZ7mPjW5m1/trI2Zcpim6p48lCSF9p7YeU0XDWaqL9BhIESeSvhXHa67L3uSELVtp2sOFK19P2Q93tqh8qxIpcZ7OilVYBo6fb1USzNFQOAvIX7R6YTr43tFvrXXQDEyGJqLfX4ZijoDCA=="
+      "salt": "07c6ccc20925462dc108f7295420c29a",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-14:dub#0"
      }
     },
     {
@@ -6372,7 +6409,7 @@
    ]
   }
  ],
- "updated": "2026-11-14T17:00:50.144Z",
+ "updated": "2026-11-15T00:00:36.680Z",
  "record": {
   "w": 26,
   "l": 24
