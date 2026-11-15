@@ -17092,11 +17092,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 9.3 in 28 min · over this line 4 of his last 10",
+     "eventId": "401909987",
+     "kalshi": {
+      "ask": 0.73,
+      "bid": 0.66,
+      "spread": 0.07,
+      "ticker": "KXNBAPTS-26NOV15CHALAC-CHASJAMES4-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.8593,
+     "pAdj": 0.7587,
+     "player": "Sion James",
+     "playerId": "4602025",
+     "price": -270,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-15T21:30Z",
+     "teams": "CHA @ LAC",
+     "revealed": {
       "v": 1,
       "hash": "3e2383908f4cebb307e8a759cc3ad67a702c0caed05c54f21744570efc72838c",
-      "iv": "x0G8KwJ3IZ04mQ1g",
-      "ct": "eY0mez4uYexWZDaQaOgDx5Cc6jFO+ZE9LmY8BVvya/Zc9G7PmRIsNyKziHlGe/6hUMjZy+bamCw0FBMIFWvt2vTtH8tFhfIzRHvC/sa5tjEkNcKwxKlQhLFIbCzw3bmdf5WafvCLsD/S07NVXiD2j8h0kGcGskL8loC+GNDZ11jsIZNn0d5VfgogE6tW0fKM82QCiE/zeZHqKihXbpVVMiD3SvaBtEnbeeH70fQJcfi8RrX9GP7ZNwyc8pKfwxl9tKjLT+f6PD21aqUMSdM11z3PS+T9Zx9Ixw1HmHE2C35SzM5QJYmTSmAF9tJ5aSJRpSDNmCOYiUHIn+hYG/WEa2JP77y2Xi+AEgkP36XL+1VVw/iBHzaQwpbZjgbo9hyAkvPh0x58JGGNua2mrklldU+qoe6Y4eUeFCfJBrWAzR46L2jXFHaU8uIlDcLHU4MeWPv8MuOJWbpLHhueHhITwZ1i7EcfnjqhDSnXwg01zNoXU3y2im/oPHTcGaS/PMoJ16jIymKmUzamXlxkWQGsrAiqWxEy+olmpKJ8liXcXbjUfgUTdIML/P7w2vCRflHICy2lvhRfSVGDLiPxAkwIquJu+rIQDCAV7zbz8AererY7zDqi+gOrvEXCSnAz08PUTIzYpAxp8ZgY"
+      "salt": "71230aa4b178f089f62f94dd1f08fb4c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-15:robin#3"
      }
     },
     {
@@ -17198,7 +17235,7 @@
    ]
   }
  ],
- "updated": "2026-11-15T21:05:10.502Z",
+ "updated": "2026-11-15T21:30:38.547Z",
  "record": {
   "w": 201,
   "l": 66,
