@@ -17536,6 +17536,9 @@
      "sport": "NBA",
      "start": "2026-11-17T02:00Z",
      "teams": "PHX @ DEN",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "9e7524e00fc0f2c65f61a267ddf00cffd9e0f1ebc34cc2ef5a2f8ebe43dea698",
@@ -17656,7 +17659,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T03:09:37.762Z",
+ "updated": "2026-11-17T03:41:16.538Z",
  "record": {
   "w": 205,
   "l": 68,

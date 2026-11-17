@@ -6601,7 +6601,7 @@
    "id": "2026-11-16:dub",
    "date": "2026-11-16",
    "published": "2026-11-16T23:00:49.315Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 8,
     "NFL": 1,
@@ -6678,6 +6678,9 @@
      "sport": "NBA",
      "start": "2026-11-17T02:00Z",
      "teams": "PHX @ DEN",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "052c094c23cce84f0f8c8105fc8891f9687016a04ec89de55083a790582d8336",
@@ -6711,6 +6714,7 @@
    "fair": -243,
    "price": -117,
    "prob": 0.7082,
+   "settled": "2026-11-17T03:41:15.273Z",
    "revealed": {
     "v": 1,
     "hash": "15f670cb3f5ab48fd833f445056093c4ab860130da09c9c50c8af546f570bac3",
@@ -6725,9 +6729,9 @@
    }
   }
  ],
- "updated": "2026-11-17T02:33:38.697Z",
+ "updated": "2026-11-17T03:41:16.392Z",
  "record": {
-  "w": 28,
+  "w": 29,
   "l": 24
  }
 }
