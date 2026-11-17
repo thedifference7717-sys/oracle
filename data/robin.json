@@ -17555,11 +17555,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.381 · 1.29 pts/gm this season (21) · a point in 8 of his last 10",
+     "eventId": "2026020332",
+     "kalshi": {
+      "ask": 0.79,
+      "bid": 0.77,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV16VANUTA-UTACKELLER9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7121,
+     "pAdj": 0.7687,
+     "player": "Clayton Keller",
+     "playerId": "8479343",
+     "price": -376,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-17T02:30:00Z",
+     "teams": "UTA vs VAN",
+     "revealed": {
       "v": 1,
       "hash": "d32b8c3f73d6949b0634c60aec5898c63848fbaf6eb01a4fea5db2bcd21bcbb7",
-      "iv": "MSBsWEg+0JhBIoJr",
-      "ct": "q3hutr4oY5pVcAzxE59ha/6U/h7gwp47f0aihlhAH8W1S9YeX5nrKlJrTJkJrGKVE4ITKmxDKEC4yuaJ5qTIuqot2yuZH2rdqQweb6VYqoJ02T4xXhd/lhZJMAmycOtGjJMEwVO8mEUZzfn+jLj8t8BiIWHtdMdehSjH71FgS3sZMUn3VQgqkPIYfz5LtawelOq96qRe/neFR3iVxBE2J1EAfxRo8Kj772knR3ECf2ukHKmO/JLIVXVuEwT2IJ0h9+YVE384d68oQcbaWoaePIgenHdnbRShIE8tPy+NlO7/cXu4tqZzJLjO6kRxgezf86f7jkoBJlthSJ3cKTIRvXmRMhFHp+Q0FWwHm1UMoKSBqUk7asaTu1zFmfbtoORYJGmuXKQySyw3o3q1Uv6YpLUcITj17GTNKbUlJ4+x0qV7rm7l9CQ3uuIOctIQRPmbiYD7/QGdJfSc9KZVJw1kz9iVUTnn1uHnPIXUTDYAIF8VfQpxaxHqfEbBlc5zEVNpMFGCJXt3UqKJ3zv+kp75jmu7VX+LB/Vp7eRMuJ3JLfTceiZTulDpsXACC4B2Lg3/CgY08ugrF0lW6zw6ZLIgRNFbqyPXareVqhoRT7z4WWeEPG1LuQgyFOXs0U8vCGPPqsHIzmjF/6gtlyFx2Mpgz+AhgA9ktb//MvOl4NXKeC3T2O1fERkEm2JvM6u1"
+      "salt": "d25d24f9a3829e27860d7d2e8ae7dfe0",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-16:robin#4"
      }
     },
     {
@@ -17613,7 +17650,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T02:24:15.185Z",
+ "updated": "2026-11-17T02:30:30.433Z",
  "record": {
   "w": 205,
   "l": 68,
