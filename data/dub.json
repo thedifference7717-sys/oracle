@@ -6616,11 +6616,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 17.7 in 28 min · over this line 3 of his last 10",
+     "eventId": "401909995",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.68,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV16CHICLE-CLEMTHOMAS15-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.922,
+     "pAdj": 0.7597,
+     "player": "Meleek Thomas",
+     "playerId": "5041951",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-17T00:00Z",
+     "teams": "CLE vs CHI",
+     "revealed": {
       "v": 1,
       "hash": "bf68327da27e9a64aed6bad34060e8c4cd8f076bc36d30c328bd6ac5bb8f7545",
-      "iv": "AL0AYuytxFocObS9",
-      "ct": "kmHf/nh1W79jW5HHbfEiQzlXCzOqBhz0LO5zPXigMiVgsAsAq97VveVGpEjh2wZCv1DByzJpAK5aO2SnujXQilm6PbnBDysM8e1y7zX+mO5V+Uu0cSnCXeUdfOvkJtNiH9PgidTjmFjfSyb1evnF81C1HPAMXf1VmO4H9Azgg7gFxSL56qmELblmGHwsTxKzj3DRYwIG3NthAgmKc/mvwmQ4EVE0QvLiTcm6W0eB8RHEIr2miPsG0kSLcNQgb8nCEc0d1eCFsB3PTQPf79ehYi1juHJjROXOVnXLI7ENrq3Y6t4J8AOd0t8k6XU2BRsjhNBYlw+ICJuZ6r7E0xdVD2aDtiSvsWLlZk1q0QyqdMiDWSaCAaITli+e4HfiddBYqVeliC5noWL+20btHcPQFrdESoUs3lAieq0MH4wfD804AOKaDzUUMx3v7W7FyPoENAYeNGgNAl0/DzryxnxBgwJZSHTcSlwT8mBtDXInvsjTHizhm7/Oaj1M4faCDVMJzjcr5XOU49EsayO/EMm7okiDscOuMuZRySIFhz2pHlw1dKAHMuanfeKayD0QwdDnrTCZpQ14Xd732oPeQSrTQ69bWFkR69vMIaQRZOa+g22fnn3f2UxD5tTlINZo23QNUnUVNSEQimFl8URxsr0="
+      "salt": "28bd7208664d86d10c76307068f843eb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-16:dub#0"
      }
     },
     {
@@ -6634,7 +6671,7 @@
    ]
   }
  ],
- "updated": "2026-11-16T23:00:49.316Z",
+ "updated": "2026-11-17T00:00:06.300Z",
  "record": {
   "w": 28,
   "l": 24
