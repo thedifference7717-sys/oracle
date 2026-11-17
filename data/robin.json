@@ -17326,7 +17326,7 @@
    "id": "2026-11-16:robin",
    "date": "2026-11-16",
    "published": "2026-11-16T23:00:49.315Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 8,
     "NFL": 1,
@@ -17584,6 +17584,9 @@
      "sport": "NHL",
      "start": "2026-11-17T02:30:00Z",
      "teams": "UTA vs VAN",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "d32b8c3f73d6949b0634c60aec5898c63848fbaf6eb01a4fea5db2bcd21bcbb7",
@@ -17656,21 +17659,63 @@
       "ctx": "2026-11-16:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 6,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 28.241,
+      "pl": 13.241
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 20,
+      "back": 51.554,
+      "pl": 31.554
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 15,
+      "back": 52.866,
+      "pl": 37.866
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 6,
+      "back": 28.875,
+      "pl": 22.875
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 1,
+      "back": 6.563,
+      "pl": 5.563
+     }
+    ]
+   },
+   "settled": "2026-11-17T04:37:59.712Z"
   }
  ],
- "updated": "2026-11-17T03:41:16.538Z",
+ "updated": "2026-11-17T04:38:00.678Z",
  "record": {
-  "w": 205,
+  "w": 211,
   "l": 68,
   "void": 2,
   "unit": "bets",
   "tickets": {
-   "w": 1014,
+   "w": 1071,
    "l": 1520
   },
   "days": {
-   "w": 24,
+   "w": 25,
    "l": 23
   }
  }
