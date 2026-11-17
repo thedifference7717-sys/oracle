@@ -17372,11 +17372,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 16.5 in 38 min · over this line 3 of his last 10 · back-to-back",
+     "eventId": "401909997",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.74,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV16PHIBKN-PHIVEDGECOMBE77-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8952,
+     "pAdj": 0.7845,
+     "player": "VJ Edgecombe",
+     "playerId": "5124612",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-17T00:30Z",
+     "teams": "PHI @ BKN",
+     "revealed": {
       "v": 1,
       "hash": "0ee6520c3171f7293822d01a97d26709c2c5c368fc8e519a40e8085c6b06babf",
-      "iv": "+dpYGIUdnoGx94Cb",
-      "ct": "EuFsrJdqcOO39/nDvVEuZi8lGRCc6CduMmWp+BEQMrS00NRCdsXHjc2ErVys0NEcXpeXpCl8Kb8QX51cpK69soxob03u8VqL7l9lU3lnDpXhObrPNbQEZSqQMB65xgdd20u9QxGszRGtdUuPP47jk3r1c8CXmCMbWsBaAbr2WwaN1TSrAPG/B34AW7qwSwLdo5aFaMIvUo9MFJvJSmTWLWZNX109RoeU7jAsD5LHOFHutyKMsZjIRnD8WL8nwcwccfwm8RXeaqGkX0oZa0GuMGRh0fCKSzlVj/5eHuq9HPr98ElQT+4kwvc0Z/7VMtYPKx5fq2YfDzAidgE/FrkTPfSArLxzTX3je4ek0Eh2ppbQ2oT/JqfRz/g9d7sXBTIxFc9/AdPrLNezJFC38pkMGAKDUVIkP/vLfdDV//CP4gU1XvUaY95GJd0MBCbmwDbdnXoL7RQ9PfDMsoXWT+LIe3vej86rkZG9JRsu9Yx+t2mnGLQYPE8yFquT8s4SxVokdF0GcdMzOJjgy35iGXCzNMCpRQ4NzPgqZSUX7Rmr79xg1WVtNaiwF3ssTecQjz8fKkDzVLVD7w5ZRZn7/o6XKvzVnsAXTTbayg+t4dlVPc+25/Au9K/80dbxIayDOCb9VkFcFNu0eBALSnid8uNfbgIbeAs+uWymsYWs/M9kIXehLSU="
+      "salt": "ed51bc3ae66dd044a54fc5ef44f5bf6d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-16:robin#0"
      }
     },
     {
@@ -17449,17 +17486,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.104 · 1.1 pts/gm this season (21) · a point in 7 of his last 10",
+     "eventId": "2026020331",
+     "kalshi": {
+      "ask": 0.62,
+      "bid": 0.6,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV16MTLNYR-NYRAFOX23-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6513,
+     "pAdj": 0.6414,
+     "player": "Adam Fox",
+     "playerId": "8479323",
+     "price": -163,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-17T00:30:00Z",
+     "teams": "NYR vs MTL",
+     "revealed": {
       "v": 1,
       "hash": "8c9fe82aafbae849cfdb14e11cd4544234b0e1efc136b03437849e01b8fdb27d",
-      "iv": "/i2l1Cc8Eedng4Zl",
-      "ct": "o2WnojGDW6ZVvrWvCcdxM14+Vy7XNXKUp4ERglqr5OvSxxC/eoCoRRFyLQyUqJm1sNzFreOxbw5XCnVLvwYAGBZWoAvik4/SFSdm0mu53sEupQFQ74vcFUT2zmZ3VC6ukpzNZw3JvwTpTR4RvvnLwlmvBkclrKl+gl0iQLZ+jsKgJaQbQ/QmhZlI0LNUhZaIR3nK9VYELgTsE3HPKfRhyzaRqMLIS8VOGY6GaLu0pdQznnBEym9Yevu57ylU2DUX/DPwQd17Av7N4h0ecqEhc4Hgyy/nYqU1lHN6xI9b9vJClZCoNlwcssW6OuWg7AfY0rIGvoMHiGqZg9WFpY8XW35o2p1tOE+HmvkiLLzMaJlJS0x+B2u5XULgzrnIDIKR9ByEXV9xx0vnlpkhUjj8oke9hV77xprazozx/eF+vFjjhaKaq4GR7mFEEQ5xRVAMjAKmVk6tzDmW5HiClPSmWK2yP0VeSIvEReICAPjgx9FD0RkW7GGrlDENBl3OBLkB0400KT+22Ocfa2hIKTPlmQ1u5zKiSrRiFcKW8Q+6uP7fhdx5Xm+QwfrpeJn2F8gvAtIb8cS0ZDHJo5fxlB+jJSsd8Q7Cio+HEWE6w/AdrL3iYBoPDtTBpuiOQshxEUCJ1TI7a/4VBPY/lAkx/gXykeaGLafzL+3R72NSe3bZy/yzG3k="
+      "salt": "bb9a9de0c2043ccc4d0279ad79376a3c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-16:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-17T00:00:06.340Z",
+ "updated": "2026-11-17T00:30:54.918Z",
  "record": {
   "w": 205,
   "l": 68,
