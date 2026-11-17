@@ -387,6 +387,7 @@ footer a{color:var(--muted)} footer a:hover{color:var(--text)}
   <div style="max-width:420px">21+ only. Gambling involves risk; bet only what you can afford to lose. If you or someone you know has a gambling problem, call 1-800-GAMBLER.</div>
 </div></footer>
 
+<script src="pages.js?v=5"></script>
 <script>
 // Live numbers from the public record (the same files the record page reads).
 const dec = a => { a = +a; return a > 0 ? 1 + a / 100 : 1 + 100 / Math.abs(a); };
@@ -396,7 +397,13 @@ const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","
 const pd = d => { const [, m, da] = d.split("-").map(Number); return `${MON[m - 1]} ${da}`; };
 const EM = { MLB: "⚾", NBA: "🏀", NFL: "🏈", NHL: "🏒" };
 const set = (id, html, c) => { const e = document.getElementById(id); if (e) { e.innerHTML = html; if (c) e.className = (e.className.replace(/\b[gr]\b/g, "") + " " + c).trim(); } };
-async function j(p) { try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? r.json() : null; } catch (e) { return null; } }
+// Through pages.js, as the record page reads them: newer rows are sealed
+// until their game, and only Pages.load opens the revealed ones (read raw,
+// the home page stopped counting at Oct 30).
+async function j(p) {
+  if (window.Pages) try { return await Pages.load(p); } catch (e) {}
+  try { const r = await fetch(p, { cache: "no-store" }); return r.ok ? r.json() : null; } catch (e) { return null; }
+}
 (async () => {
   const [L, D, R] = await Promise.all(["data/ladder.json", "data/dub.json", "data/robin.json"].map(j));
   const lb = (L && L.bets || []).filter(b => b && b.date), db = (D && D.bets || []).filter(b => b && Array.isArray(b.legs)), rb = (R && R.bets || []).filter(b => b && Array.isArray(b.legs));
