@@ -17392,6 +17392,9 @@
      "sport": "NBA",
      "start": "2026-11-17T00:30Z",
      "teams": "PHI @ BKN",
+     "result": "won",
+     "actual": 11,
+     "note": "11 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "0ee6520c3171f7293822d01a97d26709c2c5c368fc8e519a40e8085c6b06babf",
@@ -17653,7 +17656,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T02:33:38.833Z",
+ "updated": "2026-11-17T03:09:37.762Z",
  "record": {
   "w": 205,
   "l": 68,

@@ -4974,7 +4974,7 @@
   {
    "id": "2026-11-16:ladder",
    "date": "2026-11-16",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-16T23:00:47.120Z",
    "cycle": 18,
    "rung": 1,
@@ -5032,6 +5032,9 @@
    "sport": "NBA",
    "start": "2026-11-17T00:30Z",
    "teams": "PHI @ BKN",
+   "actual": 11,
+   "result": "11 PTS against a 9.5 line",
+   "settled": "2026-11-17T03:09:36.073Z",
    "revealed": {
     "v": 1,
     "hash": "f04cb37943ef5407f7d839a9d3cd5b14427f57b7984a6121b9b9ac00be60ca0d",
@@ -5060,12 +5063,12 @@
    }
   }
  ],
- "updated": "2026-11-17T00:30:54.860Z",
+ "updated": "2026-11-17T03:09:36.078Z",
  "state": {
   "account": 538.18,
   "base": 20.73,
-  "stake": 20.73,
-  "rung": 1,
+  "stake": 26.98,
+  "rung": 2,
   "cycle": 18,
   "pl": 438.18,
   "cycles": {
