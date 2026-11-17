@@ -17462,11 +17462,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "TE · sim median 25 receiving yards",
+     "eventId": "401873065",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.76,
+      "spread": 0.01,
+      "ticker": "KXNFLRECYDS-26NOV16LACBAL-BALMANDREWS89-10"
+     },
+     "line": 9.5,
+     "market": "recYds",
+     "need": "10+ receiving yards",
+     "p": 0.793,
+     "pAdj": 0.7697,
+     "player": "Mark Andrews",
+     "playerId": "3116365",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-17T01:15Z",
+     "teams": "BAL vs LAC",
+     "revealed": {
       "v": 1,
       "hash": "b07fd32cd6912d26b8385ee27da066fe4b490e3f1a042870d8fc9d6422083778",
-      "iv": "31y0oORZ75c5FsM1",
-      "ct": "4vWNa9G3qkNReq3Oekk+ae379NuHj3nQHM5tz7cQVfIAS39r82vLX1Nx8kmY6o4x8ORA4ywZzbBrw5YJv0hDYASZKeitwTfe3kjK9HTIauB7GyaOMKmLo6Y21hm7iQLmbKRS8O3XUsQjFtPqH4BA0prrrWG3+yn1QK6mBuswuyDnrKpMh+gHIPVkJBHl02409FlDKMkicUONQSTAHe9wchjws1lLB/R5JAbzeu+U8W6cfUPx7uEAwXddsFMVWXbxFSnQaTm0YuDDFTwT6kGHnB9B+HAxKpxr5NR2YLOsOTqaKYi9ASQX1xtE4CQOd6Z0xOFei4qmImLwY2jXPFmPOeHoJxCTsvAj028VF4htXR/7vyWIjBjws2HdY1JdoDSn9Ijl7TSU8yOX3QmSjUfkH8bmmtOvSyPJgFpSkTYKe2SpbySkFUg/iagqqX04AAwQqLZTleVWXr/gMeod4JQPV+HJOy5kxhtfiWdn4uxX9YS4uPj+uEvZK7NiNl0+mYK+oxnZUgmYtAKHBTsrNf0YrJPPQz32K9Ij/s3MoM2L89ANmXsoJa1GTJx/TDqPcdz9+pZY8njogDCL0cQg83WmxSrqmx5omu5RdpQze/v8D7xmrVei3hpv2RaHeEhCzmcfsbvGn3jJK0vN78eN0w=="
+      "salt": "b1f83921eff30d24c7b1330ebb03e80e",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-16:robin#2"
      }
     },
     {
@@ -17533,7 +17570,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T00:30:54.918Z",
+ "updated": "2026-11-17T01:15:58.895Z",
  "record": {
   "w": 205,
   "l": 68,
