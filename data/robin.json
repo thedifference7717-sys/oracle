@@ -17583,6 +17583,9 @@
      "sport": "NHL",
      "start": "2026-11-17T00:30:00Z",
      "teams": "NYR vs MTL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "8c9fe82aafbae849cfdb14e11cd4544234b0e1efc136b03437849e01b8fdb27d",
@@ -17610,7 +17613,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T02:02:26.065Z",
+ "updated": "2026-11-17T02:24:15.185Z",
  "record": {
   "w": 205,
   "l": 68,
