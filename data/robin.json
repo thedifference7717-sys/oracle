@@ -17437,6 +17437,9 @@
      "sport": "NBA",
      "start": "2026-11-17T00:00Z",
      "teams": "CLE vs CHI",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "206f7899fdefb6c33d495ffe06c76113e7739f3c13d88ff54c02058c90b5eecc",
@@ -17650,7 +17653,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T02:30:30.433Z",
+ "updated": "2026-11-17T02:33:38.833Z",
  "record": {
   "w": 205,
   "l": 68,
