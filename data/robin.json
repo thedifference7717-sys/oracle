@@ -17507,11 +17507,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 3.1 in 29 min · over this line 9 of his last 10 · back-to-back",
+     "eventId": "401910001",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.75,
+      "spread": 0.02,
+      "ticker": "KXNBAAST-26NOV16PHXDEN-PHXMBRIDGES22-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.7681,
+     "pAdj": 0.7574,
+     "player": "Miles Bridges",
+     "playerId": "4066383",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-17T02:00Z",
+     "teams": "PHX @ DEN",
+     "revealed": {
       "v": 1,
       "hash": "9e7524e00fc0f2c65f61a267ddf00cffd9e0f1ebc34cc2ef5a2f8ebe43dea698",
-      "iv": "qV/pMa2tCmzqKEyP",
-      "ct": "u7oBM9duiBwdURh+3vq0gp9NE6pzWy8rQKlVD+iV23HfV01s6wNaigXz1AYvqzJ2Vzv5EJhUn/4/pzcg+CacIefIa0MEGcZOD0zwIHZuleu6FY9Y9iEQnnCB+q5NwAqgvJtXod/Qo94cnXtA5mh01+LDr4//vD0yFMynsXvrrMv5byAUzSFw6YImM068D8P1g/jcMoO4wJp871a4393T2sWqLO1M7e4SBV3k6HrC9AUVZXnIcjr9YFFC4X7/HD7TzMTlu13IdmupbyhcRC6TVTsB23a5D6QbqeOrpC5va7P2+/Pa/tsbpt5he6tSOzHS+Z1r4fvSYUIygUAWo4D9xLVlKpsAV19ZjI5TqjFuuETuQaokdGwno/jxa3KDEGJ5OnQIb2eDE4sCXUGNQeLmEAxG8uyTZhkFQGFV68VOfCeokHnKpnhtA61toqnU0Y2egP3K5qDq9XZ1qf5GqIZOt53gsSOiu0XCw/snmtVSXRmXQSLBC/oCkoo/oxVDr93jaBvCCupCzbEN+eE7/VIBa27fWCH6TK99vYml9CYOpcbMCcF2rSn7BQh5eHekIZHMc7DBpK/IAdYEdo4403HiEi1Jxy027p9wC4lOcF7qdda+BY+CGBbPV2nQ5s4LytGHCk4tym2n45t+yyz8Lqs+3GH9X4ktulYMWDfcYiU0nMg="
+      "salt": "3cfa118d4e31b8ee1cd58150e8f06bd7",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-16:robin#3"
      }
     },
     {
@@ -17570,7 +17607,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T01:15:58.895Z",
+ "updated": "2026-11-17T02:01:00.222Z",
  "record": {
   "w": 205,
   "l": 68,

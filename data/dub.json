@@ -6608,12 +6608,6 @@
     "NHL": 2
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "15f670cb3f5ab48fd833f445056093c4ab860130da09c9c50c8af546f570bac3",
-    "iv": "oQj1pI3EUjWht+4M",
-    "ct": "qE9aAvofUYl8V4h1h9ILCy8sIlwiU7Z7dyZt5MjOmpM6zx57t3QNBezuZA8MNTB4eMTJex1Q4890wrVkYYzOr70dw+wpQHZJq5xYT6iQ+BbDA76pjoQeN3kuHywHpK7yFj1S7VL4Xy1RrkmkDoeHNuONmwD/gldxt9kHIDOYi+vVVwWP5PAGjCS7EaKdMPnsXImEXHbt9zIY7Pkqa69StcXe0at7oyEZOYZhu3emhZYZ848SJ2Xvc2m0QJ5jn78mZdKkRl5jRuLD2du4vDaNWkU="
-   },
    "legs": [
     {
      "detail": "proj 17.7 in 28 min · over this line 3 of his last 10",
@@ -6661,17 +6655,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 3.1 in 29 min · over this line 9 of his last 10 · back-to-back",
+     "eventId": "401910001",
+     "kalshi": {
+      "ask": 0.77,
+      "bid": 0.75,
+      "spread": 0.02,
+      "ticker": "KXNBAAST-26NOV16PHXDEN-PHXMBRIDGES22-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.7681,
+     "pAdj": 0.7574,
+     "player": "Miles Bridges",
+     "playerId": "4066383",
+     "price": -335,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-17T02:00Z",
+     "teams": "PHX @ DEN",
+     "revealed": {
       "v": 1,
       "hash": "052c094c23cce84f0f8c8105fc8891f9687016a04ec89de55083a790582d8336",
-      "iv": "Gz0DRh0iGyA+w/+v",
-      "ct": "ytFpuobfxVk9Svfg8LwoRD/9oXFUjYi+zPKtrhjPQXFcWYW6vX0fzQXauV7b7/xRknY24ypfRmQed5YilgFXEuo5pc0ze2o8wjSvgqNN0mjJ/54us5fzBNJ+6DnaCiEu/GDvbCfOV0bc+rzMxpw+ovW9sLwpYxUug9EiVi4mq2SdgmrQHdwjuvrbZX1KlAixUYVoaajRDH5VwlQFhsJPQVY9oUe/MS0Q6N40yF8qBYi1DWqHKLG8VYQ8Ub91MUkKGmL9XRSs5mJPdfc325xKWbuRE4IKZLYON7MwDeJRwZY7o95TJ9MF9ni6r/IPEAVaP8mJsuhyPDG6G0OU1SQTIs17mRT/MH6EDmWduAupM9ejjNCXs/G4W9q63nf3XHkXmpW24SVeglEdykDGG4ZinZdyql3biBsdbVPkr3bWVvI30NVWrJUpSmpQ/z0GA5H5pdmvzI1jvXWb6PyRXAi923BRi0EKCJ1+sg4lazCXgPvPCAv0kRR4KEAFqPe8IULzQTkM/H0+wbBGDz2DZ+w0ONYocuKxvb/E5vE30Ti3StfgiqSy9clYDTRwrJxso2k7+FkqqwSSMZrUHmNNDDtbzwXEOmKKjinQ6621omoUrAtD1mFdkrW29R9by4oPfDLhdrNQniKMP3viJnEzRof8d5IFDukKxA8OCOBVRV+z"
+      "salt": "9a71b96fa5b65683c3897669da5e7d45",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-16:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "VJ Edgecombe",
+    "sport": "NBA",
+    "start": "2026-11-17T00:30Z"
+   },
+   "fair": -243,
+   "price": -117,
+   "prob": 0.7082,
+   "revealed": {
+    "v": 1,
+    "hash": "15f670cb3f5ab48fd833f445056093c4ab860130da09c9c50c8af546f570bac3",
+    "salt": "6cc4240cf7a5ad3849e1988488ae45df",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-16:dub"
+   }
   }
  ],
- "updated": "2026-11-17T00:00:06.300Z",
+ "updated": "2026-11-17T02:01:00.181Z",
  "record": {
   "w": 28,
   "l": 24
