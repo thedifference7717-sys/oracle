@@ -6766,6 +6766,9 @@
      "sport": "NHL",
      "start": "2026-11-18T00:30:00Z",
      "teams": "TBL vs WSH",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "e824d052ec29dc0c00c0205aad3c1ebb7186d06e008439e192890cf8dd0dd54a",
@@ -6801,7 +6804,7 @@
    ]
   }
  ],
- "updated": "2026-11-18T00:30:23.257Z",
+ "updated": "2026-11-18T01:06:20.313Z",
  "record": {
   "w": 29,
   "l": 24
