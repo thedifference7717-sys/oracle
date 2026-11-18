@@ -17707,7 +17707,7 @@
    "id": "2026-11-17:robin",
    "date": "2026-11-17",
    "published": "2026-11-17T23:01:20.632Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 5,
     "NHL": 11
@@ -17820,6 +17820,9 @@
      "sport": "NBA",
      "start": "2026-11-18T04:00Z",
      "teams": "CHA @ LAL",
+     "result": "void",
+     "actual": null,
+     "note": "not in the box score — stake returned",
      "revealed": {
       "v": 1,
       "hash": "e43a4dcc8efd15c9b161b12b75fcb5357e15b2d0df05f0efe1bb89093019adb2",
@@ -18036,22 +18039,64 @@
       "ctx": "2026-11-17:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 10,
+      "back": 16.106,
+      "pl": 1.106
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 10,
+      "back": 20.34,
+      "pl": 0.34
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 5,
+      "back": 12.796,
+      "pl": -2.204
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 1,
+      "back": 3.207,
+      "pl": -2.793
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-18T07:02:55.247Z"
   }
  ],
- "updated": "2026-11-18T05:04:40.607Z",
+ "updated": "2026-11-18T07:02:55.829Z",
  "record": {
-  "w": 211,
-  "l": 68,
-  "void": 2,
+  "w": 215,
+  "l": 69,
+  "void": 3,
   "unit": "bets",
   "tickets": {
-   "w": 1071,
-   "l": 1520
+   "w": 1097,
+   "l": 1551
   },
   "days": {
    "w": 25,
-   "l": 23
+   "l": 24
   }
  }
 }

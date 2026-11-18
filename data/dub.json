@@ -6732,7 +6732,7 @@
    "id": "2026-11-17:dub",
    "date": "2026-11-17",
    "published": "2026-11-17T23:01:20.632Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 5,
     "NHL": 11
@@ -6808,6 +6808,9 @@
      "sport": "NBA",
      "start": "2026-11-18T04:00Z",
      "teams": "CHA @ LAL",
+     "result": "void",
+     "actual": null,
+     "note": "not in the box score — stake returned",
      "revealed": {
       "v": 1,
       "hash": "8f1d476cf9b0a010d5014cd1cf3cc1459c53bb54c21349681a495ef75247d71a",
@@ -6841,6 +6844,8 @@
    "fair": -171,
    "price": -137,
    "prob": 0.6307,
+   "settled": "2026-11-18T07:02:54.067Z",
+   "settledPrice": -355,
    "revealed": {
     "v": 1,
     "hash": "b4305e359e01f7d199337541a5d9916e66e741d3b7e7325a3642e5ad604f98d2",
@@ -6855,9 +6860,9 @@
    }
   }
  ],
- "updated": "2026-11-18T04:00:45.905Z",
+ "updated": "2026-11-18T07:02:55.210Z",
  "record": {
-  "w": 29,
+  "w": 30,
   "l": 24
  }
 }
