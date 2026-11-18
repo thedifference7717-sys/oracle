@@ -17776,11 +17776,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.422 · 1.3 pts/gm this season (20) · a point in 8 of his last 10",
+     "eventId": "2026020333",
+     "kalshi": {
+      "ask": 0.72,
+      "bid": 0.7,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV17LABOS-BOSDPASTRNAK88-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7202,
+     "pAdj": 0.7331,
+     "player": "David Pastrnak",
+     "playerId": "8477956",
+     "price": -257,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-18T00:00:00Z",
+     "teams": "BOS vs LAK",
+     "revealed": {
       "v": 1,
       "hash": "1398320b9d7960eb1b752264e8c0216e9b060f8d11cbfb2865a1265e388a2ae1",
-      "iv": "Xk7P4eEuOoaG7q1e",
-      "ct": "92y7Mgq3Ud5egqIJK28XrRajWyvDhGPIqvU/Ls30jhaPMiNu9MLkKnqhrbgIcGoicgaZ4eztSXvyWzUjjm9zN66k/Hl/ZxVOJHWbnApl9+tbKBbGBtqwTyDZ96IBlhgRbdhx0qoUqYe0KFtnle6eNK6AfmA7kfsSOEXDMFG0RhZEMKEEXs4IL/F/7q52IY43KAmerM7sLbeEEdRJhgth3IceDhROpa4Ul3GVIIi1GiIetMf7AVqyuKAWbNLmWQenXbtJHKBS3uMzJD9Y44GTDUx9FQZGavt5+t8H556r91qm3msCdOrcYd7aJIpAYlynxHUQDpHXznk+BFUGW/Wg0SK0Pnuj4oHGPLOBNhJCdL+SVGJFVpyf9+/RGjTcSJpoZ/x9P1KxqehPeAV7E72lUvFk5q2UfdFpfyMq3TI0wHeM9t7ZiYK+UJ/Kd71Mm2wVHaHSgJ2M2n2aDmsk8Uo3/sJi7rT9RcutyvcVcfLyrYYFOFfPQF9NzktpETnjjBFtYQtd2gH8sU23fHk9Uiw3zyNN3S4IjGVzEA6A1SyjCcDUowYVhNYz9D5Ku27F/qIjx0GzfwVB+NGvxxl36mXIM8tBk3FzCdiiM66U/hqbei6Z2vhEfglRU0aLDsngHsjaY3S6515GkWn+oZkXRL5wlGW3BaTKX6t22HyqLtNEe71VwnEnXn6FFucG1z76"
+      "salt": "3ec7ec05ef7fa55f6d14f84bc3980f8b",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-17:robin#3"
      }
     },
     {
@@ -17802,7 +17839,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T23:01:21.743Z",
+ "updated": "2026-11-18T00:00:01.333Z",
  "record": {
   "w": 211,
   "l": 68,
