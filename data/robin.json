@@ -17881,6 +17881,9 @@
      "sport": "NBA",
      "start": "2026-11-18T00:30Z",
      "teams": "TOR vs NY",
+     "result": "won",
+     "actual": 2,
+     "note": "2 3PM against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "7eca6d70214236dbdb4a5cb2efc06b8d3c74bf95fcfd06316ecc88c1d8046a07",
@@ -17956,7 +17959,7 @@
    ]
   }
  ],
- "updated": "2026-11-18T01:06:20.547Z",
+ "updated": "2026-11-18T02:35:07.549Z",
  "record": {
   "w": 211,
   "l": 68,
