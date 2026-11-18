@@ -17836,6 +17836,9 @@
      "sport": "NHL",
      "start": "2026-11-18T00:00:00Z",
      "teams": "BOS vs LAK",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "1398320b9d7960eb1b752264e8c0216e9b060f8d11cbfb2865a1265e388a2ae1",
@@ -17959,7 +17962,7 @@
    ]
   }
  ],
- "updated": "2026-11-18T02:35:07.549Z",
+ "updated": "2026-11-18T02:41:26.301Z",
  "record": {
   "w": 211,
   "l": 68,
