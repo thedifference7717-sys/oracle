@@ -17923,6 +17923,9 @@
      "sport": "NHL",
      "start": "2026-11-18T00:30:00Z",
      "teams": "TOR @ CHI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "8b17f07104cda2008e8c2662a70a3306a228015b79a31eb47654351e419d39a6",
@@ -17950,7 +17953,7 @@
    ]
   }
  ],
- "updated": "2026-11-18T00:30:23.285Z",
+ "updated": "2026-11-18T00:45:40.527Z",
  "record": {
   "w": 211,
   "l": 68,
