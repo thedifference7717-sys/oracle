@@ -6738,12 +6738,6 @@
     "NHL": 11
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "b4305e359e01f7d199337541a5d9916e66e741d3b7e7325a3642e5ad604f98d2",
-    "iv": "2IQP1dECGhJnjIDh",
-    "ct": "JZb/zvX19sz2gmKYXX+yrYZB1L/m07cqSR0anayiIr3cLHO28yXgcSIc25rYtJKhTxTVHvO6mXRMB+Q4bUnE15XVgrKGapZvqOVw6mFZrw5T8J16GjvoDtHRsnWNkpl9KIYNhMHwOpGnS3Id00K2RmfZPY6TZsf3Rwj/0hcRK6wcIIyh4VByMf/2GptssjdH5D1WfaTngZVEc3weEtkX0TUnsskckxnWarYj8ue6JYltYxRpmZQpn6lALsC7gU9QD37HgNeN8fl1XVcQqlPekkap"
-   },
    "legs": [
     {
      "detail": "λ 1.714 · 1.4 pts/gm this season (20) · a point in 7 of his last 10",
@@ -6794,17 +6788,74 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 16.4 in 29 min · over this line 5 of his last 10",
+     "eventId": "401910005",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.73,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV17CHALAL-CHAGALLEN8-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8185,
+     "pAdj": 0.7544,
+     "player": "Grayson Allen",
+     "playerId": "3135045",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-18T04:00Z",
+     "teams": "CHA @ LAL",
+     "revealed": {
       "v": 1,
       "hash": "8f1d476cf9b0a010d5014cd1cf3cc1459c53bb54c21349681a495ef75247d71a",
-      "iv": "XmmZOR+c/W5S+bp7",
-      "ct": "Rm9/UHgp3aSm/74/mTrt0Ih3wIxELPX/p9JGeYUSvsz3ongV085cyMqAJR2qsobFtByRPjXlRKouihPiqxOKWXlTAPZK/lld584zXbeob+jCn9ElMx0q4rBgQiFDY5H622xticUrUsdgSoB+k6nr+/xpz6QharlPetSIi79Hwuo+EmUjZ/u/VVjhGoqeWUuGePpizNgWZ1ideZekBp5hkHl2RcIq8o+ywG5bILzE6RsM9sr/D7jrW7M0odk2+TSNQd6WVFDAgUZCHWOTYKDunRTJagcKGP7C0qp3BwX94z3tlVxkMsvVOqAo6InBmlVzrO1K5HXxN/fDb9nNqXsGTTZj75c7Zzs0CLNVJqFluMTFei/8BukhZ88DKUzpqdpJ3h5wAg15BDVNFvlsyRegqBM4RPc8a+dCOaGnV3YS2NXplqS5uO44vYkHr6CI3RkfJ4nJTIsTQUEQEeNQqGkBrIYi/QwMniODbnedYuMXEXmoPXa6rt0aBxTqXHnPoHG8Jbe/6QUFLqeTPdY+IP7o59pkJUUr+Dibzb9q4QAGgcN2Yi/uN2QzO58BEPfxwZMfcc3FZ+dm6867GUsEYyyYhwKAys37G1MfiBYM1ezg3A9rxKeLXTGOx5LJCSTxyhiW4FY3hC1CMthm/X5JSA=="
+      "salt": "8be6867feb984d5bf39be3f0dcc9ec92",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-17:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Rui Hachimura",
+    "sport": "NBA",
+    "start": "2026-11-18T03:30Z"
+   },
+   "fair": -171,
+   "price": -137,
+   "prob": 0.6307,
+   "revealed": {
+    "v": 1,
+    "hash": "b4305e359e01f7d199337541a5d9916e66e741d3b7e7325a3642e5ad604f98d2",
+    "salt": "50f460ae46eca136835d883ab397a2d7",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-17:dub"
+   }
   }
  ],
- "updated": "2026-11-18T01:06:20.313Z",
+ "updated": "2026-11-18T04:00:45.905Z",
  "record": {
   "w": 29,
   "l": 24
