@@ -5065,7 +5065,7 @@
   {
    "id": "2026-11-17:ladder",
    "date": "2026-11-17",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-17T23:01:18.332Z",
    "cycle": 18,
    "rung": 2,
@@ -5122,6 +5122,9 @@
    "sport": "NBA",
    "start": "2026-11-18T03:30Z",
    "teams": "LAC vs UTAH",
+   "actual": 4,
+   "result": "4 REB against a 3.5 line",
+   "settled": "2026-11-18T05:04:38.766Z",
    "revealed": {
     "v": 1,
     "hash": "5dc84e1852cdf7a0038fb13024c54d59d630687406f44de8a20a20b3ffc7d5a7",
@@ -5150,12 +5153,12 @@
    }
   }
  ],
- "updated": "2026-11-18T03:30:21.373Z",
+ "updated": "2026-11-18T05:04:38.770Z",
  "state": {
   "account": 538.18,
   "base": 20.73,
-  "stake": 26.98,
-  "rung": 2,
+  "stake": 35.97,
+  "rung": 3,
   "cycle": 18,
   "pl": 438.18,
   "cycles": {

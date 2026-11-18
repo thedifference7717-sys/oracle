@@ -17772,6 +17772,9 @@
      "sport": "NBA",
      "start": "2026-11-18T03:30Z",
      "teams": "LAC vs UTAH",
+     "result": "won",
+     "actual": 4,
+     "note": "4 REB against a 3.5 line",
      "revealed": {
       "v": 1,
       "hash": "9948e2fc3dfc7643250c2ff5a0fde120a665ca4e8f02caf66cc4cd2cff04200e",
@@ -18036,7 +18039,7 @@
    ]
   }
  ],
- "updated": "2026-11-18T04:00:45.946Z",
+ "updated": "2026-11-18T05:04:40.607Z",
  "record": {
   "w": 211,
   "l": 68,
