@@ -6746,11 +6746,48 @@
    },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.714 · 1.4 pts/gm this season (20) · a point in 7 of his last 10",
+     "eventId": "2026020334",
+     "kalshi": {
+      "ask": 0.78,
+      "bid": 0.75,
+      "spread": 0.03,
+      "ticker": "KXNHLPTS-26NOV17WSHTB-TBNKUCHEROV86-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7705,
+     "pAdj": 0.7629,
+     "player": "Nikita Kucherov",
+     "playerId": "8476453",
+     "price": -355,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-18T00:30:00Z",
+     "teams": "TBL vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "e824d052ec29dc0c00c0205aad3c1ebb7186d06e008439e192890cf8dd0dd54a",
-      "iv": "j4hzpzOJjulWq+ZA",
-      "ct": "wofnAXJskOhQlMEBNuYqdc0mxEQIwbircYxA47frT+sAc55IGqwoEJS2iifVZjcVyU72IQddLyAMk6B+HzhvcoL/UNc+bDoDcN4CUntLTc23kK6R6TtFYN8e0XHPTCrqPsOEUk++TVatvM+C2xJmkyvNR8eQbEU1WmZjaRNDUGSqBBpZqP2CNHVS2iZc0coDE+VYHf/w5xovhMGythiH2I4nSv2T/HTTkrGRWsMX3l/TlWOpPfOBnsPiPHjPUNydMbUIMsZam4loxsJ0hsAUE31i3OwMCXn+hHuidbADIzMtGP4l62Z/EM4BABoojMKhJJh0cI+5O9VFXDIZ/clg7cMw0Y/ltPDRj3QwgxOdqt0pw1h5RZNRbnD6Ui//LkrZZXAmZHKEsPJ2VsAPhA9hLztolrHU+vmFA4fMo4tnladMnv/tVS1mZRDo/shmiFENCr2gs/TwhW8cIFPszPHGxGGZnUeQ27oOHGkPVoFeJxLrk/GkskL/sqh/jFhAuOVNYjFu4mSULnYXGbxdRM/32KRD3Q/NEs5lytskGRPFDZpQb2bkqXsoOzjARX7vlk0OxCwcVccQE40K8fdLTkkj/ZUqnD8JScwY0122bwLPxnr2Tud04SraIgV/p04qydW6Vb2O1XUtL9FgADonjImdh4qQ7E1tgiDllLRIJPTx52SyrdNnEew1N4dwyu8="
+      "salt": "afc1785aab4cb9f5aaa062a78d02f8ec",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-17:dub#0"
      }
     },
     {
@@ -6764,7 +6801,7 @@
    ]
   }
  ],
- "updated": "2026-11-17T23:01:20.632Z",
+ "updated": "2026-11-18T00:30:23.257Z",
  "record": {
   "w": 29,
   "l": 24
