@@ -17752,11 +17752,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 5.9 in 29 min · over this line 7 of his last 10",
+     "eventId": "401910006",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.74,
+      "spread": 0.01,
+      "ticker": "KXNBAREB-26NOV17UTALAC-LACRHACHIMURA28-4"
+     },
+     "line": 3.5,
+     "market": "reb",
+     "need": "4+ rebounds",
+     "p": 0.787,
+     "pAdj": 0.7505,
+     "player": "Rui Hachimura",
+     "playerId": "4066648",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-18T03:30Z",
+     "teams": "LAC vs UTAH",
+     "revealed": {
       "v": 1,
       "hash": "9948e2fc3dfc7643250c2ff5a0fde120a665ca4e8f02caf66cc4cd2cff04200e",
-      "iv": "dkGbqRISQKkk90RX",
-      "ct": "XktEqqS5Kztx5+L8gwoxTM0XQWeHfV9iM3z0RP4KbTEFk4aEMVJHDVA3FM1J4WLdwWN/zqXJNvi146G+FJ/tas98GeC1Wxy/RNwg95EO1pkJHNGnnJ0g4RQ5tEMrmIhoNjTm1CWL8vYFJm1qlxV1IfNlIDJX0YW9nTyF9NQHtO7KGF3lDGVRxzE9sOQdXwtu2/A16nZ5/87KeM6pL+QZ92esrelj9zMWc10Y9ZlvWH4t7E96uQAPkyg5qcai0/Dp7XnvN0wfrcDVUSryUmRNTkI9Xz0jMpHLEjzzfT8KLgJ2P50ZzkRPoookProfux2lh7HJP2ER0bPylMy+wA/b2FXBdbJHQZ7LiOP75Llx9IT8ukyHWO5d4jgdRhXU7icUDwf52+/X8LJ/ZvAtkwGm544Cg8oj8JpKC8EksJY/JsauIE8N2F6ZeaAr9zZk1QM4EtozJYsnRxtYJCpa5B6r6DSrkWcJqL16r+C2TZCYjYKXa3Fzy3pMK2NXOEV5AzgB2soUoTL4dVcIvjEIFwXU27gBEyZ6biV9I4yOAkW92vyRFCNl3DqyrdlxmsFxLeIuz+oWXMdA7B0m7pQVPi30XvAPnPhHuDQ2BIqzqECCBpjJgQZO6R7dIxaSyd0zPc6TQ9KDTGe+x1OCuRjikRNCSWQefRU="
+      "salt": "326ba7ac41428f5ddfb627bed5f23662",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-17:robin#0"
      }
     },
     {
@@ -17962,7 +17999,7 @@
    ]
   }
  ],
- "updated": "2026-11-18T02:41:26.301Z",
+ "updated": "2026-11-18T03:30:21.438Z",
  "record": {
   "w": 211,
   "l": 68,
