@@ -18200,6 +18200,9 @@
      "sport": "NBA",
      "start": "2026-11-19T00:30Z",
      "teams": "CHI @ BKN",
+     "result": "lost",
+     "actual": 2,
+     "note": "2 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "822386220e2fe55cf81efe1bb46dc5ba4f64b27556198007baad019100a33a25",
@@ -18376,7 +18379,7 @@
    ]
   }
  ],
- "updated": "2026-11-19T02:35:51.613Z",
+ "updated": "2026-11-19T02:49:30.846Z",
  "record": {
   "w": 215,
   "l": 69,
