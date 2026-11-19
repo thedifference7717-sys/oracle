@@ -18321,11 +18321,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.237 · 1.27 pts/gm this season (22) · a point in 8 of his last 10",
+     "eventId": "2026020346",
+     "kalshi": {
+      "ask": 0.7,
+      "bid": 0.68,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV18COLUTA-UTACKELLER9-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.6823,
+     "pAdj": 0.7027,
+     "player": "Clayton Keller",
+     "playerId": "8479343",
+     "price": -233,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-19T03:00:00Z",
+     "teams": "UTA vs COL",
+     "revealed": {
       "v": 1,
       "hash": "9adbd9b0effe803e13a9ffb782258e4f64d2ea8eada99eddad4a75a9d5d9bc4e",
-      "iv": "zxwWr95ntgbbh6jr",
-      "ct": "GWuSYFv+cVSDtn3F1zmtM02so1oQ8lNwOQsJfE7r4CZBhxlDyuOS3L13xrdSLdEdeR05TGaYl9ZJX9J4HMuFPF4Eqs0An7TBcJPIVu3T/490MVXGHFDF1NnaIOQcDIR/6A98fdq3ObZqeDEpdRV3nHbadiVIDl49dPIbgBm3ez/fu5bgOpx86Y7pLw76gCdesJcQgpznuvjRkz5bR/d1Z00V2oNzeH9NWLBkQMIXiOzxNZCUyo9geK+9itmBoUe/EWPieqPEaCUTVgQUOfy2ofjKucheBbt8pjp4JA6cfv92ApPDzfuPg/6zn//8BvS3EU6zo6BsBZbcKaRY3iMPTdFgPq2CCXdRfx4x3pzggWmX7y1GurMe5yiiEBFDZPpnRX1IVdRVnxNo+4zM3HhwEIaNNz6VUZ3vljCXH8xsQMTWvaBldkjwoWGNMxaS+oLiNSPtyS3AFmk8pgVwKvChdgp28t2GSM5JB3bHS5HSGfVRIf7ukYm8D0DZ0XZItoEsD2KEbK1Ug1ylMymQpsX6D8JyAV7BzTTd81ndxKohbJa4yuIZvXb/KIBVAISaoqKqI8E0WddiLIzZGBZkQm4f+VRzjEo+GqPF3HfN/pWigtVmwgJHazt5mwB0bIKXCZSr6mduhMZQTRTPW9n/9slovpglG4ghdJDeCRCwHaXNpd+fHysxLiyyk+pRDSA="
+      "salt": "17f6c24bdd1bca721a6786a440d2be1f",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-18:robin#4"
      }
     },
     {
@@ -18379,7 +18416,7 @@
    ]
   }
  ],
- "updated": "2026-11-19T02:49:30.846Z",
+ "updated": "2026-11-19T03:01:00.594Z",
  "record": {
   "w": 215,
   "l": 69,
