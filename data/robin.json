@@ -18296,6 +18296,9 @@
      "sport": "NHL",
      "start": "2026-11-19T00:30:00Z",
      "teams": "NJD vs MTL",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "c829114edbecb4d4e4e995d9878bd29af7c097c071431314728a756bc69f1055",
@@ -18416,7 +18419,7 @@
    ]
   }
  ],
- "updated": "2026-11-19T03:01:00.594Z",
+ "updated": "2026-11-19T03:15:36.240Z",
  "record": {
   "w": 215,
   "l": 69,
