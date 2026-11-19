@@ -6885,17 +6885,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 10.8 in 24 min",
+     "eventId": "401910011",
+     "kalshi": {
+      "ask": 0.68,
+      "bid": 0.66,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV18CHIBKN-CHIPWILLIAMS44-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.9186,
+     "pAdj": 0.7491,
+     "player": "Patrick Williams",
+     "playerId": "4431687",
+     "price": -213,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-19T00:30Z",
+     "teams": "CHI @ BKN",
+     "revealed": {
       "v": 1,
       "hash": "eff1d518d7626fcb218217b18283c52513a72dc910824bc374475448c9ca89ee",
-      "iv": "XIKF8BGJNzhSR8FS",
-      "ct": "oPtWY/TfENjqWLRgiqax1xZL7ZreA//DeykMxGJZGRf7k+32vfXoZwaXrGsybzs5comKHlR/9cqOt9X3ueDwhCe29JU1XBatxya3AQCQ/uPuEnYpC4Bk+dPTajOIurur+euCZASbxbXQavW3Ga3gyMaB6XfSt4N3eusruKCLH7gBdotYKWTg0b2WDUpKmR/EJYGQILEHxqhJwM6PcKZw+XpR7Mi8voikuGXfCUPPMZSzs+JBpgJwu96jqDC8UiPtEI/oRiWXMVyr47LMoDJdhJxzHncJjDp/9DvP7/8ExMRj1AAA/Rz7gU+phRVnLlQjeAyIh2mPWF+lNQIdriIW6yc30FtmcAoZAKXndyW25ws5yoiLE/NAtRJ+W+604jCoFF2spV3vjOS5zR9gTFczeJ0vH3l3l8CpkiUDnLcQsWydona+WfLdIlbhe9y3xM97lGm0OU74Mi9lxA2mU6K+X8jX2P4vP9uBROzpEX+T13fJIxrD0ECd5OdQTLUpmk40DuFnyM49UF8BJ8+JRsnB1NVxg02hLt6t+xKTg7ANMtVN6zhpI9fsFha5MSjf94EGqAo2etfNRUEvaBGN2AHvuVeejBfCAhtXu+79CtONJQ=="
+      "salt": "81b870b3a40e87654ac2578153cfe1f7",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-18:dub#1"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-18T23:00:50.833Z",
+ "updated": "2026-11-19T00:30:13.322Z",
  "record": {
   "w": 30,
   "l": 24
