@@ -18340,6 +18340,9 @@
      "sport": "NHL",
      "start": "2026-11-19T00:30:00Z",
      "teams": "BOS @ DET",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "df2c9e7ec37093b45dddc6eabe568d58604e0a8be5a0e0aaae54c5e05cdc2cf2",
@@ -18367,7 +18370,7 @@
    ]
   }
  ],
- "updated": "2026-11-19T01:00:33.328Z",
+ "updated": "2026-11-19T01:59:03.229Z",
  "record": {
   "w": 215,
   "l": 69,
