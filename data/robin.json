@@ -18245,6 +18245,9 @@
      "sport": "NBA",
      "start": "2026-11-19T01:00Z",
      "teams": "DET @ NO",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "9a891bb925cb5c1c584fe83db9f36cfca3b29408eee89ea334d9941f069c8029",
@@ -18373,7 +18376,7 @@
    ]
   }
  ],
- "updated": "2026-11-19T02:01:12.421Z",
+ "updated": "2026-11-19T02:35:51.613Z",
  "record": {
   "w": 215,
   "l": 69,
