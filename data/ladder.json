@@ -5155,7 +5155,7 @@
   {
    "id": "2026-11-18:ladder",
    "date": "2026-11-18",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-18T23:00:48.768Z",
    "cycle": 18,
    "rung": 3,
@@ -5212,6 +5212,9 @@
    "sport": "NBA",
    "start": "2026-11-19T00:00Z",
    "teams": "MIA vs MIL",
+   "actual": 10,
+   "result": "10 PTS against a 9.5 line",
+   "settled": "2026-11-19T02:01:10.631Z",
    "revealed": {
     "v": 1,
     "hash": "2684aac3d512670f8ca1d822387eabf4d39c3b6d0a4b679e69c262af3ed88360",
@@ -5240,12 +5243,12 @@
    }
   }
  ],
- "updated": "2026-11-19T00:00:24.378Z",
+ "updated": "2026-11-19T02:01:10.635Z",
  "state": {
   "account": 538.18,
   "base": 20.73,
-  "stake": 35.97,
-  "rung": 3,
+  "stake": 46.71,
+  "rung": 4,
   "cycle": 18,
   "pl": 438.18,
   "cycles": {
