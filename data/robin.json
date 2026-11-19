@@ -18222,11 +18222,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 14.9 in 33 min · over this line 3 of his last 10 · back-to-back",
+     "eventId": "401910013",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.73,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV18DETNOP-DETATHOMPSON9-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8543,
+     "pAdj": 0.7737,
+     "player": "Ausar Thompson",
+     "playerId": "4684742",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-19T01:00Z",
+     "teams": "DET @ NO",
+     "revealed": {
       "v": 1,
       "hash": "9a891bb925cb5c1c584fe83db9f36cfca3b29408eee89ea334d9941f069c8029",
-      "iv": "UHSJAFn1RUnrDEUj",
-      "ct": "ZzXAuvI0OnSeFZlXK+yRuWyK8MjYMWRNV3FfZgbAXI4kwOy0U+vIuaS6zPowQ470uChsBa2zO64c2LU3jeKu+YMb+AUGhV+QcW27BmWeKD6e7zcmXmPURXzW+/PUv5IxPTWAwG8IQds2Ic7fdyyfpKHyiYTEkQQmKAxN9pBFtjae2ZjCZIStnbeia4W41qDZ8DH7RPUZkCJLV/lMd8r8IOROg6j0kWxqE5AdRGl9y6wjlbqzbCtxXT1Md4PA5ZdUjO28wY7mmwM866+3yJBxHCA5HY+hQgjrGeu7geX9WrBAEfChH5SxBwbpheOGjuV7IaLnqXDqzFDrtNRrMtyGtvMOwzv1HiRIqvV1okOiIn0sopcSKJtSl6T+kSKPdFQiPuOmgiCHQYh1jUyKYrB9x0YYM3GaKQV/bODh/gVA4ONmwbmFVcfhsAjo2bOJgLw2evjChV5KfsZ+h68Cvmc1hvEaJ30FzI/X0ouvGyLe98HOKx049FEfSG2QmSIa0z2Ybgx+BDOebmdmgEcRslqSIoSMrXOjoUFHBzlsV+aYVWGQ5/2u1yk4frkt3AREInDhyV2enjQFH8gYXfvR8Q7UKX6U+6Df6tv1mMcdQmyw9nL3V1QlUFzMW8xUhn9YmDr/cirmx1eictR5knFcCyRa4EFjlmCfaIXwSWV9/mKgvT++XA=="
+      "salt": "7e98214e14d8fb7ae88625dbc2e38855",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-18:robin#2"
      }
     },
     {
@@ -18330,7 +18367,7 @@
    ]
   }
  ],
- "updated": "2026-11-19T00:30:13.362Z",
+ "updated": "2026-11-19T01:00:33.328Z",
  "record": {
   "w": 215,
   "l": 69,

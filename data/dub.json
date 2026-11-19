@@ -6869,19 +6869,50 @@
     "NHL": 3
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "b12e49a3a3fcfd409d7659acf17a5027af82d62cc2ca4dadcee0f553991d287c",
-    "iv": "4q3nrGFp6oeFAdam",
-    "ct": "iE2wJ6Ai15W9Rmt2wfjxBQDJeqpcu9AbUR0Ix3/itCOhmKWmRHEMzRHIXSFy1ED68ScNkTi6tIVdrtbQk513Q0DC6+Q1DXbLgVn8SgAMBkio2DPPFUuzvfT/SzrinYH1BlST8NneSpLuaQL85hdY1gI31QbqtWCy9pces7r6/5FoQZBiX9uPYTSdRj4SFVg3nViPUCGIe+wyjC5WwkXsORZbV+WAGt41MJsV9vBhYcre0HppFDEGXImUSz0TSS1BQX3F9ms7yftYtH64s5fZrklXnM4="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 14.9 in 33 min · over this line 3 of his last 10 · back-to-back",
+     "eventId": "401910013",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.73,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV18DETNOP-DETATHOMPSON9-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8543,
+     "pAdj": 0.7737,
+     "player": "Ausar Thompson",
+     "playerId": "4684742",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-19T01:00Z",
+     "teams": "DET @ NO",
+     "revealed": {
       "v": 1,
       "hash": "8ef541335c758a335f7d5ee9be30346cb5e4390ef09c6a6408319f8c0bc35ede",
-      "iv": "sNezUvTKmLST0cs4",
-      "ct": "m/oq5Yph+8VLCVAnDtbtioBWJo5o2xDyAfm4ceVVVjbvGd3BdrEiKdZIl6VkjdZpnl9p+MJQ4t+SGEXz/md5ev1WmNm6E7nXP3Iq4gCV/vvGBtupSoI1Qv97FnIK2emWxxAP54UUttoZwYfd5iXJ4DVg1ix9+AHuRo1KJD0rsle9229jdXLKHmC+ZASMdH5KnMOKCtYg0o9UMLe/qWdLv7yMgSp6evzDrkeLhfglW0fOtFu4NTiNO4eQh0E2CBY4bjuNm8NP4r9xETNNFIRJyQ/yQsMvkvgfzs7tCXzh88Pg+saqHlHXxryT4k2a0Y1R1+r+QEYXTbicTrwWwQLbTQ/WZTyJtolvLSaaPMSrX3vaD5y4c0x+rBU/glZTO/CWvD8uZLDNzzKofcuTt67o3EgBzdtCWc8zUJuDpGlej3ZTdv7Kwmz4Xof8jWHLKJJc9Gp8HQCNmpRGVmOTtAV6+ATt1Nq0htgSdmWdWFJUqgg7n3QWEpTIEbni1NEI0K4J7H4m4fklh54TgawjS8/dp3ZLmFiCPnv46z7CxcQ8zxaiz5eTGJE/IPQGbgxR1MEcLQ6T96X3VYvEKlc5ocpPqJnWgEjUWiTuSV5BY5q1VZco5FJ6jn7UIEr9AA2rBEefs0+5+bMQNQ7VpfcrZMCUx6bGDRw85TQELHS36WLA9XA="
+      "salt": "ae6143f4e20c672d3ef068208a99568c",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-18:dub#0"
      }
     },
     {
@@ -6929,10 +6960,30 @@
       "ctx": "2026-11-18:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Davion Mitchell",
+    "sport": "NBA",
+    "start": "2026-11-19T00:00Z"
+   },
+   "fair": -365,
+   "price": -104,
+   "prob": 0.7848,
+   "revealed": {
+    "v": 1,
+    "hash": "b12e49a3a3fcfd409d7659acf17a5027af82d62cc2ca4dadcee0f553991d287c",
+    "salt": "e6ee2cb4b4697a4463113727f034af60",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-18:dub"
+   }
   }
  ],
- "updated": "2026-11-19T00:30:13.322Z",
+ "updated": "2026-11-19T01:00:33.284Z",
  "record": {
   "w": 30,
   "l": 24
