@@ -18087,7 +18087,7 @@
    "id": "2026-11-18:robin",
    "date": "2026-11-18",
    "published": "2026-11-18T23:00:50.832Z",
-   "status": "open",
+   "status": "settled",
    "games": {
     "NBA": 12,
     "NHL": 3
@@ -18344,6 +18344,9 @@
      "sport": "NHL",
      "start": "2026-11-19T03:00:00Z",
      "teams": "UTA vs COL",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "9adbd9b0effe803e13a9ffb782258e4f64d2ea8eada99eddad4a75a9d5d9bc4e",
@@ -18416,22 +18419,64 @@
       "ctx": "2026-11-18:robin#5"
      }
     }
-   ]
+   ],
+   "graded": {
+    "hit": 4,
+    "of": 6,
+    "sizes": [
+     {
+      "m": 2,
+      "tickets": 15,
+      "cashed": 6,
+      "back": 11.46,
+      "pl": -3.54
+     },
+     {
+      "m": 3,
+      "tickets": 20,
+      "cashed": 4,
+      "back": 10.546,
+      "pl": -9.454
+     },
+     {
+      "m": 4,
+      "tickets": 15,
+      "cashed": 1,
+      "back": 3.636,
+      "pl": -11.364
+     },
+     {
+      "m": 5,
+      "tickets": 6,
+      "cashed": 0,
+      "back": 0,
+      "pl": -6
+     },
+     {
+      "m": 6,
+      "tickets": 1,
+      "cashed": 0,
+      "back": 0,
+      "pl": -1
+     }
+    ]
+   },
+   "settled": "2026-11-19T05:00:21.862Z"
   }
  ],
- "updated": "2026-11-19T03:15:36.240Z",
+ "updated": "2026-11-19T05:00:22.871Z",
  "record": {
-  "w": 215,
-  "l": 69,
+  "w": 219,
+  "l": 71,
   "void": 3,
   "unit": "bets",
   "tickets": {
-   "w": 1097,
-   "l": 1551
+   "w": 1108,
+   "l": 1597
   },
   "days": {
    "w": 25,
-   "l": 24
+   "l": 25
   }
  }
 }
