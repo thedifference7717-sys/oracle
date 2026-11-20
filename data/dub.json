@@ -6993,7 +6993,7 @@
    "id": "2026-11-19:dub",
    "date": "2026-11-19",
    "published": "2026-11-19T23:01:29.623Z",
-   "status": "open",
+   "status": "lost",
    "games": {
     "NBA": 4,
     "NFL": 1,
@@ -7070,6 +7070,9 @@
      "sport": "NBA",
      "start": "2026-11-20T01:00Z",
      "teams": "POR @ MIL",
+     "result": "lost",
+     "actual": 0,
+     "note": "0 AST against a 3.5 line",
      "revealed": {
       "v": 1,
       "hash": "9e9e4a18525a32248f7defbd38c6b7d96c06b5ab7cae82c56e48561ebe469dec",
@@ -7103,6 +7106,7 @@
    "fair": -129,
    "price": -125,
    "prob": 0.5625,
+   "settled": "2026-11-20T03:30:00.034Z",
    "revealed": {
     "v": 1,
     "hash": "0b1c0d5663a5c2f1b66237b4f76a59e5430ed023c00b3b3d887ec4d14df075a2",
@@ -7117,9 +7121,9 @@
    }
   }
  ],
- "updated": "2026-11-20T01:14:45.792Z",
+ "updated": "2026-11-20T03:30:00.985Z",
  "record": {
   "w": 30,
-  "l": 25
+  "l": 26
  }
 }
