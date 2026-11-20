@@ -18553,17 +18553,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.321 · 1.18 pts/gm this season (22) · a point in 8 of his last 10",
+     "eventId": "2026020354",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNHLPTS-26NOV19NYIWPG-WPGMSCHEIFELE55-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7,
+     "pAdj": 0.7034,
+     "player": "Mark Scheifele",
+     "playerId": "8476460",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-20T00:00:00Z",
+     "teams": "WPG vs NYI",
+     "revealed": {
       "v": 1,
       "hash": "65d94142892152c4a9e3909e591835af8e513d9a7d958641b6be1c9e0c4ce468",
-      "iv": "nCOOk5ZwDojjsCNX",
-      "ct": "AaLJqWUHFhF8XWT8THmn7CbzSOdSDWCbgEOlyD7oyB+mWhH7UEMMlt/kuHet2lGiphcZlsZ6FkgNNyuF6hz/TW8qAXsRT055LymS1YeCS7W2OCsrqSyqx0H+P1gIsfY+804nIadkFvzlUAOYF8LfDEk16NMS49u4Y+8Y/GZ0RFvGSOmKgRScEb7c0jIWky/fwp8wFjzWQmPvFoNch5OoyGbslyNwGD0/jrqtMpGaG8MmyV+k41cWnJ6IyXLuE+TuedxK3mdRrGi9nDBooOTtT2g/jhS08RaTkINehbgZ3UC77KgyRU2SIBJ6xt+7FiTIkTK2SybK2QsdyFh8ZHXE6upzbdp01wczs3+RZpm9UrEb6opkOcoL8XRM2syYStTdUSaTnhc1o6Eczm6ExdPfbve894bKhtHwajuwC+wAYulGBVewnBdF/cujsJo9RaXBiwIl2WD/C9J04lfQCWzg3G6Xby5mCOX2+3kwCaUN0ow8tRTkBBnmxwLHacXbRFfV9dboRsXjZ7oQDR2gpX1DUkxo0rDRB4ZEPsBRbPIXD1JJPtRfK3alO902LFLXXS3fUVzCqxrYPCDeUIYKc5s3LvKt/BPFx0wiuf40nwiEbXtIEt20OTYkkUP4m5NvwvydtKK9rRBAsHiKac3HEWkTSkliav+qxPq9KvCCATq9TKugfkHDUyOQ1mC7NPsWnw=="
+      "salt": "46efce0acb7c314844fa01079d42ea67",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-19T23:01:30.745Z",
+ "updated": "2026-11-20T00:00:31.853Z",
  "record": {
   "w": 219,
   "l": 71,
