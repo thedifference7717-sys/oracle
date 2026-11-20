@@ -18537,11 +18537,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "λ 1.855 · 2.39 pts/gm this season (23) · a point in 10 of his last 10",
+     "eventId": "2026020349",
+     "kalshi": {
+      "ask": 0.81,
+      "bid": 0.79,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV19EDMTB-EDMCMCDAVID97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7913,
+     "pAdj": 0.8277,
+     "player": "Connor McDavid",
+     "playerId": "8478402",
+     "price": -426,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-20T00:30:00Z",
+     "teams": "EDM @ TBL",
+     "revealed": {
       "v": 1,
       "hash": "70b429c00c99554a1d84c9846236a56b8f9f2a44e1e33533eada0290b2c09cd4",
-      "iv": "5PPVcoOCWrbhLvaX",
-      "ct": "6cnqtKA1QKkV8C39WQv5VfAcvecg3UeugzA6ch1q3xH2BXLU9XhiymAYrI8B/0tFhjytht4yNHZCb98yfGYTX112nf5rnmDZocMcA970OGhNtoLJZq9HQHgTV5pYSDD7+wl7eQBhqSPx24oDfX4AkghTa/oIvt7Fu23jPEW2V8C0Sue+OcsSImBgE5yN4q973lt1uRji9hqOsRXs9mrobEs7hUIjwWvEyVS4x3H34+u+gJVhHgszwfVPQ8BvMcZOZhSmiAuUOkwEAguK5Jssy3LocrE8S0z+m32WRwkc3znlehRcNGSTS/pKQR9QQOzfws+frdzeyweOn5ML/EHAA3aNwUrHG9XnOHd8bnTtfERTvVdmE2ytDR85+pu+kl/8TK2p+NYXWgCsl1U7zBK8n1GLTkYrffhIIavPXptzoJir7b/yYmfRQIgXpFd2qnvxX+7TH93X99wknSffstglWjD9WZVCchdL9Fq1fMVTtvV+qv/cjv0br+6VfJBK4SDErTBVLzKhxVP7Akv8INrDJlyiTXQwbNiMnhMBYhaUSTfQgvSWF+7dmsaZuVyBw6pN0rtyI7qzhJfyIJJkCkIRSXzNaQKQb5iT7bdLO2OK+yTOlHdSp6wWR8TiuWFDct21blOKMknT10idGoOPdYaz4F7JUs7BkOtNBnsvObD+wa+4KhDHu+KoZDdxHJKofQ=="
+      "salt": "0126abda8c553827b3ad8d568799b680",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:robin#3"
      }
     },
     {
@@ -18600,7 +18637,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T00:00:31.853Z",
+ "updated": "2026-11-20T00:30:45.889Z",
  "record": {
   "w": 219,
   "l": 71,
