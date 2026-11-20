@@ -18674,6 +18674,9 @@
      "sport": "NHL",
      "start": "2026-11-20T00:30:00Z",
      "teams": "EDM @ TBL",
+     "result": "lost",
+     "actual": 0,
+     "note": "no points",
      "revealed": {
       "v": 1,
       "hash": "70b429c00c99554a1d84c9846236a56b8f9f2a44e1e33533eada0290b2c09cd4",
@@ -18794,7 +18797,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T02:30:21.697Z",
+ "updated": "2026-11-20T03:04:00.839Z",
  "record": {
   "w": 219,
   "l": 71,
