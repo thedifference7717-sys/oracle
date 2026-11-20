@@ -18610,6 +18610,9 @@
      "sport": "NHL",
      "start": "2026-11-20T00:00:00Z",
      "teams": "WPG vs NYI",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "65d94142892152c4a9e3909e591835af8e513d9a7d958641b6be1c9e0c4ce468",
@@ -18637,7 +18640,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T00:30:45.889Z",
+ "updated": "2026-11-20T00:44:00.424Z",
  "record": {
   "w": 219,
   "l": 71,
