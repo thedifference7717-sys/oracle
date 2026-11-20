@@ -5245,7 +5245,7 @@
   {
    "id": "2026-11-19:ladder",
    "date": "2026-11-19",
-   "status": "open",
+   "status": "won",
    "published": "2026-11-19T23:01:27.373Z",
    "cycle": 18,
    "rung": 4,
@@ -5303,6 +5303,9 @@
    "sport": "NBA",
    "start": "2026-11-20T01:00Z",
    "teams": "POR @ MIL",
+   "actual": 12,
+   "result": "12 PTS against a 9.5 line",
+   "settled": "2026-11-20T03:13:21.895Z",
    "revealed": {
     "v": 1,
     "hash": "22931ba3ed664f3a33c555930e466b45a29b233eb1d7307d0912eae13a740166",
@@ -5331,12 +5334,12 @@
    }
   }
  ],
- "updated": "2026-11-20T01:00:56.978Z",
+ "updated": "2026-11-20T03:13:21.900Z",
  "state": {
   "account": 538.18,
   "base": 20.73,
-  "stake": 46.71,
-  "rung": 4,
+  "stake": 58.98,
+  "rung": 5,
   "cycle": 18,
   "pl": 438.18,
   "cycles": {

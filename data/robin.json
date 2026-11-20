@@ -18533,6 +18533,9 @@
      "sport": "NBA",
      "start": "2026-11-20T01:00Z",
      "teams": "POR @ MIL",
+     "result": "won",
+     "actual": 12,
+     "note": "12 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "d45e019cc71d4e7f9e6c1a75e83f83489f67bd2f3c3cba4b7c00aa7e03baab5c",
@@ -18797,7 +18800,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T03:04:00.839Z",
+ "updated": "2026-11-20T03:13:23.277Z",
  "record": {
   "w": 219,
   "l": 71,
