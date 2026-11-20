@@ -7119,9 +7119,43 @@
     ],
     "ctx": "2026-11-19:dub"
    }
+  },
+  {
+   "id": "2026-11-20:dub",
+   "date": "2026-11-20",
+   "published": "2026-11-20T23:01:04.953Z",
+   "status": "open",
+   "games": {
+    "NBA": 9
+   },
+   "seal": 1,
+   "sealed": {
+    "v": 1,
+    "hash": "a3648cd92d915f7574fbca82044d09a35f53c1afe982e9fd6baf37c12be349d1",
+    "iv": "2uESzY2QAUmIqLz5",
+    "ct": "2DgWdx6njD5q8+llzbIWPczzyTfnBeegFW4xTs+t4R3h1NrRMX61yzGP/sDwRrf+g7empDSEts+72v/lAEUVdPms54V37JQl3f/pZH45YMvQycHFTPRZYD9ezHQT+zItLnkrkd9g3okRrtwQh3NFy7OUG1wSJ159cBdBnJsCs8JFTceETrnshCPKnQa5QwFH+ZuCV8qm7uCgsJLUVB6f9ivvzI4VE4IMAOOymodab9ErfC3G47kB9I6xSqZvuvPYL3PD2CBMIdgWpomTeP8aS6DxZjKk"
+   },
+   "legs": [
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "3b3e08a49314dcec42a9e58d6b1768ada3eb96a1049af6b3c8e43b7e831a6607",
+      "iv": "DHoQFtCWJ9SHlR0K",
+      "ct": "CZtQl9UJmgJCQOpOUY5DlDdZy2JbKKWEVEaqDsRHyKWkeTMAdAUbxxHIC1WOOIRUHAjBmzxQdQs/x450j4c3MAhGzZWWQfGwCda92JPXJCsNxzDS4aKv+jjbY9XCS07UQJt2WGRlOCxdgM8bwsTOlUYY0yMTzrbwjr31MrhTZO8fMreAqzVE7paaCcvk5TAsNcLHQFEjl9LMsnwP72ab615WXLzONI+87sSqa5HbQyGbMUR74HejFTplQZg4cI+8OXvoGTg5noKpWnM/5Hd7l+0pl7beB6dFDreTXWwRo3Y7aqi0QYR/xjFG+rJ7iPILXCbiGdM25+H9MM21kW+52xLZNfs+/lHk+M9cQvLczXZPThfCPiyrDUeIoRL13yYOYxmcciojeBViVyoHJPHXdPW/egM14fo3yisOX2/EWx+1XVs8v1//rtfxjRFPtfj+so7oMOmtSWwRIVACrtcykEI/Q9ZNuRxZyrMemNrTCujmLdbu/N0lvakEiYmNV5+Bl12Y9H/CPIWLIRqA3hkf/f73I21yRgJH9N7ZNGXiFeE4bOSroqrYWQxAixgffhBKgeeHZr9YPdC4QZcUzKRNegn2PHOOEfKuOtWt1cJCRG2nSgpB1N6Tyh5Y3ScYdmH/5wuji7CsvRw5zk35We9TAROD"
+     }
+    },
+    {
+     "sealed": {
+      "v": 1,
+      "hash": "92a384dfe9da65cbcbf11e04085d6523dd9f2861036d3ada4e59d503d3230f55",
+      "iv": "bK/dRcsdrn7DdzP3",
+      "ct": "2m265pEiH/AX9gGNqgMjNTKMiQRxECtxQmvamyGd8WSTrpt82s0oOFk9GfiJ1qI0cpV6cVAVXrMRR+gDBst1V1tClgcJpQUmjq7IA0mCISKiJ4q75+MKuivgkJhJLt+lTyKUsVBMnIWlBvmqwytZWbIESYZvpKVYsVCFHk6v9hsvGx/SvlbtWetDIyU6x/yMd451BzH9GrxgvmXUZE2k+umDp5/u9oF59nCGrebrmX0g0A1TOp0AxOUmCjNRlTV0bm5BocBIX6PHZqVaybVwsOQ0KBSkwuUIVr6U3NbDxknrxBx50dFxPmazTK8+eX7yeH1FSJzBAmtT+8fCFhloMA55c7yNL76xZ6V0l4SH4s/dxGR5wI2FvmYLfI/N3DYh4akjwn2wp6EPdfGeTOCJR7nmTiWQl5W/2pNxCxLClzLxa0c4HpG5MbQKE9aSGcVAHlZyZ/y9+nbkKrIRzWXzOkaAylIVs+Ip/NTfEuHE0hoXxiZKWsFuZkueEsUzItM3QyKctnMecbMRrTEkrxSLSSSPq8AcWnY0cCAn9UGzjQFOpAOkmEKCWrB1uU2cyZ9C+KCaCfdGZprvqOPrpEsU0MYMjLY8HDOl4bK9Mkww6sNqQZwjulSACzWHIVAhYyNns4Hwp5vkbNAgHkwuzhU="
+     }
+    }
+   ]
   }
  ],
- "updated": "2026-11-20T03:30:00.985Z",
+ "updated": "2026-11-20T23:01:04.953Z",
  "record": {
   "w": 30,
   "l": 26
