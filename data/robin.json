@@ -18578,6 +18578,9 @@
      "sport": "NBA",
      "start": "2026-11-20T01:00Z",
      "teams": "SA vs LAC",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "f73a9e9ac02923e9579834a775366a5ad84ae198840bf7e0c97dfcf9007d3865",
@@ -18788,7 +18791,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T01:15:51.600Z",
+ "updated": "2026-11-20T01:24:17.348Z",
  "record": {
   "w": 219,
   "l": 71,
