@@ -18693,11 +18693,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "QB · sim median 276 passing yards",
+     "eventId": "401873066",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.68,
+      "spread": 0.01,
+      "ticker": "KXNFLPASSYDS-26NOV19INDHOU-HOUCSTROUD7-225"
+     },
+     "line": 224.5,
+     "market": "passYds",
+     "need": "225+ passing yards",
+     "p": 0.7909,
+     "pAdj": 0.7078,
+     "player": "C.J. Stroud",
+     "playerId": "4432577",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NFL",
+     "start": "2026-11-20T01:15Z",
+     "teams": "HOU vs IND",
+     "revealed": {
       "v": 1,
       "hash": "4c0e672b5080a89319dde306c7d7cb18093dcaf7b285b8cb18926c82ad6cec66",
-      "iv": "UeC7B5NMRDxT/obI",
-      "ct": "kpGD2Eo6Wcm0sHL7BAWQkNW++XyW5CAMy8YM6E5Y622TMTYorpIIETaJjuWLTBYRvtyAzcIHr3BzSaFk6utNGKipaCCAr1rqnbTLUjSGvwZxoy5aZSCnxLHAP8Jth1BbQADZ9g6c4yZH9pmeX1vskAVvrIH3/Ks/xMdhYYQIlhmUe4VnIR4Mw8iUrK1p6izd7GVCQE7qiDFmV5W3eqETW7bFGEyQZ/bFhJ2iWCsnTEN25aIPsxhFWXBP7aIEnhMLbcqWqTJtaYa5JnXRc7ZhiD8xTGvOHMLUYrI6FpQoOSVMbM4DU2w1ksJQXAzHg7HZGkcKxtPNu9UUZsNwMRmfpiyA34HzeS6CH6vweQ4BV1ejTuLJ3GPhH7U1S+1Qv0Z7J6cF1xmb51VXfmfimi7ehHPp47on0sX/4VbrviqrzqgjffQv4uNnriJ3FNwyZbUyOgdE1atWS/p8XP+Oa99acbw6EKPMRe+vkjDcxVEJFTNe2v1oGg/Ddzryh+xtO5wYSS2GreQQAiiyUUfpszhu8lV+zRLQHFW2wkiggrOlHujInMCWowWDhwCYmw93Tu85mSu9OWlbJKW1TNdb85jgxWEG/3MJfBGTCJ80WVA/fgcVaJXVlgBnZcdOWgWHgcc7YjFaohhC9a4c4WfFu0s="
+      "salt": "32fb1eecede14bf647cb9d334fb18fe0",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:robin#4"
      }
     },
     {
@@ -18751,7 +18788,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T01:00:57.043Z",
+ "updated": "2026-11-20T01:15:51.600Z",
  "record": {
   "w": 219,
   "l": 71,
