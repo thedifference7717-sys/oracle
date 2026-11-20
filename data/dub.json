@@ -7022,6 +7022,9 @@
      "sport": "NHL",
      "start": "2026-11-20T01:00:00Z",
      "teams": "MIN @ CGY",
+     "result": "won",
+     "actual": 1,
+     "note": "1 point",
      "revealed": {
       "v": 1,
       "hash": "d40507bc2837edffa0c89a790018efe245c2f3a40f31d0d902161ce657a5dfe8",
@@ -7114,7 +7117,7 @@
    }
   }
  ],
- "updated": "2026-11-20T01:00:57.002Z",
+ "updated": "2026-11-20T01:14:45.792Z",
  "record": {
   "w": 30,
   "l": 25
