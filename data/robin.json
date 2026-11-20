@@ -18626,6 +18626,9 @@
      "sport": "NBA",
      "start": "2026-11-20T01:00Z",
      "teams": "MEM vs GS",
+     "result": "won",
+     "actual": 4,
+     "note": "4 AST against a 3.5 line",
      "revealed": {
       "v": 1,
       "hash": "cd6cb15f488c286376777da373b3ec2e728744d16f4e8bde789a7eb668e45c2d",
@@ -18791,7 +18794,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T01:24:17.348Z",
+ "updated": "2026-11-20T02:30:21.697Z",
  "record": {
   "w": 219,
   "l": 71,
