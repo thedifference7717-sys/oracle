@@ -7000,33 +7000,121 @@
     "NHL": 12
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "0b1c0d5663a5c2f1b66237b4f76a59e5430ed023c00b3b3d887ec4d14df075a2",
-    "iv": "YXLtinthuy2WrLO5",
-    "ct": "eA2Rou+u3yWb8/R/6Se7KLpg2TWCDy9jxmGkHqvRpCjlohaBwyzf2x33Fm9er6o04fcMP708Y2Gu/9rAa4XiHA73DMU8gvZR1ODE+njwRf5pAjRwOjYBZ4NXJv6PxccZOWLSjjqRKgVtmCJUsH8zTlI/Gjkvlru+77vqr8RXPE51FJNhc0/sIGsoQzsHgYpAIDFePKGbL2KOFcQfyBRQr0Q9Q7WfVnb50NM42wek6sO2aoaIesso6KHLJm7yfxo0OTRfVLOAvTPCYtuOYEp5oZA="
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "λ 1.423 · 1.74 pts/gm this season (23) · a point in 10 of his last 10",
+     "eventId": "2026020355",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.73,
+      "spread": 0.02,
+      "ticker": "KXNHLPTS-26NOV19MINCGY-MINKKAPRIZOV97-1"
+     },
+     "line": 0.5,
+     "market": "pts",
+     "need": "to record a point",
+     "p": 0.7203,
+     "pAdj": 0.7579,
+     "player": "Kirill Kaprizov",
+     "playerId": "8478864",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NHL",
+     "start": "2026-11-20T01:00:00Z",
+     "teams": "MIN @ CGY",
+     "revealed": {
       "v": 1,
       "hash": "d40507bc2837edffa0c89a790018efe245c2f3a40f31d0d902161ce657a5dfe8",
-      "iv": "zPDAADk8vu/uJbRb",
-      "ct": "1uZsQcz3ax2DjcT4JycmEmJc/6xu94BZ6CMZXSE0ML7vBGMvZsClNIa0eFZDJG0Lk26Y/rUNHgFhF/49yFI5EJ1Sm1jpo4439NfQMbywhNEzKZeDzW3Bgf6XP04wNnfddrV85IY4jzvBBubldAf93i9hVaZUtgKZw4YDgwyAEuNUrPfu4klosbW/qnJQ48exVAqE3AV2FCG0V+ktA3NKL5Mc5PstHoMucNlmWU0KufQV22zTXBLcU0JI54fbuTxkPZhIRIp3AnmwXVpP2tBJs0AhKK+0gjT2Z/6POy7kXAW8u7syjKriLM/mVpMCMSAk+Xw14P15Xu7cGVBb7NBOKrRUmAOaMQFoExs3BUd9Fc24JEhEoTD76hB6rAwD35Pl2kRucBYR1ivKZJ2aOepPHzM83ARo+j8AD1lje4l/0GSTkXcQ0REOIIsBmXdfI1u7p/5onlHERRTxaot3FE+mgsDc7vlhKHelmLZNdl7Lpc1mw5NJt/HIgSG/vj65Nqo1F3MtTrlIRv3nKAXE3hYj3Bgre4P5SmT5hHgX39wqa+1u9j0C33L7vqp6yvAn5tXDgkppWOL4bGG4OzYKBpNc8GXtY2xiI/O4o3BcGgoDtSrC6XivRLqO5ZC9OCdqO4G7mZqoRKXWI4pmk8Y9O3Wb6iz0PlISg5Ga+Qlp6ezemab8qT0dVod2kV9D+CrcNsg="
+      "salt": "0720f1450c741c4a38699ac5b378f9da",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:dub#0"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 5.5 in 33 min · over this line 8 of his last 10",
+     "eventId": "401910020",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.73,
+      "spread": 0.01,
+      "ticker": "KXNBAAST-26NOV19PORMIL-PORDLILLARD0-4"
+     },
+     "line": 3.5,
+     "market": "ast",
+     "need": "4+ assists",
+     "p": 0.7809,
+     "pAdj": 0.742,
+     "player": "Damian Lillard",
+     "playerId": "6606",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-20T01:00Z",
+     "teams": "POR @ MIL",
+     "revealed": {
       "v": 1,
       "hash": "9e9e4a18525a32248f7defbd38c6b7d96c06b5ab7cae82c56e48561ebe469dec",
-      "iv": "hWmT6WHARC7QcwgZ",
-      "ct": "TBBXastxeBTzEVF9KtYwZt5fQcwFnSrucgBamDu3GwQEt9PsXNB8j8BliNGqTeB9yKKK9mSufy7gm+RBMEg/HVfhh0NCB/4Ss+0/fKOaFaYXMUlfkG5DdJR7hJQGQZr9lEc/N5V8LXD7YiT1pOLI6IpKrjT6VL1fmXgHZO2pqej5pV8NXpa+5HBjjLaFv0g6hgBrNEOck7wviZqCnnJ29miSAQT2LEroU8OSZmVl5m31mU+RNNvLbUAasJH8YSOgtLbd/gkzpc5aiah6eiEa8r+ZERMXwVoen8fN6oy8ZnqEGTfKlkYA+SnigysZtqQ60ffIudRiew4cABgH4iIb+LRGQC984xlpY7v+mfrwUjaPYh6Fg1sbcV4w4cF7epIQW7mI7IoApVmA41Spowx4dvgMUK36Q5gMVgOSW9591sA+S8+P5BV8IdC3Bhrbzmarwhoe+8+ZNQje2i96xqcdbcghBs/HKh+qjo5ewSIZzJW+7/vxZEH15rravwMBjGYs6EqEsof+1d8Vg9XUO7VmLCILcTn6GKKQYqWqHP9tbmjmt6X2O5ki+HWQhklPxCq51gtbL+R4/QmWr6SZCRhUBHU53gv6nz/nTxlja2mxztQcfJlV6GePf2nH9ihfZg/j9uFvsC0cV9bHHw=="
+      "salt": "c4d0db6c8c9c71516cc097f49a9e9739",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Jrue Holiday",
+    "sport": "NBA",
+    "start": "2026-11-20T01:00Z"
+   },
+   "fair": -129,
+   "price": -125,
+   "prob": 0.5625,
+   "revealed": {
+    "v": 1,
+    "hash": "0b1c0d5663a5c2f1b66237b4f76a59e5430ed023c00b3b3d887ec4d14df075a2",
+    "salt": "3d053b8ac283cd8daeec57267666b93f",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-19:dub"
+   }
   }
  ],
- "updated": "2026-11-19T23:01:29.624Z",
+ "updated": "2026-11-20T01:00:57.002Z",
  "record": {
   "w": 30,
   "l": 25

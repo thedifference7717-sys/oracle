@@ -18513,27 +18513,138 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 16.4 in 30 min · over this line 5 of his last 10",
+     "eventId": "401910020",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.72,
+      "spread": 0.02,
+      "ticker": "KXNBAPTS-26NOV19PORMIL-PORJHOLIDAY5-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8666,
+     "pAdj": 0.7689,
+     "player": "Jrue Holiday",
+     "playerId": "3995",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-20T01:00Z",
+     "teams": "POR @ MIL",
+     "revealed": {
       "v": 1,
       "hash": "d45e019cc71d4e7f9e6c1a75e83f83489f67bd2f3c3cba4b7c00aa7e03baab5c",
-      "iv": "xrPj/RY17komuzwT",
-      "ct": "dHeZXGv+c5liZtDVLALASfV598Gz92lu5LyFbckHLQ2rz/mSShMo9wmsoT2BWXB47d9a0CMtITrwTI8Ug465S5tjsQ8lxlvfU8IQuSxfgf8AJ2myidIcPwu4nwkgLaAuTT6Ik+w6iJA9yTxl5EVB2/8+aWhaOfxMtm8rbiyPhtUKSNXFPHVSJojTr7QGjd2zpfkECF/3NCmt3OUCFTuOUTk+Kihw1Z5Odkzht3xVD2AKaARMEOMBu7BwxLB0eextgWQi1u51HAjaiKlF30+rWm8VjgRSiNeTVGtc1QDE+vmo+slMBBhxLuOp7vpprVRcv4P+78Cstw8ZSUqCoJX7oYsW/Nr/K+cdCY8gtqY3S+2rY7qSUaR3+ePZ0TPBdUAxNYlYWBAOWFWJd5Nw7ioXmzHxCBYpIAhdxLAD45E4rstiB82xBV0aPWIfXr4RuWcFV4ALlhGZJWln2lBkJWXgeUQ55squ6vEfCWWpw63+I3PgnupL9kkrLQW9KcG1jhEtOCp+k28izE6ctZSbZ9gBWZbENmOCQMhbk1kzIkzIwyqFYIMy8sK1Y+KOc25sOa9Il2zd0bypt1CksOd/YpXhrdjc5Upibv5mPpvKZ6NrXnqEN89H85eizmQMsSOxyeSrAuWPHSjtQvwwsChB9g=="
+      "salt": "18f56965ca27340dfb248ea2e1e4c4cb",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:robin#0"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 3.8 in 31 min · over this line 4 of his last 10",
+     "eventId": "401910022",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.73,
+      "spread": 0.01,
+      "ticker": "KXNBAAST-26NOV19LACSAS-SASDVASSELL24-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8267,
+     "pAdj": 0.7577,
+     "player": "Devin Vassell",
+     "playerId": "4395630",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-20T01:00Z",
+     "teams": "SA vs LAC",
+     "revealed": {
       "v": 1,
       "hash": "f73a9e9ac02923e9579834a775366a5ad84ae198840bf7e0c97dfcf9007d3865",
-      "iv": "/rdN+eXDba/8Z79Z",
-      "ct": "AiE4Il6OyfaqYuV7G8E6Sxi4KIvXgsgFui4ppvIKYJLfCnGc3yecJ41zpouwRwQFjBjAw/ZyenkhxSYwZmx+NoUY7f7Wodu8JyKQ/S8ovhIHaI++iNWgAoomnjsxUPOzR0WT3Pg6eBijmk7t81sn9kr4Y1AB+VAVei9HMmIjhiSN3GHsyDrfS2bPr6VNKbiYXURLeudykyH+GY2z9fz1Js9nCMXmiew1X4cwEfipwyZuqZ3IW2BLoI1sCV9fpLJQ7hUvi6+5bjohL1KIDCke+TArUlcn7Y79SATjl2S3S2FRuW/VM65ZZPq64zBhvigerw7UXvv4h1z0A2EwVdbR6LkuHHusYBm7x0SHVzdKfO6LA+PUtmhWsd2oNOOF4S+bObzyLNUL2XUE52ApG73rjB+QHG+i/gu1sSAxREiqi9NnI4YL0mvPLftUpoli2DT5Bfoaf7VVXOxfStuXvXlVmXOV2CF6Qv7ikDfiKcEcqMPh+OrWnICJckVntEvCIcdA0bi0wMwsGPqz+Ufc1DLZgh1KTw7l4cRm9gdUstaE3jPa/rJCEC+QEx5ehWww+Axf+86YkG+9zu1VlimJvNFRaSonOTbj2yketUTbYes0SCdCvd49fAbQdYXudaCgDqrbQfZsFiVhZVjkxvrb0vN72w=="
+      "salt": "bee728c888442a55e12c3a68adeadd35",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:robin#1"
      }
     },
     {
-     "sealed": {
+     "detail": "proj 5.9 in 37 min · over this line 6 of his last 10 · back-to-back",
+     "eventId": "401910019",
+     "kalshi": {
+      "ask": 0.75,
+      "bid": 0.73,
+      "spread": 0.02,
+      "ticker": "KXNBAAST-26NOV19GSWMEM-MEMCBOOZER27-4"
+     },
+     "line": 3.5,
+     "market": "ast",
+     "need": "4+ assists",
+     "p": 0.8037,
+     "pAdj": 0.7562,
+     "player": "Cameron Boozer",
+     "playerId": "5041935",
+     "price": -300,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-20T01:00Z",
+     "teams": "MEM vs GS",
+     "revealed": {
       "v": 1,
       "hash": "cd6cb15f488c286376777da373b3ec2e728744d16f4e8bde789a7eb668e45c2d",
-      "iv": "DgdvdwOav3GWorkf",
-      "ct": "Usw23yUlO2HqqcogmxkE/q4b6XI7joUTAmXKQg4p2miFbEhw4mvjGov8L5x/GGPzgV5b7pppBC8k67RDd9YUl/8LjhFFiYeuH5RxGZJh+KwPxPNtr8MS6U3bD8U1Ee04AI13LuOGENWfLSWaHs6Il39Jjrp/KUIRoGSltu+TAx3YyotYouv3nmU9YnAJWsEwH7zz9SIJM5WMCj5xqoeM/7su2wfVZ/rVAIn3mPZhp0v6w8RSRbYXuXPk8K0yVX9lD94v9Ldi0bvmtAbaFvNsI9/rwArypTUUh7HboO6O67ceKzhJkGOmxfO6EXPmWdsRHAcBTHqoGKLkkCyHfe2XVQz7IH4j8ZJxPqWt4X+FMLTpqXzxHU8z2I+DKXA9o/et4P/tsB92lmrN7NgFlNg1pLNL1vWC2OTtxV0rFzgAjqbF2dZMvVMGOKRKVOD9PpZdjfVnskSWiS60M5/ONJOzVPHMwmqTJPp+YG1/0A9egGc3JNp5X6ifZ8zI8raaNszGxUCso9PD1AxueUCiKmm7UhbNRrVEHnF7nR+Lq2jiU9+RrpJqTyhcnsrfobckfGWRYTc+jlu4fYHUAxywgicnnNtl8WmDZjpFDIS76/SvcA8Ud20f24QTwp/0iP0JD65XftrvXUH+EFGCdi4j7Lh/pAg19hmU922jxOrDqZBS+ns="
+      "salt": "bcc2abd5c2030d597484b5dcc371bd45",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-19:robin#2"
      }
     },
     {
@@ -18640,7 +18751,7 @@
    ]
   }
  ],
- "updated": "2026-11-20T00:44:00.424Z",
+ "updated": "2026-11-20T01:00:57.043Z",
  "record": {
   "w": 219,
   "l": 71,
