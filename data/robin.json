@@ -19013,6 +19013,9 @@
      "sport": "NBA",
      "start": "2026-11-21T01:00Z",
      "teams": "CHI vs WSH",
+     "result": "won",
+     "actual": 2,
+     "note": "2 AST against a 1.5 line",
      "revealed": {
       "v": 1,
       "hash": "a4799ceee032a579d102805b8b6d38af1e52f538ed12e8ae9abcef0e696a83dd",
@@ -19136,7 +19139,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T02:10:27.422Z",
+ "updated": "2026-11-21T02:49:18.186Z",
  "record": {
   "w": 223,
   "l": 73,
