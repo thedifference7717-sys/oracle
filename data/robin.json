@@ -19055,6 +19055,9 @@
      "sport": "NBA",
      "start": "2026-11-21T00:30Z",
      "teams": "ORL @ BKN",
+     "result": "won",
+     "actual": 23,
+     "note": "23 PTS against a 19.5 line",
      "revealed": {
       "v": 1,
       "hash": "925d04ed60652a6cd3537d3e948acdaa4ac8ba46cc4a8044baa4f6cfa64b0e64",
@@ -19130,7 +19133,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T01:00:45.717Z",
+ "updated": "2026-11-21T02:07:17.039Z",
  "record": {
   "w": 223,
   "l": 73,
