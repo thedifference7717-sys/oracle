@@ -18892,11 +18892,48 @@
    ],
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 10.8 in 23 min",
+     "eventId": "401909310",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV20NOPOKC-OKCKWILLIAMSSF-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.9196,
+     "pAdj": 0.8035,
+     "player": "Kenrich Williams",
+     "playerId": "3133626",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-21T01:00Z",
+     "teams": "OKC vs NO",
+     "revealed": {
       "v": 1,
       "hash": "87a196d2484e58fb8cf7ac84900f550b710565a6bc189cbf0b33f7ca68038d67",
-      "iv": "FRv3qQCWbuyh9YfG",
-      "ct": "6mn82Pof60FPygQ8oQ4aZlm3jBrSB34u3TJpZPlBIuOwfCdGx6pMzaPgXiaj+unV0+K6S054/JSSvFXqyVS/LetDGcEGJn+vDAvEq8CoDHxAt0AXwYsMMM780j3R0A7WX/UB8lasTqPo8XyPuXT5+QdTlVABBn7W0fqbfsrg8kTH2tCDGbIxOTpO+ss2SZR748tQ9fPWHDAm7/EUnWfMbtjPh6Yg5gMIaxumYKZXXLHuqF8q2Hgf3xRU6Oo52tm+fjqplbxhFgzx3v7yxa1dDs7Jp7HbDRdTT3FIbc7oXw1/yW7naw0T4F8u9qi5zkFyiHUJD2A6nTXjKFOpCTQkEEiJn8ztOSYnucA7Mw5G8gbvgGPExE6WA9DJyeE14Zw+sjX+LL2nq1UjqJnBr9xrKczdmUjC04UrX8G/fOV2bkngpZawPHPM1RiqhpBwdhCr8RS2t18T3ZYnrCRRf9dPoemGgIupy3AkhRJyosdRrCjVFFbF9fYTltbObjD8LfQXusUkFDyiiDY/u24rwnw03z4JkoYp4dHPd91Ga5xazZhozso21Z4y2O0WqeoxiNmL7wyL0RD16NqDvJ/wOv4bzslo+Au7z0oKnhpr6CTNONub"
+      "salt": "263c225df731ed6b4d25273043a5d5ec",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-20:robin#0"
      }
     },
     {
@@ -18953,11 +18990,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 3.8 in 32 min · over this line 5 of his last 10",
+     "eventId": "401909309",
+     "kalshi": {
+      "ask": 0.74,
+      "bid": 0.73,
+      "spread": 0.01,
+      "ticker": "KXNBAAST-26NOV20WASCHI-CHINPOWELL24-2"
+     },
+     "line": 1.5,
+     "market": "ast",
+     "need": "2+ assists",
+     "p": 0.8418,
+     "pAdj": 0.7632,
+     "player": "Norman Powell",
+     "playerId": "2595516",
+     "price": -285,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-21T01:00Z",
+     "teams": "CHI vs WSH",
+     "revealed": {
       "v": 1,
       "hash": "a4799ceee032a579d102805b8b6d38af1e52f538ed12e8ae9abcef0e696a83dd",
-      "iv": "/sERyuOKfhnRNXFR",
-      "ct": "iRGwMD1xsul9t2vW25uat9Umgd5AXvB2ICNOqd334jyJF+ByHvjCGdLNhTJ/0OeWrLwulQoVt4pjiDsjEfHiT3Oa+hnyD3IGexxI9jsG/az1vcPGYZzndMlSvXJdPWQdjm5GXAUTUvMbReve3RjlwbptjEWK18MBInTxJ4bqfcs3Rtv0tw8pkfHdYRm7+MrM5cS7X+gAN6towRQrUrEywRtjBTICuRJzSz5rirgSZ3Xm4nLQ5GDtaULySOhk+EHkIoZwC1URr+2mxqxRhfWUC+xYTHM85qvWTFt5RGgA1QROiNFSVV4MtW74DsGDRqTqKrcyUIAFgiBeux7n6gPgYnea81VtDZ4gTtRJ+oLTv1V0vU2BhpeE7TX4kWw4X80HlhPN577U39SOsob2kyF0WNAmR+pvfQBVXWtZKPrLpOrXgCdrhqTUjVUewxUjZD0DTmRkigP7vewRai8TFunvFlMUDvP5v2ODei8CsK/pjvGvw0VvNJKA7aXO1I8MB8FboMdY1uiCWxSb4M1dNpxpN9Lzm8+VppYAEojB1qCMIdBz0pK41f2dCXFQao0HoqpKUOWJ4C/XECJ+LmyXMFsY8JSZ6eir7f1xLpbxJjbzJYWoJVHSpld1Yukp4VfPbNwJ2b5ThSYQdgyLbf+zZpRFGQ=="
+      "salt": "944dfbcc371fcf0f8ed15e44dfe22eb9",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-20:robin#3"
      }
     },
     {
@@ -19056,7 +19130,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T00:30:07.362Z",
+ "updated": "2026-11-21T01:00:45.717Z",
  "record": {
   "w": 223,
   "l": 73,
