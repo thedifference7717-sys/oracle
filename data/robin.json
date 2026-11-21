@@ -18900,11 +18900,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 11.6 in 26 min",
+     "eventId": "401909307",
+     "kalshi": {
+      "ask": 0.69,
+      "bid": 0.65,
+      "spread": 0.04,
+      "ticker": "KXNBAPTS-26NOV20INDCLE-CLESMERRILL5-5"
+     },
+     "line": 4.5,
+     "market": "pts",
+     "need": "5+ points",
+     "p": 0.9299,
+     "pAdj": 0.7618,
+     "player": "Sam Merrill",
+     "playerId": "4066757",
+     "price": -223,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-21T00:30Z",
+     "teams": "CLE vs IND",
+     "revealed": {
       "v": 1,
       "hash": "6a0ff4f79a6b245feedd9556843bc3e1ef577079dca886ce0255d6418aa4f165",
-      "iv": "mNV4VfeMvUNRCW4j",
-      "ct": "xuXSwtp8jm49gsJ6PCbRDtr/IYNPjru0v2LJxCypBfTDQrdU0bjOB4l5ixKNnrVIyT6eKsritp14kvv7WXbEWK7TAucDtpiImznvYqcGtp/3+MNHlBLcRhCtc+uLJ5ItOmhD4d7UwEMtlDKRebTABQNJd7CedTipXOypkrtXwAZxYXCFEvbSqWsycEa8XBGHHW4FfRa1qAe52VAfhnZUkuVWcSS4ovaM2WDSOYKb12StnAwKxtNqcpaMqqHNkr9VivWjaP9wRr2YGiIiXcEwDDnmMRrh+qyMcdguEh24nlezyCsW8a90BdJysnnrTd4Qqamx0mE7UM4VezfoBgw/fHxHBYm9yF5ibcBKZ1DZ21Ac73qWShlsJFRrYriwU0qeRQySRVn45OUxzw50HW1wUYD22FGN+FEs9ofsvC+Ck0yJwKeUpvblPi+AiM2AXJ2uuL/KfuPzmONrIgUlpDOdSw7O4tgqL1qsPr425YPm8EM2NBth1Zd7SxW2DI0AVmIY520D9ySf7CNNUXC6B0zRo1z4XSI9NOQeNXdEbjIENzfX8r5T6T8sJJRZsjRZ0+yEUu1lXPOlDP5ZWnZrqOFEAOzfB+emfI7+w3vX"
+      "salt": "173b4dac8d7264334b4b9d738b605a14",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-20:robin#1"
      }
     },
     {
@@ -18924,11 +18961,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 28.1 in 40 min · over this line 6 of his last 10",
+     "eventId": "401909306",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV20ORLBKN-ORLFWAGNER22-20"
+     },
+     "line": 19.5,
+     "market": "pts",
+     "need": "20+ points",
+     "p": 0.8333,
+     "pAdj": 0.7732,
+     "player": "Franz Wagner",
+     "playerId": "4566434",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-21T00:30Z",
+     "teams": "ORL @ BKN",
+     "revealed": {
       "v": 1,
       "hash": "925d04ed60652a6cd3537d3e948acdaa4ac8ba46cc4a8044baa4f6cfa64b0e64",
-      "iv": "XsxzEridBGpApKJF",
-      "ct": "JWWJJU1AyinIfy07YOANYvgx72wwXCupomYjS0NrN6AjuVPkAHmw6zovxnByEJlcWQYG/y4tPbWQYCWiBxaxPZwvsrYHwiG8qXXfAvpsXsB+oNWBPsZFRP/xaktwHY75g+GraeqegfPXM7X6iJXVodVOUMvwtzuubQjVi9P8mBYSvH9iIXDNvIKr0Okw/9IEvjuC+HD2FCiHbsadhjhtUN8TGNGGu6BFpxSegsM7XnfqSXktbv84sOSptbzsmGrTUs3lzifbO9wxEnlVFGCHSsStgTRqkJIZUeoGsthpwrlDJHj9soLA77sRLOajBcUQY5PsOQKQoPjERKdMIIVkPHV6tIzXjVruwf0fywbhiGROmLGUQKo5z91izmobrC3knm7dW3jG1MPXWemKwFohdYsb1ilraITq5DvaJlL2hEkwkS0nYu18sYdWH/2VJmncVGzVBypXIVR3h7Kk4NlNPMQvJkf/nFcYPpiZblDTLZmcbak7wIL9avtbCX3PQonXTnOcoPedEITjT4Oy19hoYWAZbbz4ZPBxpoTbQGFF3mnHL7s++EcfhkUHYEek0ezfSrCnZr9MOAXigeXZsobfZKBQTLSf9bqYwoX2g1GDMDOUyOmc2W6FN9EGiLzliGN+LylKnnxRZ8K77JD6t2IcO9U="
+      "salt": "47a6c9f729a7e85c5703ffe3709c7173",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-20:robin#4"
      }
     },
     {
@@ -18982,7 +19056,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T00:22:45.467Z",
+ "updated": "2026-11-21T00:30:07.362Z",
  "record": {
   "w": 223,
   "l": 73,
