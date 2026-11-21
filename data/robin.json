@@ -18988,11 +18988,48 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 16.4 in 33 min · over this line 6 of his last 10",
+     "eventId": "401909313",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV20SACLAL-LALWKESSLER14-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8625,
+     "pAdj": 0.7835,
+     "player": "Walker Kessler",
+     "playerId": "4433136",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-21T03:00Z",
+     "teams": "LAL vs SAC",
+     "revealed": {
       "v": 1,
       "hash": "6065f2b7f30055103fd057589f5742e02469c7419859b9b85a780204b31f71bd",
-      "iv": "aqsIv+m5UXi+1yIX",
-      "ct": "hgztK0Zk57fcj65ZtZhOjTRhv7wmsUvAZaeaD9atPEu1W4BORqCyITZnqdyj/tAiydJd9xBIR472PFGSnhbsJwwTHSOMTDiYC3+n3CYNvqjaJs5gWl5Zd6jXNlJlPEiPLdon74vWAtR2qfO5MRP0JB0o1ZdRitHUtGwhx/8zlHN0Ijjc24f/PUZ3xUIuIKRcwwvbcxX5+s5GyZn+WwB5pgEW2ieW2U5x+36Y6NlsbX3FXtmhotqWdNwAAXD4DaaJ5ynY8WjUg3HYNXja7SfPlKxrIFMPRRzPOh80YN/RLnegUEG3o8zxfeDAyNdDhjY+SneOlNuVoAbDCu9Qg5/z/dXgOMzn6bqKiG/44kx9PUTqXu2EdGu08zD3DbZ6ARyJ+utcKB7g8Z4nKcK83Id4gLIBkY86FwBKr+9XYhG0WbpumXqfKYTrYXQm2VFoQkmvX6gNRKCYoF9ZHY3FUei6s0ucxSFpKJUpU2e+v6S0sttHl4JYbB7WP9m57ivPQ24D0e7U7nc2r3rs4hWleCAGeZYfAekAslP3fCgEIJiUdtkMpn44WCK0imKLT93zR7qciaJumOWHIt4+dKLDhmUSDFtqwddWuvDRgWPhxeOXyAN8BguQ02ClkOJZ3G0W703K6oY4MqJGwjM9zJQKus1rA9mKi+Q="
+      "salt": "9c0b32cc7f496404e35d70dedfd2ed2b",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-20:robin#2"
      }
     },
     {
@@ -19142,7 +19179,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T02:53:32.947Z",
+ "updated": "2026-11-21T03:00:56.633Z",
  "record": {
   "w": 223,
   "l": 73,

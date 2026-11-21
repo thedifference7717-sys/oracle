@@ -7129,19 +7129,50 @@
     "NBA": 9
    },
    "seal": 1,
-   "sealed": {
-    "v": 1,
-    "hash": "a3648cd92d915f7574fbca82044d09a35f53c1afe982e9fd6baf37c12be349d1",
-    "iv": "2uESzY2QAUmIqLz5",
-    "ct": "2DgWdx6njD5q8+llzbIWPczzyTfnBeegFW4xTs+t4R3h1NrRMX61yzGP/sDwRrf+g7empDSEts+72v/lAEUVdPms54V37JQl3f/pZH45YMvQycHFTPRZYD9ezHQT+zItLnkrkd9g3okRrtwQh3NFy7OUG1wSJ159cBdBnJsCs8JFTceETrnshCPKnQa5QwFH+ZuCV8qm7uCgsJLUVB6f9ivvzI4VE4IMAOOymodab9ErfC3G47kB9I6xSqZvuvPYL3PD2CBMIdgWpomTeP8aS6DxZjKk"
-   },
    "legs": [
     {
-     "sealed": {
+     "detail": "proj 16.4 in 33 min · over this line 6 of his last 10",
+     "eventId": "401909313",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNBAPTS-26NOV20SACLAL-LALWKESSLER14-10"
+     },
+     "line": 9.5,
+     "market": "pts",
+     "need": "10+ points",
+     "p": 0.8625,
+     "pAdj": 0.7835,
+     "player": "Walker Kessler",
+     "playerId": "4433136",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-21T03:00Z",
+     "teams": "LAL vs SAC",
+     "revealed": {
       "v": 1,
       "hash": "3b3e08a49314dcec42a9e58d6b1768ada3eb96a1049af6b3c8e43b7e831a6607",
-      "iv": "DHoQFtCWJ9SHlR0K",
-      "ct": "CZtQl9UJmgJCQOpOUY5DlDdZy2JbKKWEVEaqDsRHyKWkeTMAdAUbxxHIC1WOOIRUHAjBmzxQdQs/x450j4c3MAhGzZWWQfGwCda92JPXJCsNxzDS4aKv+jjbY9XCS07UQJt2WGRlOCxdgM8bwsTOlUYY0yMTzrbwjr31MrhTZO8fMreAqzVE7paaCcvk5TAsNcLHQFEjl9LMsnwP72ab615WXLzONI+87sSqa5HbQyGbMUR74HejFTplQZg4cI+8OXvoGTg5noKpWnM/5Hd7l+0pl7beB6dFDreTXWwRo3Y7aqi0QYR/xjFG+rJ7iPILXCbiGdM25+H9MM21kW+52xLZNfs+/lHk+M9cQvLczXZPThfCPiyrDUeIoRL13yYOYxmcciojeBViVyoHJPHXdPW/egM14fo3yisOX2/EWx+1XVs8v1//rtfxjRFPtfj+so7oMOmtSWwRIVACrtcykEI/Q9ZNuRxZyrMemNrTCujmLdbu/N0lvakEiYmNV5+Bl12Y9H/CPIWLIRqA3hkf/f73I21yRgJH9N7ZNGXiFeE4bOSroqrYWQxAixgffhBKgeeHZr9YPdC4QZcUzKRNegn2PHOOEfKuOtWt1cJCRG2nSgpB1N6Tyh5Y3ScYdmH/5wuji7CsvRw5zk35We9TAROD"
+      "salt": "0b7c40d921e2d342edec1bdd7a21d97d",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-20:dub#0"
      }
     },
     {
@@ -7192,10 +7223,30 @@
       "ctx": "2026-11-20:dub#1"
      }
     }
-   ]
+   ],
+   "excludes": {
+    "pick": "Kenrich Williams",
+    "sport": "NBA",
+    "start": "2026-11-21T01:00Z"
+   },
+   "fair": -265,
+   "price": -129,
+   "prob": 0.7261,
+   "revealed": {
+    "v": 1,
+    "hash": "a3648cd92d915f7574fbca82044d09a35f53c1afe982e9fd6baf37c12be349d1",
+    "salt": "061998029d69f959caf6e31df837b349",
+    "keys": [
+     "excludes",
+     "fair",
+     "price",
+     "prob"
+    ],
+    "ctx": "2026-11-20:dub"
+   }
   }
  ],
- "updated": "2026-11-21T02:49:17.968Z",
+ "updated": "2026-11-21T03:00:56.599Z",
  "record": {
   "w": 30,
   "l": 26
