@@ -18912,6 +18912,9 @@
      "sport": "NBA",
      "start": "2026-11-21T01:00Z",
      "teams": "OKC vs NO",
+     "result": "won",
+     "actual": 6,
+     "note": "6 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "87a196d2484e58fb8cf7ac84900f550b710565a6bc189cbf0b33f7ca68038d67",
@@ -19139,7 +19142,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T02:49:18.186Z",
+ "updated": "2026-11-21T02:53:32.947Z",
  "record": {
   "w": 223,
   "l": 73,
