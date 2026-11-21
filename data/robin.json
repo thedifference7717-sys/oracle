@@ -18932,17 +18932,54 @@
      }
     },
     {
-     "sealed": {
+     "detail": "proj 1.7 in 41 min · over this line 6 of his last 10",
+     "eventId": "401909305",
+     "kalshi": {
+      "ask": 0.76,
+      "bid": 0.75,
+      "spread": 0.01,
+      "ticker": "KXNBA3PT-26NOV20CHAATL-ATLJJOHNSON1-1"
+     },
+     "line": 0.5,
+     "market": "tpm",
+     "need": "1+ threes made",
+     "p": 0.791,
+     "pAdj": 0.7584,
+     "player": "Jalen Johnson",
+     "playerId": "4701230",
+     "price": -317,
+     "priceSource": "kalshi",
+     "sport": "NBA",
+     "start": "2026-11-21T00:00Z",
+     "teams": "ATL vs CHA",
+     "revealed": {
       "v": 1,
       "hash": "3f053039b9cb93a41d4c5192d75d308612c2c3f0710f5fa4b280bd86c8715f1d",
-      "iv": "64Z3ETqgN/i9stHV",
-      "ct": "aMYtMUU5UugFSUa2BZ6ukARqtuY8sF2eXoBT2NyzK2j+OzjeOKHrerpM8JD5NtpQ8mAnJTj65quvchhOe6GdL4RArnSkb8rQxg/Gusft0gfrfjyBrwY360amgfgiCav8dF2HrW8fcY4a7AcXbvZR+lBLvTFuPkrucnypuP8z/IcGFXVpt8NsPaHSLPqv/bno0W4jWRgqBBFdOyvGKTNP/8WBqH3YSnOqCgKCcnNOCSFKdKhZWKE+jNd2gjF8APlMRj3TuJFVP3TtXei39r3k9XWKRuTPiJxohrakLVH7r2V3qs2lPsOqDfXSRrXoqpEMh2HL9eCxyPIAXxx+gIAAN4hKCoLE4Q25oImoSov7qCggOMlaD6cKpPZh1KTdN3pkfHJjApKWx87a0ZukRIJx4Vd7J+GVAkx1fPX1A8MZHJD8RklR9jXEr83Fv/132w+o97nHhp43q1i7Wu1hIc0qgy2lhhrwEiH7S9akumHAM1rUA3ak8xLAlMPXAm5j7yuOX5QxAi4HJqEjnXRO5nQymGYauv8gGtA6uC837wAJ7pk0CJhbPjkT0rQXBB7myUq70dejC0ZCyEpTHJgtQFvVq4k0rnaiYScH8DL4Kjn0FUnOig3of4q9SN9hpdGsulU8wSnCj7ydnCdT7NwRuWvhJdU7oQ=="
+      "salt": "35a61cb050f4788999b512251a3309a8",
+      "keys": [
+       "detail",
+       "eventId",
+       "kalshi",
+       "line",
+       "market",
+       "need",
+       "p",
+       "pAdj",
+       "player",
+       "playerId",
+       "price",
+       "priceSource",
+       "sport",
+       "start",
+       "teams"
+      ],
+      "ctx": "2026-11-20:robin#5"
      }
     }
    ]
   }
  ],
- "updated": "2026-11-20T23:01:06.037Z",
+ "updated": "2026-11-21T00:00:41.043Z",
  "record": {
   "w": 223,
   "l": 73,
