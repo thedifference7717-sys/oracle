@@ -18952,6 +18952,9 @@
      "sport": "NBA",
      "start": "2026-11-21T00:00Z",
      "teams": "ATL vs CHA",
+     "result": "won",
+     "actual": 1,
+     "note": "1 3PM against a 0.5 line",
      "revealed": {
       "v": 1,
       "hash": "3f053039b9cb93a41d4c5192d75d308612c2c3f0710f5fa4b280bd86c8715f1d",
@@ -18979,7 +18982,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T00:00:41.043Z",
+ "updated": "2026-11-21T00:22:45.467Z",
  "record": {
   "w": 223,
   "l": 73,
