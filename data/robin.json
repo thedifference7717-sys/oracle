@@ -18957,6 +18957,9 @@
      "sport": "NBA",
      "start": "2026-11-21T00:30Z",
      "teams": "CLE vs IND",
+     "result": "won",
+     "actual": 6,
+     "note": "6 PTS against a 4.5 line",
      "revealed": {
       "v": 1,
       "hash": "6a0ff4f79a6b245feedd9556843bc3e1ef577079dca886ce0255d6418aa4f165",
@@ -19133,7 +19136,7 @@
    ]
   }
  ],
- "updated": "2026-11-21T02:07:17.039Z",
+ "updated": "2026-11-21T02:10:27.422Z",
  "record": {
   "w": 223,
   "l": 73,
