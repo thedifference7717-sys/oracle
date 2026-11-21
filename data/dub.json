@@ -7124,7 +7124,7 @@
    "id": "2026-11-20:dub",
    "date": "2026-11-20",
    "published": "2026-11-20T23:01:04.953Z",
-   "status": "open",
+   "status": "won",
    "games": {
     "NBA": 9
    },
@@ -7151,6 +7151,9 @@
      "sport": "NBA",
      "start": "2026-11-21T03:00Z",
      "teams": "LAL vs SAC",
+     "result": "won",
+     "actual": 10,
+     "note": "10 PTS against a 9.5 line",
      "revealed": {
       "v": 1,
       "hash": "3b3e08a49314dcec42a9e58d6b1768ada3eb96a1049af6b3c8e43b7e831a6607",
@@ -7232,6 +7235,7 @@
    "fair": -265,
    "price": -129,
    "prob": 0.7261,
+   "settled": "2026-11-21T04:30:32.600Z",
    "revealed": {
     "v": 1,
     "hash": "a3648cd92d915f7574fbca82044d09a35f53c1afe982e9fd6baf37c12be349d1",
@@ -7246,9 +7250,9 @@
    }
   }
  ],
- "updated": "2026-11-21T03:00:56.599Z",
+ "updated": "2026-11-21T04:30:33.840Z",
  "record": {
-  "w": 30,
+  "w": 31,
   "l": 26
  }
 }
